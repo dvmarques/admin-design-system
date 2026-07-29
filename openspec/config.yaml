@@ -1,0 +1,133 @@
+schema: spec-driven
+
+context: |
+  Projeto: Admin Design System
+
+  Objetivo:
+  Construir um design system React reutilizável para aplicações
+  administrativas, inspirado nos padrões de usabilidade e layout do
+  CoreUI Admin.
+
+  Aplicações consumidoras:
+  Aplicações Next.js que utilizam o App Router.
+
+  Tecnologias:
+  - TypeScript com modo estrito
+  - React
+  - Compatibilidade com Next.js App Router
+  - Tailwind CSS como ferramenta principal de estilização
+  - Variáveis CSS como fonte dos design tokens semânticos
+  - Storybook para documentação e desenvolvimento visual
+  - Vitest e React Testing Library
+  - Playwright para fluxos críticos de interação e acessibilidade
+  - npm workspaces para organização dos pacotes
+
+  Estratégia de estilos:
+  - Tailwind CSS deve ser utilizado internamente na implementação dos componentes
+  - Design tokens devem ser definidos por meio de variáveis CSS semânticas
+  - As classes do Tailwind devem consumir os design tokens do projeto
+  - Temas claro e escuro devem ser controlados por variáveis CSS
+  - A biblioteca deve distribuir uma folha de estilos compilada
+  - Aplicações consumidoras não devem precisar escanear o código-fonte interno
+    da biblioteca para gerar classes Tailwind
+  - Aplicações consumidoras não devem ser obrigadas a utilizar Tailwind CSS
+  - As classes públicas devem evitar conflitos com os estilos das aplicações
+    consumidoras
+  - Classes Tailwind construídas dinamicamente por concatenação devem ser evitadas
+  - Variantes de componentes devem usar mapeamentos explícitos e estaticamente
+    analisáveis
+  - Utilitários como clsx podem ser usados para composição condicional de classes
+  - Uma ferramenta de variantes pode ser adotada somente se houver benefício
+    claro para a consistência das APIs
+
+  Arquitetura:
+  - Os componentes devem ser reutilizáveis fora da aplicação de demonstração
+  - Os componentes não devem depender diretamente do roteamento do Next.js
+  - Componentes que dependem do cliente devem declarar "use client"
+  - Componentes compatíveis com Server Components devem ser priorizados
+    quando não houver necessidade de interatividade
+  - As APIs públicas devem ser exportadas pelos pontos de entrada dos pacotes
+  - Os design tokens devem ser separados dos componentes React
+  - A aplicação administrativa de demonstração deve consumir a biblioteca
+    da mesma maneira que uma aplicação externa
+  - Os componentes básicos não devem conter regras específicas de negócio
+  - Os componentes devem favorecer composição em vez de configurações
+    excessivamente complexas
+  - A estratégia de build deve compilar os estilos usados pela biblioteca
+  - A API pública dos componentes não deve expor detalhes internos do Tailwind
+  - A propriedade className deve ser aceita quando a personalização for segura
+
+  Qualidade:
+  - Os componentes devem oferecer navegação por teclado
+  - O projeto deve buscar conformidade com WCAG 2.2 nível AA
+  - Os componentes devem oferecer temas claro e escuro
+  - Os componentes devem funcionar em diferentes tamanhos de tela
+  - Dependências executadas em runtime devem ser minimizadas
+  - Todo componente público deve possuir documentação e testes
+  - Alterações nas APIs públicas devem considerar compatibilidade retroativa
+  - A biblioteca deve evitar erros de hidratação em aplicações Next.js
+  - O CSS distribuído deve ser validado na aplicação Next.js de demonstração
+  - O build deve evitar a inclusão de classes Tailwind não utilizadas
+  - A customização por design tokens não deve exigir recompilar os componentes
+
+  Licenciamento:
+  - O CoreUI deve ser utilizado como referência visual e funcional
+  - Código-fonte e recursos proprietários do CoreUI PRO não devem ser copiados
+  - Funcionalidades semelhantes às versões PRO devem possuir implementação
+    própria e independente
+  - Licenças e atribuições de materiais open source incorporados ao projeto
+    devem ser registradas
+
+rules:
+  proposal:
+    - Incluir objetivos e itens explicitamente fora do escopo
+    - Identificar os pacotes e as APIs públicas afetadas
+    - Separar o trabalho da biblioteca reutilizável do trabalho da aplicação de demonstração
+    - Explicar o valor da mudança para as aplicações consumidoras
+    - Evitar incluir famílias de componentes não relacionadas na mesma proposta
+
+  specs:
+    - Escrever requisitos como comportamentos observáveis
+    - Incluir cenários de acessibilidade, responsividade e temas
+    - Distinguir requisitos obrigatórios do MVP de melhorias futuras
+    - Incluir cenários de uso em aplicações Next.js quando aplicável
+    - Especificar estados como carregamento, desabilitado, erro e vazio quando aplicável
+    - Especificar o comportamento de personalização por design tokens
+    - Evitar prescrever detalhes internos de implementação nos requisitos
+
+  design:
+    - Documentar os limites entre Client Components e Server Components
+    - Documentar as decisões de acessibilidade
+    - Documentar a integração entre Tailwind CSS e variáveis CSS
+    - Documentar como o CSS será compilado e distribuído
+    - Documentar as decisões sobre estilos, tokens e limites entre pacotes
+    - Explicar alternativas relevantes e seus trade-offs
+    - Registrar impactos no tamanho do bundle e nas dependências
+    - Registrar decisões relacionadas à composição e à API pública dos componentes
+    - Explicar como conflitos de CSS com aplicações consumidoras serão evitados
+
+  tasks:
+    - Organizar tarefas em incrementos independentes e verificáveis
+    - Incluir testes, documentação, acessibilidade e exemplos visuais
+    - Evitar tarefas que combinem vários componentes sem relação direta
+    - Incluir validação de tipos, lint e build
+    - Incluir uma demonstração no Storybook para cada componente público
+    - Incluir testes de consumo do CSS compilado em uma aplicação Next.js
+    - Incluir critérios claros para considerar cada tarefa concluída
+
+operations:
+  apply:
+    guidance:
+      - Implementar uma família coerente de componentes por vez
+      - Executar testes, lint e verificação de tipos após cada família
+      - Manter os artefatos do OpenSpec alinhados com decisões tomadas durante a implementação
+      - Não introduzir dependências sem justificar sua necessidade
+      - Evitar classes Tailwind montadas dinamicamente
+      - Verificar acessibilidade antes de concluir componentes interativos
+
+  archive:
+    guidance:
+      - Confirmar que todas as tarefas obrigatórias foram concluídas
+      - Confirmar que testes, documentação e exemplos foram atualizados
+      - Confirmar o consumo do pacote e dos estilos pela aplicação Next.js
+      - Registrar limitações conhecidas e trabalhos futuros antes de arquivar

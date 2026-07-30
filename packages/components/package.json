@@ -26,7 +26,7 @@
 		"inspect:css": "node ./scripts/inspect-css.mjs",
 		"verify:package": "node ./scripts/verify-package.mjs",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
-		"test": "npm run build:css && node --test ./tests/**/*.test.mjs",
+		"test": "npm run build:css && vitest run --root ../.. --config vitest.config.ts",
 		"build": "npm run build:css && tsc -p tsconfig.build.json && npm run inspect:css && npm run verify:package"
 	}
 }

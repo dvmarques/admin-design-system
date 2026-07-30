@@ -35,7 +35,7 @@ Alternativa considerada: depender somente do nome do pacote `@admin-ds/component
 
 ### Elementos nativos e composição são preferidos
 
-`AdsButton` renderizará por padrão um botão nativo e aceitará atributos padrão de botão. Tipografia e Surface preservarão ou aceitarão um elemento semântico apropriado; Badge, Avatar, Icon e LoadingIndicator exporão apenas a semântica necessária ao seu papel público. `className` será encaminhada somente ao elemento público externo.
+`AdsButton` renderizará por padrão um botão nativo e aceitará atributos padrão de botão. Tipografia e Surface preservarão ou aceitarão um elemento semântico apropriado; Badge, Icon e LoadingIndicator exporão apenas a semântica necessária ao seu papel público. `AdsAvatar` terá um limite de cliente isolado para ocultar uma imagem que falhou e revelar seu fallback. `className` será encaminhada somente ao elemento público externo.
 
 Essa abordagem fornece a consumidores o comportamento nativo de teclado, desabilitado, foco e formulário, sem recriar o comportamento do navegador. Ela também evita APIs que codifiquem regras específicas de produtos futuros.
 
@@ -43,7 +43,7 @@ Alternativa considerada: APIs polimórficas genéricas para cada primitiva. Elas
 
 ### O limite de cliente é mínimo
 
-As primitivas não precisam de hooks, efeitos ou APIs do navegador. Elas serão criadas como componentes React apenas de renderização; `AdsButton` receberá callbacks de eventos normais de um Client Component consumidor quando houver interação. Nenhuma primitiva adicionará uma diretiva `"use client"` no nível do pacote.
+As primitivas não precisam de hooks, efeitos ou APIs do navegador, com exceção do `AdsAvatar`, que usa estado local mínimo para tratar falha de carregamento de imagem. As demais serão criadas como componentes React apenas de renderização; `AdsButton` receberá callbacks de eventos normais de um Client Component consumidor quando houver interação. A diretiva `"use client"` ficará restrita ao módulo do Avatar.
 
 Isso maximiza a compatibilidade com Server Components e evita JavaScript desnecessário no cliente. O controle interativo de tema existente permanece separado.
 

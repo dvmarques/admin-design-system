@@ -15,5 +15,10 @@ export interface StyleFixtureProps extends HTMLAttributes<HTMLDivElement> {
 
 /** Internal visual fixture used to validate compiled design-system styles. */
 export function StyleFixture({ className, variant = 'neutral', ...props }: StyleFixtureProps) {
-	return <div className={classNames('rounded-md border p-4 shadow-sm', fixtureVariants[variant], className)} {...props} />;
+	return (
+		<div
+			className={classNames('rounded-md border p-4 shadow-sm', fixtureVariants[variant], className)}
+			{...props}
+		/>
+	);
 }

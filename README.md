@@ -18,6 +18,7 @@ implementação, validação e arquivamento.
 ## Documentação
 
 - [Roadmap do projeto](docs/roadmap.md)
+- [Estrutura e arquitetura do monorepo](docs/architecture.md)
 - [Comandos úteis do OpenSpec](docs/openspec-commands.md)
 - [Modelos recomendados por fase](docs/models.md)
 

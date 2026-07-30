@@ -15,6 +15,43 @@ O desenvolvimento é orientado por especificações com OpenSpec. Cada
 mudança relevante passa por proposta, requisitos, design, tarefas,
 implementação, validação e arquivamento.
 
+## Executar as aplicações
+
+Instale as dependências uma vez, na raiz do repositório:
+
+```powershell
+npm install
+```
+
+Antes de iniciar qualquer aplicação, gere os artefatos distribuídos dos
+pacotes internos:
+
+```powershell
+npm run build
+```
+
+### Catálogo de componentes (Storybook)
+
+Inicie o catálogo visual dos componentes com:
+
+```powershell
+npm run dev --workspace @admin-ds/docs
+```
+
+Abra [http://localhost:6006](http://localhost:6006) no navegador. Para
+interromper o servidor, pressione `Ctrl+C` no terminal.
+
+### Aplicação de demonstração (`admin-demo`)
+
+Inicie a aplicação Next.js de referência com:
+
+```powershell
+npm run dev --workspace @admin-ds/admin-demo
+```
+
+Abra [http://localhost:3000](http://localhost:3000) no navegador. Para
+interromper o servidor, pressione `Ctrl+C` no terminal.
+
 ## Documentação
 
 - [Roadmap do projeto](docs/roadmap.md)

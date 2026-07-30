@@ -45,3 +45,38 @@ import axe from 'axe-core';
 const results = await axe.run(container);
 expect(results.violations).toHaveLength(0);
 ```
+
+## Playwright e testes end-to-end
+
+O Playwright executa testes em um navegador real — neste projeto, Chromium.
+Ele cobre comportamentos que o ambiente simulado do Vitest e JSDOM não reproduz
+integralmente, como foco visível, navegação por teclado, CSS renderizado,
+responsividade, hidratação do Next.js e fluxos completos entre componentes de
+servidor e cliente.
+
+[playwright.config.ts](../playwright.config.ts) define o endereço padrão da
+aplicação e localiza os testes no diretório `e2e/`. O Chromium necessário já
+foi instalado localmente.
+
+```powershell
+# Executar os testes end-to-end
+npx.cmd playwright test
+
+# Abrir o relatório visual da última execução
+npx.cmd playwright show-report
+```
+
+O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. Eles
+serão adicionados quando `apps/admin-demo` estiver executável.
+
+```text
+e2e/
+├── theme.spec.ts
+├── keyboard-navigation.spec.ts
+├── hydration.spec.ts
+└── visual-regression.spec.ts
+```
+
+Esses testes deverão abrir o admin de referência, alternar temas, validar
+controles por teclado, verificar a ausência de divergências de hidratação e
+capturar screenshots representativos dos temas claro e escuro.

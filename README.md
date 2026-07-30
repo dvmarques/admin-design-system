@@ -28,14 +28,16 @@ implementação, validação e arquivamento.
 
 ## Estado atual
 
-A change `establish-design-system-foundation` define a fundação do
+A change `establish-design-system-foundation` concluiu a fundação do
 monorepo, design tokens, temas, distribuição dos pacotes, integração com
 Next.js, documentação e controles de qualidade.
 
-Consulte seu progresso com:
+O histórico dela está arquivado no OpenSpec. Consulte as mudanças ativas e
+arquivadas com:
 
 ```powershell
-openspec.cmd status --change establish-design-system-foundation
+openspec.cmd list
+Get-ChildItem openspec/changes/archive
 ```
 
 ## Tecnologias planejadas
@@ -51,9 +53,15 @@ openspec.cmd status --change establish-design-system-foundation
 
 ## Próximo passo
 
-Implementar as tarefas da change de fundação:
+Criar a change `add-core-primitives`, começando por elementos reutilizáveis
+como Button, Badge, Avatar, Surface, Tipografia, Ícones e indicadores de
+carregamento:
 
-```text
-Use openspec-apply-change para implementar a change
-establish-design-system-foundation.
+```powershell
+openspec.cmd new change add-core-primitives `
+  --description "Adicionar os componentes fundamentais reutilizáveis do Admin Design System" `
+  --goal "Disponibilizar primitivas acessíveis, tematizáveis e compatíveis com Next.js"
 ```
+
+Depois, use `openspec-propose` para elaborar a proposta, specs, design e
+tarefas dessa nova change.

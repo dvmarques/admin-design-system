@@ -10,11 +10,29 @@ Estabelecer o monorepo, design tokens, temas, estratégia de estilos,
 distribuição dos pacotes, Storybook, aplicação Next.js de referência e
 controles de qualidade.
 
+**Status: concluída e arquivada em 2026-07-29.**
+
+Entregas principais:
+
+- workspaces para tokens, componentes, composições admin, Storybook e demo
+  Next.js;
+- design tokens semânticos, temas claro/escuro e CSS compilado;
+- componentes iniciais de fixture e controle acessível de tema;
+- documentação, snapshots visuais locais e testes com Vitest, axe-core e
+  Playwright;
+- pipeline GitHub Actions com qualidade, build, inspeção de pacotes e fluxos
+  E2E;
+- validação de exports, peer dependencies, baseline de tamanho, licenças e
+  limitações conhecidas.
+
 ## 2. `add-core-primitives`
 
 Adicionar os componentes fundamentais usados pelas demais famílias, como
 botões, badges, avatares, superfícies, tipografia, ícones e indicadores
 de carregamento.
+
+**Próxima change recomendada.** Ela estabelece os elementos reutilizáveis
+necessários antes de formularios, overlays, navegação e composições de admin.
 
 ## 3. `add-form-components`
 
@@ -70,6 +88,6 @@ openspec.cmd list
 # Listar specs principais já consolidadas
 openspec.cmd list --specs
 
-# Consultar a fundação
-openspec.cmd status --change establish-design-system-foundation
+# Consultar o histórico arquivado da fundação
+Get-ChildItem openspec/changes/archive
 ```

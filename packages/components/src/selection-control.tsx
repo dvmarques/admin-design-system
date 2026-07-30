@@ -9,16 +9,14 @@ const selectionSizes = {
 } as const;
 
 export interface AdsSelectionControlProps
-	 extends Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className' | 'size'>,
+	extends
+		Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className' | 'size'>,
 		AdsFormControlBase {
 	label?: ReactNode;
 	size?: AdsFormSize;
 }
 
-function selectionControl(
-	type: 'checkbox' | 'radio',
-	props: AdsSelectionControlProps,
-) {
+function selectionControl(type: 'checkbox' | 'radio', props: AdsSelectionControlProps) {
 	const {
 		['aria-invalid']: ariaInvalid,
 		className,
@@ -28,7 +26,12 @@ function selectionControl(
 		...inputProps
 	} = props;
 	return (
-		<label className={classNames('ads-selection-control inline-flex items-center gap-2 text-text', className)}>
+		<label
+			className={classNames(
+				'ads-selection-control inline-flex items-center gap-2 text-text',
+				className,
+			)}
+		>
 			<input
 				{...inputProps}
 				aria-invalid={validationState === 'error' ? true : ariaInvalid}

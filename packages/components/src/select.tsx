@@ -3,8 +3,7 @@ import { formControlClasses } from './form-control-classes.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 
 export interface AdsSelectProps
-	 extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size' | 'className'>,
-		AdsFormControlBase {
+	extends Omit<SelectHTMLAttributes<HTMLSelectElement>, 'size' | 'className'>, AdsFormControlBase {
 	size?: AdsFormSize;
 }
 

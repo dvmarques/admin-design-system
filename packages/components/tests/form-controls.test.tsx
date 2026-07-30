@@ -51,9 +51,7 @@ describe('text form controls', () => {
 	});
 
 	it('has no detectable accessibility violations', async () => {
-		const { container } = render(
-			<AdsInput aria-label="Nome" />,
-		);
+		const { container } = render(<AdsInput aria-label="Nome" />);
 		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });
@@ -135,8 +133,8 @@ describe('field composition', () => {
 				</AdsSelectionGroup>
 			</>,
 		);
-			expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveAttribute('id', 'value');
-			expect(screen.getByRole('group', { name: 'Canais' })).toBeInTheDocument();
-			expect((await axe.run(container)).violations).toEqual([]);
+		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveAttribute('id', 'value');
+		expect(screen.getByRole('group', { name: 'Canais' })).toBeInTheDocument();
+		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });

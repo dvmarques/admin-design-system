@@ -3,8 +3,7 @@ import { formControlClasses } from './form-control-classes.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 
 export interface AdsTextareaProps
-	 extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className'>,
-		AdsFormControlBase {
+	extends Omit<TextareaHTMLAttributes<HTMLTextAreaElement>, 'className'>, AdsFormControlBase {
 	size?: AdsFormSize;
 }
 

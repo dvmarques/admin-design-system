@@ -3,8 +3,7 @@ import { formControlClasses } from './form-control-classes.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 
 export interface AdsInputProps
-	 extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'className'>,
-		AdsFormControlBase {
+	extends Omit<InputHTMLAttributes<HTMLInputElement>, 'size' | 'className'>, AdsFormControlBase {
 	size?: AdsFormSize;
 }
 

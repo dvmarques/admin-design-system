@@ -1,0 +1,27 @@
+{
+	"name": "@admin-ds/admin",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"sideEffects": false,
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		}
+	},
+	"types": "./dist/index.d.ts",
+	"peerDependencies": {
+		"react": ">=18.2.0",
+		"react-dom": ">=18.2.0"
+	},
+	"scripts": {
+		"verify:package": "node ./scripts/verify-package.mjs",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "node --test ./tests/**/*.test.mjs",
+		"build": "tsc -p tsconfig.build.json && npm run verify:package"
+	}
+}

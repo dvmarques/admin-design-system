@@ -1,0 +1,32 @@
+{
+	"name": "@admin-ds/components",
+	"version": "0.0.0",
+	"private": true,
+	"type": "module",
+	"sideEffects": [
+		"./dist/styles.css"
+	],
+	"files": [
+		"dist"
+	],
+	"exports": {
+		".": {
+			"types": "./dist/index.d.ts",
+			"import": "./dist/index.js"
+		},
+		"./styles.css": "./dist/styles.css"
+	},
+	"types": "./dist/index.d.ts",
+	"peerDependencies": {
+		"react": ">=18.2.0",
+		"react-dom": ">=18.2.0"
+	},
+	"scripts": {
+		"build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
+		"inspect:css": "node ./scripts/inspect-css.mjs",
+		"verify:package": "node ./scripts/verify-package.mjs",
+		"typecheck": "tsc --noEmit -p tsconfig.json",
+		"test": "npm run build:css && node --test ./tests/**/*.test.mjs",
+		"build": "npm run build:css && tsc -p tsconfig.build.json && npm run inspect:css && npm run verify:package"
+	}
+}

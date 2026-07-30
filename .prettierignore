@@ -1,0 +1,11 @@
+.codex/
+.agents/
+node_modules/
+dist/
+.next/
+storybook-static/
+coverage/
+playwright-report/
+test-results/
+package-lock.json
+packages/tokens/src/generated.ts

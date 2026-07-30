@@ -1,0 +1,20 @@
+@import 'tailwindcss/theme.css';
+@import 'tailwindcss/utilities.css';
+
+@source './';
+
+@theme inline {
+	--color-background: var(--ads-color-background);
+	--color-surface: var(--ads-color-surface);
+	--color-surface-raised: var(--ads-color-surface-raised);
+	--color-text: var(--ads-color-text);
+	--color-text-muted: var(--ads-color-text-muted);
+	--color-border: var(--ads-color-border);
+	--color-primary: var(--ads-color-primary);
+	--color-primary-hover: var(--ads-color-primary-hover);
+	--color-success: var(--ads-color-success);
+	--color-warning: var(--ads-color-warning);
+	--color-danger: var(--ads-color-danger);
+	--radius-md: var(--ads-radius-md);
+	--shadow-sm: var(--ads-elevation-sm);
+}

@@ -5,23 +5,23 @@ melhor equilíbrio entre qualidade, velocidade e consumo. Reserve o
 **GPT-5.6 Sol** para decisões complexas, problemas difíceis e validações
 críticas.
 
-| Fase | Modelo | Reasoning |
-| --- | --- | --- |
-| Explorar e criar proposta | Terra | `medium` |
-| Atualizar proposta ou executar tarefas mecânicas | Terra | `low` ou `medium` |
-| Implementar e testar | Terra | `medium` |
-| Arquitetura complexa ou investigação de bugs difíceis | Sol | `high` |
-| Revisão final de mudanças críticas | Sol | `high` |
-| Sincronizar specs e arquivar | Terra | `low` |
+| Fase                                                  | Modelo | Reasoning         |
+| ----------------------------------------------------- | ------ | ----------------- |
+| Explorar e criar proposta                             | Terra  | `medium`          |
+| Atualizar proposta ou executar tarefas mecânicas      | Terra  | `low` ou `medium` |
+| Implementar e testar                                  | Terra  | `medium`          |
+| Arquitetura complexa ou investigação de bugs difíceis | Sol    | `high`            |
+| Revisão final de mudanças críticas                    | Sol    | `high`            |
+| Sincronizar specs e arquivar                          | Terra  | `low`             |
 
 ## Proposal, spec e tasks
 
-| Artefato ou etapa | Modelo | Reasoning | Uso recomendado |
-| --- | --- | --- | --- |
-| Proposal | GPT-5.6 Terra | `medium` | Definir objetivo, escopo e impactos |
-| Spec | GPT-5.6 Sol | `high` | Garantir precisão, consistência e cobertura de cenários |
-| Criação das tasks | GPT-5.6 Terra | `medium` | Dividir a spec em etapas claras e executáveis |
-| Implementação das tasks | GPT-5.6 Terra | `medium` | Implementar tarefas que já estão bem detalhadas |
+| Artefato ou etapa       | Modelo        | Reasoning | Uso recomendado                                         |
+| ----------------------- | ------------- | --------- | ------------------------------------------------------- |
+| Proposal                | GPT-5.6 Terra | `medium`  | Definir objetivo, escopo e impactos                     |
+| Spec                    | GPT-5.6 Sol   | `high`    | Garantir precisão, consistência e cobertura de cenários |
+| Criação das tasks       | GPT-5.6 Terra | `medium`  | Dividir a spec em etapas claras e executáveis           |
+| Implementação das tasks | GPT-5.6 Terra | `medium`  | Implementar tarefas que já estão bem detalhadas         |
 
 Para economizar, uma spec simples também pode começar com Terra
 `medium`. Use Sol `high` quando houver decisões arquiteturais, requisitos

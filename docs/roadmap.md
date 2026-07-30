@@ -48,9 +48,19 @@ Entregas principais:
 Adicionar campos de texto, textarea, checkbox, radio, switch, select,
 grupos de entrada, validação e estados de formulário.
 
-**Próxima change recomendada.** Ela aproveita as primitivas concluídas para
-estabelecer controles de formulário acessíveis antes de overlays, navegação e
-composições administrativas.
+**Status: concluída e arquivada em 2026-07-30.**
+
+Entregas principais:
+
+- `AdsInput`, `AdsTextarea`, `AdsSelect`, `AdsCheckbox`, `AdsRadio` e
+  `AdsSwitch`, com tipos públicos e suporte a atributos HTML nativos;
+- composição acessível com `AdsField`, descrições, mensagens de erro,
+  grupos de entrada e grupos de seleção;
+- estados de foco, desabilitado, somente leitura, erro e sucesso, com tokens
+  semânticos para os temas claro e escuro;
+- documentação no Storybook e exemplos integrados no admin demo;
+- testes de comportamento, acessibilidade, consumo público, build, CSS e
+  snapshots visuais atualizados.
 
 ## 4. `add-overlay-components`
 

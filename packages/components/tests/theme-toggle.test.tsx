@@ -22,6 +22,11 @@ describe('ThemeToggle', () => {
 		expect(results.violations).toEqual([]);
 	});
 
+	it('merges a consumer className into its public element', () => {
+		render(<ThemeToggle className="consumer-theme-toggle" />);
+		expect(screen.getByRole('button')).toHaveClass('consumer-theme-toggle');
+	});
+
 	it.each(['light', 'dark'])(
 		'renders in the %s theme without relying on Tailwind internals',
 		(theme) => {

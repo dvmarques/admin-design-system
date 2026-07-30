@@ -1,8 +1,8 @@
 ## 1. Base compartilhada
 
-- [ ] 1.1 Registrar a convenção global no contexto e nas convenções do projeto: componentes e tipos públicos `Ads*`, classes públicas `ads-*` e tokens `--ads-*`.
-- [ ] 1.2 Criar utilitários internos mínimos para composição estática de classes e aplicar o contrato de `className` aos elementos públicos.
-- [ ] 1.3 Atualizar a configuração de estilos para que todas as classes das primitivas sejam incluídas no CSS compilado sem efeitos globais no consumidor.
+- [x] 1.1 Registrar a convenção global no contexto e nas convenções do projeto: componentes e tipos públicos `Ads*`, classes públicas `ads-*` e tokens `--ads-*`.
+- [x] 1.2 Criar utilitários internos mínimos para composição estática de classes e aplicar o contrato de `className` aos elementos públicos.
+- [x] 1.3 Atualizar a configuração de estilos para que todas as classes das primitivas sejam incluídas no CSS compilado sem efeitos globais no consumidor.
 
 ## 2. Ações e feedback
 

@@ -47,6 +47,9 @@ context: |
   - Componentes compatíveis com Server Components devem ser priorizados
     quando não houver necessidade de interatividade
   - As APIs públicas devem ser exportadas pelos pontos de entrada dos pacotes
+  - Componentes React e seus tipos públicos devem usar o prefixo Ads
+  - Classes CSS públicas de componentes devem usar o prefixo ads-
+  - Variáveis CSS públicas devem usar o prefixo --ads-
   - Os design tokens devem ser separados dos componentes React
   - A aplicação administrativa de demonstração deve consumir a biblioteca
     da mesma maneira que uma aplicação externa

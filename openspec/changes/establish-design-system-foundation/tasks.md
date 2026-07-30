@@ -58,12 +58,12 @@
 
 ## 7. Storybook e documentação
 
-- [ ] 7.1 Configurar `apps/docs` com Storybook para consumir os pacotes apenas por seus pontos de entrada públicos.
-- [ ] 7.2 Adicionar um controle global que aplique `data-theme` e permita alternar todos os exemplos entre os temas claro e escuro.
-- [ ] 7.3 Criar exemplos da fundação que demonstrem escalas de tokens, superfícies, tipografia, estados semânticos e personalização por variáveis CSS.
-- [ ] 7.4 Configurar documentação automática de propriedades e um modelo de página que exija propósito, API, variantes, estados e acessibilidade para componentes públicos futuros.
-- [ ] 7.5 Criar a documentação de instalação, importação de CSS, aplicação de temas e consumo em Next.js usando somente exports públicos.
-- [ ] 7.6 Configurar build estático do Storybook e confirmar que exemplos, temas e documentação funcionam no artefato produzido.
+- [x] 7.1 Configurar `apps/docs` com Storybook para consumir os pacotes apenas por seus pontos de entrada públicos.
+- [x] 7.2 Adicionar um controle global que aplique `data-theme` e permita alternar todos os exemplos entre os temas claro e escuro.
+- [x] 7.3 Criar exemplos da fundação que demonstrem escalas de tokens, superfícies, tipografia, estados semânticos e personalização por variáveis CSS.
+- [x] 7.4 Configurar documentação automática de propriedades e um modelo de página que exija propósito, API, variantes, estados e acessibilidade para componentes públicos futuros.
+- [x] 7.5 Criar a documentação de instalação, importação de CSS, aplicação de temas e consumo em Next.js usando somente exports públicos.
+- [x] 7.6 Configurar build estático do Storybook e confirmar que exemplos, temas e documentação funcionam no artefato produzido.
 - [ ] 7.7 Adicionar validação visual local representativa para os dois temas, sem depender nesta change de um serviço remoto de revisão.
 
 ## 8. Aplicação Next.js de referência

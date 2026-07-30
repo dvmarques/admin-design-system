@@ -41,7 +41,12 @@ export const tokenValues = {
   "color.success": "#10b981",
   "color.warning": "#f59e0b",
   "color.danger": "#ef4444",
-  "color.onPrimary": "#ffffff"
+  "color.onPrimary": "#ffffff",
+  "color.formBackground": "#ffffff",
+  "color.formBackgroundDisabled": "#f1f5f9",
+  "color.formBorderFocus": "#2563eb",
+  "color.formInvalid": "#ef4444",
+  "color.formSuccess": "#10b981"
 } as const
 export type TokenName = keyof typeof tokenValues
 export const tokenCssVariable = (name: TokenName) => `--ads-${name.replaceAll(".", "-").replaceAll(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`

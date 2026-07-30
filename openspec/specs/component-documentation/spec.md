@@ -1,8 +1,11 @@
 # component-documentation Specification
 
 ## Purpose
+
 Assegurar que cada API pública do design system possua documentação navegável, exemplos executáveis e orientação suficiente para adoção consistente.
+
 ## Requirements
+
 ### Requirement: Documentação de APIs públicas
 
 Cada componente público MUST documentar propósito, propriedades, valores padrão, variantes, estados suportados e requisitos de acessibilidade.
@@ -47,4 +50,3 @@ O catálogo MUST documentar como instalar os pacotes, importar estilos, aplicar 
 
 - **WHEN** um desenvolvedor segue a documentação publicada
 - **THEN** ele consegue renderizar um exemplo usando apenas pontos de entrada públicos
-

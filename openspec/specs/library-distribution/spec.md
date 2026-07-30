@@ -1,8 +1,11 @@
 # library-distribution Specification
 
 ## Purpose
+
 Definir um contrato de distribuição estável para JavaScript, tipos e estilos, permitindo que aplicações instalem e consumam a biblioteca sem conhecer sua estrutura interna.
+
 ## Requirements
+
 ### Requirement: Pontos de entrada públicos
 
 Cada pacote distribuível MUST declarar pontos de entrada públicos para seu código executável, tipos TypeScript e estilos aplicáveis.
@@ -47,4 +50,3 @@ O pacote MUST declarar dependências obrigatórias, opcionais e peer dependencie
 
 - **WHEN** uma aplicação instala o pacote com uma versão de React fora da faixa suportada
 - **THEN** o gerenciador de pacotes consegue emitir o alerta de incompatibilidade correspondente
-

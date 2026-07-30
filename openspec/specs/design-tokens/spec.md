@@ -1,8 +1,11 @@
 # design-tokens Specification
 
 ## Purpose
+
 Definir uma linguagem visual semântica, estável e personalizável para que componentes e aplicações consumidoras compartilhem as mesmas decisões de aparência.
+
 ## Requirements
+
 ### Requirement: Categorias mínimas de tokens
 
 O sistema MUST disponibilizar tokens semânticos para cores, tipografia, espaçamento, dimensões, bordas, raios, elevação, opacidade e movimento.
@@ -43,4 +46,3 @@ O sistema MUST tratar a remoção ou renomeação de tokens públicos como alter
 
 - **WHEN** uma versão futura substitui um token público
 - **THEN** a mudança é registrada com orientação de migração e versionada de acordo com a política de compatibilidade
-

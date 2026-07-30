@@ -1,8 +1,11 @@
 # nextjs-consumption Specification
 
 ## Purpose
+
 Garantir que os pacotes do design system possam ser consumidos por aplicações Next.js com App Router, respeitando renderização no servidor e hidratação no cliente.
+
 ## Requirements
+
 ### Requirement: Consumo pelo App Router
 
 A biblioteca MUST permitir que uma aplicação Next.js com App Router importe suas APIs públicas e seus estilos globais por caminhos documentados.
@@ -47,4 +50,3 @@ O projeto MUST manter uma aplicação Next.js de referência que consuma os arte
 
 - **WHEN** o pipeline valida a aplicação de referência
 - **THEN** imports internos ou dependências implícitas do workspace fazem a validação falhar
-

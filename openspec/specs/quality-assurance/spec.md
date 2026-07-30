@@ -1,8 +1,11 @@
 # quality-assurance Specification
 
 ## Purpose
+
 Estabelecer critérios verificáveis de qualidade para proteger tipos, comportamento, acessibilidade, compatibilidade e distribuição do design system.
+
 ## Requirements
+
 ### Requirement: Verificação obrigatória da base
 
 O projeto MUST disponibilizar verificações automatizadas de formatação, lint, tipos, testes e build para os pacotes e aplicações afetados.
@@ -56,4 +59,3 @@ Um componente MUST NOT ser considerado concluído sem API tipada, estilos compil
 
 - **WHEN** a revisão de conclusão detecta ausência de documentação pública
 - **THEN** o componente permanece incompleto
-

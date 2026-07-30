@@ -1,8 +1,11 @@
 # theming Specification
 
 ## Purpose
+
 Fornecer temas claro e escuro consistentes e personalizáveis, preservando acessibilidade e evitando que consumidores precisem recompilar a biblioteca.
+
 ## Requirements
+
 ### Requirement: Temas claro e escuro
 
 O sistema MUST fornecer conjuntos completos de valores semânticos para os temas claro e escuro.
@@ -52,4 +55,3 @@ O sistema MUST permitir a sobrescrita independente de tokens para cada tema.
 
 - **WHEN** uma aplicação sobrescreve o token primário nos escopos claro e escuro
 - **THEN** cada tema utiliza sua respectiva sobrescrita sem recompilar os componentes
-

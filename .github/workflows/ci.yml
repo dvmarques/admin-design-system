@@ -40,6 +40,7 @@ jobs:
       - run: npm run build --workspace @admin-ds/admin
       - run: npm run build --workspace @admin-ds/docs
       - run: npm run build --workspace @admin-ds/admin-demo
+      - run: npm run inspect:packages
 
   e2e:
     name: Fluxos no navegador

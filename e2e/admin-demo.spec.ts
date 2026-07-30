@@ -33,6 +33,8 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 });
 
 test('mantém a apresentação de referência nos temas claro e escuro', async ({ page }) => {
+	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
+
 	await page.context().addCookies([
 		{
 			name: 'ads-theme',

@@ -31,3 +31,25 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 	expect(hydrationErrors).toEqual([]);
 });
+
+test('mantém a apresentação de referência nos temas claro e escuro', async ({ page }) => {
+	await page.context().addCookies([
+		{
+			name: 'ads-theme',
+			value: 'dark',
+			url: 'http://127.0.0.1:3000',
+		},
+	]);
+	await page.goto('/');
+	await expect(page).toHaveScreenshot('admin-demo-dark.png', { fullPage: true });
+
+	await page.context().addCookies([
+		{
+			name: 'ads-theme',
+			value: 'light',
+			url: 'http://127.0.0.1:3000',
+		},
+	]);
+	await page.reload();
+	await expect(page).toHaveScreenshot('admin-demo-light.png', { fullPage: true });
+});

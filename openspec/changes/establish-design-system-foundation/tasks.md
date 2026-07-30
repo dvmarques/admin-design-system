@@ -64,7 +64,7 @@
 - [x] 7.4 Configurar documentação automática de propriedades e um modelo de página que exija propósito, API, variantes, estados e acessibilidade para componentes públicos futuros.
 - [x] 7.5 Criar a documentação de instalação, importação de CSS, aplicação de temas e consumo em Next.js usando somente exports públicos.
 - [x] 7.6 Configurar build estático do Storybook e confirmar que exemplos, temas e documentação funcionam no artefato produzido.
-- [ ] 7.7 Adicionar validação visual local representativa para os dois temas, sem depender nesta change de um serviço remoto de revisão.
+- [x] 7.7 Adicionar validação visual local representativa para os dois temas, sem depender nesta change de um serviço remoto de revisão.
 
 ## 8. Aplicação Next.js de referência
 
@@ -78,8 +78,8 @@
 
 ## 9. Pipeline e controles finais
 
-- [ ] 9.1 Configurar o pipeline para executar formatação, lint, typecheck e testes rápidos antes dos builds mais demorados.
-- [ ] 9.2 Adicionar ao pipeline a geração reprodutível de tokens, o build dos pacotes, o build do Storybook e o build da aplicação Next.js.
+- [x] 9.1 Configurar o pipeline para executar formatação, lint, typecheck e testes rápidos antes dos builds mais demorados.
+- [x] 9.2 Adicionar ao pipeline a geração reprodutível de tokens, o build dos pacotes, o build do Storybook e o build da aplicação Next.js.
 - [ ] 9.3 Adicionar ao pipeline os testes Playwright de teclado, temas, hidratação e consumo do CSS compilado.
 - [ ] 9.4 Adicionar inspeção dos pacotes produzidos para validar exports, peer dependencies, conteúdo publicado e baseline de tamanho.
 - [ ] 9.5 Executar a suíte completa nos temas claro e escuro e corrigir todas as falhas de comportamento, acessibilidade, tipos, lint e build.

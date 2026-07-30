@@ -21,6 +21,8 @@ implementação, validação e arquivamento.
 - [Estrutura e arquitetura do monorepo](docs/architecture.md)
 - [Critérios de qualidade](docs/quality.md)
 - [Integração em aplicações consumidoras](docs/integration.md)
+- [Licenças e atribuições](docs/licensing.md)
+- [Limitações conhecidas](docs/limitations.md)
 - [Comandos úteis do OpenSpec](docs/openspec-commands.md)
 - [Modelos recomendados por fase](docs/models.md)
 

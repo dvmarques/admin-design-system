@@ -82,7 +82,7 @@
 - [x] 9.2 Adicionar ao pipeline a geração reprodutível de tokens, o build dos pacotes, o build do Storybook e o build da aplicação Next.js.
 - [x] 9.3 Adicionar ao pipeline os testes Playwright de teclado, temas, hidratação e consumo do CSS compilado.
 - [x] 9.4 Adicionar inspeção dos pacotes produzidos para validar exports, peer dependencies, conteúdo publicado e baseline de tamanho.
-- [ ] 9.5 Executar a suíte completa nos temas claro e escuro e corrigir todas as falhas de comportamento, acessibilidade, tipos, lint e build.
-- [ ] 9.6 Revisar licenças e atribuições das dependências e recursos incorporados, confirmando que nenhum código ou asset proprietário do CoreUI PRO foi incluído.
-- [ ] 9.7 Atualizar a documentação da arquitetura e registrar limitações conhecidas antes de considerar a fundação concluída.
-- [ ] 9.8 Executar `openspec validate establish-design-system-foundation --strict` e confirmar que a change e todos os artefatos permanecem válidos.
+- [x] 9.5 Executar a suíte completa nos temas claro e escuro e corrigir todas as falhas de comportamento, acessibilidade, tipos, lint e build.
+- [x] 9.6 Revisar licenças e atribuições das dependências e recursos incorporados, confirmando que nenhum código ou asset proprietário do CoreUI PRO foi incluído.
+- [x] 9.7 Atualizar a documentação da arquitetura e registrar limitações conhecidas antes de considerar a fundação concluída.
+- [x] 9.8 Executar `openspec validate establish-design-system-foundation --strict` e confirmar que a change e todos os artefatos permanecem válidos.

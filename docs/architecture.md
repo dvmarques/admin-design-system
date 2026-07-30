@@ -76,3 +76,15 @@ Pacotes React declaram `react` e `react-dom` como peer dependencies, evitando du
 ## Estilos
 
 Variáveis CSS semânticas serão a API de personalização visual. Tailwind CSS será usado internamente para gerar CSS distribuível, sem exigir que aplicações consumidoras instalem ou configurem Tailwind.
+
+## Estado e limitações conhecidas
+
+A arquitetura descrita é a fundação distribuível. O catálogo de componentes
+e as composições administrativas serão adicionados em changes próprias. As
+limitações atuais, incluindo cobertura de navegadores, persistência de tema,
+snapshots e baseline de tamanho, estão registradas em
+[Limitações conhecidas](limitations.md).
+
+As licenças e atribuições das dependências e recursos incorporados estão em
+[Licenças e atribuições](licensing.md). O projeto não incorpora código ou
+assets proprietários do CoreUI PRO.

@@ -17,6 +17,7 @@ export default tseslint.config(
 	{
 		languageOptions: {
 			globals: {
+				console: 'readonly',
 				URL: 'readonly',
 				structuredClone: 'readonly',
 				process: 'readonly',

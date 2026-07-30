@@ -20,6 +20,8 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run format
       - run: npm run lint
+      - run: npm run build --workspace @admin-ds/tokens
+      - run: npm run build --workspace @admin-ds/components
       - run: npm run typecheck
       - run: npm run test:quality
 

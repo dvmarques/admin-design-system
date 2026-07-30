@@ -68,13 +68,13 @@
 
 ## 8. Aplicação Next.js de referência
 
-- [ ] 8.1 Inicializar `apps/admin-demo` com Next.js App Router, TypeScript estrito e sem configuração Tailwind necessária para processar fontes da biblioteca.
-- [ ] 8.2 Importar tokens e CSS compilado exclusivamente pelos pontos de entrada públicos e apresentar uma página mínima de verificação da fundação.
-- [ ] 8.3 Implementar um exemplo server-side que consuma APIs estáticas da biblioteca sem converter seu ancestral em Client Component.
-- [ ] 8.4 Implementar um limite de cliente mínimo para alternância de tema, mantendo a preferência e a resolução inicial sob responsabilidade da aplicação.
-- [ ] 8.5 Implementar resolução inicial de tema compatível com servidor e cliente e criar teste que detecte divergência de hidratação.
-- [ ] 8.6 Criar um teste de integração que consuma os pacotes construídos, e não seus caminhos-fonte, e falhe diante de imports internos ou artefatos ausentes.
-- [ ] 8.7 Executar o build de produção da aplicação sem varredura Tailwind sobre a biblioteca e confirmar que os estilos públicos permanecem disponíveis.
+- [x] 8.1 Inicializar `apps/admin-demo` com Next.js App Router, TypeScript estrito e sem configuração Tailwind necessária para processar fontes da biblioteca.
+- [x] 8.2 Importar tokens e CSS compilado exclusivamente pelos pontos de entrada públicos e apresentar uma página mínima de verificação da fundação.
+- [x] 8.3 Implementar um exemplo server-side que consuma APIs estáticas da biblioteca sem converter seu ancestral em Client Component.
+- [x] 8.4 Implementar um limite de cliente mínimo para alternância de tema, mantendo a preferência e a resolução inicial sob responsabilidade da aplicação.
+- [x] 8.5 Implementar resolução inicial de tema compatível com servidor e cliente e criar teste que detecte divergência de hidratação.
+- [x] 8.6 Criar um teste de integração que consuma os pacotes construídos, e não seus caminhos-fonte, e falhe diante de imports internos ou artefatos ausentes.
+- [x] 8.7 Executar o build de produção da aplicação sem varredura Tailwind sobre a biblioteca e confirmar que os estilos públicos permanecem disponíveis.
 
 ## 9. Pipeline e controles finais
 

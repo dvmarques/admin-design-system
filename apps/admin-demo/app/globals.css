@@ -1,0 +1,12 @@
+html,
+body {
+	margin: 0;
+	min-height: 100%;
+	background: var(--ads-color-background);
+	color: var(--ads-color-text);
+	font-family: var(--ads-typography-font-family);
+}
+
+* {
+	box-sizing: border-box;
+}

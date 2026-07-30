@@ -5,10 +5,10 @@
 Uma aplicação consumidora importa as APIs e folhas de estilo públicas:
 
 ```ts
-import { ThemeToggle } from '@admin-ds/components'
-import { tokenValues } from '@admin-ds/tokens'
-import '@admin-ds/tokens/styles.css'
-import '@admin-ds/components/styles.css'
+import { ThemeToggle } from '@admin-ds/components';
+import { tokenValues } from '@admin-ds/tokens';
+import '@admin-ds/tokens/styles.css';
+import '@admin-ds/components/styles.css';
 ```
 
 O CSS distribuído já contém as classes necessárias. A aplicação consumidora

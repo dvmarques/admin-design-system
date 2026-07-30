@@ -1,6 +1,6 @@
-import type { Preview } from '@storybook/react-vite'
-import '@admin-ds/tokens/styles.css'
-import '@admin-ds/components/styles.css'
+import type { Preview } from '@storybook/react-vite';
+import '@admin-ds/tokens/styles.css';
+import '@admin-ds/components/styles.css';
 
 const preview: Preview = {
 	globalTypes: {
@@ -12,11 +12,19 @@ const preview: Preview = {
 	},
 	decorators: [
 		(Story, context) => (
-			<div data-theme={context.globals.theme} style={{ background: 'var(--ads-color-background)', color: 'var(--ads-color-text)', minHeight: '100vh', padding: '2rem' }}>
+			<div
+				data-theme={context.globals.theme}
+				style={{
+					background: 'var(--ads-color-background)',
+					color: 'var(--ads-color-text)',
+					minHeight: '100vh',
+					padding: '2rem',
+				}}
+			>
 				<Story />
 			</div>
 		),
 	],
-}
+};
 
-export default preview
+export default preview;

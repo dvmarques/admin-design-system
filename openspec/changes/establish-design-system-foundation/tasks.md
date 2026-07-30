@@ -80,7 +80,7 @@
 
 - [x] 9.1 Configurar o pipeline para executar formatação, lint, typecheck e testes rápidos antes dos builds mais demorados.
 - [x] 9.2 Adicionar ao pipeline a geração reprodutível de tokens, o build dos pacotes, o build do Storybook e o build da aplicação Next.js.
-- [ ] 9.3 Adicionar ao pipeline os testes Playwright de teclado, temas, hidratação e consumo do CSS compilado.
+- [x] 9.3 Adicionar ao pipeline os testes Playwright de teclado, temas, hidratação e consumo do CSS compilado.
 - [ ] 9.4 Adicionar inspeção dos pacotes produzidos para validar exports, peer dependencies, conteúdo publicado e baseline de tamanho.
 - [ ] 9.5 Executar a suíte completa nos temas claro e escuro e corrigir todas as falhas de comportamento, acessibilidade, tipos, lint e build.
 - [ ] 9.6 Revisar licenças e atribuições das dependências e recursos incorporados, confirmando que nenhum código ou asset proprietário do CoreUI PRO foi incluído.

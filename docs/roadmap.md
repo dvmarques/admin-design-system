@@ -31,13 +31,26 @@ Adicionar os componentes fundamentais usados pelas demais famílias, como
 botões, badges, avatares, superfícies, tipografia, ícones e indicadores
 de carregamento.
 
-**Próxima change recomendada.** Ela estabelece os elementos reutilizáveis
-necessários antes de formularios, overlays, navegação e composições de admin.
+**Status: concluída e arquivada em 2026-07-30.**
+
+Entregas principais:
+
+- `AdsButton`, `AdsBadge`, `AdsAvatar`, `AdsSurface`, `AdsTypography`,
+  `AdsIcon` e `AdsLoadingIndicator`, com tipos e exports públicos;
+- convenção de prefixos públicos `Ads*`, `ads-*` e `--ads-*`;
+- CSS compilado para consumo sem Tailwind na aplicação consumidora;
+- documentação de todas as primitivas no Storybook e exemplos no admin demo;
+- testes unitários, de acessibilidade, E2E e snapshots visuais nos temas claro
+  e escuro.
 
 ## 3. `add-form-components`
 
 Adicionar campos de texto, textarea, checkbox, radio, switch, select,
 grupos de entrada, validação e estados de formulário.
+
+**Próxima change recomendada.** Ela aproveita as primitivas concluídas para
+estabelecer controles de formulário acessíveis antes de overlays, navegação e
+composições administrativas.
 
 ## 4. `add-overlay-components`
 

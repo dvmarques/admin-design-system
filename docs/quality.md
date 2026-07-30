@@ -34,8 +34,8 @@ analisa o HTML renderizado por componentes e identifica problemas comuns, como:
 - parte das violações de contraste.
 
 Ele complementa, mas não substitui, testes manuais com teclado, leitor de tela
-e revisão visual. A integração com a suíte de componentes será concluída na
-tarefa 6.2 da change de fundação.
+e revisão visual. A suíte de primitivas usa verificações automatizadas de
+acessibilidade para seus comportamentos públicos.
 
 Exemplo conceitual:
 
@@ -66,17 +66,16 @@ npx.cmd playwright test
 npx.cmd playwright show-report
 ```
 
-O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. Eles
-serão adicionados quando `apps/admin-demo` estiver executável.
+O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. A suíte
+atual valida o consumo público das primitivas no admin demo, a alternância de
+tema pelo teclado, a ausência de erros de hidratação e snapshots dos temas
+claro e escuro.
 
 ```text
 e2e/
-├── theme.spec.ts
-├── keyboard-navigation.spec.ts
-├── hydration.spec.ts
-└── visual-regression.spec.ts
+└── admin-demo.spec.ts
 ```
 
-Esses testes deverão abrir o admin de referência, alternar temas, validar
-controles por teclado, verificar a ausência de divergências de hidratação e
-capturar screenshots representativos dos temas claro e escuro.
+Esses testes abrem o admin de referência, alternam temas, validam controles por
+teclado, verificam a ausência de divergências de hidratação e capturam
+screenshots representativos dos temas claro e escuro.

@@ -5,9 +5,17 @@ import {
 	AdsAvatar,
 	AdsBadge,
 	AdsButton,
+	AdsCheckbox,
+	AdsField,
+	AdsInput,
 	AdsIcon,
 	AdsLoadingIndicator,
+	AdsRadio,
+	AdsSelect,
+	AdsSelectionGroup,
 	AdsSurface,
+	AdsSwitch,
+	AdsTextarea,
 	AdsTypography,
 } from '@admin-ds/components';
 
@@ -21,7 +29,15 @@ describe('public component consumption', () => {
 			AdsLoadingIndicator,
 			AdsSurface,
 			AdsTypography,
-		]).toHaveLength(7);
+			AdsCheckbox,
+			AdsField,
+			AdsInput,
+			AdsRadio,
+			AdsSelect,
+			AdsSelectionGroup,
+			AdsSwitch,
+			AdsTextarea,
+		]).toHaveLength(15);
 	});
 
 	it('includes primitive styles in the distributed CSS', async () => {
@@ -35,5 +51,7 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.min-w-0/);
 		expect(css).toMatch(/\.animate-spin/);
 		expect(css).toMatch(/\.text-3xl/);
+		expect(css).toMatch(/\.bg-form-background/);
+		expect(css).toMatch(/\.border-form-invalid/);
 	});
 });

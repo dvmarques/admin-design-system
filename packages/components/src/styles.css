@@ -15,6 +15,11 @@
 	--color-success: var(--ads-color-success);
 	--color-warning: var(--ads-color-warning);
 	--color-danger: var(--ads-color-danger);
+	--color-form-background: var(--ads-color-form-background);
+	--color-form-background-disabled: var(--ads-color-form-background-disabled);
+	--color-form-border-focus: var(--ads-color-form-border-focus);
+	--color-form-invalid: var(--ads-color-form-invalid);
+	--color-form-success: var(--ads-color-form-success);
 	--radius-md: var(--ads-radius-md);
 	--shadow-sm: var(--ads-elevation-sm);
 }

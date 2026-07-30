@@ -79,3 +79,11 @@ e2e/
 Esses testes abrem o admin de referência, alternam temas, validam controles por
 teclado, verificam a ausência de divergências de hidratação e capturam
 screenshots representativos dos temas claro e escuro.
+
+## Formulários
+
+A família de formulários possui cobertura adicional para os contratos de
+campos nativos, estados de validação, associação de rótulos e descrições,
+grupos de seleção e consumo do CSS compilado sem Tailwind na aplicação
+consumidora. Os exemplos ficam em `apps/docs/src/form.stories.tsx` e no
+admin demo.

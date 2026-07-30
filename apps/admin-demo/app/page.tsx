@@ -2,10 +2,18 @@ import {
 	AdsAvatar,
 	AdsBadge,
 	AdsButton,
+	AdsCheckbox,
+	AdsField,
+	AdsInput,
+	AdsRadio,
+	AdsSelect,
+	AdsSelectionGroup,
 	AdsIcon,
 	AdsLoadingIndicator,
 	AdsSurface,
 	AdsTypography,
+	AdsSwitch,
+	AdsTextarea,
 } from '@admin-ds/components';
 import { tokenValues } from '@admin-ds/tokens';
 import { cookies } from 'next/headers';
@@ -73,6 +81,34 @@ export default async function HomePage() {
 						</div>
 					</AdsSurface>
 				</div>
+			</section>
+
+			<section aria-labelledby="forms" style={{ marginTop: '2rem' }}>
+				<AdsTypography as="h2" id="forms" variant="heading2">
+					Controles de formulário
+				</AdsTypography>
+				<AdsSurface>
+					<div style={{ display: 'grid', gap: '1rem', maxWidth: '32rem' }}>
+						<AdsField description="Usado para notificações da conta" label="E-mail">
+							<AdsInput type="email" placeholder="nome@empresa.com" />
+						</AdsField>
+						<AdsField label="Status">
+							<AdsSelect defaultValue="active">
+								<option value="active">Ativo</option>
+								<option value="inactive">Inativo</option>
+							</AdsSelect>
+						</AdsField>
+						<AdsField label="Observações">
+							<AdsTextarea rows={3} />
+						</AdsField>
+						<AdsCheckbox label="Enviar atualizações por e-mail" />
+						<AdsSwitch defaultChecked label="Ativar notificações" />
+						<AdsSelectionGroup legend="Periodicidade">
+							<AdsRadio defaultChecked label="Diária" name="period" value="daily" />
+							<AdsRadio label="Semanal" name="period" value="weekly" />
+						</AdsSelectionGroup>
+					</div>
+				</AdsSurface>
 			</section>
 
 			<section aria-labelledby="tokens" style={{ marginTop: '2rem' }}>

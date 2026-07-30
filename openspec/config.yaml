@@ -72,6 +72,8 @@ context: |
   - O CSS distribuído deve ser validado na aplicação Next.js de demonstração
   - O build deve evitar a inclusão de classes Tailwind não utilizadas
   - A customização por design tokens não deve exigir recompilar os componentes
+  - Arquivos novos e alterados devem ser formatados com Prettier antes de concluir a change
+  - A change não deve ser arquivada enquanto `npm run format` falhar
 
   Licenciamento:
   - O CoreUI deve ser utilizado como referência visual e funcional
@@ -117,6 +119,7 @@ rules:
     - Incluir uma demonstração no Storybook para cada componente público
     - Incluir testes de consumo do CSS compilado em uma aplicação Next.js
     - Incluir critérios claros para considerar cada tarefa concluída
+    - Incluir uma tarefa final de formatação e validação do comando `npm run format`
 
 operations:
   apply:
@@ -127,6 +130,8 @@ operations:
       - Não introduzir dependências sem justificar sua necessidade
       - Evitar classes Tailwind montadas dinamicamente
       - Verificar acessibilidade antes de concluir componentes interativos
+      - Executar `npx.cmd prettier --write` nos arquivos alterados antes da validação final
+      - Executar `npm run format` e corrigir todas as falhas antes de marcar a change como concluída
 
   archive:
     guidance:
@@ -134,3 +139,4 @@ operations:
       - Confirmar que testes, documentação e exemplos foram atualizados
       - Confirmar o consumo do pacote e dos estilos pela aplicação Next.js
       - Registrar limitações conhecidas e trabalhos futuros antes de arquivar
+      - Confirmar que `npm run format` passa antes do arquivamento

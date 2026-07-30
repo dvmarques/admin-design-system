@@ -50,8 +50,8 @@
 ## 6. Infraestrutura de testes e acessibilidade
 
 - [x] 6.1 Configurar Vitest e React Testing Library para testes de tokens, componentes e contratos públicos, com ambiente adequado para DOM quando necessário.
-- [ ] 6.2 Integrar verificações automatizadas de acessibilidade para semântica, nome acessível, foco e regras detectáveis em componentes interativos futuros.
-- [ ] 6.3 Configurar Playwright para fluxos de teclado, temas e integração do pacote construído.
+- [x] 6.2 Integrar verificações automatizadas de acessibilidade para semântica, nome acessível, foco e regras detectáveis em componentes interativos futuros.
+- [x] 6.3 Configurar Playwright para fluxos de teclado, temas e integração do pacote construído.
 - [ ] 6.4 Criar helpers de teste que renderizem fixtures nos temas claro e escuro sem acoplar as asserções a classes Tailwind internas.
 - [ ] 6.5 Definir e documentar o critério de conclusão de componentes públicos: API tipada, CSS compilado, documentação, testes de comportamento e verificações de acessibilidade aplicáveis.
 - [ ] 6.6 Configurar os comandos de teste para falharem em caso de teste, regra de acessibilidade ou artefato obrigatório ausente.

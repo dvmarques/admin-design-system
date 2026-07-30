@@ -67,10 +67,13 @@ interromper o servidor, pressione `Ctrl+C` no terminal.
 
 A change `establish-design-system-foundation` concluiu a fundação do
 monorepo, design tokens, temas, distribuição dos pacotes, integração com
-Next.js, documentação e controles de qualidade.
+Next.js, documentação e controles de qualidade. A change
+`add-core-primitives` concluiu os componentes públicos fundamentais:
+`AdsButton`, `AdsBadge`, `AdsAvatar`, `AdsSurface`, `AdsTypography`,
+`AdsIcon` e `AdsLoadingIndicator`.
 
-O histórico dela está arquivado no OpenSpec. Consulte as mudanças ativas e
-arquivadas com:
+O histórico das duas changes está arquivado no OpenSpec. Consulte as mudanças
+ativas e arquivadas com:
 
 ```powershell
 openspec.cmd list
@@ -90,14 +93,14 @@ Get-ChildItem openspec/changes/archive
 
 ## Próximo passo
 
-Criar a change `add-core-primitives`, começando por elementos reutilizáveis
-como Button, Badge, Avatar, Surface, Tipografia, Ícones e indicadores de
-carregamento:
+Criar a change `add-form-components`, começando por controles de formulário
+acessíveis e tematizáveis, como campos de texto, textarea, checkbox, radio,
+switch e select:
 
 ```powershell
-openspec.cmd new change add-core-primitives `
-  --description "Adicionar os componentes fundamentais reutilizáveis do Admin Design System" `
-  --goal "Disponibilizar primitivas acessíveis, tematizáveis e compatíveis com Next.js"
+openspec.cmd new change add-form-components `
+  --description "Adicionar controles de formulário reutilizáveis ao Admin Design System" `
+  --goal "Disponibilizar campos acessíveis, tematizáveis e compatíveis com Next.js"
 ```
 
 Depois, use `openspec-propose` para elaborar a proposta, specs, design e

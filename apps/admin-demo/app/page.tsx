@@ -1,4 +1,12 @@
-import { StyleFixture } from '@admin-ds/components';
+import {
+	AdsAvatar,
+	AdsBadge,
+	AdsButton,
+	AdsIcon,
+	AdsLoadingIndicator,
+	AdsSurface,
+	AdsTypography,
+} from '@admin-ds/components';
 import { tokenValues } from '@admin-ds/tokens';
 import { cookies } from 'next/headers';
 import { resolveTheme } from '../lib/theme';
@@ -19,13 +27,18 @@ export default async function HomePage() {
 				}}
 			>
 				<div>
-					<p style={{ color: 'var(--ads-color-text-muted)', margin: 0 }}>Admin Design System</p>
-					<h1>Aplicação de referência</h1>
+					<AdsTypography variant="muted">Admin Design System</AdsTypography>
+					<AdsTypography as="h1" variant="heading1">
+						Aplicação de referência
+					</AdsTypography>
 				</div>
 				<ThemeControl initialTheme={theme} />
 			</header>
+
 			<section aria-labelledby="foundations" style={{ marginTop: '2rem' }}>
-				<h2 id="foundations">Fundação visual</h2>
+				<AdsTypography as="h2" id="foundations" variant="heading2">
+					Primitivas públicas
+				</AdsTypography>
 				<div
 					style={{
 						display: 'grid',
@@ -33,14 +46,42 @@ export default async function HomePage() {
 						gridTemplateColumns: 'repeat(auto-fit, minmax(14rem, 1fr))',
 					}}
 				>
-					<StyleFixture>Superfície neutra</StyleFixture>
-					<StyleFixture variant="primary">Ação primária</StyleFixture>
-					<StyleFixture variant="danger">Estado de perigo</StyleFixture>
+					<AdsSurface>
+						<AdsTypography variant="heading3">Ações</AdsTypography>
+						<div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem' }}>
+							<AdsButton>Salvar</AdsButton>
+							<AdsButton variant="secondary">Cancelar</AdsButton>
+						</div>
+					</AdsSurface>
+					<AdsSurface variant="raised">
+						<AdsTypography variant="heading3">Status</AdsTypography>
+						<div
+							style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}
+						>
+							<AdsAvatar alt="Ana Silva" fallback="AS" />
+							<AdsBadge variant="success">Ativo</AdsBadge>
+							<AdsIcon name="check" label="Confirmado" />
+						</div>
+					</AdsSurface>
+					<AdsSurface variant="outlined">
+						<AdsTypography variant="heading3">Carregamento</AdsTypography>
+						<div
+							style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}
+						>
+							<AdsLoadingIndicator label="Atualizando dados" />
+							<AdsTypography variant="muted">Atualizando dados</AdsTypography>
+						</div>
+					</AdsSurface>
 				</div>
 			</section>
+
 			<section aria-labelledby="tokens" style={{ marginTop: '2rem' }}>
-				<h2 id="tokens">Tokens públicos</h2>
-				<p>{Object.keys(tokenValues).length} tokens estão disponíveis pela API pública.</p>
+				<AdsTypography as="h2" id="tokens" variant="heading2">
+					Tokens públicos
+				</AdsTypography>
+				<AdsTypography>
+					{Object.keys(tokenValues).length} tokens estão disponíveis pela API pública.
+				</AdsTypography>
 			</section>
 		</main>
 	);

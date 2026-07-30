@@ -16,8 +16,9 @@
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",
 		"test": "npm run test --workspaces --if-present",
+		"test:quality": "npm run test && npm run check:generated --workspace @admin-ds/tokens",
 		"build": "npm run build --workspaces --if-present",
-		"validate": "npm run format && npm run lint && npm run typecheck && npm run test && npm run build"
+		"validate": "npm run format && npm run lint && npm run typecheck && npm run test:quality && npm run build"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

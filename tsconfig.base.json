@@ -11,6 +11,12 @@
 		"skipLibCheck": true,
 		"resolveJsonModule": true,
 		"verbatimModuleSyntax": true,
+		"baseUrl": ".",
+		"paths": {
+			"@admin-ds/tokens": ["packages/tokens/src/index.ts"],
+			"@admin-ds/components": ["packages/components/src/index.ts"],
+			"@admin-ds/admin": ["packages/admin/src/index.ts"]
+		},
 		"declaration": true,
 		"declarationMap": true,
 		"sourceMap": true

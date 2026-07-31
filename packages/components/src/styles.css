@@ -22,4 +22,15 @@
 	--color-form-success: var(--ads-color-form-success);
 	--radius-md: var(--ads-radius-md);
 	--shadow-sm: var(--ads-elevation-sm);
+	--shadow-md: var(--ads-elevation-md);
+}
+
+@layer components {
+	.ads-overlay-backdrop,
+	.ads-overlay-panel,
+	.ads-tooltip,
+	.ads-popover,
+	.ads-toast {
+		isolation: isolate;
+	}
 }

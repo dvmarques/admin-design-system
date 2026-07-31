@@ -2,6 +2,8 @@
 
 Ver `proposal.md` para a motivação. A biblioteca distribui tokens como variáveis CSS públicas e metadados TypeScript, enquanto componentes React são estilizados internamente com Tailwind CSS. Como os tokens alcançam todos os componentes e aplicações consumidoras, a mudança exige uma camada semântica que evite valores de cor e tipografia específicos em cada componente.
 
+Após a fundação inicial, uma segunda passagem de propagação alinhará as proporções e a hierarquia aos padrões públicos de bibliotecas de componentes estabelecidas. A ordem de referência é PrimeReact, shadcn/ui, Ant Design e Chakra UI. A intenção é compatibilidade de linguagem visual, não reprodução de implementações, temas ou ativos de terceiros.
+
 ## Goals / Non-Goals
 
 **Goals:**
@@ -10,6 +12,7 @@ Ver `proposal.md` para a motivação. A biblioteca distribui tokens como variáv
 - Tornar papéis tipográficos e de cor consistentes, personalizáveis e verificáveis nos dois temas.
 - Preservar a compatibilidade dos tokens públicos; novos aliases semânticos terão precedência sobre remoções.
 - Atualizar o catálogo e os baselines visuais para tornar o refinamento revisável.
+- Consolidar uma densidade compacta e moderna de interface administrativa nos componentes existentes.
 
 **Non-Goals:**
 
@@ -25,10 +28,18 @@ O padrão será `Inter, Roboto, sans-serif`. Inter (SIL Open Font License 1.1) s
 
 A escala seguirá uma progressão compacta, apropriada para administração: `12, 14, 16, 18, 20, 24, 30, 36 px`, com corpo padrão de `14 px`. Os pesos padrão serão `400`, `500`, `600` e `700`; os line-heights serão `1.5` para corpo, `1.4` para texto de interface e `1.2–1.3` para títulos. Esta combinação cria hierarquia sem inflar telas densas.
 
+O corpo, rótulos e conteúdo comum de controles usarão a base de `14 px`; textos auxiliares usarão `12 px`. Os títulos principais usarão tokens semânticos de `20`, `24`, `30` e `36 px`. Dialogs, drawers, toasts e tooltips seguem a mesma hierarquia; qualquer exceção deve ser representada por um token semântico, e não por uma declaração local.
+
 Alternativas consideradas:
 
 - `16 px` como corpo padrão: favorece leitura longa, mas ocupa espaço excessivo em tabelas, filtros e formulários administrativos.
 - Fonte exclusiva de marca: rejeitada como padrão porque aumenta acoplamento e risco de FOUT; permanece possível via sobrescrita de token, desde que a aplicação consumidora detenha a licença necessária.
+
+### 1.1 Densidade, forma e referências visuais
+
+Os controles interativos compartilharão alturas de `32 px` (`sm`), `36 px` (`md`) e `40 px` (`lg`). O raio padrão de controles será `6 px`, enquanto superfícies e overlays usarão `8 px`. Formas completamente arredondadas serão reservadas a elementos intencionalmente em pílula, como tags e avatares. Controles somente de ícone permanecem quadrados e devem alinhar o ícone de forma óptica e geométrica à mesma escala.
+
+PrimeReact orienta prioritariamente a densidade prática e as proporções administrativas. shadcn/ui orienta a aplicação contida de tokens semânticos e superfícies. Ant Design orienta a base de conteúdo de `14 px` e a organização sistemática de controles. Chakra UI orienta variantes de tamanho e de estado previsíveis. As referências são empregadas somente como princípios de design público: nenhum código, CSS, tema, ativo visual, nome ou arquivo dessas bibliotecas será copiado.
 
 ### 2. Cores primitivas e papéis semânticos
 

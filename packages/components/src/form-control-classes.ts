@@ -3,8 +3,8 @@ import type { AdsFormSize, AdsValidationState } from './form-types.js';
 
 const controlSizes = {
 	sm: 'min-h-[var(--ads-dimension-control-sm)] px-2 py-1 text-sm',
-	md: 'min-h-[var(--ads-dimension-control-md)] px-3 py-2 text-base',
-	lg: 'min-h-[var(--ads-dimension-control-lg)] px-4 py-3 text-lg',
+	md: 'min-h-[var(--ads-dimension-control-md)] px-3 py-1.5 text-sm',
+	lg: 'min-h-[var(--ads-dimension-control-lg)] px-4 py-2 text-sm',
 } as const;
 
 const validationClasses = {

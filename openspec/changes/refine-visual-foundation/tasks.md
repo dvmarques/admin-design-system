@@ -32,3 +32,12 @@
 - [x] 5.3 Validar o CSS compilado e os tokens públicos na aplicação Next.js de demonstração, incluindo alternância de tema sem recompilação da biblioteca.
 - [x] 5.4 Executar formatação, lint, tipos, testes, build e validação visual; corrigir falhas antes de considerar a change pronta.
 - [x] 5.5 Executar `npm run format` e confirmar que todos os arquivos novos e alterados estão formatados antes de arquivar a change.
+
+## 6. Alinhamento ao sistema de referências
+
+- [x] 6.1 Atualizar os tokens compartilhados de dimensão e raio para controles de `32/36/40 px`, raio de controle de `6 px` e raio de superfície/overlay de `8 px`.
+- [x] 6.2 Propagar a base de corpo e controles de `14 px` e a hierarquia semântica de títulos pelos componentes existentes, incluindo dialogs, drawers, toasts e tooltips.
+- [x] 6.3 Alinhar botões, badges, controles de formulário e controles somente de ícone existentes à densidade, forma e alinhamento óptico compartilhados, sem criar componentes.
+- [x] 6.4 Refinar superfícies, bordas, foco e estados dos temas claro e escuro existentes para preservar a aparência sóbria e acessível.
+- [x] 6.5 Atualizar histórias e snapshots visuais existentes para cobrir a densidade refinada nos dois temas.
+- [x] 6.6 Executar formatação, geração de tokens, testes, build, validação OpenSpec e regressão visual; corrigir as falhas resultantes.

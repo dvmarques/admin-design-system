@@ -49,7 +49,9 @@
 	--color-warning-border: var(--ads-color-warning-border);
 	--color-danger-border: var(--ads-color-danger-border);
 	--color-info-border: var(--ads-color-info-border);
+	--radius-sm: var(--ads-radius-sm);
 	--radius-md: var(--ads-radius-md);
+	--radius-lg: var(--ads-radius-lg);
 	--shadow-sm: var(--ads-elevation-sm);
 	--shadow-md: var(--ads-elevation-md);
 }

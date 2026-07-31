@@ -19,7 +19,7 @@ export function AdsSurface({ className, variant = 'neutral', ...props }: AdsSurf
 		<div
 			{...props}
 			className={classNames(
-				'ads-surface min-w-0 rounded-md border p-4',
+				'ads-surface min-w-0 rounded-lg border p-4',
 				surfaceVariants[variant],
 				className,
 			)}

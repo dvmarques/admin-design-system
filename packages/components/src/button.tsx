@@ -12,8 +12,8 @@ const buttonVariants = {
 
 const buttonSizes = {
 	sm: 'min-h-[var(--ads-dimension-control-sm)] px-3 text-sm',
-	md: 'min-h-[var(--ads-dimension-control-md)] px-4 text-base',
-	lg: 'min-h-[var(--ads-dimension-control-lg)] px-6 text-lg',
+	md: 'min-h-[var(--ads-dimension-control-md)] px-4 text-sm',
+	lg: 'min-h-[var(--ads-dimension-control-lg)] px-5 text-sm',
 } as const;
 
 export type AdsButtonVariant = keyof typeof buttonVariants;

@@ -47,7 +47,7 @@ describe('text form controls', () => {
 			theme,
 		);
 		expect(container.firstElementChild).toHaveAttribute('data-theme', theme);
-		expect(screen.getByRole('textbox', { name: 'E-mail' })).toHaveClass('custom-input', 'text-lg');
+		expect(screen.getByRole('textbox', { name: 'E-mail' })).toHaveClass('custom-input', 'text-sm');
 	});
 
 	it('has no detectable accessibility violations', async () => {

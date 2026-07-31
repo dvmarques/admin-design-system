@@ -2,7 +2,7 @@ import { createElement, type HTMLAttributes } from 'react';
 import { classNames } from './class-names.js';
 
 const typographyVariants = {
-	body: 'text-base leading-normal text-text',
+	body: 'text-sm leading-normal text-text',
 	bodySmall: 'text-sm leading-normal text-text',
 	muted: 'text-sm leading-normal text-text-muted',
 	lead: 'text-lg leading-normal text-text',

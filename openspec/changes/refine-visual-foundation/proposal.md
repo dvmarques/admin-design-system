@@ -10,6 +10,7 @@ Os componentes atuais precisam de uma fundação visual mais coesa para transmit
 - Refinar as paletas semânticas completa para os temas claro e escuro, incluindo superfícies, conteúdo, bordas, foco, cores de marca e estados informativo, sucesso, aviso e erro.
 - Estabelecer pares de cor e critérios mensuráveis de contraste WCAG 2.2 AA para conteúdo, controles, estados e foco nos dois temas.
 - Atualizar as histórias do Storybook e os snapshots visuais dos componentes existentes para cobrir temas e estados representativos.
+- Refinar a proporção, densidade e hierarquia visual dos componentes existentes com PrimeReact como referência principal, seguido por shadcn/ui, Ant Design e Chakra UI. As referências orientam princípios públicos de design; não serão copiados código-fonte, temas, ativos ou materiais proprietários.
 - Não criar componentes, variantes ou APIs de componentes novos; o escopo limita-se aos componentes e contratos já existentes.
 
 ## Capabilities

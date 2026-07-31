@@ -22,3 +22,12 @@ O sistema MUST distribuir somente arquivos de fontes cuja licença permita uso, 
 
 - **WHEN** uma versão da biblioteca publica arquivos de fonte como parte de seus estilos ou artefatos
 - **THEN** cada arquivo publicado possui licença compatível com uso comercial e seu aviso de licença acompanha a distribuição
+
+### Requirement: Hierarquia tipográfica compacta nos componentes existentes
+
+Os componentes existentes MUST usar `14 px` como base tokenizada para corpo e controles, `12 px` para texto auxiliar e tokens semânticos de `20`, `24`, `30` e `36 px` para os títulos principais.
+
+#### Scenario: Overlay apresenta título e conteúdo
+
+- **WHEN** um dialog, drawer, toast ou tooltip renderiza texto
+- **THEN** seu conteúdo segue a base global de `14 px` (ou `12 px` quando auxiliar) e seu título usa um token semântico de título

@@ -68,7 +68,7 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 				<OverlayPortal>
 					<div
 						className={classNames(
-							'ads-tooltip fixed z-50 max-w-[min(20rem,calc(100vw-1rem))] rounded-md bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
+							'ads-tooltip fixed z-50 max-w-[min(20rem,calc(100vw-1rem))] rounded-lg bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
 							className,
 						)}
 						data-placement={placement}

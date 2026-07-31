@@ -2,9 +2,9 @@ import { classNames } from './class-names.js';
 import type { AdsFormSize, AdsValidationState } from './form-types.js';
 
 const controlSizes = {
-	sm: 'min-h-[var(--ads-dimension-control-sm)] px-2 py-1 text-sm',
-	md: 'min-h-[var(--ads-dimension-control-md)] px-3 py-1.5 text-sm',
-	lg: 'min-h-[var(--ads-dimension-control-lg)] px-4 py-2 text-sm',
+	sm: 'min-h-[var(--ads-dimension-field-sm)] px-2 py-1 text-sm',
+	md: 'min-h-[var(--ads-dimension-field-md)] px-3 py-1 text-sm',
+	lg: 'min-h-[var(--ads-dimension-field-lg)] px-4 py-1.5 text-sm',
 } as const;
 
 const validationClasses = {

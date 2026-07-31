@@ -2,6 +2,7 @@
 
 import type { HTMLAttributes, ReactNode } from 'react';
 import { classNames } from './class-names.js';
+import { AdsIcon } from './icon.js';
 import { OverlayPortal } from './overlay-utils.js';
 import { AdsTypography } from './typography.js';
 
@@ -55,11 +56,11 @@ export function AdsToast({
 				{dismissible ? (
 					<button
 						aria-label={closeLabel}
-						className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md text-lg leading-none text-text hover:bg-surface-muted focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus"
+						className="inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent text-text-muted transition-[background-color,color,transform] duration-150 hover:bg-surface-muted hover:text-text active:scale-95 motion-reduce:transform-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 						onClick={onClose}
 						type="button"
 					>
-						<span aria-hidden="true">×</span>
+						<AdsIcon name="close" size="sm" />
 					</button>
 				) : null}
 			</div>

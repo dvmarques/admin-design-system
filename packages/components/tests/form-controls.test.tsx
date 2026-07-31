@@ -21,7 +21,11 @@ describe('text form controls', () => {
 		const input = screen.getByRole('textbox', { name: 'Nome' });
 		expect(input).toHaveAttribute('name', 'name');
 		expect(input).toHaveAttribute('aria-invalid', 'true');
-		expect(input).toHaveClass('ads-form-control', 'border-form-invalid');
+		expect(input).toHaveClass(
+			'ads-form-control',
+			'border-form-invalid',
+			'min-h-[var(--ads-dimension-field-md)]',
+		);
 	});
 
 	it('renders textarea and select with native interaction', () => {

@@ -41,3 +41,12 @@
 - [x] 6.4 Refinar superfícies, bordas, foco e estados dos temas claro e escuro existentes para preservar a aparência sóbria e acessível.
 - [x] 6.5 Atualizar histórias e snapshots visuais existentes para cobrir a densidade refinada nos dois temas.
 - [x] 6.6 Executar formatação, geração de tokens, testes, build, validação OpenSpec e regressão visual; corrigir as falhas resultantes.
+
+## 7. Correções de densidade e interação
+
+- [x] 7.1 Melhorar o contraste do badge de status pendente no tema escuro e reduzir a altura/padding dos badges para uma proporção compacta.
+- [x] 7.2 Adicionar feedback visual de pressionamento aos botões, respeitando movimento reduzido e estados desabilitados.
+- [x] 7.3 Reduzir a altura e o padding vertical do input padrão mantendo a área e hierarquia definidas pelos tokens.
+- [x] 7.4 Padronizar os botões de fechar de dialog, drawer e toast com dimensão, ícone, hover, active e foco consistentes.
+- [x] 7.5 Corrigir a abertura do tooltip por hover e preservar suporte a foco por teclado.
+- [x] 7.6 Atualizar testes, histórias e snapshots afetados; executar a validação completa e corrigir falhas.

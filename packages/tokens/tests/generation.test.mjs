@@ -72,6 +72,9 @@ test('semantic content, actions, states, and focus meet AA contrast in both them
 		pair('text', 'surface');
 		pair('textMuted', 'surface');
 		pair('onPrimary', 'primary');
+		pair('onPrimary', 'success');
+		pair('onPrimary', 'warning');
+		pair('onPrimary', 'danger');
 		pair('info', 'infoBackground');
 		pair('success', 'successBackground');
 		pair('warning', 'warningBackground');

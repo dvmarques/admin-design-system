@@ -43,6 +43,8 @@ describe('overlay dialogs', () => {
 			'text-text-muted',
 		);
 		const close = screen.getByRole('button', { name: 'Fechar' });
+		expect(close).toHaveClass('h-8', 'w-8', 'hover:bg-surface-muted', 'active:scale-95');
+		expect(close.querySelector('.ads-icon')).toHaveClass('h-4', 'w-4');
 		const confirm = screen.getByRole('button', { name: 'Confirmar' });
 		await waitFor(() => expect(document.activeElement).toBe(close));
 		confirm.focus();

@@ -38,6 +38,19 @@ describe('anchored overlays', () => {
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 	});
 
+	it('shows a tooltip while the pointer hovers the trigger', async () => {
+		render(
+			<AdsTooltip content="Ajuda por hover">
+				<AdsButton>Detalhes</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Detalhes' });
+		fireEvent.pointerEnter(trigger);
+		expect(await screen.findByRole('tooltip')).toHaveTextContent('Ajuda por hover');
+		fireEvent.pointerLeave(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+	});
+
 	it('opens a popover from its trigger and closes on Escape with focus restoration', async () => {
 		render(<PopoverFixture />);
 		const trigger = screen.getByRole('button', { name: 'Mais ações' });

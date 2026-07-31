@@ -59,8 +59,8 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 			className="ads-tooltip-anchor inline-flex"
 			onBlur={() => setOpen(false)}
 			onFocus={() => setOpen(true)}
-			onMouseEnter={() => setOpen(true)}
-			onMouseLeave={() => setOpen(false)}
+			onPointerEnter={() => setOpen(true)}
+			onPointerLeave={() => setOpen(false)}
 			ref={anchorRef}
 		>
 			{trigger}

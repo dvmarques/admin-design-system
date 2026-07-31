@@ -5,14 +5,14 @@ const badgeVariants = {
 	neutral: 'border-border bg-surface-muted text-text',
 	primary: 'border-transparent bg-primary text-[var(--ads-color-on-primary)]',
 	success: 'border-transparent bg-success text-[var(--ads-color-on-primary)]',
-	warning: 'border-transparent bg-warning text-text',
+	warning: 'border-transparent bg-warning text-[var(--ads-color-on-primary)]',
 	danger: 'border-transparent bg-danger text-[var(--ads-color-on-primary)]',
 } as const;
 
 const badgeSizes = {
-	sm: 'min-h-6 px-2 py-0.5 text-xs',
-	md: 'min-h-8 px-2.5 py-1 text-sm',
-	lg: 'min-h-10 px-3 py-1.5 text-sm',
+	sm: 'px-1.5 py-0.5 text-xs',
+	md: 'px-2 py-0.5 text-sm',
+	lg: 'px-2.5 py-1 text-sm',
 } as const;
 
 export type AdsBadgeVariant = keyof typeof badgeVariants;

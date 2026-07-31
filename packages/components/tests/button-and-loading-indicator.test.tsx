@@ -11,7 +11,12 @@ describe('AdsButton', () => {
 
 		const button = screen.getByRole('button', { name: 'Salvar' });
 		expect(button).toHaveAttribute('type', 'button');
-		expect(button).toHaveClass('ads-button', 'bg-primary');
+		expect(button).toHaveClass(
+			'ads-button',
+			'bg-primary',
+			'active:translate-y-px',
+			'active:scale-[0.99]',
+		);
 	});
 
 	it.each([

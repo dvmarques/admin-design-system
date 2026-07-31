@@ -21,6 +21,10 @@ test.describe('public overlays', () => {
 		await expect(page.getByRole('dialog', { name: 'Exemplo de drawer' })).toBeHidden();
 
 		const tooltipTrigger = page.getByRole('button', { name: 'Tooltip' });
+		await tooltipTrigger.hover();
+		await expect(page.getByRole('tooltip')).toHaveText('Ações adicionais');
+		await page.getByRole('button', { name: 'Popover' }).hover();
+		await expect(page.getByRole('tooltip')).toBeHidden();
 		await tooltipTrigger.focus();
 		await expect(page.getByRole('tooltip')).toHaveText('Ações adicionais');
 

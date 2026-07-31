@@ -43,7 +43,7 @@ export function AdsButton({
 			{...props}
 			aria-busy={isLoading || undefined}
 			className={classNames(
-				'ads-button inline-flex items-center justify-center gap-2 rounded-md border font-medium transition-[background-color,color,border-color,box-shadow] duration-150 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+				'ads-button inline-flex items-center justify-center gap-2 rounded-md border font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-150 ease-out active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
 				buttonVariants[variant],
 				buttonSizes[size],
 				className,

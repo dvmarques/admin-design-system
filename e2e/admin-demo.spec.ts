@@ -1,5 +1,9 @@
 import { expect, test } from '@playwright/test';
 
+async function hideDevelopmentPortal(page: import('@playwright/test').Page) {
+	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
+}
+
 test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo teclado', async ({
 	page,
 }) => {
@@ -43,6 +47,7 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 		},
 	]);
 	await page.goto('/');
+	await hideDevelopmentPortal(page);
 	await expect(page).toHaveScreenshot('admin-demo-dark.png', { fullPage: true });
 
 	await page.context().addCookies([
@@ -53,5 +58,6 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 		},
 	]);
 	await page.reload();
+	await hideDevelopmentPortal(page);
 	await expect(page).toHaveScreenshot('admin-demo-light.png', { fullPage: true });
 });

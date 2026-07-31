@@ -22,3 +22,12 @@ O sistema MUST disponibilizar tokens reutilizáveis para controles pequenos, mé
 
 - **WHEN** um componente interativo existente renderiza uma variante pequena, média ou grande
 - **THEN** ele consome a dimensão compartilhada correspondente em vez de definir uma altura local
+
+### Requirement: Controle de fechar usa papéis semânticos de cor
+
+O sistema MUST disponibilizar tokens semânticos de fundo, conteúdo e fundo de hover para os controles de fechar de overlays, com valores específicos para os temas claro e escuro e equivalência entre CSS e TypeScript.
+
+#### Scenario: Controle de fechar é renderizado em um overlay
+
+- **WHEN** dialog, drawer ou toast apresenta seu controle de fechar
+- **THEN** o fundo e o ícone são resolvidos pelos papéis semânticos do tema ativo, sem valores cromáticos locais no componente

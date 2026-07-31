@@ -43,7 +43,14 @@ describe('overlay dialogs', () => {
 			'text-text-muted',
 		);
 		const close = screen.getByRole('button', { name: 'Fechar' });
-		expect(close).toHaveClass('h-8', 'w-8', 'hover:bg-surface-muted', 'active:scale-95');
+		expect(close).toHaveClass(
+			'h-8',
+			'w-8',
+			'bg-overlay-close-background',
+			'text-overlay-close-content',
+			'hover:bg-overlay-close-background-hover',
+			'active:scale-95',
+		);
 		expect(close.querySelector('.ads-icon')).toHaveClass('h-4', 'w-4');
 		const confirm = screen.getByRole('button', { name: 'Confirmar' });
 		await waitFor(() => expect(document.activeElement).toBe(close));
@@ -86,6 +93,28 @@ describe('overlay dialogs', () => {
 		expect(drawer).toHaveClass('w-[min(24rem,100vw)]');
 		expect(drawer).toHaveClass('font-sans');
 		expect(screen.getByRole('heading', { name: 'Filtros' })).toHaveClass('ads-typography');
+		expect(screen.getByRole('button', { name: 'Fechar' })).toHaveClass(
+			'bg-overlay-close-background',
+			'text-overlay-close-content',
+		);
+	});
+
+	it('preserves the nearest theme in its portal and synchronizes theme changes', async () => {
+		const { getByTestId } = render(
+			<div data-testid="theme-scope" data-theme="light">
+				<AdsDialog onOpenChange={() => undefined} open title="Com tema local">
+					Conteúdo
+				</AdsDialog>
+			</div>,
+		);
+		const portal = await waitFor(() => {
+			const element = document.querySelector<HTMLElement>('[data-ads-overlay-root]');
+			expect(element).toHaveAttribute('data-theme', 'light');
+			return element!;
+		});
+
+		getByTestId('theme-scope').setAttribute('data-theme', 'dark');
+		await waitFor(() => expect(portal).toHaveAttribute('data-theme', 'dark'));
 	});
 
 	it('has no detectable accessibility violations', async () => {

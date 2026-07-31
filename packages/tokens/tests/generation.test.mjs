@@ -80,5 +80,12 @@ test('semantic content, actions, states, and focus meet AA contrast in both them
 		pair('warning', 'warningBackground');
 		pair('danger', 'dangerBackground');
 		pair('focus', 'surface');
+		pair('overlayCloseContent', 'overlayCloseBackground');
+		pair('overlayCloseContent', 'overlayCloseBackgroundHover');
+		assert.ok(
+			contrast(resolveThemeValue(theme.focus), resolveThemeValue(theme.overlayCloseBackground)) >=
+				3,
+			`${themeName}: focus on overlayCloseBackground`,
+		);
 	}
 });

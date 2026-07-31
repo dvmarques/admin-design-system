@@ -85,7 +85,7 @@ function OverlayPanel({
 					{showCloseButton ? (
 						<button
 							aria-label={closeLabel}
-							className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent text-text-muted transition-[background-color,color,transform] duration-150 hover:bg-surface-muted hover:text-text active:scale-95 motion-reduce:transform-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+							className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-overlay-close-background text-overlay-close-content transition-[background-color,color,transform] duration-150 hover:bg-overlay-close-background-hover active:scale-95 motion-reduce:transform-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 							onClick={() => onOpenChange(false)}
 							type="button"
 						>

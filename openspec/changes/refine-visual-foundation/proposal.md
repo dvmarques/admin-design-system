@@ -11,6 +11,7 @@ Os componentes atuais precisam de uma fundação visual mais coesa para transmit
 - Estabelecer pares de cor e critérios mensuráveis de contraste WCAG 2.2 AA para conteúdo, controles, estados e foco nos dois temas.
 - Atualizar as histórias do Storybook e os snapshots visuais dos componentes existentes para cobrir temas e estados representativos.
 - Refinar a proporção, densidade e hierarquia visual dos componentes existentes com PrimeReact como referência principal, seguido por shadcn/ui, Ant Design e Chakra UI. As referências orientam princípios públicos de design; não serão copiados código-fonte, temas, ativos ou materiais proprietários.
+- Garantir que overlays portados preservem o tema ativo e que os controles de fechar de dialog, drawer e toast tenham superfície e ícone semanticamente contrastantes nos temas claro e escuro.
 - Não criar componentes, variantes ou APIs de componentes novos; o escopo limita-se aos componentes e contratos já existentes.
 
 ## Capabilities

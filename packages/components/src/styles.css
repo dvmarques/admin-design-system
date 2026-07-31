@@ -49,6 +49,9 @@
 	--color-warning-border: var(--ads-color-warning-border);
 	--color-danger-border: var(--ads-color-danger-border);
 	--color-info-border: var(--ads-color-info-border);
+	--color-overlay-close-background: var(--ads-color-overlay-close-background);
+	--color-overlay-close-content: var(--ads-color-overlay-close-content);
+	--color-overlay-close-background-hover: var(--ads-color-overlay-close-background-hover);
 	--radius-sm: var(--ads-radius-sm);
 	--radius-md: var(--ads-radius-md);
 	--radius-lg: var(--ads-radius-lg);

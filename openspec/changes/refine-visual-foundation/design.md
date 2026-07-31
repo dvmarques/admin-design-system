@@ -86,6 +86,25 @@ Alternativas consideradas:
 - Usar valores hex diretamente por componente: rejeitado por impedir coerência entre temas e substituição global.
 - Usar apenas cores primitivas públicas: rejeitado porque transfere a decisão semântica para cada consumidor.
 
+### 2.1 Tema de overlays e controles de fechar
+
+Dialog, drawer e toast continuarão usando `surfaceRaised` como fundo da caixa: `#FFFFFF` no tema claro e `#1E293B` no tema escuro. O portal MUST preservar o `data-theme` mais próximo do ponto de origem e acompanhar alterações do tema enquanto o overlay estiver aberto, mesmo quando o conteúdo for anexado a `document.body`.
+
+Os controles de fechar compartilharão papéis semânticos próprios para fundo, conteúdo e hover. Os valores iniciais serão:
+
+| Papel do controle de fechar | Tema claro | Tema escuro |
+| --------------------------- | ---------- | ----------- |
+| fundo                       | `#F1F5F9`  | `#334155`   |
+| conteúdo (ícone X)          | `#0F172A`  | `#F8FAFC`   |
+| fundo no hover              | `#E2E8F0`  | `#475569`   |
+
+O ícone MUST atingir contraste mínimo de `4.5:1` contra os fundos padrão e de hover. O foco continuará usando o papel semântico `focus`, com contraste mínimo de `3:1` contra a superfície adjacente. A dimensão de `32 px`, o SVG atual e o feedback de pressionamento permanecem inalterados.
+
+Alternativas consideradas:
+
+- Usar `textMuted` sobre fundo transparente: rejeitado porque aproxima visualmente o ícone da superfície e não oferece contraste estável em todos os escopos de tema.
+- Ler somente o tema do elemento `html`: rejeitado porque aplicações consumidoras e o Storybook podem aplicar `data-theme` em um escopo local.
+
 ### 3. Contraste e foco
 
 Os pares críticos buscarão no mínimo `4.5:1` para texto normal e `3:1` para texto grande, controles e indicadores gráficos aplicáveis. O anel de foco terá contraste mínimo de `3:1` com a superfície adjacente, espessura visível e não dependerá somente de mudança de cor. A validação cobrirá canvas/surface, conteúdo primário/secundário, ação preenchida, estados e foco nos dois temas.
@@ -104,6 +123,7 @@ Cada história afetada deverá selecionar explicitamente tema claro e escuro e e
 
 - [Tokens públicos com uso não mapeado] → Fazer inventário antes da alteração e manter aliases de compatibilidade; qualquer remoção exige migração e versionamento apropriado.
 - [Contraste suficiente no token isolado, mas insuficiente em sobreposições] → Validar os pares reais de foreground/background e as superfícies de overlay nos dois temas.
+- [Portal escapar do escopo de tema local] → Propagar e observar o `data-theme` do ponto de origem no host do portal, com testes de troca de tema durante um overlay aberto.
 - [Diferenças de métrica entre fontes fallback] → Usar uma escala em pixels e line-heights relativos, com revisão visual usando Inter e Roboto.
 - [Distribuição indevida de fonte proprietária] → Restringir o pacote a Inter e Roboto, incluir seus avisos de licença e revisar os artefatos publicados antes da versão.
 - [Snapshots excessivamente amplos ocultarem a intenção da mudança] → Organizar cenários por componente, tema e estado, com aprovação visual direcionada.

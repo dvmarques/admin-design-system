@@ -50,3 +50,12 @@
 - [x] 7.4 Padronizar os botões de fechar de dialog, drawer e toast com dimensão, ícone, hover, active e foco consistentes.
 - [x] 7.5 Corrigir a abertura do tooltip por hover e preservar suporte a foco por teclado.
 - [x] 7.6 Atualizar testes, histórias e snapshots afetados; executar a validação completa e corrigir falhas.
+
+## 8. Tema e contraste dos controles de fechar
+
+- [x] 8.1 Adicionar tokens semânticos de fundo, conteúdo e hover do controle de fechar para os temas claro e escuro, gerar os artefatos CSS/TypeScript e documentar os novos papéis.
+- [x] 8.2 Atualizar o host de `OverlayPortal` para preservar o `data-theme` explícito mais próximo do ponto de origem e sincronizar mudanças enquanto o overlay estiver aberto.
+- [x] 8.3 Aplicar os novos tokens ao controle de fechar compartilhado por dialog, drawer e toast, preservando dimensão de `32 px`, SVG, feedback de pressionamento e foco.
+- [x] 8.4 Adicionar testes das cores computadas e do contraste do ícone nos estados padrão, hover e foco para os temas claro e escuro.
+- [x] 8.5 Adicionar testes de portal em escopo local, troca de tema com overlay aberto e histórias/snapshots de dialog, drawer e toast nos dois temas.
+- [x] 8.6 Executar geração de tokens, formatação, testes, build, Storybook, Playwright e validação OpenSpec; corrigir todas as falhas antes de concluir a etapa.

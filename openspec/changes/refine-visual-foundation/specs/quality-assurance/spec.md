@@ -17,3 +17,12 @@ O projeto MUST verificar automaticamente os pares críticos de cores da fundaç�
 
 - **WHEN** a validação executa para os temas claro e escuro
 - **THEN** ela falha se um par crítico de conteúdo, superfície, controle ou foco não atingir o contraste mínimo aplicável
+
+### Requirement: Tema e contraste dos overlays possuem cobertura automatizada
+
+O projeto MUST verificar o tema computado de overlays portados, a troca de tema com o overlay aberto e o contraste dos controles de fechar de dialog, drawer e toast nos estados padrão, hover e foco.
+
+#### Scenario: Validação executa para controles de fechar
+
+- **WHEN** os testes renderizam dialog, drawer e toast em escopos locais claro e escuro
+- **THEN** as cores computadas correspondem aos tokens do tema de origem e os pares de contraste atendem aos critérios definidos

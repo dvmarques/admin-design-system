@@ -72,6 +72,9 @@ export const tokenValues = {
   "color.warningBorder": "#fde68a",
   "color.dangerBorder": "#fecaca",
   "color.infoBorder": "#bae6fd",
+  "color.overlayCloseBackground": "#f1f5f9",
+  "color.overlayCloseContent": "#0f172a",
+  "color.overlayCloseBackgroundHover": "#e2e8f0",
   "color.overlayBackdrop": "rgb(15 23 42 / 0.64)"
 } as const
 export type TokenName = keyof typeof tokenValues

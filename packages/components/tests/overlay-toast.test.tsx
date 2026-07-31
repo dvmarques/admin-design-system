@@ -37,7 +37,14 @@ describe('AdsToast', () => {
 		const onClose = vi.fn();
 		render(<AdsToast onClose={onClose}>Mensagem</AdsToast>);
 		const close = await screen.findByRole('button', { name: 'Fechar notificação' });
-		expect(close).toHaveClass('h-8', 'w-8', 'hover:bg-surface-muted', 'active:scale-95');
+		expect(close).toHaveClass(
+			'h-8',
+			'w-8',
+			'bg-overlay-close-background',
+			'text-overlay-close-content',
+			'hover:bg-overlay-close-background-hover',
+			'active:scale-95',
+		);
 		expect(close.querySelector('.ads-icon')).toHaveClass('h-4', 'w-4');
 		close.focus();
 		fireEvent.keyDown(close, { key: 'Enter' });

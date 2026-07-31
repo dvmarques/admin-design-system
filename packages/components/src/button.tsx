@@ -1,4 +1,4 @@
-import type { ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import { classNames } from './class-names.js';
 import { AdsLoadingIndicator } from './loading-indicator.js';
 
@@ -27,17 +27,20 @@ export interface AdsButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> 
 }
 
 /** A native button with design-system variants, sizes, and loading state. */
-export function AdsButton({
-	children,
-	className,
-	disabled = false,
-	isLoading = false,
-	loadingLabel = 'Carregando',
-	size = 'md',
-	type = 'button',
-	variant = 'primary',
-	...props
-}: AdsButtonProps) {
+export const AdsButton = forwardRef<HTMLButtonElement, AdsButtonProps>(function AdsButton(
+	{
+		children,
+		className,
+		disabled = false,
+		isLoading = false,
+		loadingLabel = 'Carregando',
+		size = 'md',
+		type = 'button',
+		variant = 'primary',
+		...props
+	}: AdsButtonProps,
+	ref,
+) {
 	return (
 		<button
 			{...props}
@@ -49,10 +52,11 @@ export function AdsButton({
 				className,
 			)}
 			disabled={disabled || isLoading}
+			ref={ref}
 			type={type}
 		>
 			{isLoading ? <AdsLoadingIndicator aria-hidden="true" label={loadingLabel} size="sm" /> : null}
 			{children}
 		</button>
 	);
-}
+});

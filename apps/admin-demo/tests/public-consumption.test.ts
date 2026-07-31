@@ -22,6 +22,11 @@ import {
 	AdsPopover,
 	AdsToast,
 	AdsTooltip,
+	AdsBreadcrumb,
+	AdsNav,
+	AdsTabs,
+	AdsDropdown,
+	AdsPagination,
 } from '@admin-ds/components';
 
 describe('public component consumption', () => {
@@ -47,7 +52,12 @@ describe('public component consumption', () => {
 			AdsPopover,
 			AdsToast,
 			AdsTooltip,
-		]).toHaveLength(20);
+			AdsBreadcrumb,
+			AdsNav,
+			AdsTabs,
+			AdsDropdown,
+			AdsPagination,
+		]).toHaveLength(25);
 	});
 
 	it('includes primitive styles in the distributed CSS', async () => {
@@ -65,5 +75,8 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.border-form-invalid/);
 		expect(css).toMatch(/\.ads-overlay-panel/);
 		expect(css).toMatch(/\.ads-toast/);
+		expect(css).toMatch(/\.ads-breadcrumb/);
+		expect(css).toMatch(/\.ads-dropdown-content/);
+		expect(css).toMatch(/\.ads-pagination/);
 	});
 });

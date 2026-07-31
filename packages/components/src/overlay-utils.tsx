@@ -154,6 +154,7 @@ export function useAnchoredPosition(
 	anchorRef: RefObject<HTMLElement | null>,
 	contentRef: RefObject<HTMLElement | null>,
 	placement: 'top' | 'right' | 'bottom' | 'left' = 'bottom',
+	align: 'center' | 'start' = 'center',
 ) {
 	const [position, setPosition] = useState<React.CSSProperties>({});
 	const update = useCallback(() => {
@@ -164,7 +165,7 @@ export function useAnchoredPosition(
 		const width = content.offsetWidth;
 		const height = content.offsetHeight;
 		const gap = 8;
-		let left = rect.left + rect.width / 2 - width / 2;
+		let left = align === 'start' ? rect.left : rect.left + rect.width / 2 - width / 2;
 		let top = rect.bottom + gap;
 		if (placement === 'top') top = rect.top - height - gap;
 		if (placement === 'left') {
@@ -178,7 +179,7 @@ export function useAnchoredPosition(
 		left = Math.min(Math.max(8, left), Math.max(8, window.innerWidth - width - 8));
 		top = Math.min(Math.max(8, top), Math.max(8, window.innerHeight - height - 8));
 		setPosition({ left, top });
-	}, [anchorRef, contentRef, placement]);
+	}, [align, anchorRef, contentRef, placement]);
 
 	useLayoutEffect(() => {
 		if (!open) return;

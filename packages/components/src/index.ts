@@ -51,3 +51,23 @@ export { AdsPopover, AdsTooltip } from './overlay-anchored.js';
 export type { AdsOverlayPlacement, AdsPopoverProps, AdsTooltipProps } from './overlay-anchored.js';
 export { AdsToast } from './overlay-toast.js';
 export type { AdsToastProps, AdsToastVariant } from './overlay-toast.js';
+export { AdsBreadcrumb, AdsNav, AdsTabs } from './navigation.js';
+export type {
+	AdsBreadcrumbItem,
+	AdsBreadcrumbProps,
+	AdsNavItem,
+	AdsNavProps,
+	AdsTabsListProps,
+	AdsTabsPanelProps,
+	AdsTabsProps,
+	AdsTabsTriggerProps,
+} from './navigation.js';
+export { AdsDropdown } from './dropdown.js';
+export type {
+	AdsDropdownContentProps,
+	AdsDropdownItemProps,
+	AdsDropdownProps,
+	AdsDropdownTriggerProps,
+} from './dropdown.js';
+export { AdsPagination, getAdsPaginationItems } from './pagination.js';
+export type { AdsPaginationPage, AdsPaginationProps } from './pagination.js';

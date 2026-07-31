@@ -8,6 +8,21 @@ const selectionSizes = {
 	lg: 'h-6 w-6',
 } as const;
 
+const switchSizes = {
+	sm: {
+		track: 'h-5 w-9 peer-checked:[&>span]:translate-x-4',
+		thumb: 'left-0.5 top-0.5 h-4 w-4',
+	},
+	md: {
+		track: 'h-6 w-10 peer-checked:[&>span]:translate-x-4',
+		thumb: 'left-1 top-1 h-4 w-4',
+	},
+	lg: {
+		track: 'h-7 w-12 peer-checked:[&>span]:translate-x-5',
+		thumb: 'left-1 top-1 h-5 w-5',
+	},
+} as const;
+
 export interface AdsSelectionControlProps
 	extends
 		Omit<InputHTMLAttributes<HTMLInputElement>, 'type' | 'className' | 'size'>,
@@ -76,12 +91,17 @@ export function AdsSwitch(props: AdsSelectionControlProps) {
 				<span
 					aria-hidden="true"
 					className={classNames(
-						'pointer-events-none relative block rounded-full border border-border bg-surface transition-colors duration-150 peer-checked:bg-primary peer-checked:[&>span]:translate-x-4 peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-form-border-focus peer-disabled:opacity-50',
-						size === 'sm' ? 'h-5 w-9' : size === 'lg' ? 'h-7 w-12' : 'h-6 w-10',
+						'pointer-events-none relative block rounded-full border border-border bg-surface transition-colors duration-150 peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-form-border-focus peer-disabled:opacity-50',
+						switchSizes[size].track,
 						validationState === 'error' && 'border-form-invalid',
 					)}
 				>
-					<span className="absolute left-0.5 top-0.5 block h-4 w-4 rounded-full bg-white transition-transform duration-150" />
+					<span
+						className={classNames(
+							'absolute block rounded-full bg-surface-muted transition-[background-color,transform] duration-150 peer-checked:bg-surface',
+							switchSizes[size].thumb,
+						)}
+					/>
 				</span>
 			</span>
 			{label ? <span>{label}</span> : null}

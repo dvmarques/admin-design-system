@@ -17,6 +17,7 @@ const preview: Preview = {
 				style={{
 					background: 'var(--ads-color-background)',
 					color: 'var(--ads-color-text)',
+					fontFamily: 'var(--ads-typography-font-family)',
 					minHeight: '100vh',
 					padding: '2rem',
 				}}

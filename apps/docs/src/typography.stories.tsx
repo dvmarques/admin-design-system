@@ -25,3 +25,25 @@ export const Scale: Story = {
 		</div>
 	),
 };
+
+export const WeightsAndSizes: Story = {
+	render: () => (
+		<div className="grid gap-3" style={{ color: 'var(--ads-color-text)' }}>
+			<div style={{ fontSize: 'var(--ads-typography-font-size-xs)', fontWeight: 500 }}>
+				12 px · medium
+			</div>
+			<div style={{ fontSize: 'var(--ads-typography-font-size-sm)', fontWeight: 400 }}>
+				14 px · regular
+			</div>
+			<div style={{ fontSize: 'var(--ads-typography-font-size-md)', fontWeight: 500 }}>
+				16 px · medium
+			</div>
+			<div style={{ fontSize: 'var(--ads-typography-font-size-lg)', fontWeight: 600 }}>
+				18 px · semibold
+			</div>
+			<div style={{ fontSize: 'var(--ads-typography-font-size-xl)', fontWeight: 700 }}>
+				20 px · bold
+			</div>
+		</div>
+	),
+};

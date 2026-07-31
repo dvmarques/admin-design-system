@@ -17,6 +17,14 @@ import {
 	useEscapeKey,
 	useStableId,
 } from './overlay-utils.js';
+import { AdsTypography } from './typography.js';
+
+const tooltipArrowPlacements = {
+	top: '-bottom-1 left-1/2 -translate-x-1/2',
+	right: '-left-1 top-1/2 -translate-y-1/2',
+	bottom: '-top-1 left-1/2 -translate-x-1/2',
+	left: '-right-1 top-1/2 -translate-y-1/2',
+} as const;
 
 export type AdsOverlayPlacement = 'top' | 'right' | 'bottom' | 'left';
 
@@ -60,15 +68,25 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 				<OverlayPortal>
 					<div
 						className={classNames(
-							'ads-tooltip fixed z-50 max-w-[min(20rem,calc(100vw-1rem))] rounded-md bg-surface-raised px-3 py-2 text-sm text-text shadow-md',
+							'ads-tooltip fixed z-50 max-w-[min(20rem,calc(100vw-1rem))] rounded-md bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
 							className,
 						)}
+						data-placement={placement}
 						id={tooltipId}
 						ref={contentRef}
 						role="tooltip"
 						style={position}
 					>
-						{content}
+						<span
+							aria-hidden="true"
+							className={classNames(
+								'absolute h-2 w-2 rotate-45 bg-surface-raised',
+								tooltipArrowPlacements[placement],
+							)}
+						/>
+						<AdsTypography as="div" variant="bodySmall">
+							{content}
+						</AdsTypography>
 					</div>
 				</OverlayPortal>
 			) : null}

@@ -84,6 +84,26 @@ describe('selection form controls', () => {
 		expect(checkbox).toHaveFocus();
 	});
 
+	it('centers a visible switch thumb for every size and moves it by the matching track distance', () => {
+		render(
+			<>
+				<AdsSwitch label="Pequeno" size="sm" />
+				<AdsSwitch label="Médio" size="md" />
+				<AdsSwitch label="Grande" size="lg" />
+			</>,
+		);
+
+		const [small, medium, large] = ['Pequeno', 'Médio', 'Grande'].map(
+			(label) => screen.getByRole('checkbox', { name: label }).nextElementSibling as HTMLElement,
+		);
+		expect(small).toHaveClass('h-5', 'w-9', 'peer-checked:[&>span]:translate-x-4');
+		expect(small.firstElementChild).toHaveClass('top-0.5', 'bg-surface-muted');
+		expect(medium).toHaveClass('h-6', 'w-10', 'peer-checked:[&>span]:translate-x-4');
+		expect(medium.firstElementChild).toHaveClass('top-1', 'bg-surface-muted');
+		expect(large).toHaveClass('h-7', 'w-12', 'peer-checked:[&>span]:translate-x-5');
+		expect(large.firstElementChild).toHaveClass('top-1', 'h-5', 'w-5', 'bg-surface-muted');
+	});
+
 	it.each(['light', 'dark'] as const)('renders selection controls in the %s theme', (theme) => {
 		const { container } = renderWithTheme(<AdsSwitch label="Ativo" size="lg" />, theme);
 		expect(container.firstElementChild).toHaveAttribute('data-theme', theme);

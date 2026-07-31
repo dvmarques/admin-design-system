@@ -25,6 +25,53 @@ export const ThemeControl: Story = {
 	render: () => <ThemeToggle />,
 };
 
+export const SemanticStates: Story = {
+	render: () => (
+		<div className="grid gap-3">
+			<div
+				className="rounded-md p-3"
+				style={{
+					background: 'var(--ads-color-info-background)',
+					border: '1px solid var(--ads-color-info-border)',
+					color: 'var(--ads-color-info)',
+				}}
+			>
+				Informação contextual
+			</div>
+			<div
+				className="rounded-md p-3"
+				style={{
+					background: 'var(--ads-color-success-background)',
+					border: '1px solid var(--ads-color-success-border)',
+					color: 'var(--ads-color-success)',
+				}}
+			>
+				Operação concluída com sucesso
+			</div>
+			<div
+				className="rounded-md p-3"
+				style={{
+					background: 'var(--ads-color-warning-background)',
+					border: '1px solid var(--ads-color-warning-border)',
+					color: 'var(--ads-color-warning)',
+				}}
+			>
+				Atenção: verifique os dados
+			</div>
+			<div
+				className="rounded-md p-3"
+				style={{
+					background: 'var(--ads-color-danger-background)',
+					border: '1px solid var(--ads-color-danger-border)',
+					color: 'var(--ads-color-danger)',
+				}}
+			>
+				Não foi possível concluir a operação
+			</div>
+		</div>
+	),
+};
+
 export const Tokens: Story = {
 	render: () => (
 		<dl>

@@ -30,6 +30,18 @@ describe('overlay dialogs', () => {
 		fireEvent.click(trigger);
 		const dialog = screen.getByRole('dialog', { name: 'Confirmar operação' });
 		expect(dialog).toBeVisible();
+		expect(screen.getByRole('heading', { name: 'Confirmar operação' })).toHaveClass(
+			'ads-typography',
+			'text-xl',
+			'font-semibold',
+			'leading-tight',
+		);
+		expect(screen.getByText('Confirme a operação antes de continuar.')).toHaveClass(
+			'ads-typography',
+			'text-sm',
+			'leading-normal',
+			'text-text-muted',
+		);
 		const close = screen.getByRole('button', { name: 'Fechar' });
 		const confirm = screen.getByRole('button', { name: 'Confirmar' });
 		await waitFor(() => expect(document.activeElement).toBe(close));
@@ -70,6 +82,8 @@ describe('overlay dialogs', () => {
 		);
 		const drawer = screen.getByRole('dialog', { name: 'Filtros' });
 		expect(drawer).toHaveClass('w-[min(24rem,100vw)]');
+		expect(drawer).toHaveClass('font-sans');
+		expect(screen.getByRole('heading', { name: 'Filtros' })).toHaveClass('ads-typography');
 	});
 
 	it('has no detectable accessibility violations', async () => {

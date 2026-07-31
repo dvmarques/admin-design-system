@@ -11,6 +11,13 @@ describe('AdsToast', () => {
 			const toast = await screen.findByRole('status');
 			expect(toast).toHaveAttribute('aria-live', 'polite');
 			expect(toast).toHaveAttribute('data-variant', variant);
+			expect(screen.getByText('Operação concluída')).toHaveClass(
+				'ads-typography',
+				'text-sm',
+				'leading-normal',
+				'text-text',
+			);
+			expect(toast).toHaveClass('font-sans');
 		},
 	);
 

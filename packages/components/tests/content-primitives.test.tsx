@@ -9,10 +9,17 @@ import { renderWithTheme } from './test-utils';
 
 describe('AdsBadge', () => {
 	it('renders textual status variants and a stable public class', () => {
-		render(<AdsBadge variant="success">Ativo</AdsBadge>);
+		render(
+			<>
+				<AdsBadge variant="neutral">Rascunho</AdsBadge>
+				<AdsBadge variant="success">Ativo</AdsBadge>
+			</>,
+		);
 
 		const badge = screen.getByText('Ativo');
 		expect(badge).toHaveClass('ads-badge', 'bg-success');
+		expect(screen.getByText('Rascunho')).toHaveClass('bg-surface-muted', 'min-h-8');
+		expect(badge).toHaveClass('min-h-8');
 	});
 
 	it.each(['light', 'dark'] as const)('renders responsively in the %s theme', (theme) => {

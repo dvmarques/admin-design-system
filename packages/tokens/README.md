@@ -22,6 +22,14 @@ aplicação. Sem um atributo explícito, o CSS respeita
 A aplicação consumidora é responsável por persistir a preferência do
 usuário e aplicar o atributo antes da hidratação, quando necessário.
 
+## Tipografia
+
+A pilha padrão é `Inter, Roboto, sans-serif`. Inter e Roboto são fontes de
+licença livre para uso comercial (SIL Open Font License 1.1 e Apache License
+2.0, respectivamente). O pacote não distribui arquivos de fonte; consumidores
+que fizerem o download ou empacotamento dessas fontes devem preservar seus
+avisos de licença.
+
 ## Compatibilidade
 
 Nomes de tokens públicos são contratos semânticos. Remoções ou renomeações

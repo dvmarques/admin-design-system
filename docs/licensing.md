@@ -24,3 +24,12 @@ seus próprios distribuidores. Antes de uma publicação, a lista deve ser
 regenerada a partir do lockfile e revisada com o processo de compliance do
 projeto. Novos ícones, fontes, imagens ou snippets externos devem registrar
 origem, licença e atribuição nesta página antes de serem incorporados.
+
+## Fontes da fundação visual
+
+A pilha tipográfica pública usa `Inter, Roboto, sans-serif`. Inter é
+distribuída sob a SIL Open Font License 1.1 e Roboto sob Apache License 2.0;
+ambas permitem uso comercial. A biblioteca não empacota arquivos de fontes
+proprietárias nem depende de Segoe UI, Helvetica Neue ou Arial. Caso arquivos
+de Inter ou Roboto sejam adicionados futuramente ao pacote, seus textos de
+licença deverão acompanhar os artefatos distribuídos.

@@ -30,6 +30,9 @@ describe('anchored overlays', () => {
 		trigger.focus();
 		const tooltip = await screen.findByRole('tooltip');
 		expect(tooltip).toHaveTextContent('Ajuda contextual');
+		expect(tooltip).toHaveAttribute('data-placement', 'top');
+		expect(tooltip.firstElementChild).toHaveAttribute('aria-hidden', 'true');
+		expect(tooltip.firstElementChild).toHaveClass('-bottom-1', 'rotate-45');
 		expect(document.activeElement).toBe(trigger);
 		fireEvent.blur(trigger);
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());

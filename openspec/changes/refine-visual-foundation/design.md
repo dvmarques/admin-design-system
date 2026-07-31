@@ -36,37 +36,37 @@ Os valores são organizados em duas camadas: uma escala interna de cores e token
 
 Base clara proposta:
 
-| Papel | Valor |
-| --- | --- |
-| canvas | `#F8FAFC` |
-| surface | `#FFFFFF` |
-| surface-muted | `#F1F5F9` |
-| text-primary | `#0F172A` |
+| Papel          | Valor     |
+| -------------- | --------- |
+| canvas         | `#F8FAFC` |
+| surface        | `#FFFFFF` |
+| surface-muted  | `#F1F5F9` |
+| text-primary   | `#0F172A` |
 | text-secondary | `#475569` |
-| border | `#E2E8F0` |
-| primary | `#2563EB` |
-| focus | `#2563EB` |
-| info | `#0369A1` |
-| success | `#15803D` |
-| warning | `#B45309` |
-| danger | `#DC2626` |
+| border         | `#E2E8F0` |
+| primary        | `#2563EB` |
+| focus          | `#2563EB` |
+| info           | `#0369A1` |
+| success        | `#15803D` |
+| warning        | `#B45309` |
+| danger         | `#B91C1C` |
 
 Base escura proposta:
 
-| Papel | Valor |
-| --- | --- |
-| canvas | `#0F172A` |
-| surface | `#111827` |
-| surface-muted | `#1E293B` |
-| text-primary | `#F8FAFC` |
+| Papel          | Valor     |
+| -------------- | --------- |
+| canvas         | `#0F172A` |
+| surface        | `#111827` |
+| surface-muted  | `#1E293B` |
+| text-primary   | `#F8FAFC` |
 | text-secondary | `#CBD5E1` |
-| border | `#334155` |
-| primary | `#60A5FA` |
-| focus | `#93C5FD` |
-| info | `#7DD3FC` |
-| success | `#86EFAC` |
-| warning | `#FCD34D` |
-| danger | `#FDA4AF` |
+| border         | `#334155` |
+| primary        | `#60A5FA` |
+| focus          | `#93C5FD` |
+| info           | `#7DD3FC` |
+| success        | `#86EFAC` |
+| warning        | `#FCD34D` |
+| danger         | `#FDA4AF` |
 
 Cada estado terá tokens separados para conteúdo, fundo sutil e borda. Para ações preenchidas, o token de conteúdo sobre a cor de ação será escolhido e testado como par, em vez de pressupor que branco serve para todo tom. Estados desabilitados continuam semanticamente distintos, sem serem usados para transmitir informação essencial.
 

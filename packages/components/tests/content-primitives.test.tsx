@@ -9,10 +9,17 @@ import { renderWithTheme } from './test-utils';
 
 describe('AdsBadge', () => {
 	it('renders textual status variants and a stable public class', () => {
-		render(<AdsBadge variant="success">Ativo</AdsBadge>);
+		render(
+			<>
+				<AdsBadge variant="neutral">Rascunho</AdsBadge>
+				<AdsBadge variant="success">Ativo</AdsBadge>
+			</>,
+		);
 
 		const badge = screen.getByText('Ativo');
 		expect(badge).toHaveClass('ads-badge', 'bg-success');
+		expect(screen.getByText('Rascunho')).toHaveClass('bg-surface-muted', 'py-0.5');
+		expect(badge).toHaveClass('py-0.5');
 	});
 
 	it.each(['light', 'dark'] as const)('renders responsively in the %s theme', (theme) => {
@@ -24,6 +31,10 @@ describe('AdsBadge', () => {
 
 	it('does not have detectable accessibility violations', async () => {
 		const { container } = render(<AdsBadge variant="warning">Atenção</AdsBadge>);
+		expect(screen.getByText('Atenção')).toHaveClass(
+			'bg-warning',
+			'text-[var(--ads-color-on-primary)]',
+		);
 
 		const results = await axe.run(container);
 		expect(results.violations).toEqual([]);

@@ -2,7 +2,9 @@
 
 import { useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
+import { AdsIcon } from './icon.js';
 import { OverlayPortal, useEscapeKey, useOverlayFocus, useStableId } from './overlay-utils.js';
+import { AdsTypography } from './typography.js';
 
 interface AdsOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>, 'role' | 'title'> {
 	open: boolean;
@@ -68,7 +70,7 @@ function OverlayPanel({
 					aria-labelledby={title ? titleId : props['aria-labelledby']}
 					aria-modal="true"
 					className={classNames(
-						'ads-overlay-panel relative max-h-[calc(100vh-2rem)] overflow-auto border border-border bg-surface-raised p-6 text-text shadow-md outline-none',
+						'ads-overlay-panel relative max-h-[calc(100vh-2rem)] overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-md outline-none',
 						isDrawer
 							? placement === 'left'
 								? 'mr-auto h-full max-h-none w-[min(24rem,100vw)] rounded-r-lg'
@@ -83,24 +85,31 @@ function OverlayPanel({
 					{showCloseButton ? (
 						<button
 							aria-label={closeLabel}
-							className="absolute right-4 top-4 rounded-md p-1 text-text-muted hover:bg-surface focus-visible:outline focus-visible:outline-2 focus-visible:outline-primary"
+							className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-overlay-close-background text-overlay-close-content transition-[background-color,color,transform] duration-150 hover:bg-overlay-close-background-hover active:scale-95 motion-reduce:transform-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 							onClick={() => onOpenChange(false)}
 							type="button"
 						>
-							<span aria-hidden="true">×</span>
+							<AdsIcon name="close" size="sm" />
 						</button>
 					) : null}
 					{title ? (
-						<h2 className="pr-8 text-xl font-semibold" id={titleId}>
+						<AdsTypography as="h2" className="pr-8" id={titleId} variant="heading4">
 							{title}
-						</h2>
+						</AdsTypography>
 					) : null}
 					{description ? (
-						<p className="mt-2 text-text-muted" id={descriptionId}>
+						<AdsTypography className="mt-2" id={descriptionId} variant="muted">
 							{description}
-						</p>
+						</AdsTypography>
 					) : null}
-					<div className={classNames(title || description ? 'mt-5' : undefined)}>{children}</div>
+					<div
+						className={classNames(
+							'text-sm leading-normal',
+							title || description ? 'mt-5' : undefined,
+						)}
+					>
+						{children}
+					</div>
 				</div>
 			</div>
 		</OverlayPortal>

@@ -16,7 +16,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Camadas acessíveis para diálogos, contexto ancorado e notificações transitórias.',
+					'Camadas acessíveis para diálogos, contexto ancorado e notificações transitórias, com tooltip por hover e foco. Os controles de fechar acompanham o tema selecionado na barra de ferramentas.',
 			},
 		},
 	},

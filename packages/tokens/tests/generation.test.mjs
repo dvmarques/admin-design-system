@@ -51,3 +51,41 @@ test('default content and action colors meet the AA contrast baseline', () => {
 	assert.ok(contrast(source.slate900, source.slate50) >= 4.5);
 	assert.ok(contrast(source.white, source.blue500) >= 4.5);
 });
+
+function resolveThemeValue(value) {
+	if (!value.startsWith('{')) return value;
+	return value
+		.slice(1, -1)
+		.split('.')
+		.reduce((current, segment) => current[segment], tokenSource);
+}
+
+test('semantic content, actions, states, and focus meet AA contrast in both themes', () => {
+	for (const themeName of ['light', 'dark']) {
+		const theme = tokenSource.color.semantic[themeName];
+		const pair = (foreground, background) =>
+			assert.ok(
+				contrast(resolveThemeValue(theme[foreground]), resolveThemeValue(theme[background])) >= 4.5,
+				`${themeName}: ${foreground} on ${background}`,
+			);
+
+		pair('text', 'surface');
+		pair('textMuted', 'surface');
+		pair('onPrimary', 'primary');
+		pair('onPrimary', 'success');
+		pair('onPrimary', 'warning');
+		pair('onPrimary', 'danger');
+		pair('info', 'infoBackground');
+		pair('success', 'successBackground');
+		pair('warning', 'warningBackground');
+		pair('danger', 'dangerBackground');
+		pair('focus', 'surface');
+		pair('overlayCloseContent', 'overlayCloseBackground');
+		pair('overlayCloseContent', 'overlayCloseBackgroundHover');
+		assert.ok(
+			contrast(resolveThemeValue(theme.focus), resolveThemeValue(theme.overlayCloseBackground)) >=
+				3,
+			`${themeName}: focus on overlayCloseBackground`,
+		);
+	}
+});

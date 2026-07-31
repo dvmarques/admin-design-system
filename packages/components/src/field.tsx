@@ -112,7 +112,15 @@ export function AdsInputGroup({
 	...props
 }: AdsInputGroupProps) {
 	return (
-		<div {...props} className={classNames('ads-input-group flex items-stretch', className)}>
+		<div
+			{...props}
+			className={classNames(
+				'ads-input-group flex items-stretch',
+				startContent ? '[&>.ads-form-control]:rounded-l-none' : undefined,
+				endContent ? '[&>.ads-form-control]:rounded-r-none' : undefined,
+				className,
+			)}
+		>
 			{startContent ? (
 				<span className="ads-input-group__start inline-flex items-center rounded-l-md border border-r-0 border-border bg-surface-raised px-3 text-text-muted">
 					{startContent}

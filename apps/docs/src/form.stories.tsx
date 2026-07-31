@@ -17,7 +17,8 @@ const meta = {
 	parameters: {
 		docs: {
 			description: {
-				component: 'Controles nativos acessíveis para coleta e seleção de dados administrativos.',
+				component:
+					'Controles nativos acessíveis e compactos para coleta e seleção de dados administrativos.',
 			},
 		},
 	},

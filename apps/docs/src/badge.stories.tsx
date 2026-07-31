@@ -8,7 +8,8 @@ const meta = {
 	parameters: {
 		docs: {
 			description: {
-				component: 'Rótulo textual compacto para status, sem depender somente de cor.',
+				component:
+					'Rótulo textual compacto para status, com contraste legível nos temas claro e escuro.',
 			},
 		},
 	},

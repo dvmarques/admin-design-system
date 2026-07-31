@@ -17,7 +17,7 @@ export interface StyleFixtureProps extends HTMLAttributes<HTMLDivElement> {
 export function StyleFixture({ className, variant = 'neutral', ...props }: StyleFixtureProps) {
 	return (
 		<div
-			className={classNames('rounded-md border p-4 shadow-sm', fixtureVariants[variant], className)}
+			className={classNames('rounded-lg border p-4 shadow-sm', fixtureVariants[variant], className)}
 			{...props}
 		/>
 	);

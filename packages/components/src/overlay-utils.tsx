@@ -38,7 +38,33 @@ export function useMounted() {
 
 export function OverlayPortal({ children }: { children: ReactNode }) {
 	const mounted = useMounted();
-	return mounted ? createPortal(children, document.body) : null;
+	const sourceRef = useRef<HTMLSpanElement>(null);
+	const [theme, setTheme] = useState<string | null>(null);
+
+	useLayoutEffect(() => {
+		const source = sourceRef.current;
+		if (!source) return;
+		const themeRoot = source.closest<HTMLElement>('[data-theme]') ?? document.documentElement;
+		const syncTheme = () => setTheme(themeRoot.getAttribute('data-theme'));
+		syncTheme();
+		const observer = new MutationObserver(syncTheme);
+		observer.observe(themeRoot, { attributes: true, attributeFilter: ['data-theme'] });
+		return () => observer.disconnect();
+	}, []);
+
+	return (
+		<>
+			<span aria-hidden="true" hidden ref={sourceRef} />
+			{mounted
+				? createPortal(
+						<div className="contents" data-ads-overlay-root="" data-theme={theme ?? undefined}>
+							{children}
+						</div>,
+						document.body,
+					)
+				: null}
+		</>
+	);
 }
 
 export function useOverlayFocus(

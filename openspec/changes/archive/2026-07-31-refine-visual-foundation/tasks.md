@@ -1,0 +1,61 @@
+## 1. Inventário e contrato de tokens
+
+- [x] 1.1 Inventariar os tokens CSS e metadados TypeScript atuais, seus consumidores e quaisquer valores visuais codificados nos componentes existentes.
+- [x] 1.2 Mapear tokens públicos que exigem aliases de compatibilidade e documentar qualquer impacto de migração antes de remover ou renomear valores.
+- [x] 1.3 Definir os nomes públicos `--ads-*` para família, escala, pesos, alturas de linha, papéis de superfície/conteúdo, foco e estados semânticos, mantendo equivalência nos metadados TypeScript.
+
+## 2. Fundação tipográfica e de temas
+
+- [x] 2.1 Implementar a pilha tipográfica padrão `Inter, Roboto, sans-serif`, permitindo sobrescrita pelo token público documentado e excluindo fontes proprietárias da distribuição.
+- [x] 2.2 Adicionar aos artefatos distribuídos os avisos SIL Open Font License 1.1 (Inter) e Apache License 2.0 (Roboto), caso seus arquivos sejam empacotados.
+- [x] 2.3 Implementar a escala `12/14/16/18/20/24/30/36 px`, pesos `400/500/600/700` e alturas de linha semânticas nos tokens globais.
+- [x] 2.4 Implementar os papéis de canvas, superfícies, conteúdo, bordas, ação primária e foco para os temas claro e escuro conforme a base aprovada no design.
+- [x] 2.5 Implementar tokens de conteúdo, fundo sutil, borda e interação para os estados informativo, sucesso, aviso e erro nos dois temas.
+- [x] 2.6 Atualizar os mapeamentos estáticos do Tailwind para consumir exclusivamente os tokens semânticos revisados, sem gerar classes dinamicamente.
+
+## 3. Propagação pelos componentes existentes
+
+- [x] 3.1 Migrar os componentes existentes que usam valores tipográficos ou cromáticos específicos para os papéis globais revisados, preservando suas APIs públicas.
+- [x] 3.2 Revisar estados de foco, desabilitado, erro, carregamento e vazio já suportados para assegurar que usem tokens adequados e não dependam apenas de cor.
+- [x] 3.3 Validar a aparência responsiva dos componentes afetados em larguras reduzidas, com a escala tipográfica e os fallbacks de fonte configurados.
+
+## 4. Documentação e regressão visual
+
+- [x] 4.1 Atualizar a documentação dos tokens com a pilha tipográfica, escala, pesos, paletas claro/escuro, estados e exemplos de sobrescrita por consumidores.
+- [x] 4.2 Atualizar as histórias dos componentes existentes afetados para demonstrar seus estados representativos nos temas claro e escuro, sem criar novas famílias de componentes.
+- [x] 4.3 Atualizar e revisar os snapshots visuais aprovados para os componentes e estados afetados nos dois temas.
+
+## 5. Acessibilidade e validação de distribuição
+
+- [x] 5.1 Adicionar ou atualizar a verificação automatizada dos pares críticos de contraste para texto, controles, estados e foco, com mínimo WCAG 2.2 AA aplicável em ambos os temas.
+- [x] 5.2 Executar testes de acessibilidade aplicáveis para foco visível, navegação por teclado e estados semânticos dos componentes afetados.
+- [x] 5.3 Validar o CSS compilado e os tokens públicos na aplicação Next.js de demonstração, incluindo alternância de tema sem recompilação da biblioteca.
+- [x] 5.4 Executar formatação, lint, tipos, testes, build e validação visual; corrigir falhas antes de considerar a change pronta.
+- [x] 5.5 Executar `npm run format` e confirmar que todos os arquivos novos e alterados estão formatados antes de arquivar a change.
+
+## 6. Alinhamento ao sistema de referências
+
+- [x] 6.1 Atualizar os tokens compartilhados de dimensão e raio para controles de `32/36/40 px`, raio de controle de `6 px` e raio de superfície/overlay de `8 px`.
+- [x] 6.2 Propagar a base de corpo e controles de `14 px` e a hierarquia semântica de títulos pelos componentes existentes, incluindo dialogs, drawers, toasts e tooltips.
+- [x] 6.3 Alinhar botões, badges, controles de formulário e controles somente de ícone existentes à densidade, forma e alinhamento óptico compartilhados, sem criar componentes.
+- [x] 6.4 Refinar superfícies, bordas, foco e estados dos temas claro e escuro existentes para preservar a aparência sóbria e acessível.
+- [x] 6.5 Atualizar histórias e snapshots visuais existentes para cobrir a densidade refinada nos dois temas.
+- [x] 6.6 Executar formatação, geração de tokens, testes, build, validação OpenSpec e regressão visual; corrigir as falhas resultantes.
+
+## 7. Correções de densidade e interação
+
+- [x] 7.1 Melhorar o contraste do badge de status pendente no tema escuro e reduzir a altura/padding dos badges para uma proporção compacta.
+- [x] 7.2 Adicionar feedback visual de pressionamento aos botões, respeitando movimento reduzido e estados desabilitados.
+- [x] 7.3 Reduzir a altura e o padding vertical do input padrão mantendo a área e hierarquia definidas pelos tokens.
+- [x] 7.4 Padronizar os botões de fechar de dialog, drawer e toast com dimensão, ícone, hover, active e foco consistentes.
+- [x] 7.5 Corrigir a abertura do tooltip por hover e preservar suporte a foco por teclado.
+- [x] 7.6 Atualizar testes, histórias e snapshots afetados; executar a validação completa e corrigir falhas.
+
+## 8. Tema e contraste dos controles de fechar
+
+- [x] 8.1 Adicionar tokens semânticos de fundo, conteúdo e hover do controle de fechar para os temas claro e escuro, gerar os artefatos CSS/TypeScript e documentar os novos papéis.
+- [x] 8.2 Atualizar o host de `OverlayPortal` para preservar o `data-theme` explícito mais próximo do ponto de origem e sincronizar mudanças enquanto o overlay estiver aberto.
+- [x] 8.3 Aplicar os novos tokens ao controle de fechar compartilhado por dialog, drawer e toast, preservando dimensão de `32 px`, SVG, feedback de pressionamento e foco.
+- [x] 8.4 Adicionar testes das cores computadas e do contraste do ícone nos estados padrão, hover e foco para os temas claro e escuro.
+- [x] 8.5 Adicionar testes de portal em escopo local, troca de tema com overlay aberto e histórias/snapshots de dialog, drawer e toast nos dois temas.
+- [x] 8.6 Executar geração de tokens, formatação, testes, build, Storybook, Playwright e validação OpenSpec; corrigir todas as falhas antes de concluir a etapa.

@@ -21,7 +21,11 @@ describe('text form controls', () => {
 		const input = screen.getByRole('textbox', { name: 'Nome' });
 		expect(input).toHaveAttribute('name', 'name');
 		expect(input).toHaveAttribute('aria-invalid', 'true');
-		expect(input).toHaveClass('ads-form-control', 'border-form-invalid');
+		expect(input).toHaveClass(
+			'ads-form-control',
+			'border-form-invalid',
+			'min-h-[var(--ads-dimension-field-md)]',
+		);
 	});
 
 	it('renders textarea and select with native interaction', () => {
@@ -47,7 +51,7 @@ describe('text form controls', () => {
 			theme,
 		);
 		expect(container.firstElementChild).toHaveAttribute('data-theme', theme);
-		expect(screen.getByRole('textbox', { name: 'E-mail' })).toHaveClass('custom-input', 'text-lg');
+		expect(screen.getByRole('textbox', { name: 'E-mail' })).toHaveClass('custom-input', 'text-sm');
 	});
 
 	it('has no detectable accessibility violations', async () => {
@@ -82,6 +86,46 @@ describe('selection form controls', () => {
 		expect(checkbox).toHaveAttribute('aria-invalid', 'true');
 		checkbox.focus();
 		expect(checkbox).toHaveFocus();
+	});
+
+	it.each(['light', 'dark'] as const)(
+		'uses semantic field backgrounds for unchecked %s checkboxes and radios',
+		(theme) => {
+			renderWithTheme(
+				<>
+					<AdsCheckbox label="Aceito" />
+					<AdsRadio label="Opção" name="choice" value="option" />
+				</>,
+				theme,
+			);
+
+			for (const label of ['Aceito', 'Opção']) {
+				const indicator = screen.getByRole(label === 'Aceito' ? 'checkbox' : 'radio', {
+					name: label,
+				}).nextElementSibling;
+				expect(indicator).toHaveClass('bg-form-background', 'border-border');
+			}
+		},
+	);
+
+	it('centers a visible switch thumb for every size and moves it by the matching track distance', () => {
+		render(
+			<>
+				<AdsSwitch label="Pequeno" size="sm" />
+				<AdsSwitch label="Médio" size="md" />
+				<AdsSwitch label="Grande" size="lg" />
+			</>,
+		);
+
+		const [small, medium, large] = ['Pequeno', 'Médio', 'Grande'].map(
+			(label) => screen.getByRole('checkbox', { name: label }).nextElementSibling as HTMLElement,
+		);
+		expect(small).toHaveClass('h-5', 'w-9', 'peer-checked:[&>span]:translate-x-4');
+		expect(small.firstElementChild).toHaveClass('top-0.5', 'bg-surface-muted');
+		expect(medium).toHaveClass('h-6', 'w-10', 'peer-checked:[&>span]:translate-x-4');
+		expect(medium.firstElementChild).toHaveClass('top-1', 'bg-surface-muted');
+		expect(large).toHaveClass('h-7', 'w-12', 'peer-checked:[&>span]:translate-x-5');
+		expect(large.firstElementChild).toHaveClass('top-1', 'h-5', 'w-5', 'bg-surface-muted');
 	});
 
 	it.each(['light', 'dark'] as const)('renders selection controls in the %s theme', (theme) => {
@@ -134,6 +178,10 @@ describe('field composition', () => {
 			</>,
 		);
 		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveAttribute('id', 'value');
+		expect(container.querySelector('.ads-input-group')).toHaveClass(
+			'[&>.ads-form-control]:rounded-l-none',
+		);
+		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveClass('rounded-md');
 		expect(screen.getByRole('group', { name: 'Canais' })).toBeInTheDocument();
 		expect((await axe.run(container)).violations).toEqual([]);
 	});

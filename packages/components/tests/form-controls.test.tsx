@@ -88,6 +88,26 @@ describe('selection form controls', () => {
 		expect(checkbox).toHaveFocus();
 	});
 
+	it.each(['light', 'dark'] as const)(
+		'uses semantic field backgrounds for unchecked %s checkboxes and radios',
+		(theme) => {
+			renderWithTheme(
+				<>
+					<AdsCheckbox label="Aceito" />
+					<AdsRadio label="Opção" name="choice" value="option" />
+				</>,
+				theme,
+			);
+
+			for (const label of ['Aceito', 'Opção']) {
+				const indicator = screen.getByRole(label === 'Aceito' ? 'checkbox' : 'radio', {
+					name: label,
+				}).nextElementSibling;
+				expect(indicator).toHaveClass('bg-form-background', 'border-border');
+			}
+		},
+	);
+
 	it('centers a visible switch thumb for every size and moves it by the matching track distance', () => {
 		render(
 			<>
@@ -158,6 +178,10 @@ describe('field composition', () => {
 			</>,
 		);
 		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveAttribute('id', 'value');
+		expect(container.querySelector('.ads-input-group')).toHaveClass(
+			'[&>.ads-form-control]:rounded-l-none',
+		);
+		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveClass('rounded-md');
 		expect(screen.getByRole('group', { name: 'Canais' })).toBeInTheDocument();
 		expect((await axe.run(container)).violations).toEqual([]);
 	});

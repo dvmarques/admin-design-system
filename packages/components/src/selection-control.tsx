@@ -40,6 +40,10 @@ function selectionControl(type: 'checkbox' | 'radio', props: AdsSelectionControl
 		validationState = 'default',
 		...inputProps
 	} = props;
+	const indicatorClass =
+		type === 'checkbox'
+			? 'rounded-sm peer-checked:after:absolute peer-checked:after:left-1/2 peer-checked:after:top-1/2 peer-checked:after:h-2 peer-checked:after:w-1 peer-checked:after:-translate-x-1/2 peer-checked:after:-translate-y-[60%] peer-checked:after:rotate-45 peer-checked:after:border-b-2 peer-checked:after:border-r-2 peer-checked:after:border-surface'
+			: 'rounded-full peer-checked:after:absolute peer-checked:after:left-1/2 peer-checked:after:top-1/2 peer-checked:after:h-2 peer-checked:after:w-2 peer-checked:after:-translate-x-1/2 peer-checked:after:-translate-y-1/2 peer-checked:after:rounded-full peer-checked:after:bg-surface';
 	return (
 		<label
 			className={classNames(
@@ -50,12 +54,18 @@ function selectionControl(type: 'checkbox' | 'radio', props: AdsSelectionControl
 			<input
 				{...inputProps}
 				aria-invalid={validationState === 'error' ? true : ariaInvalid}
-				className={classNames(
-					'ads-selection-control__input accent-primary focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-form-border-focus disabled:cursor-not-allowed disabled:opacity-50',
-					selectionSizes[size],
-					validationState === 'error' && 'accent-form-invalid',
-				)}
+				className={classNames('ads-selection-control__input peer sr-only')}
 				type={type}
+			/>
+			<span
+				aria-hidden="true"
+				className={classNames(
+					'pointer-events-none relative shrink-0 border border-border bg-form-background transition-[background-color,border-color] duration-150 peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-form-border-focus peer-disabled:opacity-50',
+					selectionSizes[size],
+					indicatorClass,
+					validationState === 'error' &&
+						'border-form-invalid peer-checked:border-form-invalid peer-checked:bg-form-invalid',
+				)}
 			/>
 			{label ? <span>{label}</span> : null}
 		</label>

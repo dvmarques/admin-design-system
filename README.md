@@ -74,7 +74,10 @@ Next.js, documentação e controles de qualidade. A change
 os controles e composições de formulário, e `add-overlay-components` concluiu
 `AdsDialog`, `AdsDrawer`, `AdsTooltip`, `AdsPopover` e `AdsToast`, incluindo
 foco, teclado, temas, CSS distribuído, documentação, testes e integração no
-admin demo.
+admin demo. A change `add-navigation-components` concluiu `AdsBreadcrumb`,
+`AdsNav`, `AdsTabs`, `AdsDropdown` e `AdsPagination`, com interações por
+teclado, temas, CSS distribuído, documentação, testes, snapshots visuais e
+consumo pela aplicação Next.js de demonstração.
 
 O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:
@@ -97,14 +100,13 @@ Get-ChildItem openspec/changes/archive
 
 ## Próximo passo
 
-Criar a change `add-navigation-components`, começando por breadcrumbs, tabs,
-nav, dropdowns, paginação e padrões de navegação acessíveis por teclado:
+Planejar a change `add-data-display-components`, começando por tabelas,
+listas, cards, indicadores de progresso, estados vazios e padrões de
+apresentação de dados administrativos:
 
 ```powershell
-openspec.cmd new change add-navigation-components `
-  --description "Adicionar componentes de navegação reutilizáveis ao Admin Design System" `
-  --goal "Disponibilizar navegação acessível, tematizável e compatível com Next.js"
+openspec-propose add-data-display-components
 ```
 
-Depois, use `openspec-propose` para elaborar a proposta, specs, design e
-tarefas dessa nova change.
+Isso criará a proposta, specs, design e tarefas da próxima família de
+componentes.

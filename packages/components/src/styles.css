@@ -67,4 +67,19 @@
 	.ads-toast {
 		isolation: isolate;
 	}
+
+	.ads-breadcrumb,
+	.ads-nav,
+	.ads-tabs,
+	.ads-tabs-list,
+	.ads-tabs-trigger,
+	.ads-tabs-panel,
+	.ads-dropdown,
+	.ads-dropdown-trigger,
+	.ads-dropdown-content,
+	.ads-dropdown-item,
+	.ads-pagination,
+	.ads-pagination-item {
+		isolation: isolate;
+	}
 }

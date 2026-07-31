@@ -20,6 +20,7 @@ import { cookies } from 'next/headers';
 import { resolveTheme } from '../lib/theme';
 import { ThemeControl } from './theme-control';
 import { OverlayShowcase } from './overlay-showcase';
+import { NavigationShowcase } from './navigation-showcase';
 
 export default async function HomePage() {
 	const cookieStore = await cookies();
@@ -127,6 +128,15 @@ export default async function HomePage() {
 				</AdsTypography>
 				<AdsSurface variant="raised">
 					<OverlayShowcase />
+				</AdsSurface>
+			</section>
+
+			<section aria-labelledby="navigation" style={{ marginTop: '2rem' }}>
+				<AdsTypography as="h2" id="navigation" variant="heading2">
+					Navegação pública
+				</AdsTypography>
+				<AdsSurface variant="raised">
+					<NavigationShowcase />
 				</AdsSurface>
 			</section>
 		</main>

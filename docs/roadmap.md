@@ -90,13 +90,31 @@ sincronizadas ao conjunto principal e a change foi arquivada em
 Adicionar breadcrumbs, tabs, nav, dropdowns, paginação e padrões de
 navegação acessíveis por teclado.
 
-**Próximo passo:** iniciar o planejamento desta change com
-`openspec-propose add-navigation-components`.
+**Status: concluída e arquivada em 2026-07-31.**
+
+Entregas principais:
+
+- `AdsBreadcrumb`, `AdsNav` e `AdsTabs`, com semântica, foco visível,
+  navegação por teclado, temas e composição independente de roteador;
+- `AdsDropdown`, com portal, alinhamento ancorado, posicionamento responsivo,
+  foco gerenciado, clique externo e itens de menu desabilitados;
+- `AdsPagination`, com estados atual e desabilitado, intervalo compacto e
+  integração por callbacks ou links providos pela aplicação;
+- CSS distribuído, documentação no Storybook, exemplos no admin demo,
+  validação de consumo público, testes de acessibilidade e snapshots visuais;
+- sincronização das specs `navigation-structure`, `navigation-menus` e
+  `pagination` ao conjunto principal.
+
+A change está arquivada em
+`openspec/changes/archive/2026-07-31-add-navigation-components`.
 
 ## 6. `add-data-display-components`
 
 Adicionar tabelas, listas, cards, indicadores de progresso, estados
 vazios e padrões de apresentação de dados administrativos.
+
+**Próximo passo:** iniciar o planejamento desta change com
+`openspec-propose add-data-display-components`.
 
 ## 7. `add-admin-shell`
 

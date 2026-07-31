@@ -70,9 +70,13 @@ monorepo, design tokens, temas, distribuição dos pacotes, integração com
 Next.js, documentação e controles de qualidade. A change
 `add-core-primitives` concluiu os componentes públicos fundamentais:
 `AdsButton`, `AdsBadge`, `AdsAvatar`, `AdsSurface`, `AdsTypography`,
-`AdsIcon` e `AdsLoadingIndicator`.
+`AdsIcon` e `AdsLoadingIndicator`. A change `add-form-components` concluiu
+os controles e composições de formulário, e `add-overlay-components` concluiu
+`AdsDialog`, `AdsDrawer`, `AdsTooltip`, `AdsPopover` e `AdsToast`, incluindo
+foco, teclado, temas, CSS distribuído, documentação, testes e integração no
+admin demo.
 
-O histórico das duas changes está arquivado no OpenSpec. Consulte as mudanças
+O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:
 
 ```powershell
@@ -93,14 +97,13 @@ Get-ChildItem openspec/changes/archive
 
 ## Próximo passo
 
-Criar a change `add-form-components`, começando por controles de formulário
-acessíveis e tematizáveis, como campos de texto, textarea, checkbox, radio,
-switch e select:
+Criar a change `add-navigation-components`, começando por breadcrumbs, tabs,
+nav, dropdowns, paginação e padrões de navegação acessíveis por teclado:
 
 ```powershell
-openspec.cmd new change add-form-components `
-  --description "Adicionar controles de formulário reutilizáveis ao Admin Design System" `
-  --goal "Disponibilizar campos acessíveis, tematizáveis e compatíveis com Next.js"
+openspec.cmd new change add-navigation-components `
+  --description "Adicionar componentes de navegação reutilizáveis ao Admin Design System" `
+  --goal "Disponibilizar navegação acessível, tematizável e compatível com Next.js"
 ```
 
 Depois, use `openspec-propose` para elaborar a proposta, specs, design e

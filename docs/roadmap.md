@@ -67,10 +67,31 @@ Entregas principais:
 Adicionar modal, drawer ou offcanvas, tooltip, popover, toast e outros
 elementos apresentados sobre o conteúdo da página.
 
+**Status: concluída e arquivada em 2026-07-30.**
+
+Entregas principais:
+
+- `AdsDialog` e `AdsDrawer`, com portal seguro, backdrop configurável,
+  fechamento por Escape e retorno de foco;
+- `AdsTooltip` e `AdsPopover`, com associação ARIA, posicionamento responsivo,
+  clique externo e suporte a teclado;
+- `AdsToast`, com variantes semânticas, regiões `status`/`alert` e descarte
+  acessível;
+- tokens semânticos e CSS distribuído para overlays nos temas claro e escuro;
+- documentação Storybook, exemplos no admin demo, testes unitários,
+  acessibilidade, consumo público, Playwright e snapshots visuais.
+
+As specs `overlay-dialogs`, `anchored-overlays` e `toast-notifications` foram
+sincronizadas ao conjunto principal e a change foi arquivada em
+`openspec/changes/archive/2026-07-30-add-overlay-components`.
+
 ## 5. `add-navigation-components`
 
 Adicionar breadcrumbs, tabs, nav, dropdowns, paginação e padrões de
 navegação acessíveis por teclado.
+
+**Próximo passo:** iniciar o planejamento desta change com
+`openspec-propose add-navigation-components`.
 
 ## 6. `add-data-display-components`
 

@@ -17,6 +17,11 @@ import {
 	AdsSwitch,
 	AdsTextarea,
 	AdsTypography,
+	AdsDialog,
+	AdsDrawer,
+	AdsPopover,
+	AdsToast,
+	AdsTooltip,
 } from '@admin-ds/components';
 
 describe('public component consumption', () => {
@@ -37,7 +42,12 @@ describe('public component consumption', () => {
 			AdsSelectionGroup,
 			AdsSwitch,
 			AdsTextarea,
-		]).toHaveLength(15);
+			AdsDialog,
+			AdsDrawer,
+			AdsPopover,
+			AdsToast,
+			AdsTooltip,
+		]).toHaveLength(20);
 	});
 
 	it('includes primitive styles in the distributed CSS', async () => {
@@ -53,5 +63,7 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.text-3xl/);
 		expect(css).toMatch(/\.bg-form-background/);
 		expect(css).toMatch(/\.border-form-invalid/);
+		expect(css).toMatch(/\.ads-overlay-panel/);
+		expect(css).toMatch(/\.ads-toast/);
 	});
 });

@@ -45,6 +45,7 @@ export const tokenSource = {
 				formBorderFocus: '{color.reference.blue500}',
 				formInvalid: '{color.reference.red500}',
 				formSuccess: '{color.reference.emerald500}',
+				overlayBackdrop: 'rgb(15 23 42 / 0.64)',
 			},
 			dark: {
 				background: '{color.reference.slate900}',
@@ -64,6 +65,7 @@ export const tokenSource = {
 				formBorderFocus: '{color.reference.blue500}',
 				formInvalid: '{color.reference.red500}',
 				formSuccess: '{color.reference.emerald500}',
+				overlayBackdrop: 'rgb(15 23 42 / 0.78)',
 			},
 		},
 	},

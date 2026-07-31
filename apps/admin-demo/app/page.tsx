@@ -19,6 +19,7 @@ import { tokenValues } from '@admin-ds/tokens';
 import { cookies } from 'next/headers';
 import { resolveTheme } from '../lib/theme';
 import { ThemeControl } from './theme-control';
+import { OverlayShowcase } from './overlay-showcase';
 
 export default async function HomePage() {
 	const cookieStore = await cookies();
@@ -118,6 +119,15 @@ export default async function HomePage() {
 				<AdsTypography>
 					{Object.keys(tokenValues).length} tokens estão disponíveis pela API pública.
 				</AdsTypography>
+			</section>
+
+			<section aria-labelledby="overlays" style={{ marginTop: '2rem' }}>
+				<AdsTypography as="h2" id="overlays" variant="heading2">
+					Overlays públicos
+				</AdsTypography>
+				<AdsSurface variant="raised">
+					<OverlayShowcase />
+				</AdsSurface>
 			</section>
 		</main>
 	);

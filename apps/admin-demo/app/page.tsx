@@ -21,6 +21,7 @@ import { resolveTheme } from '../lib/theme';
 import { ThemeControl } from './theme-control';
 import { OverlayShowcase } from './overlay-showcase';
 import { NavigationShowcase } from './navigation-showcase';
+import { EvaluationShowcase } from './evaluation-showcase';
 
 export default async function HomePage() {
 	const cookieStore = await cookies();
@@ -130,6 +131,8 @@ export default async function HomePage() {
 						</div>
 					</AdsSurface>
 				</section>
+
+				<EvaluationShowcase />
 
 				<div className="demo-utility-grid">
 					<section aria-labelledby="tokens" className="demo-section demo-section--compact">

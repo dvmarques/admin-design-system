@@ -30,6 +30,7 @@ describe('navigation components', () => {
 		expect(screen.getByRole('link', { name: 'Dashboard' })).toHaveClass(
 			'min-h-10',
 			'bg-surface-selected',
+			'text-on-surface-selected',
 		);
 	});
 
@@ -54,7 +55,12 @@ describe('navigation components', () => {
 		fireEvent.keyDown(second, { key: 'Enter' });
 		expect(screen.getByText('Painel dois')).toBeInTheDocument();
 		expect(second).toHaveAttribute('data-state', 'active');
-		expect(second).toHaveClass('bg-surface-selected', 'border-primary', 'border-b-2');
+		expect(second).toHaveClass(
+			'bg-surface-selected',
+			'text-on-surface-selected',
+			'border-primary',
+			'border-b-2',
+		);
 	});
 
 	it('opens dropdown and restores focus after Escape', () => {

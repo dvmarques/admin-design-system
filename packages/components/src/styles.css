@@ -26,6 +26,7 @@
 	--color-surface-muted: var(--ads-color-surface-muted);
 	--color-surface-hover: var(--ads-color-surface-hover);
 	--color-surface-selected: var(--ads-color-surface-selected);
+	--color-on-surface-selected: var(--ads-color-on-surface-selected);
 	--color-text: var(--ads-color-text);
 	--color-text-primary: var(--ads-color-text-primary);
 	--color-text-muted: var(--ads-color-text-muted);

@@ -98,7 +98,7 @@ export function AdsNav({
 								className={classNames(
 									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none',
 									item.current
-										? 'border-primary bg-surface-selected text-text-primary shadow-sm hover:bg-surface-hover'
+										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
 										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
 								)}
 								href={item.href}
@@ -114,7 +114,7 @@ export function AdsNav({
 								className={classNames(
 									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
 									item.current
-										? 'border-primary bg-surface-selected text-text-primary shadow-sm hover:bg-surface-hover'
+										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
 										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
 								)}
 							>
@@ -208,7 +208,7 @@ function AdsTabsTrigger({
 			aria-selected={active}
 			className={classNames(
 				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent border-b-border bg-transparent px-4 py-2 text-sm font-medium text-primary hover:bg-surface-hover hover:text-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
-				active && 'border-primary border-b-2 bg-surface-selected text-text-primary',
+				active && 'border-primary border-b-2 bg-surface-selected text-on-surface-selected',
 				className,
 			)}
 			data-state={active ? 'active' : 'inactive'}

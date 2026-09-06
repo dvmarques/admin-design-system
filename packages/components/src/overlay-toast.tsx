@@ -43,7 +43,7 @@ export function AdsToast({
 				aria-atomic="true"
 				aria-live={isError ? 'assertive' : 'polite'}
 				className={classNames(
-					'ads-toast fixed bottom-4 right-4 z-50 flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 rounded-lg border bg-surface-raised p-4 font-sans text-text shadow-md',
+					'ads-toast fixed bottom-4 right-4 z-[var(--ads-layer-toast)] flex w-[min(24rem,calc(100vw-2rem))] items-start gap-3 rounded-lg border bg-surface-raised p-4 font-sans text-text shadow-lg max-md:inset-x-4 max-md:bottom-4 max-md:right-auto max-md:w-auto max-md:p-3',
 					toastVariants[variant],
 					className,
 				)}

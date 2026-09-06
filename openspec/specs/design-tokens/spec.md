@@ -78,3 +78,12 @@ O sistema MUST disponibilizar tokens semânticos de fundo, conteúdo e fundo de 
 
 - **WHEN** dialog, drawer ou toast apresenta seu controle de fechar
 - **THEN** o fundo e o ícone são resolvidos pelos papéis semânticos do tema ativo, sem valores cromáticos locais no componente
+
+### Requirement: Papéis de interação, elevação e camada são explícitos
+
+O sistema MUST disponibilizar tokens semânticos aditivos para superfície de hover, superfície selecionada, borda forte, anel e offset de foco, hover de ações, três níveis de elevação e camadas de overlay. Os tokens MUST ter valores nos dois temas e preservar a possibilidade de sobrescrita por variáveis CSS.
+
+#### Scenario: Consumidor personaliza o foco
+
+- **WHEN** uma aplicação sobrescreve os tokens de anel e offset de foco
+- **THEN** os componentes que recebem foco visível refletem a personalização sem exigir mudanças nas classes dos componentes

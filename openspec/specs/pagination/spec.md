@@ -37,3 +37,12 @@ Os controles MUST apresentar foco visível, alvo interativo distinguível, estad
 
 - **WHEN** um usuário percorre a paginação com Tab e ativa uma página elegível
 - **THEN** o controle recebe foco visível e solicita a mudança apenas para a página selecionada
+
+### Requirement: Paginação preserva estabilidade em largura reduzida
+
+AdsPagination MUST usar métricas numéricas estáveis quando aplicável e MUST manter página atual, foco e controles de avanço distinguíveis em largura reduzida. Quando o conjunto não couber, o componente MUST adotar rolagem horizontal ou quebra controlada sem ocultar ações operáveis.
+
+#### Scenario: Paginação excede o contêiner compacto
+
+- **WHEN** a paginação possui mais controles do que a largura disponível comporta
+- **THEN** a pessoa consegue alcançar controles adicionais sem sobreposição, truncamento de controles ou perda da identificação da página atual

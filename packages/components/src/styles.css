@@ -24,14 +24,20 @@
 	--color-surface: var(--ads-color-surface);
 	--color-surface-raised: var(--ads-color-surface-raised);
 	--color-surface-muted: var(--ads-color-surface-muted);
+	--color-surface-hover: var(--ads-color-surface-hover);
+	--color-surface-selected: var(--ads-color-surface-selected);
 	--color-text: var(--ads-color-text);
 	--color-text-primary: var(--ads-color-text-primary);
 	--color-text-muted: var(--ads-color-text-muted);
 	--color-text-secondary: var(--ads-color-text-secondary);
 	--color-border: var(--ads-color-border);
+	--color-border-strong: var(--ads-color-border-strong);
 	--color-primary: var(--ads-color-primary);
 	--color-primary-hover: var(--ads-color-primary-hover);
+	--color-danger-hover: var(--ads-color-danger-hover);
 	--color-focus: var(--ads-color-focus);
+	--color-focus-ring: var(--ads-color-focus-ring);
+	--color-focus-ring-offset: var(--ads-color-focus-ring-offset);
 	--color-info: var(--ads-color-info);
 	--color-success: var(--ads-color-success);
 	--color-warning: var(--ads-color-warning);
@@ -57,6 +63,11 @@
 	--radius-lg: var(--ads-radius-lg);
 	--shadow-sm: var(--ads-elevation-sm);
 	--shadow-md: var(--ads-elevation-md);
+	--shadow-lg: var(--ads-elevation-lg);
+	--z-index-base: var(--ads-layer-base);
+	--z-index-dropdown: var(--ads-layer-dropdown);
+	--z-index-overlay: var(--ads-layer-overlay);
+	--z-index-toast: var(--ads-layer-toast);
 }
 
 @layer components {

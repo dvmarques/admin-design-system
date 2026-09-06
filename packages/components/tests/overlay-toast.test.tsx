@@ -13,7 +13,7 @@ describe('AdsToast', () => {
 			expect(toast).toHaveAttribute('data-variant', variant);
 			expect(screen.getByText('Operação concluída')).toHaveClass(
 				'ads-typography',
-				'text-sm',
+				'text-xs',
 				'leading-normal',
 				'text-text',
 			);

@@ -24,9 +24,13 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	]);
 	await page.goto('/');
 
-	await expect(page.getByRole('heading', { name: 'Aplicação de referência' })).toBeVisible();
+	await expect(
+		page.getByRole('heading', {
+			name: 'Primitivas para produtos que precisam permanecer claros em escala.',
+		}),
+	).toBeVisible();
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-	await expect(page.getByText(/tokens estão disponíveis pela API pública/)).toBeVisible();
+	await expect(page.getByText(/tokens disponíveis pela API pública/)).toBeVisible();
 
 	const toggle = page.getByRole('button', { name: 'Usar tema claro' });
 	await toggle.focus();

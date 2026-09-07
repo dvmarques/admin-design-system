@@ -24,6 +24,7 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 - Manter protegidas as branches que definem a linha estável e a lógica revisada dos workflows de release.
 - Manter invariantes de versão/changelog em `develop` para todas as mudanças, não apenas no back-merge.
 - Tornar verificável o back-merge de release para `develop` e exigir sua conclusão antes da publicação.
+- Revalidar PRs contra o HEAD corrente da branch base antes do merge para evitar checks obsoletos.
 
 **Non-Goals:**
 
@@ -73,7 +74,9 @@ Antes de qualquer merge de `release/X.Y.Z`, `release-check` deve confirmar que n
 
 Quando não houver predecessora fechada, o bootstrap remoto é mais estrito: além da ausência de artefatos da própria versão alvo, qualquer tag/GitHub Release de release incompatível com a ausência de histórico fechado deve bloquear a primeira integração.
 
-O ruleset de `master` deve exigir PR/required checks, bloquear push direto, force push e deleção, com bypass administrativo mínimo/documentado.
+O ruleset de `master` deve exigir PR e required checks em modo **strict/up-to-date**, bloquear push direto, force push e deleção, com bypass administrativo mínimo/documentado. Uma PR precisa estar atualizada com o HEAD corrente de `master` antes do merge para que `release-check` e os checks gerais sejam recalculados contra a linha estável atual.
+
+Isso impede que duas PRs de release permaneçam verdes contra o mesmo HEAD anterior: quando uma delas altera `master`, a outra deixa de estar atualizada e deve ser revalidada antes de qualquer merge.
 
 #### Bootstrap do primeiro ruleset de `master`
 
@@ -81,7 +84,7 @@ Como `master` está atualmente desprotegida e `release-check` ainda não existe:
 
 1. integrar em `develop` o workflow que define `release-check`;
 2. abrir a primeira PR de release e deixar o check aparecer/executar;
-3. configurar o ruleset exigindo `release-check` e os demais checks necessários;
+3. configurar o ruleset exigindo `release-check` e os demais checks necessários em modo strict/up-to-date;
 4. confirmar a proteção ativa;
 5. somente então fazer o primeiro merge de release.
 
@@ -92,8 +95,9 @@ Como `master` está atualmente desprotegida e `release-check` ainda não existe:
 O ruleset mínimo de `develop` deve:
 
 - exigir Pull Request para integração;
-- exigir os checks gerais de CI aplicáveis à branch;
+- exigir os checks gerais de CI aplicáveis à branch em modo strict/up-to-date;
 - exigir um check `develop-policy` sempre presente em PRs para `develop`;
+- exigir que a head seja atualizada com o HEAD corrente de `develop` antes do merge;
 - bloquear push direto;
 - bloquear force push;
 - bloquear deleção;
@@ -117,6 +121,8 @@ Quando a head é same-repo `release/X.Y.Z`, o check entra no modo de back-merge 
 - todos os manifests existentes em `develop` coordenados na versão `X.Y.Z` sem perda de metadados futuros.
 
 Diferentemente de `master`, `develop` não restringe a origem das PRs a `release/*`; feature branches continuam válidas desde que preservem as invariantes acima.
+
+O modo strict/up-to-date evita que uma PR comum permaneça aprovada contra um estado antigo de `develop` e seja mergeada depois de um back-merge, potencialmente revertendo versão ou changelog sem passar novamente por `develop-policy`.
 
 A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. O novo check deve aparecer/executar antes de ser marcado como required, pela mesma estratégia de bootstrap adotada para novos status checks.
 
@@ -253,6 +259,7 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 - [Fork usa branch release/*] → exigir same-repo.
 - [Branch/version mismatch] → derivar versão da head e comparar com preparação.
 - [Ruleset exige check inexistente] → executar novos checks antes de torná-los required.
+- [Check verde fica obsoleto após avanço da base] → rulesets de `master` e `develop` usam modo strict/up-to-date para exigir nova validação contra o HEAD atual.
 - [Develop permite alterar workflow por push direto] → exigir PR + CI, `develop-policy` e bloquear push direto/force push/deleção.
 - [Feature altera histórico/versionamento pós-release] → `develop-policy` preserva blocos fechados e versão coordenada em toda PR comum.
 - [Back-merge depende de convenção humana] → `develop-policy` entra em modo estrito para `release/X.Y.Z`.
@@ -265,4 +272,4 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 - [Predecessora muda após release-check] → revalidar sua tag/release durante a publicação da versão atual.
 - [Mudança remota entre validação e escrita] → job publish revalida predecessora, develop, tag/release e reachability imediatamente antes da mutação.
 - [Master avança após merge] → resolver commit da release, não HEAD.
-- [Develop avança durante a release] → back-merge preserva bloco fechado e mudanças futuras separadamente; PRs posteriores continuam sujeitos a `develop-policy`.
+- [Develop avança durante a release] → back-merge preserva bloco fechado e mudanças futuras separadamente; PRs posteriores continuam sujeitos a `develop-policy` e ao modo strict/up-to-date.

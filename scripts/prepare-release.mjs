@@ -8,9 +8,12 @@ import {
   readJson, updateManifestVersions, validateCoordinatedManifests, validateTargetAgainstState,
 } from './release-utils.mjs';
 
+const PINNED_NPM = '11.19.1';
 const target = process.argv[2];
 if (!target) throw new Error('Uso: npm run release:prepare -- X.Y.Z');
 assertStableSemver(target);
+const npmVersion = execFileSync('npm',['--version'],{encoding:'utf8'}).trim();
+if (npmVersion !== PINNED_NPM) throw new Error(`Use npm ${PINNED_NPM} para preparar releases; atual: ${npmVersion}.`);
 const root = process.cwd();
 const branch = execFileSync('git',['branch','--show-current'],{encoding:'utf8'}).trim();
 if (branch !== `release/${target}`) throw new Error(`Execute em release/${target}; branch atual: ${branch || '(detached)'}`);

@@ -20,6 +20,7 @@ O repositório está atualmente alinhado em `0.0.1` no manifesto raiz, workspace
 - Fazer o `release-check` aplicar a política de origem apenas em eventos `pull_request` destinados a `master`, sem falhar indevidamente em execuções de `push` pós-merge.
 - Exigir que a release anterior ao alvo esteja publicada com tag anotada e GitHub Release consistentes antes de permitir a integração de uma nova release.
 - Criar workflow manual `Publicar release` serializado por `concurrency` com grupo único e `queue: max`, sem cancelar publicação em andamento.
+- Exigir que o `workflow_dispatch` de publicação seja executado a partir da default branch `develop`; dispatch em qualquer outro branch/tag deve falhar antes de qualquer escrita.
 - Localizar a PR merged `release/X.Y.Z -> master`, usar seu `merge_commit_sha`, validar que esse commit continua alcançável a partir de `master` e fazer checkout explícito dele antes de validar manifests, changelog e notas.
 - Criar somente tags anotadas `vX.Y.Z`; tags existentes devem ser dereferenciadas até o commit e nunca movidas, sobrescritas ou recriadas.
 - Tratar GitHub Release existente como idempotente apenas quando tag, commit, nome, estado draft/prerelease e notas forem equivalentes ao esperado.

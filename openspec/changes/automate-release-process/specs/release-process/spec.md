@@ -14,15 +14,15 @@ O projeto MUST disponibilizar um comando de preparação de release que receba u
 
 #### Scenario: Bootstrap da primeira release
 - **WHEN** não existir nenhuma versão fechada no changelog
-- **AND** não existir nenhuma tag de release `v*`
-- **AND** não existir nenhuma GitHub Release
+- **AND** não existir nenhuma tag de release no padrão `vX.Y.Z`
+- **AND** não existir nenhuma GitHub Release associada a tag no padrão `vX.Y.Z`
 - **AND** os manifests coordenados declararem uma única versão atual `A.B.C`
 - **THEN** o alvo da primeira release MUST ser uma SemVer maior ou igual a `A.B.C`
 - **AND** downgrade MUST NOT ser permitido
 
 #### Scenario: Artefato remoto órfão durante bootstrap
 - **WHEN** não existir versão fechada no changelog
-- **AND** existir tag de release `v*` ou GitHub Release
+- **AND** existir tag ou GitHub Release no padrão de release `vX.Y.Z`
 - **THEN** a preparação/validação MUST falhar como estado inconsistente
 - **AND** MUST NOT tratar o repositório como bootstrap limpo
 
@@ -46,11 +46,12 @@ A automação MUST permitir que a próxima release estável seja patch, minor ou
 - **AND** a seção MUST ser fechada como `X.Y.Z`
 
 ### Requirement: Changelog versionado de forma inequívoca
-A automação MUST interpretar as versões fechadas do `CHANGELOG.md` por SemVer e data, sem depender somente da posição textual do arquivo.
+A automação MUST interpretar as versões fechadas do `CHANGELOG.md` por SemVer e data oficial, sem depender somente da posição textual do arquivo.
 
 #### Scenario: Determinar última versão fechada
-- **WHEN** existirem uma ou mais seções fechadas
-- **THEN** a última versão fechada MUST ser a maior SemVer entre elas
+- **WHEN** existirem uma ou mais seções fechadas válidas
+- **THEN** cada seção fechada MUST usar SemVer estável e data no formato `dd-mmm-aaaa` com o mês PT-BR definido nesta capability
+- **AND** a última versão fechada MUST ser a maior SemVer entre essas seções
 - **AND** a seção `Em andamento` MUST NOT ser considerada versão fechada
 
 #### Scenario: Determinar predecessora do alvo
@@ -59,7 +60,7 @@ A automação MUST interpretar as versões fechadas do `CHANGELOG.md` por SemVer
 - **AND** a própria seção fechada `X.Y.Z` MUST NOT ser considerada sua predecessora
 
 #### Scenario: Changelog inconsistente
-- **WHEN** houver versões fechadas duplicadas, fora de ordem SemVer decrescente, zero ou múltiplas seções `Em andamento` ou conflito com a versão alvo
+- **WHEN** houver versão fechada com data inválida, versões fechadas duplicadas, fora de ordem SemVer decrescente, zero ou múltiplas seções `Em andamento` ou conflito com a versão alvo
 - **THEN** a validação MUST falhar antes de considerar a release preparada
 
 ### Requirement: Data de fechamento determinística

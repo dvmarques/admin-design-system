@@ -55,7 +55,7 @@ Ficam neste design e nas fontes operacionais: branches, PRs, same-repo policy, r
 
 O `release-check` deriva `X.Y.Z` da branch e exige correspondência com manifests/changelog. `release/1.2.3` contendo preparação `1.2.4` falha.
 
-No back-merge, a branch pode incorporar o estado mais recente de `develop` apenas para reconciliação. O diff de retorno deve ficar restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`. O bloco fechado `X.Y.Z` permanece idêntico ao que entrou em `master`; entradas posteriores ficam na seção `Em andamento`; workspaces novos são coordenados sem perder metadados futuros.
+No back-merge, a branch pode incorporar o estado mais recente de `develop` apenas para reconciliação. O diff de retorno deve ficar restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`. O bloco fechado `X.Y.Z` permanece idêntico ao que entrou no commit exato da release em `master`; entradas posteriores ficam na seção `Em andamento`; workspaces novos são coordenados sem perder metadados futuros.
 
 ### `master` como linha estável
 
@@ -67,6 +67,10 @@ Uma PR de release válida para `master` deve atender simultaneamente:
 - versão da branch igual à versão preparada.
 
 PR inválida falha explicitamente no `release-check`. Regras baseadas em metadados de PR não são aplicadas em `push` pós-merge.
+
+Antes de qualquer merge de `release/X.Y.Z`, `release-check` deve confirmar que não existe tag `vX.Y.Z` nem GitHub Release correspondente. Uma versão ainda não integrada não pode possuir artefato remoto de publicação válido.
+
+Quando não houver predecessora fechada, o bootstrap remoto é mais estrito: além da ausência de artefatos da própria versão alvo, qualquer tag/GitHub Release de release incompatível com a ausência de histórico fechado deve bloquear a primeira integração.
 
 O ruleset de `master` deve exigir PR/required checks, bloquear push direto, force push e deleção, com bypass administrativo mínimo/documentado.
 
@@ -100,7 +104,8 @@ Para `release/X.Y.Z -> develop`, esse check deve validar pelo menos:
 
 - origem same-repo e formato/coerência da versão da branch;
 - diff restrito aos arquivos de preparação/reconciliação permitidos;
-- bloco fechado `X.Y.Z` idêntico ao bloco liberado na linha estável;
+- resolução independente do commit exato da release `X.Y.Z` já integrada;
+- bloco fechado `X.Y.Z` idêntico ao bloco desse commit exato, nunca ao HEAD corrente de `master`;
 - entradas pós-corte permanecendo na seção `Em andamento`;
 - todos os manifests existentes em `develop` coordenados na versão esperada sem perda de metadados futuros.
 
@@ -117,13 +122,13 @@ Uma seção fechada válida possui SemVer estável e data `dd-mmm-aaaa` com mês
 
 Versões fechadas devem ser únicas e aparecer em ordem SemVer decrescente.
 
-Bootstrap:
+Validação remota pré-integração:
 
-- **local:** sem versão fechada, alvo >= versão coordenada atual; sem GitHub API;
-- **pré-integração remota:** para uma release sem predecessora, não pode haver artefato `vX.Y.Z` incompatível com o bootstrap ainda não integrado;
-- **pós-integração:** artefatos da versão alvo são avaliados pelas regras normais de idempotência/recuperação, não pela regra de bootstrap pré-integração.
+- **todas as releases:** a própria versão alvo não pode possuir tag `vX.Y.Z` nem GitHub Release antes de ser integrada;
+- **bootstrap sem predecessora:** além disso, não pode existir histórico remoto de releases no padrão `vA.B.C` incompatível com a ausência de versões fechadas no changelog;
+- **pós-integração:** artefatos da versão alvo são avaliados pelas regras normais de idempotência/recuperação, não pela regra de ausência pré-integração.
 
-Depois do bootstrap, versão atual = última fechada antes da preparação e novo alvo > ela. O placeholder patch pode ser renomeado para minor/major preservando conteúdo.
+Bootstrap local permanece offline: sem versão fechada, alvo >= versão coordenada atual. Depois do bootstrap, versão atual = última fechada antes da preparação e novo alvo > ela. O placeholder patch pode ser renomeado para minor/major preservando conteúdo.
 
 ### Data determinística
 
@@ -151,11 +156,12 @@ Quality/build/E2E existentes continuam responsáveis por suas verificações. `r
 
 - same-repo + branch/version match;
 - consistência da preparação;
-- bootstrap remoto sem artefato órfão;
+- ausência de tag/GitHub Release da própria versão alvo antes da integração;
+- no bootstrap, ausência de histórico remoto incompatível;
 - publicação consistente da predecessora;
 - OpenSpec estrito.
 
-A predecessora é validada resolvendo independentemente seu commit integrado pelo mesmo resolvedor da release atual e só depois comparando tag/GitHub Release.
+A predecessora é validada resolvendo independentemente seu commit integrado pelo mesmo resolvedor da release atual e só depois comparando tag/GitHub Release. A GitHub Release da predecessora deve satisfazer as mesmas invariantes de identidade, estado e notas exigidas da publicação atual.
 
 O job `release-check` recebe somente:
 
@@ -196,9 +202,9 @@ A checagem `github.ref_name == develop` protege contra seleção acidental de ou
 
 O resolvedor localiza de forma inequívoca a PR merged same-repo `release/X.Y.Z -> master` e usa seu commit efetivamente integrado (`merge_commit_sha` conforme o método de merge).
 
-Antes de publicação, confirma reachability a partir de `master` e valida o checkout explícito desse commit. Nunca usa o HEAD corrente como substituto. O mesmo resolvedor encontra o commit esperado da predecessora.
+Antes de publicação, confirma reachability a partir de `master` e valida o checkout explícito desse commit. Nunca usa o HEAD corrente como substituto. O mesmo resolvedor encontra o commit esperado da predecessora e o baseline exato usado nas comparações do back-merge.
 
-A identidade da PR merged é mantida pelo GitHub mesmo após a remoção da branch, portanto a validação de releases anteriores não depende de manter indefinidamente as branches já publicadas.
+A identidade da PR merged é mantida pelo GitHub mesmo após a remoção da branch, portanto a validação de releases anteriores não depende de manter indefinidamente as branches já publicadas. O resolvedor deve falhar em caso de zero ou múltiplas PRs candidatas compatíveis, em vez de escolher silenciosamente uma delas.
 
 ### Tags e GitHub Release
 
@@ -223,12 +229,14 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 
 - [Capability vira checklist operacional] → manter política operacional fora da delta spec.
 - [Preparação local depende de GitHub] → separar preflight local de validação remota.
-- [Artefato alvo de retry é confundido com bootstrap órfão] → bootstrap remoto é pré-integração; pós-integração usa idempotência.
+- [Artefato da versão alvo existe antes do merge] → bloquear qualquer tag/release `vX.Y.Z` pré-integração; pós-integração usa idempotência.
+- [Bootstrap local contradiz histórico remoto] → no primeiro release, validar também ausência de artefatos remotos de release incompatíveis com changelog sem versões fechadas.
 - [Fork usa branch release/*] → exigir same-repo.
 - [Branch/version mismatch] → derivar versão da head e comparar com preparação.
 - [Ruleset de master exige check inexistente] → executar check antes de torná-lo required e ativar proteção antes do primeiro merge.
 - [Develop permite alterar workflow por push direto] → exigir PR + CI e bloquear push direto/force push/deleção na default branch.
 - [Back-merge depende de convenção humana] → check obrigatório em `develop` é no-op para PR comum e estrito para `release/X.Y.Z`.
+- [Back-merge compara contra master avançada] → resolver o commit exato de `X.Y.Z` e usar esse commit como baseline imutável.
 - [CI sem acesso a PRs] → `pull-requests: read` apenas no job que precisa.
 - [Tag valida a si própria] → resolver commit esperado independentemente.
 - [Código do release influencia job privilegiado via outputs] → job write rederiva commit/notas/estado por lógica confiável e usa outputs read-only apenas como evidência comparativa.

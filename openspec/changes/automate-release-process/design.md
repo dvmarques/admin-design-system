@@ -22,6 +22,7 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 - Reutilizar quality/build/E2E existentes.
 - Aplicar menor privilégio aos tokens da CI/publicação.
 - Manter protegidas as branches que definem a linha estável e a lógica revisada dos workflows de release.
+- Tornar verificável o back-merge de release para `develop`, sem depender apenas de convenção humana.
 
 **Non-Goals:**
 
@@ -87,14 +88,23 @@ O ruleset mínimo de `develop` deve:
 
 - exigir Pull Request para integração;
 - exigir os checks gerais de CI aplicáveis à branch;
+- exigir um check de política de release/back-merge que esteja sempre presente em PRs para `develop`;
 - bloquear push direto;
 - bloquear force push;
 - bloquear deleção;
 - manter bypass administrativo no menor escopo possível e documentado.
 
-Diferentemente de `master`, `develop` **não** restringe a origem a `release/*`: feature branches e a própria `release/X.Y.Z` no back-merge continuam sendo origens válidas via PR.
+Diferentemente de `master`, `develop` **não** restringe a origem a `release/*`: feature branches continuam válidas. O check de back-merge termina com sucesso/no-op para PRs comuns e aplica validação estrita quando a head é `release/X.Y.Z` do próprio repositório.
 
-A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. Como os checks gerais já existem, esse ruleset pode ser configurado durante a implantação desta change, sem depender do futuro `release-check` de `master`.
+Para `release/X.Y.Z -> develop`, esse check deve validar pelo menos:
+
+- origem same-repo e formato/coerência da versão da branch;
+- diff restrito aos arquivos de preparação/reconciliação permitidos;
+- bloco fechado `X.Y.Z` idêntico ao bloco liberado na linha estável;
+- entradas pós-corte permanecendo na seção `Em andamento`;
+- todos os manifests existentes em `develop` coordenados na versão esperada sem perda de metadados futuros.
+
+A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. Como os checks gerais já existem, o ruleset pode ser configurado durante a implantação; o novo check de back-merge deve aparecer/executar antes de ser marcado como required, pela mesma estratégia de bootstrap adotada para novos status checks.
 
 ### Bootstrap, SemVer e changelog
 
@@ -137,7 +147,7 @@ Manifesto raiz, `packages/*`, `apps/*`, referências internas versionadas e lock
 
 ### CI e validação remota
 
-Quality/build/E2E existentes continuam responsáveis por suas verificações. `release-check` adiciona apenas validações de release:
+Quality/build/E2E existentes continuam responsáveis por suas verificações. `release-check` adiciona somente validações de release:
 
 - same-repo + branch/version match;
 - consistência da preparação;
@@ -166,16 +176,19 @@ A publicação é dividida em pelo menos duas fases/jobs:
    - permissões `contents: read` e `pull-requests: read`;
    - resolve PR/commit, reachability, versão, changelog, notas e estado atual de tag/release;
    - pode fazer checkout do commit liberado e executar scripts de validação;
-   - produz somente outputs/artefatos necessários para a fase seguinte.
+   - produz evidência diagnóstica e outputs que podem ser usados como comparação pela fase seguinte, mas não como fonte de verdade privilegiada.
 
 2. **publish (write)**
    - depende do job read-only ter concluído com sucesso;
    - recebe `contents: write` e somente permissões adicionais estritamente necessárias;
-   - revalida imediatamente as pré-condições remotas mutáveis (especialmente tag/release) antes da escrita;
-   - cria tag/GitHub Release usando dados validados;
-   - não executa scripts arbitrários do commit liberado com token de escrita.
+   - re-resolve independentemente PR/commit e reobtém versão/changelog/notas por operações confiáveis do próprio workflow, sem executar scripts do commit liberado;
+   - compara o resultado independente com a evidência do job read-only e falha em qualquer divergência;
+   - revalida imediatamente tag/release e reachability antes da escrita;
+   - cria tag/GitHub Release somente a partir dos dados rederivados no job privilegiado.
 
-Assim código do commit liberado é validado apenas com token read-only, reduzindo o impacto de qualquer script de repositório executado durante a validação.
+O job privilegiado não deve confiar em commit SHA, release notes ou outro conteúdo arbitrário produzido pelo job read-only sem rederivação/verificação. Para ler o commit liberado, pode usar operações não executáveis como checkout sem scripts, `git show` ou API GitHub; parâmetros derivados de arquivos devem ser tratados como dados, nunca interpolados em comandos avaliados dinamicamente.
+
+Assim código do commit liberado é validado apenas com token read-only, enquanto o job com token de escrita toma decisões a partir de dados rederivados por lógica confiável do workflow.
 
 A checagem `github.ref_name == develop` protege contra seleção acidental de outro ref na versão revisada do workflow; a proteção de `develop` garante que essa definição de workflow não seja alterada por push direto fora do processo revisado.
 
@@ -184,6 +197,8 @@ A checagem `github.ref_name == develop` protege contra seleção acidental de ou
 O resolvedor localiza de forma inequívoca a PR merged same-repo `release/X.Y.Z -> master` e usa seu commit efetivamente integrado (`merge_commit_sha` conforme o método de merge).
 
 Antes de publicação, confirma reachability a partir de `master` e valida o checkout explícito desse commit. Nunca usa o HEAD corrente como substituto. O mesmo resolvedor encontra o commit esperado da predecessora.
+
+A identidade da PR merged é mantida pelo GitHub mesmo após a remoção da branch, portanto a validação de releases anteriores não depende de manter indefinidamente as branches já publicadas.
 
 ### Tags e GitHub Release
 
@@ -213,9 +228,11 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 - [Branch/version mismatch] → derivar versão da head e comparar com preparação.
 - [Ruleset de master exige check inexistente] → executar check antes de torná-lo required e ativar proteção antes do primeiro merge.
 - [Develop permite alterar workflow por push direto] → exigir PR + CI e bloquear push direto/force push/deleção na default branch.
+- [Back-merge depende de convenção humana] → check obrigatório em `develop` é no-op para PR comum e estrito para `release/X.Y.Z`.
 - [CI sem acesso a PRs] → `pull-requests: read` apenas no job que precisa.
 - [Tag valida a si própria] → resolver commit esperado independentemente.
-- [Código do release roda com token write] → separar job read-only de job de publicação e não executar scripts arbitrários no job write.
-- [Mudança remota entre validação e escrita] → job publish revalida tag/release imediatamente antes da mutação; falha/retry permanece idempotente.
+- [Código do release influencia job privilegiado via outputs] → job write rederiva commit/notas/estado por lógica confiável e usa outputs read-only apenas como evidência comparativa.
+- [Código do release roda com token write] → não executar scripts do commit liberado no job privilegiado.
+- [Mudança remota entre validação e escrita] → job publish revalida tag/release/reachability imediatamente antes da mutação; falha/retry permanece idempotente.
 - [Master avança após merge] → resolver commit da release, não HEAD.
 - [Develop avança durante a release] → back-merge preserva bloco fechado e mudanças futuras separadamente.

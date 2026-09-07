@@ -18,6 +18,7 @@ O estado atual está alinhado em `0.0.1`, existe apenas `0.0.1 - Em andamento` n
 - Garantir que a tag aponte para o commit exato da PR de release e que esse commit continue pertencendo ao histórico de `master`.
 - Tornar publicação recuperável sem mover ou recriar tags.
 - Manter `develop` sincronizada por um caminho normativo único e sem incorporar à release mudanças que entraram em `develop` depois do corte.
+- Garantir que a lógica de publicação usada pelo `workflow_dispatch` venha sempre da default branch `develop`.
 - Reutilizar CI existente e executar OpenSpec de forma reproduzível e multiplataforma.
 
 **Non-Goals:**
@@ -40,7 +41,7 @@ O ciclo será:
 4. após o merge, a branch de release fica congelada para novas mudanças funcionais;
 5. a mesma branch abre PR `release/X.Y.Z -> develop`;
 6. o retorno deve representar o estado de preparação já integrado em `master`; somente ajustes estritamente necessários para reconciliar mudanças posteriores de `develop` podem ser adicionados;
-7. depois da sincronização com `develop`, a publicação é disparada manualmente;
+7. depois da sincronização com `develop`, a publicação é disparada manualmente a partir da própria `develop`;
 8. a branch `release/X.Y.Z` só pode ser removida depois que sincronização com `develop` e publicação da GitHub Release tiverem sido concluídas com sucesso.
 
 Esse caminho evita trazer para `develop` artefatos de histórico específicos de `master` e preserva mudanças que tenham entrado em `develop` após a criação da release branch.
@@ -135,9 +136,11 @@ Assim uma nova release pode ser preparada localmente, mas não integrada enquant
 
 A CI deve disponibilizar uma versão fixada do OpenSpec por mecanismo multiplataforma e não depender de `openspec.cmd` nem de instalação global preexistente no runner Linux.
 
-### Publicação manual e fila de concorrência
+### Publicação manual, ref confiável e fila de concorrência
 
 `release.yml` usa `workflow_dispatch` e declara um único grupo de `concurrency` para publicação de releases com `queue: max`. Não deve usar `cancel-in-progress: true`, para que uma publicação em andamento nunca seja substituída por outra.
+
+Embora o GitHub permita escolher outro branch/tag no dispatch manual, o processo de release deve aceitar publicação somente quando `github.ref_name == develop`. Qualquer dispatch em outro ref deve falhar antes de consultar/criar tag ou GitHub Release. Isso garante que a lógica de publicação executada seja a versão revisada e sincronizada da default branch.
 
 Permissões mínimas explícitas:
 
@@ -150,6 +153,7 @@ O workflow localiza de forma inequívoca a PR merged `release/X.Y.Z -> master` e
 
 Antes de qualquer escrita remota:
 
+- validar que o dispatch está executando em `develop`;
 - validar que o SHA continua alcançável a partir do `master` atual;
 - fazer checkout explícito desse SHA;
 - validar nesse checkout versão coordenada, changelog e release notes;
@@ -185,7 +189,7 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 
 ### Documentação
 
-`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada e predecessora, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo e semântica do PR de retorno para `develop`, retenção da branch até publicação, publicação, recuperação e configuração manual de proteção/ruleset.
+`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada e predecessora, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo e semântica do PR de retorno para `develop`, retenção da branch até publicação, dispatch obrigatório em `develop`, publicação, recuperação e configuração manual de proteção/ruleset.
 
 ## Risks / Trade-offs
 
@@ -196,6 +200,7 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 - [release-check falha no push pós-merge por falta de head_ref] → política de origem é aplicada somente a `pull_request` para `master`.
 - [Release seguinte integrada antes da anterior ser publicada] → `release-check` valida publicação consistente da predecessora.
 - [Publicações simultâneas ou pendentes substituídas] → `concurrency` usa grupo único com `queue: max` e sem cancelamento da execução em andamento.
+- [Dispatch executa versão diferente do workflow] → exigir `github.ref_name == develop` antes de qualquer efeito remoto.
 - [npm diferente altera lockfile] → `packageManager` fixa versão exata usada também pela CI.
 - [Workflow manual não aparece na primeira implantação] → sincronizar `release/X.Y.Z -> develop` antes do primeiro disparo.
 - [Mudanças novas de develop entram na versão já fechada] → manter o bloco `X.Y.Z` idêntico ao de `master` e direcionar conteúdo pós-corte para a nova seção `Em andamento`.

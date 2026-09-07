@@ -4,7 +4,7 @@ O projeto ainda não possui um processo padronizado e reproduzível para prepara
 
 O issue #7 define um fluxo semi-automatizado no qual a decisão de versão, integração e publicação continua humana, enquanto preparação, validações de consistência, resolução do commit liberado, tag e GitHub Release ficam automatizadas.
 
-O repositório está atualmente alinhado em `0.0.1` no manifesto raiz, workspaces e lockfile, com `0.0.1 - Em andamento` no changelog. Não existem tags `v*` nem GitHub Releases, portanto esse estado caracteriza o bootstrap da primeira release.
+O repositório está atualmente alinhado em `0.0.1` no manifesto raiz, workspaces e lockfile, com `0.0.1 - Em andamento` no changelog. Não existem tags de release `vX.Y.Z` nem GitHub Releases correspondentes, portanto esse estado caracteriza o bootstrap da primeira release.
 
 A governança atual do repositório separa contratos estáveis de instruções operacionais. Por isso, a nova capability especificará apenas comportamentos observáveis da automação de release; política de branches, ruleset, passos humanos, back-merge e operação do workflow serão documentados no design e nas fontes operacionais apropriadas.
 
@@ -13,10 +13,12 @@ A governança atual do repositório separa contratos estáveis de instruções o
 ### Contrato estável da automação
 
 - Criar um comando de preparação que recebe uma versão estável `X.Y.Z`, valida o estado, prepara todas as alterações e evita estado parcial em caso de falha.
-- Rejeitar prerelease (`-alpha`, `-rc` etc.) e build metadata (`+...`) neste primeiro fluxo.
-- Definir bootstrap explícito para a primeira release, impedindo downgrade.
-- Validar versões fechadas do changelog por SemVer, unicidade e ordem decrescente, distinguindo a versão alvo de sua predecessora.
-- Permitir escolha explícita de patch, minor ou major independentemente do placeholder `Em andamento`.
+- Não suportar prerelease (`-alpha`, `-rc` etc.) nem build metadata (`+...`) neste primeiro fluxo; eventual suporte futuro deverá ser especificado separadamente.
+- Definir bootstrap explícito para a primeira release: quando não existir versão fechada nem artefato remoto no padrão `vX.Y.Z`, permitir como alvo qualquer SemVer maior ou igual à versão coordenada atual, sem permitir downgrade.
+- Definir a última versão fechada como a maior SemVer entre as seções fechadas do `CHANGELOG.md`, exigindo versões fechadas únicas, ordenadas de forma decrescente e com data no formato oficial.
+- Definir a release anterior de um alvo `X.Y.Z` como a maior SemVer fechada estritamente menor que o alvo, evitando confundir a versão em preparação com sua predecessora.
+- Após a primeira release, exigir que o estado coordenado atual corresponda à última versão fechada antes da preparação e que a próxima `X.Y.Z` seja uma SemVer estritamente superior.
+- Permitir que o mantenedor escolha patch, minor ou major; a única seção `Em andamento` pode ser renomeada do placeholder para a versão escolhida, preservando conteúdo.
 - Fechar a versão usando a data civil de `America/Sao_Paulo`, em `dd-mmm-aaaa`, com abreviações PT-BR fixas.
 - Atualizar de forma coordenada manifesto raiz, `packages/*`, `apps/*`, dependências internas e `package-lock.json`.
 - Fixar uma versão exata do npm para tornar a regeneração/validação do lockfile reproduzível.

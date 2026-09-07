@@ -81,13 +81,25 @@ Execute a validação proporcional à mudança. Para uma validação completa:
 npm run validate
 ```
 
+Antes de abrir ou atualizar um PR, prefira a saída concisa dos comandos
+oficiais. A sequência equivalente é `npm run format`, `npm run lint`,
+`npm run typecheck`, `npm run test:quiet`, `npm run build` e
+`npm run test:e2e`. Para diagnosticar falhas, use `npm run test:verbose` ou
+`npm run test:e2e:verbose`.
+
+Os testes E2E devem usar contratos estáveis: priorize funções ARIA, nomes
+acessíveis, identificadores semânticos e headings de seção estáveis, evitando
+textos editoriais incidentais. Atualize snapshots apenas quando a mudança
+visual for intencional e o diff tiver sido revisado; não os aceite apenas para
+eliminar uma falha.
+
 Para alterações de componentes ou estilos, valide também o consumo pelos apps:
 
 ```powershell
 npm run build
 npm run dev --workspace @admin-ds/docs
 npm run dev --workspace @admin-ds/admin-demo
-npx.cmd playwright test
+npm run test:e2e
 ```
 
 Antes da conclusão, formate os arquivos alterados e confirme:

@@ -6,4 +6,4 @@
 ## 2. Validação
 
 - [x] 2.1 Executar a verificação de formatação e a validação estrita do OpenSpec, confirmando que os artefatos e os manifests permanecem consistentes.
-- [x] 2.2 Executar `npm run typecheck`, `npm run build` e `npm run test:e2e`, confirmando que nenhum teste E2E falha; atualizar os snapshots claro e escuro de forma intencional para refletir os 84 tokens públicos atualmente expostos.
+- [ ] 2.2 Executar `npm run typecheck`, `npm run build` e `npm run test:e2e`, confirmando que nenhum teste E2E falha; não atualizar snapshots, pois não há alteração visual.

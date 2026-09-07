@@ -6,7 +6,7 @@ O issue #7 define um fluxo semi-automatizado no qual a decisão de versão, inte
 
 O repositório está atualmente alinhado em `0.0.1` no manifesto raiz, workspaces e lockfile, com `0.0.1 - Em andamento` no changelog. Não existem tags de release `vX.Y.Z` nem GitHub Releases correspondentes, portanto esse estado caracteriza o bootstrap da primeira release.
 
-A governança atual do repositório separa contratos estáveis de instruções operacionais. Por isso, a nova capability especificará apenas comportamentos observáveis da automação de release; política de branches, ruleset, passos humanos, back-merge e operação do workflow serão documentados no design e nas fontes operacionais apropriadas.
+A governança atual do repositório separa contratos estáveis de instruções operacionais. Por isso, a nova capability especificará apenas comportamentos observáveis da automação de release; política de branches, rulesets, passos humanos, back-merge e operação do workflow serão documentados no design e nas fontes operacionais apropriadas.
 
 ## What Changes
 
@@ -35,8 +35,9 @@ A governança atual do repositório separa contratos estáveis de instruções o
 - Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então remover a branch.
 - Proteger `master` com PR e required checks, bloqueando push direto/force push/deleção conforme configuração documentada.
 - Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI e bloqueando push direto, force push e deleção; sem restringir as branches de origem como em `master`.
+- Tornar obrigatório em `develop` um check de política que seja no-op para PR comum e valide estritamente back-merges `release/X.Y.Z`, incluindo escopo de arquivos, bloco fechado e coordenação de workspaces.
 - Disparar a publicação a partir da default branch `develop` e serializar execuções conforme o workflow documentado.
-- Separar a publicação em validação read-only e mutação privilegiada, evitando executar scripts do commit liberado com token de escrita.
+- Separar a publicação em validação read-only e mutação privilegiada; o job com escrita rederiva independentemente commit/notas/estado remoto por lógica confiável do workflow e não executa scripts do commit liberado.
 - Documentar o procedimento completo em `docs/release-process.md`, manter resumo no `README.md` e referências operacionais concisas em `AGENTS.md`/`openspec/config.yaml` quando aplicável.
 
 ## Capabilities

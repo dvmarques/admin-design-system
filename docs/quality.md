@@ -92,7 +92,7 @@ confirme que não há falhas:
 npm run format
 npm run lint
 npm run typecheck
-npm run test
+npm run test:quiet
 npm run build
 npm run test:e2e
 ```
@@ -104,6 +104,15 @@ snapshot, revise o diff e atualize-o explicitamente com
 silenciar uma regressão. Os testes E2E devem preferir nomes acessíveis, funções
 ARIA, identificadores semânticos e headings de seção estáveis a textos
 editoriais incidentais.
+
+Os comandos de teste da checklist usam saída concisa para reduzir ruído. Em
+caso de falha, o processo ainda retorna código diferente de zero. Para
+investigar com todos os detalhes, execute:
+
+```powershell
+npm run test:verbose
+npm run test:e2e:verbose
+```
 
 ## Formulários
 

@@ -122,6 +122,7 @@ rules:
     - Incluir uma tarefa final de formatação e validação do comando `npm run format`
     - Incluir a execução de `npm run test:e2e` e a confirmação de que nenhum teste E2E falha antes do commit
     - Exigir atualização de snapshots somente quando a mudança visual for intencional e revisada
+    - Preferir comandos de teste silenciosos ou concisos no fluxo pré-PR e documentar um comando verboso equivalente para diagnóstico
 
 operations:
   apply:
@@ -135,6 +136,7 @@ operations:
       - Executar `npx.cmd prettier --write` nos arquivos alterados antes da validação final
       - Executar `npm run format` e corrigir todas as falhas antes de marcar a change como concluída
       - Executar `npm run test:e2e` e confirmar que nenhum teste E2E falha antes do commit; atualizar snapshots apenas para mudanças visuais intencionais
+      - Usar a saída concisa por padrão nos testes, preservando códigos de falha e logs diagnósticos no modo verboso
 
   archive:
     guidance:

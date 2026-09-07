@@ -21,8 +21,8 @@
 
 ## 5. Saída de testes e diagnóstico
 
-- [ ] 5.1 Adicionar entradas raiz para testes silenciosos ou concisos e comandos verbosos equivalentes; verificar que o modo padrão reduz logs de testes aprovados sem alterar códigos de saída.
-- [ ] 5.2 Configurar os scripts Vitest dos workspaces para usar silêncio que preserve logs de falhas e o script Playwright para reporter compacto; verificar que uma falha continua visível e retorna código diferente de zero.
-- [ ] 5.3 Atualizar `test:quality`, `validate` e a checklist pré-PR para usarem as entradas concisas, mantendo os comandos verbosos documentados para diagnóstico; verificar que a mesma suíte é executada em ambos os modos.
-- [ ] 5.4 Atualizar a documentação OpenSpec e `docs/quality.md` com a política de saída e exemplos de diagnóstico; verificar que uma pessoa consegue alternar entre os modos sem conhecer detalhes internos dos workspaces.
-- [ ] 5.5 Executar os testes em modo conciso e verboso, além de `npm run validate`, e confirmar que ambos preservam resultados e falhas; verificar novamente `openspec.cmd validate strengthen-pre-pr-validation --strict`.
+- [x] 5.1 Adicionar entradas raiz para testes silenciosos ou concisos e comandos verbosos equivalentes; verificar que o modo padrão reduz logs de testes aprovados sem alterar códigos de saída.
+- [x] 5.2 Configurar os scripts Vitest dos workspaces para usar silêncio que preserve logs de falhas e o script Playwright para reporter compacto; verificar que uma falha continua visível e retorna código diferente de zero.
+- [x] 5.3 Atualizar `test:quality`, `validate` e a checklist pré-PR para usarem as entradas concisas, mantendo os comandos verbosos documentados para diagnóstico; verificar que a mesma suíte é executada em ambos os modos.
+- [x] 5.4 Atualizar a documentação OpenSpec e `docs/quality.md` com a política de saída e exemplos de diagnóstico; verificar que uma pessoa consegue alternar entre os modos sem conhecer detalhes internos dos workspaces.
+- [x] 5.5 Executar os testes em modo conciso e verboso, além de `npm run validate`, e confirmar que ambos preservam resultados e falhas; verificar novamente `openspec.cmd validate strengthen-pre-pr-validation --strict`.

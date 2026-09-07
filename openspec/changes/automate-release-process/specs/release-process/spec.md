@@ -112,9 +112,9 @@ A publicação de `X.Y.Z` MUST resolver e validar o commit exato correspondente 
 #### Scenario: Resolver commit da release
 - **WHEN** a publicação de `X.Y.Z` for solicitada
 - **THEN** a automação MUST resolver de forma inequívoca o commit efetivamente integrado para essa versão
-- **AND** MUST confirmar que esse commit continua alcançável a partir de `master`
+- **AND** MUST confirmar que esse commit continua pertencendo ao histórico estável da release
 - **AND** MUST validar nesse commit a versão coordenada e o changelog fechado
-- **AND** MUST NOT substituir o commit resolvido pelo HEAD corrente de `master`
+- **AND** MUST NOT substituir o commit resolvido pelo HEAD corrente da linha estável
 
 #### Scenario: Commit não resolvido ou ambíguo
 - **WHEN** não for possível determinar de forma inequívoca o commit da release

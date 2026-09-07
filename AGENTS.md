@@ -59,6 +59,19 @@ Antes de concluir uma change, execute:
 openspec.cmd validate --all --strict
 ```
 
+## Releases
+
+O procedimento operacional de releases está em `docs/release-process.md`.
+Agentes devem seguir esse documento em vez de inferir o fluxo a partir do
+histórico Git. Em especial:
+
+- mudanças funcionais entram primeiro em `develop`, nunca apenas em `release/X.Y.Z`;
+- PRs em Draft não executam a CI automática de Pull Request; a validação completa
+  acontece ao marcar Ready for review;
+- `release:prepare` exige npm `11.19.1`, branch `release/X.Y.Z` e working tree limpa;
+- a publicação só ocorre após o back-merge da mesma release para `develop`;
+- não mover, substituir ou recriar tags de release existentes.
+
 ## Implementação de componentes
 
 - Priorize Server Components quando não houver interatividade; componentes de

@@ -40,12 +40,14 @@ O ciclo será:
 4. após o merge, a branch de release fica congelada para novas mudanças funcionais;
 5. a mesma branch abre PR `release/X.Y.Z -> develop`;
 6. o retorno deve representar o estado de preparação já integrado em `master`; somente ajustes estritamente necessários para resolver conflitos do back-merge podem ser adicionados;
-7. somente após a sincronização com `develop` a branch pode ser removida;
-8. a publicação é disparada manualmente.
+7. depois da sincronização com `develop`, a publicação é disparada manualmente;
+8. a branch `release/X.Y.Z` só pode ser removida depois que sincronização com `develop` e publicação da GitHub Release tiverem sido concluídas com sucesso.
 
-Esse caminho evita trazer para `develop` artefatos de histórico específicos de `master` e preserva mudanças que tenham entrado em `develop` após a criação da release branch. O PR de retorno deve ser revisado para garantir que não introduz nova mudança funcional além do conteúdo já liberado.
+Esse caminho evita trazer para `develop` artefatos de histórico específicos de `master` e preserva mudanças que tenham entrado em `develop` após a criação da release branch.
 
-Como `develop` é a default branch, o fluxo inicial deve garantir que o workflow `release.yml` já esteja presente nela antes do primeiro `workflow_dispatch`. Por isso, na primeira implantação, a sincronização de volta para `develop` deve ocorrer antes do disparo de publicação se o workflow ainda não existir na default branch.
+Como a release branch nasceu de `develop` e a preparação altera somente arquivos de versionamento/release, o PR de retorno deve ter escopo restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`, além de ajustes estritamente necessários nesses mesmos arquivos para resolução de conflitos. Alteração fora desse conjunto indica nova mudança não liberada e deve bloquear o back-merge.
+
+Como `develop` é a default branch, o fluxo deve garantir que `release.yml` esteja presente nela antes do `workflow_dispatch`. Na primeira implantação isso torna o back-merge obrigatório antes da primeira publicação.
 
 ### `master` exclusiva e protegida
 
@@ -67,11 +69,13 @@ Além do check de CI, `master` deve ser protegida por branch protection/ruleset 
 - não permita push direto fora do fluxo;
 - mantenha bypass administrativo no menor escopo possível e documentado.
 
-### Bootstrap e definição da última versão fechada
+### Bootstrap e definição das versões fechadas
 
 O parser do changelog deve tratar como versões fechadas somente seções com SemVer explícita e data, excluindo a seção `Em andamento`.
 
-A **última versão fechada** é definida como a maior SemVer entre todas as seções fechadas. O changelog deve manter versões fechadas únicas e ordenadas de forma SemVer decrescente; duplicidade ou ordem inválida causa falha de validação.
+A **última versão fechada** é a maior SemVer entre todas as seções fechadas. O changelog deve manter versões fechadas únicas e ordenadas de forma SemVer decrescente; duplicidade ou ordem inválida causa falha de validação.
+
+Para uma release alvo `X.Y.Z`, a **release anterior** é definida como a maior SemVer fechada estritamente menor que `X.Y.Z`. Essa é a versão cuja publicação deve ser validada antes da integração de uma nova release. A própria `X.Y.Z`, já fechada na branch de preparação, nunca deve ser confundida com sua predecessora.
 
 O preflight diferencia dois estados:
 
@@ -84,9 +88,9 @@ O preflight diferencia dois estados:
 
 **Fluxo normal:** existe ao menos uma versão fechada. Nesse caso:
 
-- a versão coordenada atual dos manifests deve corresponder à última versão fechada;
-- a versão alvo `X.Y.Z` deve ser estritamente superior à última versão fechada;
-- a última versão fechada anterior deve já estar publicada de forma consistente antes que uma nova PR de release possa ser integrada.
+- a versão coordenada atual dos manifests deve corresponder à última versão fechada antes da preparação;
+- a versão alvo `X.Y.Z` deve ser estritamente superior à última versão fechada antes da preparação;
+- a release anterior a `X.Y.Z` deve já estar publicada de forma consistente antes que a nova PR possa ser integrada em `master`.
 
 ### Escolha de versão independente do placeholder
 
@@ -112,13 +116,13 @@ A implementação deve adicionar `packageManager` com uma versão exata de npm e
 
 A CI atual continua responsável por quality/build/E2E. `release-check` adiciona somente regras de release.
 
-Para `release/* -> master`, além de versão/changelog/OpenSpec, o check deve verificar que a release fechada imediatamente anterior, quando existir, já possui:
+Para `release/* -> master`, além de versão/changelog/OpenSpec, o check deve determinar a release anterior como a maior SemVer fechada menor que o alvo e, quando ela existir, verificar:
 
 - tag anotada válida;
 - commit esperado;
 - GitHub Release consistente.
 
-Assim uma nova release pode ser preparada localmente, mas não integrada enquanto a anterior não tiver sido publicada corretamente.
+Assim uma nova release pode ser preparada localmente, mas não integrada enquanto a predecessora não tiver sido publicada corretamente.
 
 ### OpenSpec reprodutível
 
@@ -174,18 +178,20 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 
 ### Documentação
 
-`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, PR de retorno congelado para `develop`, publicação, recuperação e configuração manual de proteção/ruleset.
+`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada e predecessora, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo do PR de retorno para `develop`, retenção da branch até publicação, publicação, recuperação e configuração manual de proteção/ruleset.
 
 ## Risks / Trade-offs
 
 - [Primeira release sem versão fechada] → bootstrap permite alvo maior ou igual ao estado coordenado atual e bloqueia downgrade.
 - [Changelog fora de ordem ou duplicado] → parser valida unicidade e ordenação SemVer decrescente e calcula a maior versão fechada.
+- [Release atual confundida com a anterior] → predecessora é definida como a maior SemVer fechada estritamente menor que o alvo.
 - [Feature ou push direto entra em master] → `release-check` bloqueia PR não-release e ruleset bloqueia push direto/force push/deleção.
 - [release-check falha no push pós-merge por falta de head_ref] → política de origem é aplicada somente a `pull_request` para `master`.
-- [Release seguinte integrada antes da anterior ser publicada] → `release-check` valida publicação consistente da última versão fechada anterior.
+- [Release seguinte integrada antes da anterior ser publicada] → `release-check` valida publicação consistente da predecessora.
 - [Publicações simultâneas ou pendentes substituídas] → `concurrency` usa grupo único com `queue: max` e sem cancelamento da execução em andamento.
 - [npm diferente altera lockfile] → `packageManager` fixa versão exata usada também pela CI.
-- [Workflow manual não aparece na primeira implantação] → sincronizar `release/X.Y.Z -> develop` antes do primeiro disparo quando necessário.
-- [Release branch recebe mudança nova depois de master] → congelar mudanças funcionais e limitar o PR de retorno ao estado já liberado mais eventuais resoluções de conflito.
+- [Workflow manual não aparece na primeira implantação] → sincronizar `release/X.Y.Z -> develop` antes do primeiro disparo.
+- [Release branch recebe mudança nova depois de master] → congelar mudanças funcionais e limitar o PR de retorno aos arquivos de preparação/conflito permitidos.
+- [Branch removida antes de o workflow localizar a release] → manter `release/X.Y.Z` até back-merge e publicação concluírem.
 - [Commit da PR deixa histórico de master] → validar reachability antes de tag/release.
 - [Release existente com metadata incorreta] → validar tag, nome, draft, prerelease e body antes do no-op.

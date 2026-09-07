@@ -19,6 +19,10 @@ export const MONTHS_PT_BR = [
 ];
 export const RELEASE_FILES = ['CHANGELOG.md', 'package.json', 'package-lock.json'];
 
+const VERSION_HEADING_RE = /^### \[([^\]]+)\] - (.+)$/gm;
+const RELEASE_DATE_RE =
+	/^(\d{2})-(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)-(\d{4})$/;
+
 export function assertStableSemver(version) {
 	if (!STABLE_SEMVER.test(version)) {
 		throw new Error(`Versão inválida: ${version}. Use X.Y.Z sem prerelease/build metadata.`);
@@ -53,15 +57,29 @@ export function formatReleaseDate(date = new Date()) {
 	return `${values.day}-${MONTHS_PT_BR[Number(values.month) - 1]}-${values.year}`;
 }
 
-const HEADING_RE =
-	/^### \[(\d+\.\d+\.\d+)\] - (Em andamento|\d{2}-(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)-\d{4})$/gm;
+export function assertReleaseDate(value) {
+	const match = RELEASE_DATE_RE.exec(value);
+	if (!match) throw new Error(`Data de release inválida: ${value}.`);
+	const day = Number(match[1]);
+	const month = MONTHS_PT_BR.indexOf(match[2]);
+	const year = Number(match[3]);
+	const leap = year % 4 === 0 && (year % 100 !== 0 || year % 400 === 0);
+	const daysInMonth = [31, leap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+	if (day < 1 || day > daysInMonth[month]) {
+		throw new Error(`Data de release inválida: ${value}.`);
+	}
+	return value;
+}
 
 export function parseChangelog(text) {
 	const sections = [];
-	for (const match of text.matchAll(HEADING_RE)) {
+	for (const match of text.matchAll(VERSION_HEADING_RE)) {
+		const version = assertStableSemver(match[1]);
+		const status = match[2];
+		if (status !== 'Em andamento') assertReleaseDate(status);
 		sections.push({
-			version: match[1],
-			status: match[2],
+			version,
+			status,
 			index: match.index,
 			heading: match[0],
 		});

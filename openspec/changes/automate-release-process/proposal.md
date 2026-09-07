@@ -33,6 +33,7 @@ A governança atual do repositório separa contratos estáveis de instruções o
 
 - Manter `master` como linha estável, aceitando releases conforme a política documentada do repositório.
 - Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então publicar/remover a branch.
+- Fazer `release-check` validar que o delta exclusivo da release branch desde seu ponto de corte em `develop` permaneça restrito aos arquivos de preparação/versionamento; mudanças funcionais exclusivas da branch de release devem bloquear a integração.
 - Proteger `master` com PR e required checks em modo estrito, bloqueando push direto/force push/deleção e exigindo que a branch esteja atualizada com a base antes do merge, para que nenhuma release use checks calculados contra um HEAD antigo de `master`.
 - Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI em modo estrito e bloqueando push direto, force push e deleção; PRs devem ser atualizadas com a base antes do merge para revalidar invariantes contra o estado corrente de `develop`.
 - Tornar obrigatório em `develop` um `develop-policy` que preserve histórico fechado e versão coordenada em PRs comuns e aplique regras estritas de back-merge em `release/X.Y.Z`.

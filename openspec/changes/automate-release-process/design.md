@@ -20,6 +20,7 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 - Resolver o commit exato da release e da predecessora independentemente das tags.
 - Tornar tag/release imutáveis e recuperação idempotente.
 - Reutilizar quality/build/E2E existentes.
+- Evitar execução automática de CI enquanto Pull Requests estiverem em draft e disparar validação completa ao passarem para Ready for review.
 - Aplicar menor privilégio aos tokens da CI/publicação.
 - Manter protegidas as branches que definem a linha estável e a lógica revisada dos workflows de release.
 - Manter invariantes de versão/changelog em `develop` para todas as mudanças, não apenas no back-merge.
@@ -34,6 +35,7 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 - Exigir GitHub API para a preparação local.
 - Aceitar releases originadas de forks.
 - Versionar/publicar workspaces de forma independente.
+- Cancelar retroativamente uma execução de CI que já tenha começado antes de um PR ser convertido para draft.
 - Transformar branch policy/ruleset/checklist humana em requisitos permanentes da capability.
 
 ## Decisions
@@ -42,7 +44,7 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 
 A capability cobre preparação/recuperação, SemVer/changelog, versionamento coordenado, validação remota/predecessora, resolução do commit, tags, GitHub Release e release notes.
 
-Ficam neste design e nas fontes operacionais: branches, PRs, same-repo policy, required checks/ruleset, eventos GitHub, retenção da branch, ref do dispatch, permissões e configuração concreta dos workflows.
+Ficam neste design e nas fontes operacionais: branches, PRs, same-repo policy, required checks/ruleset, eventos GitHub, comportamento draft/ready, retenção da branch, ref do dispatch, permissões e configuração concreta dos workflows.
 
 ### Ciclo operacional
 
@@ -85,7 +87,7 @@ Isso impede que duas PRs de release permaneçam verdes contra o mesmo HEAD anter
 Como `master` está atualmente desprotegida e `release-check` ainda não existe:
 
 1. integrar em `develop` o workflow que define `release-check`;
-2. abrir a primeira PR de release e deixar o check aparecer/executar;
+2. abrir a primeira PR de release, marcá-la como Ready for review e deixar o check aparecer/executar;
 3. configurar o ruleset exigindo `release-check` e os demais checks necessários em modo strict/up-to-date;
 4. confirmar a proteção ativa;
 5. somente então fazer o primeiro merge de release.
@@ -98,14 +100,14 @@ O ruleset mínimo de `develop` deve:
 
 - exigir Pull Request para integração;
 - exigir os checks gerais de CI aplicáveis à branch em modo strict/up-to-date;
-- exigir um check `develop-policy` sempre presente em PRs para `develop`;
+- exigir um check `develop-policy` sempre presente em PRs para `develop` quando estiverem prontos para revisão;
 - exigir que a head seja atualizada com o HEAD corrente de `develop` antes do merge;
 - bloquear push direto;
 - bloquear force push;
 - bloquear deleção;
 - manter bypass administrativo no menor escopo possível e documentado.
 
-`develop-policy` não é um no-op completo para PRs comuns. Em toda PR para `develop`, ele deve preservar as invariantes operacionais do estado de release:
+`develop-policy` não é um no-op completo para PRs comuns. Em toda PR para `develop` que esteja pronta para revisão, ele deve preservar as invariantes operacionais do estado de release:
 
 - exatamente uma seção `Em andamento`;
 - seções fechadas válidas, únicas e em ordem SemVer decrescente;
@@ -126,7 +128,7 @@ Diferentemente de `master`, `develop` não restringe a origem das PRs a `release
 
 O modo strict/up-to-date evita que uma PR comum permaneça aprovada contra um estado antigo de `develop` e seja mergeada depois de um back-merge, potencialmente revertendo versão ou changelog sem passar novamente por `develop-policy`.
 
-A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. O novo check deve aparecer/executar antes de ser marcado como required, pela mesma estratégia de bootstrap adotada para novos status checks.
+A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. O novo check deve aparecer/executar em uma PR Ready for review antes de ser marcado como required, pela mesma estratégia de bootstrap adotada para novos status checks.
 
 ### Bootstrap, SemVer e changelog
 
@@ -178,6 +180,22 @@ Quality/build/E2E existentes continuam responsáveis por suas verificações. `r
 - no bootstrap, ausência de histórico remoto incompatível;
 - publicação consistente da predecessora;
 - OpenSpec estrito.
+
+#### Pull Requests em draft
+
+O workflow de CI continua recebendo os eventos de Pull Request necessários, mas os jobs automáticos não devem executar enquanto `github.event.pull_request.draft == true`.
+
+A condição operacional dos jobs deve preservar os eventos de `push` e liberar execução em PR apenas quando não for draft, por exemplo com semântica equivalente a:
+
+`github.event_name != 'pull_request' || github.event.pull_request.draft == false`.
+
+Essa regra vale para os jobs gerais de quality/build/E2E e para `release-check`/`develop-policy`. Dependências entre jobs podem propagar o skip normalmente; o objetivo é evitar custo e ruído enquanto o PR está em elaboração.
+
+O evento `pull_request` deve incluir `ready_for_review` além dos eventos usados para criação/atualização da PR. Ao mudar de Draft para **Ready for review**, uma nova execução deve avaliar o commit corrente e executar os checks aplicáveis. Commits enviados enquanto o PR permanecer draft continuam sem executar os jobs automáticos; ao voltar para Ready, a validação completa é disparada novamente.
+
+Se uma execução já tiver começado quando o PR era Ready e depois ele for convertido para draft, o fluxo não precisa cancelar retroativamente essa execução; a regra governa novos disparos/jobs enquanto o estado corrente for draft.
+
+A estratégia deliberadamente não depende de impedir a criação do workflow/check por filtros de branch/path ou ausência de evento, evitando incompatibilidade desnecessária com required checks. O PR draft em si não é considerado pronto para integração; ao tornar-se Ready, os checks reais passam a ser exigidos e executados sobre o commit corrente.
 
 A predecessora é validada resolvendo independentemente seu commit integrado pelo mesmo resolvedor da release atual e só depois comparando tag/GitHub Release. A GitHub Release da predecessora deve satisfazer as mesmas invariantes de identidade, estado e notas exigidas da publicação atual.
 
@@ -256,6 +274,9 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 ## Risks / Trade-offs
 
 - [Capability vira checklist operacional] → manter política operacional fora da delta spec.
+- [Preparação local depende de GitHub] → separar preflight local de validação remota.
+- [CI roda durante elaboração de PR draft] → condicionar jobs ao estado não-draft e usar `ready_for_review` para disparar a validação completa quando o PR estiver pronto.
+- [Required check fica ausente por filtro de workflow] → manter o workflow/evento disponível e aplicar skip no nível dos jobs em vez de depender de ausência do workflow.
 - [Preparação local depende de GitHub] → separar preflight local de validação remota.
 - [Mudança funcional entra somente pela release branch] → comparar o delta exclusivo desde o corte em `develop` e permitir apenas arquivos de preparação/versionamento.
 - [Artefato da versão alvo existe antes do merge] → bloquear qualquer tag/release `vX.Y.Z` pré-integração; pós-integração usa idempotência.

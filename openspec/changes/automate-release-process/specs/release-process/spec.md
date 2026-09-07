@@ -1,6 +1,6 @@
 ## Purpose
 
-Define o ciclo reproduzível de preparação, validação, serialização, sincronização pós-release e publicação do Admin Design System, mantendo código, versão, changelog, tag, GitHub Release e `develop` coerentes entre si.
+Define o ciclo reproduzível de preparação, validação, serialização, proteção, sincronização pós-release e publicação do Admin Design System, mantendo código, versão, changelog, tag, GitHub Release e `develop` coerentes entre si.
 
 ## ADDED Requirements
 
@@ -9,8 +9,9 @@ O sistema MUST fornecer um comando de preparação que receba uma versão SemVer
 
 #### Scenario: Bootstrap da primeira release
 - **WHEN** não existir versão fechada no changelog nem tag `v*` ou GitHub Release anterior
-- **AND** os manifests coordenados declararem uma única versão atual
-- **THEN** o alvo da primeira release MAY ser igual à versão coordenada atual
+- **AND** os manifests coordenados declararem uma única versão atual `A.B.C`
+- **THEN** o alvo da primeira release MUST ser uma SemVer maior ou igual a `A.B.C`
+- **AND** downgrade MUST NOT ser permitido
 - **AND** MUST existir exatamente uma seção `Em andamento` sem conflito com o alvo escolhido
 
 #### Scenario: Preflight após a primeira release
@@ -37,6 +38,20 @@ O sistema MUST fornecer um comando de preparação que receba uma versão SemVer
 - **THEN** o sistema MUST terminar sem deixar os arquivos de trabalho em estado parcial
 - **AND** MUST restaurar integralmente o estado anterior ou utilizar estratégia de substituição atômica equivalente
 
+### Requirement: Changelog versionado de forma inequívoca
+O processo MUST identificar versões fechadas por SemVer e data, sem depender apenas da posição textual do arquivo.
+
+#### Scenario: Determinar última versão fechada
+- **WHEN** existirem uma ou mais seções fechadas no `CHANGELOG.md`
+- **THEN** a última versão fechada MUST ser a maior SemVer entre essas seções
+- **AND** a seção `Em andamento` MUST NOT ser considerada versão fechada
+
+#### Scenario: Validar integridade das versões fechadas
+- **WHEN** o changelog for validado
+- **THEN** versões fechadas MUST ser únicas
+- **AND** MUST aparecer em ordem SemVer decrescente
+- **AND** duplicidade ou ordem inválida MUST causar falha de validação
+
 ### Requirement: Escolha explícita da próxima versão
 A próxima release MUST ser escolhida pelo mantenedor e não MUST ser limitada ao placeholder patch aberto pelo processo anterior.
 
@@ -60,8 +75,8 @@ Todos os manifests versionados do produto, dependências internas e lockfile MUS
 - **THEN** o projeto MUST declarar uma versão exata do npm em `packageManager`
 - **AND** a preparação e a CI MUST usar essa mesma versão
 
-### Requirement: `master` exclusiva para releases
-A branch `master` MUST aceitar somente integração de branches `release/*` neste fluxo inicial.
+### Requirement: `master` exclusiva e protegida para releases
+A branch `master` MUST aceitar somente integração de branches `release/*` neste fluxo inicial e MUST ser protegida contra alterações fora do fluxo de PR aprovado.
 
 #### Scenario: PR de release para master
 - **WHEN** uma PR `release/X.Y.Z -> master` for validada
@@ -69,13 +84,24 @@ A branch `master` MUST aceitar somente integração de branches `release/*` nest
 - **AND** MUST executar o `release-check`
 
 #### Scenario: PR não-release para master
-- **WHEN** uma PR destinada a `master` não tiver head branch `release/*`
+- **WHEN** o evento for `pull_request` destinado a `master`
+- **AND** a head branch não for `release/*`
 - **THEN** o `release-check` MUST falhar explicitamente
 - **AND** MUST informar que `master` aceita somente branches de release neste fluxo
 
+#### Scenario: Push pós-merge em master
+- **WHEN** a CI executar por evento `push` em `master`
+- **THEN** a regra de origem baseada em `github.head_ref` MUST NOT ser aplicada
+- **AND** os checks gerais MAY continuar executando normalmente
+
 #### Scenario: Proteção da branch
-- **WHEN** qualquer check obrigatório falhar
-- **THEN** a proteção/ruleset de `master` MUST impedir o merge
+- **WHEN** a proteção/ruleset de `master` for configurada
+- **THEN** MUST exigir pull request antes de merge
+- **AND** MUST exigir os status checks definidos para o fluxo
+- **AND** MUST bloquear push direto fora do fluxo aprovado
+- **AND** MUST bloquear force push
+- **AND** MUST bloquear deleção de `master`
+- **AND** qualquer bypass administrativo MUST ser mínimo e documentado
 
 ### Requirement: Release anterior publicada antes da próxima integração
 Uma nova release MUST NOT ser integrada em `master` enquanto a última versão fechada anterior ainda não estiver publicada de forma consistente.
@@ -97,13 +123,14 @@ A validação OpenSpec executada na CI MUST usar uma forma versionada e multipla
 - **THEN** MUST usar o launcher multiplataforma apropriado
 - **AND** MUST NOT depender de `openspec.cmd` ou instalação global preexistente
 
-### Requirement: Publicação manual serializada no commit exato
-A publicação MUST depender de `workflow_dispatch`, MUST ser serializada e MUST usar o commit exato produzido pela PR de release.
+### Requirement: Publicação manual enfileirada no commit exato
+A publicação MUST depender de `workflow_dispatch`, MUST ser serializada sem substituir execuções pendentes e MUST usar o commit exato produzido pela PR de release.
 
 #### Scenario: Concorrência
 - **WHEN** houver múltiplos disparos de publicação
 - **THEN** o workflow MUST usar um grupo de `concurrency` único para releases
-- **AND** MUST NOT cancelar uma publicação em andamento em favor de outra
+- **AND** MUST usar `queue: max`
+- **AND** MUST NOT usar `cancel-in-progress: true`
 
 #### Scenario: Resolver commit da release
 - **WHEN** o operador disparar `Publicar release` com `X.Y.Z`
@@ -177,9 +204,15 @@ As notas da GitHub Release MUST vir somente da seção fechada da versão corres
 ### Requirement: Continuidade pós-release em develop
 A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de volta para `develop` antes de ser removida e antes da próxima preparação de release.
 
+#### Scenario: Congelar branch após merge em master
+- **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
+- **THEN** a branch de release MUST NOT receber novas mudanças funcionais
+- **AND** o estado de preparação que entrou em `master` MUST permanecer como referência do retorno para `develop`
+
 #### Scenario: Sincronização normativa
 - **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
 - **THEN** MUST ser aberto/realizado PR `release/X.Y.Z -> develop`
+- **AND** o PR de retorno MUST conter somente o estado de release já integrado em `master` e ajustes estritamente necessários para resolução de conflitos do back-merge
 - **AND** conflitos com mudanças posteriores em `develop` MUST ser resolvidos explicitamente
 - **AND** refs MUST NOT ser reescritas à força
 
@@ -197,4 +230,4 @@ O repositório MUST documentar claramente o fluxo e suas responsabilidades.
 #### Scenario: Descobrir como publicar uma release
 - **WHEN** um mantenedor consultar o `README.md`
 - **THEN** MUST encontrar um resumo e link para `docs/release-process.md`
-- **AND** o documento detalhado MUST explicar bootstrap, escolha da versão, preparação atômica, política exclusiva de `master`, sequência entre releases, PR de retorno para `develop`, publicação, recuperação, toolchain e configuração de proteção/ruleset
+- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento e PR de retorno para `develop`, publicação, recuperação e configuração de ruleset

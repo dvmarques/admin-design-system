@@ -34,6 +34,8 @@ A governança atual do repositório separa contratos estáveis de instruções o
 - Manter `master` como linha estável, aceitando releases conforme a política documentada do repositório.
 - Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então publicar/remover a branch.
 - Fazer `release-check` validar que o delta exclusivo da release branch desde seu ponto de corte em `develop` permaneça restrito aos arquivos de preparação/versionamento; mudanças funcionais exclusivas da branch de release devem bloquear a integração.
+- Não executar os jobs automáticos de CI de Pull Requests enquanto o PR estiver em estado draft; em `push` a CI continua normal e, ao marcar o PR como **Ready for review**, uma nova execução deve disparar os checks aplicáveis ao commit corrente.
+- Aplicar a mesma regra de draft aos checks gerais e aos checks de política/release (`release-check` e `develop-policy`), evitando custo e ruído durante elaboração sem depender de ausência do workflow/check.
 - Proteger `master` com PR e required checks em modo estrito, bloqueando push direto/force push/deleção e exigindo que a branch esteja atualizada com a base antes do merge, para que nenhuma release use checks calculados contra um HEAD antigo de `master`.
 - Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI em modo estrito e bloqueando push direto, force push e deleção; PRs devem ser atualizadas com a base antes do merge para revalidar invariantes contra o estado corrente de `develop`.
 - Tornar obrigatório em `develop` um `develop-policy` que preserve histórico fechado e versão coordenada em PRs comuns e aplique regras estritas de back-merge em `release/X.Y.Z`.
@@ -58,8 +60,8 @@ Nenhuma.
 - `package.json`, incluindo `packageManager` com versão exata do npm, e manifests em `packages/*` e `apps/*`.
 - Dependências internas entre workspaces e `package-lock.json`.
 - `CHANGELOG.md`.
-- GitHub Actions em `.github/workflows/`.
+- GitHub Actions em `.github/workflows/`, incluindo controle de execução para PRs draft/ready.
 - Configuração operacional de proteção/rulesets estritos de `master` e `develop`.
 - Forma de instalação/execução do OpenSpec na CI.
 - Documentação em `README.md`, `docs/release-process.md`, `AGENTS.md` e, quando necessário, `openspec/config.yaml`.
-- Testes automatizados do processo de release.
+- Testes automatizados do processo de release e do comportamento de CI em PRs draft/ready.

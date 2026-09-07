@@ -15,9 +15,9 @@ O sistema MUST fornecer um comando de preparação que receba uma versão SemVer
 - **AND** MUST existir exatamente uma seção `Em andamento` sem conflito com o alvo escolhido
 
 #### Scenario: Preflight após a primeira release
-- **WHEN** existir ao menos uma versão fechada
-- **THEN** a versão coordenada atual dos manifests MUST corresponder à última versão fechada
-- **AND** a versão alvo MUST ser estritamente superior à última versão fechada
+- **WHEN** existir ao menos uma versão fechada antes da preparação
+- **THEN** a versão coordenada atual dos manifests MUST corresponder à última versão fechada antes da preparação
+- **AND** a versão alvo MUST ser estritamente superior a ela
 
 #### Scenario: Preparar uma versão válida
 - **WHEN** o preflight e a staging de todos os conteúdos forem concluídos com sucesso
@@ -45,6 +45,11 @@ O processo MUST identificar versões fechadas por SemVer e data, sem depender ap
 - **WHEN** existirem uma ou mais seções fechadas no `CHANGELOG.md`
 - **THEN** a última versão fechada MUST ser a maior SemVer entre essas seções
 - **AND** a seção `Em andamento` MUST NOT ser considerada versão fechada
+
+#### Scenario: Determinar release anterior ao alvo
+- **WHEN** uma release alvo `X.Y.Z` estiver sendo validada
+- **THEN** a release anterior MUST ser a maior SemVer fechada estritamente menor que `X.Y.Z`
+- **AND** a própria seção fechada `X.Y.Z` MUST NOT ser considerada sua predecessora
 
 #### Scenario: Validar integridade das versões fechadas
 - **WHEN** o changelog for validado
@@ -104,15 +109,15 @@ A branch `master` MUST aceitar somente integração de branches `release/*` nest
 - **AND** qualquer bypass administrativo MUST ser mínimo e documentado
 
 ### Requirement: Release anterior publicada antes da próxima integração
-Uma nova release MUST NOT ser integrada em `master` enquanto a última versão fechada anterior ainda não estiver publicada de forma consistente.
+Uma nova release MUST NOT ser integrada em `master` enquanto sua predecessora ainda não estiver publicada de forma consistente.
 
 #### Scenario: Primeira release
-- **WHEN** não existir versão fechada anterior
+- **WHEN** não existir SemVer fechada menor que a versão alvo
 - **THEN** o `release-check` MUST permitir o bootstrap sem exigir publicação precedente
 
 #### Scenario: Release anterior publicada
-- **WHEN** existir versão fechada anterior à release em preparação
-- **THEN** o `release-check` MUST validar que ela possui tag anotada válida e GitHub Release consistente
+- **WHEN** existir uma release anterior definida como a maior SemVer fechada menor que a versão alvo
+- **THEN** o `release-check` MUST validar que essa predecessora possui tag anotada válida e GitHub Release consistente
 - **AND** MUST falhar se a publicação anterior estiver ausente ou divergente
 
 ### Requirement: OpenSpec reproduzível na CI
@@ -202,7 +207,7 @@ As notas da GitHub Release MUST vir somente da seção fechada da versão corres
 - **THEN** o corpo MUST conter apenas o conteúdo pertencente à seção fechada `X.Y.Z` daquele commit
 
 ### Requirement: Continuidade pós-release em develop
-A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de volta para `develop` antes de ser removida e antes da próxima preparação de release.
+A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de volta para `develop`, publicada e somente então removida.
 
 #### Scenario: Congelar branch após merge em master
 - **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
@@ -212,7 +217,8 @@ A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de vo
 #### Scenario: Sincronização normativa
 - **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
 - **THEN** MUST ser aberto/realizado PR `release/X.Y.Z -> develop`
-- **AND** o PR de retorno MUST conter somente o estado de release já integrado em `master` e ajustes estritamente necessários para resolução de conflitos do back-merge
+- **AND** o PR de retorno MUST alterar somente `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`
+- **AND** alterações nesses arquivos além do estado já integrado em `master` MUST se limitar à resolução necessária de conflitos do back-merge
 - **AND** conflitos com mudanças posteriores em `develop` MUST ser resolvidos explicitamente
 - **AND** refs MUST NOT ser reescritas à força
 
@@ -220,8 +226,13 @@ A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de vo
 - **WHEN** `release.yml` ainda não existir na default branch `develop`
 - **THEN** a sincronização `release/X.Y.Z -> develop` MUST ocorrer antes do primeiro `workflow_dispatch`
 
+#### Scenario: Retenção da release branch
+- **WHEN** sincronização com `develop` ou publicação da GitHub Release ainda não tiver sido concluída com sucesso
+- **THEN** a branch `release/X.Y.Z` MUST permanecer disponível
+- **AND** MUST NOT ser removida
+
 #### Scenario: Próxima release
-- **WHEN** `develop` ainda não contiver o estado pós-release anterior
+- **WHEN** `develop` ainda não contiver o estado pós-release anterior ou a versão anterior ainda não estiver publicada de forma consistente
 - **THEN** a próxima preparação MUST NOT ser considerada pronta para iniciar
 
 ### Requirement: Processo documentado
@@ -230,4 +241,4 @@ O repositório MUST documentar claramente o fluxo e suas responsabilidades.
 #### Scenario: Descobrir como publicar uma release
 - **WHEN** um mantenedor consultar o `README.md`
 - **THEN** MUST encontrar um resumo e link para `docs/release-process.md`
-- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento e PR de retorno para `develop`, publicação, recuperação e configuração de ruleset
+- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/retensão do PR de retorno para `develop`, publicação, recuperação e configuração de ruleset

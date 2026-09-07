@@ -1,163 +1,200 @@
+## Purpose
+
+Define o ciclo reproduzível de preparação, validação, serialização, sincronização pós-release e publicação do Admin Design System, mantendo código, versão, changelog, tag, GitHub Release e `develop` coerentes entre si.
+
 ## ADDED Requirements
 
 ### Requirement: Preparação explícita e atômica de release
-O sistema MUST fornecer um comando de preparação que receba uma versão SemVer `X.Y.Z`, valide completamente o estado atual e prepare os arquivos versionados necessários sem publicar a release.
+O sistema MUST fornecer um comando de preparação que receba uma versão SemVer `X.Y.Z`, valide completamente o estado atual e prepare os arquivos necessários sem publicar a release.
 
-#### Scenario: Preflight válido
-- **WHEN** o operador executar o comando em uma branch `release/X.Y.Z`, com working tree limpa, SemVer válida, versões coordenadas e exatamente uma seção `Em andamento`
-- **THEN** o sistema MUST concluir todas as validações antes de alterar qualquer arquivo
-- **AND** MUST validar que `X.Y.Z` é superior à última versão fechada
-- **AND** MUST calcular previamente todas as alterações necessárias
+#### Scenario: Bootstrap da primeira release
+- **WHEN** não existir versão fechada no changelog nem tag `v*` ou GitHub Release anterior
+- **AND** os manifests coordenados declararem uma única versão atual
+- **THEN** o alvo da primeira release MAY ser igual à versão coordenada atual
+- **AND** MUST existir exatamente uma seção `Em andamento` sem conflito com o alvo escolhido
+
+#### Scenario: Preflight após a primeira release
+- **WHEN** existir ao menos uma versão fechada
+- **THEN** a versão coordenada atual dos manifests MUST corresponder à última versão fechada
+- **AND** a versão alvo MUST ser estritamente superior à última versão fechada
 
 #### Scenario: Preparar uma versão válida
 - **WHEN** o preflight e a staging de todos os conteúdos forem concluídos com sucesso
 - **THEN** o sistema MUST associar a única seção `Em andamento` à versão `X.Y.Z`, renomeando seu placeholder quando necessário
+- **AND** MUST preservar o conteúdo acumulado nessa seção
 - **AND** MUST fechar essa seção com a data corrente
 - **AND** MUST atualizar para `X.Y.Z` o `package.json` raiz, todos os manifests de `packages/*` e `apps/*` e referências internas versionadas aplicáveis
 - **AND** MUST regenerar o lockfile sem atualizar dependências externas
-- **AND** MUST criar acima uma nova seção `Em andamento` para a próxima versão patch como placeholder
-- **AND** MUST aplicar as alterações aos arquivos reais somente depois de toda a preparação ter sido produzida com sucesso
+- **AND** MUST criar acima uma nova seção `Em andamento` para a próxima versão patch apenas como placeholder
+- **AND** MUST aplicar alterações reais somente depois de toda a staging ter sido produzida com sucesso
 
 #### Scenario: Estado inconsistente durante o preflight
-- **WHEN** a branch não corresponder à versão, a working tree não estiver limpa, o changelog tiver formato inválido, houver zero ou múltiplas seções `Em andamento`, já existir seção conflitante para `X.Y.Z`, a versão solicitada não for superior à última release fechada ou as versões atuais estiverem divergentes
+- **WHEN** a branch não corresponder à versão, a working tree não estiver limpa, o changelog tiver formato inválido, houver zero ou múltiplas seções `Em andamento`, existir seção conflitante para `X.Y.Z`, as versões atuais estiverem divergentes, a regra de bootstrap não for satisfeita ou a versão alvo não respeitar a ordenação exigida
 - **THEN** o comando MUST falhar antes de iniciar alterações
-- **AND** MUST NOT deixar uma preparação parcial produzida pelo script
 
 #### Scenario: Falha durante staging ou aplicação
-- **WHEN** ocorrer uma falha depois do preflight, durante a geração do lockfile, staging ou substituição final dos arquivos
+- **WHEN** ocorrer falha durante geração do lockfile, staging ou substituição final
 - **THEN** o sistema MUST terminar sem deixar os arquivos de trabalho em estado parcial
-- **AND** MUST restaurar o estado anterior ou utilizar estratégia de substituição atômica equivalente
+- **AND** MUST restaurar integralmente o estado anterior ou utilizar estratégia de substituição atômica equivalente
 
 ### Requirement: Escolha explícita da próxima versão
-A versão da próxima release MUST ser escolhida pelo mantenedor e não MUST ser limitada ao placeholder patch aberto pelo processo anterior.
+A próxima release MUST ser escolhida pelo mantenedor e não MUST ser limitada ao placeholder patch aberto pelo processo anterior.
 
 #### Scenario: Placeholder diferente da versão escolhida
-- **WHEN** existir uma única seção `A.B.C - Em andamento` e o mantenedor preparar uma SemVer superior `X.Y.Z` diferente de `A.B.C`
-- **THEN** o processo MUST preservar o conteúdo da seção em andamento
-- **AND** MUST tratá-la como a seção `X.Y.Z` durante a preparação
+- **WHEN** existir uma única seção `A.B.C - Em andamento` e o mantenedor preparar uma SemVer válida `X.Y.Z` diferente de `A.B.C`
+- **THEN** o processo MUST preservar o conteúdo da seção
+- **AND** MUST tratá-la como `X.Y.Z` durante a preparação
 
-### Requirement: Versionamento coordenado do monorepo
-Todos os manifests versionados do produto e suas dependências internas MUST representar a mesma versão preparada.
+### Requirement: Versionamento coordenado e toolchain reproduzível
+Todos os manifests versionados do produto, dependências internas e lockfile MUST representar a mesma versão preparada, e a regeneração do lockfile MUST usar uma versão exata e compartilhada do npm.
 
 #### Scenario: Release coordenada
 - **WHEN** `X.Y.Z` tiver sido preparada
 - **THEN** o manifesto raiz MUST declarar `X.Y.Z`
 - **AND** todos os manifests em `packages/*` e `apps/*` MUST declarar `X.Y.Z`
-- **AND** referências internas versionadas entre workspaces MUST usar a versão coordenada aplicável
+- **AND** referências internas versionadas MUST usar a versão coordenada aplicável
 - **AND** o lockfile MUST refletir esses manifests
 
-#### Scenario: Divergência entre workspaces
-- **WHEN** qualquer manifesto ou referência interna relevante divergir de `X.Y.Z`
-- **THEN** a validação de release MUST falhar
+#### Scenario: npm reproduzível
+- **WHEN** a preparação ou CI regenerar/validar o lockfile
+- **THEN** o projeto MUST declarar uma versão exata do npm em `packageManager`
+- **AND** a preparação e a CI MUST usar essa mesma versão
 
-### Requirement: Validação antes do merge
-A CI MUST validar a consistência da release em pull requests destinadas a `master` sem duplicar desnecessariamente os jobs de qualidade, build e E2E existentes.
+### Requirement: `master` exclusiva para releases
+A branch `master` MUST aceitar somente integração de branches `release/*` neste fluxo inicial.
 
-#### Scenario: PR de release consistente
+#### Scenario: PR de release para master
 - **WHEN** uma PR `release/X.Y.Z -> master` for validada
-- **THEN** a CI MUST executar os checks gerais já definidos pelo projeto
-- **AND** MUST executar um check específico de release para versões coordenadas e changelog
-- **AND** MUST executar a validação OpenSpec estrita em ambiente reproduzível e multiplataforma
+- **THEN** a CI MUST executar os checks gerais do projeto
+- **AND** MUST executar o `release-check`
 
-#### Scenario: PR não relacionada a release
+#### Scenario: PR não-release para master
 - **WHEN** uma PR destinada a `master` não tiver head branch `release/*`
-- **THEN** o check obrigatório de release MUST continuar presente
-- **AND** MUST concluir com sucesso sem executar as validações específicas de preparação de release
+- **THEN** o `release-check` MUST falhar explicitamente
+- **AND** MUST informar que `master` aceita somente branches de release neste fluxo
 
-#### Scenario: PR de release inconsistente
+#### Scenario: Proteção da branch
 - **WHEN** qualquer check obrigatório falhar
-- **THEN** a CI MUST marcar a preparação como inválida
-- **AND** a configuração de proteção/ruleset de `master` MUST impedir o merge enquanto os checks obrigatórios não estiverem aprovados
+- **THEN** a proteção/ruleset de `master` MUST impedir o merge
+
+### Requirement: Release anterior publicada antes da próxima integração
+Uma nova release MUST NOT ser integrada em `master` enquanto a última versão fechada anterior ainda não estiver publicada de forma consistente.
+
+#### Scenario: Primeira release
+- **WHEN** não existir versão fechada anterior
+- **THEN** o `release-check` MUST permitir o bootstrap sem exigir publicação precedente
+
+#### Scenario: Release anterior publicada
+- **WHEN** existir versão fechada anterior à release em preparação
+- **THEN** o `release-check` MUST validar que ela possui tag anotada válida e GitHub Release consistente
+- **AND** MUST falhar se a publicação anterior estiver ausente ou divergente
 
 ### Requirement: OpenSpec reproduzível na CI
 A validação OpenSpec executada na CI MUST usar uma forma versionada e multiplataforma de disponibilizar o CLI.
 
-#### Scenario: Validar OpenSpec no runner Linux
+#### Scenario: Runner Linux
 - **WHEN** a CI executar em Linux
-- **THEN** MUST usar o executável/launcher multiplataforma apropriado
-- **AND** MUST NOT depender de `openspec.cmd` ou de uma instalação global preexistente no runner
+- **THEN** MUST usar o launcher multiplataforma apropriado
+- **AND** MUST NOT depender de `openspec.cmd` ou instalação global preexistente
 
-### Requirement: Publicação manual no commit exato da release
-A publicação de uma release MUST depender de um disparo manual do GitHub Actions informando a versão desejada e MUST usar o commit exato produzido pela PR correspondente.
+### Requirement: Publicação manual serializada no commit exato
+A publicação MUST depender de `workflow_dispatch`, MUST ser serializada e MUST usar o commit exato produzido pela PR de release.
+
+#### Scenario: Concorrência
+- **WHEN** houver múltiplos disparos de publicação
+- **THEN** o workflow MUST usar um grupo de `concurrency` único para releases
+- **AND** MUST NOT cancelar uma publicação em andamento em favor de outra
 
 #### Scenario: Resolver commit da release
 - **WHEN** o operador disparar `Publicar release` com `X.Y.Z`
-- **THEN** o workflow MUST resolver de forma inequívoca a PR merged `release/X.Y.Z -> master`
-- **AND** MUST usar o `merge_commit_sha` dessa PR como commit efetivamente liberado
-- **AND** MUST validar nesse commit as versões coordenadas e a seção fechada do changelog
-- **AND** MUST NOT assumir que o HEAD atual de `master` é o commit da release
+- **THEN** o workflow MUST localizar de forma inequívoca a PR merged `release/X.Y.Z -> master`
+- **AND** MUST usar o `merge_commit_sha` dessa PR
+- **AND** MUST verificar que esse commit continua alcançável a partir do `master` atual
+- **AND** MUST fazer checkout explícito desse SHA antes de validar versão, changelog e notas
+- **AND** MUST NOT usar o checkout implícito do `workflow_dispatch` como substituto do commit liberado
 
-#### Scenario: Permissões mínimas do workflow
-- **WHEN** o workflow de publicação for executado
-- **THEN** MUST declarar explicitamente `contents: write`
-- **AND** MUST declarar explicitamente `pull-requests: read`
+#### Scenario: Commit não alcançável
+- **WHEN** o `merge_commit_sha` não pertencer mais ao histórico de `master`
+- **THEN** o workflow MUST falhar sem criar ou alterar tag/release
+
+#### Scenario: Permissões mínimas
+- **WHEN** o workflow for executado
+- **THEN** MUST declarar `contents: write`
+- **AND** MUST declarar `pull-requests: read`
 - **AND** MUST manter outras permissões desabilitadas salvo necessidade explícita
 
-#### Scenario: PR de release não resolvida
-- **WHEN** não existir uma PR merged correspondente ou houver ambiguidade sobre o commit da release
-- **THEN** o workflow MUST falhar sem criar tag ou GitHub Release
-
 ### Requirement: Tags anotadas imutáveis e recuperação idempotente
-O processo MUST usar tags anotadas para releases, nunca mover, sobrescrever ou recriar uma tag existente e MUST permitir recuperação segura quando a tag foi criada mas a GitHub Release não.
+O processo MUST usar apenas tags anotadas de release e MUST nunca mover, sobrescrever ou recriar uma tag existente.
 
-#### Scenario: Tag ainda não existe
-- **WHEN** `vX.Y.Z` não existir e a publicação for válida
-- **THEN** o workflow MUST criar uma tag anotada no `merge_commit_sha` validado antes de criar a GitHub Release
+#### Scenario: Tag inexistente
+- **WHEN** `vX.Y.Z` não existir e todas as validações passarem
+- **THEN** o workflow MUST criar uma tag anotada no `merge_commit_sha` validado antes da GitHub Release
 
-#### Scenario: Tag anotada existente no mesmo commit sem GitHub Release
-- **WHEN** `vX.Y.Z` já existir como tag anotada e seu commit dereferenciado for exatamente o commit validado e a GitHub Release correspondente não existir
-- **THEN** o workflow MUST preservar a tag existente
-- **AND** MUST continuar criando somente a GitHub Release
+#### Scenario: Tag anotada existente no mesmo commit
+- **WHEN** `vX.Y.Z` existir como tag anotada e seu commit dereferenciado for o commit validado
+- **THEN** a tag MAY ser reutilizada sem alteração
 
-#### Scenario: Tag lightweight existente
-- **WHEN** `vX.Y.Z` existir como lightweight tag, ainda que aponte para o commit esperado
+#### Scenario: Tag lightweight
+- **WHEN** `vX.Y.Z` existir como lightweight tag
 - **THEN** o workflow MUST falhar
 - **AND** MUST NOT substituir ou recriar a tag
 
-#### Scenario: Tag anotada existente em outro commit
-- **WHEN** `vX.Y.Z` já existir e seu commit dereferenciado for diferente do commit validado
-- **THEN** o workflow MUST falhar
-- **AND** MUST NOT mover, sobrescrever ou recriar a tag existente
+#### Scenario: Tag anotada em outro commit
+- **WHEN** o commit dereferenciado da tag divergir do commit validado
+- **THEN** o workflow MUST falhar sem alterar a tag
 
 ### Requirement: GitHub Release consistente e idempotente
-Uma GitHub Release existente MUST ser tratada como publicação concluída somente quando estiver consistente com tag, commit e changelog esperados.
+Uma GitHub Release existente MUST ser tratada como publicação concluída somente quando todos os seus metadados relevantes corresponderem ao estado esperado.
 
-#### Scenario: GitHub Release já existente e consistente
+#### Scenario: GitHub Release existente e consistente
 - **WHEN** a GitHub Release `vX.Y.Z` já existir
-- **AND** estiver associada à tag `vX.Y.Z`
+- **AND** `tag_name` for `vX.Y.Z`
+- **AND** o nome da release for `vX.Y.Z`
+- **AND** `draft` for `false`
+- **AND** `prerelease` for `false`
 - **AND** a tag anotada dereferenciar para o commit validado
-- **AND** o corpo da release corresponder às notas extraídas do changelog desse commit
+- **AND** o body for equivalente às notas extraídas após normalizar somente CRLF/LF e newline final
 - **THEN** o workflow MUST encerrar como sucesso/no-op explícito
-- **AND** MUST NOT recriar ou alterar silenciosamente a release
+- **AND** MUST NOT modificar tag ou release
 
 #### Scenario: GitHub Release existente divergente
-- **WHEN** a GitHub Release `vX.Y.Z` existir mas tag, commit ou notas divergirem do estado esperado
+- **WHEN** qualquer um desses metadados divergir
 - **THEN** o workflow MUST falhar
-- **AND** MUST NOT alterar a tag ou a release existente
+- **AND** MUST NOT alterar tag ou release
+
+#### Scenario: Recuperação após criação da tag
+- **WHEN** a tag anotada válida existir no commit esperado e a GitHub Release não existir
+- **THEN** o workflow MUST preservar a tag
+- **AND** MUST criar somente a GitHub Release
 
 ### Requirement: Notas derivadas do changelog
-As notas da GitHub Release MUST ser extraídas somente da seção fechada da versão correspondente no `CHANGELOG.md` do commit liberado.
+As notas da GitHub Release MUST vir somente da seção fechada da versão correspondente no `CHANGELOG.md` do commit liberado.
 
-#### Scenario: Extrair notas da versão
-- **WHEN** a release `X.Y.Z` for publicada ou recuperada após falha parcial
-- **THEN** o corpo da GitHub Release MUST conter apenas o conteúdo pertencente à seção fechada `X.Y.Z` naquele commit
+#### Scenario: Extrair notas
+- **WHEN** a release `X.Y.Z` for publicada ou recuperada
+- **THEN** o corpo MUST conter apenas o conteúdo pertencente à seção fechada `X.Y.Z` daquele commit
 
 ### Requirement: Continuidade pós-release em develop
-O estado preparado da release MUST ser sincronizado de volta para `develop` antes da preparação da próxima release.
+A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de volta para `develop` antes de ser removida e antes da próxima preparação de release.
 
-#### Scenario: Sincronizar release concluída
+#### Scenario: Sincronização normativa
 - **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
-- **THEN** as alterações da preparação MUST ser integradas também em `develop` por merge/PR ou mecanismo equivalente sem reescrever refs à força
-- **AND** `develop` MUST conter a versão coordenada, a seção `X.Y.Z` fechada e o novo placeholder `Em andamento`
+- **THEN** MUST ser aberto/realizado PR `release/X.Y.Z -> develop`
+- **AND** conflitos com mudanças posteriores em `develop` MUST ser resolvidos explicitamente
+- **AND** refs MUST NOT ser reescritas à força
 
-#### Scenario: Próxima release com develop desatualizada
+#### Scenario: Primeira implantação do workflow
+- **WHEN** `release.yml` ainda não existir na default branch `develop`
+- **THEN** a sincronização `release/X.Y.Z -> develop` MUST ocorrer antes do primeiro `workflow_dispatch`
+
+#### Scenario: Próxima release
 - **WHEN** `develop` ainda não contiver o estado pós-release anterior
-- **THEN** a próxima preparação de release MUST NOT ser considerada pronta para iniciar
+- **THEN** a próxima preparação MUST NOT ser considerada pronta para iniciar
 
 ### Requirement: Processo documentado
-O repositório MUST documentar de forma clara quais etapas são humanas e quais são automatizadas.
+O repositório MUST documentar claramente o fluxo e suas responsabilidades.
 
 #### Scenario: Descobrir como publicar uma release
 - **WHEN** um mantenedor consultar o `README.md`
-- **THEN** MUST encontrar um resumo do fluxo de release e um link para `docs/release-process.md`
-- **AND** o documento detalhado MUST explicar preparação, escolha da versão, PR, checks obrigatórios, merge, sincronização com `develop`, resolução do commit, disparo manual, publicação e recuperação de falhas
+- **THEN** MUST encontrar um resumo e link para `docs/release-process.md`
+- **AND** o documento detalhado MUST explicar bootstrap, escolha da versão, preparação atômica, política exclusiva de `master`, sequência entre releases, PR de retorno para `develop`, publicação, recuperação, toolchain e configuração de proteção/ruleset

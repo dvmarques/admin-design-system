@@ -14,7 +14,8 @@ A governança atual do repositório distingue contratos estáveis de instruçõe
 - Preservar decisão humana sobre versão, integração e disparo da publicação.
 - Manter raiz, workspaces privados, dependências internas, lockfile e changelog coordenados.
 - Permitir releases estáveis major, minor ou patch escolhidas pelo mantenedor.
-- Garantir preparação recuperável sem estado parcial.
+- Garantir preparação local recuperável sem depender de API remota.
+- Garantir que validações remotas bloqueiem tags/releases órfãs ou inconsistentes.
 - Garantir que a tag aponte para o commit exato da release, e não para o HEAD corrente de `master`.
 - Tornar publicação idempotente e recuperável sem mover ou recriar tags existentes.
 - Reutilizar a CI existente, sem duplicar quality/build/E2E.
@@ -25,6 +26,7 @@ A governança atual do repositório distingue contratos estáveis de instruçõe
 - Publicar automaticamente em todo push para `master`.
 - Inferir automaticamente major/minor/patch.
 - Suportar prerelease ou build metadata neste primeiro fluxo.
+- Exigir autenticação/API GitHub para executar a preparação local.
 - Suportar `hotfix/*` neste primeiro desenho.
 - Versionar/publicar cada workspace de forma independente.
 - Transformar política de branches, ruleset ou checklist humana em requisitos permanentes da capability.
@@ -38,7 +40,7 @@ A capability `release-process` cobre apenas comportamentos observáveis da autom
 - preparação e recuperação;
 - SemVer e changelog;
 - versionamento coordenado;
-- validação da predecessora;
+- validação remota/bootstrap e da predecessora;
 - resolução do commit liberado;
 - tags anotadas e imutáveis;
 - GitHub Release idempotente;
@@ -61,8 +63,8 @@ Isso segue a governança em que specs representam contratos estáveis, enquanto 
 O ciclo será:
 
 1. `release/X.Y.Z` nasce de `develop`;
-2. a preparação ocorre nessa branch;
-3. PR `release/X.Y.Z -> master` integra a release;
+2. a preparação local ocorre nessa branch;
+3. PR `release/X.Y.Z -> master` integra a release depois das validações locais/remotas;
 4. após o merge, a branch não recebe novo delta funcional;
 5. a mesma branch é reconciliada com `develop` por PR;
 6. depois da sincronização com `develop`, a publicação é disparada manualmente;
@@ -78,7 +80,7 @@ O diff operacional de retorno deve ficar restrito aos arquivos preparados pela r
 
 ### `master` como linha estável
 
-`master` será operada como linha estável de releases. O `release-check` será aplicado em PRs para `master` e validará a preparação. A política operacional inicial aceita somente head `release/*`; outras heads falham explicitamente.
+`master` será operada como linha estável de releases. O `release-check` será aplicado em PRs para `master` e validará a preparação e o estado remoto. A política operacional inicial aceita somente head `release/*`; outras heads falham explicitamente.
 
 Em eventos `push` pós-merge, a regra baseada em `github.head_ref` não é aplicada. Os checks gerais existentes podem continuar executando normalmente.
 
@@ -104,9 +106,14 @@ O parser considera fechada apenas uma seção com SemVer estável e data no form
 
 As versões fechadas devem ser únicas e aparecer em ordem SemVer decrescente no arquivo.
 
-No bootstrap, não pode existir versão fechada, tag `vX.Y.Z` nem GitHub Release associada a esse padrão. Tags ou releases fora do esquema de versionamento do processo não participam da detecção de bootstrap. Qualquer artefato remoto órfão dentro do padrão `vX.Y.Z` torna o estado inconsistente e bloqueia a preparação até correção explícita.
+O bootstrap é dividido em duas camadas:
 
-No bootstrap limpo, o alvo pode ser igual ou superior à versão coordenada atual. Depois do bootstrap, a versão atual deve coincidir com a última versão fechada e o próximo alvo deve ser estritamente maior.
+- **local:** sem versão fechada no changelog, o alvo pode ser igual ou superior à versão coordenada atual; o preflight não consulta API GitHub;
+- **remota:** antes da integração/publicação, `release-check` confirma que não existe tag ou GitHub Release no padrão `vX.Y.Z` incompatível com a ausência de histórico fechado.
+
+Tags/releases fora desse padrão não participam da detecção. Um artefato órfão dentro do padrão bloqueia a release na validação remota até correção explícita.
+
+Depois do bootstrap, a versão atual deve coincidir com a última versão fechada e o próximo alvo deve ser estritamente maior.
 
 O placeholder aberto depois de cada release usa a próxima patch apenas como valor de trabalho. Ele pode ser renomeado para uma versão minor ou major escolhida depois, preservando seu conteúdo.
 
@@ -122,13 +129,13 @@ O mesmo formato é exigido para reconhecer seções fechadas como válidas.
 
 `release:prepare` terá três fases lógicas:
 
-1. **preflight** somente leitura;
+1. **preflight** somente leitura de estado local/versionado;
 2. **staging** de todos os conteúdos novos, inclusive lockfile;
 3. **aplicação final** apenas depois de a staging estar completa.
 
-Como guardas operacionais, o preflight local também exigirá branch atual exatamente `release/X.Y.Z` e working tree limpa antes da primeira escrita. Essas condições pertencem ao modo de operação do comando, não ao contrato permanente da capability.
+Como guardas operacionais, o preflight local exige branch atual exatamente `release/X.Y.Z` e working tree limpa antes da primeira escrita. Ele não depende de autenticação ou consulta à API do GitHub.
 
-Falhas de validação não alteram arquivos. Falhas durante staging não alteram os arquivos reais. Se a aplicação final falhar, o estado anterior deve ser restaurado ou uma estratégia de substituição atômica equivalente deve evitar resultado parcial.
+Falhas de validação local não alteram arquivos. Falhas durante staging não alteram os arquivos reais. Se a aplicação final falhar, o estado anterior deve ser restaurado ou uma estratégia de substituição atômica equivalente deve evitar resultado parcial.
 
 ### Versionamento coordenado e toolchain
 
@@ -142,7 +149,13 @@ Fixar o npm é uma decisão de implementação para satisfazer o requisito está
 
 A CI atual continua responsável por quality/build/E2E. Um check específico de release executará somente as validações adicionais necessárias, evitando repetir `npm run validate` ou reinstalar browsers sem necessidade.
 
-Para uma release após o bootstrap, o check também valida que a predecessora atende aos mesmos critérios de tag anotada, commit e GitHub Release usados pela publicação atual.
+O `release-check` reúne as validações que dependem do GitHub remoto:
+
+- bootstrap sem tag/GitHub Release órfã no padrão `vX.Y.Z`;
+- publicação consistente da predecessora quando ela existir;
+- consistência entre versão preparada e changelog.
+
+A preparação local continua utilizável sem essas consultas remotas; a PR não pode ser integrada enquanto o `release-check` remoto não estiver verde.
 
 A validação OpenSpec da CI deverá usar uma versão fixada e um launcher multiplataforma, sem depender de `openspec.cmd` ou instalação global no runner Linux.
 
@@ -201,7 +214,8 @@ Se a tag correta existir mas a GitHub Release não, a reexecução preserva a ta
 ## Risks / Trade-offs
 
 - [Capability virar checklist operacional] → manter políticas de branch/workflow fora da delta spec e nas fontes operacionais.
-- [Primeira release com artefato remoto órfão] → bootstrap exige ausência de histórico fechado e de artefato remoto no padrão `vX.Y.Z`.
+- [Preparação local depender de GitHub] → separar preflight local de validações remotas da CI/publicação.
+- [Primeira release com artefato remoto órfão] → `release-check` remoto bloqueia artefato no padrão `vX.Y.Z`.
 - [Tag não relacionada começa com v] → detecção considera somente o padrão estável `vX.Y.Z`.
 - [Prerelease entra sem política] → aceitar somente `X.Y.Z` estável neste fluxo.
 - [Data varia por timezone] → calcular em `America/Sao_Paulo` com mapa fixo de meses e validar o mesmo formato em seções fechadas.

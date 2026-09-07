@@ -89,14 +89,16 @@ O projeto MUST disponibilizar uma validação automatizável que determine se um
 - **AND** MUST rejeitar divergências entre esses artefatos
 
 #### Scenario: Bootstrap remoto limpo
-- **WHEN** a validação remota for executada para a primeira release
-- **THEN** MUST confirmar que não existe tag nem GitHub Release no padrão estável `vX.Y.Z` que conflite com a ausência de histórico fechado
+- **WHEN** a validação remota for executada para uma release sem predecessora
+- **THEN** MUST confirmar que não existe tag nem GitHub Release no padrão estável `vX.Y.Z` que conflite com o bootstrap
 - **AND** MUST falhar se existir artefato remoto órfão dentro desse padrão
 
 #### Scenario: Predecessora necessária
 - **WHEN** existir uma predecessora para `X.Y.Z`
-- **THEN** a validação MUST confirmar que a predecessora atende aos mesmos critérios de tag anotada, commit e GitHub Release definidos nesta capability
-- **AND** MUST falhar quando a publicação precedente estiver ausente ou divergente
+- **THEN** a automação MUST resolver de forma independente o commit efetivamente integrado da predecessora usando o mesmo contrato de resolução de commit aplicado à release atual
+- **AND** MUST confirmar que a tag anotada da predecessora dereferencia para esse commit esperado
+- **AND** MUST confirmar que a GitHub Release da predecessora atende aos critérios definidos nesta capability
+- **AND** MUST falhar quando qualquer parte da publicação precedente estiver ausente ou divergente
 
 ### Requirement: Publicação no commit exato da release
 A publicação de `X.Y.Z` MUST resolver e validar o commit exato correspondente à integração daquela release antes de criar artefatos remotos.

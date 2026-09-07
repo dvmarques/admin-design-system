@@ -38,16 +38,17 @@
 ## 4. Publicação da release
 
 - [ ] 4.1 Criar `.github/workflows/release.yml` com `workflow_dispatch`, input obrigatório `version`, permissões `contents: write` e `pull-requests: read`.
-- [ ] 4.2 Adicionar `concurrency` com grupo único de publicação e `queue: max`, sem `cancel-in-progress: true`.
-- [ ] 4.3 Resolver de forma inequívoca a PR merged `release/X.Y.Z -> master` e obter seu `merge_commit_sha`.
-- [ ] 4.4 Validar que o `merge_commit_sha` continua alcançável a partir do `master` atual.
-- [ ] 4.5 Fazer checkout explícito do `merge_commit_sha` antes de validar manifests, changelog e release notes.
-- [ ] 4.6 Validar versão coordenada e seção fechada no commit liberado.
-- [ ] 4.7 Verificar `vX.Y.Z`, distinguindo tag anotada de lightweight e dereferenciando tag anotada até o commit.
-- [ ] 4.8 Criar tag anotada `vX.Y.Z` somente se não existir; reutilizar apenas tag anotada no commit correto; falhar para lightweight ou commit divergente.
-- [ ] 4.9 Criar GitHub Release com `tag_name = vX.Y.Z`, nome `vX.Y.Z`, `draft=false`, `prerelease=false` e notas extraídas do changelog.
-- [ ] 4.10 Tratar tag válida existente + release ausente como recuperação, criando somente a release.
-- [ ] 4.11 Quando a release já existir, validar tag, commit, nome, draft, prerelease e body normalizado antes de sucesso/no-op; falhar sem alteração para divergência.
+- [ ] 4.2 Validar no início do workflow que `github.ref_name == develop` e falhar antes de qualquer acesso mutável quando o dispatch usar outro branch/tag.
+- [ ] 4.3 Adicionar `concurrency` com grupo único de publicação e `queue: max`, sem `cancel-in-progress: true`.
+- [ ] 4.4 Resolver de forma inequívoca a PR merged `release/X.Y.Z -> master` e obter seu `merge_commit_sha`.
+- [ ] 4.5 Validar que o `merge_commit_sha` continua alcançável a partir do `master` atual.
+- [ ] 4.6 Fazer checkout explícito do `merge_commit_sha` antes de validar manifests, changelog e release notes.
+- [ ] 4.7 Validar versão coordenada e seção fechada no commit liberado.
+- [ ] 4.8 Verificar `vX.Y.Z`, distinguindo tag anotada de lightweight e dereferenciando tag anotada até o commit.
+- [ ] 4.9 Criar tag anotada `vX.Y.Z` somente se não existir; reutilizar apenas tag anotada no commit correto; falhar para lightweight ou commit divergente.
+- [ ] 4.10 Criar GitHub Release com `tag_name = vX.Y.Z`, nome `vX.Y.Z`, `draft=false`, `prerelease=false` e notas extraídas do changelog.
+- [ ] 4.11 Tratar tag válida existente + release ausente como recuperação, criando somente a release.
+- [ ] 4.12 Quando a release já existir, validar tag, commit, nome, draft, prerelease e body normalizado antes de sucesso/no-op; falhar sem alteração para divergência.
 
 ## 5. Sincronização pós-release
 
@@ -79,16 +80,17 @@
 - [ ] 6.11 Testar que PR não-release para `master` falha no `release-check`.
 - [ ] 6.12 Testar que `push` pós-merge em `master` não aciona indevidamente a política baseada em head branch.
 - [ ] 6.13 Testar bootstrap sem publicação anterior e bloqueio da próxima release quando a predecessora não estiver publicada consistentemente.
-- [ ] 6.14 Testar resolução por `merge_commit_sha` para métodos de merge suportados e com `master` avançado.
-- [ ] 6.15 Testar falha quando o commit liberado não estiver mais alcançável em `master`.
-- [ ] 6.16 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
-- [ ] 6.17 Testar recuperação tag válida + release ausente.
-- [ ] 6.18 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
-- [ ] 6.19 Testar/validar que múltiplos `workflow_dispatch` permanecem enfileirados pelo grupo com `queue: max` sem substituir execução pendente.
-- [ ] 6.20 Testar back-merge quando `develop` recebeu novas entradas de changelog após o corte, mantendo o bloco fechado imutável e as novas entradas em `Em andamento`.
-- [ ] 6.21 Testar back-merge quando `develop` recebeu novo workspace após o corte, coordenando sua versão sem perder dependências/metadados futuros.
-- [ ] 6.22 Testar rejeição de arquivo fora do conjunto permitido no PR de retorno.
-- [ ] 6.23 Testar/validar que a branch não é removida antes de back-merge e publicação concluídos.
+- [ ] 6.14 Testar dispatch em `develop` como permitido e dispatch em branch/tag diferente como falha antes de qualquer efeito remoto.
+- [ ] 6.15 Testar resolução por `merge_commit_sha` para métodos de merge suportados e com `master` avançado.
+- [ ] 6.16 Testar falha quando o commit liberado não estiver mais alcançável em `master`.
+- [ ] 6.17 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
+- [ ] 6.18 Testar recuperação tag válida + release ausente.
+- [ ] 6.19 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
+- [ ] 6.20 Testar/validar que múltiplos `workflow_dispatch` permanecem enfileirados pelo grupo com `queue: max` sem substituir execução pendente.
+- [ ] 6.21 Testar back-merge quando `develop` recebeu novas entradas de changelog após o corte, mantendo o bloco fechado imutável e as novas entradas em `Em andamento`.
+- [ ] 6.22 Testar back-merge quando `develop` recebeu novo workspace após o corte, coordenando sua versão sem perder dependências/metadados futuros.
+- [ ] 6.23 Testar rejeição de arquivo fora do conjunto permitido no PR de retorno.
+- [ ] 6.24 Testar/validar que a branch não é removida antes de back-merge e publicação concluídos.
 
 ## 7. Documentação
 
@@ -99,14 +101,15 @@
 - [ ] 7.5 Documentar que a política de origem de branch vale para `pull_request` a `master`, não para `push` pós-merge.
 - [ ] 7.6 Documentar congelamento da release branch após merge em `master`, arquivos permitidos no PR de retorno e retenção da branch até a publicação.
 - [ ] 7.7 Documentar semântica do back-merge: bloco fechado imutável, novas entradas permanecendo em `Em andamento` e workspaces novos coordenados sem perda de metadados futuros.
-- [ ] 7.8 Documentar `merge_commit_sha`, reachability em `master`, checkout explícito, tags anotadas e recuperação idempotente.
-- [ ] 7.9 Documentar `concurrency` com grupo único e `queue: max`.
-- [ ] 7.10 Documentar os metadados exigidos da GitHub Release e a normalização permitida no body.
-- [ ] 7.11 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
+- [ ] 7.8 Documentar que `Publicar release` deve ser disparado com ref `develop` e que outro ref é rejeitado.
+- [ ] 7.9 Documentar `merge_commit_sha`, reachability em `master`, checkout explícito, tags anotadas e recuperação idempotente.
+- [ ] 7.10 Documentar `concurrency` com grupo único e `queue: max`.
+- [ ] 7.11 Documentar os metadados exigidos da GitHub Release e a normalização permitida no body.
+- [ ] 7.12 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
 
 ## 8. Validação final
 
 - [ ] 8.1 Executar suíte de testes e checks existentes do projeto.
 - [ ] 8.2 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
-- [ ] 8.3 Revisar fluxo de bootstrap `0.0.1`, back-merge semântico, publicação, remoção da branch e release seguinte sem efetuar publicação real indevida.
-- [ ] 8.4 Revisar cenários de falha/recuperação: atomicidade local, changelog inválido, predecessora incorreta, push direto, release anterior ausente, publicação concorrente, commit não alcançável, lightweight tag, release preexistente divergente e develop avançado durante a release.
+- [ ] 8.3 Revisar fluxo de bootstrap `0.0.1`, back-merge semântico, dispatch em `develop`, publicação, remoção da branch e release seguinte sem efetuar publicação real indevida.
+- [ ] 8.4 Revisar cenários de falha/recuperação: atomicidade local, changelog inválido, predecessora incorreta, push direto, release anterior ausente, dispatch em ref incorreto, publicação concorrente, commit não alcançável, lightweight tag, release preexistente divergente e develop avançado durante a release.

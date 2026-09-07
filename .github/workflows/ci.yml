@@ -9,6 +9,11 @@ on:
     branches:
       - develop
       - master
+    types:
+      - opened
+      - synchronize
+      - reopened
+      - ready_for_review
 
 permissions:
   contents: read
@@ -16,6 +21,7 @@ permissions:
 jobs:
   quality:
     name: Qualidade rápida
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -23,6 +29,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: npm run format
       - run: npm run lint
@@ -33,6 +40,7 @@ jobs:
 
   build:
     name: Artefatos de distribuição
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     needs: quality
     runs-on: ubuntu-latest
     steps:
@@ -41,6 +49,7 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: npm run generate --workspace @admin-ds/tokens
       - run: npm run check:generated --workspace @admin-ds/tokens
@@ -53,6 +62,7 @@ jobs:
 
   e2e:
     name: Fluxos no navegador
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     needs: build
     runs-on: ubuntu-latest
     steps:
@@ -61,8 +71,72 @@ jobs:
         with:
           node-version: 22
           cache: npm
+      - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: npx playwright install --with-deps chromium
       - run: npm run build --workspace @admin-ds/tokens
       - run: npm run build --workspace @admin-ds/components
       - run: npx playwright test
+
+  develop-policy:
+    name: Política de develop
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+      GITHUB_HEAD_REF: ${{ github.head_ref }}
+      PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - run: node ./scripts/develop-policy.mjs
+      - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive
+
+  release-check:
+    name: Validação de release
+    if: github.event_name == 'pull_request' && github.base_ref == 'master' && github.event.pull_request.draft == false
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - name: Validar identidade e preparação
+        shell: bash
+        run: |
+          if [[ ! "$GITHUB_HEAD_REF" =~ ^release/([0-9]+\.[0-9]+\.[0-9]+)$ ]]; then
+            echo "PRs para master devem vir de release/X.Y.Z" >&2
+            exit 1
+          fi
+          VERSION="${GITHUB_HEAD_REF#release/}"
+          if [[ "${{ github.event.pull_request.head.repo.full_name }}" != "$GITHUB_REPOSITORY" ]]; then
+            echo "Release PR deve vir do mesmo repositório" >&2
+            exit 1
+          fi
+          npm run release:validate -- "$VERSION"
+          node ./scripts/release-github.mjs target-absent "$VERSION"
+          node ./scripts/release-github.mjs bootstrap-remote "$VERSION"
+          node ./scripts/release-github.mjs predecessor "$VERSION"
+      - name: Validar delta exclusivo da release
+        shell: bash
+        run: |
+          git fetch origin develop --no-tags
+          BASE="$(git merge-base HEAD origin/develop)"
+          BAD="$(git diff --name-only "$BASE"...HEAD | grep -Ev '^(CHANGELOG\.md|package\.json|package-lock\.json|(packages|apps)/[^/]+/package\.json)$' || true)"
+          if [[ -n "$BAD" ]]; then
+            echo "Release branch contém alterações funcionais exclusivas:" >&2
+            echo "$BAD" >&2
+            exit 1
+          fi
+      - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive

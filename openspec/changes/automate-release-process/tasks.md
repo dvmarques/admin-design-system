@@ -33,9 +33,10 @@
 - [ ] 3.4 Em PR `release/* -> master` válida, executar a validação reutilizável da preparação, bootstrap remoto/predecessora e changelog.
 - [ ] 3.5 Para qualquer head não-release ou release de origem inválida em PR para `master`, fazer `release-check` falhar explicitamente.
 - [ ] 3.6 Garantir que a política baseada em metadados de PR seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
-- [ ] 3.7 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
-- [ ] 3.8 Na primeira implantação, abrir a PR de release e confirmar que `release-check` já executou/apareceu antes de configurá-lo como required check.
-- [ ] 3.9 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
+- [ ] 3.7 Conceder ao job `release-check` somente `contents: read` e `pull-requests: read`, preservando as permissões atuais dos demais jobs e sem conceder escrita à CI.
+- [ ] 3.8 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
+- [ ] 3.9 Na primeira implantação, abrir a PR de release e confirmar que `release-check` já executou/apareceu antes de configurá-lo como required check.
+- [ ] 3.10 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
 
 ## 4. Publicação da release
 
@@ -80,14 +81,15 @@
 - [ ] 6.11 Testar resolução independente do commit da predecessora e rejeitar caso a tag aponte para commit diferente do esperado.
 - [ ] 6.12 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
 - [ ] 6.13 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
-- [ ] 6.14 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
-- [ ] 6.15 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
-- [ ] 6.16 Testar recuperação tag válida + release ausente.
-- [ ] 6.17 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
-- [ ] 6.18 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
-- [ ] 6.19 Testar back-merge com novas entradas de changelog após o corte.
-- [ ] 6.20 Testar back-merge com workspace novo após o corte, preservando metadados futuros.
-- [ ] 6.21 Testar rejeição de delta funcional/arquivo fora do escopo permitido no PR de retorno.
+- [ ] 6.14 Validar estaticamente as permissões mínimas do `release-check`: `contents: read`, `pull-requests: read` e nenhuma permissão de escrita.
+- [ ] 6.15 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
+- [ ] 6.16 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
+- [ ] 6.17 Testar recuperação tag válida + release ausente.
+- [ ] 6.18 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
+- [ ] 6.19 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
+- [ ] 6.20 Testar back-merge com novas entradas de changelog após o corte.
+- [ ] 6.21 Testar back-merge com workspace novo após o corte, preservando metadados futuros.
+- [ ] 6.22 Testar rejeição de delta funcional/arquivo fora do escopo permitido no PR de retorno.
 
 ## 7. Documentação e governança operacional
 
@@ -98,7 +100,7 @@
 - [ ] 7.5 Documentar que o fluxo inicial não suporta prerelease/build metadata, `hotfix/*` nem releases vindas de forks.
 - [ ] 7.6 Documentar padrão de branch/tag `release/X.Y.Z`/`vX.Y.Z`, coerência entre nome da branch e versão preparada, timezone/formato do changelog e definição da última versão fechada/predecessora.
 - [ ] 7.7 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
-- [ ] 7.8 Documentar política de `master`, same-repo head, comportamento distinto entre `pull_request` e `push` e sequência inicial para ativar `release-check` como required antes do primeiro merge.
+- [ ] 7.8 Documentar política de `master`, same-repo head, permissões mínimas do `release-check`, comportamento distinto entre `pull_request` e `push` e sequência inicial para ativar o check como required antes do primeiro merge.
 - [ ] 7.9 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
 - [ ] 7.10 Documentar resolução independente do commit atual/predecessora, tags anotadas, GitHub Release e recuperação idempotente.
 - [ ] 7.11 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.

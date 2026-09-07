@@ -22,6 +22,27 @@ const section = (text, parsed, version) => {
 	const next = parsed.sections.find((candidate) => candidate.index > current.index);
 	return text.slice(current.index, next?.index ?? text.length).trimEnd();
 };
+const assertClosedBlocksPreserved = ({ allowAddedVersion = null } = {}) => {
+	const baseVersions = baseParsed.closed.map(({ version }) => version);
+	const headVersions = headParsed.closed.map(({ version }) => version);
+	const expectedVersions = allowAddedVersion
+		? [allowAddedVersion, ...baseVersions]
+		: baseVersions;
+	if (
+		headVersions.length !== expectedVersions.length ||
+		headVersions.some((version, index) => version !== expectedVersions[index])
+	) {
+		throw new Error(
+			`Conjunto de versões fechadas divergente. Esperado: ${expectedVersions.join(', ') || '(vazio)'}; encontrado: ${headVersions.join(', ') || '(vazio)'}.`,
+		);
+	}
+	for (const closed of baseParsed.closed) {
+		const before = section(baseChangelog, baseParsed, closed.version);
+		const after = section(headChangelog, headParsed, closed.version);
+		if (after === null) throw new Error(`Bloco fechado ${closed.version} removido.`);
+		if (before !== after) throw new Error(`Bloco fechado ${closed.version} alterado.`);
+	}
+};
 
 const headChangelog = await fs.readFile('CHANGELOG.md', 'utf8');
 const baseChangelog = show(base, 'CHANGELOG.md');
@@ -48,12 +69,7 @@ if (!isBackmerge) {
 	if (headParsed.ongoing[0].version !== baseParsed.ongoing[0]?.version) {
 		throw new Error('PR comum não pode alterar o heading Em andamento.');
 	}
-	for (const closed of baseParsed.closed) {
-		const before = section(baseChangelog, baseParsed, closed.version);
-		const after = section(headChangelog, headParsed, closed.version);
-		if (after === null) throw new Error(`Bloco fechado ${closed.version} removido.`);
-		if (before !== after) throw new Error(`Bloco fechado ${closed.version} alterado.`);
-	}
+	assertClosedBlocksPreserved();
 	console.log('develop-policy comum: ok');
 } else {
 	const changed = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], {
@@ -71,6 +87,7 @@ if (!isBackmerge) {
 	if (headVersion !== version) {
 		throw new Error(`Back-merge ${version} com manifests ${headVersion}.`);
 	}
+	assertClosedBlocksPreserved({ allowAddedVersion: version });
 
 	const repo = process.env.GITHUB_REPOSITORY;
 	const token = process.env.GITHUB_TOKEN;

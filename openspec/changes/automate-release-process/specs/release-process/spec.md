@@ -13,10 +13,18 @@ O projeto MUST disponibilizar um comando de preparação de release que receba u
 - **AND** MUST NOT alterar os arquivos versionados
 
 #### Scenario: Bootstrap da primeira release
-- **WHEN** não existir versão fechada nem artefato de release anterior consistente
+- **WHEN** não existir nenhuma versão fechada no changelog
+- **AND** não existir nenhuma tag de release `v*`
+- **AND** não existir nenhuma GitHub Release
 - **AND** os manifests coordenados declararem uma única versão atual `A.B.C`
 - **THEN** o alvo da primeira release MUST ser uma SemVer maior ou igual a `A.B.C`
 - **AND** downgrade MUST NOT ser permitido
+
+#### Scenario: Artefato remoto órfão durante bootstrap
+- **WHEN** não existir versão fechada no changelog
+- **AND** existir tag de release `v*` ou GitHub Release
+- **THEN** a preparação/validação MUST falhar como estado inconsistente
+- **AND** MUST NOT tratar o repositório como bootstrap limpo
 
 #### Scenario: Preparar uma versão após o bootstrap
 - **WHEN** existir ao menos uma versão fechada anterior
@@ -88,7 +96,7 @@ O projeto MUST disponibilizar uma validação automatizável que determine se um
 
 #### Scenario: Predecessora necessária
 - **WHEN** existir uma predecessora para `X.Y.Z`
-- **THEN** a validação MUST confirmar que a predecessora possui artefatos de publicação consistentes
+- **THEN** a validação MUST confirmar que a predecessora atende aos mesmos critérios de tag anotada, commit e GitHub Release definidos nesta capability
 - **AND** MUST falhar quando a publicação precedente estiver ausente ou divergente
 
 ### Requirement: Publicação no commit exato da release
@@ -97,9 +105,9 @@ A publicação de `X.Y.Z` MUST resolver e validar o commit exato correspondente 
 #### Scenario: Resolver commit da release
 - **WHEN** a publicação de `X.Y.Z` for solicitada
 - **THEN** a automação MUST resolver de forma inequívoca o commit efetivamente integrado para essa versão
-- **AND** MUST confirmar que esse commit pertence ao histórico estável esperado
+- **AND** MUST confirmar que esse commit continua alcançável a partir de `master`
 - **AND** MUST validar nesse commit a versão coordenada e o changelog fechado
-- **AND** MUST NOT substituir o commit resolvido pelo HEAD corrente da branch estável
+- **AND** MUST NOT substituir o commit resolvido pelo HEAD corrente de `master`
 
 #### Scenario: Commit não resolvido ou ambíguo
 - **WHEN** não for possível determinar de forma inequívoca o commit da release
@@ -128,13 +136,13 @@ A GitHub Release `vX.Y.Z` MUST representar a tag e o commit validados e MUST per
 
 #### Scenario: Criar GitHub Release
 - **WHEN** a tag anotada correta existir e a GitHub Release correspondente não existir
-- **THEN** a automação MUST criar a GitHub Release associada a `vX.Y.Z`
+- **THEN** a automação MUST criar a GitHub Release com `tag_name` e nome iguais a `vX.Y.Z`
 - **AND** MUST usar somente as notas da seção fechada `X.Y.Z` do changelog do commit liberado
-- **AND** MUST publicar a release como não-draft e não-prerelease
+- **AND** MUST publicar a release com `draft=false` e `prerelease=false`
 
 #### Scenario: GitHub Release existente e consistente
 - **WHEN** a GitHub Release `vX.Y.Z` já existir
-- **AND** tag, commit, nome, estado draft/prerelease e body corresponderem ao esperado
+- **AND** `tag_name`, nome, commit, `draft`, `prerelease` e body corresponderem ao estado definido nesta capability
 - **THEN** a publicação MUST encerrar como sucesso/no-op explícito
 - **AND** MUST NOT modificar tag ou release
 

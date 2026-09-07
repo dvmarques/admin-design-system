@@ -1,11 +1,11 @@
 {
 	"name": "@admin-ds/docs",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"dependencies": {
-		"@admin-ds/components": "0.0.0",
-		"@admin-ds/tokens": "0.0.0",
+		"@admin-ds/components": "0.0.1",
+		"@admin-ds/tokens": "0.0.1",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8"
 	},

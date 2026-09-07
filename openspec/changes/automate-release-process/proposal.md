@@ -12,9 +12,10 @@ A governança atual do repositório separa contratos estáveis de instruções o
 
 ### Contrato estável da automação
 
-- Criar um comando de preparação que recebe uma versão estável `X.Y.Z`, valida o estado, prepara todas as alterações e evita estado parcial em caso de falha.
+- Criar um comando local de preparação que recebe uma versão estável `X.Y.Z`, valida changelog/manifests/working copy, prepara todas as alterações e evita estado parcial em caso de falha, sem depender de acesso à API do GitHub.
 - Não suportar prerelease (`-alpha`, `-rc` etc.) nem build metadata (`+...`) neste primeiro fluxo; eventual suporte futuro deverá ser especificado separadamente.
-- Definir bootstrap explícito para a primeira release: quando não existir versão fechada nem artefato remoto no padrão `vX.Y.Z`, permitir como alvo qualquer SemVer maior ou igual à versão coordenada atual, sem permitir downgrade.
+- Definir bootstrap local explícito para a primeira release com base no changelog e na versão coordenada atual, permitindo alvo maior ou igual ao estado atual e proibindo downgrade.
+- Validar remotamente, no `release-check`/publicação, que não existem tags ou GitHub Releases órfãs no padrão `vX.Y.Z` incompatíveis com o histórico versionado.
 - Definir a última versão fechada como a maior SemVer entre as seções fechadas do `CHANGELOG.md`, exigindo versões fechadas únicas, ordenadas de forma decrescente e com data no formato oficial.
 - Definir a release anterior de um alvo `X.Y.Z` como a maior SemVer fechada estritamente menor que o alvo, evitando confundir a versão em preparação com sua predecessora.
 - Após a primeira release, exigir que o estado coordenado atual corresponda à última versão fechada antes da preparação e que a próxima `X.Y.Z` seja uma SemVer estritamente superior.

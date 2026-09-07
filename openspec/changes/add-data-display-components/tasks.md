@@ -7,8 +7,8 @@
 ## 2. Tabelas
 
 - [ ] 2.1 Implementar `AdsTable` e suas partes composicionais preservando semântica HTML tabular, atributos nativos e associações de cabeçalhos.
-- [ ] 2.2 Implementar estilos de cabeçalho, linhas, células, divisores, alinhamentos, hover/seleção visual quando aplicável e foco de conteúdo interativo usando tokens públicos.
-- [ ] 2.3 Implementar comportamento responsivo que preserve acesso a todas as colunas, preferindo overflow horizontal a transformações que quebrem semântica.
+- [ ] 2.2 Implementar estilos de cabeçalho, linhas, células, divisores, alinhamentos, hover e foco de conteúdo interativo usando tokens públicos, sem introduzir estado de seleção de linha nesta change.
+- [ ] 2.3 Implementar comportamento responsivo que preserve a estrutura tabular e acesso a todas as colunas por overflow horizontal quando o conteúdo exceder a largura disponível, sem ocultar colunas automaticamente.
 - [ ] 2.4 Escrever testes unitários e de acessibilidade para estrutura, cabeçalhos, conteúdo interativo, atributos públicos, temas e viewport estreita.
 - [ ] 2.5 Criar histórias Storybook e exemplos no admin demo com tabela simples, conteúdo rico em células e combinação externa com paginação.
 
@@ -22,11 +22,11 @@
 
 ## 4. Progresso e estados vazios
 
-- [ ] 4.1 Implementar `AdsProgress` determinado com valor, mínimo, máximo e representação acessível coerente.
+- [ ] 4.1 Implementar `AdsProgress` determinado com valor, mínimo, máximo, normalização determinística de valores fora do intervalo e representação acessível coerente.
 - [ ] 4.2 Implementar `AdsProgress` indeterminado sem anunciar percentual fictício, com animação que respeite preferências de movimento reduzido.
 - [ ] 4.3 Implementar `AdsEmptyState` com título, descrição, visual opcional e área de ações fornecidas pelo consumidor, sem semântica de erro por padrão.
 - [ ] 4.4 Adicionar tokens/estilos necessários para trilha e indicador de progresso, hierarquia do estado vazio e temas claro/escuro.
-- [ ] 4.5 Escrever testes unitários e de acessibilidade para progresso determinado/indeterminado, reduced motion, estado vazio e ações.
+- [ ] 4.5 Escrever testes unitários e de acessibilidade para progresso determinado/indeterminado, limites de valor, reduced motion, estado vazio e ações.
 - [ ] 4.6 Criar histórias Storybook e exemplos no admin demo para carregamento, processamento, coleção vazia e busca sem resultados.
 
 ## 5. Integração dos padrões de apresentação

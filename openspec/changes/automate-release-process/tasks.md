@@ -21,17 +21,21 @@
 - [ ] 2.2 Criar validação reutilizável de consistência entre versão, manifests, dependências internas, lockfile e `CHANGELOG.md`.
 - [ ] 2.3 Reutilizar a mesma lógica para calcular última versão fechada e predecessora do alvo.
 - [ ] 2.4 No bootstrap remoto, detectar tag/GitHub Release órfã no padrão `vX.Y.Z` e falhar sem exigir essa consulta de `release:prepare` local.
-- [ ] 2.5 Validar publicação da predecessora pelos mesmos critérios de tag anotada, commit e GitHub Release usados na publicação atual.
-- [ ] 2.6 Implementar comparação de release notes normalizando somente CRLF/LF e newline final.
+- [ ] 2.5 Criar um resolvedor reutilizável do commit efetivamente integrado de uma versão e usá-lo tanto para a release atual quanto para a predecessora.
+- [ ] 2.6 Validar a predecessora comparando tag anotada e GitHub Release contra o commit esperado resolvido independentemente, sem usar a própria tag como fonte de verdade.
+- [ ] 2.7 Implementar comparação de release notes normalizando somente CRLF/LF e newline final.
 
-## 3. CI e toolchain
+## 3. CI e política operacional de master
 
 - [ ] 3.1 Integrar um `release-check` à CI sem duplicar quality/build/E2E já existentes.
-- [ ] 3.2 Em PR `release/* -> master`, executar a validação reutilizável da preparação, bootstrap remoto/predecessora e changelog.
-- [ ] 3.3 Implementar a política operacional de `master` para que PR não-`release/*` falhe explicitamente no `release-check`.
-- [ ] 3.4 Garantir que a política baseada em head branch seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
-- [ ] 3.5 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
-- [ ] 3.6 Configurar/documentar ruleset de `master` exigindo PR e required checks e bloqueando push direto, force push e deleção; manter bypass no menor escopo necessário.
+- [ ] 3.2 Em PR para `master`, exigir head no padrão estável `release/X.Y.Z`, derivar a versão da branch e validar que ela coincide com manifests/changelog preparados.
+- [ ] 3.3 Exigir que a PR de release tenha `head.repo.full_name == github.repository`; rejeitar forks mesmo que possuam branch homônima `release/*`.
+- [ ] 3.4 Em PR `release/* -> master` válida, executar a validação reutilizável da preparação, bootstrap remoto/predecessora e changelog.
+- [ ] 3.5 Para qualquer head não-release ou release de origem inválida em PR para `master`, fazer `release-check` falhar explicitamente.
+- [ ] 3.6 Garantir que a política baseada em metadados de PR seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
+- [ ] 3.7 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
+- [ ] 3.8 Na primeira implantação, abrir a PR de release e confirmar que `release-check` já executou/apareceu antes de configurá-lo como required check.
+- [ ] 3.9 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
 
 ## 4. Publicação da release
 
@@ -39,7 +43,7 @@
 - [ ] 4.2 Declarar permissões mínimas necessárias, incluindo `contents: write` e `pull-requests: read`.
 - [ ] 4.3 Restringir operacionalmente o dispatch ao ref `develop`, falhando antes de efeitos remotos quando outro ref for selecionado.
 - [ ] 4.4 Serializar publicações com um único grupo de `concurrency`, `queue: max` e sem `cancel-in-progress: true`.
-- [ ] 4.5 Resolver de forma inequívoca a PR merged `release/X.Y.Z -> master` e obter o `merge_commit_sha` efetivamente integrado.
+- [ ] 4.5 Resolver de forma inequívoca a PR merged same-repo `release/X.Y.Z -> master` e obter o `merge_commit_sha` efetivamente integrado.
 - [ ] 4.6 Validar que o commit resolvido continua alcançável a partir de `master` e fazer checkout explícito dele.
 - [ ] 4.7 Validar versão coordenada, seção fechada e release notes no commit liberado.
 - [ ] 4.8 Verificar `vX.Y.Z`, distinguindo tag anotada de lightweight e dereferenciando até o commit.
@@ -73,16 +77,17 @@
 - [ ] 6.8 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
 - [ ] 6.9 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
 - [ ] 6.10 Testar extração e comparação normalizada das release notes.
-- [ ] 6.11 Testar validação da predecessora ausente, consistente e divergente pelos mesmos critérios da publicação atual.
-- [ ] 6.12 Testar política de PR para `master` e comportamento distinto em `push` pós-merge.
-- [ ] 6.13 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
-- [ ] 6.14 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
-- [ ] 6.15 Testar recuperação tag válida + release ausente.
-- [ ] 6.16 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
-- [ ] 6.17 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
-- [ ] 6.18 Testar back-merge com novas entradas de changelog após o corte.
-- [ ] 6.19 Testar back-merge com workspace novo após o corte, preservando metadados futuros.
-- [ ] 6.20 Testar rejeição de delta funcional/arquivo fora do escopo permitido no PR de retorno.
+- [ ] 6.11 Testar resolução independente do commit da predecessora e rejeitar caso a tag aponte para commit diferente do esperado.
+- [ ] 6.12 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
+- [ ] 6.13 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
+- [ ] 6.14 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
+- [ ] 6.15 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
+- [ ] 6.16 Testar recuperação tag válida + release ausente.
+- [ ] 6.17 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
+- [ ] 6.18 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
+- [ ] 6.19 Testar back-merge com novas entradas de changelog após o corte.
+- [ ] 6.20 Testar back-merge com workspace novo após o corte, preservando metadados futuros.
+- [ ] 6.21 Testar rejeição de delta funcional/arquivo fora do escopo permitido no PR de retorno.
 
 ## 7. Documentação e governança operacional
 
@@ -90,12 +95,12 @@
 - [ ] 7.2 Documentar claramente o que é responsabilidade humana e o que é responsabilidade da automação.
 - [ ] 7.3 Documentar que `release:prepare` é local/offline quanto à API GitHub e que validações remotas ocorrem no `release-check`/publicação.
 - [ ] 7.4 Documentar `0.0.1` apenas como contexto da primeira implantação atual.
-- [ ] 7.5 Documentar que o fluxo inicial não suporta prerelease/build metadata nem `hotfix/*`.
-- [ ] 7.6 Documentar padrão de tag `vX.Y.Z`, timezone/formato do changelog e definição da última versão fechada/predecessora.
+- [ ] 7.5 Documentar que o fluxo inicial não suporta prerelease/build metadata, `hotfix/*` nem releases vindas de forks.
+- [ ] 7.6 Documentar padrão de branch/tag `release/X.Y.Z`/`vX.Y.Z`, coerência entre nome da branch e versão preparada, timezone/formato do changelog e definição da última versão fechada/predecessora.
 - [ ] 7.7 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
-- [ ] 7.8 Documentar política de `master`, required checks/ruleset e comportamento distinto entre `pull_request` e `push`.
+- [ ] 7.8 Documentar política de `master`, same-repo head, comportamento distinto entre `pull_request` e `push` e sequência inicial para ativar `release-check` como required antes do primeiro merge.
 - [ ] 7.9 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
-- [ ] 7.10 Documentar resolução do commit, tags anotadas, GitHub Release e recuperação idempotente.
+- [ ] 7.10 Documentar resolução independente do commit atual/predecessora, tags anotadas, GitHub Release e recuperação idempotente.
 - [ ] 7.11 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
 - [ ] 7.12 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
 - [ ] 7.13 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
@@ -105,5 +110,5 @@
 - [ ] 8.1 Executar os checks oficiais do projeto conforme `AGENTS.md`/`docs/quality.md`, incluindo `npm run test:e2e` antes do commit final.
 - [ ] 8.2 Formatar todos os arquivos alterados e confirmar `npm run format` sem falhas.
 - [ ] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
-- [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, back-merge, publicação e próxima release sem efetuar publicação real indevida.
+- [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, ativação do ruleset, back-merge, publicação e próxima release sem efetuar publicação real indevida.
 - [ ] 8.5 Revisar cenários de recuperação e confirmar que nenhum detalhe puramente operacional foi reintroduzido como requisito permanente da capability.

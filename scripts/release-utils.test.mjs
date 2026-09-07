@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import {
+	assertReleaseDate,
 	assertStableSemver,
 	compareSemver,
 	extractReleaseNotes,
@@ -25,8 +26,13 @@ test('semver compare and patch', () => {
 	assert.equal(nextPatch('1.2.9'), '1.2.10');
 });
 
-test('release date uses Sao Paulo calendar', () => {
+test('release date uses Sao Paulo calendar and rejects invalid dates', () => {
 	assert.equal(formatReleaseDate(new Date('2026-09-08T01:30:00Z')), '07-set-2026');
+	assert.equal(assertReleaseDate('29-fev-2028'), '29-fev-2028');
+	assert.throws(() => assertReleaseDate('29-fev-2027'));
+	assert.throws(() => assertReleaseDate('31-abr-2026'));
+	assert.throws(() => parseChangelog('### [1.0.0] - 31-fev-2026\n'));
+	assert.throws(() => parseChangelog('### [1.0.0] - publicado\n'));
 });
 
 test('changelog parsing and preparation', () => {

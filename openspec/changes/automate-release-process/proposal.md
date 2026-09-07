@@ -32,10 +32,11 @@ A governança atual do repositório separa contratos estáveis de instruções o
 ### Processo operacional
 
 - Manter `master` como linha estável, aceitando releases conforme a política documentada do repositório.
-- Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então remover a branch.
+- Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então publicar/remover a branch.
 - Proteger `master` com PR e required checks, bloqueando push direto/force push/deleção conforme configuração documentada.
 - Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI e bloqueando push direto, force push e deleção; sem restringir as branches de origem como em `master`.
-- Tornar obrigatório em `develop` um check de política que seja no-op para PR comum e valide estritamente back-merges `release/X.Y.Z`, incluindo escopo de arquivos, bloco fechado comparado ao commit exato da release e coordenação de workspaces.
+- Tornar obrigatório em `develop` um `develop-policy` que preserve histórico fechado e versão coordenada em PRs comuns e aplique regras estritas de back-merge em `release/X.Y.Z`.
+- Exigir que `Publicar release` confirme a PR de back-merge merged e o estado atual de `develop` consistente antes de criar tag/GitHub Release.
 - Disparar a publicação a partir da default branch `develop` e serializar execuções conforme o workflow documentado.
 - Separar a publicação em validação read-only e mutação privilegiada; o job com escrita rederiva independentemente commit/notas/estado remoto por lógica confiável do workflow e não executa scripts do commit liberado.
 - Documentar o procedimento completo em `docs/release-process.md`, manter resumo no `README.md` e referências operacionais concisas em `AGENTS.md`/`openspec/config.yaml` quando aplicável.

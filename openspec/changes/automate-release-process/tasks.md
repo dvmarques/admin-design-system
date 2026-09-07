@@ -55,11 +55,14 @@
 - [ ] 5.2 Congelar a branch após o merge em `master`, proibindo novas mudanças funcionais antes do retorno para `develop`.
 - [ ] 5.3 Padronizar PR `release/X.Y.Z -> develop` como único caminho de retorno pós-release.
 - [ ] 5.4 Validar que o PR de retorno altera somente `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`.
-- [ ] 5.5 Garantir que diferenças nesses arquivos além do estado já integrado em `master` se limitem à resolução necessária de conflitos do back-merge.
-- [ ] 5.6 Garantir resolução explícita de conflitos com mudanças posteriores em `develop` e proibir force update de refs.
-- [ ] 5.7 Na primeira implantação, garantir que `release.yml` chegue à default branch `develop` antes do primeiro `workflow_dispatch`.
-- [ ] 5.8 Documentar/validar que a branch de release só pode ser removida após back-merge e publicação concluídos.
-- [ ] 5.9 Documentar/validar que uma nova release não deve começar enquanto `develop` não contiver o estado pós-release anterior e a versão anterior não estiver publicada consistentemente.
+- [ ] 5.5 Comparar o bloco fechado `X.Y.Z` do changelog no back-merge com o bloco liberado em `master` e exigir equivalência exata.
+- [ ] 5.6 Preservar entradas de changelog adicionadas em `develop` depois do corte da release na nova seção `Em andamento`, sem incorporá-las à versão já fechada.
+- [ ] 5.7 Após o back-merge, validar que todos os manifests existentes em `develop`, inclusive workspaces criados após o corte, usam a versão coordenada `X.Y.Z` e referências internas coerentes.
+- [ ] 5.8 Preservar mudanças futuras de dependências/metadados em manifests de `develop` enquanto se reconciliam apenas os campos de versão/referências necessários.
+- [ ] 5.9 Garantir resolução explícita de conflitos com mudanças posteriores em `develop` e proibir force update de refs.
+- [ ] 5.10 Na primeira implantação, garantir que `release.yml` chegue à default branch `develop` antes do primeiro `workflow_dispatch`.
+- [ ] 5.11 Documentar/validar que a branch de release só pode ser removida após back-merge e publicação concluídos.
+- [ ] 5.12 Documentar/validar que uma nova release não deve começar enquanto `develop` não contiver o estado pós-release anterior e a versão anterior não estiver publicada consistentemente.
 
 ## 6. Testes
 
@@ -82,8 +85,10 @@
 - [ ] 6.17 Testar recuperação tag válida + release ausente.
 - [ ] 6.18 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
 - [ ] 6.19 Testar/validar que múltiplos `workflow_dispatch` permanecem enfileirados pelo grupo com `queue: max` sem substituir execução pendente.
-- [ ] 6.20 Testar/validar o fluxo `release/X.Y.Z -> develop`, incluindo rejeição de nova mudança funcional pós-merge, limite de arquivos permitidos e preservação de mudanças concorrentes em `develop`.
-- [ ] 6.21 Testar/validar que a branch não é removida antes de back-merge e publicação concluídos.
+- [ ] 6.20 Testar back-merge quando `develop` recebeu novas entradas de changelog após o corte, mantendo o bloco fechado imutável e as novas entradas em `Em andamento`.
+- [ ] 6.21 Testar back-merge quando `develop` recebeu novo workspace após o corte, coordenando sua versão sem perder dependências/metadados futuros.
+- [ ] 6.22 Testar rejeição de arquivo fora do conjunto permitido no PR de retorno.
+- [ ] 6.23 Testar/validar que a branch não é removida antes de back-merge e publicação concluídos.
 
 ## 7. Documentação
 
@@ -93,14 +98,15 @@
 - [ ] 7.4 Documentar required checks/ruleset de `master`, bloqueio de push direto/force push/deleção e que `hotfix/*` não faz parte do fluxo inicial.
 - [ ] 7.5 Documentar que a política de origem de branch vale para `pull_request` a `master`, não para `push` pós-merge.
 - [ ] 7.6 Documentar congelamento da release branch após merge em `master`, arquivos permitidos no PR de retorno e retenção da branch até a publicação.
-- [ ] 7.7 Documentar `merge_commit_sha`, reachability em `master`, checkout explícito, tags anotadas e recuperação idempotente.
-- [ ] 7.8 Documentar `concurrency` com grupo único e `queue: max`.
-- [ ] 7.9 Documentar os metadados exigidos da GitHub Release e a normalização permitida no body.
-- [ ] 7.10 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
+- [ ] 7.7 Documentar semântica do back-merge: bloco fechado imutável, novas entradas permanecendo em `Em andamento` e workspaces novos coordenados sem perda de metadados futuros.
+- [ ] 7.8 Documentar `merge_commit_sha`, reachability em `master`, checkout explícito, tags anotadas e recuperação idempotente.
+- [ ] 7.9 Documentar `concurrency` com grupo único e `queue: max`.
+- [ ] 7.10 Documentar os metadados exigidos da GitHub Release e a normalização permitida no body.
+- [ ] 7.11 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
 
 ## 8. Validação final
 
 - [ ] 8.1 Executar suíte de testes e checks existentes do projeto.
 - [ ] 8.2 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
-- [ ] 8.3 Revisar fluxo de bootstrap `0.0.1`, back-merge congelado, publicação, remoção da branch e release seguinte sem efetuar publicação real indevida.
-- [ ] 8.4 Revisar cenários de falha/recuperação: atomicidade local, changelog inválido, predecessora incorreta, push direto, release anterior ausente, publicação concorrente, commit não alcançável, lightweight tag e release preexistente divergente.
+- [ ] 8.3 Revisar fluxo de bootstrap `0.0.1`, back-merge semântico, publicação, remoção da branch e release seguinte sem efetuar publicação real indevida.
+- [ ] 8.4 Revisar cenários de falha/recuperação: atomicidade local, changelog inválido, predecessora incorreta, push direto, release anterior ausente, publicação concorrente, commit não alcançável, lightweight tag, release preexistente divergente e develop avançado durante a release.

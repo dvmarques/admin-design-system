@@ -80,7 +80,7 @@ Uma release preparada MUST representar uma única versão coordenada no manifest
 - **THEN** versões de dependências externas MUST NOT ser atualizadas apenas como efeito colateral da preparação
 
 ### Requirement: Validação reutilizável da release
-O projeto MUST disponibilizar uma validação automatizável que determine se uma release preparada e seu estado remoto estão consistentes antes da publicação.
+O projeto MUST disponibilizar uma validação automatizável que determine se uma release preparada e seu estado remoto estão consistentes para a etapa em que a validação é executada.
 
 #### Scenario: Release preparada consistente
 - **WHEN** a validação for executada para `X.Y.Z`
@@ -88,10 +88,16 @@ O projeto MUST disponibilizar uma validação automatizável que determine se um
 - **AND** MUST confirmar a seção fechada correspondente no changelog
 - **AND** MUST rejeitar divergências entre esses artefatos
 
-#### Scenario: Bootstrap remoto limpo
-- **WHEN** a validação remota for executada para uma release sem predecessora
-- **THEN** MUST confirmar que não existe tag nem GitHub Release no padrão estável `vX.Y.Z` que conflite com o bootstrap
+#### Scenario: Bootstrap remoto antes da integração
+- **WHEN** a validação pré-integração for executada para uma release sem predecessora
+- **THEN** MUST confirmar que não existe tag nem GitHub Release no padrão estável `vX.Y.Z` incompatível com o bootstrap ainda não integrado
+- **AND** MUST considerar uma tag/release da própria versão alvo como órfã enquanto ainda não existir o commit integrado esperado daquela release
 - **AND** MUST falhar se existir artefato remoto órfão dentro desse padrão
+
+#### Scenario: Recuperação depois da integração
+- **WHEN** a publicação for reexecutada depois de o commit da release já ter sido integrado
+- **THEN** a existência da tag/release da versão alvo MUST ser avaliada pelos requisitos de idempotência desta capability
+- **AND** MUST NOT ser rejeitada apenas por a release não possuir predecessora
 
 #### Scenario: Predecessora necessária
 - **WHEN** existir uma predecessora para `X.Y.Z`

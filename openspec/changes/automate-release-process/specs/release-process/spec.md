@@ -129,7 +129,12 @@ A validação OpenSpec executada na CI MUST usar uma forma versionada e multipla
 - **AND** MUST NOT depender de `openspec.cmd` ou instalação global preexistente
 
 ### Requirement: Publicação manual enfileirada no commit exato
-A publicação MUST depender de `workflow_dispatch`, MUST ser serializada sem substituir execuções pendentes e MUST usar o commit exato produzido pela PR de release.
+A publicação MUST depender de `workflow_dispatch`, MUST ser executada a partir da default branch `develop`, MUST ser serializada sem substituir execuções pendentes e MUST usar o commit exato produzido pela PR de release.
+
+#### Scenario: Ref autorizado para publicação
+- **WHEN** o operador disparar `Publicar release`
+- **THEN** o workflow MUST validar `github.ref_name == develop`
+- **AND** dispatch em qualquer outro branch ou tag MUST falhar antes de consultar ou alterar tag/GitHub Release
 
 #### Scenario: Concorrência
 - **WHEN** houver múltiplos disparos de publicação
@@ -138,7 +143,7 @@ A publicação MUST depender de `workflow_dispatch`, MUST ser serializada sem su
 - **AND** MUST NOT usar `cancel-in-progress: true`
 
 #### Scenario: Resolver commit da release
-- **WHEN** o operador disparar `Publicar release` com `X.Y.Z`
+- **WHEN** o operador disparar `Publicar release` com `X.Y.Z` a partir de `develop`
 - **THEN** o workflow MUST localizar de forma inequívoca a PR merged `release/X.Y.Z -> master`
 - **AND** MUST usar o `merge_commit_sha` dessa PR
 - **AND** MUST verificar que esse commit continua alcançável a partir do `master` atual
@@ -256,4 +261,4 @@ O repositório MUST documentar claramente o fluxo e suas responsabilidades.
 #### Scenario: Descobrir como publicar uma release
 - **WHEN** um mantenedor consultar o `README.md`
 - **THEN** MUST encontrar um resumo e link para `docs/release-process.md`
-- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/semântica/retenção do PR de retorno para `develop`, publicação, recuperação e configuração de ruleset
+- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/semântica/retenção do PR de retorno para `develop`, dispatch obrigatório em `develop`, publicação, recuperação e configuração de ruleset

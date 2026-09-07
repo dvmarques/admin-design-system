@@ -25,7 +25,9 @@ O repositório está atualmente alinhado em `0.0.1` no manifesto raiz, workspace
 - Tratar GitHub Release existente como idempotente apenas quando tag, commit, nome, estado draft/prerelease e notas forem equivalentes ao esperado.
 - Normalizar somente finais de linha e newline final ao comparar release notes, sem aceitar diferenças reais de conteúdo.
 - Sincronizar obrigatoriamente a mesma branch `release/X.Y.Z` de volta para `develop` por PR após o merge em `master`, mantendo-a congelada para novas mudanças funcionais.
-- Limitar o PR de retorno aos arquivos de preparação de release (`CHANGELOG.md`, manifests e lockfile), permitindo somente ajustes necessários nesses arquivos para resolução de conflitos do back-merge.
+- Limitar o PR de retorno aos arquivos de preparação de release (`CHANGELOG.md`, manifests e lockfile).
+- Preservar o bloco fechado `X.Y.Z` exatamente como liberado em `master`; entradas adicionadas em `develop` após o corte devem permanecer na nova seção `Em andamento`.
+- Recoordenar, no back-merge, todos os manifests existentes em `develop`, inclusive workspaces criados após o corte, para `X.Y.Z`, preservando dependências e metadados futuros.
 - Manter a branch `release/X.Y.Z` até que back-merge para `develop` e publicação da GitHub Release estejam ambos concluídos com sucesso.
 - Exigir a sincronização com `develop` antes da primeira publicação para disponibilizar o `workflow_dispatch` na default branch, e sempre antes da próxima preparação de release.
 - Disponibilizar OpenSpec de forma versionada, reproduzível e multiplataforma na CI.

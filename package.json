@@ -19,7 +19,8 @@
 		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test && npm run check:generated --workspace @admin-ds/tokens",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
 		"build": "npm run build --workspaces --if-present",
-		"validate": "npm run format && npm run lint && npm run typecheck && npm run test:quality && npm run build"
+		"test:e2e": "playwright test",
+		"validate": "npm run format && npm run lint && npm run typecheck && npm run test:quality && npm run build && npm run test:e2e"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

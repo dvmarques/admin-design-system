@@ -30,4 +30,3 @@ Os testes E2E MUST localizar os elementos necessários por contratos de interfac
 
 - **WHEN** um texto descritivo não contratual é alterado sem mudar o fluxo público coberto
 - **THEN** os testes E2E continuam localizando os controles e regiões estáveis necessários para validar o fluxo
-

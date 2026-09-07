@@ -120,6 +120,8 @@ rules:
     - Incluir testes de consumo do CSS compilado em uma aplicação Next.js
     - Incluir critérios claros para considerar cada tarefa concluída
     - Incluir uma tarefa final de formatação e validação do comando `npm run format`
+    - Incluir a execução de `npm run test:e2e` e a confirmação de que nenhum teste E2E falha antes do commit
+    - Exigir atualização de snapshots somente quando a mudança visual for intencional e revisada
 
 operations:
   apply:
@@ -132,6 +134,7 @@ operations:
       - Verificar acessibilidade antes de concluir componentes interativos
       - Executar `npx.cmd prettier --write` nos arquivos alterados antes da validação final
       - Executar `npm run format` e corrigir todas as falhas antes de marcar a change como concluída
+      - Executar `npm run test:e2e` e confirmar que nenhum teste E2E falha antes do commit; atualizar snapshots apenas para mudanças visuais intencionais
 
   archive:
     guidance:

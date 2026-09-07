@@ -20,16 +20,16 @@ O sistema MUST fornecer `AdsTable` para apresentar dados tabulares usando estrut
 
 ### Requirement: Tabela suporta apresentação administrativa responsiva
 
-`AdsTable` MUST oferecer estilos de cabeçalho, corpo, divisores, alinhamento e estados de linha usando tokens públicos nos temas claro e escuro. Em viewport estreita, o conteúdo MUST permanecer acessível sem ocultar colunas de forma implícita; overflow horizontal MAY ser utilizado em um container apropriado.
+`AdsTable` MUST oferecer estilos de cabeçalho, corpo, divisores, alinhamento e estados visuais não interativos de linha usando tokens públicos nos temas claro e escuro. Quando as colunas excederem a largura disponível, a estrutura tabular MUST ser preservada e todo o conteúdo MUST permanecer acessível por deslocamento horizontal em um container apropriado. O componente MUST NOT ocultar colunas automaticamente nem transformar a tabela em outra estrutura visual que descaracterize sua semântica.
 
 #### Scenario: Tabela excede a largura disponível
 
 - **WHEN** as colunas excedem a largura do container
-- **THEN** o usuário continua conseguindo acessar todo o conteúdo tabular sem perda de células
+- **THEN** o usuário consegue acessar horizontalmente todas as colunas sem perda de células e a marcação continua semanticamente tabular
 
 ### Requirement: Componente não assume lógica de dados
 
-`AdsTable` MUST NOT buscar, ordenar, filtrar, paginar, virtualizar ou editar dados por conta própria. O consumidor MUST poder combinar a tabela com `AdsPagination`, `AdsProgress`, `AdsEmptyState` ou lógica externa sem acoplamento interno entre esses recursos.
+`AdsTable` MUST NOT buscar, ordenar, filtrar, paginar, virtualizar, selecionar ou editar dados por conta própria. O consumidor MUST poder combinar a tabela com `AdsPagination`, `AdsProgress`, `AdsEmptyState` ou lógica externa sem acoplamento interno entre esses recursos.
 
 #### Scenario: Consumidor controla ordenação externamente
 

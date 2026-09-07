@@ -5,7 +5,12 @@ Define o ciclo reproduzível de preparação, validação, serialização, prote
 ## ADDED Requirements
 
 ### Requirement: Preparação explícita e atômica de release
-O sistema MUST fornecer um comando de preparação que receba uma versão SemVer `X.Y.Z`, valide completamente o estado atual e prepare os arquivos necessários sem publicar a release.
+O sistema MUST fornecer um comando de preparação que receba uma versão estável `X.Y.Z`, valide completamente o estado atual e prepare os arquivos necessários sem publicar a release.
+
+#### Scenario: Rejeitar versão fora do formato estável
+- **WHEN** o alvo contiver prerelease ou build metadata, como `1.0.0-rc.1` ou `1.0.0+build.1`
+- **THEN** o comando MUST falhar
+- **AND** MUST NOT alterar arquivos
 
 #### Scenario: Bootstrap da primeira release
 - **WHEN** não existir versão fechada no changelog nem tag `v*` ou GitHub Release anterior
@@ -23,7 +28,7 @@ O sistema MUST fornecer um comando de preparação que receba uma versão SemVer
 - **WHEN** o preflight e a staging de todos os conteúdos forem concluídos com sucesso
 - **THEN** o sistema MUST associar a única seção `Em andamento` à versão `X.Y.Z`, renomeando seu placeholder quando necessário
 - **AND** MUST preservar o conteúdo acumulado nessa seção
-- **AND** MUST fechar essa seção com a data corrente
+- **AND** MUST fechar essa seção usando a data civil corrente em `America/Sao_Paulo`
 - **AND** MUST atualizar para `X.Y.Z` o `package.json` raiz, todos os manifests de `packages/*` e `apps/*` e referências internas versionadas aplicáveis
 - **AND** MUST regenerar o lockfile sem atualizar dependências externas
 - **AND** MUST criar acima uma nova seção `Em andamento` para a próxima versão patch apenas como placeholder
@@ -38,8 +43,17 @@ O sistema MUST fornecer um comando de preparação que receba uma versão SemVer
 - **THEN** o sistema MUST terminar sem deixar os arquivos de trabalho em estado parcial
 - **AND** MUST restaurar integralmente o estado anterior ou utilizar estratégia de substituição atômica equivalente
 
+### Requirement: Data de release determinística
+A data gravada no `CHANGELOG.md` MUST ser independente da timezone da máquina que executa a preparação.
+
+#### Scenario: Formatar data da release
+- **WHEN** uma seção for fechada
+- **THEN** a data MUST ser calculada na timezone `America/Sao_Paulo`
+- **AND** MUST usar o formato `dd-mmm-aaaa`
+- **AND** o mês MUST usar uma das abreviações minúsculas `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`
+
 ### Requirement: Changelog versionado de forma inequívoca
-O processo MUST identificar versões fechadas por SemVer e data, sem depender apenas da posição textual do arquivo.
+O processo MUST identificar versões fechadas por SemVer estável e data, sem depender apenas da posição textual do arquivo.
 
 #### Scenario: Determinar última versão fechada
 - **WHEN** existirem uma ou mais seções fechadas no `CHANGELOG.md`
@@ -61,7 +75,7 @@ O processo MUST identificar versões fechadas por SemVer e data, sem depender ap
 A próxima release MUST ser escolhida pelo mantenedor e não MUST ser limitada ao placeholder patch aberto pelo processo anterior.
 
 #### Scenario: Placeholder diferente da versão escolhida
-- **WHEN** existir uma única seção `A.B.C - Em andamento` e o mantenedor preparar uma SemVer válida `X.Y.Z` diferente de `A.B.C`
+- **WHEN** existir uma única seção `A.B.C - Em andamento` e o mantenedor preparar uma SemVer estável válida `X.Y.Z` diferente de `A.B.C`
 - **THEN** o processo MUST preservar o conteúdo da seção
 - **AND** MUST tratá-la como `X.Y.Z` durante a preparação
 
@@ -214,10 +228,10 @@ As notas da GitHub Release MUST vir somente da seção fechada da versão corres
 ### Requirement: Continuidade pós-release em develop
 A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de volta para `develop`, publicada e somente então removida.
 
-#### Scenario: Congelar branch após merge em master
+#### Scenario: Congelar delta funcional após merge em master
 - **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
-- **THEN** a branch de release MUST NOT receber novas mudanças funcionais
-- **AND** o estado de preparação que entrou em `master` MUST permanecer como referência do retorno para `develop`
+- **THEN** a branch de release MUST NOT introduzir novo delta funcional em relação ao estado já liberado
+- **AND** MAY incorporar o estado mais recente de `develop` exclusivamente para resolver conflitos do back-merge
 
 #### Scenario: Escopo do back-merge
 - **WHEN** for aberto PR `release/X.Y.Z -> develop`
@@ -240,6 +254,7 @@ A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de vo
 - **WHEN** o PR `release/X.Y.Z -> develop` estiver pronto para merge
 - **THEN** a coordenação de versões em `develop` MUST ser validada novamente
 - **AND** o bloco fechado `X.Y.Z` MUST ser comparado com o bloco liberado em `master`
+- **AND** MUST NOT existir delta funcional novo fora do escopo de reconciliação permitido
 - **AND** conflitos MUST ser resolvidos explicitamente sem force update de refs
 
 #### Scenario: Primeira implantação do workflow
@@ -261,4 +276,4 @@ O repositório MUST documentar claramente o fluxo e suas responsabilidades.
 #### Scenario: Descobrir como publicar uma release
 - **WHEN** um mantenedor consultar o `README.md`
 - **THEN** MUST encontrar um resumo e link para `docs/release-process.md`
-- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/semântica/retenção do PR de retorno para `develop`, dispatch obrigatório em `develop`, publicação, recuperação e configuração de ruleset
+- **AND** o documento detalhado MUST explicar SemVer estável suportada, bootstrap, data/timezone, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/semântica/retenção do PR de retorno para `develop`, dispatch obrigatório em `develop`, publicação, recuperação e configuração de ruleset

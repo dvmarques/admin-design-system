@@ -11,7 +11,7 @@ O estado atual está alinhado em `0.0.1`, existe apenas `0.0.1 - Em andamento` n
 - Automatizar preparação, validações mecânicas, tag e GitHub Release.
 - Preservar decisão humana sobre versão, merge e publicação.
 - Manter raiz, workspaces privados, dependências internas, lockfile e changelog coordenados.
-- Permitir major, minor ou patch escolhidos pelo mantenedor.
+- Permitir releases estáveis major, minor ou patch escolhidas pelo mantenedor.
 - Garantir preparação transacional sem estado parcial.
 - Tornar `master` exclusiva para releases e protegida contra integração fora do fluxo.
 - Garantir que releases sejam integradas/publicadas em sequência, sem empilhamento sobre versão anterior ainda não publicada.
@@ -25,6 +25,7 @@ O estado atual está alinhado em `0.0.1`, existe apenas `0.0.1 - Em andamento` n
 
 - Publicar automaticamente em todo push para `master`.
 - Inferir automaticamente major/minor/patch.
+- Suportar versões prerelease ou build metadata neste primeiro fluxo.
 - Permitir feature branches diretamente em `master`.
 - Suportar `hotfix/*` neste primeiro desenho; se necessário, será definido explicitamente depois.
 - Versionar/publicar cada workspace de forma independente.
@@ -38,22 +39,22 @@ O ciclo será:
 1. `release/X.Y.Z` nasce de `develop`;
 2. a preparação ocorre nessa branch;
 3. PR `release/X.Y.Z -> master` integra a release;
-4. após o merge, a branch de release fica congelada para novas mudanças funcionais;
+4. após o merge, a branch de release não pode introduzir novo delta funcional;
 5. a mesma branch abre PR `release/X.Y.Z -> develop`;
-6. o retorno deve representar o estado de preparação já integrado em `master`; somente ajustes estritamente necessários para reconciliar mudanças posteriores de `develop` podem ser adicionados;
+6. o retorno deve representar o estado de preparação já integrado em `master`; a branch pode incorporar/mesclar o estado mais recente de `develop` somente para reconciliar conflitos do back-merge, desde que isso não introduza delta funcional novo no PR de retorno;
 7. depois da sincronização com `develop`, a publicação é disparada manualmente a partir da própria `develop`;
 8. a branch `release/X.Y.Z` só pode ser removida depois que sincronização com `develop` e publicação da GitHub Release tiverem sido concluídas com sucesso.
 
 Esse caminho evita trazer para `develop` artefatos de histórico específicos de `master` e preserva mudanças que tenham entrado em `develop` após a criação da release branch.
 
-Como a release branch nasceu de `develop` e a preparação altera somente arquivos de versionamento/release, o PR de retorno deve ter escopo restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`. Alteração fora desse conjunto indica nova mudança não liberada e deve bloquear o back-merge.
+Como a preparação altera somente arquivos de versionamento/release, o PR de retorno deve ter escopo restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`. Alteração fora desse conjunto indica delta funcional novo e deve bloquear o back-merge.
 
 O back-merge deve preservar duas invariantes semânticas:
 
 - o bloco fechado `X.Y.Z` do `CHANGELOG.md` deve permanecer exatamente igual ao bloco liberado em `master`; entradas adicionadas em `develop` depois do corte da release devem permanecer/migrar para a nova seção `Em andamento`, nunca para a versão já fechada;
 - depois do back-merge, todos os manifests existentes em `develop`, inclusive workspaces criados depois do corte da release, devem declarar a versão coordenada `X.Y.Z` e usar referências internas coerentes, preservando outras mudanças de dependências/metadados que pertencem ao desenvolvimento futuro.
 
-O PR de retorno só pode ser considerado concluído depois de validar novamente a coordenação de versões e a imutabilidade do bloco fechado da release.
+O PR de retorno só pode ser considerado concluído depois de validar novamente a coordenação de versões, a imutabilidade do bloco fechado da release e a ausência de delta funcional fora do escopo permitido.
 
 Como `develop` é a default branch, o fluxo deve garantir que `release.yml` esteja presente nela antes do `workflow_dispatch`. Na primeira implantação isso torna o back-merge obrigatório antes da primeira publicação.
 
@@ -77,9 +78,11 @@ Além do check de CI, `master` deve ser protegida por branch protection/ruleset 
 - não permita push direto fora do fluxo;
 - mantenha bypass administrativo no menor escopo possível e documentado.
 
-### Bootstrap e definição das versões fechadas
+### Bootstrap, SemVer e definição das versões fechadas
 
-O parser do changelog deve tratar como versões fechadas somente seções com SemVer explícita e data, excluindo a seção `Em andamento`.
+O fluxo inicial aceita somente versões estáveis no formato `X.Y.Z`; prerelease (`-alpha`, `-rc` etc.) e build metadata (`+...`) são rejeitados.
+
+O parser do changelog deve tratar como versões fechadas somente seções com SemVer estável explícita e data, excluindo a seção `Em andamento`.
 
 A **última versão fechada** é a maior SemVer entre todas as seções fechadas. O changelog deve manter versões fechadas únicas e ordenadas de forma SemVer decrescente; duplicidade ou ordem inválida causa falha de validação.
 
@@ -103,6 +106,12 @@ O preflight diferencia dois estados:
 ### Escolha de versão independente do placeholder
 
 Depois de cada release, o changelog abre automaticamente a próxima patch apenas como placeholder. A próxima versão real pode ser patch, minor ou major. A única seção `Em andamento` é renomeada para a versão escolhida, preservando seu conteúdo, desde que não exista conflito e as regras de bootstrap/ordenação sejam atendidas.
+
+### Data determinística da release
+
+A data usada para fechar a seção do changelog será a data civil corrente na timezone `America/Sao_Paulo`, independentemente da timezone da máquina que executa a preparação.
+
+O formato será `dd-mmm-aaaa`, com abreviações PT-BR fixas e minúsculas: `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`.
 
 ### Preparação transacional
 
@@ -189,11 +198,13 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 
 ### Documentação
 
-`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada e predecessora, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo e semântica do PR de retorno para `develop`, retenção da branch até publicação, dispatch obrigatório em `develop`, publicação, recuperação e configuração manual de proteção/ruleset.
+`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, SemVer estável suportada, definição da última versão fechada e predecessora, data/timezone, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo e semântica do PR de retorno para `develop`, retenção da branch até publicação, dispatch obrigatório em `develop`, publicação, recuperação e configuração manual de proteção/ruleset.
 
 ## Risks / Trade-offs
 
 - [Primeira release sem versão fechada] → bootstrap permite alvo maior ou igual ao estado coordenado atual e bloqueia downgrade.
+- [Prerelease/build metadata entram sem política definida] → rejeitar formatos diferentes de `X.Y.Z` neste fluxo inicial.
+- [Data varia conforme timezone da máquina] → calcular a data explicitamente em `America/Sao_Paulo` com abreviações PT-BR fixas.
 - [Changelog fora de ordem ou duplicado] → parser valida unicidade e ordenação SemVer decrescente e calcula a maior versão fechada.
 - [Release atual confundida com a anterior] → predecessora é definida como a maior SemVer fechada estritamente menor que o alvo.
 - [Feature ou push direto entra em master] → `release-check` bloqueia PR não-release e ruleset bloqueia push direto/force push/deleção.
@@ -205,7 +216,7 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 - [Workflow manual não aparece na primeira implantação] → sincronizar `release/X.Y.Z -> develop` antes do primeiro disparo.
 - [Mudanças novas de develop entram na versão já fechada] → manter o bloco `X.Y.Z` idêntico ao de `master` e direcionar conteúdo pós-corte para a nova seção `Em andamento`.
 - [Workspace criado após o corte fica em versão antiga] → validar todos os manifests existentes em `develop` após o back-merge e coordená-los em `X.Y.Z` sem perder metadados futuros.
-- [Release branch recebe mudança nova depois de master] → congelar mudanças funcionais e limitar o PR de retorno aos arquivos de preparação/conflito permitidos.
+- [Resolução de conflito exige atualizar a release branch] → permitir incorporar `develop` somente para reconciliação, mas bloquear qualquer delta funcional novo no PR de retorno.
 - [Branch removida antes de o workflow localizar a release] → manter `release/X.Y.Z` até back-merge e publicação concluírem.
 - [Commit da PR deixa histórico de master] → validar reachability antes de tag/release.
 - [Release existente com metadata incorreta] → validar tag, nome, draft, prerelease e body antes do no-op.

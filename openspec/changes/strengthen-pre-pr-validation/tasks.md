@@ -18,3 +18,11 @@
 - [x] 4.1 Executar `npm run format`, `npm run lint`, `npm run typecheck`, `npm run test`, `npm run build` e `npm run test:e2e`; verificar que todos terminam sem falha e registrar qualquer pré-requisito ambiental utilizado.
 - [x] 4.2 Executar `npm run validate` como validação integrada e confirmar que ele inclui a suíte E2E após o build; verificar que a sequência final reproduz os controles locais esperados antes do PR.
 - [x] 4.3 Executar `openspec.cmd validate strengthen-pre-pr-validation --strict` e verificar que todos os artefatos da change permanecem válidos.
+
+## 5. Saída de testes e diagnóstico
+
+- [ ] 5.1 Adicionar entradas raiz para testes silenciosos ou concisos e comandos verbosos equivalentes; verificar que o modo padrão reduz logs de testes aprovados sem alterar códigos de saída.
+- [ ] 5.2 Configurar os scripts Vitest dos workspaces para usar silêncio que preserve logs de falhas e o script Playwright para reporter compacto; verificar que uma falha continua visível e retorna código diferente de zero.
+- [ ] 5.3 Atualizar `test:quality`, `validate` e a checklist pré-PR para usarem as entradas concisas, mantendo os comandos verbosos documentados para diagnóstico; verificar que a mesma suíte é executada em ambos os modos.
+- [ ] 5.4 Atualizar a documentação OpenSpec e `docs/quality.md` com a política de saída e exemplos de diagnóstico; verificar que uma pessoa consegue alternar entre os modos sem conhecer detalhes internos dos workspaces.
+- [ ] 5.5 Executar os testes em modo conciso e verboso, além de `npm run validate`, e confirmar que ambos preservam resultados e falhas; verificar novamente `openspec.cmd validate strengthen-pre-pr-validation --strict`.

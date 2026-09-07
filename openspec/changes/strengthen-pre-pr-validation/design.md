@@ -43,12 +43,19 @@ Alternativa considerada: manter os textos completos. Eles cobrem conteúdo visí
 
 `docs/quality.md` reunirá o comando e a checklist pré-PR. As regras em `openspec/config.yaml` serão estendidas para que novas changes incluam E2E, atualização intencional de snapshots e confirmação de ausência de falhas E2E nas tarefas aplicáveis. Isso evita uma checklist isolada e requisitos OpenSpec desatualizados.
 
+### Preferir saída concisa nos testes
+
+Os comandos usados pelo gate pré-PR devem reduzir ruído sem transformar falhas em mensagens opacas. Para Vitest, será adotada a opção de silêncio que mantém logs de testes aprovados ocultos e preserva logs de falhas; para Playwright, será usado um reporter compacto no comando padrão. Cada família de testes terá uma entrada verbosa documentada para diagnóstico, e os códigos de saída permanecerão inalterados.
+
+Alternativa considerada: aplicar silêncio absoluto a todos os processos. Isso reduz mais o log, mas pode esconder contexto essencial quando um teste falha e torna o diagnóstico mais lento.
+
 ## Risks / Trade-offs
 
 - [O navegador Playwright não está instalado em uma máquina local] → Documentar a instalação de Chromium e manter a mensagem de falha como pré-requisito explícito.
 - [A validação raiz ficará mais lenta] → Manter `test:e2e` independente para ciclos de diagnóstico; a validação completa passa a representar deliberadamente o custo do gate pré-PR.
 - [Seletores semânticos podem não existir para uma região de demonstração] → Preferir o menor contrato estável no admin demo e limitar identificadores de teste a esse app, sem adicioná-los à API pública dos pacotes.
 - [Snapshot é atualizado sem revisão visual] → Documentar que a atualização só é aceitável junto de uma mudança visual intencional e revisão do diff.
+- [Saída concisa omite contexto útil] → Preservar mensagens de falha e documentar comandos verbosos equivalentes para investigação.
 
 ## Migration Plan
 

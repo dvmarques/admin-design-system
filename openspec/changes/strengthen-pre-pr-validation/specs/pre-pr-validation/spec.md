@@ -30,3 +30,22 @@ Os testes E2E MUST localizar os elementos necessários por contratos de interfac
 
 - **WHEN** um texto descritivo não contratual é alterado sem mudar o fluxo público coberto
 - **THEN** os testes E2E continuam localizando os controles e regiões estáveis necessários para validar o fluxo
+
+### Requirement: Saída concisa com diagnóstico disponível
+
+O processo pré-PR MUST usar saída silenciosa ou concisa nos comandos de teste por padrão, sem ocultar o código de falha. O projeto MUST disponibilizar uma forma documentada de executar os mesmos testes em modo verboso para investigar falhas.
+
+#### Scenario: Testes passam no modo conciso
+
+- **WHEN** a pessoa executa a validação pré-PR sem falhas
+- **THEN** a saída prioriza o resultado agregado e evita logs repetitivos de testes aprovados
+
+#### Scenario: Teste falha no modo conciso
+
+- **WHEN** um teste falha durante a validação pré-PR
+- **THEN** o processo retorna código diferente de zero e preserva informação suficiente para identificar o teste, com instrução para obter o diagnóstico verboso
+
+#### Scenario: Pessoa investiga uma falha
+
+- **WHEN** a pessoa executa o comando documentado de diagnóstico verboso
+- **THEN** a mesma suíte é executada com detalhes completos de casos, logs e falhas

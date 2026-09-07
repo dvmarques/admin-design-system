@@ -9,6 +9,7 @@ Os testes end-to-end são executados no GitHub Actions, mas não fazem parte da 
 - Documentar a execução local de E2E, a atualização deliberada de snapshots visuais e a confirmação de uma suíte E2E sem falhas antes do commit ou PR.
 - Criar uma checklist pré-PR com formatação, lint, tipos, testes, build e E2E.
 - Tornar os seletores E2E dependentes de contratos de interface estáveis, como funções ARIA, identificadores semânticos e headings de seção, em vez de textos editoriais frágeis quando houver alternativa.
+- Preferir saída silenciosa ou concisa nos comandos de teste do fluxo pré-PR, mantendo um modo verboso explícito para diagnóstico.
 
 ## Capabilities
 
@@ -23,6 +24,7 @@ Os testes end-to-end são executados no GitHub Actions, mas não fazem parte da 
 ## Impact
 
 - Arquivos de automação e documentação: `package.json`, `docs/quality.md`, nova documentação de contribuição ou checklist pré-PR e orientações OpenSpec de tarefas.
+- Scripts de teste devem preservar o código de saída e exibir detalhes suficientes quando houver falha, mesmo no modo conciso.
 - Testes E2E em `e2e/` e, se necessário, os elementos estáveis expostos pelo admin demo para suportar seletores semânticos.
 - O contrato público dos pacotes distribuídos não muda; a mudança fortalece a entrega e a validação da integração pelo `apps/admin-demo`.
 - Não adiciona dependências de runtime. A execução local exigirá que o Chromium do Playwright esteja instalado, como já ocorre no CI.

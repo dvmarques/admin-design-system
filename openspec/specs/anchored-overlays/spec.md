@@ -50,3 +50,14 @@ AdsTooltip e AdsPopover MUST usar tokens de superfície, elevação e camada apr
 
 - **WHEN** um popover é aberto a partir de um controle em superfície selecionada
 - **THEN** o popover permanece visualmente distinto da seleção e preserva a associação com seu gatilho
+
+### Requirement: Overlays ancorados respeitam a prioridade de notificações
+
+AdsTooltip e AdsPopover MUST usar uma camada de overlay inferior à camada de
+notificações, preservando a visibilidade de toasts durante a interação com
+conteúdo contextual.
+
+#### Scenario: Notificação é apresentada sobre um popover
+
+- **WHEN** um popover ou tooltip está aberto e uma notificação é exibida
+- **THEN** a notificação permanece visualmente acima do overlay ancorado

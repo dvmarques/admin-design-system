@@ -43,6 +43,7 @@
 - [ ] 3.13 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
 - [ ] 3.14 Configurar/documentar ruleset mínimo de `develop` exigindo PR, checks gerais e `develop-policy`, bloqueando push direto, force push e deleção sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
 - [ ] 3.15 Configurar os required checks de `master` e `develop` em modo estrito, exigindo que a head esteja atualizada com a base antes do merge; atualizar/revalidar a PR quando a base avançar para impedir uso de checks calculados contra estado antigo.
+- [ ] 3.16 Fazer `release-check` resolver o ponto de corte de `release/X.Y.Z` em `develop` e rejeitar qualquer delta exclusivo fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`; mudanças funcionais exclusivas da release branch devem falhar antes do merge em `master`.
 
 ## 4. Publicação da release
 
@@ -113,6 +114,7 @@
 - [ ] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
 - [ ] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
 - [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
+- [ ] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
 
 ## 7. Documentação e governança operacional
 
@@ -133,6 +135,7 @@
 - [ ] 7.15 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
 - [ ] 7.16 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
 - [ ] 7.17 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
+- [ ] 7.18 Documentar que uma release branch não pode introduzir alterações funcionais exclusivas: o delta desde o ponto de corte em `develop` deve ficar restrito aos arquivos de preparação/versionamento aceitos pelo `release-check`.
 
 ## 8. Validação final
 

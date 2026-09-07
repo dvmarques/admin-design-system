@@ -4,27 +4,20 @@ Definir o contrato observável da automação de release do Admin Design System,
 
 ## ADDED Requirements
 
-### Requirement: Preparação consistente e recuperável
-O projeto MUST disponibilizar um comando de preparação de release que receba uma versão estável `X.Y.Z`, valide o estado necessário e produza as alterações de release sem deixar estado parcial em caso de falha.
+### Requirement: Preparação local consistente e recuperável
+O projeto MUST disponibilizar um comando local de preparação de release que receba uma versão estável `X.Y.Z`, valide o estado versionado necessário e produza as alterações de release sem deixar estado parcial em caso de falha.
 
 #### Scenario: Rejeitar versão fora do formato estável
 - **WHEN** o alvo contiver prerelease ou build metadata, como `1.0.0-rc.1` ou `1.0.0+build.1`
 - **THEN** a preparação MUST falhar
 - **AND** MUST NOT alterar os arquivos versionados
 
-#### Scenario: Bootstrap da primeira release
+#### Scenario: Bootstrap local da primeira release
 - **WHEN** não existir nenhuma versão fechada no changelog
-- **AND** não existir nenhuma tag de release no padrão `vX.Y.Z`
-- **AND** não existir nenhuma GitHub Release associada a tag no padrão `vX.Y.Z`
 - **AND** os manifests coordenados declararem uma única versão atual `A.B.C`
 - **THEN** o alvo da primeira release MUST ser uma SemVer maior ou igual a `A.B.C`
 - **AND** downgrade MUST NOT ser permitido
-
-#### Scenario: Artefato remoto órfão durante bootstrap
-- **WHEN** não existir versão fechada no changelog
-- **AND** existir tag ou GitHub Release no padrão de release `vX.Y.Z`
-- **THEN** a preparação/validação MUST falhar como estado inconsistente
-- **AND** MUST NOT tratar o repositório como bootstrap limpo
+- **AND** a preparação local MUST NOT depender de consulta à API do GitHub para concluir seu preflight
 
 #### Scenario: Preparar uma versão após o bootstrap
 - **WHEN** existir ao menos uma versão fechada anterior
@@ -87,13 +80,18 @@ Uma release preparada MUST representar uma única versão coordenada no manifest
 - **THEN** versões de dependências externas MUST NOT ser atualizadas apenas como efeito colateral da preparação
 
 ### Requirement: Validação reutilizável da release
-O projeto MUST disponibilizar uma validação automatizável que determine se uma release preparada está consistente antes de sua publicação.
+O projeto MUST disponibilizar uma validação automatizável que determine se uma release preparada e seu estado remoto estão consistentes antes da publicação.
 
 #### Scenario: Release preparada consistente
 - **WHEN** a validação for executada para `X.Y.Z`
 - **THEN** MUST confirmar a versão coordenada dos manifests e lockfile
 - **AND** MUST confirmar a seção fechada correspondente no changelog
 - **AND** MUST rejeitar divergências entre esses artefatos
+
+#### Scenario: Bootstrap remoto limpo
+- **WHEN** a validação remota for executada para a primeira release
+- **THEN** MUST confirmar que não existe tag nem GitHub Release no padrão estável `vX.Y.Z` que conflite com a ausência de histórico fechado
+- **AND** MUST falhar se existir artefato remoto órfão dentro desse padrão
 
 #### Scenario: Predecessora necessária
 - **WHEN** existir uma predecessora para `X.Y.Z`

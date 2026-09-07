@@ -85,6 +85,10 @@ screenshots representativos dos temas claro e escuro.
 
 ## Checklist pré-PR
 
+Esta é a referência humana para os comandos e a checklist de validação antes
+do PR. As instruções para agentes ficam em `AGENTS.md` e os critérios de
+changes ficam em `openspec/config.yaml`.
+
 Antes de abrir ou atualizar um PR, execute todos os comandos abaixo na raiz e
 confirme que não há falhas:
 

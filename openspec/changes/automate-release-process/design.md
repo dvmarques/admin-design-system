@@ -16,6 +16,7 @@ A governança atual do repositório distingue contratos estáveis de instruçõe
 - Permitir releases estáveis major, minor ou patch escolhidas pelo mantenedor.
 - Garantir preparação local recuperável sem depender de API remota.
 - Garantir que validações remotas bloqueiem tags/releases órfãs ou inconsistentes.
+- Garantir que PRs de release para `master` sejam internos ao repositório e correspondam à versão preparada.
 - Garantir que a tag aponte para o commit exato da release, e não para o HEAD corrente de `master`.
 - Tornar publicação idempotente e recuperável sem mover ou recriar tags existentes.
 - Reutilizar a CI existente, sem duplicar quality/build/E2E.
@@ -28,6 +29,7 @@ A governança atual do repositório distingue contratos estáveis de instruçõe
 - Suportar prerelease ou build metadata neste primeiro fluxo.
 - Exigir autenticação/API GitHub para executar a preparação local.
 - Suportar `hotfix/*` neste primeiro desenho.
+- Aceitar releases originadas de forks neste fluxo inicial.
 - Versionar/publicar cada workspace de forma independente.
 - Transformar política de branches, ruleset ou checklist humana em requisitos permanentes da capability.
 
@@ -50,6 +52,7 @@ As decisões de operação ficam neste design e na documentação do repositóri
 
 - branch `release/X.Y.Z`;
 - PRs para `master` e `develop`;
+- origem same-repo da PR de release;
 - required checks/ruleset;
 - eventos `pull_request`/`push`;
 - retenção da release branch;
@@ -62,13 +65,15 @@ Isso segue a governança em que specs representam contratos estáveis, enquanto 
 
 O ciclo será:
 
-1. `release/X.Y.Z` nasce de `develop`;
+1. `release/X.Y.Z` nasce de `develop` no próprio repositório;
 2. a preparação local ocorre nessa branch;
 3. PR `release/X.Y.Z -> master` integra a release depois das validações locais/remotas;
 4. após o merge, a branch não recebe novo delta funcional;
 5. a mesma branch é reconciliada com `develop` por PR;
 6. depois da sincronização com `develop`, a publicação é disparada manualmente;
 7. a branch só é removida depois do back-merge e da publicação concluída.
+
+O `release-check` deve derivar a versão esperada do nome da head `release/X.Y.Z` e confirmar que ela coincide com a versão coordenada e com a seção fechada da preparação. Uma branch `release/1.2.3` que contenha preparação `1.2.4` deve falhar.
 
 A release branch pode incorporar o estado mais recente de `develop` apenas para resolver o back-merge. O PR de retorno não pode introduzir mudança funcional nova da release.
 
@@ -80,9 +85,18 @@ O diff operacional de retorno deve ficar restrito aos arquivos preparados pela r
 
 ### `master` como linha estável
 
-`master` será operada como linha estável de releases. O `release-check` será aplicado em PRs para `master` e validará a preparação e o estado remoto. A política operacional inicial aceita somente head `release/*`; outras heads falham explicitamente.
+`master` será operada como linha estável de releases. O `release-check` será aplicado em PRs para `master` e validará a preparação e o estado remoto.
 
-Em eventos `push` pós-merge, a regra baseada em `github.head_ref` não é aplicada. Os checks gerais existentes podem continuar executando normalmente.
+A política operacional inicial aceita somente PRs que atendam simultaneamente:
+
+- base `master`;
+- head no padrão estável `release/X.Y.Z`;
+- `head.repo.full_name == github.repository`, impedindo que um fork com branch homônima seja tratado como release oficial;
+- versão derivada do nome da branch igual à versão preparada nos manifests/changelog.
+
+Qualquer PR que não satisfaça essas condições falha explicitamente no `release-check`.
+
+Em eventos `push` pós-merge, a regra baseada em `github.head_ref`/metadados de PR não é aplicada. Os checks gerais existentes podem continuar executando normalmente.
 
 A proteção/ruleset de `master` deverá, no mínimo:
 
@@ -92,6 +106,16 @@ A proteção/ruleset de `master` deverá, no mínimo:
 - bloquear force push;
 - bloquear deleção;
 - manter bypass administrativo no menor escopo possível e documentado.
+
+#### Bootstrap do primeiro ruleset
+
+Hoje `master` ainda não possui proteção e o `release-check` ainda não existe. Portanto a primeira implantação seguirá esta ordem para evitar configurar como required um check inexistente:
+
+1. implementar e integrar o workflow que define `release-check` na branch de desenvolvimento;
+2. abrir a primeira PR `release/X.Y.Z -> master`, fazendo o `release-check` aparecer/executar no repositório;
+3. configurar o ruleset de `master` exigindo `release-check` e os demais checks necessários;
+4. confirmar que a proteção está ativa;
+5. somente então permitir o merge da primeira PR de release.
 
 Essa configuração é operacional e será documentada; não faz parte do contrato permanente da capability.
 
@@ -109,7 +133,7 @@ As versões fechadas devem ser únicas e aparecer em ordem SemVer decrescente no
 O bootstrap é dividido em duas camadas:
 
 - **local:** sem versão fechada no changelog, o alvo pode ser igual ou superior à versão coordenada atual; o preflight não consulta API GitHub;
-- **remota:** antes da integração/publicação, `release-check` confirma que não existe tag ou GitHub Release no padrão `vX.Y.Z` incompatível com a ausência de histórico fechado.
+- **remota:** antes da integração/publicação, `release-check` confirma que não existe tag ou GitHub Release no padrão `vX.Y.Z` incompatível com a ausência de predecessora/histórico publicado.
 
 Tags/releases fora desse padrão não participam da detecção. Um artefato órfão dentro do padrão bloqueia a release na validação remota até correção explícita.
 
@@ -151,9 +175,12 @@ A CI atual continua responsável por quality/build/E2E. Um check específico de 
 
 O `release-check` reúne as validações que dependem do GitHub remoto:
 
+- origem same-repo e nome/versionamento coerente da branch de release;
 - bootstrap sem tag/GitHub Release órfã no padrão `vX.Y.Z`;
 - publicação consistente da predecessora quando ela existir;
 - consistência entre versão preparada e changelog.
+
+A predecessora não é validada tomando a tag como fonte de verdade. A automação resolve independentemente o commit integrado da predecessora pelo mesmo mecanismo usado para a release atual e, só então, compara a tag e a GitHub Release contra esse commit esperado.
 
 A preparação local continua utilizável sem essas consultas remotas; a PR não pode ser integrada enquanto o `release-check` remoto não estiver verde.
 
@@ -174,7 +201,7 @@ A restrição ao ref `develop`, a sintaxe de concorrência e as permissões pert
 
 ### Resolver o commit exato
 
-O workflow localizará de forma inequívoca a PR merged `release/X.Y.Z -> master` e usará o commit efetivamente integrado (`merge_commit_sha` conforme o método de merge utilizado pelo GitHub).
+O workflow localizará de forma inequívoca a PR merged `release/X.Y.Z -> master` do próprio repositório e usará o commit efetivamente integrado (`merge_commit_sha` conforme o método de merge utilizado pelo GitHub).
 
 Antes de qualquer escrita remota:
 
@@ -182,6 +209,8 @@ Antes de qualquer escrita remota:
 - fazer checkout explícito dele;
 - validar nesse checkout a versão coordenada, o changelog e as notas;
 - nunca substituir esse commit pelo HEAD corrente de `master`.
+
+O mesmo resolvedor é reutilizado para descobrir o commit esperado da predecessora.
 
 A capability exige a resolução inequívoca do commit; a dependência concreta de PR/`merge_commit_sha` é decisão desta implementação.
 
@@ -216,11 +245,15 @@ Se a tag correta existir mas a GitHub Release não, a reexecução preserva a ta
 - [Capability virar checklist operacional] → manter políticas de branch/workflow fora da delta spec e nas fontes operacionais.
 - [Preparação local depender de GitHub] → separar preflight local de validações remotas da CI/publicação.
 - [Primeira release com artefato remoto órfão] → `release-check` remoto bloqueia artefato no padrão `vX.Y.Z`.
+- [Fork usa branch release/*] → exigir `head.repo.full_name == github.repository`.
+- [Nome da branch não corresponde à versão preparada] → derivar `X.Y.Z` da head e comparar com manifests/changelog.
+- [Ruleset exige check inexistente na primeira implantação] → executar o check na primeira PR antes de torná-lo required, ativando a proteção antes do merge.
 - [Tag não relacionada começa com v] → detecção considera somente o padrão estável `vX.Y.Z`.
 - [Prerelease entra sem política] → aceitar somente `X.Y.Z` estável neste fluxo.
 - [Data varia por timezone] → calcular em `America/Sao_Paulo` com mapa fixo de meses e validar o mesmo formato em seções fechadas.
 - [Changelog fora de ordem] → validar unicidade e ordem SemVer decrescente.
 - [Release atual confundida com predecessora] → predecessora é sempre a maior SemVer fechada menor que o alvo.
+- [Tag errada valida a si própria] → resolver independentemente o commit esperado da predecessora antes de comparar a tag.
 - [Preparação executada em branch/working tree incorretos] → preflight operacional exige `release/X.Y.Z` e árvore limpa.
 - [Preparação deixa arquivos parciais] → preflight + staging + rollback/substituição atômica.
 - [npm diferente altera lockfile] → pin de npm compartilhado entre local/CI.

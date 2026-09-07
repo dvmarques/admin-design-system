@@ -17,7 +17,7 @@ O estado atual está alinhado em `0.0.1`, existe apenas `0.0.1 - Em andamento` n
 - Garantir que releases sejam integradas/publicadas em sequência, sem empilhamento sobre versão anterior ainda não publicada.
 - Garantir que a tag aponte para o commit exato da PR de release e que esse commit continue pertencendo ao histórico de `master`.
 - Tornar publicação recuperável sem mover ou recriar tags.
-- Manter `develop` sincronizada por um caminho normativo único e sem incorporar mudanças pós-release que não foram liberadas.
+- Manter `develop` sincronizada por um caminho normativo único e sem incorporar à release mudanças que entraram em `develop` depois do corte.
 - Reutilizar CI existente e executar OpenSpec de forma reproduzível e multiplataforma.
 
 **Non-Goals:**
@@ -39,13 +39,20 @@ O ciclo será:
 3. PR `release/X.Y.Z -> master` integra a release;
 4. após o merge, a branch de release fica congelada para novas mudanças funcionais;
 5. a mesma branch abre PR `release/X.Y.Z -> develop`;
-6. o retorno deve representar o estado de preparação já integrado em `master`; somente ajustes estritamente necessários para resolver conflitos do back-merge podem ser adicionados;
+6. o retorno deve representar o estado de preparação já integrado em `master`; somente ajustes estritamente necessários para reconciliar mudanças posteriores de `develop` podem ser adicionados;
 7. depois da sincronização com `develop`, a publicação é disparada manualmente;
 8. a branch `release/X.Y.Z` só pode ser removida depois que sincronização com `develop` e publicação da GitHub Release tiverem sido concluídas com sucesso.
 
 Esse caminho evita trazer para `develop` artefatos de histórico específicos de `master` e preserva mudanças que tenham entrado em `develop` após a criação da release branch.
 
-Como a release branch nasceu de `develop` e a preparação altera somente arquivos de versionamento/release, o PR de retorno deve ter escopo restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`, além de ajustes estritamente necessários nesses mesmos arquivos para resolução de conflitos. Alteração fora desse conjunto indica nova mudança não liberada e deve bloquear o back-merge.
+Como a release branch nasceu de `develop` e a preparação altera somente arquivos de versionamento/release, o PR de retorno deve ter escopo restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`. Alteração fora desse conjunto indica nova mudança não liberada e deve bloquear o back-merge.
+
+O back-merge deve preservar duas invariantes semânticas:
+
+- o bloco fechado `X.Y.Z` do `CHANGELOG.md` deve permanecer exatamente igual ao bloco liberado em `master`; entradas adicionadas em `develop` depois do corte da release devem permanecer/migrar para a nova seção `Em andamento`, nunca para a versão já fechada;
+- depois do back-merge, todos os manifests existentes em `develop`, inclusive workspaces criados depois do corte da release, devem declarar a versão coordenada `X.Y.Z` e usar referências internas coerentes, preservando outras mudanças de dependências/metadados que pertencem ao desenvolvimento futuro.
+
+O PR de retorno só pode ser considerado concluído depois de validar novamente a coordenação de versões e a imutabilidade do bloco fechado da release.
 
 Como `develop` é a default branch, o fluxo deve garantir que `release.yml` esteja presente nela antes do `workflow_dispatch`. Na primeira implantação isso torna o back-merge obrigatório antes da primeira publicação.
 
@@ -178,7 +185,7 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 
 ### Documentação
 
-`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada e predecessora, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo do PR de retorno para `develop`, retenção da branch até publicação, publicação, recuperação e configuração manual de proteção/ruleset.
+`README.md` terá resumo e link. `docs/release-process.md` documentará bootstrap, definição da última versão fechada e predecessora, versão, preparação transacional, política/proteção exclusiva de `master`, comportamento distinto entre `pull_request` e `push`, sequência entre releases, congelamento/escopo e semântica do PR de retorno para `develop`, retenção da branch até publicação, publicação, recuperação e configuração manual de proteção/ruleset.
 
 ## Risks / Trade-offs
 
@@ -191,6 +198,8 @@ Se a tag estiver correta e a GitHub Release não existir, criar somente a releas
 - [Publicações simultâneas ou pendentes substituídas] → `concurrency` usa grupo único com `queue: max` e sem cancelamento da execução em andamento.
 - [npm diferente altera lockfile] → `packageManager` fixa versão exata usada também pela CI.
 - [Workflow manual não aparece na primeira implantação] → sincronizar `release/X.Y.Z -> develop` antes do primeiro disparo.
+- [Mudanças novas de develop entram na versão já fechada] → manter o bloco `X.Y.Z` idêntico ao de `master` e direcionar conteúdo pós-corte para a nova seção `Em andamento`.
+- [Workspace criado após o corte fica em versão antiga] → validar todos os manifests existentes em `develop` após o back-merge e coordená-los em `X.Y.Z` sem perder metadados futuros.
 - [Release branch recebe mudança nova depois de master] → congelar mudanças funcionais e limitar o PR de retorno aos arquivos de preparação/conflito permitidos.
 - [Branch removida antes de o workflow localizar a release] → manter `release/X.Y.Z` até back-merge e publicação concluírem.
 - [Commit da PR deixa histórico de master] → validar reachability antes de tag/release.

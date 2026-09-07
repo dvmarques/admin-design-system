@@ -214,13 +214,28 @@ A mesma branch `release/X.Y.Z` integrada em `master` MUST ser sincronizada de vo
 - **THEN** a branch de release MUST NOT receber novas mudanças funcionais
 - **AND** o estado de preparação que entrou em `master` MUST permanecer como referência do retorno para `develop`
 
-#### Scenario: Sincronização normativa
-- **WHEN** a PR `release/X.Y.Z -> master` tiver sido integrada
-- **THEN** MUST ser aberto/realizado PR `release/X.Y.Z -> develop`
-- **AND** o PR de retorno MUST alterar somente `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`
-- **AND** alterações nesses arquivos além do estado já integrado em `master` MUST se limitar à resolução necessária de conflitos do back-merge
-- **AND** conflitos com mudanças posteriores em `develop` MUST ser resolvidos explicitamente
-- **AND** refs MUST NOT ser reescritas à força
+#### Scenario: Escopo do back-merge
+- **WHEN** for aberto PR `release/X.Y.Z -> develop`
+- **THEN** o diff MUST alterar somente `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`
+- **AND** mudanças fora desse conjunto MUST causar falha do check de retorno
+
+#### Scenario: Preservar semântica do changelog no back-merge
+- **WHEN** `develop` tiver recebido novas entradas de changelog depois do corte da release
+- **THEN** o bloco fechado `X.Y.Z` MUST permanecer idêntico ao bloco liberado em `master`
+- **AND** entradas pós-corte MUST permanecer ou ser movidas para a nova seção `Em andamento`
+- **AND** MUST NOT ser incorporadas retroativamente ao bloco fechado `X.Y.Z`
+
+#### Scenario: Coordenar workspaces criados após o corte
+- **WHEN** `develop` contiver manifests/workspaces criados depois do corte da release
+- **THEN** após o back-merge todos os manifests existentes em `develop` MUST declarar a versão coordenada `X.Y.Z`
+- **AND** referências internas versionadas MUST permanecer coerentes
+- **AND** mudanças de dependências/metadados pertencentes ao desenvolvimento futuro MUST ser preservadas
+
+#### Scenario: Concluir sincronização normativa
+- **WHEN** o PR `release/X.Y.Z -> develop` estiver pronto para merge
+- **THEN** a coordenação de versões em `develop` MUST ser validada novamente
+- **AND** o bloco fechado `X.Y.Z` MUST ser comparado com o bloco liberado em `master`
+- **AND** conflitos MUST ser resolvidos explicitamente sem force update de refs
 
 #### Scenario: Primeira implantação do workflow
 - **WHEN** `release.yml` ainda não existir na default branch `develop`
@@ -241,4 +256,4 @@ O repositório MUST documentar claramente o fluxo e suas responsabilidades.
 #### Scenario: Descobrir como publicar uma release
 - **WHEN** um mantenedor consultar o `README.md`
 - **THEN** MUST encontrar um resumo e link para `docs/release-process.md`
-- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/retensão do PR de retorno para `develop`, publicação, recuperação e configuração de ruleset
+- **AND** o documento detalhado MUST explicar bootstrap, definição da última versão fechada e predecessora, escolha da versão, preparação atômica, toolchain, política/proteção exclusiva de `master`, comportamento em `pull_request` e `push`, sequência entre releases, congelamento/escopo/semântica/retenção do PR de retorno para `develop`, publicação, recuperação e configuração de ruleset

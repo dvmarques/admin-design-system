@@ -3,8 +3,8 @@
 - [ ] 1.1 Criar utilitários reutilizáveis para parsing de SemVer estável, changelog, workspaces e comparação de versões.
 - [ ] 1.2 Criar `scripts/prepare-release.mjs` com preflight somente leitura, staging completa e aplicação final recuperável.
 - [ ] 1.3 Validar como guardas operacionais branch atual exatamente `release/X.Y.Z` e working tree limpa antes da primeira escrita.
-- [ ] 1.4 Rejeitar prerelease/build metadata e validar bootstrap, downgrade e ordenação da versão alvo.
-- [ ] 1.5 No bootstrap, exigir ausência simultânea de versão fechada, tag `vX.Y.Z` e GitHub Release associada; tratar artefato remoto órfão dentro desse padrão como inconsistência.
+- [ ] 1.4 Rejeitar prerelease/build metadata e validar bootstrap local, downgrade e ordenação da versão alvo.
+- [ ] 1.5 Garantir que o preflight local não dependa de autenticação ou consulta à API do GitHub.
 - [ ] 1.6 Validar uma única seção `Em andamento`, formato oficial de data das seções fechadas, unicidade/ordem SemVer decrescente e ausência de conflito com o alvo.
 - [ ] 1.7 Permitir renomear o placeholder `Em andamento` para patch/minor/major escolhido, preservando conteúdo.
 - [ ] 1.8 Fechar a versão usando data civil em `America/Sao_Paulo`, formato `dd-mmm-aaaa` e abreviações PT-BR fixas.
@@ -20,13 +20,14 @@
 - [ ] 2.1 Criar `scripts/extract-release-notes.mjs` para extrair somente a seção fechada solicitada.
 - [ ] 2.2 Criar validação reutilizável de consistência entre versão, manifests, dependências internas, lockfile e `CHANGELOG.md`.
 - [ ] 2.3 Reutilizar a mesma lógica para calcular última versão fechada e predecessora do alvo.
-- [ ] 2.4 Validar publicação da predecessora pelos mesmos critérios de tag anotada, commit e GitHub Release usados na publicação atual.
-- [ ] 2.5 Implementar comparação de release notes normalizando somente CRLF/LF e newline final.
+- [ ] 2.4 No bootstrap remoto, detectar tag/GitHub Release órfã no padrão `vX.Y.Z` e falhar sem exigir essa consulta de `release:prepare` local.
+- [ ] 2.5 Validar publicação da predecessora pelos mesmos critérios de tag anotada, commit e GitHub Release usados na publicação atual.
+- [ ] 2.6 Implementar comparação de release notes normalizando somente CRLF/LF e newline final.
 
 ## 3. CI e toolchain
 
 - [ ] 3.1 Integrar um `release-check` à CI sem duplicar quality/build/E2E já existentes.
-- [ ] 3.2 Em PR `release/* -> master`, executar a validação reutilizável da preparação e da predecessora.
+- [ ] 3.2 Em PR `release/* -> master`, executar a validação reutilizável da preparação, bootstrap remoto/predecessora e changelog.
 - [ ] 3.3 Implementar a política operacional de `master` para que PR não-`release/*` falhe explicitamente no `release-check`.
 - [ ] 3.4 Garantir que a política baseada em head branch seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
 - [ ] 3.5 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
@@ -64,8 +65,8 @@
 
 - [ ] 6.1 Testar aceitação de `X.Y.Z` estável e rejeição de prerelease/build metadata.
 - [ ] 6.2 Testar branch divergente e working tree suja, confirmando falha antes de qualquer escrita.
-- [ ] 6.3 Testar bootstrap com alvo igual/maior à versão atual e rejeição de downgrade.
-- [ ] 6.4 Testar bootstrap com tag/GitHub Release órfã no padrão `vX.Y.Z` e confirmar que artefatos fora desse padrão não interferem na detecção.
+- [ ] 6.3 Testar bootstrap local com alvo igual/maior à versão atual e rejeição de downgrade sem acesso à API GitHub.
+- [ ] 6.4 Testar validação remota de bootstrap com tag/GitHub Release órfã no padrão `vX.Y.Z` e confirmar que artefatos fora desse padrão não interferem.
 - [ ] 6.5 Testar maior SemVer fechada, predecessora, data fechada inválida, duplicidade, ordem inválida e estados inválidos de `Em andamento`.
 - [ ] 6.6 Testar renomeação do placeholder para patch/minor/major preservando conteúdo.
 - [ ] 6.7 Testar data em `America/Sao_Paulo`, inclusive processo em outra timezone e fronteira de mudança de dia.
@@ -85,18 +86,19 @@
 
 ## 7. Documentação e governança operacional
 
-- [ ] 7.1 Criar `docs/release-process.md` com pré-condições, bootstrap, escolha de versão, preparação, CI, branches, ruleset, back-merge, publicação e recuperação.
+- [ ] 7.1 Criar `docs/release-process.md` com pré-condições, bootstrap local/remoto, escolha de versão, preparação, CI, branches, ruleset, back-merge, publicação e recuperação.
 - [ ] 7.2 Documentar claramente o que é responsabilidade humana e o que é responsabilidade da automação.
-- [ ] 7.3 Documentar `0.0.1` apenas como contexto da primeira implantação atual.
-- [ ] 7.4 Documentar que o fluxo inicial não suporta prerelease/build metadata nem `hotfix/*`.
-- [ ] 7.5 Documentar padrão de tag `vX.Y.Z`, timezone/formato do changelog e definição da última versão fechada/predecessora.
-- [ ] 7.6 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
-- [ ] 7.7 Documentar política de `master`, required checks/ruleset e comportamento distinto entre `pull_request` e `push`.
-- [ ] 7.8 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
-- [ ] 7.9 Documentar resolução do commit, tags anotadas, GitHub Release e recuperação idempotente.
-- [ ] 7.10 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
-- [ ] 7.11 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
-- [ ] 7.12 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
+- [ ] 7.3 Documentar que `release:prepare` é local/offline quanto à API GitHub e que validações remotas ocorrem no `release-check`/publicação.
+- [ ] 7.4 Documentar `0.0.1` apenas como contexto da primeira implantação atual.
+- [ ] 7.5 Documentar que o fluxo inicial não suporta prerelease/build metadata nem `hotfix/*`.
+- [ ] 7.6 Documentar padrão de tag `vX.Y.Z`, timezone/formato do changelog e definição da última versão fechada/predecessora.
+- [ ] 7.7 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
+- [ ] 7.8 Documentar política de `master`, required checks/ruleset e comportamento distinto entre `pull_request` e `push`.
+- [ ] 7.9 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
+- [ ] 7.10 Documentar resolução do commit, tags anotadas, GitHub Release e recuperação idempotente.
+- [ ] 7.11 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
+- [ ] 7.12 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
+- [ ] 7.13 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
 
 ## 8. Validação final
 

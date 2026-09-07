@@ -70,6 +70,8 @@ Uma PR de release válida para `master` deve atender simultaneamente:
 
 PR inválida falha explicitamente no `release-check`. Regras baseadas em metadados de PR não são aplicadas em `push` pós-merge.
 
+Além das validações de identidade, `release-check` deve resolver o ponto de corte da branch `release/X.Y.Z` em `develop` e inspecionar o delta exclusivo introduzido depois desse ponto. Esse delta pode conter somente arquivos de preparação/versionamento: `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`. Qualquer alteração funcional, documentação funcional ou outro arquivo exclusivo da release branch deve bloquear a integração em `master`, pois mudanças funcionais precisam ter passado primeiro pelo fluxo normal de PR para `develop`.
+
 Antes de qualquer merge de `release/X.Y.Z`, `release-check` deve confirmar que não existe tag `vX.Y.Z` nem GitHub Release correspondente. Uma versão ainda não integrada não pode possuir artefato remoto de publicação válido.
 
 Quando não houver predecessora fechada, o bootstrap remoto é mais estrito: além da ausência de artefatos da própria versão alvo, qualquer tag/GitHub Release de release incompatível com a ausência de histórico fechado deve bloquear a primeira integração.
@@ -170,6 +172,7 @@ Manifesto raiz, `packages/*`, `apps/*`, referências internas versionadas e lock
 Quality/build/E2E existentes continuam responsáveis por suas verificações. `release-check` adiciona somente validações de release:
 
 - same-repo + branch/version match;
+- delta exclusivo da release restrito aos arquivos de preparação/versionamento;
 - consistência da preparação;
 - ausência de tag/GitHub Release da própria versão alvo antes da integração;
 - no bootstrap, ausência de histórico remoto incompatível;
@@ -254,6 +257,7 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 
 - [Capability vira checklist operacional] → manter política operacional fora da delta spec.
 - [Preparação local depende de GitHub] → separar preflight local de validação remota.
+- [Mudança funcional entra somente pela release branch] → comparar o delta exclusivo desde o corte em `develop` e permitir apenas arquivos de preparação/versionamento.
 - [Artefato da versão alvo existe antes do merge] → bloquear qualquer tag/release `vX.Y.Z` pré-integração; pós-integração usa idempotência.
 - [Bootstrap local contradiz histórico remoto] → no primeiro release, validar também ausência de artefatos remotos de release incompatíveis com changelog sem versões fechadas.
 - [Fork usa branch release/*] → exigir same-repo.

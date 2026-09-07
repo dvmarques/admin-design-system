@@ -25,7 +25,7 @@
 - [ ] 2.6 Validar a predecessora comparando tag anotada e GitHub Release contra o commit esperado resolvido independentemente, sem usar a própria tag como fonte de verdade.
 - [ ] 2.7 Implementar comparação de release notes normalizando somente CRLF/LF e newline final.
 
-## 3. CI e política operacional de master
+## 3. CI e política operacional de branches
 
 - [ ] 3.1 Integrar um `release-check` à CI sem duplicar quality/build/E2E já existentes.
 - [ ] 3.2 Em PR para `master`, exigir head no padrão estável `release/X.Y.Z`, derivar a versão da branch e validar que ela coincide com manifests/changelog preparados.
@@ -35,8 +35,9 @@
 - [ ] 3.6 Garantir que a política baseada em metadados de PR seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
 - [ ] 3.7 Conceder ao job `release-check` somente `contents: read` e `pull-requests: read`, preservando as permissões atuais dos demais jobs e sem conceder escrita à CI.
 - [ ] 3.8 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
-- [ ] 3.9 Na primeira implantação, abrir a PR de release e confirmar que `release-check` já executou/apareceu antes de configurá-lo como required check.
+- [ ] 3.9 Na primeira implantação, abrir a PR de release e confirmar que `release-check` já executou/apareceu antes de configurá-lo como required check de `master`.
 - [ ] 3.10 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
+- [ ] 3.11 Configurar/documentar ruleset mínimo de `develop` exigindo PR + checks gerais de CI e bloqueando push direto, force push e deleção, sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
 
 ## 4. Publicação da release
 
@@ -66,7 +67,7 @@
 - [ ] 5.6 Recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
 - [ ] 5.7 Validar novamente versões/changelog e ausência de delta funcional novo antes do merge de retorno.
 - [ ] 5.8 Garantir resolução explícita de conflitos sem force update de refs.
-- [ ] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` antes do primeiro dispatch manual.
+- [ ] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop` esteja ativa antes do primeiro dispatch manual.
 - [ ] 5.10 Bloquear início operacional da próxima release enquanto o estado anterior não estiver reconciliado em `develop` e publicado consistentemente.
 
 ## 6. Testes automatizados
@@ -98,7 +99,7 @@
 
 ## 7. Documentação e governança operacional
 
-- [ ] 7.1 Criar `docs/release-process.md` com pré-condições, bootstrap local/remoto, escolha de versão, preparação, CI, branches, ruleset, back-merge, publicação e recuperação.
+- [ ] 7.1 Criar `docs/release-process.md` com pré-condições, bootstrap local/remoto, escolha de versão, preparação, CI, branches, rulesets, back-merge, publicação e recuperação.
 - [ ] 7.2 Documentar claramente o que é responsabilidade humana e o que é responsabilidade da automação.
 - [ ] 7.3 Documentar que `release:prepare` é local/offline quanto à API GitHub e que validações remotas ocorrem no `release-check`/publicação.
 - [ ] 7.4 Documentar `0.0.1` apenas como contexto da primeira implantação atual.
@@ -106,17 +107,18 @@
 - [ ] 7.6 Documentar padrão de branch/tag `release/X.Y.Z`/`vX.Y.Z`, coerência entre nome da branch e versão preparada, timezone/formato do changelog e definição da última versão fechada/predecessora.
 - [ ] 7.7 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
 - [ ] 7.8 Documentar política de `master`, same-repo head, permissões mínimas do `release-check`, comportamento distinto entre `pull_request` e `push` e sequência inicial para ativar o check como required antes do primeiro merge.
-- [ ] 7.9 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
-- [ ] 7.10 Documentar resolução independente do commit atual/predecessora, tags anotadas, GitHub Release e recuperação idempotente.
+- [ ] 7.9 Documentar proteção mínima de `develop`: PR + CI, sem push direto/force push/deleção e sem restrição de origem equivalente à de `master`.
+- [ ] 7.10 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
 - [ ] 7.11 Documentar separação de privilégios do workflow de publicação e a revalidação antes da escrita.
-- [ ] 7.12 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
-- [ ] 7.13 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
-- [ ] 7.14 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
+- [ ] 7.12 Documentar resolução independente do commit atual/predecessora, tags anotadas, GitHub Release e recuperação idempotente.
+- [ ] 7.13 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
+- [ ] 7.14 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
+- [ ] 7.15 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
 
 ## 8. Validação final
 
 - [ ] 8.1 Executar os checks oficiais do projeto conforme `AGENTS.md`/`docs/quality.md`, incluindo `npm run test:e2e` antes do commit final.
 - [ ] 8.2 Formatar todos os arquivos alterados e confirmar `npm run format` sem falhas.
 - [ ] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
-- [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, ativação do ruleset, back-merge, publicação e próxima release sem efetuar publicação real indevida.
+- [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção de `develop`, ativação do ruleset de `master`, back-merge, publicação e próxima release sem efetuar publicação real indevida.
 - [ ] 8.5 Revisar cenários de recuperação e confirmar que nenhum detalhe puramente operacional foi reintroduzido como requisito permanente da capability.

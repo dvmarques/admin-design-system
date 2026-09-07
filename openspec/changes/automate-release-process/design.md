@@ -2,7 +2,7 @@
 
 O fluxo de release precisa manter coerentes cinco artefatos observáveis: versão coordenada do monorepo, seção fechada do `CHANGELOG.md`, commit efetivamente liberado, tag Git e GitHub Release. Operacionalmente, também é necessário manter `develop` pronta para a próxima release.
 
-O estado atual está alinhado em `0.0.1`, existe apenas `0.0.1 - Em andamento` no changelog e ainda não há tag `v*` nem GitHub Release. Isso caracteriza o bootstrap da primeira release; `0.0.1` é contexto transitório, não requisito permanente.
+O estado atual está alinhado em `0.0.1`, existe apenas `0.0.1 - Em andamento` no changelog e ainda não há tag no padrão `vX.Y.Z` nem GitHub Release correspondente. Isso caracteriza o bootstrap da primeira release; `0.0.1` é contexto transitório, não requisito permanente.
 
 A governança atual do repositório distingue contratos estáveis de instruções operacionais. A delta spec de `release-process` descreve somente comportamentos observáveis da automação. Este design, `docs/release-process.md`, `AGENTS.md` e a configuração OpenSpec registram como o repositório opera esse contrato.
 
@@ -95,16 +95,16 @@ Essa configuração é operacional e será documentada; não faz parte do contra
 
 ### Bootstrap, SemVer e changelog
 
-O fluxo inicial aceita somente versões estáveis `X.Y.Z`.
+O fluxo inicial aceita somente versões estáveis `X.Y.Z` e tags correspondentes `vX.Y.Z`.
 
-O parser considera fechada apenas uma seção com SemVer estável e data. A seção `Em andamento` não é uma versão fechada.
+O parser considera fechada apenas uma seção com SemVer estável e data no formato oficial `dd-mmm-aaaa`, usando os meses PT-BR definidos abaixo. A seção `Em andamento` não é uma versão fechada.
 
 - **última versão fechada**: maior SemVer entre as seções fechadas;
 - **predecessora de `X.Y.Z`**: maior SemVer fechada estritamente menor que o alvo.
 
 As versões fechadas devem ser únicas e aparecer em ordem SemVer decrescente no arquivo.
 
-No bootstrap, não pode existir versão fechada, tag de release `v*` nem GitHub Release anterior. Qualquer artefato remoto órfão torna o estado inconsistente e bloqueia a preparação até correção explícita.
+No bootstrap, não pode existir versão fechada, tag `vX.Y.Z` nem GitHub Release associada a esse padrão. Tags ou releases fora do esquema de versionamento do processo não participam da detecção de bootstrap. Qualquer artefato remoto órfão dentro do padrão `vX.Y.Z` torna o estado inconsistente e bloqueia a preparação até correção explícita.
 
 No bootstrap limpo, o alvo pode ser igual ou superior à versão coordenada atual. Depois do bootstrap, a versão atual deve coincidir com a última versão fechada e o próximo alvo deve ser estritamente maior.
 
@@ -115,6 +115,8 @@ O placeholder aberto depois de cada release usa a próxima patch apenas como val
 A data que fecha o changelog será calculada como data civil em `America/Sao_Paulo`, independentemente da timezone do processo.
 
 Formato: `dd-mmm-aaaa`, com meses `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul`, `ago`, `set`, `out`, `nov`, `dez`.
+
+O mesmo formato é exigido para reconhecer seções fechadas como válidas.
 
 ### Preparação transacional
 
@@ -199,9 +201,10 @@ Se a tag correta existir mas a GitHub Release não, a reexecução preserva a ta
 ## Risks / Trade-offs
 
 - [Capability virar checklist operacional] → manter políticas de branch/workflow fora da delta spec e nas fontes operacionais.
-- [Primeira release com artefato remoto órfão] → bootstrap exige ausência simultânea de histórico fechado, tag e GitHub Release.
+- [Primeira release com artefato remoto órfão] → bootstrap exige ausência de histórico fechado e de artefato remoto no padrão `vX.Y.Z`.
+- [Tag não relacionada começa com v] → detecção considera somente o padrão estável `vX.Y.Z`.
 - [Prerelease entra sem política] → aceitar somente `X.Y.Z` estável neste fluxo.
-- [Data varia por timezone] → calcular em `America/Sao_Paulo` com mapa fixo de meses.
+- [Data varia por timezone] → calcular em `America/Sao_Paulo` com mapa fixo de meses e validar o mesmo formato em seções fechadas.
 - [Changelog fora de ordem] → validar unicidade e ordem SemVer decrescente.
 - [Release atual confundida com predecessora] → predecessora é sempre a maior SemVer fechada menor que o alvo.
 - [Preparação executada em branch/working tree incorretos] → preflight operacional exige `release/X.Y.Z` e árvore limpa.

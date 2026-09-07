@@ -4,8 +4,8 @@
 - [ ] 1.2 Criar `scripts/prepare-release.mjs` com preflight somente leitura, staging completa e aplicação final recuperável.
 - [ ] 1.3 Validar como guardas operacionais branch atual exatamente `release/X.Y.Z` e working tree limpa antes da primeira escrita.
 - [ ] 1.4 Rejeitar prerelease/build metadata e validar bootstrap, downgrade e ordenação da versão alvo.
-- [ ] 1.5 No bootstrap, exigir ausência simultânea de versão fechada, tag `v*` e GitHub Release; tratar artefato remoto órfão como inconsistência.
-- [ ] 1.6 Validar uma única seção `Em andamento`, unicidade/ordem SemVer decrescente das versões fechadas e ausência de conflito com o alvo.
+- [ ] 1.5 No bootstrap, exigir ausência simultânea de versão fechada, tag `vX.Y.Z` e GitHub Release associada; tratar artefato remoto órfão dentro desse padrão como inconsistência.
+- [ ] 1.6 Validar uma única seção `Em andamento`, formato oficial de data das seções fechadas, unicidade/ordem SemVer decrescente e ausência de conflito com o alvo.
 - [ ] 1.7 Permitir renomear o placeholder `Em andamento` para patch/minor/major escolhido, preservando conteúdo.
 - [ ] 1.8 Fechar a versão usando data civil em `America/Sao_Paulo`, formato `dd-mmm-aaaa` e abreviações PT-BR fixas.
 - [ ] 1.9 Criar acima o próximo patch apenas como placeholder `Em andamento`.
@@ -65,8 +65,8 @@
 - [ ] 6.1 Testar aceitação de `X.Y.Z` estável e rejeição de prerelease/build metadata.
 - [ ] 6.2 Testar branch divergente e working tree suja, confirmando falha antes de qualquer escrita.
 - [ ] 6.3 Testar bootstrap com alvo igual/maior à versão atual e rejeição de downgrade.
-- [ ] 6.4 Testar bootstrap com tag/release órfã e exigir falha de consistência.
-- [ ] 6.5 Testar maior SemVer fechada, predecessora, duplicidade, ordem inválida e estados inválidos de `Em andamento`.
+- [ ] 6.4 Testar bootstrap com tag/GitHub Release órfã no padrão `vX.Y.Z` e confirmar que artefatos fora desse padrão não interferem na detecção.
+- [ ] 6.5 Testar maior SemVer fechada, predecessora, data fechada inválida, duplicidade, ordem inválida e estados inválidos de `Em andamento`.
 - [ ] 6.6 Testar renomeação do placeholder para patch/minor/major preservando conteúdo.
 - [ ] 6.7 Testar data em `America/Sao_Paulo`, inclusive processo em outra timezone e fronteira de mudança de dia.
 - [ ] 6.8 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
@@ -89,7 +89,7 @@
 - [ ] 7.2 Documentar claramente o que é responsabilidade humana e o que é responsabilidade da automação.
 - [ ] 7.3 Documentar `0.0.1` apenas como contexto da primeira implantação atual.
 - [ ] 7.4 Documentar que o fluxo inicial não suporta prerelease/build metadata nem `hotfix/*`.
-- [ ] 7.5 Documentar timezone/formato do changelog e definição da última versão fechada/predecessora.
+- [ ] 7.5 Documentar padrão de tag `vX.Y.Z`, timezone/formato do changelog e definição da última versão fechada/predecessora.
 - [ ] 7.6 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
 - [ ] 7.7 Documentar política de `master`, required checks/ruleset e comportamento distinto entre `pull_request` e `push`.
 - [ ] 7.8 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.

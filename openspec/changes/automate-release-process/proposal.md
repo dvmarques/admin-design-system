@@ -33,8 +33,8 @@ A governança atual do repositório separa contratos estáveis de instruções o
 
 - Manter `master` como linha estável, aceitando releases conforme a política documentada do repositório.
 - Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então publicar/remover a branch.
-- Proteger `master` com PR e required checks, bloqueando push direto/force push/deleção conforme configuração documentada.
-- Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI e bloqueando push direto, force push e deleção; sem restringir as branches de origem como em `master`.
+- Proteger `master` com PR e required checks em modo estrito, bloqueando push direto/force push/deleção e exigindo que a branch esteja atualizada com a base antes do merge, para que nenhuma release use checks calculados contra um HEAD antigo de `master`.
+- Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI em modo estrito e bloqueando push direto, force push e deleção; PRs devem ser atualizadas com a base antes do merge para revalidar invariantes contra o estado corrente de `develop`.
 - Tornar obrigatório em `develop` um `develop-policy` que preserve histórico fechado e versão coordenada em PRs comuns e aplique regras estritas de back-merge em `release/X.Y.Z`.
 - Exigir que `Publicar release` confirme a PR de back-merge merged e o estado atual de `develop` consistente antes de criar tag/GitHub Release.
 - Disparar a publicação a partir da default branch `develop` e serializar execuções conforme o workflow documentado.
@@ -58,7 +58,7 @@ Nenhuma.
 - Dependências internas entre workspaces e `package-lock.json`.
 - `CHANGELOG.md`.
 - GitHub Actions em `.github/workflows/`.
-- Configuração operacional de proteção/rulesets de `master` e `develop`.
+- Configuração operacional de proteção/rulesets estritos de `master` e `develop`.
 - Forma de instalação/execução do OpenSpec na CI.
 - Documentação em `README.md`, `docs/release-process.md`, `AGENTS.md` e, quando necessário, `openspec/config.yaml`.
 - Testes automatizados do processo de release.

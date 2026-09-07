@@ -1,8 +1,8 @@
 ## Context
 
-O fluxo de release precisa garantir que cinco elementos representem exatamente a mesma versão: commit liberado, versões coordenadas do monorepo, seção fechada do `CHANGELOG.md`, tag Git e GitHub Release. O processo deve reduzir operações manuais sem transformar qualquer merge em `master` em uma publicação automática.
+O fluxo de release precisa garantir que seis elementos permaneçam coerentes: commit liberado em `master`, versões coordenadas do monorepo, seção fechada do `CHANGELOG.md`, tag Git, GitHub Release e o estado de continuidade em `develop`. O processo deve reduzir operações manuais sem transformar qualquer merge em `master` em uma publicação automática.
 
-O estado atual está alinhado em `0.0.1` no manifesto raiz, workspaces e lockfile, com `0.0.1 - Em andamento` no changelog. Essa passa a ser a primeira release esperada pelo fluxo.
+O estado atual está alinhado em `0.0.1` no manifesto raiz, workspaces e lockfile, com `0.0.1 - Em andamento` no changelog. Essa é a primeira release esperada pelo fluxo inicial, mas esse valor é contexto transitório e não um requisito permanente da capability.
 
 ## Goals / Non-Goals
 
@@ -11,9 +11,12 @@ O estado atual está alinhado em `0.0.1` no manifesto raiz, workspaces e lockfil
 - Automatizar preparação, validações mecânicas, tag e GitHub Release.
 - Preservar decisão humana sobre versão, merge e publicação.
 - Manter raiz, workspaces privados, dependências internas, lockfile e changelog coordenados na mesma versão.
+- Permitir major, minor ou patch escolhidos pelo mantenedor, sem obrigar a próxima release a coincidir com o placeholder patch aberto no changelog.
+- Garantir que falhas durante a preparação não deixem arquivos parcialmente modificados pelo processo.
 - Garantir que a tag aponte para o commit exato produzido pela PR da release, e não simplesmente para o HEAD corrente de `master`.
-- Tornar a publicação recuperável sem nunca mover ou sobrescrever uma tag existente.
-- Usar o `CHANGELOG.md` como fonte única das notas da release.
+- Tornar a publicação recuperável sem nunca mover, sobrescrever ou recriar uma tag existente.
+- Validar estado já publicado antes de tratá-lo como sucesso idempotente.
+- Manter `develop` sincronizada com o estado pós-release para preparar corretamente a release seguinte.
 - Reutilizar a CI existente e adicionar somente validações específicas de release.
 - Executar OpenSpec na CI de forma reprodutível e multiplataforma.
 - Documentar o fluxo de forma curta no README e completa em documento dedicado.
@@ -23,13 +26,13 @@ O estado atual está alinhado em `0.0.1` no manifesto raiz, workspaces e lockfil
 - Publicar automaticamente em todo push para `master`.
 - Inferir automaticamente se uma mudança é major, minor ou patch.
 - Versionar ou publicar cada workspace de forma independente.
-- Alterar a estratégia geral de branching do projeto além da branch temporária `release/X.Y.Z`.
+- Alterar a estratégia geral de branching do projeto além do ciclo de release `develop -> release/X.Y.Z -> master` com sincronização de volta para `develop`.
 
 ## Decisions
 
 ### Separar preparação de publicação
 
-A preparação ocorrerá localmente na branch `release/X.Y.Z` por meio de `npm run release:prepare -- X.Y.Z`. A publicação acontecerá somente depois do merge em `master`, via `workflow_dispatch`.
+A preparação ocorrerá localmente na branch `release/X.Y.Z` criada a partir de `develop`, por meio de `npm run release:prepare -- X.Y.Z`. A publicação acontecerá somente depois do merge em `master`, via `workflow_dispatch`.
 
 Essa separação permite revisar no PR todas as alterações de versão e changelog antes de criar qualquer tag imutável.
 
@@ -42,9 +45,10 @@ O mantenedor será responsável por:
 3. executar o comando de preparação;
 4. revisar e abrir PR para `master`;
 5. fazer o merge após os checks obrigatórios ficarem verdes;
-6. disparar manualmente `Publicar release` informando `X.Y.Z`.
+6. sincronizar as mudanças da release de volta para `develop` por merge/PR ou fluxo automatizado equivalente;
+7. disparar manualmente `Publicar release` informando `X.Y.Z`.
 
-Todo o restante será automatizado e validado por scripts/workflows.
+A sincronização de `develop` pode ser automatizada futuramente, mas o processo documentado MUST garantir que ela aconteça antes da próxima preparação de release.
 
 ### Versionamento coordenado do monorepo
 
@@ -52,88 +56,111 @@ A versão do produto é coordenada entre o `package.json` raiz e todos os manife
 
 A validação de release falhará se qualquer manifesto ou dependência interna permanecer em uma versão diferente da release preparada.
 
-### Preflight antes de qualquer escrita
+### Versão escolhida é independente do placeholder
 
-`release:prepare` terá duas fases lógicas. Primeiro executará apenas validações e cálculos; somente depois de todas passarem aplicará alterações aos arquivos.
+Após uma release, o changelog abre automaticamente `X.Y.(Z+1) - Em andamento` apenas como placeholder de trabalho. Na preparação seguinte, o mantenedor pode escolher qualquer SemVer válida superior à última versão fechada, incluindo major ou minor.
 
-O preflight verificará no mínimo:
+Se a única seção `Em andamento` estiver em uma versão placeholder diferente da escolhida, `release:prepare` a renomeará para `X.Y.Z` antes de fechá-la. O processo falhará se houver mais de uma seção em andamento, se a versão escolhida não for superior à última release fechada ou se houver outra seção conflitante com `X.Y.Z`.
 
-- SemVer válida;
-- branch atual `release/X.Y.Z`;
-- working tree limpa antes da preparação;
-- exatamente uma seção `Em andamento` no changelog e correspondência com `X.Y.Z`;
-- ausência de uma seção já fechada para a mesma versão;
-- consistência das versões atuais do monorepo;
-- possibilidade de calcular a próxima versão patch e todas as alterações necessárias.
+### Preparação transacional
 
-Falha de preflight não deve deixar arquivos parcialmente modificados pelo script.
+`release:prepare` terá três fases lógicas:
+
+1. **preflight:** somente leitura, validação de branch, working tree, SemVer, changelog e versões atuais;
+2. **staging:** calcular e produzir todos os novos conteúdos em memória ou diretório temporário, incluindo a regeneração controlada do lockfile;
+3. **commit local das alterações de arquivo:** substituir os arquivos reais somente depois que toda a staging tiver sido concluída com sucesso.
+
+Se qualquer etapa de staging falhar, o script não deve modificar os arquivos de trabalho. Se a aplicação final falhar após ter começado, o script deve restaurar os arquivos afetados ao estado anterior ou usar uma estratégia de substituição atômica que evite estado parcial.
 
 ### Fechar e reabrir o changelog automaticamente
 
-O script localizará exatamente uma seção `### [X.Y.Z] - Em andamento`, substituirá `Em andamento` pela data corrente em `dd-mmm-aaaa` em português e abrirá acima a próxima versão patch `X.Y.(Z+1) - Em andamento`.
-
-O processo falhará se a estrutura não for inequívoca.
+A única seção `Em andamento` será associada à versão escolhida, fechada com a data corrente em `dd-mmm-aaaa` em português e preservará seu conteúdo. Acima dela será aberta a próxima versão patch da release recém-preparada como novo placeholder `Em andamento`.
 
 ### Extrair release notes por script dedicado
 
-`scripts/extract-release-notes.mjs` receberá uma versão e devolverá somente o corpo daquela seção fechada. O workflow reutilizará esse resultado para criar a GitHub Release, evitando divergência entre changelog e release notes.
+`scripts/extract-release-notes.mjs` receberá uma versão e devolverá somente o corpo daquela seção fechada. O workflow reutilizará esse resultado para criar e validar a GitHub Release.
 
-### Reutilizar a CI existente
+### Reutilizar a CI existente sem criar required check pendente
 
 A CI atual já executa qualidade, build e E2E em jobs próprios. A implementação não duplicará esse pipeline chamando `npm run validate` novamente dentro de um job de release.
 
-Será adicionado um check específico de release para PRs `release/* -> master`, responsável por validar:
+Um job/check `release-check` fará parte do workflow que atende PRs para `master`. Quando `github.head_ref` começar por `release/`, ele executará as validações específicas de release. Para outras PRs destinadas a `master`, o job continuará presente e terminará com sucesso sem executar a validação específica. Assim o mesmo check pode ser configurado como obrigatório sem permanecer pendente por filtros de workflow.
+
+O `release-check` validará:
 
 - versões coordenadas do monorepo;
 - changelog fechado corretamente;
 - estrutura e consistência da preparação;
 - OpenSpec em modo estrito.
 
-Os jobs existentes de qualidade, build e E2E continuam sendo os responsáveis por suas validações atuais. A proteção/ruleset de `master` deve exigir os checks necessários para impedir merge de uma preparação inválida.
+A proteção/ruleset de `master` deve exigir os checks necessários para impedir merge de uma preparação inválida.
 
 ### OpenSpec reprodutível na CI
 
 Como a CI roda em Linux, o workflow não dependerá de `openspec.cmd` nem de instalação global presente na máquina do desenvolvedor. A implementação deverá fixar uma forma reproduzível de disponibilizar a versão esperada do OpenSpec na CI e executar o CLI multiplataforma correspondente.
 
-### Resolver o commit exato da PR de release
+### Resolver o commit exato da PR pelo merge_commit_sha
 
-O workflow `Publicar release` não assumirá que o HEAD atual de `master` é o commit da versão informada. Ele resolverá a PR integrada da branch `release/X.Y.Z` para `master` e obterá o commit resultante efetivamente integrado.
+O workflow `Publicar release` localizará de forma inequívoca a PR merged cuja head branch seja `release/X.Y.Z` e cuja base seja `master`. O commit liberado será o `merge_commit_sha` retornado pela PR merged, que representa o commit efetivamente integrado independentemente de o merge ter sido feito por merge commit, squash ou rebase.
 
-Esse commit será validado quanto à versão e changelog. A tag `vX.Y.Z` apontará para ele mesmo que `master` já contenha commits posteriores.
+O workflow não assumirá que o HEAD atual de `master` ainda é esse commit. O commit resolvido será validado quanto à versão coordenada, changelog e release notes.
 
-O workflow falhará se não conseguir resolver de forma inequívoca uma PR merged correspondente à versão.
+### Permissões mínimas explícitas
 
-### Publicação manual, idempotente e sem mover tags
+O workflow de publicação declarará explicitamente as permissões necessárias, no mínimo:
 
-Antes de qualquer escrita remota, o workflow validará:
+- `contents: write`, para criar tag e GitHub Release;
+- `pull-requests: read`, para localizar e inspecionar a PR merged.
 
-- existência e merge da PR `release/X.Y.Z -> master`;
-- commit exato resultante dessa PR;
-- versões coordenadas em `X.Y.Z` nesse commit;
-- seção correspondente fechada no changelog desse commit;
-- extração válida das release notes;
-- estado da tag `vX.Y.Z` e da GitHub Release correspondente.
+Outras permissões permanecerão desabilitadas salvo necessidade comprovada durante a implementação.
+
+### Tags anotadas, imutáveis e corretamente dereferenciadas
+
+A tag de release deve ser uma tag anotada `vX.Y.Z`. Ao avaliar uma tag já existente, o workflow deve distinguir o objeto tag do commit alvo e dereferenciar a tag até o commit (`^{commit}` ou mecanismo equivalente).
 
 Comportamento:
 
-- se a tag não existir, criar tag anotada `vX.Y.Z` no commit validado e depois criar a GitHub Release;
-- se a tag existir no mesmo commit e a GitHub Release ainda não existir, preservar a tag e criar somente a GitHub Release;
-- se a tag existir apontando para outro commit, falhar imediatamente;
-- se a GitHub Release já existir, não recriá-la silenciosamente; reportar que a versão já foi publicada.
+- tag inexistente: criar tag anotada no `merge_commit_sha` validado;
+- tag anotada existente e commit dereferenciado igual ao commit validado: pode ser reutilizada;
+- tag lightweight existente, mesmo no commit esperado: tratar como inconsistência e falhar;
+- tag anotada existente em outro commit: falhar sem alteração.
 
 Nenhum caminho permitido move, sobrescreve ou recria uma tag existente.
 
+### GitHub Release existente só é idempotente se estiver consistente
+
+Antes de tratar uma GitHub Release existente como publicação já concluída, o workflow validará:
+
+- tag da release exatamente `vX.Y.Z`;
+- tag anotada resolvendo para o commit esperado;
+- release notes equivalentes ao bloco extraído do `CHANGELOG.md` daquele commit.
+
+Se tudo estiver consistente, a execução termina como sucesso/no-op explícito. Se houver qualquer divergência, falha sem modificar a release ou a tag.
+
+Se a tag existir corretamente e a GitHub Release não existir, o workflow cria somente a release, permitindo recuperação da falha parcial anterior.
+
+### Sincronizar de volta para develop
+
+Depois que a PR `release/X.Y.Z -> master` for integrada, as alterações de preparação da release devem ser levadas de volta para `develop`. Isso inclui versão coordenada, seção fechada e novo placeholder `Em andamento`.
+
+A sincronização deve preservar mudanças que possam ter entrado em `develop` depois da criação da branch de release. Por isso, o caminho recomendado é um PR/merge de `master` ou da própria branch de release para `develop`, resolvendo conflitos explicitamente quando existirem, em vez de mover refs à força.
+
+A próxima branch `release/*` não deve ser criada enquanto `develop` não contiver o estado pós-release anterior.
+
 ### README como porta de entrada, documento dedicado como referência
 
-O `README.md` terá apenas o fluxo resumido e link para `docs/release-process.md`. O documento dedicado conterá passo a passo, responsabilidades humano/automação, pré-condições, checks obrigatórios e recuperação de falhas.
+O `README.md` terá apenas o fluxo resumido e link para `docs/release-process.md`. O documento dedicado conterá passo a passo, responsabilidades humano/automação, pré-condições, checks obrigatórios, sincronização com `develop` e recuperação de falhas.
 
 ## Risks / Trade-offs
 
-- [Operador informa versão errada no workflow] → resolver PR, commit, manifests, changelog e tag antes de qualquer escrita.
-- [Master avança depois do merge da release] → tag apontará para o commit da PR de release, não para o HEAD atual.
-- [Tag criada e criação da GitHub Release falha] → reexecução reutiliza a tag somente se ela apontar para o mesmo commit validado.
-- [Tag existente em commit diferente] → falhar sem modificar o repositório.
-- [Alteração parcial durante `release:prepare`] → executar preflight completo antes da primeira escrita e cobrir o comportamento com testes.
+- [Operador informa versão errada] → validar SemVer, última versão fechada, branch, manifests e changelog antes de qualquer escrita.
+- [Placeholder patch não corresponde à próxima versão real] → permitir renomear a única seção em andamento para a SemVer escolhida pelo mantenedor.
+- [Falha após iniciar staging ou aplicação] → produzir tudo antes da substituição final e restaurar estado anterior se uma substituição falhar.
+- [Master avança depois do merge da release] → tag usa o `merge_commit_sha` da PR, não o HEAD atual.
+- [Tag criada e criação da GitHub Release falha] → reexecução reutiliza somente tag anotada que dereferencia para o mesmo commit validado.
+- [Tag lightweight ou tag em commit diferente] → falhar sem modificar o repositório.
+- [Release existente divergente] → falhar em vez de considerar a execução idempotente.
+- [Develop fica para trás após release] → exigir sincronização de volta antes da próxima preparação.
+- [Required check fica pendente em PR comum] → manter o job `release-check` presente para toda PR a `master`, com no-op de sucesso fora de `release/*`.
 - [CI duplicada e lenta] → reutilizar jobs existentes e adicionar apenas check específico de release.
 - [OpenSpec depende de ambiente local] → fixar instalação/execução multiplataforma e reprodutível no workflow.
-- [Próxima versão não é patch] → a seção automática `X.Y.(Z+1) - Em andamento` é apenas o próximo placeholder; uma futura política de bump poderá substituir essa regra.

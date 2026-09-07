@@ -22,7 +22,8 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 - Reutilizar quality/build/E2E existentes.
 - Aplicar menor privilégio aos tokens da CI/publicação.
 - Manter protegidas as branches que definem a linha estável e a lógica revisada dos workflows de release.
-- Tornar verificável o back-merge de release para `develop`, sem depender apenas de convenção humana.
+- Manter invariantes de versão/changelog em `develop` para todas as mudanças, não apenas no back-merge.
+- Tornar verificável o back-merge de release para `develop` e exigir sua conclusão antes da publicação.
 
 **Non-Goals:**
 
@@ -50,7 +51,7 @@ Ficam neste design e nas fontes operacionais: branches, PRs, same-repo policy, r
 4. integrar somente depois dos checks e da proteção de `master` estarem válidos;
 5. após o merge, não introduzir novo delta funcional na release branch;
 6. reconciliar `release/X.Y.Z -> develop`;
-7. publicar manualmente;
+7. publicar manualmente, somente depois de o back-merge estar integrado e validado;
 8. remover a branch somente após back-merge e publicação concluídos.
 
 O `release-check` deriva `X.Y.Z` da branch e exige correspondência com manifests/changelog. `release/1.2.3` contendo preparação `1.2.4` falha.
@@ -92,24 +93,32 @@ O ruleset mínimo de `develop` deve:
 
 - exigir Pull Request para integração;
 - exigir os checks gerais de CI aplicáveis à branch;
-- exigir um check de política de release/back-merge que esteja sempre presente em PRs para `develop`;
+- exigir um check `develop-policy` sempre presente em PRs para `develop`;
 - bloquear push direto;
 - bloquear force push;
 - bloquear deleção;
 - manter bypass administrativo no menor escopo possível e documentado.
 
-Diferentemente de `master`, `develop` **não** restringe a origem a `release/*`: feature branches continuam válidas. O check de back-merge termina com sucesso/no-op para PRs comuns e aplica validação estrita quando a head é `release/X.Y.Z` do próprio repositório.
+`develop-policy` não é um no-op completo para PRs comuns. Em toda PR para `develop`, ele deve preservar as invariantes operacionais do estado de release:
 
-Para `release/X.Y.Z -> develop`, esse check deve validar pelo menos:
+- exatamente uma seção `Em andamento`;
+- seções fechadas válidas, únicas e em ordem SemVer decrescente;
+- blocos fechados já existentes na base não podem ser alterados/removidos por PR comum;
+- todos os manifests existentes no head permanecem coordenados em uma única versão;
+- PR comum não pode alterar a versão coordenada já existente; workspace novo deve nascer com essa mesma versão.
 
-- origem same-repo e formato/coerência da versão da branch;
+Quando a head é same-repo `release/X.Y.Z`, o check entra no modo de back-merge e permite a transição de estado da release, validando adicionalmente:
+
+- formato/coerência da versão da branch;
 - diff restrito aos arquivos de preparação/reconciliação permitidos;
 - resolução independente do commit exato da release `X.Y.Z` já integrada;
 - bloco fechado `X.Y.Z` idêntico ao bloco desse commit exato, nunca ao HEAD corrente de `master`;
 - entradas pós-corte permanecendo na seção `Em andamento`;
-- todos os manifests existentes em `develop` coordenados na versão esperada sem perda de metadados futuros.
+- todos os manifests existentes em `develop` coordenados na versão `X.Y.Z` sem perda de metadados futuros.
 
-A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. Como os checks gerais já existem, o ruleset pode ser configurado durante a implantação; o novo check de back-merge deve aparecer/executar antes de ser marcado como required, pela mesma estratégia de bootstrap adotada para novos status checks.
+Diferentemente de `master`, `develop` não restringe a origem das PRs a `release/*`; feature branches continuam válidas desde que preservem as invariantes acima.
+
+A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. O novo check deve aparecer/executar antes de ser marcado como required, pela mesma estratégia de bootstrap adotada para novos status checks.
 
 ### Bootstrap, SemVer e changelog
 
@@ -176,27 +185,37 @@ A validação OpenSpec usa versão fixada e launcher multiplataforma, sem `opens
 
 `release.yml` usa `workflow_dispatch` com input obrigatório `version`. Operacionalmente aceita somente `github.ref_name == develop`, usa um grupo único de `concurrency` com `queue: max` e não usa `cancel-in-progress: true`.
 
+Antes de avaliar tag/release, a publicação deve resolver e validar o back-merge da mesma versão:
+
+- deve existir uma PR merged same-repo `release/X.Y.Z -> develop` correspondente;
+- o estado atual de `develop` deve conter o bloco fechado `X.Y.Z` idêntico ao commit exato liberado e preservar uma única seção `Em andamento` válida;
+- os manifests atuais em `develop` devem permanecer coordenados em `X.Y.Z`;
+- se a predecessora existir, sua publicação deve ser revalidada como consistente também no momento da publicação atual.
+
+Assim o workflow não permite publicar antes de concluir a continuidade pós-release em `develop`, e não depende apenas da ordem documentada dos passos humanos.
+
 A publicação é dividida em pelo menos duas fases/jobs:
 
 1. **resolve/validate (read-only)**
    - permissões `contents: read` e `pull-requests: read`;
-   - resolve PR/commit, reachability, versão, changelog, notas e estado atual de tag/release;
+   - resolve PR/commit da release, back-merge, predecessora, reachability, versão, changelog, notas e estado atual de tag/release;
    - pode fazer checkout do commit liberado e executar scripts de validação;
    - produz evidência diagnóstica e outputs que podem ser usados como comparação pela fase seguinte, mas não como fonte de verdade privilegiada.
 
 2. **publish (write)**
    - depende do job read-only ter concluído com sucesso;
    - recebe `contents: write` e somente permissões adicionais estritamente necessárias;
-   - re-resolve independentemente PR/commit e reobtém versão/changelog/notas por operações confiáveis do próprio workflow, sem executar scripts do commit liberado;
+   - re-resolve independentemente PR/commit da release e back-merge e reobtém versão/changelog/notas por operações confiáveis do próprio workflow, sem executar scripts do commit liberado;
+   - revalida a predecessora quando existir;
    - compara o resultado independente com a evidência do job read-only e falha em qualquer divergência;
-   - revalida imediatamente tag/release e reachability antes da escrita;
+   - revalida imediatamente estado atual de `develop`, tag/release e reachability antes da escrita;
    - cria tag/GitHub Release somente a partir dos dados rederivados no job privilegiado.
 
 O job privilegiado não deve confiar em commit SHA, release notes ou outro conteúdo arbitrário produzido pelo job read-only sem rederivação/verificação. Para ler o commit liberado, pode usar operações não executáveis como checkout sem scripts, `git show` ou API GitHub; parâmetros derivados de arquivos devem ser tratados como dados, nunca interpolados em comandos avaliados dinamicamente.
 
 Assim código do commit liberado é validado apenas com token read-only, enquanto o job com token de escrita toma decisões a partir de dados rederivados por lógica confiável do workflow.
 
-A checagem `github.ref_name == develop` protege contra seleção acidental de outro ref na versão revisada do workflow; a proteção de `develop` garante que essa definição de workflow não seja alterada por push direto fora do processo revisado.
+A checagem `github.ref_name == develop` protege contra seleção acidental de outro ref na versão revisada do workflow; a proteção e `develop-policy` garantem que essa definição e o estado de continuidade não sejam alterados fora do processo revisado.
 
 ### Resolver o commit exato
 
@@ -233,14 +252,17 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 - [Bootstrap local contradiz histórico remoto] → no primeiro release, validar também ausência de artefatos remotos de release incompatíveis com changelog sem versões fechadas.
 - [Fork usa branch release/*] → exigir same-repo.
 - [Branch/version mismatch] → derivar versão da head e comparar com preparação.
-- [Ruleset de master exige check inexistente] → executar check antes de torná-lo required e ativar proteção antes do primeiro merge.
-- [Develop permite alterar workflow por push direto] → exigir PR + CI e bloquear push direto/force push/deleção na default branch.
-- [Back-merge depende de convenção humana] → check obrigatório em `develop` é no-op para PR comum e estrito para `release/X.Y.Z`.
+- [Ruleset exige check inexistente] → executar novos checks antes de torná-los required.
+- [Develop permite alterar workflow por push direto] → exigir PR + CI, `develop-policy` e bloquear push direto/force push/deleção.
+- [Feature altera histórico/versionamento pós-release] → `develop-policy` preserva blocos fechados e versão coordenada em toda PR comum.
+- [Back-merge depende de convenção humana] → `develop-policy` entra em modo estrito para `release/X.Y.Z`.
+- [Publicação ocorre antes do back-merge] → workflow resolve PR de retorno e valida estado atual de `develop` antes de qualquer publicação.
 - [Back-merge compara contra master avançada] → resolver o commit exato de `X.Y.Z` e usar esse commit como baseline imutável.
 - [CI sem acesso a PRs] → `pull-requests: read` apenas no job que precisa.
 - [Tag valida a si própria] → resolver commit esperado independentemente.
 - [Código do release influencia job privilegiado via outputs] → job write rederiva commit/notas/estado por lógica confiável e usa outputs read-only apenas como evidência comparativa.
 - [Código do release roda com token write] → não executar scripts do commit liberado no job privilegiado.
-- [Mudança remota entre validação e escrita] → job publish revalida tag/release/reachability imediatamente antes da mutação; falha/retry permanece idempotente.
+- [Predecessora muda após release-check] → revalidar sua tag/release durante a publicação da versão atual.
+- [Mudança remota entre validação e escrita] → job publish revalida predecessora, develop, tag/release e reachability imediatamente antes da mutação.
 - [Master avança após merge] → resolver commit da release, não HEAD.
-- [Develop avança durante a release] → back-merge preserva bloco fechado e mudanças futuras separadamente.
+- [Develop avança durante a release] → back-merge preserva bloco fechado e mudanças futuras separadamente; PRs posteriores continuam sujeitos a `develop-policy`.

@@ -96,10 +96,16 @@ Todos os manifests versionados do produto, dependências internas e lockfile MUS
 ### Requirement: Validação remota consistente
 O processo automatizado MUST validar o estado remoto relevante antes de considerar uma release integrável ou publicável.
 
-#### Scenario: Bootstrap remoto pré-integração com artefato órfão
+#### Scenario: Artefato da versão alvo antes da integração
+- **WHEN** a versão alvo `X.Y.Z` ainda não tiver sido integrada ao histórico estável esperado
+- **AND** já existir tag `vX.Y.Z` ou GitHub Release correspondente
+- **THEN** a validação pré-integração MUST falhar
+- **AND** MUST NOT tratar esse artefato como publicação válida da versão ainda não integrada
+
+#### Scenario: Bootstrap remoto com histórico incompatível
 - **WHEN** uma release alvo não possuir predecessora fechada
 - **AND** a validação ocorrer antes da integração da release alvo
-- **AND** existir tag ou GitHub Release no padrão `vX.Y.Z` incompatível com o histórico ainda não integrado
+- **AND** existir artefato de release no padrão `vA.B.C` incompatível com a ausência de histórico fechado
 - **THEN** a validação MUST falhar
 
 #### Scenario: Retry pós-integração da versão alvo
@@ -111,6 +117,7 @@ O processo automatizado MUST validar o estado remoto relevante antes de consider
 - **WHEN** existir uma predecessora da versão alvo
 - **THEN** o processo MUST resolver independentemente o commit esperado dessa predecessora
 - **AND** MUST validar a tag anotada e a GitHub Release da predecessora contra esse commit esperado
+- **AND** a GitHub Release da predecessora MUST satisfazer as mesmas invariantes de identidade, estado e notas exigidas para uma publicação consistente
 - **AND** MUST falhar se a publicação anterior estiver ausente ou divergente
 
 ### Requirement: OpenSpec reproduzível na CI

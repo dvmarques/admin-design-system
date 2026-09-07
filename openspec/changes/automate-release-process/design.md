@@ -20,6 +20,7 @@ A governança atual do repositório distingue contratos estáveis de instruçõe
 - Garantir que a tag aponte para o commit exato da release, e não para o HEAD corrente de `master`.
 - Tornar publicação idempotente e recuperável sem mover ou recriar tags existentes.
 - Reutilizar a CI existente, sem duplicar quality/build/E2E.
+- Aplicar princípio de menor privilégio ao `GITHUB_TOKEN` dos workflows.
 - Manter o processo operacional de branches e retorno para `develop` documentado e verificável.
 
 **Non-Goals:**
@@ -109,10 +110,10 @@ A proteção/ruleset de `master` deverá, no mínimo:
 
 #### Bootstrap do primeiro ruleset
 
-Hoje `master` ainda não possui proteção e o `release-check` ainda não existe. Portanto a primeira implantação seguirá esta ordem para evitar configurar como required um check inexistente:
+Hoje `master` ainda não possui proteção e o `release-check` ainda não existe. Portanto a primeira implantação seguirá esta ordem:
 
-1. implementar e integrar o workflow que define `release-check` na branch de desenvolvimento;
-2. abrir a primeira PR `release/X.Y.Z -> master`, fazendo o `release-check` aparecer/executar no repositório;
+1. implementar e integrar o workflow que define `release-check` em `develop`;
+2. abrir a primeira PR `release/X.Y.Z -> master`, fazendo o check aparecer/executar;
 3. configurar o ruleset de `master` exigindo `release-check` e os demais checks necessários;
 4. confirmar que a proteção está ativa;
 5. somente então permitir o merge da primeira PR de release.
@@ -184,6 +185,15 @@ A predecessora não é validada tomando a tag como fonte de verdade. A automaç�
 
 A preparação local continua utilizável sem essas consultas remotas; a PR não pode ser integrada enquanto o `release-check` remoto não estiver verde.
 
+#### Permissões do `GITHUB_TOKEN` na CI
+
+O workflow atual já declara `contents: read`. Como a definição explícita de `permissions` zera escopos não listados, o `release-check` também deverá declarar `pull-requests: read` para consultar PRs atual/predecessora. O escopo recomendado para a CI fica:
+
+- `contents: read` — checkout, commits, tags e releases;
+- `pull-requests: read` — resolução e validação das PRs de release.
+
+Nenhuma permissão de escrita é necessária para `release-check`.
+
 A validação OpenSpec da CI deverá usar uma versão fixada e um launcher multiplataforma, sem depender de `openspec.cmd` ou instalação global no runner Linux.
 
 ### Publicação manual e serialização
@@ -195,9 +205,9 @@ Operacionalmente:
 - o dispatch é aceito apenas quando executado com `github.ref_name == develop`;
 - outro ref falha antes de efeitos remotos;
 - publicações usam um único grupo de `concurrency` com `queue: max` e sem `cancel-in-progress: true`;
-- permissões serão mínimas, incluindo `contents: write` e `pull-requests: read`.
+- permissões serão mínimas: `contents: write` e `pull-requests: read`.
 
-A restrição ao ref `develop`, a sintaxe de concorrência e as permissões pertencem à operação do workflow, não à capability permanente.
+Quando `permissions` é declarado, qualquer escopo não listado fica `none`; isso preserva o princípio de menor privilégio.
 
 ### Resolver o commit exato
 
@@ -248,6 +258,7 @@ Se a tag correta existir mas a GitHub Release não, a reexecução preserva a ta
 - [Fork usa branch release/*] → exigir `head.repo.full_name == github.repository`.
 - [Nome da branch não corresponde à versão preparada] → derivar `X.Y.Z` da head e comparar com manifests/changelog.
 - [Ruleset exige check inexistente na primeira implantação] → executar o check na primeira PR antes de torná-lo required, ativando a proteção antes do merge.
+- [CI não consegue consultar PRs] → declarar explicitamente `pull-requests: read` junto a `contents: read`.
 - [Tag não relacionada começa com v] → detecção considera somente o padrão estável `vX.Y.Z`.
 - [Prerelease entra sem política] → aceitar somente `X.Y.Z` estável neste fluxo.
 - [Data varia por timezone] → calcular em `America/Sao_Paulo` com mapa fixo de meses e validar o mesmo formato em seções fechadas.

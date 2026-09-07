@@ -34,10 +34,12 @@
 - [ ] 3.5 Para qualquer head não-release ou release de origem inválida em PR para `master`, fazer `release-check` falhar explicitamente.
 - [ ] 3.6 Garantir que a política baseada em metadados de PR seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
 - [ ] 3.7 Conceder ao job `release-check` somente `contents: read` e `pull-requests: read`, preservando as permissões atuais dos demais jobs e sem conceder escrita à CI.
-- [ ] 3.8 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
-- [ ] 3.9 Na primeira implantação, abrir a PR de release e confirmar que `release-check` já executou/apareceu antes de configurá-lo como required check de `master`.
-- [ ] 3.10 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
-- [ ] 3.11 Configurar/documentar ruleset mínimo de `develop` exigindo PR + checks gerais de CI e bloqueando push direto, force push e deleção, sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
+- [ ] 3.8 Criar um check de política/back-merge que esteja presente em todas as PRs para `develop`, concluindo com sucesso/no-op para PRs comuns e executando validação estrita para head same-repo `release/X.Y.Z`.
+- [ ] 3.9 No back-merge, validar origem/versão da branch, conjunto de arquivos permitido, identidade do bloco fechado em relação à linha estável, preservação das entradas `Em andamento` e coordenação dos manifests existentes em `develop`.
+- [ ] 3.10 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
+- [ ] 3.11 Na primeira implantação, deixar novos checks aparecerem/executarem antes de configurá-los como required nos respectivos rulesets.
+- [ ] 3.12 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
+- [ ] 3.13 Configurar/documentar ruleset mínimo de `develop` exigindo PR, checks gerais e o check de política/back-merge, bloqueando push direto, force push e deleção sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
 
 ## 4. Publicação da release
 
@@ -47,27 +49,30 @@
 - [ ] 4.4 Criar job `resolve/validate` com somente `contents: read` e `pull-requests: read`.
 - [ ] 4.5 No job read-only, resolver de forma inequívoca a PR merged same-repo `release/X.Y.Z -> master`, obter o `merge_commit_sha`, validar reachability, checkout explícito, versão coordenada, changelog, release notes e estado atual de tag/release.
 - [ ] 4.6 Garantir que scripts do commit liberado sejam executados somente no job read-only e nunca com `contents: write`.
-- [ ] 4.7 Passar ao job de publicação apenas outputs/artefatos necessários, incluindo commit validado e release notes.
+- [ ] 4.7 Produzir no job read-only somente evidências/outputs diagnósticos que possam ser comparados depois, sem tratá-los como fonte de verdade privilegiada.
 - [ ] 4.8 Criar job `publish` dependente do sucesso de `resolve/validate`, com `contents: write` e somente permissões adicionais estritamente necessárias.
-- [ ] 4.9 No início do job `publish`, revalidar imediatamente o estado remoto mutável da tag/GitHub Release para reduzir race entre validação e escrita.
-- [ ] 4.10 Verificar `vX.Y.Z`, distinguindo tag anotada de lightweight e dereferenciando até o commit esperado.
-- [ ] 4.11 Criar tag anotada somente quando inexistente; reutilizar apenas tag anotada no commit correto; falhar para tag incompatível.
-- [ ] 4.12 Criar GitHub Release com `tag_name` e nome `vX.Y.Z`, `draft=false`, `prerelease=false` e notas extraídas do changelog.
-- [ ] 4.13 Tratar tag válida existente + release ausente como recuperação, criando somente a GitHub Release.
-- [ ] 4.14 Quando a release já existir, validar tag, commit, nome, draft, prerelease e body antes de sucesso/no-op; falhar sem alteração para divergência.
-- [ ] 4.15 Garantir que o job com `contents: write` não execute scripts arbitrários do checkout da release; usar apenas operações de publicação necessárias.
+- [ ] 4.9 No job privilegiado, re-resolver independentemente PR/commit e reobter versão/changelog/release notes por lógica confiável do workflow, sem executar scripts do commit liberado.
+- [ ] 4.10 Comparar os dados rederivados no job privilegiado com a evidência read-only e falhar em qualquer divergência.
+- [ ] 4.11 Revalidar imediatamente reachability e estado remoto de tag/GitHub Release antes de qualquer escrita.
+- [ ] 4.12 Tratar dados vindos do repositório como dados, evitando interpolação/eval em comandos; usar operações não executáveis como API GitHub, checkout sem scripts ou `git show` para leitura.
+- [ ] 4.13 Verificar `vX.Y.Z`, distinguindo tag anotada de lightweight e dereferenciando até o commit esperado.
+- [ ] 4.14 Criar tag anotada somente quando inexistente; reutilizar apenas tag anotada no commit correto; falhar para tag incompatível.
+- [ ] 4.15 Criar GitHub Release com `tag_name` e nome `vX.Y.Z`, `draft=false`, `prerelease=false` e notas extraídas do changelog rederivado.
+- [ ] 4.16 Tratar tag válida existente + release ausente como recuperação, criando somente a GitHub Release.
+- [ ] 4.17 Quando a release já existir, validar tag, commit, nome, draft, prerelease e body antes de sucesso/no-op; falhar sem alteração para divergência.
+- [ ] 4.18 Garantir que o job com `contents: write` não execute scripts arbitrários do checkout da release; usar apenas operações de publicação necessárias.
 
 ## 5. Fluxo operacional e back-merge
 
 - [ ] 5.1 Manter `release/X.Y.Z` após o merge em `master` até concluir back-merge para `develop` e publicação.
 - [ ] 5.2 Proibir novo delta funcional na release branch após o merge em `master`; permitir incorporar `develop` somente para reconciliar o retorno.
 - [ ] 5.3 Padronizar PR `release/X.Y.Z -> develop` como caminho de retorno da preparação.
-- [ ] 5.4 Validar que o diff de retorno fique restrito a `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`.
+- [ ] 5.4 Fazer o check obrigatório de back-merge rejeitar arquivos fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`.
 - [ ] 5.5 Preservar o bloco fechado `X.Y.Z` idêntico ao liberado em `master` e manter entradas pós-corte na nova seção `Em andamento`.
 - [ ] 5.6 Recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
 - [ ] 5.7 Validar novamente versões/changelog e ausência de delta funcional novo antes do merge de retorno.
 - [ ] 5.8 Garantir resolução explícita de conflitos sem force update de refs.
-- [ ] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop` esteja ativa antes do primeiro dispatch manual.
+- [ ] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop`, incluindo o check de back-merge, esteja ativa antes do primeiro dispatch manual.
 - [ ] 5.10 Bloquear início operacional da próxima release enquanto o estado anterior não estiver reconciliado em `develop` e publicado consistentemente.
 
 ## 6. Testes automatizados
@@ -86,16 +91,17 @@
 - [ ] 6.12 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
 - [ ] 6.13 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
 - [ ] 6.14 Validar estaticamente as permissões mínimas do `release-check`: `contents: read`, `pull-requests: read` e nenhuma escrita.
-- [ ] 6.15 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
-- [ ] 6.16 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
-- [ ] 6.17 Testar recuperação tag válida + release ausente.
-- [ ] 6.18 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
-- [ ] 6.19 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
-- [ ] 6.20 Validar separação de privilégios: job read-only executa validações/scripts; job write não executa scripts arbitrários do commit liberado.
-- [ ] 6.21 Testar mudança concorrente de tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
-- [ ] 6.22 Testar back-merge com novas entradas de changelog após o corte.
-- [ ] 6.23 Testar back-merge com workspace novo após o corte, preservando metadados futuros.
-- [ ] 6.24 Testar rejeição de delta funcional/arquivo fora do escopo permitido no PR de retorno.
+- [ ] 6.15 Testar check de `develop` em PR comum como sucesso/no-op e em back-merge de release como validação estrita, incluindo arquivo indevido, bloco fechado divergente e workspace novo.
+- [ ] 6.16 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
+- [ ] 6.17 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
+- [ ] 6.18 Testar recuperação tag válida + release ausente.
+- [ ] 6.19 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
+- [ ] 6.20 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
+- [ ] 6.21 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.
+- [ ] 6.22 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
+- [ ] 6.23 Testar mudança concorrente de tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
+- [ ] 6.24 Testar back-merge com novas entradas de changelog após o corte.
+- [ ] 6.25 Testar back-merge com workspace novo após o corte, preservando metadados futuros.
 
 ## 7. Documentação e governança operacional
 
@@ -107,9 +113,9 @@
 - [ ] 7.6 Documentar padrão de branch/tag `release/X.Y.Z`/`vX.Y.Z`, coerência entre nome da branch e versão preparada, timezone/formato do changelog e definição da última versão fechada/predecessora.
 - [ ] 7.7 Documentar guardas locais de `release:prepare`: branch `release/X.Y.Z` e working tree limpa.
 - [ ] 7.8 Documentar política de `master`, same-repo head, permissões mínimas do `release-check`, comportamento distinto entre `pull_request` e `push` e sequência inicial para ativar o check como required antes do primeiro merge.
-- [ ] 7.9 Documentar proteção mínima de `develop`: PR + CI, sem push direto/force push/deleção e sem restrição de origem equivalente à de `master`.
+- [ ] 7.9 Documentar proteção mínima de `develop` e o check obrigatório de back-merge/no-op para PR comum.
 - [ ] 7.10 Documentar back-merge, bloco fechado imutável, workspaces novos e retenção da branch.
-- [ ] 7.11 Documentar separação de privilégios do workflow de publicação e a revalidação antes da escrita.
+- [ ] 7.11 Documentar separação de privilégios do workflow, rederivação independente no job write e revalidação antes da mutação.
 - [ ] 7.12 Documentar resolução independente do commit atual/predecessora, tags anotadas, GitHub Release e recuperação idempotente.
 - [ ] 7.13 Adicionar ao `README.md` resumo do processo e link para `docs/release-process.md`.
 - [ ] 7.14 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.

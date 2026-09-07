@@ -11,21 +11,23 @@ O repositório está atualmente alinhado em `0.0.1` no manifesto raiz, workspace
 - Criar um comando de preparação que recebe `X.Y.Z`, executa preflight somente leitura, produz todas as alterações em staging e aplica os arquivos reais de forma atômica somente após sucesso completo.
 - Definir bootstrap explícito para a primeira release: quando não existir versão fechada, tag `v*` ou GitHub Release anterior, permitir como alvo qualquer SemVer maior ou igual à versão coordenada atual, sem permitir downgrade.
 - Definir a última versão fechada como a maior SemVer entre as seções fechadas do `CHANGELOG.md`, exigindo versões fechadas únicas e ordenadas de forma decrescente no arquivo.
-- Após a primeira release, exigir que o estado coordenado atual corresponda à última versão fechada e que a próxima `X.Y.Z` seja uma SemVer estritamente superior.
+- Definir a release anterior de um alvo `X.Y.Z` como a maior SemVer fechada estritamente menor que o alvo, evitando confundir a versão em preparação com sua predecessora.
+- Após a primeira release, exigir que o estado coordenado atual corresponda à última versão fechada antes da preparação e que a próxima `X.Y.Z` seja uma SemVer estritamente superior.
 - Permitir que o mantenedor escolha patch, minor ou major; a única seção `Em andamento` pode ser renomeada do placeholder para a versão escolhida, preservando conteúdo.
 - Atualizar de forma coordenada manifesto raiz, `packages/*`, `apps/*`, dependências internas e `package-lock.json`.
 - Fixar uma versão exata do npm no projeto e reutilizá-la localmente e na CI para tornar a regeneração do lockfile reproduzível.
 - Tornar `master` exclusiva para integração de branches `release/*`, tanto por política de PR quanto por proteção/ruleset contra push direto, force push e deleção.
 - Fazer o `release-check` aplicar a política de origem apenas em eventos `pull_request` destinados a `master`, sem falhar indevidamente em execuções de `push` pós-merge.
-- Exigir que, quando já existir uma release fechada anterior, ela esteja publicada com tag anotada e GitHub Release consistentes antes de permitir a integração de uma nova release.
+- Exigir que a release anterior ao alvo esteja publicada com tag anotada e GitHub Release consistentes antes de permitir a integração de uma nova release.
 - Criar workflow manual `Publicar release` serializado por `concurrency` com grupo único e `queue: max`, sem cancelar publicação em andamento.
 - Localizar a PR merged `release/X.Y.Z -> master`, usar seu `merge_commit_sha`, validar que esse commit continua alcançável a partir de `master` e fazer checkout explícito dele antes de validar manifests, changelog e notas.
 - Criar somente tags anotadas `vX.Y.Z`; tags existentes devem ser dereferenciadas até o commit e nunca movidas, sobrescritas ou recriadas.
 - Tratar GitHub Release existente como idempotente apenas quando tag, commit, nome, estado draft/prerelease e notas forem equivalentes ao esperado.
 - Normalizar somente finais de linha e newline final ao comparar release notes, sem aceitar diferenças reais de conteúdo.
-- Sincronizar obrigatoriamente a mesma branch `release/X.Y.Z` de volta para `develop` por PR após o merge em `master`, mantendo-a congelada para novas mudanças funcionais até o retorno terminar.
-- Exigir que o PR de retorno para `develop` contenha somente o estado de preparação já integrado em `master` e, quando necessário, ajustes estritamente de resolução de conflitos desse retorno.
-- Exigir a sincronização com `develop` antes da publicação inicial quando necessário para disponibilizar o `workflow_dispatch` na default branch, e sempre antes da próxima preparação de release.
+- Sincronizar obrigatoriamente a mesma branch `release/X.Y.Z` de volta para `develop` por PR após o merge em `master`, mantendo-a congelada para novas mudanças funcionais.
+- Limitar o PR de retorno aos arquivos de preparação de release (`CHANGELOG.md`, manifests e lockfile), permitindo somente ajustes necessários nesses arquivos para resolução de conflitos do back-merge.
+- Manter a branch `release/X.Y.Z` até que back-merge para `develop` e publicação da GitHub Release estejam ambos concluídos com sucesso.
+- Exigir a sincronização com `develop` antes da primeira publicação para disponibilizar o `workflow_dispatch` na default branch, e sempre antes da próxima preparação de release.
 - Disponibilizar OpenSpec de forma versionada, reproduzível e multiplataforma na CI.
 - Documentar o processo em `docs/release-process.md` e manter no `README.md` apenas um resumo com link.
 
@@ -48,7 +50,7 @@ Nenhuma.
 - `CHANGELOG.md`.
 - GitHub Actions em `.github/workflows/`, required checks e proteção/ruleset de `master`.
 - Política de branching: `master` recebe apenas `release/*` neste fluxo inicial e não aceita push direto.
-- Estratégia normativa de sincronização `release/X.Y.Z -> develop` após o merge em `master`.
+- Estratégia normativa de sincronização `release/X.Y.Z -> develop` após o merge em `master`, com retenção da branch até publicação concluída.
 - Forma de instalação/execução do OpenSpec na CI.
 - Documentação em `README.md` e `docs/release-process.md`.
 - Testes automatizados do processo de release.

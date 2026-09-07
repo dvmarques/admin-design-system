@@ -24,7 +24,7 @@ A governança atual do repositório separa contratos estáveis de instruções o
 - Atualizar de forma coordenada manifesto raiz, `packages/*`, `apps/*`, dependências internas e `package-lock.json`.
 - Fixar uma versão exata do npm para tornar a regeneração/validação do lockfile reproduzível.
 - Criar validação reutilizável que bloqueie uma release inconsistente e, após o bootstrap, exija publicação consistente da predecessora.
-- Publicar manualmente uma versão validando o commit exato integrado em `master`, sem assumir o HEAD corrente.
+- Publicar manualmente uma versão validando o commit exato integrado na linha estável, sem assumir o HEAD corrente.
 - Criar somente tags anotadas `vX.Y.Z`, nunca mover/recriar tags existentes e permitir recuperação idempotente quando a tag correta já existe.
 - Criar/validar GitHub Release consistente com tag, commit e notas derivadas exclusivamente do changelog do commit liberado.
 - Disponibilizar a validação OpenSpec na CI de forma versionada, reproduzível e multiplataforma.
@@ -34,7 +34,9 @@ A governança atual do repositório separa contratos estáveis de instruções o
 - Manter `master` como linha estável, aceitando releases conforme a política documentada do repositório.
 - Usar `release/X.Y.Z` a partir de `develop`, integrar em `master`, reconciliar o estado de release de volta para `develop` e só então remover a branch.
 - Proteger `master` com PR e required checks, bloqueando push direto/force push/deleção conforme configuração documentada.
+- Proteger também `develop`, por ser a default branch que contém a definição revisada dos workflows e recebe o back-merge, exigindo PR + CI e bloqueando push direto, force push e deleção; sem restringir as branches de origem como em `master`.
 - Disparar a publicação a partir da default branch `develop` e serializar execuções conforme o workflow documentado.
+- Separar a publicação em validação read-only e mutação privilegiada, evitando executar scripts do commit liberado com token de escrita.
 - Documentar o procedimento completo em `docs/release-process.md`, manter resumo no `README.md` e referências operacionais concisas em `AGENTS.md`/`openspec/config.yaml` quando aplicável.
 
 ## Capabilities
@@ -54,7 +56,7 @@ Nenhuma.
 - Dependências internas entre workspaces e `package-lock.json`.
 - `CHANGELOG.md`.
 - GitHub Actions em `.github/workflows/`.
-- Configuração operacional de proteção/ruleset de `master`.
+- Configuração operacional de proteção/rulesets de `master` e `develop`.
 - Forma de instalação/execução do OpenSpec na CI.
 - Documentação em `README.md`, `docs/release-process.md`, `AGENTS.md` e, quando necessário, `openspec/config.yaml`.
 - Testes automatizados do processo de release.

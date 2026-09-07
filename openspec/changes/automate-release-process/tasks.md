@@ -35,15 +35,19 @@
 - [ ] 3.5 Para qualquer head não-release ou release de origem inválida em PR para `master`, fazer `release-check` falhar explicitamente.
 - [ ] 3.6 Garantir que a política baseada em metadados de PR seja aplicada somente a `pull_request` para `master` e não quebre execuções de `push` pós-merge.
 - [ ] 3.7 Conceder ao job `release-check` somente `contents: read` e `pull-requests: read`, preservando as permissões atuais dos demais jobs e sem conceder escrita à CI.
-- [ ] 3.8 Criar `develop-policy` sempre presente em PRs para `develop`.
+- [ ] 3.8 Criar `develop-policy` sempre presente em PRs para `develop` quando o PR estiver pronto para revisão.
 - [ ] 3.9 Em PR comum para `develop`, validar exatamente uma seção `Em andamento`, preservar sem adição/remoção/alteração o conjunto de seções fechadas existente na base, manter inalterado o heading/version placeholder `Em andamento`, coordenar todos os manifests e proibir mudança da versão coordenada atual; workspace novo deve nascer com a mesma versão.
 - [ ] 3.10 Em back-merge same-repo `release/X.Y.Z -> develop`, permitir a transição de release e validar branch/versão, conjunto de arquivos permitido, commit exato da release, bloco fechado idêntico a esse commit, entradas futuras em `Em andamento` e coordenação de todos os manifests atuais.
 - [ ] 3.11 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
-- [ ] 3.12 Na primeira implantação, deixar novos checks aparecerem/executarem antes de configurá-los como required nos respectivos rulesets.
+- [ ] 3.12 Na primeira implantação, deixar novos checks aparecerem/executarem em PR Ready for review antes de configurá-los como required nos respectivos rulesets.
 - [ ] 3.13 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
 - [ ] 3.14 Configurar/documentar ruleset mínimo de `develop` exigindo PR, checks gerais e `develop-policy`, bloqueando push direto, force push e deleção sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
 - [ ] 3.15 Configurar os required checks de `master` e `develop` em modo estrito, exigindo que a head esteja atualizada com a base antes do merge; atualizar/revalidar a PR quando a base avançar para impedir uso de checks calculados contra estado antigo.
 - [ ] 3.16 Fazer `release-check` resolver o ponto de corte de `release/X.Y.Z` em `develop` e rejeitar qualquer delta exclusivo fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`; mudanças funcionais exclusivas da release branch devem falhar antes do merge em `master`.
+- [ ] 3.17 Condicionar os jobs automáticos disparados por `pull_request` ao estado não-draft, preservando execução normal em `push`; usar condição equivalente a `github.event_name != 'pull_request' || github.event.pull_request.draft == false`.
+- [ ] 3.18 Configurar os tipos de evento de `pull_request` necessários, incluindo `ready_for_review`, para que a transição Draft -> Ready dispare nova execução completa sobre o commit corrente; manter `opened`, `synchronize` e `reopened` conforme aplicável.
+- [ ] 3.19 Aplicar a regra de draft aos jobs gerais quality/build/E2E e aos checks `release-check`/`develop-policy`, sem depender da ausência do workflow/check; novas atualizações enquanto draft permanecem sem executar os jobs automáticos.
+- [ ] 3.20 Não exigir cancelamento retroativo de execução já iniciada caso um PR Ready seja convertido novamente para draft; novos disparos enquanto draft devem permanecer pulados.
 
 ## 4. Publicação da release
 
@@ -115,6 +119,9 @@
 - [ ] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
 - [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
 - [ ] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
+- [ ] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.
+- [ ] 6.32 Testar transição `ready_for_review`: uma nova execução deve rodar os checks aplicáveis no commit corrente; ao converter novamente para draft, novos disparos permanecem skipped sem exigir cancelamento retroativo de execução já iniciada.
+- [ ] 6.33 Testar que eventos `push` para `develop`/`master` continuam executando a CI normalmente independentemente da regra de draft de Pull Request.
 
 ## 7. Documentação e governança operacional
 
@@ -136,6 +143,7 @@
 - [ ] 7.16 Adicionar em `AGENTS.md` referência operacional curta para agentes, apontando para `docs/release-process.md` sem duplicar o procedimento.
 - [ ] 7.17 Revisar `openspec/config.yaml`; adicionar apenas orientação release-specific que seja útil a futuras changes e não duplique a documentação. Registrar no PR se nenhuma mudança for necessária.
 - [ ] 7.18 Documentar que uma release branch não pode introduzir alterações funcionais exclusivas: o delta desde o ponto de corte em `develop` deve ficar restrito aos arquivos de preparação/versionamento aceitos pelo `release-check`.
+- [ ] 7.19 Documentar a política de CI para PRs draft: jobs automáticos são pulados enquanto draft, `ready_for_review` dispara validação completa do commit corrente, `push` continua normal e não há obrigação de cancelar retroativamente execução já iniciada.
 
 ## 8. Validação final
 
@@ -144,3 +152,4 @@
 - [ ] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
 - [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção estrita de `develop`/`master`, back-merge obrigatório, publicação e próxima release sem efetuar publicação real indevida.
 - [ ] 8.5 Revisar cenários de recuperação e confirmar que nenhum detalhe puramente operacional foi reintroduzido como requisito permanente da capability.
+- [ ] 8.6 Revisar especificamente o ciclo Draft -> Ready -> Draft e confirmar que required checks reais executam quando o PR fica pronto para revisão sem quebrar a CI de `push`.

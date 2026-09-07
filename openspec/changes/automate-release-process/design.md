@@ -21,6 +21,7 @@ A governança atual distingue contratos estáveis de instruções operacionais. 
 - Tornar tag/release imutáveis e recuperação idempotente.
 - Reutilizar quality/build/E2E existentes.
 - Aplicar menor privilégio aos tokens da CI/publicação.
+- Manter protegidas as branches que definem a linha estável e a lógica revisada dos workflows de release.
 
 **Non-Goals:**
 
@@ -68,7 +69,7 @@ PR inválida falha explicitamente no `release-check`. Regras baseadas em metadad
 
 O ruleset de `master` deve exigir PR/required checks, bloquear push direto, force push e deleção, com bypass administrativo mínimo/documentado.
 
-#### Bootstrap do primeiro ruleset
+#### Bootstrap do primeiro ruleset de `master`
 
 Como `master` está atualmente desprotegida e `release-check` ainda não existe:
 
@@ -77,6 +78,23 @@ Como `master` está atualmente desprotegida e `release-check` ainda não existe:
 3. configurar o ruleset exigindo `release-check` e os demais checks necessários;
 4. confirmar a proteção ativa;
 5. somente então fazer o primeiro merge de release.
+
+### `develop` como fonte confiável da operação
+
+`develop` é a default branch, recebe o back-merge e contém a definição revisada de `.github/workflows/release.yml` usada pelo `workflow_dispatch`. Por isso, a restrição operacional `github.ref_name == develop` só oferece a garantia esperada se alterações em `develop` também passarem por revisão e CI.
+
+O ruleset mínimo de `develop` deve:
+
+- exigir Pull Request para integração;
+- exigir os checks gerais de CI aplicáveis à branch;
+- bloquear push direto;
+- bloquear force push;
+- bloquear deleção;
+- manter bypass administrativo no menor escopo possível e documentado.
+
+Diferentemente de `master`, `develop` **não** restringe a origem a `release/*`: feature branches e a própria `release/X.Y.Z` no back-merge continuam sendo origens válidas via PR.
+
+A proteção de `develop` deve estar ativa antes de ela ser tratada como fonte confiável do workflow de publicação. Como os checks gerais já existem, esse ruleset pode ser configurado durante a implantação desta change, sem depender do futuro `release-check` de `master`.
 
 ### Bootstrap, SemVer e changelog
 
@@ -159,7 +177,7 @@ A publicação é dividida em pelo menos duas fases/jobs:
 
 Assim código do commit liberado é validado apenas com token read-only, reduzindo o impacto de qualquer script de repositório executado durante a validação.
 
-A checagem `github.ref_name == develop` protege contra seleção acidental de outro ref na versão revisada do workflow; a confiança na definição do workflow continua dependendo da revisão/proteção das branches que podem alterar `.github/workflows/`.
+A checagem `github.ref_name == develop` protege contra seleção acidental de outro ref na versão revisada do workflow; a proteção de `develop` garante que essa definição de workflow não seja alterada por push direto fora do processo revisado.
 
 ### Resolver o commit exato
 
@@ -193,7 +211,8 @@ Release existente só é no-op quando todos os metadados esperados coincidem. Se
 - [Artefato alvo de retry é confundido com bootstrap órfão] → bootstrap remoto é pré-integração; pós-integração usa idempotência.
 - [Fork usa branch release/*] → exigir same-repo.
 - [Branch/version mismatch] → derivar versão da head e comparar com preparação.
-- [Ruleset exige check inexistente] → executar check antes de torná-lo required e ativar proteção antes do primeiro merge.
+- [Ruleset de master exige check inexistente] → executar check antes de torná-lo required e ativar proteção antes do primeiro merge.
+- [Develop permite alterar workflow por push direto] → exigir PR + CI e bloquear push direto/force push/deleção na default branch.
 - [CI sem acesso a PRs] → `pull-requests: read` apenas no job que precisa.
 - [Tag valida a si própria] → resolver commit esperado independentemente.
 - [Código do release roda com token write] → separar job read-only de job de publicação e não executar scripts arbitrários no job write.

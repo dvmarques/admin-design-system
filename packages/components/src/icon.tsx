@@ -39,7 +39,7 @@ export function AdsIcon({ className, label, name, size = 'md', ...props }: AdsIc
 			stroke="currentColor"
 			strokeLinecap="round"
 			strokeLinejoin="round"
-			strokeWidth="2"
+			strokeWidth="1.75"
 			viewBox="0 0 24 24"
 		>
 			{iconPaths[name]}

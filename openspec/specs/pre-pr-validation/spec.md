@@ -1,0 +1,53 @@
+# pre-pr-validation Specification
+
+## Purpose
+
+Definir uma validação pré-PR reproduzível que encontre localmente regressões de integração e apresentação antes do envio para revisão.
+
+## Requirements
+
+### Requirement: Checklist pré-PR documentada
+
+O projeto MUST documentar uma checklist pré-PR que exija a execução bem-sucedida de formatação, lint, verificação de tipos, testes, build e testes E2E antes do envio para revisão.
+
+#### Scenario: Pessoa prepara uma alteração para revisão
+
+- **WHEN** a pessoa consulta a documentação de contribuição ou qualidade antes de abrir um PR
+- **THEN** ela encontra os comandos obrigatórios de validação pré-PR, incluindo a execução de E2E
+
+### Requirement: Aprovação deliberada de snapshots visuais
+
+O projeto MUST instruir que snapshots visuais sejam atualizados somente quando a mudança de aparência for intencional e revisada, e que divergências não aprovadas façam a validação E2E falhar.
+
+#### Scenario: Alteração modifica uma aparência coberta
+
+- **WHEN** a suíte E2E detecta diferença em um snapshot visual
+- **THEN** a alteração permanece falhando até que a aparência seja corrigida ou o snapshot seja atualizado deliberadamente
+
+### Requirement: Contratos estáveis nos testes E2E
+
+Os testes E2E MUST localizar os elementos necessários por contratos de interface estáveis, priorizando funções e nomes acessíveis, identificadores semânticos ou headings de seção estáveis quando disponíveis, em vez de conteúdo editorial incidental.
+
+#### Scenario: Conteúdo editorial é revisado
+
+- **WHEN** um texto descritivo não contratual é alterado sem mudar o fluxo público coberto
+- **THEN** os testes E2E continuam localizando os controles e regiões estáveis necessários para validar o fluxo
+
+### Requirement: Saída concisa com diagnóstico disponível
+
+O processo pré-PR MUST usar saída silenciosa ou concisa nos comandos de teste por padrão, sem ocultar o código de falha. O projeto MUST disponibilizar uma forma documentada de executar os mesmos testes em modo verboso para investigar falhas.
+
+#### Scenario: Testes passam no modo conciso
+
+- **WHEN** a pessoa executa a validação pré-PR sem falhas
+- **THEN** a saída prioriza o resultado agregado e evita logs repetitivos de testes aprovados
+
+#### Scenario: Teste falha no modo conciso
+
+- **WHEN** um teste falha durante a validação pré-PR
+- **THEN** o processo retorna código diferente de zero e preserva informação suficiente para identificar o teste, com instrução para obter o diagnóstico verboso
+
+#### Scenario: Pessoa investiga uma falha
+
+- **WHEN** a pessoa executa o comando documentado de diagnóstico verboso
+- **THEN** a mesma suíte é executada com detalhes completos de casos, logs e falhas

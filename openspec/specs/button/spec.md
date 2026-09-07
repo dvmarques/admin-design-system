@@ -37,3 +37,12 @@ O botão MUST responder aos tokens semânticos de tema e permitir personalizaç�
 
 - **WHEN** a aplicação altera o token suportado no escopo de seu tema
 - **THEN** o botão reflete a personalização no CSS público distribuído
+
+### Requirement: Foco e hover respeitam a hierarquia de ação
+
+AdsButton MUST usar papéis semânticos de hover e foco que preservem a distinção entre ações primária, secundária, discreta e destrutiva. O foco visível MUST permanecer externo ao limite do botão e o estado de carregamento MUST manter a largura da ação.
+
+#### Scenario: Ação destrutiva recebe foco
+
+- **WHEN** uma pessoa focaliza pelo teclado uma ação destrutiva habilitada
+- **THEN** o foco é perceptível sem confundir a ação com uma variante primária e o rótulo não sofre deslocamento ao iniciar o carregamento

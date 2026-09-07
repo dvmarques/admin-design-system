@@ -5,9 +5,9 @@ import { AdsLoadingIndicator } from './loading-indicator.js';
 const buttonVariants = {
 	primary:
 		'border-transparent bg-primary text-[var(--ads-color-on-primary)] hover:bg-primary-hover',
-	secondary: 'border-border bg-surface text-text hover:bg-surface-raised',
-	danger: 'border-transparent bg-danger text-[var(--ads-color-on-primary)] hover:brightness-90',
-	ghost: 'border-transparent bg-transparent text-text hover:bg-surface-raised',
+	secondary: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
+	danger: 'border-transparent bg-danger text-[var(--ads-color-on-primary)] hover:bg-danger-hover',
+	ghost: 'border-transparent bg-transparent text-text hover:bg-surface-hover',
 } as const;
 
 const buttonSizes = {
@@ -46,7 +46,7 @@ export const AdsButton = forwardRef<HTMLButtonElement, AdsButtonProps>(function 
 			{...props}
 			aria-busy={isLoading || undefined}
 			className={classNames(
-				'ads-button inline-flex items-center justify-center gap-2 rounded-md border font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-150 ease-out active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+				'ads-button inline-flex items-center justify-center gap-2 rounded-md border font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
 				buttonVariants[variant],
 				buttonSizes[size],
 				className,

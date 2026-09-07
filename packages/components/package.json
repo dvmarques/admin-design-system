@@ -1,6 +1,6 @@
 {
 	"name": "@admin-ds/components",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"sideEffects": [
@@ -27,6 +27,7 @@
 		"verify:package": "node ./scripts/verify-package.mjs",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"test": "npm run build:css && vitest run --root ../.. --config vitest.config.ts",
+		"test:quiet": "npm run build:css && vitest run --root ../.. --config vitest.config.ts --silent=passed-only",
 		"build": "npm run build:css && tsc -p tsconfig.build.json && npm run inspect:css && npm run verify:package"
 	}
 }

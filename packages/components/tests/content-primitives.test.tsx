@@ -4,6 +4,7 @@ import { describe, expect, it } from 'vitest';
 import { AdsAvatar } from '../src/avatar';
 import { AdsBadge } from '../src/badge';
 import { AdsIcon } from '../src/icon';
+import { AdsSkeleton } from '../src/skeleton';
 import { AdsTypography } from '../src/typography';
 import { renderWithTheme } from './test-utils';
 
@@ -17,7 +18,7 @@ describe('AdsBadge', () => {
 		);
 
 		const badge = screen.getByText('Ativo');
-		expect(badge).toHaveClass('ads-badge', 'bg-success');
+		expect(badge).toHaveClass('ads-badge', 'bg-success-background', 'text-success');
 		expect(screen.getByText('Rascunho')).toHaveClass('bg-surface-muted', 'py-0.5');
 		expect(badge).toHaveClass('py-0.5');
 	});
@@ -31,13 +32,20 @@ describe('AdsBadge', () => {
 
 	it('does not have detectable accessibility violations', async () => {
 		const { container } = render(<AdsBadge variant="warning">Atenção</AdsBadge>);
-		expect(screen.getByText('Atenção')).toHaveClass(
-			'bg-warning',
-			'text-[var(--ads-color-on-primary)]',
-		);
+		expect(screen.getByText('Atenção')).toHaveClass('bg-warning-background', 'text-warning');
 
 		const results = await axe.run(container);
 		expect(results.violations).toEqual([]);
+	});
+});
+
+describe('AdsSkeleton', () => {
+	it('is decorative by default and can expose an accessible loading label', () => {
+		const { rerender } = render(<AdsSkeleton className="h-4 w-32" />);
+		expect(document.querySelector('.ads-skeleton')).toHaveAttribute('aria-hidden', 'true');
+
+		rerender(<AdsSkeleton label="Carregando resumo" />);
+		expect(screen.getByRole('status', { name: 'Carregando resumo' })).toBeVisible();
 	});
 });
 

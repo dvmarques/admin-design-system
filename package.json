@@ -1,6 +1,6 @@
 {
 	"name": "admin-design-system",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"private": true,
 	"engines": {
 		"node": ">=22.0.0",
@@ -16,10 +16,14 @@
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",
 		"test": "npm run test --workspaces --if-present",
-		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test && npm run check:generated --workspace @admin-ds/tokens",
+		"test:verbose": "npm run test --workspaces --if-present",
+		"test:quiet": "npm --silent run test:quiet --workspaces --if-present",
+		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run check:generated --workspace @admin-ds/tokens",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
 		"build": "npm run build --workspaces --if-present",
-		"validate": "npm run format && npm run lint && npm run typecheck && npm run test:quality && npm run build"
+		"test:e2e": "playwright test --reporter=dot",
+		"test:e2e:verbose": "playwright test --reporter=list",
+		"validate": "npm run format && npm run lint && npm run typecheck && npm run test:quality && npm run build && npm run test:e2e"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

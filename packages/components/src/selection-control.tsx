@@ -47,7 +47,7 @@ function selectionControl(type: 'checkbox' | 'radio', props: AdsSelectionControl
 	return (
 		<label
 			className={classNames(
-				'ads-selection-control inline-flex items-center gap-2 text-text',
+				'ads-selection-control inline-flex items-center gap-2 text-sm leading-normal text-text',
 				className,
 			)}
 		>
@@ -60,7 +60,7 @@ function selectionControl(type: 'checkbox' | 'radio', props: AdsSelectionControl
 			<span
 				aria-hidden="true"
 				className={classNames(
-					'pointer-events-none relative shrink-0 border border-border bg-form-background transition-[background-color,border-color] duration-150 peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-form-border-focus peer-disabled:opacity-50',
+					'pointer-events-none relative shrink-0 border border-border bg-form-background transition-[background-color,border-color,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring-offset peer-disabled:opacity-60',
 					selectionSizes[size],
 					indicatorClass,
 					validationState === 'error' &&
@@ -101,7 +101,7 @@ export function AdsSwitch(props: AdsSelectionControlProps) {
 				<span
 					aria-hidden="true"
 					className={classNames(
-						'pointer-events-none relative block rounded-full border border-border bg-surface transition-colors duration-150 peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-form-border-focus peer-disabled:opacity-50',
+						'pointer-events-none relative block rounded-full border border-border bg-surface transition-colors duration-150 peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring-offset peer-disabled:opacity-50',
 						switchSizes[size].track,
 						validationState === 'error' && 'border-form-invalid',
 					)}

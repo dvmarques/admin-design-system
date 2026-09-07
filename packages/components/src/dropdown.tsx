@@ -132,7 +132,7 @@ function AdsDropdownContent({
 			<div
 				{...props}
 				className={classNames(
-					'ads-dropdown-content fixed z-50 min-w-48 rounded-md border border-border bg-surface-raised p-1 font-sans text-text shadow-md',
+					'ads-dropdown-content fixed z-[var(--ads-layer-dropdown)] min-w-48 rounded-lg border border-border bg-surface-raised p-1.5 font-sans text-text shadow-md',
 					className,
 				)}
 				id={menuId}
@@ -188,10 +188,10 @@ function AdsDropdownItem({
 					...(href ? { href } : { type: 'button' }),
 					'aria-disabled': disabled || undefined,
 					className: classNames(
-						'ads-dropdown-item box-border flex w-full max-w-full appearance-none items-center rounded-sm border-0 bg-transparent px-3 py-2 text-left text-sm font-sans font-medium no-underline outline-none',
+						'ads-dropdown-item box-border flex w-full max-w-full appearance-none items-center rounded-md border-0 bg-transparent px-3 py-2 text-left text-sm font-sans font-medium no-underline outline-none transition-[background-color,color] duration-[var(--ads-motion-fast)] ease-[var(--ads-motion-easing)]',
 						disabled
 							? 'cursor-default text-text-muted opacity-50'
-							: 'text-text hover:bg-surface-muted focus-visible:bg-surface-muted focus-visible:outline-none',
+							: 'text-text hover:bg-surface-hover focus-visible:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus-ring focus-visible:outline-offset-1',
 						className,
 					),
 					disabled: !href && disabled,

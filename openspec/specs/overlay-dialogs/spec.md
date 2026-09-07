@@ -56,3 +56,12 @@ Os diálogos e drawers MUST usar tokens semânticos públicos de cor, borda, rai
 
 - **WHEN** uma aplicação sobrescreve um token público usado pelo overlay
 - **THEN** o diálogo ou drawer usa o valor personalizado sem recompilar os estilos da biblioteca
+
+### Requirement: Overlays modais respeitam escala de camada e largura reduzida
+
+AdsDialog e AdsDrawer MUST usar a escala semântica de elevação e camada para se separar do conteúdo de fundo. Em largura inferior a 768 px, o espaçamento interno e a composição de ações MUST se adaptar sem reduzir a legibilidade, a área de toque ou os contratos de foco.
+
+#### Scenario: Diálogo é aberto em tela estreita
+
+- **WHEN** um diálogo com ações é exibido em largura inferior a 768 px
+- **THEN** conteúdo, ações e controle de fechar permanecem acessíveis sem colisão ou corte do conteúdo

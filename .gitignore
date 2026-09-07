@@ -6,5 +6,6 @@ coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
+debug.log
 .env*
 !.env.example

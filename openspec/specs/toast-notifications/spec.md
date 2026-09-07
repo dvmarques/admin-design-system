@@ -41,3 +41,12 @@ Toasts MUST usar tokens semânticos públicos para cor, borda, raio, elevação 
 
 - **WHEN** uma aplicação mostra um toast em uma viewport estreita com o tema escuro ativo
 - **THEN** a mensagem, a variante e o controle de fechar permanecem legíveis e utilizáveis sem overflow horizontal
+
+### Requirement: Toast responde ao contexto compacto
+
+AdsToast MUST usar superfície e camada semânticas e MUST adaptar espaçamento e ações em largura reduzida, preservando leitura rápida e alvo de toque do descarte.
+
+#### Scenario: Toast é exibido em tela estreita
+
+- **WHEN** uma notificação possui mensagem e ação de descarte em largura reduzida
+- **THEN** a mensagem quebra sem sobrepor o descarte e ambos permanecem visualmente distinguíveis

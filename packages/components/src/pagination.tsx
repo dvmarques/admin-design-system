@@ -49,7 +49,7 @@ export function AdsPagination({
 			aria-label={label}
 			aria-current={target === safePage ? 'page' : undefined}
 			className={classNames(
-				'ads-pagination-item min-w-9 px-2',
+				'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums',
 				target === safePage ? 'border-transparent' : undefined,
 			)}
 			disabled={disabled}

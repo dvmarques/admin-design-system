@@ -57,7 +57,7 @@ function OverlayPanel({
 	return (
 		<OverlayPortal>
 			<div
-				className="ads-overlay-backdrop fixed inset-0 z-40 flex bg-black/60"
+				className="ads-overlay-backdrop fixed inset-0 z-[var(--ads-layer-overlay)] flex bg-black/60"
 				data-overlay="backdrop"
 				style={{ backgroundColor: 'var(--ads-color-overlay-backdrop)' }}
 				onMouseDown={(event) => {
@@ -70,7 +70,7 @@ function OverlayPanel({
 					aria-labelledby={title ? titleId : props['aria-labelledby']}
 					aria-modal="true"
 					className={classNames(
-						'ads-overlay-panel relative max-h-[calc(100vh-2rem)] overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-md outline-none',
+						'ads-overlay-panel relative max-h-[calc(100vh-2rem)] overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-lg outline-none max-md:max-h-[calc(100vh-1rem)] max-md:p-4',
 						isDrawer
 							? placement === 'left'
 								? 'mr-auto h-full max-h-none w-[min(24rem,100vw)] rounded-r-lg'

@@ -42,3 +42,12 @@ Os componentes de composição MUST espaçar, alinhar e estilizar rótulos, cont
 
 - **WHEN** uma aplicação altera um campo entre os estados normal, sucesso e erro
 - **THEN** a composição apresenta a mensagem e o estado correspondentes de modo consistente, sem modificar dados do campo
+
+### Requirement: Estados de campo não dependem exclusivamente de cor
+
+A composição de campo MUST preservar distância, tipografia e associação semântica suficientes para distinguir ajuda, erro e sucesso; quando houver estado, a comunicação visual MUST combinar cor com ao menos outro sinal já disponível na composição.
+
+#### Scenario: Campo apresenta validação em layout compacto
+
+- **WHEN** uma aplicação apresenta mensagem de validação abaixo de um controle em largura reduzida
+- **THEN** rótulo, valor e mensagem permanecem associados, legíveis e sem sobreposição

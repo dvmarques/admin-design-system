@@ -59,8 +59,11 @@ aplicação e localiza os testes no diretório `e2e/`. O Chromium necessário j�
 foi instalado localmente.
 
 ```powershell
-# Executar os testes end-to-end
-npx.cmd playwright test
+# Executar os testes end-to-end pela entrada oficial do repositório
+npm run test:e2e
+
+# Atualizar snapshots somente após revisar uma mudança visual intencional
+npm run test:e2e -- --update-snapshots
 
 # Abrir o relatório visual da última execução
 npx.cmd playwright show-report
@@ -79,6 +82,37 @@ e2e/
 Esses testes abrem o admin de referência, alternam temas, validam controles por
 teclado, verificam a ausência de divergências de hidratação e capturam
 screenshots representativos dos temas claro e escuro.
+
+## Checklist pré-PR
+
+Antes de abrir ou atualizar um PR, execute todos os comandos abaixo na raiz e
+confirme que não há falhas:
+
+```powershell
+npm run format
+npm run lint
+npm run typecheck
+npm run test:quiet
+npm run build
+npm run test:e2e
+```
+
+O comando `npm run validate` combina essa sequência de qualidade e também
+executa o E2E após o build. Se uma alteração visual intencional modificar um
+snapshot, revise o diff e atualize-o explicitamente com
+`npm run test:e2e -- --update-snapshots`; não aceite snapshots apenas para
+silenciar uma regressão. Os testes E2E devem preferir nomes acessíveis, funções
+ARIA, identificadores semânticos e headings de seção estáveis a textos
+editoriais incidentais.
+
+Os comandos de teste da checklist usam saída concisa para reduzir ruído. Em
+caso de falha, o processo ainda retorna código diferente de zero. Para
+investigar com todos os detalhes, execute:
+
+```powershell
+npm run test:verbose
+npm run test:e2e:verbose
+```
 
 ## Formulários
 

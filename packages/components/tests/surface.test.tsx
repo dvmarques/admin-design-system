@@ -8,7 +8,7 @@ describe('AdsSurface', () => {
 	it.each([
 		['neutral', 'bg-surface'],
 		['raised', 'bg-surface-raised'],
-		['outlined', 'bg-transparent'],
+		['outlined', 'bg-surface-muted/40'],
 	] as const)('renders the %s visual level', (variant, expectedClass) => {
 		render(<AdsSurface variant={variant}>Conteúdo</AdsSurface>);
 

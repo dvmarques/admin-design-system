@@ -37,7 +37,7 @@ export function AdsAvatar({
 	return (
 		<span
 			className={classNames(
-				'ads-avatar relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-surface-raised font-medium text-text',
+				'ads-avatar relative inline-flex shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border bg-surface-raised font-medium text-text',
 				avatarSizes[size],
 				className,
 			)}

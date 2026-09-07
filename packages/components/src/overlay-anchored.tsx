@@ -68,7 +68,7 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 				<OverlayPortal>
 					<div
 						className={classNames(
-							'ads-tooltip fixed z-50 max-w-[min(20rem,calc(100vw-1rem))] rounded-lg bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
+							'ads-tooltip fixed z-[var(--ads-layer-overlay)] max-w-[min(20rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
 							className,
 						)}
 						data-placement={placement}
@@ -141,7 +141,7 @@ export function AdsPopover({
 					<div
 						{...props}
 						className={classNames(
-							'ads-popover fixed z-50 max-w-[min(24rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised p-4 text-text shadow-md',
+							'ads-popover fixed z-[var(--ads-layer-overlay)] max-w-[min(24rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised p-4 text-text shadow-lg max-md:p-3',
 							className,
 						)}
 						id={popoverId}

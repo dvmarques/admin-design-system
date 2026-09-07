@@ -104,7 +104,9 @@ O parser considera fechada apenas uma seção com SemVer estável e data. A seç
 
 As versões fechadas devem ser únicas e aparecer em ordem SemVer decrescente no arquivo.
 
-No bootstrap, sem release anterior coerente, o alvo pode ser igual ou superior à versão coordenada atual. Depois do bootstrap, a versão atual deve coincidir com a última versão fechada e o próximo alvo deve ser estritamente maior.
+No bootstrap, não pode existir versão fechada, tag de release `v*` nem GitHub Release anterior. Qualquer artefato remoto órfão torna o estado inconsistente e bloqueia a preparação até correção explícita.
+
+No bootstrap limpo, o alvo pode ser igual ou superior à versão coordenada atual. Depois do bootstrap, a versão atual deve coincidir com a última versão fechada e o próximo alvo deve ser estritamente maior.
 
 O placeholder aberto depois de cada release usa a próxima patch apenas como valor de trabalho. Ele pode ser renomeado para uma versão minor ou major escolhida depois, preservando seu conteúdo.
 
@@ -122,6 +124,8 @@ Formato: `dd-mmm-aaaa`, com meses `jan`, `fev`, `mar`, `abr`, `mai`, `jun`, `jul
 2. **staging** de todos os conteúdos novos, inclusive lockfile;
 3. **aplicação final** apenas depois de a staging estar completa.
 
+Como guardas operacionais, o preflight local também exigirá branch atual exatamente `release/X.Y.Z` e working tree limpa antes da primeira escrita. Essas condições pertencem ao modo de operação do comando, não ao contrato permanente da capability.
+
 Falhas de validação não alteram arquivos. Falhas durante staging não alteram os arquivos reais. Se a aplicação final falhar, o estado anterior deve ser restaurado ou uma estratégia de substituição atômica equivalente deve evitar resultado parcial.
 
 ### Versionamento coordenado e toolchain
@@ -136,7 +140,7 @@ Fixar o npm é uma decisão de implementação para satisfazer o requisito está
 
 A CI atual continua responsável por quality/build/E2E. Um check específico de release executará somente as validações adicionais necessárias, evitando repetir `npm run validate` ou reinstalar browsers sem necessidade.
 
-Para uma release após o bootstrap, o check também valida que a predecessora possui publicação consistente antes de permitir a integração.
+Para uma release após o bootstrap, o check também valida que a predecessora atende aos mesmos critérios de tag anotada, commit e GitHub Release usados pela publicação atual.
 
 A validação OpenSpec da CI deverá usar uma versão fixada e um launcher multiplataforma, sem depender de `openspec.cmd` ou instalação global no runner Linux.
 
@@ -148,7 +152,7 @@ Operacionalmente:
 
 - o dispatch é aceito apenas quando executado com `github.ref_name == develop`;
 - outro ref falha antes de efeitos remotos;
-- publicações usam um único grupo de `concurrency` com fila preservada e sem cancelar uma execução em andamento;
+- publicações usam um único grupo de `concurrency` com `queue: max` e sem `cancel-in-progress: true`;
 - permissões serão mínimas, incluindo `contents: write` e `pull-requests: read`.
 
 A restrição ao ref `develop`, a sintaxe de concorrência e as permissões pertencem à operação do workflow, não à capability permanente.
@@ -159,7 +163,7 @@ O workflow localizará de forma inequívoca a PR merged `release/X.Y.Z -> master
 
 Antes de qualquer escrita remota:
 
-- confirmar que o commit pertence ao histórico atual de `master`;
+- confirmar que o commit continua alcançável a partir de `master`;
 - fazer checkout explícito dele;
 - validar nesse checkout a versão coordenada, o changelog e as notas;
 - nunca substituir esse commit pelo HEAD corrente de `master`.
@@ -179,7 +183,7 @@ Nenhum caminho permitido move, sobrescreve ou recria uma tag existente.
 
 ### GitHub Release e notas
 
-A GitHub Release usa a tag validada e notas extraídas exclusivamente da seção fechada `X.Y.Z` do changelog do commit liberado.
+A GitHub Release usa `tag_name` e nome `vX.Y.Z`, `draft=false`, `prerelease=false` e notas extraídas exclusivamente da seção fechada `X.Y.Z` do changelog do commit liberado.
 
 Se a release já existir, o workflow valida tag, commit, nome, `draft`, `prerelease` e body. O body só pode ser normalizado quanto a CRLF/LF e newline final para a comparação.
 
@@ -195,14 +199,15 @@ Se a tag correta existir mas a GitHub Release não, a reexecução preserva a ta
 ## Risks / Trade-offs
 
 - [Capability virar checklist operacional] → manter políticas de branch/workflow fora da delta spec e nas fontes operacionais.
-- [Primeira release sem histórico fechado] → bootstrap explícito bloqueia downgrade.
+- [Primeira release com artefato remoto órfão] → bootstrap exige ausência simultânea de histórico fechado, tag e GitHub Release.
 - [Prerelease entra sem política] → aceitar somente `X.Y.Z` estável neste fluxo.
 - [Data varia por timezone] → calcular em `America/Sao_Paulo` com mapa fixo de meses.
 - [Changelog fora de ordem] → validar unicidade e ordem SemVer decrescente.
 - [Release atual confundida com predecessora] → predecessora é sempre a maior SemVer fechada menor que o alvo.
+- [Preparação executada em branch/working tree incorretos] → preflight operacional exige `release/X.Y.Z` e árvore limpa.
 - [Preparação deixa arquivos parciais] → preflight + staging + rollback/substituição atômica.
 - [npm diferente altera lockfile] → pin de npm compartilhado entre local/CI.
-- [Release seguinte integra antes da anterior ser publicada] → release-check valida a predecessora.
+- [Release seguinte integra antes da anterior ser publicada] → release-check valida a predecessora pelos mesmos critérios da publicação.
 - [Master avança depois do merge] → publicação resolve o commit da release e não usa HEAD.
 - [Tag criada e GitHub Release falha] → reexecução reutiliza apenas tag anotada no commit esperado.
 - [Develop avança durante a release] → back-merge preserva bloco fechado e mudanças futuras separadamente.

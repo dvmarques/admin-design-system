@@ -28,6 +28,17 @@ import {
 	AdsTabs,
 	AdsDropdown,
 	AdsPagination,
+	AdsTable,
+	AdsTableHead,
+	AdsTableBody,
+	AdsTableRow,
+	AdsTableHeader,
+	AdsTableCell,
+	AdsList,
+	AdsListItem,
+	AdsCard,
+	AdsProgress,
+	AdsEmptyState,
 } from '@admin-ds/components';
 
 describe('public component consumption', () => {
@@ -59,7 +70,18 @@ describe('public component consumption', () => {
 			AdsTabs,
 			AdsDropdown,
 			AdsPagination,
-		]).toHaveLength(26);
+			AdsTable,
+			AdsTableHead,
+			AdsTableBody,
+			AdsTableRow,
+			AdsTableHeader,
+			AdsTableCell,
+			AdsList,
+			AdsListItem,
+			AdsCard,
+			AdsProgress,
+			AdsEmptyState,
+		]).toHaveLength(37);
 	});
 
 	it('includes primitive styles in the distributed CSS', async () => {
@@ -81,5 +103,8 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.ads-breadcrumb/);
 		expect(css).toMatch(/\.ads-dropdown-content/);
 		expect(css).toMatch(/\.ads-pagination/);
+		expect(css).toMatch(/\.overflow-x-auto/);
+		expect(css).toMatch(/\.border-dashed/);
+		expect(css).toMatch(/motion-reduce/);
 	});
 });

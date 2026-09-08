@@ -14,8 +14,7 @@ const headRef = process.env.GITHUB_HEAD_REF ?? '';
 const sameRepo = process.env.PR_HEAD_REPO === process.env.GITHUB_REPOSITORY;
 if (!base) throw new Error('GITHUB_BASE_SHA obrigatório.');
 
-const show = (ref, file) =>
-	execFileSync('git', ['show', `${ref}:${file}`], { encoding: 'utf8' });
+const show = (ref, file) => execFileSync('git', ['show', `${ref}:${file}`], { encoding: 'utf8' });
 const section = (text, parsed, version) => {
 	const current = parsed.closed.find((candidate) => candidate.version === version);
 	if (!current) return null;
@@ -25,9 +24,7 @@ const section = (text, parsed, version) => {
 const assertClosedBlocksPreserved = ({ allowAddedVersion = null } = {}) => {
 	const baseVersions = baseParsed.closed.map(({ version }) => version);
 	const headVersions = headParsed.closed.map(({ version }) => version);
-	const expectedVersions = allowAddedVersion
-		? [allowAddedVersion, ...baseVersions]
-		: baseVersions;
+	const expectedVersions = allowAddedVersion ? [allowAddedVersion, ...baseVersions] : baseVersions;
 	if (
 		headVersions.length !== expectedVersions.length ||
 		headVersions.some((version, index) => version !== expectedVersions[index])
@@ -132,15 +129,12 @@ if (!isBackmerge) {
 		{ headers },
 	);
 	if (!contentResponse.ok) {
-		throw new Error(
-			`Falha ao ler CHANGELOG do commit liberado: ${contentResponse.status}`,
-		);
+		throw new Error(`Falha ao ler CHANGELOG do commit liberado: ${contentResponse.status}`);
 	}
 	const content = await contentResponse.json();
-	const releaseChangelog = Buffer.from(
-		content.content.replace(/\n/g, ''),
-		'base64',
-	).toString('utf8');
+	const releaseChangelog = Buffer.from(content.content.replace(/\n/g, ''), 'base64').toString(
+		'utf8',
+	);
 	const releaseParsed = parseChangelog(releaseChangelog);
 	const expected = section(releaseChangelog, releaseParsed, version);
 	const actual = section(headChangelog, headParsed, version);

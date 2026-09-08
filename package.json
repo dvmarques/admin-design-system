@@ -19,7 +19,7 @@
 		"test": "npm run test --workspaces --if-present",
 		"test:verbose": "npm run test --workspaces --if-present",
 		"test:quiet": "npm --silent run test:quiet --workspaces --if-present",
-		"test:release": "node --test ./scripts/release-*.test.mjs",
+		"test:release": "node --test ./scripts/*release*.test.mjs",
 		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run test:release && npm run check:generated --workspace @admin-ds/tokens",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
 		"build": "npm run build --workspaces --if-present",

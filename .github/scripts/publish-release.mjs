@@ -15,6 +15,7 @@ const readonlyDevelopSha = process.env.READONLY_DEVELOP_SHA;
 const readonlyReleaseNotesSha = process.env.READONLY_RELEASE_NOTES_SHA;
 const repository = process.env.GITHUB_REPOSITORY;
 const token = process.env.GITHUB_TOKEN;
+const apiBaseUrl = process.env.GITHUB_API_URL ?? 'https://api.github.com';
 
 if (!version || !STABLE_SEMVER.test(version)) throw new Error(`Versão inválida: ${version ?? ''}`);
 if (
@@ -36,7 +37,7 @@ const headers = {
 };
 
 async function api(apiPath, { method = 'GET', body, allow404 = false } = {}) {
-	const response = await globalThis.fetch(`https://api.github.com/repos/${repository}${apiPath}`, {
+	const response = await globalThis.fetch(`${apiBaseUrl}/repos/${repository}${apiPath}`, {
 		method,
 		headers: { ...headers, ...(body ? { 'Content-Type': 'application/json' } : {}) },
 		body: body ? JSON.stringify(body) : undefined,

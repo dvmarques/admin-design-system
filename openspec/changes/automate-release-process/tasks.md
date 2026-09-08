@@ -108,7 +108,7 @@
 - [ ] 6.17 Testar `develop-policy` no back-merge, incluindo comparação contra o commit exato liberado mesmo se `master` tiver avançado.
 - [ ] 6.18 Testar que PR previamente verde fica impedida de merge após avanço de `develop` ou `master` até ser atualizada com a nova base e ter os checks reexecutados; cobrir duas releases concorrentes contra o mesmo HEAD de `master`.
 - [ ] 6.19 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
-- [ ] 6.20 Testar publicação antes do back-merge, back-merge ausente/ambíguo e `develop` divergente; todos devem falhar sem criar tag/release.
+- [x] 6.20 Testar publicação antes do back-merge, back-merge ausente/ambíguo e `develop` divergente; todos devem falhar sem criar tag/release.
 - [ ] 6.21 Testar revalidação da predecessora na publicação quando ela for removida/divergir após o `release-check` pré-merge.
 - [ ] 6.22 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
 - [ ] 6.23 Testar recuperação tag válida + release ausente.

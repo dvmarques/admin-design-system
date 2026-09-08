@@ -153,7 +153,13 @@ describe('AdsProgress', () => {
 		);
 	});
 
-	it('rejects invalid numeric input deterministically', () => {
+	it('ignores range validation while indeterminate', () => {
+		expect(() =>
+			render(<AdsProgress label="Processando" min={10} max={10} />),
+		).not.toThrow();
+	});
+
+	it('rejects invalid numeric input deterministically in determinate mode', () => {
 		expect(() => render(<AdsProgress min={10} max={10} value={10} />)).toThrow(RangeError);
 		expect(() => render(<AdsProgress value={Number.NaN} />)).toThrow(RangeError);
 	});

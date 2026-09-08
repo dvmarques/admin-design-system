@@ -74,3 +74,11 @@ test('publication rejects incompatible tags and divergent existing releases befo
 	assert.match(publishRelease, /await api\('\/git\/tags'/);
 	assert.match(publishRelease, /await api\('\/releases'/);
 });
+
+test('publication recovers a valid tag by creating only the missing release', () => {
+	assert.match(publishRelease, /let tag = currentState\.tag/);
+	assert.match(publishRelease, /if \(!tag\.exists\) \{/);
+	assert.match(publishRelease, /await api\('\/git\/tags'/);
+	assert.match(publishRelease, /await api\('\/releases'/);
+	assert.match(publishRelease, /if \(!tag\.annotated \|\| tag\.commit !== releaseSha\)/);
+});

@@ -111,7 +111,7 @@
 - [x] 6.20 Testar publicação antes do back-merge, back-merge ausente/ambíguo e `develop` divergente; todos devem falhar sem criar tag/release.
 - [ ] 6.21 Testar revalidação da predecessora na publicação quando ela for removida/divergir após o `release-check` pré-merge.
 - [x] 6.22 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
-- [ ] 6.23 Testar recuperação tag válida + release ausente.
+- [x] 6.23 Testar recuperação tag válida + release ausente.
 - [x] 6.24 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
 - [x] 6.25 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
 - [x] 6.26 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.

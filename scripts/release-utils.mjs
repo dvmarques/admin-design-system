@@ -154,7 +154,7 @@ export function prepareChangelog(text, target, date = new Date()) {
 export async function discoverManifests(root = '.') {
 	const result = ['package.json'];
 	for (const parent of ['packages', 'apps']) {
-		let entries = [];
+		let entries;
 		try {
 			entries = await fs.readdir(path.join(root, parent), { withFileTypes: true });
 		} catch {

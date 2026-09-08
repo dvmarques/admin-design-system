@@ -20,8 +20,7 @@ export const MONTHS_PT_BR = [
 export const RELEASE_FILES = ['CHANGELOG.md', 'package.json', 'package-lock.json'];
 
 const VERSION_HEADING_RE = /^### \[([^\]]+)\] - (.+)$/gm;
-const RELEASE_DATE_RE =
-	/^(\d{2})-(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)-(\d{4})$/;
+const RELEASE_DATE_RE = /^(\d{2})-(jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)-(\d{4})$/;
 
 export function assertStableSemver(version) {
 	if (!STABLE_SEMVER.test(version)) {

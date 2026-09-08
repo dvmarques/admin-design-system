@@ -101,8 +101,8 @@
 - [ ] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
 - [x] 6.11 Testar extração e comparação normalizada das release notes.
 - [ ] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
-- [ ] 6.13 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
-- [ ] 6.14 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
+- [x] 6.13 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
+- [x] 6.14 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
 - [x] 6.15 Validar estaticamente as permissões mínimas do `release-check`: `contents: read`, `pull-requests: read` e nenhuma escrita.
 - [ ] 6.16 Testar `develop-policy` em PR comum: alteração/adição/remoção de bloco fechado, mudança do heading `Em andamento`, mudança da versão coordenada, workspace novo com versão divergente e changelog inválido devem falhar; mudança comum válida deve passar.
 - [ ] 6.17 Testar `develop-policy` no back-merge, incluindo comparação contra o commit exato liberado mesmo se `master` tiver avançado.
@@ -118,7 +118,7 @@
 - [ ] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
 - [ ] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
 - [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
-- [ ] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
+- [x] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
 - [x] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.
 - [x] 6.32 Testar transição `ready_for_review`: uma nova execução deve rodar os checks aplicáveis no commit corrente; ao converter novamente para draft, novos disparos permanecem skipped sem exigir cancelamento retroativo de execução já iniciada.
 - [x] 6.33 Testar que eventos `push` para `develop`/`master` continuam executando a CI normalmente independentemente da regra de draft de Pull Request.

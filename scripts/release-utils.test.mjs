@@ -76,13 +76,9 @@ test('bootstrap and subsequent target rules', () => {
 		}),
 	);
 
-	const parsed = parseChangelog(
-		'### [0.0.2] - Em andamento\n\n### [0.0.1] - 01-set-2026\n',
-	);
+	const parsed = parseChangelog('### [0.0.2] - Em andamento\n\n### [0.0.1] - 01-set-2026\n');
 	validateTargetAgainstState({ target: '0.1.0', current: '0.0.1', parsed });
-	assert.throws(() =>
-		validateTargetAgainstState({ target: '0.0.1', current: '0.0.1', parsed }),
-	);
+	assert.throws(() => validateTargetAgainstState({ target: '0.0.1', current: '0.0.1', parsed }));
 });
 
 test('coordinated manifests and internal deps', () => {

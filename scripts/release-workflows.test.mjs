@@ -10,6 +10,11 @@ const [developPolicy, releaseGithub] = await Promise.all([
 	fs.readFile(new URL('./develop-policy.mjs', import.meta.url), 'utf8'),
 	fs.readFile(new URL('./release-github.mjs', import.meta.url), 'utf8'),
 ]);
+const publishRelease = await fs.readFile(
+	new URL('../.github/scripts/publish-release.mjs', import.meta.url),
+	'utf8',
+);
+const prepareRelease = await fs.readFile(new URL('./prepare-release.mjs', import.meta.url), 'utf8');
 
 test('publication workflow is manually dispatched only from develop and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);
@@ -52,9 +57,104 @@ test('develop policy distinguishes normal PRs from same-repository back-merges',
 	assert.match(developPolicy, /Bloco fechado .* diverge do commit exato liberado/);
 });
 
+test('develop policy preserves closed history and reconciles the exact release block', () => {
+	assert.match(developPolicy, /Conjunto de versões fechadas divergente/);
+	assert.match(developPolicy, /Bloco fechado \$\{closed\.version\} removido/);
+	assert.match(developPolicy, /Bloco fechado \$\{closed\.version\} alterado/);
+	assert.match(developPolicy, /allowAddedVersion: version/);
+	assert.match(
+		developPolicy,
+		/contents\/CHANGELOG\.md\?ref=\$\{encodeURIComponent\(releaseSha\)\}/,
+	);
+	assert.match(developPolicy, /headVersion !== version/);
+});
+
 test('remote release validation resolves only one matching merged PR', () => {
 	assert.match(releaseGithub, /candidates\.length !== 1/);
 	assert.match(releaseGithub, /head\?\.repo\?\.full_name === repo/);
 	assert.match(releaseGithub, /target-absent/);
 	assert.match(releaseGithub, /bootstrap-remote/);
+});
+
+test('publication rejects incompatible tags and divergent existing releases before writes', () => {
+	assert.match(
+		publishRelease,
+		/tag\.exists && \(!tag\.annotated \|\| tag\.commit !== releaseSha\)/,
+	);
+	assert.match(publishRelease, /Tag v\$\{target\} é lightweight ou aponta para outro commit/);
+	assert.match(publishRelease, /GitHub Release v\$\{target\} existente está divergente/);
+	assert.match(publishRelease, /if \(currentState\.release\)[\s\S]*?process\.exit\(0\)/);
+	assert.match(publishRelease, /await api\('\/git\/tags'/);
+	assert.match(publishRelease, /await api\('\/releases'/);
+});
+
+test('publication recovers a valid tag by creating only the missing release', () => {
+	assert.match(publishRelease, /let tag = currentState\.tag/);
+	assert.match(publishRelease, /if \(!tag\.exists\) \{/);
+	assert.match(publishRelease, /await api\('\/git\/tags'/);
+	assert.match(publishRelease, /await api\('\/releases'/);
+	assert.match(publishRelease, /if \(!tag\.annotated \|\| tag\.commit !== releaseSha\)/);
+});
+
+test('publication revalidates read-only evidence and mutable state before writes', () => {
+	assert.match(publishRelease, /Commit rederivado diverge do job read-only/);
+	assert.match(publishRelease, /Back-merge rederivado diverge do job read-only/);
+	assert.match(publishRelease, /Notas rederivadas divergem da evidência read-only/);
+	assert.match(publishRelease, /develop mudou durante a publicação/);
+	assert.match(publishRelease, /PR\/commit de release ou back-merge mudou durante a publicação/);
+	assert.match(publishRelease, /const currentState = await validateTargetArtifacts/);
+});
+
+test('publication validates the resolved predecessor before and immediately before writes', () => {
+	assert.match(publishRelease, /async function validatePublished/);
+	assert.match(publishRelease, /Release anterior \$\{target\} inconsistente/);
+	assert.match(publishRelease, /Metadados da release anterior \$\{target\} divergentes/);
+	assert.match(
+		publishRelease,
+		/if \(predecessor\) await validatePublished\(predecessor\);[\s\S]*?await validateTargetArtifacts/,
+	);
+	assert.match(
+		publishRelease,
+		/if \(predecessor\) await validatePublished\(predecessor\);[\s\S]*?const currentState/,
+	);
+});
+
+test('publication resolves merged commits and CI requires an up-to-date base', () => {
+	assert.match(publishRelease, /merge_commit_sha/);
+	assert.match(publishRelease, /assertAncestor\(releaseSha, initialMasterSha/);
+	assert.match(publishRelease, /assertAncestor\(backmergeSha, initialDevelopSha/);
+	assert.match(ci, /pull_request:/);
+});
+
+test('release validation rejects pre-existing target artifacts and incompatible bootstrap history', () => {
+	assert.match(releaseGithub, /command === 'target-absent'/);
+	assert.match(releaseGithub, /state\.tag\.exists \|\| state\.release/);
+	assert.match(releaseGithub, /command === 'bootstrap-remote'/);
+	assert.match(releaseGithub, /Bootstrap incompatível com histórico remoto/);
+	assert.match(releaseGithub, /releaseTags\.length \|\| releaseNames\.length/);
+});
+
+test('release preparation validates its guards before staging and restores on apply failure', () => {
+	assert.match(prepareRelease, /branch !== `release\/\$\{target\}`/);
+	assert.match(prepareRelease, /Working tree deve estar limpa antes da preparação/);
+	assert.match(prepareRelease, /await fs\.mkdtemp/);
+	assert.match(prepareRelease, /const backups = new Map/);
+	assert.match(prepareRelease, /await fs\.writeFile\(path\.join\(root, relative\), content\)/);
+	assert.match(prepareRelease, /await fs\.rm\(tempRoot/);
+});
+
+test('release preparation regenerates only the lockfile with isolated offline npm', () => {
+	assert.match(prepareRelease, /--package-lock-only/);
+	assert.match(prepareRelease, /--offline/);
+	assert.match(prepareRelease, /--ignore-scripts/);
+	assert.match(prepareRelease, /--no-audit/);
+	assert.match(prepareRelease, /--no-fund/);
+	assert.match(prepareRelease, /isolatedNpmConfig/);
+});
+
+test('back-merge permits only release files and validates all current workspaces', () => {
+	assert.match(developPolicy, /changed\.filter\(\(file\) => !isAllowedReleaseFile\(file\)\)/);
+	assert.match(developPolicy, /discoverManifests/);
+	assert.match(developPolicy, /validateCoordinatedManifests\(manifests\)/);
+	assert.match(developPolicy, /assertClosedBlocksPreserved\(\{ allowAddedVersion: version \}\)/);
 });

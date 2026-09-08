@@ -80,7 +80,7 @@
 - [x] 5.3 Padronizar PR `release/X.Y.Z -> develop` como caminho de retorno da preparação.
 - [x] 5.4 Fazer `develop-policy` rejeitar arquivos fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json` no modo back-merge.
 - [x] 5.5 Comparar o bloco fechado `X.Y.Z` com o conteúdo do commit exato da release resolvido pelo histórico da PR, nunca com o HEAD corrente de `master`.
-- [ ] 5.6 Manter entradas pós-corte na nova seção `Em andamento` e recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
+- [x] 5.6 Manter entradas pós-corte na nova seção `Em andamento` e recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
 - [x] 5.7 Validar novamente versões/changelog e ausência de delta funcional novo antes do merge de retorno.
 - [x] 5.8 Garantir resolução explícita de conflitos sem force update de refs.
 - [x] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop`, incluindo `develop-policy`, esteja ativa antes do primeiro dispatch manual.
@@ -90,34 +90,34 @@
 ## 6. Testes automatizados
 
 - [x] 6.1 Testar aceitação de `X.Y.Z` estável e rejeição de prerelease/build metadata.
-- [ ] 6.2 Testar branch divergente e working tree suja, confirmando falha antes de qualquer escrita.
+- [x] 6.2 Testar branch divergente e working tree suja, confirmando falha antes de qualquer escrita.
 - [x] 6.3 Testar bootstrap local com alvo igual/maior à versão atual e rejeição de downgrade sem acesso à API GitHub.
-- [ ] 6.4 Testar rejeição pré-integração de tag/release já existente para a própria versão alvo em release inicial e subsequente.
-- [ ] 6.5 Testar bootstrap remoto sem predecessora com outro artefato `vA.B.C` incompatível com ausência de histórico e retry pós-integração com tag alvo correta.
+- [x] 6.4 Testar rejeição pré-integração de tag/release já existente para a própria versão alvo em release inicial e subsequente.
+- [x] 6.5 Testar bootstrap remoto sem predecessora com outro artefato `vA.B.C` incompatível com ausência de histórico e retry pós-integração com tag alvo correta.
 - [x] 6.6 Testar maior SemVer fechada, predecessora, data fechada inválida, duplicidade, ordem inválida e estados inválidos de `Em andamento`.
 - [x] 6.7 Testar renomeação do placeholder para patch/minor/major preservando conteúdo.
 - [x] 6.8 Testar data em `America/Sao_Paulo`, inclusive processo em outra timezone e fronteira de mudança de dia.
-- [ ] 6.9 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
-- [ ] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
+- [x] 6.9 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
+- [x] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
 - [x] 6.11 Testar extração e comparação normalizada das release notes.
-- [ ] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
+- [x] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
 - [x] 6.13 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
 - [x] 6.14 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
 - [x] 6.15 Validar estaticamente as permissões mínimas do `release-check`: `contents: read`, `pull-requests: read` e nenhuma escrita.
-- [ ] 6.16 Testar `develop-policy` em PR comum: alteração/adição/remoção de bloco fechado, mudança do heading `Em andamento`, mudança da versão coordenada, workspace novo com versão divergente e changelog inválido devem falhar; mudança comum válida deve passar.
-- [ ] 6.17 Testar `develop-policy` no back-merge, incluindo comparação contra o commit exato liberado mesmo se `master` tiver avançado.
-- [ ] 6.18 Testar que PR previamente verde fica impedida de merge após avanço de `develop` ou `master` até ser atualizada com a nova base e ter os checks reexecutados; cobrir duas releases concorrentes contra o mesmo HEAD de `master`.
-- [ ] 6.19 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
-- [ ] 6.20 Testar publicação antes do back-merge, back-merge ausente/ambíguo e `develop` divergente; todos devem falhar sem criar tag/release.
-- [ ] 6.21 Testar revalidação da predecessora na publicação quando ela for removida/divergir após o `release-check` pré-merge.
-- [ ] 6.22 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
-- [ ] 6.23 Testar recuperação tag válida + release ausente.
-- [ ] 6.24 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
+- [x] 6.16 Testar `develop-policy` em PR comum: alteração/adição/remoção de bloco fechado, mudança do heading `Em andamento`, mudança da versão coordenada, workspace novo com versão divergente e changelog inválido devem falhar; mudança comum válida deve passar.
+- [x] 6.17 Testar `develop-policy` no back-merge, incluindo comparação contra o commit exato liberado mesmo se `master` tiver avançado.
+- [x] 6.18 Testar que PR previamente verde fica impedida de merge após avanço de `develop` ou `master` até ser atualizada com a nova base e ter os checks reexecutados; cobrir duas releases concorrentes contra o mesmo HEAD de `master`.
+- [x] 6.19 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
+- [x] 6.20 Testar publicação antes do back-merge, back-merge ausente/ambíguo e `develop` divergente; todos devem falhar sem criar tag/release.
+- [x] 6.21 Testar revalidação da predecessora na publicação quando ela for removida/divergir após o `release-check` pré-merge.
+- [x] 6.22 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
+- [x] 6.23 Testar recuperação tag válida + release ausente.
+- [x] 6.24 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
 - [x] 6.25 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
 - [x] 6.26 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.
-- [ ] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
-- [ ] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
-- [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
+- [x] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
+- [x] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
+- [x] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
 - [x] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
 - [x] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.
 - [x] 6.32 Testar transição `ready_for_review`: uma nova execução deve rodar os checks aplicáveis no commit corrente; ao converter novamente para draft, novos disparos permanecem skipped sem exigir cancelamento retroativo de execução já iniciada.

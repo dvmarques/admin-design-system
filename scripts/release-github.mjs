@@ -134,9 +134,7 @@ if (command === 'resolve') {
 	if (!predecessor) {
 		console.log(JSON.stringify({ predecessor: null }));
 	} else {
-		console.log(
-			JSON.stringify({ predecessor, published: await published(predecessor) }),
-		);
+		console.log(JSON.stringify({ predecessor, published: await published(predecessor) }));
 	}
 } else if (command === 'bootstrap-remote') {
 	const parsed = parseChangelog(await fs.readFile('CHANGELOG.md', 'utf8'));

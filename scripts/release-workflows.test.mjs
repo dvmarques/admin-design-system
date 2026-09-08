@@ -117,3 +117,10 @@ test('publication validates the resolved predecessor before and immediately befo
 		/if \(predecessor\) await validatePublished\(predecessor\);[\s\S]*?const currentState/,
 	);
 });
+
+test('publication resolves merged commits and CI requires an up-to-date base', () => {
+	assert.match(publishRelease, /merge_commit_sha/);
+	assert.match(publishRelease, /assertAncestor\(releaseSha, initialMasterSha/);
+	assert.match(publishRelease, /assertAncestor\(backmergeSha, initialDevelopSha/);
+	assert.match(ci, /pull_request:/);
+});

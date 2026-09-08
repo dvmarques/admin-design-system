@@ -52,11 +52,24 @@ npm run dev --workspace @admin-ds/admin-demo
 Abra [http://localhost:3000](http://localhost:3000) no navegador. Para
 interromper o servidor, pressione `Ctrl+C` no terminal.
 
+## Releases
+
+Fluxo resumido:
+
+```text
+develop -> release/X.Y.Z -> PR master -> back-merge develop -> Publicar release -> vX.Y.Z + GitHub Release
+```
+
+A escolha da versão, os merges e o disparo da publicação são ações humanas. A preparação, as validações de consistência, a resolução do commit liberado, a tag anotada e a GitHub Release são automatizadas. Pull Requests em Draft não executam a CI automática de PR; a validação completa é disparada ao marcar o PR como Ready for review.
+
+Consulte o passo a passo, regras de recuperação e configuração de branch protection em [Processo de release](docs/release-process.md).
+
 ## Documentação
 
 - [Roadmap do projeto](docs/roadmap.md)
 - [Estrutura e arquitetura do monorepo](docs/architecture.md)
 - [Critérios de qualidade](docs/quality.md)
+- [Processo de release](docs/release-process.md)
 - [Integração em aplicações consumidoras](docs/integration.md)
 - [Licenças e atribuições](docs/licensing.md)
 - [Limitações conhecidas](docs/limitations.md)

@@ -1,0 +1,110 @@
+name: Publicar release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: Versão estável X.Y.Z
+        required: true
+        type: string
+
+concurrency:
+  group: release-publication
+  queue: max
+
+jobs:
+  resolve-validate:
+    name: Resolver e validar
+    permissions:
+      contents: read
+      pull-requests: read
+    runs-on: ubuntu-latest
+    outputs:
+      release_sha: ${{ steps.resolve.outputs.release_sha }}
+      backmerge_sha: ${{ steps.resolve.outputs.backmerge_sha }}
+      develop_sha: ${{ steps.evidence.outputs.develop_sha }}
+      release_notes_sha: ${{ steps.evidence.outputs.release_notes_sha }}
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      VERSION: ${{ inputs.version }}
+    steps:
+      - name: Validar ref e versão
+        shell: bash
+        run: |
+          [[ "$GITHUB_REF_NAME" == "develop" ]] || { echo "Dispare este workflow a partir de develop" >&2; exit 1; }
+          [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || { echo "Versão inválida: $VERSION" >&2; exit 1; }
+      - uses: actions/checkout@v6
+        with:
+          ref: develop
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - id: resolve
+        name: Resolver release e back-merge
+        shell: bash
+        run: |
+          RELEASE_JSON="$(node ./scripts/release-github.mjs resolve "$VERSION" master)"
+          BACKMERGE_JSON="$(node ./scripts/release-github.mjs resolve "$VERSION" develop)"
+          RELEASE_SHA="$(node -e 'const x=JSON.parse(process.argv[1]); process.stdout.write(x.merge_commit_sha)' "$RELEASE_JSON")"
+          BACKMERGE_SHA="$(node -e 'const x=JSON.parse(process.argv[1]); process.stdout.write(x.merge_commit_sha)' "$BACKMERGE_JSON")"
+          echo "release_sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "backmerge_sha=$BACKMERGE_SHA" >> "$GITHUB_OUTPUT"
+          git fetch origin master develop --no-tags
+          git merge-base --is-ancestor "$RELEASE_SHA" origin/master || { echo "Commit liberado não pertence ao histórico atual de master" >&2; exit 1; }
+          git merge-base --is-ancestor "$BACKMERGE_SHA" origin/develop || { echo "Back-merge não pertence ao histórico atual de develop" >&2; exit 1; }
+          node ./scripts/release-github.mjs predecessor "$VERSION"
+          node ./scripts/release-github.mjs state "$VERSION"
+      - uses: actions/checkout@v6
+        with:
+          ref: ${{ steps.resolve.outputs.release_sha }}
+          fetch-depth: 0
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - run: npm run release:validate -- "$VERSION"
+      - run: npm run release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
+      - uses: actions/checkout@v6
+        with:
+          ref: develop
+          fetch-depth: 0
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - run: npm run release:validate -- "$VERSION"
+      - id: evidence
+        name: Comparar changelog do back-merge e registrar evidência
+        shell: bash
+        run: |
+          RELEASE_NOTES_SHA="$(sha256sum "$RUNNER_TEMP/release-notes.md" | cut -d ' ' -f 1)"
+          DEVELOP_NOTES_SHA="$(npm run --silent release:notes -- "$VERSION" | sha256sum | cut -d ' ' -f 1)"
+          [[ "$DEVELOP_NOTES_SHA" == "$RELEASE_NOTES_SHA" ]] || { echo "Bloco fechado em develop diverge do commit liberado" >&2; exit 1; }
+          echo "develop_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "release_notes_sha=$RELEASE_NOTES_SHA" >> "$GITHUB_OUTPUT"
+
+  publish:
+    name: Publicar
+    needs: resolve-validate
+    permissions:
+      contents: write
+      pull-requests: read
+    runs-on: ubuntu-latest
+    env:
+      GITHUB_TOKEN: ${{ github.token }}
+      VERSION: ${{ inputs.version }}
+      READONLY_RELEASE_SHA: ${{ needs.resolve-validate.outputs.release_sha }}
+      READONLY_BACKMERGE_SHA: ${{ needs.resolve-validate.outputs.backmerge_sha }}
+      READONLY_DEVELOP_SHA: ${{ needs.resolve-validate.outputs.develop_sha }}
+      READONLY_RELEASE_NOTES_SHA: ${{ needs.resolve-validate.outputs.release_notes_sha }}
+    steps:
+      - name: Checkout da lógica confiável do workflow
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Re-resolver, revalidar e publicar
+        run: node ./.github/scripts/publish-release.mjs

@@ -17,9 +17,8 @@ export function AdsProgress({
 	value,
 	...props
 }: AdsProgressProps) {
-	const determinate = value !== undefined;
 	if (
-		determinate &&
+		value !== undefined &&
 		(!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(value) || max <= min)
 	) {
 		throw new RangeError(
@@ -27,7 +26,8 @@ export function AdsProgress({
 		);
 	}
 
-	const effectiveValue = determinate ? Math.min(max, Math.max(min, value)) : undefined;
+	const effectiveValue = value === undefined ? undefined : Math.min(max, Math.max(min, value));
+	const determinate = effectiveValue !== undefined;
 	const percent = effectiveValue === undefined ? 50 : ((effectiveValue - min) / (max - min)) * 100;
 
 	return (

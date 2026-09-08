@@ -1,6 +1,8 @@
 #!/usr/bin/env node
+import { Buffer } from 'node:buffer';
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs/promises';
+import { URLSearchParams } from 'node:url';
 import {
 	discoverManifests,
 	isAllowedReleaseFile,
@@ -103,9 +105,10 @@ if (!isBackmerge) {
 		head: `${owner}:release/${version}`,
 		per_page: '100',
 	});
-	const pullsResponse = await fetch(`https://api.github.com/repos/${repo}/pulls?${query}`, {
-		headers,
-	});
+	const pullsResponse = await globalThis.fetch(
+		`https://api.github.com/repos/${repo}/pulls?${query}`,
+		{ headers },
+	);
 	if (!pullsResponse.ok) {
 		throw new Error(`Falha ao resolver PR de release: ${pullsResponse.status}`);
 	}
@@ -124,7 +127,7 @@ if (!isBackmerge) {
 	}
 
 	const releaseSha = matches[0].merge_commit_sha;
-	const contentResponse = await fetch(
+	const contentResponse = await globalThis.fetch(
 		`https://api.github.com/repos/${repo}/contents/CHANGELOG.md?ref=${encodeURIComponent(releaseSha)}`,
 		{ headers },
 	);

@@ -2,13 +2,17 @@ import type { HTMLAttributes } from 'react';
 import { classNames } from './class-names.js';
 import { AdsSurface, type AdsSurfaceProps } from './surface.js';
 
-export type AdsListProps = HTMLAttributes<HTMLUListElement>;
-export function AdsList({ className, ...props }: AdsListProps) {
+export interface AdsListProps extends HTMLAttributes<HTMLUListElement> {
+	divided?: boolean;
+}
+
+export function AdsList({ className, divided = true, ...props }: AdsListProps) {
 	return (
 		<ul
 			{...props}
 			className={classNames(
-				'ads-list m-0 list-none divide-y divide-border rounded-lg border border-border bg-surface p-0 text-text',
+				'ads-list m-0 list-none rounded-lg border border-border bg-surface p-0 text-text',
+				divided && 'divide-y divide-border',
 				className,
 			)}
 		/>
@@ -20,14 +24,19 @@ export function AdsListItem({ className, ...props }: AdsListItemProps) {
 	return (
 		<li
 			{...props}
-			className={classNames('ads-list-item min-w-0 px-4 py-3 transition-colors hover:bg-surface-hover', className)}
+			className={classNames(
+				'ads-list-item min-w-0 px-4 py-3 transition-colors hover:bg-surface-hover',
+				className,
+			)}
 		/>
 	);
 }
 
 export type AdsCardProps = AdsSurfaceProps;
 export function AdsCard({ className, ...props }: AdsCardProps) {
-	return <AdsSurface {...props} className={classNames('ads-card flex flex-col gap-4', className)} />;
+	return (
+		<AdsSurface {...props} className={classNames('ads-card flex flex-col gap-4', className)} />
+	);
 }
 
 export type AdsCardHeaderProps = HTMLAttributes<HTMLDivElement>;

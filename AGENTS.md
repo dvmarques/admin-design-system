@@ -70,6 +70,9 @@ histórico Git. Em especial:
   acontece ao marcar Ready for review;
 - `release:prepare` exige npm `11.19.1`, branch `release/X.Y.Z` e working tree limpa;
 - a publicação só ocorre após o back-merge da mesma release para `develop`;
+- toda PR de release — `release/X.Y.Z -> master` e o respectivo back-merge — usa o label `release`, tem como assignee quem estiver conduzindo o processo e é integrada com merge commit;
+- PRs que não tiverem o label `release` e tenham `develop` como base são integradas por squash;
+- para relacionar uma PR a uma issue sem fechá-la, use o vínculo manual em Development e não use palavras-chave de fechamento, como `Closes #123`;
 - não mover, substituir ou recriar tags de release existentes.
 
 ## Implementação de componentes

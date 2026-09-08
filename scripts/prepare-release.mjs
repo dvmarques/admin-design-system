@@ -61,8 +61,9 @@ for (const { rel, json } of updateManifestVersions(manifests, target)) {
 staged.set('CHANGELOG.md', prepareChangelog(changelog, target));
 
 const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'admin-ds-release-'));
+const npmConfigRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'admin-ds-npm-config-'));
 try {
-	const isolatedNpmConfig = path.join(tempRoot, '.npmrc');
+	const isolatedNpmConfig = path.join(npmConfigRoot, 'npmrc');
 	await fs.writeFile(isolatedNpmConfig, '');
 	for (const [relative, content] of staged) {
 		const destination = path.join(tempRoot, relative);
@@ -123,6 +124,7 @@ try {
 	}
 } finally {
 	await fs.rm(tempRoot, { recursive: true, force: true });
+	await fs.rm(npmConfigRoot, { recursive: true, force: true });
 }
 
 console.log(`Release ${target} preparada com sucesso.`);

@@ -35,12 +35,16 @@ export const Table: Story = {
 			<AdsTableBody>
 				<AdsTableRow>
 					<AdsTableCell>Mariana Costa</AdsTableCell>
-					<AdsTableCell><AdsBadge variant="success">Ativo</AdsBadge></AdsTableCell>
+					<AdsTableCell>
+						<AdsBadge variant="success">Ativo</AdsBadge>
+					</AdsTableCell>
 					<AdsTableCell align="end">18</AdsTableCell>
 				</AdsTableRow>
 				<AdsTableRow>
 					<AdsTableCell>Rafael Lima</AdsTableCell>
-					<AdsTableCell><AdsBadge variant="warning">Pendente</AdsBadge></AdsTableCell>
+					<AdsTableCell>
+						<AdsBadge variant="warning">Pendente</AdsBadge>
+					</AdsTableCell>
 					<AdsTableCell align="end">7</AdsTableCell>
 				</AdsTableRow>
 			</AdsTableBody>
@@ -57,9 +61,13 @@ export const Collections: Story = {
 				<AdsListItem>Documento anexado</AdsListItem>
 			</AdsList>
 			<AdsCard>
-				<AdsCardHeader><strong>Conta empresarial</strong></AdsCardHeader>
+				<AdsCardHeader>
+					<strong>Conta empresarial</strong>
+				</AdsCardHeader>
 				<AdsCardContent>Plano ativo com 12 usuários.</AdsCardContent>
-				<AdsCardActions><AdsButton size="sm">Gerenciar</AdsButton></AdsCardActions>
+				<AdsCardActions>
+					<AdsButton size="sm">Gerenciar</AdsButton>
+				</AdsCardActions>
 			</AdsCard>
 		</div>
 	),

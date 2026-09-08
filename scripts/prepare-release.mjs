@@ -74,14 +74,14 @@ try {
 	await fs.copyFile(path.join(root, 'package-lock.json'), path.join(tempRoot, 'package-lock.json'));
 	runNpm(
 		[
+			'--userconfig',
+			isolatedNpmConfig,
 			'install',
 			'--package-lock-only',
 			'--ignore-scripts',
 			'--offline',
 			'--no-audit',
 			'--no-fund',
-			'--userconfig',
-			isolatedNpmConfig,
 		],
 		{ cwd: tempRoot, stdio: 'inherit' },
 	);
@@ -89,13 +89,13 @@ try {
 	// antes de qualquer arquivo do repositório ser substituído.
 	runNpm(
 		[
+			'--userconfig',
+			isolatedNpmConfig,
 			'ci',
 			'--ignore-scripts',
 			'--offline',
 			'--no-audit',
 			'--no-fund',
-			'--userconfig',
-			isolatedNpmConfig,
 		],
 		{
 			cwd: tempRoot,

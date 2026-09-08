@@ -83,6 +83,7 @@ export {
 	AdsTableRow,
 } from './data-table.js';
 export type {
+	AdsTableAlignment,
 	AdsTableBodyProps,
 	AdsTableCaptionProps,
 	AdsTableCellProps,

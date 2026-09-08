@@ -142,3 +142,19 @@ test('release preparation validates its guards before staging and restores on ap
 	assert.match(prepareRelease, /await fs\.writeFile\(path\.join\(root, relative\), content\)/);
 	assert.match(prepareRelease, /await fs\.rm\(tempRoot/);
 });
+
+test('release preparation regenerates only the lockfile with isolated offline npm', () => {
+	assert.match(prepareRelease, /--package-lock-only/);
+	assert.match(prepareRelease, /--offline/);
+	assert.match(prepareRelease, /--ignore-scripts/);
+	assert.match(prepareRelease, /--no-audit/);
+	assert.match(prepareRelease, /--no-fund/);
+	assert.match(prepareRelease, /isolatedNpmConfig/);
+});
+
+test('back-merge permits only release files and validates all current workspaces', () => {
+	assert.match(developPolicy, /changed\.filter\(\(file\) => !isAllowedReleaseFile\(file\)\)/);
+	assert.match(developPolicy, /discoverManifests/);
+	assert.match(developPolicy, /validateCoordinatedManifests\(manifests\)/);
+	assert.match(developPolicy, /assertClosedBlocksPreserved\(\{ allowAddedVersion: version \}\)/);
+});

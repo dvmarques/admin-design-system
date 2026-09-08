@@ -80,7 +80,7 @@
 - [x] 5.3 Padronizar PR `release/X.Y.Z -> develop` como caminho de retorno da preparação.
 - [x] 5.4 Fazer `develop-policy` rejeitar arquivos fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json` no modo back-merge.
 - [x] 5.5 Comparar o bloco fechado `X.Y.Z` com o conteúdo do commit exato da release resolvido pelo histórico da PR, nunca com o HEAD corrente de `master`.
-- [ ] 5.6 Manter entradas pós-corte na nova seção `Em andamento` e recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
+- [x] 5.6 Manter entradas pós-corte na nova seção `Em andamento` e recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
 - [x] 5.7 Validar novamente versões/changelog e ausência de delta funcional novo antes do merge de retorno.
 - [x] 5.8 Garantir resolução explícita de conflitos sem force update de refs.
 - [x] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop`, incluindo `develop-policy`, esteja ativa antes do primeiro dispatch manual.
@@ -98,7 +98,7 @@
 - [x] 6.7 Testar renomeação do placeholder para patch/minor/major preservando conteúdo.
 - [x] 6.8 Testar data em `America/Sao_Paulo`, inclusive processo em outra timezone e fronteira de mudança de dia.
 - [x] 6.9 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
-- [ ] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
+- [x] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
 - [x] 6.11 Testar extração e comparação normalizada das release notes.
 - [x] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
 - [x] 6.13 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
@@ -117,7 +117,7 @@
 - [x] 6.26 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.
 - [x] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
 - [x] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
-- [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
+- [x] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
 - [x] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
 - [x] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.
 - [x] 6.32 Testar transição `ready_for_review`: uma nova execução deve rodar os checks aplicáveis no commit corrente; ao converter novamente para draft, novos disparos permanecem skipped sem exigir cancelamento retroativo de execução já iniciada.

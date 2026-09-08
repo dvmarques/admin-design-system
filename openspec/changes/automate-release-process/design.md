@@ -46,6 +46,8 @@ A capability cobre preparação/recuperação, SemVer/changelog, versionamento c
 
 Ficam neste design e nas fontes operacionais: branches, PRs, same-repo policy, required checks/ruleset, eventos GitHub, comportamento draft/ready, retenção da branch, ref do dispatch, permissões e configuração concreta dos workflows.
 
+Os metadados e a estratégia de integração também são operacionais: as PRs `release/X.Y.Z -> master` e seus back-merges devem receber o label `release`, ser atribuídas à pessoa que conduz a operação e usar merge commit. As demais PRs cuja base seja `develop` usam squash. Vínculos de PR com issues que não devam encerrá-las são criados manualmente na seção Development; palavras-chave de fechamento não são usadas. A exclusão automática de branches permanece desabilitada para preservar a branch de release até a publicação.
+
 ### Ciclo operacional
 
 1. criar `release/X.Y.Z` a partir de `develop` no próprio repositório;

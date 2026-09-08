@@ -10,6 +10,7 @@ import {
 	AdsInput,
 	AdsIcon,
 	AdsLoadingIndicator,
+	AdsSkeleton,
 	AdsRadio,
 	AdsSelect,
 	AdsSelectionGroup,
@@ -37,6 +38,7 @@ describe('public component consumption', () => {
 			AdsButton,
 			AdsIcon,
 			AdsLoadingIndicator,
+			AdsSkeleton,
 			AdsSurface,
 			AdsTypography,
 			AdsCheckbox,
@@ -57,7 +59,7 @@ describe('public component consumption', () => {
 			AdsTabs,
 			AdsDropdown,
 			AdsPagination,
-		]).toHaveLength(25);
+		]).toHaveLength(26);
 	});
 
 	it('includes primitive styles in the distributed CSS', async () => {
@@ -70,6 +72,7 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.bg-success/);
 		expect(css).toMatch(/\.min-w-0/);
 		expect(css).toMatch(/\.animate-spin/);
+		expect(css).toMatch(/\.animate-pulse/);
 		expect(css).toMatch(/\.text-3xl/);
 		expect(css).toMatch(/\.bg-form-background/);
 		expect(css).toMatch(/\.border-form-invalid/);

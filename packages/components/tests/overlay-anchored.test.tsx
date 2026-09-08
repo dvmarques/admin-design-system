@@ -30,6 +30,7 @@ describe('anchored overlays', () => {
 		trigger.focus();
 		const tooltip = await screen.findByRole('tooltip');
 		expect(tooltip).toHaveTextContent('Ajuda contextual');
+		expect(tooltip).toHaveClass('z-[var(--ads-layer-overlay)]');
 		expect(tooltip).toHaveAttribute('data-placement', 'top');
 		expect(tooltip.firstElementChild).toHaveAttribute('aria-hidden', 'true');
 		expect(tooltip.firstElementChild).toHaveClass('-bottom-1', 'rotate-45');
@@ -58,6 +59,7 @@ describe('anchored overlays', () => {
 		fireEvent.click(trigger);
 		const popover = await screen.findByRole('dialog', { name: 'Ações rápidas' });
 		expect(popover).toBeVisible();
+		expect(popover).toHaveClass('z-[var(--ads-layer-overlay)]');
 		expect(trigger).toHaveAttribute('aria-expanded', 'true');
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());

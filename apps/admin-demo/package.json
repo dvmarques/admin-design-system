@@ -1,11 +1,11 @@
 {
 	"name": "@admin-ds/admin-demo",
-	"version": "0.0.0",
+	"version": "0.0.1",
 	"private": true,
 	"type": "module",
 	"dependencies": {
-		"@admin-ds/components": "0.0.0",
-		"@admin-ds/tokens": "0.0.0",
+		"@admin-ds/components": "0.0.1",
+		"@admin-ds/tokens": "0.0.1",
 		"next": "^16.2.12",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8"
@@ -14,6 +14,7 @@
 		"dev": "next dev",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"test": "vitest run --root ../.. --config vitest.config.ts",
+		"test:quiet": "vitest run --root ../.. --config vitest.config.ts --silent=passed-only",
 		"build": "npm run build --workspace @admin-ds/tokens && npm run build --workspace @admin-ds/components && next build",
 		"start": "next start"
 	}

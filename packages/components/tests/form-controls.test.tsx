@@ -45,6 +45,20 @@ describe('text form controls', () => {
 		expect(screen.getByRole('combobox', { name: 'Status' })).toHaveValue('active');
 	});
 
+	it('distinguishes readonly from disabled controls', () => {
+		render(
+			<>
+				<AdsInput aria-label="Somente leitura" readOnly />
+				<AdsInput aria-label="Desabilitado" disabled />
+			</>,
+		);
+		expect(screen.getByRole('textbox', { name: 'Somente leitura' })).toHaveClass(
+			'read-only:bg-surface-muted',
+			'read-only:cursor-default',
+		);
+		expect(screen.getByRole('textbox', { name: 'Desabilitado' })).toBeDisabled();
+	});
+
 	it.each(['light', 'dark'] as const)('supports the %s theme and custom class', (theme) => {
 		const { container } = renderWithTheme(
 			<AdsInput aria-label="E-mail" className="custom-input" size="lg" />,

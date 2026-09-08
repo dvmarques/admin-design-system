@@ -89,17 +89,17 @@ export function AdsNav({
 			aria-label={ariaLabel}
 			className={classNames('ads-nav overflow-x-auto', className)}
 		>
-			<ul className="m-0 flex min-w-max list-none flex-wrap items-center gap-1 p-0">
+			<ul className="m-0 flex min-w-max list-none flex-nowrap items-center gap-1 p-0">
 				{items.map((item, index) => (
 					<li key={`${index}-${String(item.label)}`}>
 						{item.href && !item.disabled ? (
 							<a
 								aria-current={item.current ? 'page' : undefined}
 								className={classNames(
-									'ads-nav-item inline-flex min-h-[var(--ads-dimension-control-md)] items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-150 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary',
+									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none',
 									item.current
-										? 'border-transparent bg-primary text-[var(--ads-color-on-primary)] hover:bg-primary-hover'
-										: 'border-border bg-surface text-text hover:bg-surface-raised',
+										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
+										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
 								)}
 								href={item.href}
 							>
@@ -112,10 +112,10 @@ export function AdsNav({
 								onClick={item.onClick}
 								type="button"
 								className={classNames(
-									'ads-nav-item inline-flex min-h-[var(--ads-dimension-control-md)] items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-150 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-primary disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
 									item.current
-										? 'border-transparent bg-primary text-[var(--ads-color-on-primary)] hover:bg-primary-hover'
-										: 'border-border bg-surface text-text hover:bg-surface-raised',
+										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
+										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
 								)}
 							>
 								{item.label}
@@ -177,7 +177,7 @@ function AdsTabsList({ className, ...props }: AdsTabsListProps) {
 			{...props}
 			aria-orientation="horizontal"
 			className={classNames(
-				'ads-tabs-list flex max-w-full flex-wrap border-b border-border',
+				'ads-tabs-list flex max-w-full flex-nowrap overflow-x-auto border-b border-border',
 				className,
 			)}
 			role="tablist"
@@ -207,8 +207,8 @@ function AdsTabsTrigger({
 			aria-controls={panelId}
 			aria-selected={active}
 			className={classNames(
-				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent border-b-border bg-transparent px-4 py-2 text-sm font-medium text-primary hover:text-primary-hover focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
-				active && 'border-primary border-b-primary bg-primary text-[var(--ads-color-on-primary)]',
+				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent border-b-border bg-transparent px-4 py-2 text-sm font-medium text-primary hover:bg-surface-hover hover:text-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
+				active && 'border-primary border-b-2 bg-surface-selected text-on-surface-selected',
 				className,
 			)}
 			data-state={active ? 'active' : 'inactive'}

@@ -39,18 +39,28 @@ export function AdsField({
 	} as Partial<typeof childProps>);
 
 	return (
-		<div {...props} className={classNames('ads-field flex flex-col gap-1.5', className)}>
+		<div
+			{...props}
+			className={classNames('ads-field flex flex-col gap-2 max-md:gap-1.5', className)}
+		>
 			<label className="ads-field__label text-sm font-medium text-text" htmlFor={controlId}>
 				{label}
 			</label>
 			{control}
 			{description ? (
-				<p className="ads-field__description text-sm text-text-muted" id={descriptionId}>
+				<p
+					className="ads-field__description text-xs leading-normal text-text-muted"
+					id={descriptionId}
+				>
 					{description}
 				</p>
 			) : null}
 			{error ? (
-				<p className="ads-field__message text-sm text-form-invalid" id={errorId} role="alert">
+				<p
+					className="ads-field__message text-xs font-medium leading-normal text-form-invalid"
+					id={errorId}
+					role="alert"
+				>
 					{error}
 				</p>
 			) : null}
@@ -66,7 +76,10 @@ export function AdsFieldLabel({ className, ...props }: AdsFieldLabelProps) {
 	return (
 		<label
 			{...props}
-			className={classNames('ads-field__label text-sm font-medium text-text', className)}
+			className={classNames(
+				'ads-field__label text-sm font-medium leading-tight text-text',
+				className,
+			)}
 		/>
 	);
 }
@@ -79,7 +92,10 @@ export function AdsFieldDescription({ className, ...props }: AdsFieldDescription
 	return (
 		<p
 			{...props}
-			className={classNames('ads-field__description text-sm text-text-muted', className)}
+			className={classNames(
+				'ads-field__description text-xs leading-normal text-text-muted',
+				className,
+			)}
 		/>
 	);
 }
@@ -92,7 +108,10 @@ export function AdsFieldMessage({ className, ...props }: AdsFieldMessageProps) {
 	return (
 		<p
 			{...props}
-			className={classNames('ads-field__message text-sm text-form-invalid', className)}
+			className={classNames(
+				'ads-field__message text-xs font-medium leading-normal text-form-invalid',
+				className,
+			)}
 			role="alert"
 		/>
 	);
@@ -115,20 +134,20 @@ export function AdsInputGroup({
 		<div
 			{...props}
 			className={classNames(
-				'ads-input-group flex items-stretch',
+				'ads-input-group flex items-stretch rounded-md transition-shadow duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring focus-within:ring-2 focus-within:ring-focus-ring-offset',
 				startContent ? '[&>.ads-form-control]:rounded-l-none' : undefined,
 				endContent ? '[&>.ads-form-control]:rounded-r-none' : undefined,
 				className,
 			)}
 		>
 			{startContent ? (
-				<span className="ads-input-group__start inline-flex items-center rounded-l-md border border-r-0 border-border bg-surface-raised px-3 text-text-muted">
+				<span className="ads-input-group__start inline-flex items-center rounded-l-md border border-r-0 border-border bg-surface-muted px-3 text-sm text-text-muted">
 					{startContent}
 				</span>
 			) : null}
 			{children}
 			{endContent ? (
-				<span className="ads-input-group__end inline-flex items-center rounded-r-md border border-l-0 border-border bg-surface-raised px-3 text-text-muted">
+				<span className="ads-input-group__end inline-flex items-center rounded-r-md border border-l-0 border-border bg-surface-muted px-3 text-sm text-text-muted">
 					{endContent}
 				</span>
 			) : null}

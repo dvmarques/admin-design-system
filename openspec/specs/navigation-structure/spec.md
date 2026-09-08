@@ -52,3 +52,12 @@ O sistema MUST fornecer `AdsTabs` para associar tabs a painéis por IDs estávei
 
 - **WHEN** o consumidor define tokens públicos de navegação em um escopo de tema
 - **THEN** tabs, breadcrumb e nav usam os valores personalizados sem recompilação da biblioteca
+
+### Requirement: Seleção de navegação é estrutural e responsiva
+
+Tabs e navegação persistente MUST comunicar seleção por indicador, borda ou superfície suave, mantendo o foco visível distinto. Em largura reduzida, os destinos MUST permanecer acessíveis por rolagem horizontal ou quebra controlada, sem truncar ou ocultar itens interativos.
+
+#### Scenario: Conjunto de tabs excede a largura disponível
+
+- **WHEN** tabs não cabem na largura do contêiner
+- **THEN** todos os destinos continuam alcançáveis e a tab ativa permanece identificável sem assumir aparência de botão de chamada principal

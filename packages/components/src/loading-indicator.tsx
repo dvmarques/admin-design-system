@@ -31,7 +31,7 @@ export function AdsLoadingIndicator({
 			<svg
 				aria-hidden="true"
 				className={classNames(
-					'animate-spin motion-reduce:animate-none',
+					'animate-spin [animation-duration:700ms] motion-reduce:animate-none',
 					loadingIndicatorSizes[size],
 				)}
 				fill="none"

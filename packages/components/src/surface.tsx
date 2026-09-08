@@ -3,8 +3,8 @@ import { classNames } from './class-names.js';
 
 const surfaceVariants = {
 	neutral: 'border-border bg-surface text-text',
-	raised: 'border-transparent bg-surface-raised text-text shadow-sm',
-	outlined: 'border-border bg-transparent text-text',
+	raised: 'border-transparent bg-surface-raised text-text shadow-md',
+	outlined: 'border-border bg-surface-muted/40 text-text',
 } as const;
 
 export type AdsSurfaceVariant = keyof typeof surfaceVariants;
@@ -19,7 +19,7 @@ export function AdsSurface({ className, variant = 'neutral', ...props }: AdsSurf
 		<div
 			{...props}
 			className={classNames(
-				'ads-surface min-w-0 rounded-lg border p-4',
+				'ads-surface min-w-0 rounded-lg border p-5',
 				surfaceVariants[variant],
 				className,
 			)}

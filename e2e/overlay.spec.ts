@@ -62,7 +62,7 @@ test.describe('public overlays', () => {
 		const darkDialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
 		const darkClose = darkDialog.getByRole('button', { name: 'Fechar', exact: true }).first();
 		await expect(darkDialog).toBeVisible();
-		expect(await colorsOf(darkDialog)).toMatchObject({ background: 'rgb(30, 41, 59)' });
+		expect(await colorsOf(darkDialog)).toMatchObject({ background: 'rgb(51, 65, 85)' });
 		expect(await colorsOf(darkClose)).toMatchObject({
 			background: 'rgb(51, 65, 85)',
 			color: 'rgb(248, 250, 252)',

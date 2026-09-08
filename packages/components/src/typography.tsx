@@ -3,13 +3,13 @@ import { classNames } from './class-names.js';
 
 const typographyVariants = {
 	body: 'text-sm leading-normal text-text',
-	bodySmall: 'text-sm leading-normal text-text',
+	bodySmall: 'text-xs leading-normal text-text',
 	muted: 'text-sm leading-normal text-text-muted',
 	lead: 'text-lg leading-normal text-text',
-	heading1: 'text-4xl font-semibold leading-tight text-text',
-	heading2: 'text-3xl font-semibold leading-tight text-text',
-	heading3: 'text-2xl font-semibold leading-tight text-text',
-	heading4: 'text-xl font-semibold leading-tight text-text',
+	heading1: 'text-4xl font-semibold leading-tight tracking-tight text-text',
+	heading2: 'text-3xl font-semibold leading-tight tracking-tight text-text',
+	heading3: 'text-2xl font-semibold leading-tight tracking-tight text-text',
+	heading4: 'text-xl font-semibold leading-tight tracking-tight text-text',
 } as const;
 
 const typographyElements = {

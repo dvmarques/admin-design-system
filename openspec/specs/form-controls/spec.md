@@ -47,3 +47,12 @@ Os controles textuais MUST responder aos tokens semânticos documentados de fund
 
 - **WHEN** uma aplicação importa o CSS publicado do pacote de componentes sem configurar Tailwind
 - **THEN** os controles exibem seus estilos e estados documentados
+
+### Requirement: Somente leitura é distinguível de indisponibilidade
+
+AdsInput, AdsTextarea e AdsSelect MUST comunicar visualmente somente leitura de forma distinta de indisponibilidade, preservando a legibilidade e o comportamento nativo aplicável. Estados de hover e foco MUST ser perceptíveis apenas quando a interação for permitida.
+
+#### Scenario: Valor somente leitura é exibido
+
+- **WHEN** uma aplicação renderiza um controle textual somente leitura ao lado de um controle desabilitado
+- **THEN** ambos são distinguíveis visualmente e o valor somente leitura continua legível para cópia ou seleção quando o elemento nativo permitir

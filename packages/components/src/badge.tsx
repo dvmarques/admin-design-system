@@ -4,9 +4,9 @@ import { classNames } from './class-names.js';
 const badgeVariants = {
 	neutral: 'border-border bg-surface-muted text-text',
 	primary: 'border-transparent bg-primary text-[var(--ads-color-on-primary)]',
-	success: 'border-transparent bg-success text-[var(--ads-color-on-primary)]',
-	warning: 'border-transparent bg-warning text-[var(--ads-color-on-primary)]',
-	danger: 'border-transparent bg-danger text-[var(--ads-color-on-primary)]',
+	success: 'border-success-border bg-success-background text-success',
+	warning: 'border-warning-border bg-warning-background text-warning',
+	danger: 'border-danger-border bg-danger-background text-danger',
 } as const;
 
 const badgeSizes = {
@@ -29,7 +29,7 @@ export function AdsBadge({ className, size = 'md', variant = 'neutral', ...props
 		<span
 			{...props}
 			className={classNames(
-				'ads-badge inline-flex max-w-full items-center rounded-full border font-medium leading-tight',
+				'ads-badge inline-flex max-w-full items-center rounded-md border font-medium leading-tight',
 				badgeVariants[variant],
 				badgeSizes[size],
 				className,

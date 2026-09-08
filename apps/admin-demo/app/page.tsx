@@ -21,124 +21,148 @@ import { resolveTheme } from '../lib/theme';
 import { ThemeControl } from './theme-control';
 import { OverlayShowcase } from './overlay-showcase';
 import { NavigationShowcase } from './navigation-showcase';
+import { EvaluationShowcase } from './evaluation-showcase';
 
 export default async function HomePage() {
 	const cookieStore = await cookies();
 	const theme = resolveTheme(cookieStore.get('ads-theme')?.value);
 
 	return (
-		<main style={{ margin: '0 auto', maxWidth: '72rem', padding: '2rem' }}>
-			<header
-				style={{
-					display: 'flex',
-					alignItems: 'center',
-					justifyContent: 'space-between',
-					gap: '1rem',
-				}}
-			>
-				<div>
-					<AdsTypography variant="muted">Admin Design System</AdsTypography>
-					<AdsTypography as="h1" variant="heading1">
-						Aplicação de referência
-					</AdsTypography>
-				</div>
-				<ThemeControl initialTheme={theme} />
-			</header>
-
-			<section aria-labelledby="foundations" style={{ marginTop: '2rem' }}>
-				<AdsTypography as="h2" id="foundations" variant="heading2">
-					Primitivas públicas
-				</AdsTypography>
-				<div
-					style={{
-						display: 'grid',
-						gap: '1rem',
-						gridTemplateColumns: 'repeat(auto-fit, minmax(14rem, 1fr))',
-					}}
-				>
-					<AdsSurface>
-						<AdsTypography variant="heading3">Ações</AdsTypography>
-						<div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem' }}>
-							<AdsButton>Salvar</AdsButton>
-							<AdsButton variant="secondary">Cancelar</AdsButton>
-						</div>
-					</AdsSurface>
-					<AdsSurface variant="raised">
-						<AdsTypography variant="heading3">Status</AdsTypography>
-						<div
-							style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}
-						>
-							<AdsAvatar alt="Ana Silva" fallback="AS" />
-							<AdsBadge variant="success">Ativo</AdsBadge>
-							<AdsIcon name="check" label="Confirmado" />
-						</div>
-					</AdsSurface>
-					<AdsSurface variant="outlined">
-						<AdsTypography variant="heading3">Carregamento</AdsTypography>
-						<div
-							style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', marginTop: '1rem' }}
-						>
-							<AdsLoadingIndicator label="Atualizando dados" />
-							<AdsTypography variant="muted">Atualizando dados</AdsTypography>
-						</div>
-					</AdsSurface>
-				</div>
-			</section>
-
-			<section aria-labelledby="forms" style={{ marginTop: '2rem' }}>
-				<AdsTypography as="h2" id="forms" variant="heading2">
-					Controles de formulário
-				</AdsTypography>
-				<AdsSurface>
-					<div style={{ display: 'grid', gap: '1rem', maxWidth: '32rem' }}>
-						<AdsField description="Usado para notificações da conta" label="E-mail">
-							<AdsInput type="email" placeholder="nome@empresa.com" />
-						</AdsField>
-						<AdsField label="Status">
-							<AdsSelect defaultValue="active">
-								<option value="active">Ativo</option>
-								<option value="inactive">Inativo</option>
-							</AdsSelect>
-						</AdsField>
-						<AdsField label="Observações">
-							<AdsTextarea rows={3} />
-						</AdsField>
-						<AdsCheckbox label="Enviar atualizações por e-mail" />
-						<AdsSwitch defaultChecked label="Ativar notificações" />
-						<AdsSelectionGroup legend="Periodicidade">
-							<AdsRadio defaultChecked label="Diária" name="period" value="daily" />
-							<AdsRadio label="Semanal" name="period" value="weekly" />
-						</AdsSelectionGroup>
+		<main className="demo-page">
+			<div className="demo-shell">
+				<header className="demo-hero">
+					<div className="demo-hero__intro">
+						<p className="demo-kicker">Admin Design System</p>
+						<AdsTypography as="h1" className="demo-title" variant="heading1">
+							Primitivas para produtos que precisam permanecer claros em escala.
+						</AdsTypography>
+						<AdsTypography className="demo-lede" variant="muted">
+							Uma referência viva para validar componentes, estados e interações antes de levá-los
+							para a aplicação.
+						</AdsTypography>
 					</div>
-				</AdsSurface>
-			</section>
+					<div className="demo-hero__tools">
+						<span className="demo-theme-label">Aparência</span>
+						<ThemeControl initialTheme={theme} />
+					</div>
+				</header>
 
-			<section aria-labelledby="tokens" style={{ marginTop: '2rem' }}>
-				<AdsTypography as="h2" id="tokens" variant="heading2">
-					Tokens públicos
-				</AdsTypography>
-				<AdsTypography>
-					{Object.keys(tokenValues).length} tokens estão disponíveis pela API pública.
-				</AdsTypography>
-			</section>
+				<section aria-labelledby="foundations" className="demo-section">
+					<div className="demo-section__heading">
+						<div>
+							<p className="demo-kicker">Fundamentos</p>
+							<AdsTypography as="h2" id="foundations" variant="heading2">
+								Estados essenciais, sem ruído visual
+							</AdsTypography>
+						</div>
+						<AdsTypography className="demo-section__note" variant="muted">
+							Ações, identidade e feedback em uma leitura rápida.
+						</AdsTypography>
+					</div>
+					<div className="demo-foundations-grid">
+						<AdsSurface className="demo-panel demo-panel--actions" variant="raised">
+							<p className="demo-panel__eyebrow">Fluxo principal</p>
+							<AdsTypography variant="heading3">Ações</AdsTypography>
+							<AdsTypography className="demo-panel__copy" variant="muted">
+								A ação mais importante tem contraste e precedência claros.
+							</AdsTypography>
+							<div className="demo-actions">
+								<AdsButton>Salvar</AdsButton>
+								<AdsButton variant="secondary">Cancelar</AdsButton>
+							</div>
+						</AdsSurface>
+						<AdsSurface className="demo-panel" variant="neutral">
+							<p className="demo-panel__eyebrow">Pessoa e contexto</p>
+							<AdsTypography variant="heading3">Status</AdsTypography>
+							<div className="demo-status">
+								<AdsAvatar alt="Ana Silva" fallback="AS" />
+								<div>
+									<AdsTypography className="demo-status__name">Ana Silva</AdsTypography>
+									<AdsBadge variant="success">Ativo</AdsBadge>
+								</div>
+								<AdsIcon name="check" label="Confirmado" />
+							</div>
+						</AdsSurface>
+						<AdsSurface className="demo-panel" variant="outlined">
+							<p className="demo-panel__eyebrow">Feedback do sistema</p>
+							<AdsTypography variant="heading3">Carregamento</AdsTypography>
+							<div className="demo-loading">
+								<AdsLoadingIndicator label="Atualizando dados" />
+								<AdsTypography variant="muted">Atualizando dados</AdsTypography>
+							</div>
+						</AdsSurface>
+					</div>
+				</section>
 
-			<section aria-labelledby="overlays" style={{ marginTop: '2rem' }}>
-				<AdsTypography as="h2" id="overlays" variant="heading2">
-					Overlays públicos
-				</AdsTypography>
-				<AdsSurface variant="raised">
-					<OverlayShowcase />
-				</AdsSurface>
-			</section>
+				<section aria-labelledby="forms" className="demo-section demo-section--form">
+					<div className="demo-section__heading">
+						<div>
+							<p className="demo-kicker">Entrada de dados</p>
+							<AdsTypography as="h2" id="forms" variant="heading2">
+								Controles de formulário
+							</AdsTypography>
+						</div>
+						<AdsTypography className="demo-section__note" variant="muted">
+							Rótulos, ajuda contextual e seleção com espaço para leitura.
+						</AdsTypography>
+					</div>
+					<AdsSurface className="demo-form-surface" variant="raised">
+						<div className="demo-form">
+							<AdsField description="Usado para notificações da conta" label="E-mail">
+								<AdsInput type="email" placeholder="nome@empresa.com" />
+							</AdsField>
+							<AdsField label="Status">
+								<AdsSelect defaultValue="active">
+									<option value="active">Ativo</option>
+									<option value="inactive">Inativo</option>
+								</AdsSelect>
+							</AdsField>
+							<AdsField className="demo-form__wide" label="Observações">
+								<AdsTextarea rows={3} />
+							</AdsField>
+							<div className="demo-form__wide demo-preferences">
+								<AdsCheckbox label="Enviar atualizações por e-mail" />
+								<AdsSwitch defaultChecked label="Ativar notificações" />
+								<AdsSelectionGroup legend="Periodicidade">
+									<AdsRadio defaultChecked label="Diária" name="period" value="daily" />
+									<AdsRadio label="Semanal" name="period" value="weekly" />
+								</AdsSelectionGroup>
+							</div>
+						</div>
+					</AdsSurface>
+				</section>
 
-			<section aria-labelledby="navigation" style={{ marginTop: '2rem' }}>
-				<AdsTypography as="h2" id="navigation" variant="heading2">
-					Navegação pública
-				</AdsTypography>
-				<AdsSurface variant="raised">
-					<NavigationShowcase />
-				</AdsSurface>
-			</section>
+				<EvaluationShowcase />
+
+				<div className="demo-utility-grid">
+					<section aria-labelledby="tokens" className="demo-section demo-section--compact">
+						<AdsSurface className="demo-utility-panel" variant="neutral">
+							<p className="demo-panel__eyebrow">Contrato público</p>
+							<AdsTypography as="h2" id="tokens" variant="heading3">
+								Tokens públicos
+							</AdsTypography>
+							<p className="demo-token-count">{Object.keys(tokenValues).length}</p>
+							<AdsTypography variant="muted">tokens disponíveis pela API pública.</AdsTypography>
+						</AdsSurface>
+					</section>
+					<section aria-labelledby="overlays" className="demo-section demo-section--compact">
+						<AdsSurface className="demo-utility-panel" variant="raised">
+							<AdsTypography as="h2" id="overlays" variant="heading3">
+								Overlays públicos
+							</AdsTypography>
+							<OverlayShowcase />
+						</AdsSurface>
+					</section>
+					<section aria-labelledby="navigation" className="demo-section demo-section--compact">
+						<AdsSurface className="demo-utility-panel" variant="raised">
+							<AdsTypography as="h2" id="navigation" variant="heading3">
+								Navegação pública
+							</AdsTypography>
+							<NavigationShowcase />
+						</AdsSurface>
+					</section>
+				</div>
+			</div>
 		</main>
 	);
 }

@@ -21,6 +21,9 @@ jobs:
     runs-on: ubuntu-latest
     outputs:
       release_sha: ${{ steps.resolve.outputs.release_sha }}
+      backmerge_sha: ${{ steps.resolve.outputs.backmerge_sha }}
+      develop_sha: ${{ steps.evidence.outputs.develop_sha }}
+      release_notes_sha: ${{ steps.evidence.outputs.release_notes_sha }}
     env:
       GITHUB_TOKEN: ${{ github.token }}
       VERSION: ${{ inputs.version }}
@@ -49,6 +52,7 @@ jobs:
           RELEASE_SHA="$(node -e 'const x=JSON.parse(process.argv[1]); process.stdout.write(x.merge_commit_sha)' "$RELEASE_JSON")"
           BACKMERGE_SHA="$(node -e 'const x=JSON.parse(process.argv[1]); process.stdout.write(x.merge_commit_sha)' "$BACKMERGE_JSON")"
           echo "release_sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
+          echo "backmerge_sha=$BACKMERGE_SHA" >> "$GITHUB_OUTPUT"
           git fetch origin master develop --no-tags
           git merge-base --is-ancestor "$RELEASE_SHA" origin/master || { echo "Commit liberado não pertence ao histórico atual de master" >&2; exit 1; }
           git merge-base --is-ancestor "$BACKMERGE_SHA" origin/develop || { echo "Back-merge não pertence ao histórico atual de develop" >&2; exit 1; }
@@ -69,6 +73,15 @@ jobs:
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: npm run release:validate -- "$VERSION"
+      - id: evidence
+        name: Comparar changelog do back-merge e registrar evidência
+        shell: bash
+        run: |
+          RELEASE_NOTES_SHA="$(sha256sum "$RUNNER_TEMP/release-notes.md" | cut -d ' ' -f 1)"
+          DEVELOP_NOTES_SHA="$(npm run --silent release:notes -- "$VERSION" | sha256sum | cut -d ' ' -f 1)"
+          [[ "$DEVELOP_NOTES_SHA" == "$RELEASE_NOTES_SHA" ]] || { echo "Bloco fechado em develop diverge do commit liberado" >&2; exit 1; }
+          echo "develop_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          echo "release_notes_sha=$RELEASE_NOTES_SHA" >> "$GITHUB_OUTPUT"
 
   publish:
     name: Publicar
@@ -81,6 +94,9 @@ jobs:
       GITHUB_TOKEN: ${{ github.token }}
       VERSION: ${{ inputs.version }}
       READONLY_RELEASE_SHA: ${{ needs.resolve-validate.outputs.release_sha }}
+      READONLY_BACKMERGE_SHA: ${{ needs.resolve-validate.outputs.backmerge_sha }}
+      READONLY_DEVELOP_SHA: ${{ needs.resolve-validate.outputs.develop_sha }}
+      READONLY_RELEASE_NOTES_SHA: ${{ needs.resolve-validate.outputs.release_notes_sha }}
     steps:
       - name: Checkout da lógica confiável do workflow
         uses: actions/checkout@v6

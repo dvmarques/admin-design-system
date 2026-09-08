@@ -8,7 +8,9 @@ import {
 	formatReleaseDate,
 	isAllowedReleaseFile,
 	nextPatch,
+	normalizeReleaseBody,
 	parseChangelog,
+	predecessorVersion,
 	prepareChangelog,
 	updateManifestVersions,
 	validateCoordinatedManifests,
@@ -60,6 +62,15 @@ test('invalid changelog order and duplicate fail', () => {
 			'### [0.0.2] - Em andamento\n\n### [0.0.1] - 01-set-2026\n\n### [0.0.1] - 02-set-2026\n',
 		),
 	);
+});
+
+test('release notes and predecessor use only the closed matching section', () => {
+	const source =
+		'### [1.0.2] - Em andamento\n\n- future\n\n### [1.0.1] - 02-set-2026\n\n- current\r\n\n### [1.0.0] - 01-set-2026\n\n- previous\n';
+	assert.equal(extractReleaseNotes(source, '1.0.1'), '- current');
+	assert.equal(predecessorVersion(parseChangelog(source), '1.0.1'), '1.0.0');
+	assert.equal(normalizeReleaseBody('- current\r\n'), '- current');
+	assert.equal(normalizeReleaseBody('- current\n\n'), '- current');
 });
 
 test('bootstrap and subsequent target rules', () => {

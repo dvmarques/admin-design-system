@@ -67,6 +67,12 @@ try {
 		['install', '--package-lock-only', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'],
 		{ cwd: tempRoot, stdio: 'inherit' },
 	);
+	// Confirma que o lockfile gerado pode ser instalado de forma reproduzível
+	// antes de qualquer arquivo do repositório ser substituído.
+	execFileSync('npm', ['ci', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'], {
+		cwd: tempRoot,
+		stdio: 'inherit',
+	});
 	staged.set(
 		'package-lock.json',
 		await fs.readFile(path.join(tempRoot, 'package-lock.json'), 'utf8'),

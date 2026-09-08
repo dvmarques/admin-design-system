@@ -1,5 +1,6 @@
 #!/usr/bin/env node
 import { Buffer } from 'node:buffer';
+import { createHash } from 'node:crypto';
 import { URLSearchParams } from 'node:url';
 
 const STABLE_SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
@@ -9,11 +10,21 @@ const MONTHS = ['jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', '
 
 const version = process.env.VERSION;
 const readonlyReleaseSha = process.env.READONLY_RELEASE_SHA;
+const readonlyBackmergeSha = process.env.READONLY_BACKMERGE_SHA;
+const readonlyDevelopSha = process.env.READONLY_DEVELOP_SHA;
+const readonlyReleaseNotesSha = process.env.READONLY_RELEASE_NOTES_SHA;
 const repository = process.env.GITHUB_REPOSITORY;
 const token = process.env.GITHUB_TOKEN;
 
 if (!version || !STABLE_SEMVER.test(version)) throw new Error(`Versão inválida: ${version ?? ''}`);
-if (!readonlyReleaseSha) throw new Error('READONLY_RELEASE_SHA é obrigatório.');
+if (
+	!readonlyReleaseSha ||
+	!readonlyBackmergeSha ||
+	!readonlyDevelopSha ||
+	!readonlyReleaseNotesSha
+) {
+	throw new Error('Evidências do job read-only são obrigatórias.');
+}
 if (!repository || !token) throw new Error('GITHUB_REPOSITORY e GITHUB_TOKEN são obrigatórios.');
 
 const [owner, repo] = repository.split('/');
@@ -145,6 +156,10 @@ function normalizeBody(value = '') {
 	return value.replace(/\r\n/g, '\n').replace(/\n+$/, '');
 }
 
+function notesSha(value) {
+	return createHash('sha256').update(`${value}\n`).digest('hex');
+}
+
 async function manifestPaths(ref) {
 	const paths = ['package.json'];
 	for (const parent of ['packages', 'apps']) {
@@ -252,9 +267,13 @@ const releaseSha = releasePr.merge_commit_sha;
 const backmergeSha = backmergePr.merge_commit_sha;
 if (releaseSha !== readonlyReleaseSha)
 	throw new Error('Commit rederivado diverge do job read-only.');
+if (backmergeSha !== readonlyBackmergeSha)
+	throw new Error('Back-merge rederivado diverge do job read-only.');
 
 const initialDevelopSha = await refSha('heads/develop');
 const initialMasterSha = await refSha('heads/master');
+if (initialDevelopSha !== readonlyDevelopSha)
+	throw new Error('HEAD de develop diverge da evidência read-only.');
 await assertAncestor(releaseSha, initialMasterSha, 'Release');
 await assertAncestor(backmergeSha, initialDevelopSha, 'Back-merge');
 await validateCoordinated(releaseSha, version);
@@ -263,6 +282,8 @@ await validateCoordinated(initialDevelopSha, version);
 const releaseChangelog = await contentAt('CHANGELOG.md', releaseSha);
 const releaseParsed = parseChangelog(releaseChangelog);
 const notes = releaseBlock(releaseChangelog, releaseParsed, version);
+if (notesSha(notes) !== readonlyReleaseNotesSha)
+	throw new Error('Notas rederivadas divergem da evidência read-only.');
 const developChangelog = await contentAt('CHANGELOG.md', initialDevelopSha);
 const developParsed = parseChangelog(developChangelog);
 if (releaseBlock(developChangelog, developParsed, version) !== notes) {

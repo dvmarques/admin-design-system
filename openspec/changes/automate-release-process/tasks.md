@@ -11,7 +11,7 @@
 - [x] 1.9 Criar acima o próximo patch apenas como placeholder `Em andamento`.
 - [x] 1.10 Atualizar de forma coordenada raiz, `packages/*`, `apps/*` e referências internas versionadas para `X.Y.Z`.
 - [x] 1.11 Fixar uma versão exata do npm em `packageManager` e garantir uso da mesma versão na preparação e na CI.
-- [ ] 1.12 Regenerar `package-lock.json` sem atualizar dependências externas como efeito colateral e validar o resultado com instalação reproduzível.
+- [x] 1.12 Regenerar `package-lock.json` sem atualizar dependências externas como efeito colateral e validar o resultado com instalação reproduzível.
 - [x] 1.13 Implementar rollback/restauração ou substituição atômica equivalente para impedir estado parcial em falha de aplicação.
 - [x] 1.14 Expor o comando como `npm run release:prepare -- X.Y.Z`.
 
@@ -41,7 +41,7 @@
 - [x] 3.11 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
 - [ ] 3.12 Na primeira implantação, deixar novos checks aparecerem/executarem em PR Ready for review antes de configurá-los como required nos respectivos rulesets.
 - [ ] 3.13 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
-- [ ] 3.14 Configurar/documentar ruleset mínimo de `develop` exigindo PR, checks gerais e `develop-policy`, bloqueando push direto, force push e deleção sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
+- [x] 3.14 Configurar/documentar ruleset mínimo de `develop` exigindo PR, checks gerais e `develop-policy`, bloqueando push direto, force push e deleção sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
 - [ ] 3.15 Configurar os required checks de `master` e `develop` em modo estrito, exigindo que a head esteja atualizada com a base antes do merge; atualizar/revalidar a PR quando a base avançar para impedir uso de checks calculados contra estado antigo.
 - [x] 3.16 Fazer `release-check` resolver o ponto de corte de `release/X.Y.Z` em `develop` e rejeitar qualquer delta exclusivo fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`; mudanças funcionais exclusivas da release branch devem falhar antes do merge em `master`.
 - [x] 3.17 Condicionar os jobs automáticos disparados por `pull_request` ao estado não-draft, preservando execução normal em `push`; usar condição equivalente a `github.event_name != 'pull_request' || github.event.pull_request.draft == false`.
@@ -63,8 +63,8 @@
 - [x] 4.10 Produzir no job read-only somente evidências/outputs diagnósticos que possam ser comparados depois, sem tratá-los como fonte de verdade privilegiada.
 - [x] 4.11 Criar job `publish` dependente do sucesso de `resolve/validate`, com `contents: write` e somente permissões adicionais estritamente necessárias.
 - [x] 4.12 No job privilegiado, re-resolver independentemente PR/commit da release e do back-merge e reobter versão/changelog/release notes por lógica confiável do workflow, sem executar scripts do commit liberado.
-- [ ] 4.13 Revalidar no job privilegiado estado atual de `develop`, predecessora quando existir, reachability, tag e GitHub Release imediatamente antes da escrita.
-- [ ] 4.14 Comparar os dados rederivados no job privilegiado com a evidência read-only e falhar em qualquer divergência.
+- [x] 4.13 Revalidar no job privilegiado estado atual de `develop`, predecessora quando existir, reachability, tag e GitHub Release imediatamente antes da escrita.
+- [x] 4.14 Comparar os dados rederivados no job privilegiado com a evidência read-only e falhar em qualquer divergência.
 - [x] 4.15 Tratar dados vindos do repositório como dados, evitando interpolação/eval em comandos; usar operações não executáveis como API GitHub, checkout sem scripts ou `git show` para leitura.
 - [x] 4.16 Verificar `vX.Y.Z`, distinguindo tag anotada de lightweight e dereferenciando até o commit esperado.
 - [x] 4.17 Criar tag anotada somente quando inexistente; reutilizar apenas tag anotada no commit correto; falhar para tag incompatível.
@@ -99,7 +99,7 @@
 - [x] 6.8 Testar data em `America/Sao_Paulo`, inclusive processo em outra timezone e fronteira de mudança de dia.
 - [ ] 6.9 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
 - [ ] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
-- [ ] 6.11 Testar extração e comparação normalizada das release notes.
+- [x] 6.11 Testar extração e comparação normalizada das release notes.
 - [ ] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
 - [ ] 6.13 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
 - [ ] 6.14 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
@@ -149,7 +149,7 @@
 
 - [ ] 8.1 Executar os checks oficiais do projeto conforme `AGENTS.md`/`docs/quality.md`, incluindo `npm run test:e2e` antes do commit final.
 - [ ] 8.2 Formatar todos os arquivos alterados e confirmar `npm run format` sem falhas.
-- [ ] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
+- [x] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
 - [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção estrita de `develop`/`master`, back-merge obrigatório, publicação e próxima release sem efetuar publicação real indevida.
 - [ ] 8.5 Revisar cenários de recuperação e confirmar que nenhum detalhe puramente operacional foi reintroduzido como requisito permanente da capability.
 - [ ] 8.6 Revisar especificamente o ciclo Draft -> Ready -> Draft e confirmar que required checks reais executam quando o PR fica pronto para revisão sem quebrar a CI de `push`.

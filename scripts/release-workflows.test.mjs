@@ -10,6 +10,10 @@ const [developPolicy, releaseGithub] = await Promise.all([
 	fs.readFile(new URL('./develop-policy.mjs', import.meta.url), 'utf8'),
 	fs.readFile(new URL('./release-github.mjs', import.meta.url), 'utf8'),
 ]);
+const publishRelease = await fs.readFile(
+	new URL('../.github/scripts/publish-release.mjs', import.meta.url),
+	'utf8',
+);
 
 test('publication workflow is manually dispatched only from develop and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);
@@ -57,4 +61,16 @@ test('remote release validation resolves only one matching merged PR', () => {
 	assert.match(releaseGithub, /head\?\.repo\?\.full_name === repo/);
 	assert.match(releaseGithub, /target-absent/);
 	assert.match(releaseGithub, /bootstrap-remote/);
+});
+
+test('publication rejects incompatible tags and divergent existing releases before writes', () => {
+	assert.match(
+		publishRelease,
+		/tag\.exists && \(!tag\.annotated \|\| tag\.commit !== releaseSha\)/,
+	);
+	assert.match(publishRelease, /Tag v\$\{target\} é lightweight ou aponta para outro commit/);
+	assert.match(publishRelease, /GitHub Release v\$\{target\} existente está divergente/);
+	assert.match(publishRelease, /if \(currentState\.release\)[\s\S]*?process\.exit\(0\)/);
+	assert.match(publishRelease, /await api\('\/git\/tags'/);
+	assert.match(publishRelease, /await api\('\/releases'/);
 });

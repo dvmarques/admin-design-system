@@ -39,10 +39,10 @@
 - [x] 3.9 Em PR comum para `develop`, validar exatamente uma seção `Em andamento`, preservar sem adição/remoção/alteração o conjunto de seções fechadas existente na base, manter inalterado o heading/version placeholder `Em andamento`, coordenar todos os manifests e proibir mudança da versão coordenada atual; workspace novo deve nascer com a mesma versão.
 - [x] 3.10 Em back-merge same-repo `release/X.Y.Z -> develop`, permitir a transição de release e validar branch/versão, conjunto de arquivos permitido, commit exato da release, bloco fechado idêntico a esse commit, entradas futuras em `Em andamento` e coordenação de todos os manifests atuais.
 - [x] 3.11 Definir forma versionada e multiplataforma de disponibilizar OpenSpec no runner Linux e executar validação estrita sem depender de `openspec.cmd`/instalação global.
-- [ ] 3.12 Na primeira implantação, deixar novos checks aparecerem/executarem em PR Ready for review antes de configurá-los como required nos respectivos rulesets.
-- [ ] 3.13 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
+- [x] 3.12 Na primeira implantação, deixar novos checks aparecerem/executarem em PR Ready for review antes de configurá-los como required nos respectivos rulesets.
+- [x] 3.13 Configurar/documentar ruleset de `master` exigindo PR, `release-check` e demais checks necessários e bloqueando push direto, force push e deleção; confirmar proteção ativa antes do primeiro merge e manter bypass no menor escopo necessário.
 - [x] 3.14 Configurar/documentar ruleset mínimo de `develop` exigindo PR, checks gerais e `develop-policy`, bloqueando push direto, force push e deleção sem restringir as branches de origem; confirmar proteção ativa antes de usar `develop` como fonte confiável do workflow de publicação.
-- [ ] 3.15 Configurar os required checks de `master` e `develop` em modo estrito, exigindo que a head esteja atualizada com a base antes do merge; atualizar/revalidar a PR quando a base avançar para impedir uso de checks calculados contra estado antigo.
+- [x] 3.15 Configurar os required checks de `master` e `develop` em modo estrito, exigindo que a head esteja atualizada com a base antes do merge; atualizar/revalidar a PR quando a base avançar para impedir uso de checks calculados contra estado antigo.
 - [x] 3.16 Fazer `release-check` resolver o ponto de corte de `release/X.Y.Z` em `develop` e rejeitar qualquer delta exclusivo fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json`; mudanças funcionais exclusivas da release branch devem falhar antes do merge em `master`.
 - [x] 3.17 Condicionar os jobs automáticos disparados por `pull_request` ao estado não-draft, preservando execução normal em `push`; usar condição equivalente a `github.event_name != 'pull_request' || github.event.pull_request.draft == false`.
 - [x] 3.18 Configurar os tipos de evento de `pull_request` necessários, incluindo `ready_for_review`, para que a transição Draft -> Ready dispare nova execução completa sobre o commit corrente; manter `opened`, `synchronize` e `reopened` conforme aplicável.
@@ -75,17 +75,17 @@
 
 ## 5. Fluxo operacional e back-merge
 
-- [ ] 5.1 Manter `release/X.Y.Z` após o merge em `master` até concluir back-merge para `develop` e publicação.
-- [ ] 5.2 Proibir novo delta funcional na release branch após o merge em `master`; permitir incorporar `develop` somente para reconciliar o retorno.
+- [x] 5.1 Manter `release/X.Y.Z` após o merge em `master` até concluir back-merge para `develop` e publicação.
+- [x] 5.2 Proibir novo delta funcional na release branch após o merge em `master`; permitir incorporar `develop` somente para reconciliar o retorno.
 - [x] 5.3 Padronizar PR `release/X.Y.Z -> develop` como caminho de retorno da preparação.
 - [x] 5.4 Fazer `develop-policy` rejeitar arquivos fora de `CHANGELOG.md`, `package.json`, `package-lock.json`, `packages/*/package.json` e `apps/*/package.json` no modo back-merge.
 - [x] 5.5 Comparar o bloco fechado `X.Y.Z` com o conteúdo do commit exato da release resolvido pelo histórico da PR, nunca com o HEAD corrente de `master`.
 - [ ] 5.6 Manter entradas pós-corte na nova seção `Em andamento` e recoordenar workspaces criados em `develop` após o corte sem perder dependências/metadados futuros.
 - [x] 5.7 Validar novamente versões/changelog e ausência de delta funcional novo antes do merge de retorno.
-- [ ] 5.8 Garantir resolução explícita de conflitos sem force update de refs.
-- [ ] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop`, incluindo `develop-policy`, esteja ativa antes do primeiro dispatch manual.
+- [x] 5.8 Garantir resolução explícita de conflitos sem force update de refs.
+- [x] 5.9 Na primeira implantação, garantir que `release.yml` esteja em `develop` e que a proteção mínima de `develop`, incluindo `develop-policy`, esteja ativa antes do primeiro dispatch manual.
 - [x] 5.10 Bloquear a publicação no workflow enquanto o back-merge da mesma versão não estiver merged e o estado atual de `develop` não satisfizer as invariantes esperadas.
-- [ ] 5.11 Bloquear início operacional da próxima release enquanto o estado anterior não estiver reconciliado em `develop` e publicado consistentemente.
+- [x] 5.11 Bloquear início operacional da próxima release enquanto o estado anterior não estiver reconciliado em `develop` e publicado consistentemente.
 
 ## 6. Testes automatizados
 
@@ -113,15 +113,15 @@
 - [ ] 6.22 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
 - [ ] 6.23 Testar recuperação tag válida + release ausente.
 - [ ] 6.24 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
-- [ ] 6.25 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
-- [ ] 6.26 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.
+- [x] 6.25 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
+- [x] 6.26 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.
 - [ ] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
 - [ ] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
 - [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
 - [ ] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
-- [ ] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.
-- [ ] 6.32 Testar transição `ready_for_review`: uma nova execução deve rodar os checks aplicáveis no commit corrente; ao converter novamente para draft, novos disparos permanecem skipped sem exigir cancelamento retroativo de execução já iniciada.
-- [ ] 6.33 Testar que eventos `push` para `develop`/`master` continuam executando a CI normalmente independentemente da regra de draft de Pull Request.
+- [x] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.
+- [x] 6.32 Testar transição `ready_for_review`: uma nova execução deve rodar os checks aplicáveis no commit corrente; ao converter novamente para draft, novos disparos permanecem skipped sem exigir cancelamento retroativo de execução já iniciada.
+- [x] 6.33 Testar que eventos `push` para `develop`/`master` continuam executando a CI normalmente independentemente da regra de draft de Pull Request.
 
 ## 7. Documentação e governança operacional
 
@@ -147,9 +147,9 @@
 
 ## 8. Validação final
 
-- [ ] 8.1 Executar os checks oficiais do projeto conforme `AGENTS.md`/`docs/quality.md`, incluindo `npm run test:e2e` antes do commit final.
+- [x] 8.1 Executar os checks oficiais do projeto conforme `AGENTS.md`/`docs/quality.md`, incluindo `npm run test:e2e` antes do commit final.
 - [ ] 8.2 Formatar todos os arquivos alterados e confirmar `npm run format` sem falhas.
 - [x] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
-- [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção estrita de `develop`/`master`, back-merge obrigatório, publicação e próxima release sem efetuar publicação real indevida.
+- [x] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção estrita de `develop`/`master`, back-merge obrigatório, publicação e próxima release sem efetuar publicação real indevida.
 - [ ] 8.5 Revisar cenários de recuperação e confirmar que nenhum detalhe puramente operacional foi reintroduzido como requisito permanente da capability.
-- [ ] 8.6 Revisar especificamente o ciclo Draft -> Ready -> Draft e confirmar que required checks reais executam quando o PR fica pronto para revisão sem quebrar a CI de `push`.
+- [x] 8.6 Revisar especificamente o ciclo Draft -> Ready -> Draft e confirmar que required checks reais executam quando o PR fica pronto para revisão sem quebrar a CI de `push`.

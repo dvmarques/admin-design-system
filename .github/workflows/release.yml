@@ -65,7 +65,7 @@ jobs:
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: npm run release:validate -- "$VERSION"
-      - run: npm run release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
+      - run: npm run --silent release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
       - uses: actions/checkout@v6
         with:
           ref: develop

@@ -25,12 +25,18 @@ export default function DataDisplayPage() {
 			<div className="demo-shell">
 				<header className="demo-section">
 					<p className="demo-kicker">Data display</p>
-					<AdsTypography as="h1" variant="heading1">Apresentação de dados administrativos</AdsTypography>
-					<AdsTypography variant="muted">Exemplo consumindo somente APIs públicas de @admin-ds/components.</AdsTypography>
+					<AdsTypography as="h1" variant="heading1">
+						Apresentação de dados administrativos
+					</AdsTypography>
+					<AdsTypography variant="muted">
+						Exemplo consumindo somente APIs públicas de @admin-ds/components.
+					</AdsTypography>
 				</header>
 
 				<section aria-labelledby="data-table" className="demo-section">
-					<AdsTypography as="h2" id="data-table" variant="heading2">Clientes</AdsTypography>
+					<AdsTypography as="h2" id="data-table" variant="heading2">
+						Clientes
+					</AdsTypography>
 					<AdsTable aria-label="Clientes recentes">
 						<AdsTableHead>
 							<AdsTableRow>
@@ -42,12 +48,16 @@ export default function DataDisplayPage() {
 						<AdsTableBody>
 							<AdsTableRow>
 								<AdsTableCell>Mariana Costa</AdsTableCell>
-								<AdsTableCell><AdsBadge variant="success">Ativo</AdsBadge></AdsTableCell>
+								<AdsTableCell>
+									<AdsBadge variant="success">Ativo</AdsBadge>
+								</AdsTableCell>
 								<AdsTableCell align="end">18</AdsTableCell>
 							</AdsTableRow>
 							<AdsTableRow>
 								<AdsTableCell>Rafael Lima</AdsTableCell>
-								<AdsTableCell><AdsBadge variant="warning">Pendente</AdsBadge></AdsTableCell>
+								<AdsTableCell>
+									<AdsBadge variant="warning">Pendente</AdsBadge>
+								</AdsTableCell>
 								<AdsTableCell align="end">7</AdsTableCell>
 							</AdsTableRow>
 						</AdsTableBody>
@@ -56,7 +66,9 @@ export default function DataDisplayPage() {
 				</section>
 
 				<section aria-labelledby="collections" className="demo-section">
-					<AdsTypography as="h2" id="collections" variant="heading2">Coleções</AdsTypography>
+					<AdsTypography as="h2" id="collections" variant="heading2">
+						Coleções
+					</AdsTypography>
 					<div className="demo-foundations-grid">
 						<AdsList aria-label="Atividade recente">
 							<AdsListItem>Cadastro atualizado</AdsListItem>
@@ -64,15 +76,23 @@ export default function DataDisplayPage() {
 							<AdsListItem>Documento anexado</AdsListItem>
 						</AdsList>
 						<AdsCard>
-							<AdsCardHeader><AdsTypography variant="heading3">Conta empresarial</AdsTypography></AdsCardHeader>
-							<AdsCardContent><AdsTypography variant="muted">Plano ativo com 12 usuários.</AdsTypography></AdsCardContent>
-							<AdsCardActions><AdsButton size="sm">Gerenciar</AdsButton></AdsCardActions>
+							<AdsCardHeader>
+								<AdsTypography variant="heading3">Conta empresarial</AdsTypography>
+							</AdsCardHeader>
+							<AdsCardContent>
+								<AdsTypography variant="muted">Plano ativo com 12 usuários.</AdsTypography>
+							</AdsCardContent>
+							<AdsCardActions>
+								<AdsButton size="sm">Gerenciar</AdsButton>
+							</AdsCardActions>
 						</AdsCard>
 					</div>
 				</section>
 
 				<section aria-labelledby="feedback" className="demo-section">
-					<AdsTypography as="h2" id="feedback" variant="heading2">Feedback</AdsTypography>
+					<AdsTypography as="h2" id="feedback" variant="heading2">
+						Feedback
+					</AdsTypography>
 					<div className="demo-form">
 						<div>
 							<AdsTypography>Importação 65%</AdsTypography>

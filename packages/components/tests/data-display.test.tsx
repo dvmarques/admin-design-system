@@ -17,6 +17,7 @@ import {
 	AdsTableHeader,
 	AdsTableRow,
 } from '../src';
+import { renderWithTheme } from './test-utils';
 
 describe('AdsTable', () => {
 	it('preserves native table semantics inside a horizontal overflow container', () => {
@@ -39,6 +40,15 @@ describe('AdsTable', () => {
 		expect(table.closest('.ads-table-container')).toHaveClass('overflow-x-auto');
 		expect(screen.getByRole('columnheader', { name: 'Nome' })).toHaveAttribute('scope', 'col');
 		expect(screen.getByRole('cell', { name: 'Maria' })).toBeVisible();
+	});
+
+	it.each(['light', 'dark'] as const)('remains available in the %s theme', async (theme) => {
+		const { container } = renderWithTheme(
+			<AdsTable aria-label="Resumo"><AdsTableBody><AdsTableRow><AdsTableCell>Valor</AdsTableCell></AdsTableRow></AdsTableBody></AdsTable>,
+			theme,
+		);
+		expect(container.firstElementChild).toHaveAttribute('data-theme', theme);
+		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });
 
@@ -64,6 +74,14 @@ describe('AdsList and AdsCard', () => {
 		expect(screen.getByRole('button', { name: 'Editar' })).toBeVisible();
 		expect(screen.getByText('Cliente').closest('.ads-card')).toHaveClass('ads-surface');
 	});
+
+	it.each(['light', 'dark'] as const)('is accessible in the %s theme', async (theme) => {
+		const { container } = renderWithTheme(
+			<><AdsList aria-label="Itens"><AdsListItem>Item</AdsListItem></AdsList><AdsCard>Conteúdo</AdsCard></>,
+			theme,
+		);
+		expect((await axe.run(container)).violations).toEqual([]);
+	});
 });
 
 describe('AdsProgress', () => {
@@ -86,6 +104,11 @@ describe('AdsProgress', () => {
 
 	it('rejects an invalid range deterministically', () => {
 		expect(() => render(<AdsProgress min={10} max={10} value={10} />)).toThrow(RangeError);
+	});
+
+	it('has no detectable accessibility violations in both modes', async () => {
+		const { container } = render(<><AdsProgress label="Importando" value={30} /><AdsProgress label="Processando" /></>);
+		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });
 

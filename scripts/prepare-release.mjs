@@ -19,10 +19,18 @@ const PINNED_NPM = '11.19.1';
 const npmCli =
 	process.env.npm_execpath ??
 	path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
-const runNpm = (argumentsList, options = {}) =>
-	process.platform === 'win32'
-		? execFileSync(process.execPath, [npmCli, ...argumentsList], options)
-		: execFileSync('npm', argumentsList, options);
+const npmEnvironment = { ...process.env };
+delete npmEnvironment.npm_config_allow_scripts;
+delete npmEnvironment.NPM_CONFIG_ALLOW_SCRIPTS;
+const runNpm = (argumentsList, { env, ...options } = {}) => {
+	const command = process.platform === 'win32' ? process.execPath : 'npm';
+	const commandArguments =
+		process.platform === 'win32' ? [npmCli, ...argumentsList] : argumentsList;
+	return execFileSync(command, commandArguments, {
+		...options,
+		env: { ...npmEnvironment, ...env },
+	});
+};
 const target = process.argv[2];
 if (!target) throw new Error('Uso: npm run release:prepare -- X.Y.Z');
 assertStableSemver(target);

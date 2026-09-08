@@ -42,9 +42,33 @@ describe('AdsTable', () => {
 		expect(screen.getByRole('cell', { name: 'Maria' })).toBeVisible();
 	});
 
+	it('keeps interactive cell content keyboard focusable', () => {
+		render(
+			<AdsTable aria-label="Ações de clientes">
+				<AdsTableBody>
+					<AdsTableRow>
+						<AdsTableCell>
+							<button type="button">Editar cliente</button>
+						</AdsTableCell>
+					</AdsTableRow>
+				</AdsTableBody>
+			</AdsTable>,
+		);
+
+		const action = screen.getByRole('button', { name: 'Editar cliente' });
+		action.focus();
+		expect(action).toHaveFocus();
+	});
+
 	it.each(['light', 'dark'] as const)('remains available in the %s theme', async (theme) => {
 		const { container } = renderWithTheme(
-			<AdsTable aria-label="Resumo"><AdsTableBody><AdsTableRow><AdsTableCell>Valor</AdsTableCell></AdsTableRow></AdsTableBody></AdsTable>,
+			<AdsTable aria-label="Resumo">
+				<AdsTableBody>
+					<AdsTableRow>
+						<AdsTableCell>Valor</AdsTableCell>
+					</AdsTableRow>
+				</AdsTableBody>
+			</AdsTable>,
 			theme,
 		);
 		expect(container.firstElementChild).toHaveAttribute('data-theme', theme);
@@ -75,9 +99,25 @@ describe('AdsList and AdsCard', () => {
 		expect(screen.getByText('Cliente').closest('.ads-card')).toHaveClass('ads-surface');
 	});
 
+	it('allows list dividers to be disabled', () => {
+		render(
+			<AdsList aria-label="Sem divisores" divided={false}>
+				<AdsListItem>Primeiro</AdsListItem>
+				<AdsListItem>Segundo</AdsListItem>
+			</AdsList>,
+		);
+
+		expect(screen.getByRole('list', { name: 'Sem divisores' })).not.toHaveClass('divide-y');
+	});
+
 	it.each(['light', 'dark'] as const)('is accessible in the %s theme', async (theme) => {
 		const { container } = renderWithTheme(
-			<><AdsList aria-label="Itens"><AdsListItem>Item</AdsListItem></AdsList><AdsCard>Conteúdo</AdsCard></>,
+			<>
+				<AdsList aria-label="Itens">
+					<AdsListItem>Item</AdsListItem>
+				</AdsList>
+				<AdsCard>Conteúdo</AdsCard>
+			</>,
 			theme,
 		);
 		expect((await axe.run(container)).violations).toEqual([]);
@@ -94,20 +134,37 @@ describe('AdsProgress', () => {
 		expect(progress).toHaveAttribute('aria-valuenow', '20');
 	});
 
+	it('preserves a native aria-label when the convenience label prop is omitted', () => {
+		render(<AdsProgress aria-label="Sincronização" value={25} />);
+
+		expect(screen.getByRole('progressbar', { name: 'Sincronização' })).toHaveAttribute(
+			'aria-valuenow',
+			'25',
+		);
+	});
+
 	it('omits a fictional percentage while indeterminate', () => {
 		render(<AdsProgress label="Processando" />);
 		const progress = screen.getByRole('progressbar', { name: 'Processando' });
 
 		expect(progress).not.toHaveAttribute('aria-valuenow');
-		expect(progress.querySelector('.ads-progress-indicator')).toHaveClass('motion-reduce:animate-none');
+		expect(progress.querySelector('.ads-progress-indicator')).toHaveClass(
+			'motion-reduce:animate-none',
+		);
 	});
 
-	it('rejects an invalid range deterministically', () => {
+	it('rejects invalid numeric input deterministically', () => {
 		expect(() => render(<AdsProgress min={10} max={10} value={10} />)).toThrow(RangeError);
+		expect(() => render(<AdsProgress value={Number.NaN} />)).toThrow(RangeError);
 	});
 
 	it('has no detectable accessibility violations in both modes', async () => {
-		const { container } = render(<><AdsProgress label="Importando" value={30} /><AdsProgress label="Processando" /></>);
+		const { container } = render(
+			<>
+				<AdsProgress label="Importando" value={30} />
+				<AdsProgress label="Processando" />
+			</>,
+		);
 		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });

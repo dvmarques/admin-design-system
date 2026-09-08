@@ -61,20 +61,10 @@ try {
 		await fs.writeFile(destination, content);
 	}
 
-	await fs.copyFile(
-		path.join(root, 'package-lock.json'),
-		path.join(tempRoot, 'package-lock.json'),
-	);
+	await fs.copyFile(path.join(root, 'package-lock.json'), path.join(tempRoot, 'package-lock.json'));
 	execFileSync(
 		'npm',
-		[
-			'install',
-			'--package-lock-only',
-			'--ignore-scripts',
-			'--offline',
-			'--no-audit',
-			'--no-fund',
-		],
+		['install', '--package-lock-only', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'],
 		{ cwd: tempRoot, stdio: 'inherit' },
 	);
 	staged.set(

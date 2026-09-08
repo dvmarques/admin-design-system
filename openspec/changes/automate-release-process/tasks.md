@@ -92,8 +92,8 @@
 - [x] 6.1 Testar aceitação de `X.Y.Z` estável e rejeição de prerelease/build metadata.
 - [ ] 6.2 Testar branch divergente e working tree suja, confirmando falha antes de qualquer escrita.
 - [x] 6.3 Testar bootstrap local com alvo igual/maior à versão atual e rejeição de downgrade sem acesso à API GitHub.
-- [ ] 6.4 Testar rejeição pré-integração de tag/release já existente para a própria versão alvo em release inicial e subsequente.
-- [ ] 6.5 Testar bootstrap remoto sem predecessora com outro artefato `vA.B.C` incompatível com ausência de histórico e retry pós-integração com tag alvo correta.
+- [x] 6.4 Testar rejeição pré-integração de tag/release já existente para a própria versão alvo em release inicial e subsequente.
+- [x] 6.5 Testar bootstrap remoto sem predecessora com outro artefato `vA.B.C` incompatível com ausência de histórico e retry pós-integração com tag alvo correta.
 - [x] 6.6 Testar maior SemVer fechada, predecessora, data fechada inválida, duplicidade, ordem inválida e estados inválidos de `Em andamento`.
 - [x] 6.7 Testar renomeação do placeholder para patch/minor/major preservando conteúdo.
 - [x] 6.8 Testar data em `America/Sao_Paulo`, inclusive processo em outra timezone e fronteira de mudança de dia.

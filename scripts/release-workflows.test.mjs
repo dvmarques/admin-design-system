@@ -124,3 +124,11 @@ test('publication resolves merged commits and CI requires an up-to-date base', (
 	assert.match(publishRelease, /assertAncestor\(backmergeSha, initialDevelopSha/);
 	assert.match(ci, /pull_request:/);
 });
+
+test('release validation rejects pre-existing target artifacts and incompatible bootstrap history', () => {
+	assert.match(releaseGithub, /command === 'target-absent'/);
+	assert.match(releaseGithub, /state\.tag\.exists \|\| state\.release/);
+	assert.match(releaseGithub, /command === 'bootstrap-remote'/);
+	assert.match(releaseGithub, /Bootstrap incompatível com histórico remoto/);
+	assert.match(releaseGithub, /releaseTags\.length \|\| releaseNames\.length/);
+});

@@ -29,7 +29,7 @@ jobs:
         shell: bash
         run: |
           [[ "$GITHUB_REF_NAME" == "develop" ]] || { echo "Dispare este workflow a partir de develop" >&2; exit 1; }
-          [[ "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]] || { echo "Versão inválida: $VERSION" >&2; exit 1; }
+          [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || { echo "Versão inválida: $VERSION" >&2; exit 1; }
       - uses: actions/checkout@v6
         with:
           ref: develop
@@ -45,11 +45,13 @@ jobs:
         shell: bash
         run: |
           RELEASE_JSON="$(node ./scripts/release-github.mjs resolve "$VERSION" master)"
-          node ./scripts/release-github.mjs resolve "$VERSION" develop > /dev/null
+          BACKMERGE_JSON="$(node ./scripts/release-github.mjs resolve "$VERSION" develop)"
           RELEASE_SHA="$(node -e 'const x=JSON.parse(process.argv[1]); process.stdout.write(x.merge_commit_sha)' "$RELEASE_JSON")"
+          BACKMERGE_SHA="$(node -e 'const x=JSON.parse(process.argv[1]); process.stdout.write(x.merge_commit_sha)' "$BACKMERGE_JSON")"
           echo "release_sha=$RELEASE_SHA" >> "$GITHUB_OUTPUT"
           git fetch origin master develop --no-tags
           git merge-base --is-ancestor "$RELEASE_SHA" origin/master || { echo "Commit liberado não pertence ao histórico atual de master" >&2; exit 1; }
+          git merge-base --is-ancestor "$BACKMERGE_SHA" origin/develop || { echo "Back-merge não pertence ao histórico atual de develop" >&2; exit 1; }
           node ./scripts/release-github.mjs predecessor "$VERSION"
           node ./scripts/release-github.mjs state "$VERSION"
       - uses: actions/checkout@v6
@@ -76,293 +78,17 @@ jobs:
       pull-requests: read
     runs-on: ubuntu-latest
     env:
+      GITHUB_TOKEN: ${{ github.token }}
       VERSION: ${{ inputs.version }}
       READONLY_RELEASE_SHA: ${{ needs.resolve-validate.outputs.release_sha }}
     steps:
-      - name: Re-resolver, revalidar e publicar
-        uses: actions/github-script@v9
+      - name: Checkout da lógica confiável do workflow
+        uses: actions/checkout@v6
         with:
-          script: |
-            const version = process.env.VERSION;
-            if (!/^\d+\.\d+\.\d+$/.test(version)) {
-              throw new Error(`Versão inválida: ${version}`);
-            }
-
-            const { owner, repo } = context.repo;
-            const repoFull = `${owner}/${repo}`;
-            const head = `${owner}:release/${version}`;
-            const normalize = (value = '') => value.replace(/\r\n/g, '\n').replace(/\n+$/, '');
-            const semverCmp = (a, b) => {
-              const aa = a.split('.').map(Number);
-              const bb = b.split('.').map(Number);
-              for (let index = 0; index < 3; index += 1) {
-                if (aa[index] !== bb[index]) return aa[index] - bb[index];
-              }
-              return 0;
-            };
-
-            async function resolve(base) {
-              const { data } = await github.rest.pulls.list({
-                owner,
-                repo,
-                state: 'closed',
-                base,
-                head,
-                per_page: 100,
-              });
-              const matches = data.filter(
-                (pr) =>
-                  pr.merged_at &&
-                  pr.head?.repo?.full_name === repoFull &&
-                  pr.head?.ref === `release/${version}` &&
-                  pr.base?.ref === base,
-              );
-              if (matches.length !== 1) {
-                throw new Error(
-                  `Esperada 1 PR merged release/${version} -> ${base}; encontradas ${matches.length}`,
-                );
-              }
-              return matches[0];
-            }
-
-            async function getContent(path, ref) {
-              const { data } = await github.rest.repos.getContent({ owner, repo, path, ref });
-              if (Array.isArray(data) || data.type !== 'file') {
-                throw new Error(`${path}@${ref} não é arquivo`);
-              }
-              return Buffer.from(data.content.replace(/\n/g, ''), 'base64').toString('utf8');
-            }
-
-            async function listDirectory(path, ref) {
-              const { data } = await github.rest.repos.getContent({ owner, repo, path, ref });
-              if (!Array.isArray(data)) throw new Error(`${path}@${ref} não é diretório`);
-              return data;
-            }
-
-            function releaseBlock(changelog, target) {
-              const escaped = target.replaceAll('.', '\\.');
-              const re = new RegExp(
-                `^### \\[${escaped}\\] - \\d{2}-(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)-\\d{4}$`,
-                'm',
-              );
-              const match = re.exec(changelog);
-              if (!match) throw new Error(`Bloco fechado ${target} ausente`);
-              const rest = changelog.slice(match.index + match[0].length);
-              const next = rest.search(/^### \[/m);
-              return rest.slice(0, next < 0 ? undefined : next).trim();
-            }
-
-            async function validateCoordinated(ref, target) {
-              const manifests = ['package.json'];
-              for (const parent of ['packages', 'apps']) {
-                const entries = await listDirectory(parent, ref);
-                for (const entry of entries.filter((item) => item.type === 'dir')) {
-                  manifests.push(`${parent}/${entry.name}/package.json`);
-                }
-              }
-
-              const parsed = [];
-              for (const path of manifests) {
-                parsed.push({ path, json: JSON.parse(await getContent(path, ref)) });
-              }
-              const names = new Set(parsed.map(({ json }) => json.name).filter(Boolean));
-              for (const { path, json } of parsed) {
-                if (json.version !== target) {
-                  throw new Error(`${path}@${ref} usa ${json.version}; esperado ${target}`);
-                }
-                for (const field of [
-                  'dependencies',
-                  'devDependencies',
-                  'peerDependencies',
-                  'optionalDependencies',
-                ]) {
-                  for (const [name, value] of Object.entries(json[field] ?? {})) {
-                    if (names.has(name) && value !== target) {
-                      throw new Error(`${path}: ${field}.${name}=${value}; esperado ${target}`);
-                    }
-                  }
-                }
-              }
-
-              const lock = JSON.parse(await getContent('package-lock.json', ref));
-              if (lock.version !== target || lock.packages?.['']?.version !== target) {
-                throw new Error(`package-lock.json@${ref} não está coordenado em ${target}`);
-              }
-              for (const { path } of parsed.filter(({ path }) => path !== 'package.json')) {
-                const workspace = path.slice(0, -'/package.json'.length);
-                if (lock.packages?.[workspace]?.version !== target) {
-                  throw new Error(`Lockfile divergente em ${workspace}@${ref}`);
-                }
-              }
-            }
-
-            async function tagState(target) {
-              try {
-                const { data: ref } = await github.rest.git.getRef({
-                  owner,
-                  repo,
-                  ref: `tags/v${target}`,
-                });
-                if (ref.object.type !== 'tag') {
-                  return { exists: true, annotated: false, commit: ref.object.sha };
-                }
-                const { data: tag } = await github.rest.git.getTag({
-                  owner,
-                  repo,
-                  tag_sha: ref.object.sha,
-                });
-                if (tag.object.type !== 'commit') {
-                  throw new Error(`v${target} não aponta para commit`);
-                }
-                return {
-                  exists: true,
-                  annotated: true,
-                  commit: tag.object.sha,
-                  tagObject: ref.object.sha,
-                };
-              } catch (error) {
-                if (error.status === 404) return { exists: false };
-                throw error;
-              }
-            }
-
-            async function releaseState(target) {
-              try {
-                return (
-                  await github.rest.repos.getReleaseByTag({ owner, repo, tag: `v${target}` })
-                ).data;
-              } catch (error) {
-                if (error.status === 404) return null;
-                throw error;
-              }
-            }
-
-            async function resolveVersion(target) {
-              const versionHead = `${owner}:release/${target}`;
-              const { data } = await github.rest.pulls.list({
-                owner,
-                repo,
-                state: 'closed',
-                base: 'master',
-                head: versionHead,
-                per_page: 100,
-              });
-              const matches = data.filter(
-                (pr) =>
-                  pr.merged_at &&
-                  pr.head?.repo?.full_name === repoFull &&
-                  pr.head?.ref === `release/${target}` &&
-                  pr.base?.ref === 'master',
-              );
-              if (matches.length !== 1) {
-                throw new Error(`Release anterior ${target}: PR merged ambígua/ausente`);
-              }
-              return matches[0];
-            }
-
-            async function validatePublished(target) {
-              const pr = await resolveVersion(target);
-              const tag = await tagState(target);
-              const release = await releaseState(target);
-              if (!tag.exists || !tag.annotated || tag.commit !== pr.merge_commit_sha || !release) {
-                throw new Error(`Release anterior ${target} inconsistente`);
-              }
-              const changelog = await getContent('CHANGELOG.md', pr.merge_commit_sha);
-              const notes = releaseBlock(changelog, target);
-              if (
-                release.tag_name !== `v${target}` ||
-                release.name !== `v${target}` ||
-                release.draft ||
-                release.prerelease ||
-                normalize(release.body ?? '') !== normalize(notes)
-              ) {
-                throw new Error(`Metadados da release anterior ${target} divergentes`);
-              }
-            }
-
-            const releasePr = await resolve('master');
-            await resolve('develop');
-            const releaseSha = releasePr.merge_commit_sha;
-            if (releaseSha !== process.env.READONLY_RELEASE_SHA) {
-              throw new Error('Commit rederivado diverge do job read-only');
-            }
-
-            const compare = await github.rest.repos.compareCommits({
-              owner,
-              repo,
-              base: releaseSha,
-              head: 'master',
-            });
-            if (!['ahead', 'identical'].includes(compare.data.status)) {
-              throw new Error('Commit liberado não pertence ao histórico atual de master');
-            }
-
-            await validateCoordinated(releaseSha, version);
-            await validateCoordinated('develop', version);
-
-            const releaseChangelog = await getContent('CHANGELOG.md', releaseSha);
-            const developChangelog = await getContent('CHANGELOG.md', 'develop');
-            const notes = releaseBlock(releaseChangelog, version);
-            if (releaseBlock(developChangelog, version) !== notes) {
-              throw new Error('Bloco fechado em develop diverge do commit liberado');
-            }
-
-            const closed = [
-              ...releaseChangelog.matchAll(
-                /^### \[(\d+\.\d+\.\d+)\] - \d{2}-(?:jan|fev|mar|abr|mai|jun|jul|ago|set|out|nov|dez)-\d{4}$/gm,
-              ),
-            ]
-              .map((match) => match[1])
-              .filter((candidate) => semverCmp(candidate, version) < 0)
-              .sort(semverCmp);
-            const predecessor = closed.at(-1);
-            if (predecessor) await validatePublished(predecessor);
-
-            const tag = await tagState(version);
-            const existingRelease = await releaseState(version);
-            if (tag.exists && (!tag.annotated || tag.commit !== releaseSha)) {
-              throw new Error(`Tag v${version} é lightweight ou aponta para outro commit`);
-            }
-            if (existingRelease) {
-              if (
-                !tag.exists ||
-                existingRelease.tag_name !== `v${version}` ||
-                existingRelease.name !== `v${version}` ||
-                existingRelease.draft ||
-                existingRelease.prerelease ||
-                normalize(existingRelease.body ?? '') !== normalize(notes)
-              ) {
-                throw new Error(`GitHub Release v${version} existente está divergente`);
-              }
-              core.notice(`v${version} já publicada de forma consistente; nenhuma alteração necessária.`);
-              return;
-            }
-
-            if (!tag.exists) {
-              const { data: tagObject } = await github.rest.git.createTag({
-                owner,
-                repo,
-                tag: `v${version}`,
-                message: `Release v${version}`,
-                object: releaseSha,
-                type: 'commit',
-              });
-              await github.rest.git.createRef({
-                owner,
-                repo,
-                ref: `refs/tags/v${version}`,
-                sha: tagObject.sha,
-              });
-            }
-
-            await github.rest.repos.createRelease({
-              owner,
-              repo,
-              tag_name: `v${version}`,
-              name: `v${version}`,
-              body: notes,
-              draft: false,
-              prerelease: false,
-              target_commitish: releaseSha,
-            });
-            core.notice(`Release v${version} publicada no commit ${releaseSha}.`);
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+      - name: Re-resolver, revalidar e publicar
+        run: node ./.github/scripts/publish-release.mjs

@@ -115,8 +115,8 @@
 - [x] 6.24 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.
 - [x] 6.25 Validar `queue: max`, ausência de `cancel-in-progress: true` e rejeição operacional de dispatch em ref diferente de `develop`.
 - [x] 6.26 Validar separação de privilégios: job read-only executa validações/scripts; job write rederiva dados por lógica confiável e não executa scripts arbitrários do commit liberado.
-- [ ] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
-- [ ] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
+- [x] 6.27 Testar adulteração/divergência dos outputs do job read-only e confirmar que o job privilegiado detecta a diferença pela rederivação independente.
+- [x] 6.28 Testar mudança concorrente de `develop`, predecessora, tag/release entre os jobs e confirmar revalidação/falha segura no job de publicação.
 - [ ] 6.29 Testar back-merge com novas entradas de changelog após o corte e com workspace novo, preservando metadados futuros.
 - [x] 6.30 Testar `release-check` com delta exclusivo válido contendo apenas arquivos de preparação e com alteração funcional/documental exclusiva da release branch, que deve falhar antes do merge em `master`.
 - [x] 6.31 Testar PR aberto como draft e `synchronize` enquanto draft: jobs gerais, `release-check` e `develop-policy` devem ficar skipped, sem consumir execução de validação pesada.

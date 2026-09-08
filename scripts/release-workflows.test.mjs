@@ -82,3 +82,12 @@ test('publication recovers a valid tag by creating only the missing release', ()
 	assert.match(publishRelease, /await api\('\/releases'/);
 	assert.match(publishRelease, /if \(!tag\.annotated \|\| tag\.commit !== releaseSha\)/);
 });
+
+test('publication revalidates read-only evidence and mutable state before writes', () => {
+	assert.match(publishRelease, /Commit rederivado diverge do job read-only/);
+	assert.match(publishRelease, /Back-merge rederivado diverge do job read-only/);
+	assert.match(publishRelease, /Notas rederivadas divergem da evidência read-only/);
+	assert.match(publishRelease, /develop mudou durante a publicação/);
+	assert.match(publishRelease, /PR\/commit de release ou back-merge mudou durante a publicação/);
+	assert.match(publishRelease, /const currentState = await validateTargetArtifacts/);
+});

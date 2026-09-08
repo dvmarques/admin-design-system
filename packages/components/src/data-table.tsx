@@ -44,8 +44,11 @@ export function AdsTableRow({ className, ...props }: AdsTableRowProps) {
 	);
 }
 
-export interface AdsTableHeaderProps extends ThHTMLAttributes<HTMLTableCellElement> {
-	align?: 'start' | 'center' | 'end';
+export type AdsTableAlignment = 'start' | 'center' | 'end';
+
+export interface AdsTableHeaderProps
+	extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'> {
+	align?: AdsTableAlignment;
 }
 
 const alignment = {
@@ -54,7 +57,12 @@ const alignment = {
 	end: 'text-right',
 } as const;
 
-export function AdsTableHeader({ align = 'start', className, scope = 'col', ...props }: AdsTableHeaderProps) {
+export function AdsTableHeader({
+	align = 'start',
+	className,
+	scope = 'col',
+	...props
+}: AdsTableHeaderProps) {
 	return (
 		<th
 			{...props}
@@ -68,15 +76,19 @@ export function AdsTableHeader({ align = 'start', className, scope = 'col', ...p
 	);
 }
 
-export interface AdsTableCellProps extends TdHTMLAttributes<HTMLTableCellElement> {
-	align?: 'start' | 'center' | 'end';
+export interface AdsTableCellProps extends Omit<TdHTMLAttributes<HTMLTableCellElement>, 'align'> {
+	align?: AdsTableAlignment;
 }
 
 export function AdsTableCell({ align = 'start', className, ...props }: AdsTableCellProps) {
 	return (
 		<td
 			{...props}
-			className={classNames('ads-table-cell px-4 py-3 align-middle', alignment[align], className)}
+			className={classNames(
+				'ads-table-cell px-4 py-3 align-middle',
+				alignment[align],
+				className,
+			)}
 		/>
 	);
 }

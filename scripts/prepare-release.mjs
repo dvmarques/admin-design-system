@@ -16,12 +16,13 @@ import {
 } from './release-utils.mjs';
 
 const PINNED_NPM = '11.19.1';
-const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const npmCli =
+	process.env.npm_execpath ??
+	path.join(path.dirname(process.execPath), 'node_modules', 'npm', 'bin', 'npm-cli.js');
 const runNpm = (argumentsList, options = {}) =>
-	execFileSync(npmCommand, argumentsList, {
-		...options,
-		shell: process.platform === 'win32',
-	});
+	process.platform === 'win32'
+		? execFileSync(process.execPath, [npmCli, ...argumentsList], options)
+		: execFileSync('npm', argumentsList, options);
 const target = process.argv[2];
 if (!target) throw new Error('Uso: npm run release:prepare -- X.Y.Z');
 assertStableSemver(target);
@@ -61,6 +62,8 @@ staged.set('CHANGELOG.md', prepareChangelog(changelog, target));
 
 const tempRoot = await fs.mkdtemp(path.join(os.tmpdir(), 'admin-ds-release-'));
 try {
+	const isolatedNpmConfig = path.join(tempRoot, '.npmrc');
+	await fs.writeFile(isolatedNpmConfig, '');
 	for (const [relative, content] of staged) {
 		const destination = path.join(tempRoot, relative);
 		await fs.mkdir(path.dirname(destination), { recursive: true });
@@ -69,15 +72,35 @@ try {
 
 	await fs.copyFile(path.join(root, 'package-lock.json'), path.join(tempRoot, 'package-lock.json'));
 	runNpm(
-		['install', '--package-lock-only', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'],
+		[
+			'install',
+			'--package-lock-only',
+			'--ignore-scripts',
+			'--offline',
+			'--no-audit',
+			'--no-fund',
+			'--userconfig',
+			isolatedNpmConfig,
+		],
 		{ cwd: tempRoot, stdio: 'inherit' },
 	);
 	// Confirma que o lockfile gerado pode ser instalado de forma reproduzível
 	// antes de qualquer arquivo do repositório ser substituído.
-	runNpm(['ci', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'], {
-		cwd: tempRoot,
-		stdio: 'inherit',
-	});
+	runNpm(
+		[
+			'ci',
+			'--ignore-scripts',
+			'--offline',
+			'--no-audit',
+			'--no-fund',
+			'--userconfig',
+			isolatedNpmConfig,
+		],
+		{
+			cwd: tempRoot,
+			stdio: 'inherit',
+		},
+	);
 	staged.set(
 		'package-lock.json',
 		await fs.readFile(path.join(tempRoot, 'package-lock.json'), 'utf8'),

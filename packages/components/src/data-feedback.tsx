@@ -17,15 +17,17 @@ export function AdsProgress({
 	value,
 	...props
 }: AdsProgressProps) {
-	if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
-		throw new RangeError('AdsProgress requires finite values with max greater than min.');
-	}
-	if (value !== undefined && !Number.isFinite(value)) {
-		throw new RangeError('AdsProgress requires a finite value when determinate.');
+	const determinate = value !== undefined;
+	if (
+		determinate &&
+		(!Number.isFinite(min) || !Number.isFinite(max) || !Number.isFinite(value) || max <= min)
+	) {
+		throw new RangeError(
+			'AdsProgress requires finite min, max and value with max greater than min when determinate.',
+		);
 	}
 
-	const effectiveValue = value === undefined ? undefined : Math.min(max, Math.max(min, value));
-	const determinate = effectiveValue !== undefined;
+	const effectiveValue = determinate ? Math.min(max, Math.max(min, value)) : undefined;
 	const percent = effectiveValue === undefined ? 50 : ((effectiveValue - min) / (max - min)) * 100;
 
 	return (

@@ -56,6 +56,18 @@ test('develop policy distinguishes normal PRs from same-repository back-merges',
 	assert.match(developPolicy, /Bloco fechado .* diverge do commit exato liberado/);
 });
 
+test('develop policy preserves closed history and reconciles the exact release block', () => {
+	assert.match(developPolicy, /Conjunto de versões fechadas divergente/);
+	assert.match(developPolicy, /Bloco fechado \$\{closed\.version\} removido/);
+	assert.match(developPolicy, /Bloco fechado \$\{closed\.version\} alterado/);
+	assert.match(developPolicy, /allowAddedVersion: version/);
+	assert.match(
+		developPolicy,
+		/contents\/CHANGELOG\.md\?ref=\$\{encodeURIComponent\(releaseSha\)\}/,
+	);
+	assert.match(developPolicy, /headVersion !== version/);
+});
+
 test('remote release validation resolves only one matching merged PR', () => {
 	assert.match(releaseGithub, /candidates\.length !== 1/);
 	assert.match(releaseGithub, /head\?\.repo\?\.full_name === repo/);

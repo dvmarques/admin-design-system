@@ -43,7 +43,8 @@ async function refSha(ref) {
 async function contentAt(filePath, ref, { allow404 = false } = {}) {
 	const result = await api(`/contents/${filePath}?ref=${encodeURIComponent(ref)}`, { allow404 });
 	if (!result) return null;
-	if (Array.isArray(result) || result.type !== 'file') throw new Error(`${filePath}@${ref} não é arquivo.`);
+	if (Array.isArray(result) || result.type !== 'file')
+		throw new Error(`${filePath}@${ref} não é arquivo.`);
 	return Buffer.from(result.content.replace(/\n/g, ''), 'base64').toString('utf8');
 }
 
@@ -69,14 +70,19 @@ async function resolveMerged(target, base) {
 			pr.base?.ref === base,
 	);
 	if (matches.length !== 1) {
-		throw new Error(`Esperada 1 PR merged release/${target} -> ${base}; encontradas ${matches.length}.`);
+		throw new Error(
+			`Esperada 1 PR merged release/${target} -> ${base}; encontradas ${matches.length}.`,
+		);
 	}
-	if (!matches[0].merge_commit_sha) throw new Error(`PR release/${target} -> ${base} sem merge_commit_sha.`);
+	if (!matches[0].merge_commit_sha)
+		throw new Error(`PR release/${target} -> ${base} sem merge_commit_sha.`);
 	return matches[0];
 }
 
 async function assertAncestor(ancestor, descendant, label) {
-	const compare = await api(`/compare/${encodeURIComponent(ancestor)}...${encodeURIComponent(descendant)}`);
+	const compare = await api(
+		`/compare/${encodeURIComponent(ancestor)}...${encodeURIComponent(descendant)}`,
+	);
 	if (!['ahead', 'identical'].includes(compare.status)) {
 		throw new Error(`${label}: ${ancestor} não pertence ao histórico de ${descendant}.`);
 	}
@@ -105,13 +111,15 @@ function assertReleaseDate(value) {
 function parseChangelog(text) {
 	const sections = [];
 	for (const match of text.matchAll(VERSION_HEADING)) {
-		if (!STABLE_SEMVER.test(match[1])) throw new Error(`Versão inválida no changelog: ${match[1]}.`);
+		if (!STABLE_SEMVER.test(match[1]))
+			throw new Error(`Versão inválida no changelog: ${match[1]}.`);
 		if (match[2] !== 'Em andamento') assertReleaseDate(match[2]);
 		sections.push({ version: match[1], status: match[2], index: match.index, heading: match[0] });
 	}
 	const ongoing = sections.filter(({ status }) => status === 'Em andamento');
 	const closed = sections.filter(({ status }) => status !== 'Em andamento');
-	if (ongoing.length !== 1) throw new Error(`Esperada exatamente uma seção Em andamento; encontradas ${ongoing.length}.`);
+	if (ongoing.length !== 1)
+		throw new Error(`Esperada exatamente uma seção Em andamento; encontradas ${ongoing.length}.`);
 	const seen = new Set();
 	for (const section of closed) {
 		if (seen.has(section.version)) throw new Error(`Versão fechada duplicada: ${section.version}.`);
@@ -154,8 +162,14 @@ async function validateCoordinated(ref, target) {
 	}
 	const names = new Set(manifests.map(({ json }) => json.name).filter(Boolean));
 	for (const { path: filePath, json } of manifests) {
-		if (json.version !== target) throw new Error(`${filePath}@${ref} usa ${json.version}; esperado ${target}.`);
-		for (const field of ['dependencies', 'devDependencies', 'peerDependencies', 'optionalDependencies']) {
+		if (json.version !== target)
+			throw new Error(`${filePath}@${ref} usa ${json.version}; esperado ${target}.`);
+		for (const field of [
+			'dependencies',
+			'devDependencies',
+			'peerDependencies',
+			'optionalDependencies',
+		]) {
 			for (const [name, value] of Object.entries(json[field] ?? {})) {
 				if (names.has(name) && value !== target) {
 					throw new Error(`${filePath}: ${field}.${name}=${value}; esperado ${target}.`);
@@ -167,7 +181,9 @@ async function validateCoordinated(ref, target) {
 	if (lock.version !== target || lock.packages?.['']?.version !== target) {
 		throw new Error(`package-lock.json@${ref} não está coordenado em ${target}.`);
 	}
-	for (const { path: filePath } of manifests.filter(({ path: candidate }) => candidate !== 'package.json')) {
+	for (const { path: filePath } of manifests.filter(
+		({ path: candidate }) => candidate !== 'package.json',
+	)) {
 		const workspace = filePath.slice(0, -'/package.json'.length);
 		if (lock.packages?.[workspace]?.version !== target) {
 			throw new Error(`Lockfile divergente em ${workspace}@${ref}.`);
@@ -233,7 +249,8 @@ const releasePr = await resolveMerged(version, 'master');
 const backmergePr = await resolveMerged(version, 'develop');
 const releaseSha = releasePr.merge_commit_sha;
 const backmergeSha = backmergePr.merge_commit_sha;
-if (releaseSha !== readonlyReleaseSha) throw new Error('Commit rederivado diverge do job read-only.');
+if (releaseSha !== readonlyReleaseSha)
+	throw new Error('Commit rederivado diverge do job read-only.');
 
 const initialDevelopSha = await refSha('heads/develop');
 const initialMasterSha = await refSha('heads/master');
@@ -262,13 +279,18 @@ await validateTargetArtifacts(version, releaseSha, notes);
 // Revalidar o estado mutável imediatamente antes de qualquer escrita.
 const releasePrNow = await resolveMerged(version, 'master');
 const backmergePrNow = await resolveMerged(version, 'develop');
-if (releasePrNow.merge_commit_sha !== releaseSha || backmergePrNow.merge_commit_sha !== backmergeSha) {
+if (
+	releasePrNow.merge_commit_sha !== releaseSha ||
+	backmergePrNow.merge_commit_sha !== backmergeSha
+) {
 	throw new Error('PR/commit de release ou back-merge mudou durante a publicação.');
 }
 const currentDevelopSha = await refSha('heads/develop');
 const currentMasterSha = await refSha('heads/master');
 if (currentDevelopSha !== initialDevelopSha) {
-	throw new Error(`develop mudou durante a publicação: ${initialDevelopSha} -> ${currentDevelopSha}.`);
+	throw new Error(
+		`develop mudou durante a publicação: ${initialDevelopSha} -> ${currentDevelopSha}.`,
+	);
 }
 await assertAncestor(releaseSha, currentMasterSha, 'Release');
 await assertAncestor(backmergeSha, currentDevelopSha, 'Back-merge');
@@ -284,7 +306,12 @@ let tag = currentState.tag;
 if (!tag.exists) {
 	const tagObject = await api('/git/tags', {
 		method: 'POST',
-		body: { tag: `v${version}`, message: `Release v${version}`, object: releaseSha, type: 'commit' },
+		body: {
+			tag: `v${version}`,
+			message: `Release v${version}`,
+			object: releaseSha,
+			type: 'commit',
+		},
 	});
 	await api('/git/refs', {
 		method: 'POST',
@@ -292,7 +319,8 @@ if (!tag.exists) {
 	});
 	tag = { exists: true, annotated: true, commit: releaseSha };
 }
-if (!tag.annotated || tag.commit !== releaseSha) throw new Error(`Tag v${version} incompatível após criação.`);
+if (!tag.annotated || tag.commit !== releaseSha)
+	throw new Error(`Tag v${version} incompatível após criação.`);
 
 await api('/releases', {
 	method: 'POST',

@@ -144,3 +144,21 @@ jobs:
             exit 1
           fi
       - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive
+
+  prettier-publish-helper:
+    name: Prettier helper temporário
+    if: github.event_name == 'pull_request' && github.base_ref == 'develop' && github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - run: npx prettier --write .github/scripts/publish-release.mjs
+      - uses: actions/upload-artifact@v4
+        with:
+          name: prettier-publish-helper
+          path: .github/scripts/publish-release.mjs

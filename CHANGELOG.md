@@ -6,7 +6,9 @@ Design System.
 O formato segue as convenções do Keep a Changelog. As mudanças são organizadas
 por versão e pelas changes correspondentes do OpenSpec.
 
-### [0.0.1] - Em andamento
+### [0.0.2] - Em andamento
+
+### [0.0.1] - 08-set-2026
 
 #### Changed
 

@@ -8,24 +8,38 @@ export interface AdsProgressProps extends Omit<HTMLAttributes<HTMLDivElement>, '
 	label?: string;
 }
 
-export function AdsProgress({ className, label, max = 100, min = 0, value, ...props }: AdsProgressProps) {
-	if (max <= min) {
-		throw new RangeError('AdsProgress requires max to be greater than min.');
+export function AdsProgress({
+	'aria-label': ariaLabel,
+	className,
+	label,
+	max = 100,
+	min = 0,
+	value,
+	...props
+}: AdsProgressProps) {
+	if (!Number.isFinite(min) || !Number.isFinite(max) || max <= min) {
+		throw new RangeError('AdsProgress requires finite values with max greater than min.');
+	}
+	if (value !== undefined && !Number.isFinite(value)) {
+		throw new RangeError('AdsProgress requires a finite value when determinate.');
 	}
 
 	const determinate = value !== undefined;
 	const effectiveValue = determinate ? Math.min(max, Math.max(min, value)) : undefined;
-	const percent = determinate ? ((effectiveValue! - min) / (max - min)) * 100 : 50;
+	const percent = determinate ? ((effectiveValue - min) / (max - min)) * 100 : 50;
 
 	return (
 		<div
 			{...props}
 			role="progressbar"
-			aria-label={label}
+			aria-label={label ?? ariaLabel}
 			aria-valuemin={determinate ? min : undefined}
 			aria-valuemax={determinate ? max : undefined}
 			aria-valuenow={effectiveValue}
-			className={classNames('ads-progress h-2 w-full overflow-hidden rounded-full bg-surface-muted', className)}
+			className={classNames(
+				'ads-progress h-2 w-full overflow-hidden rounded-full bg-surface-muted',
+				className,
+			)}
 		>
 			<div
 				className={classNames(
@@ -38,14 +52,21 @@ export function AdsProgress({ className, label, max = 100, min = 0, value, ...pr
 	);
 }
 
-export interface AdsEmptyStateProps extends HTMLAttributes<HTMLDivElement> {
+export interface AdsEmptyStateProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
 	title: ReactNode;
 	description?: ReactNode;
 	visual?: ReactNode;
 	actions?: ReactNode;
 }
 
-export function AdsEmptyState({ actions, className, description, title, visual, ...props }: AdsEmptyStateProps) {
+export function AdsEmptyState({
+	actions,
+	className,
+	description,
+	title,
+	visual,
+	...props
+}: AdsEmptyStateProps) {
 	return (
 		<div
 			{...props}
@@ -57,9 +78,15 @@ export function AdsEmptyState({ actions, className, description, title, visual, 
 			{visual ? <div className="ads-empty-state-visual text-text-muted">{visual}</div> : null}
 			<div className="ads-empty-state-title text-lg font-semibold text-text-primary">{title}</div>
 			{description ? (
-				<div className="ads-empty-state-description max-w-prose text-sm text-text-muted">{description}</div>
+				<div className="ads-empty-state-description max-w-prose text-sm text-text-muted">
+					{description}
+				</div>
 			) : null}
-			{actions ? <div className="ads-empty-state-actions mt-1 flex flex-wrap justify-center gap-2">{actions}</div> : null}
+			{actions ? (
+				<div className="ads-empty-state-actions mt-1 flex flex-wrap justify-center gap-2">
+					{actions}
+				</div>
+			) : null}
 		</div>
 	);
 }

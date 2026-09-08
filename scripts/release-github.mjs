@@ -1,5 +1,7 @@
 #!/usr/bin/env node
+import { Buffer } from 'node:buffer';
 import fs from 'node:fs/promises';
+import { URLSearchParams } from 'node:url';
 import {
 	extractReleaseNotes,
 	normalizeReleaseBody,
@@ -23,7 +25,9 @@ const headers = {
 };
 
 async function api(apiPath, { allow404 = false } = {}) {
-	const response = await fetch(`https://api.github.com/repos/${repo}${apiPath}`, { headers });
+	const response = await globalThis.fetch(`https://api.github.com/repos/${repo}${apiPath}`, {
+		headers,
+	});
 	if (allow404 && response.status === 404) return null;
 	if (!response.ok) {
 		throw new Error(`${response.status} ${apiPath}: ${await response.text()}`);

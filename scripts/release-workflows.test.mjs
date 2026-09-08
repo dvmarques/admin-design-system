@@ -91,3 +91,17 @@ test('publication revalidates read-only evidence and mutable state before writes
 	assert.match(publishRelease, /PR\/commit de release ou back-merge mudou durante a publicação/);
 	assert.match(publishRelease, /const currentState = await validateTargetArtifacts/);
 });
+
+test('publication validates the resolved predecessor before and immediately before writes', () => {
+	assert.match(publishRelease, /async function validatePublished/);
+	assert.match(publishRelease, /Release anterior \$\{target\} inconsistente/);
+	assert.match(publishRelease, /Metadados da release anterior \$\{target\} divergentes/);
+	assert.match(
+		publishRelease,
+		/if \(predecessor\) await validatePublished\(predecessor\);[\s\S]*?await validateTargetArtifacts/,
+	);
+	assert.match(
+		publishRelease,
+		/if \(predecessor\) await validatePublished\(predecessor\);[\s\S]*?const currentState/,
+	);
+});

@@ -100,7 +100,7 @@
 - [ ] 6.9 Testar falhas de preflight, staging, lockfile e aplicação final sem estado parcial.
 - [ ] 6.10 Testar versionamento coordenado e ausência de atualização externa não relacionada no lockfile.
 - [x] 6.11 Testar extração e comparação normalizada das release notes.
-- [ ] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
+- [x] 6.12 Testar resolução independente do commit da predecessora e rejeitar tag/release que divirjam das invariantes completas esperadas.
 - [x] 6.13 Testar PR para `master` com branch/version mismatch, fork com branch `release/*` e PR same-repo válida.
 - [x] 6.14 Testar comportamento distinto em `push` pós-merge, sem aplicar regras dependentes de metadados da PR.
 - [x] 6.15 Validar estaticamente as permissões mínimas do `release-check`: `contents: read`, `pull-requests: read` e nenhuma escrita.
@@ -109,7 +109,7 @@
 - [ ] 6.18 Testar que PR previamente verde fica impedida de merge após avanço de `develop` ou `master` até ser atualizada com a nova base e ter os checks reexecutados; cobrir duas releases concorrentes contra o mesmo HEAD de `master`.
 - [ ] 6.19 Testar resolução por `merge_commit_sha` com `master` avançado e falha para commit não alcançável/ambíguo.
 - [x] 6.20 Testar publicação antes do back-merge, back-merge ausente/ambíguo e `develop` divergente; todos devem falhar sem criar tag/release.
-- [ ] 6.21 Testar revalidação da predecessora na publicação quando ela for removida/divergir após o `release-check` pré-merge.
+- [x] 6.21 Testar revalidação da predecessora na publicação quando ela for removida/divergir após o `release-check` pré-merge.
 - [x] 6.22 Testar tag inexistente, anotada correta, lightweight e anotada em outro commit.
 - [x] 6.23 Testar recuperação tag válida + release ausente.
 - [x] 6.24 Testar release existente consistente e divergências em nome, draft, prerelease, tag, commit ou body.

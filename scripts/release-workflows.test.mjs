@@ -6,6 +6,10 @@ const [ci, release] = await Promise.all([
 	fs.readFile(new URL('../.github/workflows/ci.yml', import.meta.url), 'utf8'),
 	fs.readFile(new URL('../.github/workflows/release.yml', import.meta.url), 'utf8'),
 ]);
+const [developPolicy, releaseGithub] = await Promise.all([
+	fs.readFile(new URL('./develop-policy.mjs', import.meta.url), 'utf8'),
+	fs.readFile(new URL('./release-github.mjs', import.meta.url), 'utf8'),
+]);
 
 test('publication workflow is manually dispatched only from develop and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);
@@ -31,4 +35,26 @@ test('CI keeps checks visible while draft PR jobs are skipped and Ready reruns t
 	assert.match(ci, /develop-policy:[\s\S]*?github\.base_ref == 'develop'[\s\S]*?draft == false/);
 	assert.match(ci, /release-check:[\s\S]*?github\.base_ref == 'master'[\s\S]*?draft == false/);
 	assert.match(ci, /push:[\s\S]*?develop[\s\S]*?master/);
+});
+
+test('release check rejects invalid PR origins and release deltas', () => {
+	assert.match(ci, /GITHUB_HEAD_REF.*release/);
+	assert.match(ci, /head\.repo\.full_name.*GITHUB_REPOSITORY/);
+	assert.match(ci, /Validar delta exclusivo da release/);
+	assert.match(ci, /CHANGELOG\\\.md\|package\\\.json\|package-lock\\\.json/);
+});
+
+test('develop policy distinguishes normal PRs from same-repository back-merges', () => {
+	assert.match(developPolicy, /PR comum não pode alterar a versão coordenada/);
+	assert.match(developPolicy, /PR comum não pode alterar o heading Em andamento/);
+	assert.match(developPolicy, /Back-merge altera arquivos não permitidos/);
+	assert.match(developPolicy, /pr\.head\?\.repo\?\.full_name === repo/);
+	assert.match(developPolicy, /Bloco fechado .* diverge do commit exato liberado/);
+});
+
+test('remote release validation resolves only one matching merged PR', () => {
+	assert.match(releaseGithub, /candidates\.length !== 1/);
+	assert.match(releaseGithub, /head\?\.repo\?\.full_name === repo/);
+	assert.match(releaseGithub, /target-absent/);
+	assert.match(releaseGithub, /bootstrap-remote/);
 });

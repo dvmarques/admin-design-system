@@ -17,6 +17,7 @@ if (!readonlyReleaseSha) throw new Error('READONLY_RELEASE_SHA é obrigatório.'
 if (!repository || !token) throw new Error('GITHUB_REPOSITORY e GITHUB_TOKEN são obrigatórios.');
 
 const [owner, repo] = repository.split('/');
+if (!owner || !repo) throw new Error('GITHUB_REPOSITORY inválido.');
 const headers = {
 	Accept: 'application/vnd.github+json',
 	Authorization: `Bearer ${token}`,

@@ -150,6 +150,6 @@
 - [x] 8.1 Executar os checks oficiais do projeto conforme `AGENTS.md`/`docs/quality.md`, incluindo `npm run test:e2e` antes do commit final.
 - [ ] 8.2 Formatar todos os arquivos alterados e confirmar `npm run format` sem falhas.
 - [x] 8.3 Executar validação OpenSpec estrita da change e de todas as specs com o CLI multiplataforma adotado.
-- [ ] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção estrita de `develop`/`master`, back-merge obrigatório, publicação e próxima release sem efetuar publicação real indevida.
+- [x] 8.4 Revisar o fluxo completo de bootstrap, integração, proteção estrita de `develop`/`master`, back-merge obrigatório, publicação e próxima release sem efetuar publicação real indevida.
 - [ ] 8.5 Revisar cenários de recuperação e confirmar que nenhum detalhe puramente operacional foi reintroduzido como requisito permanente da capability.
-- [ ] 8.6 Revisar especificamente o ciclo Draft -> Ready -> Draft e confirmar que required checks reais executam quando o PR fica pronto para revisão sem quebrar a CI de `push`.
+- [x] 8.6 Revisar especificamente o ciclo Draft -> Ready -> Draft e confirmar que required checks reais executam quando o PR fica pronto para revisão sem quebrar a CI de `push`.

@@ -14,6 +14,7 @@ const publishRelease = await fs.readFile(
 	new URL('../.github/scripts/publish-release.mjs', import.meta.url),
 	'utf8',
 );
+const prepareRelease = await fs.readFile(new URL('./prepare-release.mjs', import.meta.url), 'utf8');
 
 test('publication workflow is manually dispatched only from develop and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);
@@ -131,4 +132,13 @@ test('release validation rejects pre-existing target artifacts and incompatible 
 	assert.match(releaseGithub, /command === 'bootstrap-remote'/);
 	assert.match(releaseGithub, /Bootstrap incompatível com histórico remoto/);
 	assert.match(releaseGithub, /releaseTags\.length \|\| releaseNames\.length/);
+});
+
+test('release preparation validates its guards before staging and restores on apply failure', () => {
+	assert.match(prepareRelease, /branch !== `release\/\$\{target\}`/);
+	assert.match(prepareRelease, /Working tree deve estar limpa antes da preparação/);
+	assert.match(prepareRelease, /await fs\.mkdtemp/);
+	assert.match(prepareRelease, /const backups = new Map/);
+	assert.match(prepareRelease, /await fs\.writeFile\(path\.join\(root, relative\), content\)/);
+	assert.match(prepareRelease, /await fs\.rm\(tempRoot/);
 });

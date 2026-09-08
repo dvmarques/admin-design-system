@@ -16,11 +16,17 @@ import {
 } from './release-utils.mjs';
 
 const PINNED_NPM = '11.19.1';
+const npmCommand = process.platform === 'win32' ? 'npm.cmd' : 'npm';
+const runNpm = (argumentsList, options = {}) =>
+	execFileSync(npmCommand, argumentsList, {
+		...options,
+		shell: process.platform === 'win32',
+	});
 const target = process.argv[2];
 if (!target) throw new Error('Uso: npm run release:prepare -- X.Y.Z');
 assertStableSemver(target);
 
-const npmVersion = execFileSync('npm', ['--version'], { encoding: 'utf8' }).trim();
+const npmVersion = runNpm(['--version'], { encoding: 'utf8' }).trim();
 if (npmVersion !== PINNED_NPM) {
 	throw new Error(`Use npm ${PINNED_NPM} para preparar releases; atual: ${npmVersion}.`);
 }
@@ -62,14 +68,13 @@ try {
 	}
 
 	await fs.copyFile(path.join(root, 'package-lock.json'), path.join(tempRoot, 'package-lock.json'));
-	execFileSync(
-		'npm',
+	runNpm(
 		['install', '--package-lock-only', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'],
 		{ cwd: tempRoot, stdio: 'inherit' },
 	);
 	// Confirma que o lockfile gerado pode ser instalado de forma reproduzível
 	// antes de qualquer arquivo do repositório ser substituído.
-	execFileSync('npm', ['ci', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'], {
+	runNpm(['ci', '--ignore-scripts', '--offline', '--no-audit', '--no-fund'], {
 		cwd: tempRoot,
 		stdio: 'inherit',
 	});

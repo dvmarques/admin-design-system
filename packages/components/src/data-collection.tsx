@@ -25,7 +25,7 @@ export function AdsListItem({ className, ...props }: AdsListItemProps) {
 	);
 }
 
-export interface AdsCardProps extends AdsSurfaceProps {}
+export type AdsCardProps = AdsSurfaceProps;
 export function AdsCard({ className, ...props }: AdsCardProps) {
 	return <AdsSurface {...props} className={classNames('ads-card flex flex-col gap-4', className)} />;
 }

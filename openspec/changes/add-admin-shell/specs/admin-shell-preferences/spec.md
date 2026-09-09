@@ -64,6 +64,10 @@ Quando o drawer está aberto por estado interno e a viewport deixa o breakpoint 
 
 Quando `mobileOpen` é controlado externamente e está aberto, cruzar para desktop MUST NOT fazer o shell mutar ou substituir a prop recebida. O shell MUST disparar o callback de mudança solicitando fechamento. Enquanto a aplicação ainda não refletir a atualização, a apresentação desktop MUST permanecer livre dos efeitos do overlay móvel, incluindo backdrop, portal e focus trap ativos.
 
+O shell MAY manter apenas a coordenação transitória necessária para lembrar que aquele valor controlado `true` já recebeu uma solicitação de fechamento por mudança de breakpoint. Essa coordenação MUST NOT substituir `mobileOpen` como fonte de verdade pública nem produzir um segundo contrato controlável; sua única função é impedir que o mesmo `true` antigo provoque reabertura inesperada caso a viewport volte ao mobile antes de o consumidor reconhecer o fechamento.
+
+Depois de uma solicitação de fechamento por breakpoint, uma nova abertura controlada MUST depender de reconhecimento do fechamento (`mobileOpen=false`) seguido por uma nova intenção explícita de abertura (`false → true`), ou sinalização pública equivalente. Manter continuamente `mobileOpen=true` sem reconhecer o fechamento MUST NOT ser interpretado como uma nova abertura.
+
 #### Scenario: Mobile aberto controlado muda para desktop
 
 - **WHEN** `mobileOpen` é controlado externamente, está verdadeiro e a viewport entra no layout desktop
@@ -73,6 +77,25 @@ Quando `mobileOpen` é controlado externamente e está aberto, cruzar para deskt
 
 - **WHEN** o callback de fechamento foi disparado mas a prop controlada ainda permanece verdadeira durante o layout desktop
 - **THEN** o shell não mantém backdrop, portal, focus trap ou segunda navegação móvel operável enquanto aguarda a atualização externa
+
+#### Scenario: Viewport volta ao mobile antes do reconhecimento externo
+
+- **WHEN** o callback de fechamento foi disparado, `mobileOpen` ainda permanece `true` e a viewport retorna ao mobile
+- **THEN** o drawer continua fechado e o valor antigo não é tratado como nova intenção de abertura
+
+#### Scenario: Consumidor reconhece fechamento e abre novamente
+
+- **WHEN** o consumidor atualiza `mobileOpen` para `false` após a solicitação e posteriormente muda novamente para `true`
+- **THEN** o shell reconhece essa nova transição como nova intenção controlada de abertura no breakpoint móvel
+
+### Requirement: Estado acessível do trigger representa a apresentação efetiva
+
+Quando a abertura móvel controlada estiver temporariamente suprimida pela troca para desktop, os atributos de estado do trigger MUST representar a apresentação efetivamente operável. Em particular, `aria-expanded` MUST NOT permanecer `true` apenas porque a prop controlada ainda não reconheceu a solicitação de fechamento.
+
+#### Scenario: Prop controlada antiga permanece verdadeira no desktop
+
+- **WHEN** `mobileOpen=true` permanece recebido após o shell solicitar fechamento e o overlay móvel está inativo no layout desktop
+- **THEN** o trigger não anuncia a navegação móvel como expandida/operável
 
 ### Requirement: Persistência de preferências pertence ao consumidor
 

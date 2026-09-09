@@ -64,11 +64,21 @@ O shell MUST NOT importar ou exigir Next.js, React Router ou outra biblioteca de
 - **WHEN** o consumidor fornece links ou componentes de navegação integrados ao seu roteador
 - **THEN** o shell apenas estrutura e apresenta a navegação sem conhecer a implementação do roteamento
 
-### Requirement: Responsividade preserva acessibilidade e conteúdo
+### Requirement: Responsividade preserva acessibilidade e uma única instância lógica da navegação
 
-A mudança entre modos desktop e móvel MUST NOT duplicar conteúdo de navegação de forma que duas cópias operáveis permaneçam simultaneamente expostas a tecnologias assistivas. Controles ocultos MUST NOT permanecer indevidamente focáveis, e transições MUST respeitar `prefers-reduced-motion`.
+A mudança entre modos desktop e móvel MUST NOT manter duas montagens simultâneas do mesmo conteúdo arbitrário da sidebar como estratégia padrão. A implementação MUST preservar uma única instância lógica da navegação por vez, evitando duplicação de IDs, estado interno, efeitos, listeners e integrações de roteamento. Controles ocultos MUST NOT permanecer indevidamente focáveis, e transições MUST respeitar `prefers-reduced-motion`.
 
 #### Scenario: Viewport muda de desktop para mobile
 
 - **WHEN** o layout passa para o modo móvel
-- **THEN** somente a representação interativa apropriada da navegação fica disponível ao usuário e à árvore de acessibilidade
+- **THEN** a representação desktop deixa de ser a instância ativa e somente a representação mobile apropriada permanece montada/operável conforme a estratégia escolhida, sem duas cópias simultâneas do mesmo conteúdo arbitrário
+
+#### Scenario: Conteúdo da sidebar possui estado interno
+
+- **WHEN** o consumidor fornece conteúdo de navegação com IDs, estado interno ou efeitos próprios
+- **THEN** o shell não mantém duas instâncias simultâneas desse conteúdo apenas para atender aos dois breakpoints
+
+#### Scenario: Implementação excepcionalmente exige duas montagens
+
+- **WHEN** uma solução técnica só puder ser implementada com duas montagens simultâneas
+- **THEN** essa exceção deve ser justificada explicitamente e coberta por testes que demonstrem ausência de colisões de IDs, estado, efeitos e exposição duplicada à árvore de acessibilidade

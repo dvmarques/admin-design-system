@@ -33,17 +33,20 @@
 - [ ] 4.2 Em viewports estreitas, retirar a sidebar persistente do fluxo e disponibilizar contrato público para abertura da navegação móvel.
 - [ ] 4.3 Garantir que o drawer mobile use apresentação completa por padrão, sem herdar largura recolhida, labels ocultos ou representação compacta da sidebar desktop quando `collapsed` estiver ativo; adaptações específicas para mobile devem depender de composição explícita do consumidor.
 - [ ] 4.4 Implementar `MobileMenuTrigger` ou API equivalente, permitindo composição visual pelo consumidor enquanto o shell coordena `aria-expanded`, associação com a navegação, abertura/fechamento e retorno de foco.
-- [ ] 4.5 Reutilizar `AdsDrawer` para a navegação móvel quando compatível, preservando portal, backdrop, foco, Escape e retorno de foco sem duplicar lógica de overlay.
-- [ ] 4.6 Implementar contrato controlado e não controlado para abertura da navegação móvel e callback de alteração para coordenação pela aplicação, garantindo que o trigger não mantenha estado concorrente.
-- [ ] 4.7 Implementar a transição desktop/mobile preservando uma única instância lógica do conteúdo arbitrário da sidebar por vez; não manter duas montagens simultâneas como estratégia padrão.
-- [ ] 4.8 Implementar mobile aberto → desktop no modo não controlado encerrando o overlay e resetando o estado interno `mobileOpen`/equivalente para impedir estado latente e reabertura inesperada ao voltar para mobile.
-- [ ] 4.9 Implementar mobile aberto → desktop no modo controlado sem mutar a prop externa, disparando callback de fechamento e desativando imediatamente backdrop, portal, focus trap e qualquer representação mobile operável enquanto o layout desktop estiver ativo.
-- [ ] 4.10 Garantir que a transição mobile aberto → desktop termine com foco em elemento válido ainda montado e nunca deixe foco preso em overlay desmontado.
-- [ ] 4.11 Garantir que desktop → mobile após o fechamento coordenado mantenha o drawer fechado até nova ação explícita ou nova prop controlada de abertura.
-- [ ] 4.12 Tornar a estratégia responsiva segura para SSR/hidratação: não acessar `window`/`matchMedia` no servidor, manter primeiro render determinístico e evitar hydration mismatch.
-- [ ] 4.13 Validar que mudança de breakpoint não produz IDs duplicados, estado interno duplicado, efeitos/listeners duplicados, backdrop/focus trap residual ou duas representações operáveis na árvore de acessibilidade.
-- [ ] 4.14 Caso uma exceção exija duas montagens simultâneas, registrar a justificativa técnica no design e cobrir explicitamente colisões de IDs, estado, efeitos e acessibilidade antes de aceitar a solução.
-- [ ] 4.15 Respeitar `prefers-reduced-motion` nas transições estruturais e validar navegação por teclado em desktop e mobile.
+- [ ] 4.5 Garantir que `aria-expanded` e demais atributos de estado do trigger reflitam a apresentação móvel efetivamente aberta/operável, e não apenas uma prop controlada temporariamente suprimida no desktop.
+- [ ] 4.6 Reutilizar `AdsDrawer` para a navegação móvel quando compatível, preservando portal, backdrop, foco, Escape e retorno de foco sem duplicar lógica de overlay.
+- [ ] 4.7 Implementar contrato controlado e não controlado para abertura da navegação móvel e callback de alteração para coordenação pela aplicação, garantindo que o trigger não mantenha estado concorrente.
+- [ ] 4.8 Implementar a transição desktop/mobile preservando uma única instância lógica do conteúdo arbitrário da sidebar por vez; não manter duas montagens simultâneas como estratégia padrão.
+- [ ] 4.9 Implementar mobile aberto → desktop no modo não controlado encerrando o overlay e resetando o estado interno `mobileOpen`/equivalente para impedir estado latente e reabertura inesperada ao voltar para mobile.
+- [ ] 4.10 Implementar mobile aberto → desktop no modo controlado sem mutar a prop externa, disparando callback de fechamento e desativando imediatamente backdrop, portal, focus trap e qualquer representação mobile operável enquanto o layout desktop estiver ativo.
+- [ ] 4.11 No modo controlado, registrar apenas coordenação transitória suficiente para invalidar o `true` antigo após a solicitação de fechamento por breakpoint; não tratar essa coordenação como segunda fonte pública de verdade para `mobileOpen`.
+- [ ] 4.12 Exigir reconhecimento do fechamento controlado (`mobileOpen=false`) antes de aceitar nova abertura (`false → true`) após a transição para desktop, impedindo que um `true` antigo cause reabertura quando a viewport voltar ao mobile.
+- [ ] 4.13 Garantir que a transição mobile aberto → desktop termine com foco em elemento válido ainda montado e nunca force retorno para trigger que esteja desmontado, oculto ou não focável no desktop.
+- [ ] 4.14 Garantir que desktop → mobile após o fechamento coordenado mantenha o drawer fechado até nova ação explícita no modo não controlado ou nova intenção controlada reconhecida após o fechamento.
+- [ ] 4.15 Tornar a estratégia responsiva segura para SSR/hidratação: não acessar `window`/`matchMedia` no servidor, manter primeiro render determinístico e evitar hydration mismatch.
+- [ ] 4.16 Validar que mudança de breakpoint não produz IDs duplicados, estado interno duplicado, efeitos/listeners duplicados, backdrop/focus trap residual ou duas representações operáveis na árvore de acessibilidade.
+- [ ] 4.17 Caso uma exceção exija duas montagens simultâneas, registrar a justificativa técnica no design e cobrir explicitamente colisões de IDs, estado, efeitos e acessibilidade antes de aceitar a solução.
+- [ ] 4.18 Respeitar `prefers-reduced-motion` nas transições estruturais e validar navegação por teclado em desktop e mobile.
 
 ## 5. Integração com componentes e temas
 
@@ -72,9 +75,12 @@
 - [ ] 7.5 Criar testes específicos garantindo que `collapsed`/`defaultCollapsed` afetem somente a sidebar desktop e que o drawer mobile permaneça completo por padrão, inclusive quando a preferência desktop estiver recolhida.
 - [ ] 7.6 Criar testes de mobile aberto → desktop no modo não controlado validando reset de `mobileOpen`, fechamento do drawer, foco válido e ausência de backdrop, portal e focus trap residual.
 - [ ] 7.7 Criar testes de mobile aberto → desktop no modo controlado validando callback de fechamento, não mutação da prop, desativação dos efeitos do overlay e ausência de segunda instância operável da navegação.
-- [ ] 7.8 Criar teste desktop → mobile após fechamento coordenado garantindo que o drawer não reabra sem nova ação explícita ou nova prop controlada.
-- [ ] 7.9 Criar teste de renderização sem DOM/SSR e hidratação para garantir ausência de acesso a APIs de viewport no servidor e ausência de hydration mismatch no primeiro render do cliente.
-- [ ] 7.10 Criar/atualizar Playwright para fluxo desktop, fluxo mobile, abertura/fechamento pelo trigger, teclado e mudanças de viewport, incluindo mobile aberto → desktop → mobile.
-- [ ] 7.11 Atualizar snapshots visuais representativos nos temas claro e escuro para desktop expandido/recolhido e mobile.
-- [ ] 7.12 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
-- [ ] 7.13 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #15 antes de concluir e arquivar a change.
+- [ ] 7.8 Criar teste controlado em que a prop permanece `true` após o callback e a viewport volta ao mobile, garantindo que o drawer não reabra até ocorrer reconhecimento `false` seguido de nova abertura explícita `true`.
+- [ ] 7.9 Criar teste garantindo que `aria-expanded` reflita o overlay efetivamente operável durante a supressão controlada no desktop.
+- [ ] 7.10 Criar teste de foco para mobile aberto → desktop quando o trigger mobile deixa de estar focável, garantindo destino válido e ausência de foco em conteúdo desmontado.
+- [ ] 7.11 Criar teste desktop → mobile após fechamento coordenado garantindo que o drawer não reabra sem nova ação explícita ou nova intenção controlada reconhecida.
+- [ ] 7.12 Criar teste de renderização sem DOM/SSR e hidratação para garantir ausência de acesso a APIs de viewport no servidor e ausência de hydration mismatch no primeiro render do cliente.
+- [ ] 7.13 Criar/atualizar Playwright para fluxo desktop, fluxo mobile, abertura/fechamento pelo trigger, teclado e mudanças de viewport, incluindo mobile aberto → desktop → mobile.
+- [ ] 7.14 Atualizar snapshots visuais representativos nos temas claro e escuro para desktop expandido/recolhido e mobile.
+- [ ] 7.15 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
+- [ ] 7.16 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #15 antes de concluir e arquivar a change.

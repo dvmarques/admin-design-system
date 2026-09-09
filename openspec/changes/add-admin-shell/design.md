@@ -40,7 +40,9 @@ O header deve permitir branding e ações arbitrárias. A sidebar deve permitir 
 
 ### 3. Responsividade será comportamento do shell, não do roteador
 
-Em viewports amplas, a sidebar deve participar do layout e poder permanecer expandida ou recolhida. Em viewports estreitas, a navegação estrutural deve sair do fluxo principal e ser apresentada como overlay/drawer acessível.
+Em viewports amplas, a sidebar deve participar do layout e poder permanecer expandida ou recolhida. Em viewports estreitas, a navegação estrutural deve sair do fluxo principal e ser apresentada como overlay/drawer acessível em sua apresentação completa.
+
+O estado `collapsed`/`defaultCollapsed` é exclusivamente uma preferência estrutural da sidebar desktop. Ele pode alterar a largura/ocupação da sidebar persistente e continua exposto para que a composição consumidora adapte explicitamente seu conteúdo no desktop. Ao entrar no modo móvel, o drawer não deve herdar largura reduzida, labels ocultos ou outra representação compacta apenas porque a sidebar desktop está recolhida. A aplicação ainda pode adaptar explicitamente o conteúdo apresentado no mobile, mas essa adaptação não deve ocorrer automaticamente em função de `collapsed`.
 
 A implementação deve reutilizar `AdsDrawer` quando seus contratos de foco, Escape, backdrop e portal atenderem ao caso. O shell pode coordenar a abertura/fechamento, mas não deve copiar internamente toda a lógica de overlay existente.
 
@@ -57,9 +59,11 @@ O design system não persistirá esses estados. A aplicação poderá persistir 
 
 ### 5. Preferências são estruturais, não um sistema de configurações
 
-Nesta primeira versão, preferência de layout significa apenas estado necessário ao shell, principalmente expansão/recolhimento da sidebar. Densidade global, posição alternativa do header, múltiplas sidebars e layouts arbitrários ficam fora do escopo até existir demanda concreta.
+Nesta primeira versão, preferência de layout significa apenas estado necessário ao shell, principalmente expansão/recolhimento da sidebar desktop. Densidade global, posição alternativa do header, múltiplas sidebars e layouts arbitrários ficam fora do escopo até existir demanda concreta.
 
-O estado recolhido controla a ocupação estrutural da sidebar, não a transformação semântica do conteúdo arbitrário recebido. O shell deve expor esse estado de forma suficiente para que a composição consumidora adapte rótulos, ícones ou outras representações quando necessário, preservando nomes acessíveis e ordem de teclado. O design system não deve inferir automaticamente como converter conteúdo textual em uma versão compacta.
+O estado recolhido controla a ocupação estrutural da sidebar desktop, não a transformação semântica do conteúdo arbitrário recebido nem a apresentação do drawer mobile. O shell deve expor esse estado de forma suficiente para que a composição consumidora adapte rótulos, ícones ou outras representações quando necessário no desktop, preservando nomes acessíveis e ordem de teclado. O design system não deve inferir automaticamente como converter conteúdo textual em uma versão compacta.
+
+A abertura móvel (`mobileOpen` ou contrato equivalente) é um estado separado de `collapsed`: ela controla somente a existência/visibilidade da apresentação overlay no breakpoint móvel e não redefine a preferência estrutural desktop.
 
 O tema não será gerenciado pelo shell. O header poderá receber `ThemeToggle` ou outro controle fornecido pelo consumidor, preservando o mecanismo existente.
 
@@ -97,13 +101,25 @@ A decisão entre desktop e mobile não deve depender de leitura de viewport no s
 
 A implementação pode usar CSS para apresentação inicial e somente ativar coordenação de runtime após hidratação, ou outra estratégia equivalente, desde que evite hydration mismatch, acesso indevido a `window`/`matchMedia` durante SSR e remounts desnecessários que quebrem estado ou foco.
 
+### 12. A transição de mobile aberto para desktop encerra o overlay antes de consolidar o layout desktop
+
+Quando a viewport deixa o breakpoint móvel enquanto o drawer está aberto, o shell deve encerrar ou coordenar o encerramento da apresentação overlay de forma compatível com a ativação da sidebar desktop. Backdrop, portal e focus trap não podem permanecer ativos quando o layout desktop estiver visível, e o foco deve terminar em um elemento válido da interface, nunca preso em conteúdo desmontado.
+
+No modo não controlado, o shell deve fechar/resetar seu estado interno `mobileOpen` (ou equivalente) durante essa transição. Esse estado não pode permanecer latente e provocar reabertura inesperada do drawer caso a viewport volte ao mobile depois.
+
+No modo controlado, o shell não altera a prop recebida nem cria estado concorrente, mas deve disparar o callback de mudança solicitando `false` quando o breakpoint deixa de ser móvel. Enquanto o consumidor ainda não refletir a nova prop, o shell deve impedir que backdrop, portal, focus trap ou uma segunda instância operável da navegação permaneçam ativos no layout desktop. A composição deve continuar obedecendo ao princípio de uma única instância lógica da navegação.
+
+Se a viewport retornar ao mobile após o fechamento coordenado, o drawer deve permanecer fechado até nova ação explícita do usuário ou nova prop controlada do consumidor. A preferência desktop `collapsed` permanece independente dessa transição.
+
 ## Accessibility
 
 - O conteúdo principal deve ser exposto por landmark `main` e permanecer alcançável por teclado.
 - A navegação lateral deve ter nome acessível configurável quando necessário.
 - O trigger móvel deve expor nome acessível, `aria-expanded` e associação apropriada com a navegação controlada pelo shell.
 - Ao abrir a navegação móvel, foco, Escape, backdrop e retorno de foco devem seguir os contratos acessíveis já fornecidos pelo overlay reutilizado.
-- Ao recolher a sidebar, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis; a composição consumidora é responsável por adaptar seu conteúdo ao estado estrutural exposto pelo shell.
+- Ao recolher a sidebar desktop, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis; a composição consumidora é responsável por adaptar seu conteúdo ao estado estrutural exposto pelo shell.
+- O drawer mobile deve manter apresentação completa por padrão, sem ocultar labels ou reduzir largura em função do estado `collapsed` da sidebar desktop.
+- Ao cruzar de mobile aberto para desktop, focus trap, backdrop e portal do overlay devem ser encerrados e o foco deve ser restaurado ou transferido para um elemento válido ainda montado.
 - Estados visuais não podem depender apenas de cor e devem manter contraste adequado nos temas claro e escuro.
 - Foco visível deve permanecer consistente em controles do header, sidebar e conteúdo.
 - Transições estruturais devem respeitar `prefers-reduced-motion`.
@@ -115,10 +131,13 @@ A implementação pode usar CSS para apresentação inicial e somente ativar coo
 - Testes de integração com componentes públicos existentes, sem imports privados de `@admin-ds/components`.
 - Testes de consumo público garantindo exports, tipos, peer dependencies/dependencies declaradas e CSS compilado/importável do pacote `@admin-ds/admin`.
 - Testes específicos para garantir que a navegação responsiva não mantenha duas montagens simultâneas do mesmo conteúdo arbitrário.
+- Testes garantindo que `collapsed`/`defaultCollapsed` afetem somente a sidebar desktop e que o drawer mobile permaneça em apresentação completa por padrão.
+- Testes de transição mobile aberto → desktop nos modos não controlado e controlado, incluindo reset/solicitação de fechamento de `mobileOpen`, ausência de backdrop/portal/focus trap residual, foco válido e nenhuma segunda instância simultânea da navegação.
+- Teste de desktop → mobile após o fechamento para garantir ausência de reabertura inesperada do drawer.
 - Testes de SSR/hidratação garantindo markup inicial compatível e ausência de acesso a APIs de viewport no servidor.
 - Storybook cobrindo shell desktop expandido, desktop recolhido, mobile fechado/aberto e composição com ações/tema.
 - Admin demo com exemplo realista e mínimo, consumindo apenas APIs públicas.
-- Playwright e snapshots visuais para temas claro/escuro, viewport desktop e móvel, abertura da navegação e navegação por teclado.
+- Playwright e snapshots visuais para temas claro/escuro, viewport desktop e móvel, abertura da navegação, mudança de breakpoint e navegação por teclado.
 - Validação final com format, lint, typecheck, testes, build, E2E e OpenSpec strict.
 
 ## Risks / Trade-offs
@@ -132,6 +151,7 @@ A implementação pode usar CSS para apresentação inicial e somente ativar coo
 - Evitar duas montagens simultâneas pode exigir coordenação de breakpoint em runtime; caso CSS puro não seja suficiente sem duplicar a árvore, a implementação pode adotar comportamento React mínimo e bem encapsulado para preservar uma única instância lógica da navegação.
 - Estratégias baseadas em viewport no runtime podem causar divergência de SSR/hidratação; por isso o primeiro render deve permanecer determinístico e compatível com ambientes sem DOM.
 - Um trigger móvel totalmente customizável aumenta a responsabilidade de composição; por isso o shell deve encapsular estado e ARIA, deixando ao consumidor apenas a apresentação quando possível.
+- No modo móvel controlado, cruzar para desktop exige solicitar fechamento sem mutar a prop do consumidor; a implementação deve desativar imediatamente os efeitos do overlay no desktop e evitar reabertura/duplicação enquanto aguarda a atualização externa.
 
 ## Open Questions
 

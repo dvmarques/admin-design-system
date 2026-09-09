@@ -36,7 +36,7 @@ A aplicação consumidora continua responsável pelo conteúdo de cada região. 
 
 O shell deve produzir landmarks adequados para que tecnologias assistivas consigam distinguir banner/header, navegação lateral e conteúdo principal. Deve existir apenas um `main` estrutural fornecido pelo shell no caso comum, e a API não deve exigir que o consumidor recrie landmarks internamente.
 
-O header deve permitir branding e ações arbitrárias. A sidebar deve permitir conteúdo de navegação fornecido pelo consumidor, inclusive `AdsNav` ou composição equivalente.
+O header deve permitir branding e ações arbitrárias. A sidebar deve permitir conteúdo de navegação fornecido pelo consumidor por APIs públicas. O shell não deve assumir que `AdsNav` atual atende automaticamente a navegação vertical: durante a implementação, o componente existente deve ser validado nesse contexto e somente receber uma evolução genérica de orientação se essa capacidade fizer sentido fora do Admin Shell. Caso contrário, a sidebar permanece composicional e aceita outra estrutura pública de navegação fornecida pelo consumidor.
 
 ### 3. Responsividade será comportamento do shell, não do roteador
 
@@ -59,6 +59,8 @@ O design system não persistirá esses estados. A aplicação poderá persistir 
 
 Nesta primeira versão, preferência de layout significa apenas estado necessário ao shell, principalmente expansão/recolhimento da sidebar. Densidade global, posição alternativa do header, múltiplas sidebars e layouts arbitrários ficam fora do escopo até existir demanda concreta.
 
+O estado recolhido controla a ocupação estrutural da sidebar, não a transformação semântica do conteúdo arbitrário recebido. O shell deve expor esse estado de forma suficiente para que a composição consumidora adapte rótulos, ícones ou outras representações quando necessário, preservando nomes acessíveis e ordem de teclado. O design system não deve inferir automaticamente como converter conteúdo textual em uma versão compacta.
+
 O tema não será gerenciado pelo shell. O header poderá receber `ThemeToggle` ou outro controle fornecido pelo consumidor, preservando o mecanismo existente.
 
 ### 6. Tokens existentes serão priorizados
@@ -77,7 +79,7 @@ O `apps/admin-demo` receberá somente uma página ou seção suficiente para val
 - A navegação lateral deve ter nome acessível configurável quando necessário.
 - O controle que abre a navegação móvel deve expor nome, estado e associação apropriados.
 - Ao abrir a navegação móvel, foco, Escape, backdrop e retorno de foco devem seguir os contratos acessíveis já fornecidos pelo overlay reutilizado.
-- Ao recolher a sidebar, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis.
+- Ao recolher a sidebar, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis; a composição consumidora é responsável por adaptar seu conteúdo ao estado estrutural exposto pelo shell.
 - Estados visuais não podem depender apenas de cor e devem manter contraste adequado nos temas claro e escuro.
 - Foco visível deve permanecer consistente em controles do header, sidebar e conteúdo.
 - Transições estruturais devem respeitar `prefers-reduced-motion`.
@@ -99,6 +101,7 @@ O `apps/admin-demo` receberá somente uma página ou seção suficiente para val
 - Uma API excessivamente genérica pode não entregar valor além de CSS de layout; a primeira versão deve encapsular comportamento responsivo, acessibilidade e coordenação de navegação suficientes para justificar o pacote admin.
 - Reutilizar `AdsDrawer` pode exigir adaptação visual para representar navegação lateral; qualquer mudança necessária deve permanecer genérica e não degradar os contratos existentes de overlay.
 - Estado controlado e não controlado aumenta a superfície da API; a convenção deve seguir padrões React previsíveis e ser testada para evitar divergência entre props e estado interno.
+- Reaproveitar `AdsNav` na sidebar pode exigir uma orientação vertical ainda inexistente; essa evolução só deve ocorrer se resultar em capacidade genérica reutilizável, evitando acoplamento do componente ao Admin Shell.
 
 ## Open Questions
 

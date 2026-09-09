@@ -74,7 +74,7 @@ jobs:
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: |
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.sources
           npx playwright install --with-deps chromium
       - run: npm run build --workspace @admin-ds/tokens
       - run: npm run build --workspace @admin-ds/components

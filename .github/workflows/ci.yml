@@ -73,7 +73,9 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
-      - run: npx playwright install --with-deps chromium
+      - run: |
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
+          npx playwright install --with-deps chromium
       - run: npm run build --workspace @admin-ds/tokens
       - run: npm run build --workspace @admin-ds/components
       - run: npx playwright test

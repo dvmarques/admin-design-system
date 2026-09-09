@@ -1,7 +1,7 @@
 ## 1. Fundação e contratos públicos
 
 - [ ] 1.1 Revisar o placeholder atual de `@admin-ds/admin`, dependências do workspace e contratos públicos existentes em `@admin-ds/components` que serão reutilizados pelo shell.
-- [ ] 1.2 Definir a API pública final de `AdsAdminShell` e suas partes estruturais (`Header`, `Sidebar`, `Content` ou contrato equivalente), incluindo tipos React, atributos HTML suportados e nomes acessíveis.
+- [ ] 1.2 Definir a API pública final de `AdsAdminShell` e suas partes estruturais (`Header`, `Sidebar`, `Content` ou contrato equivalente), incluindo tipos React, atributos HTML suportados, nomes acessíveis e forma de expor o estado estrutural da sidebar à composição consumidora.
 - [ ] 1.3 Substituir `createAdminShell` pelo componente React real, preservando `react`/`react-dom` como peer dependencies e sem introduzir dependência de runtime desnecessária.
 - [ ] 1.4 Mapear tokens existentes para superfícies, bordas, texto, foco, espaçamento, sombras e motion; criar novos tokens somente quando houver conceito estrutural público realmente ausente.
 - [ ] 1.5 Garantir CSS distribuído consumível sem Tailwind na aplicação final e atualizar verificação de pacote/exports de `@admin-ds/admin`.
@@ -10,7 +10,7 @@
 
 - [ ] 2.1 Implementar o root `AdsAdminShell` com organização responsiva de header, sidebar e conteúdo principal.
 - [ ] 2.2 Implementar região de header composicional para branding, ações, usuário e controles fornecidos pela aplicação, sem props de domínio específicas.
-- [ ] 2.3 Implementar região de sidebar composicional com nome acessível configurável e suporte a conteúdo de navegação público como `AdsNav`.
+- [ ] 2.3 Implementar região de sidebar composicional com nome acessível configurável e suporte a conteúdo React arbitrário por APIs públicas, sem assumir que `AdsNav` atual atende automaticamente ao layout vertical.
 - [ ] 2.4 Implementar região principal com landmark `main`, dimensionamento seguro, overflow adequado e preservação do fluxo de foco.
 - [ ] 2.5 Implementar classes, data attributes e/ou CSS variables públicas apenas quando necessárias para estilização e integração previsível pelo consumidor.
 
@@ -18,9 +18,10 @@
 
 - [ ] 3.1 Implementar estados expandido e recolhido da sidebar em viewports amplas sem sobrepor o conteúdo principal.
 - [ ] 3.2 Implementar contrato controlado (`collapsed`/equivalente + callback) e não controlado (`defaultCollapsed`/equivalente) seguindo convenções React previsíveis.
-- [ ] 3.3 Garantir que o estado recolhido não torne controles existentes inacessíveis; conteúdo fornecido pela aplicação deve continuar com nome acessível e ordem de teclado válida.
-- [ ] 3.4 Não persistir automaticamente a preferência; documentar exemplo de persistência externa controlada pelo consumidor.
-- [ ] 3.5 Cobrir expansão/recolhimento, modo controlado, modo não controlado e atualização externa com testes unitários e de acessibilidade.
+- [ ] 3.3 Expor o estado estrutural da sidebar de forma suficiente para que a composição consumidora adapte labels, ícones ou outra representação quando recolhida, sem transformação automática de conteúdo pelo shell.
+- [ ] 3.4 Garantir que o estado recolhido não torne controles existentes inacessíveis; conteúdo fornecido pela aplicação deve continuar com nome acessível e ordem de teclado válida.
+- [ ] 3.5 Não persistir automaticamente a preferência; documentar exemplo de persistência externa controlada pelo consumidor.
+- [ ] 3.6 Cobrir expansão/recolhimento, modo controlado, modo não controlado, atualização externa e adaptação do conteúdo consumidor com testes unitários e de acessibilidade.
 
 ## 4. Navegação responsiva
 
@@ -33,18 +34,20 @@
 
 ## 5. Integração com componentes e temas
 
-- [ ] 5.1 Demonstrar composição do shell com `AdsNav`, `AdsButton`, `AdsIcon`, `AdsDrawer` e `ThemeToggle` exclusivamente por exports públicos.
-- [ ] 5.2 Garantir que tema claro/escuro seja herdado pelo shell pelos tokens existentes, sem estado de tema próprio em `@admin-ds/admin`.
-- [ ] 5.3 Validar foco visível, contraste, divisores, superfícies e estados estruturais em ambos os temas.
-- [ ] 5.4 Confirmar que nenhuma mudança em `@admin-ds/components` é necessária; se houver lacuna genérica indispensável, implementar somente o contrato mínimo reutilizável e cobri-lo separadamente.
+- [ ] 5.1 Validar se `AdsNav` atende ao uso lateral apenas por sua API pública; se faltar orientação vertical e a capacidade for genérica, evoluir `AdsNav` minimamente e cobrir essa evolução separadamente. Caso contrário, demonstrar a sidebar com outra composição pública apropriada.
+- [ ] 5.2 Demonstrar composição do shell com componentes públicos adequados como `AdsButton`, `AdsIcon`, `AdsDrawer` e `ThemeToggle`, sem imports privados.
+- [ ] 5.3 Garantir que tema claro/escuro seja herdado pelo shell pelos tokens existentes, sem estado de tema próprio em `@admin-ds/admin`.
+- [ ] 5.4 Validar foco visível, contraste, divisores, superfícies e estados estruturais em ambos os temas.
+- [ ] 5.5 Confirmar que nenhuma mudança em `@admin-ds/components` é necessária além de eventual capacidade genérica indispensável identificada no item 5.1.
 
 ## 6. Documentação e demonstração
 
 - [ ] 6.1 Criar documentação Storybook para API, composição das regiões, desktop expandido, desktop recolhido, mobile fechado/aberto e estados controlados/não controlados.
 - [ ] 6.2 Adicionar exemplo de composição com branding, navegação, ações e controle de tema sem acoplamento a um domínio específico.
-- [ ] 6.3 Atualizar `apps/admin-demo` com uma demonstração mínima do Admin Shell usando apenas `@admin-ds/admin`, `@admin-ds/components` e CSS públicos.
-- [ ] 6.4 Manter a demo desta change limitada à validação do shell, sem antecipar a remodelação completa prevista em `add-nextjs-admin-demo`.
-- [ ] 6.5 Documentar responsabilidades do consumidor: roteamento, autenticação, autorização, persistência de preferências, definição dos itens de navegação e conteúdo do header.
+- [ ] 6.3 Demonstrar como o consumidor adapta o conteúdo da sidebar ao estado recolhido sem depender de transformação automática feita pelo shell.
+- [ ] 6.4 Atualizar `apps/admin-demo` com uma demonstração mínima do Admin Shell usando apenas `@admin-ds/admin`, `@admin-ds/components` e CSS públicos.
+- [ ] 6.5 Manter a demo desta change limitada à validação do shell, sem antecipar a remodelação completa prevista em `add-nextjs-admin-demo`.
+- [ ] 6.6 Documentar responsabilidades do consumidor: roteamento, autenticação, autorização, persistência de preferências, definição dos itens de navegação, adaptação do conteúdo recolhido e conteúdo do header.
 
 ## 7. Testes e validação
 

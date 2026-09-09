@@ -85,11 +85,23 @@ A implementação deve evitar renderizar simultaneamente a mesma composição de
 
 A estratégia responsiva deve manter uma única instância lógica do conteúdo de navegação por vez. Se a solução escolhida exigir troca de montagem entre desktop e mobile, essa transição deve preservar os contratos de acessibilidade e estado documentados. Uma solução com duas montagens simultâneas só poderá ser aceita se houver justificativa técnica explícita e testes que provem ausência de colisões de IDs, estado ou efeitos; ela não é o comportamento padrão esperado desta change.
 
+### 10. O trigger mobile será uma API pública coordenada pelo shell
+
+O shell deve fornecer um contrato público para o controle que abre a navegação móvel, preferencialmente uma primitive/parte composicional como `AdsAdminShell.MobileMenuTrigger` ou API equivalente. O consumidor continua livre para definir conteúdo visual, ícone, rótulo e posicionamento no header, mas não deve precisar reproduzir manualmente a coordenação interna do estado móvel.
+
+Esse contrato deve coordenar `aria-expanded`, associação com a navegação móvel, abertura/fechamento nos modos controlado e não controlado e retorno de foco ao elemento que iniciou a abertura. A implementação pode permitir composição customizada do controle, desde que preserve esses atributos e comportamentos.
+
+### 11. A estratégia responsiva deve ser segura para SSR e hidratação
+
+A decisão entre desktop e mobile não deve depender de leitura de viewport no servidor nem produzir markup inicial incompatível entre renderização server-side e primeiro render do cliente. Caso seja necessário comportamento React para preservar uma única instância lógica da sidebar, ele deve ser encapsulado de forma SSR-safe.
+
+A implementação pode usar CSS para apresentação inicial e somente ativar coordenação de runtime após hidratação, ou outra estratégia equivalente, desde que evite hydration mismatch, acesso indevido a `window`/`matchMedia` durante SSR e remounts desnecessários que quebrem estado ou foco.
+
 ## Accessibility
 
 - O conteúdo principal deve ser exposto por landmark `main` e permanecer alcançável por teclado.
 - A navegação lateral deve ter nome acessível configurável quando necessário.
-- O controle que abre a navegação móvel deve expor nome, estado e associação apropriados.
+- O trigger móvel deve expor nome acessível, `aria-expanded` e associação apropriada com a navegação controlada pelo shell.
 - Ao abrir a navegação móvel, foco, Escape, backdrop e retorno de foco devem seguir os contratos acessíveis já fornecidos pelo overlay reutilizado.
 - Ao recolher a sidebar, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis; a composição consumidora é responsável por adaptar seu conteúdo ao estado estrutural exposto pelo shell.
 - Estados visuais não podem depender apenas de cor e devem manter contraste adequado nos temas claro e escuro.
@@ -99,10 +111,11 @@ A estratégia responsiva deve manter uma única instância lógica do conteúdo 
 ## Testing Strategy
 
 - Testes unitários para estrutura, landmarks, props públicas e contratos controlado/não controlado.
-- Testes de acessibilidade para nomes de navegação, controles de abertura/recolhimento, foco e uso por teclado.
+- Testes de acessibilidade para nomes de navegação, trigger móvel, controles de abertura/recolhimento, foco e uso por teclado.
 - Testes de integração com componentes públicos existentes, sem imports privados de `@admin-ds/components`.
 - Testes de consumo público garantindo exports, tipos, peer dependencies/dependencies declaradas e CSS compilado/importável do pacote `@admin-ds/admin`.
 - Testes específicos para garantir que a navegação responsiva não mantenha duas montagens simultâneas do mesmo conteúdo arbitrário.
+- Testes de SSR/hidratação garantindo markup inicial compatível e ausência de acesso a APIs de viewport no servidor.
 - Storybook cobrindo shell desktop expandido, desktop recolhido, mobile fechado/aberto e composição com ações/tema.
 - Admin demo com exemplo realista e mínimo, consumindo apenas APIs públicas.
 - Playwright e snapshots visuais para temas claro/escuro, viewport desktop e móvel, abertura da navegação e navegação por teclado.
@@ -117,7 +130,9 @@ A estratégia responsiva deve manter uma única instância lógica do conteúdo 
 - Reaproveitar `AdsNav` na sidebar pode exigir uma orientação vertical ainda inexistente; essa evolução só deve ocorrer se resultar em capacidade genérica reutilizável, evitando acoplamento do componente ao Admin Shell.
 - Reutilizar componentes de `@admin-ds/components` cria uma relação de runtime que precisa estar refletida no contrato de empacotamento e consumo de CSS do pacote admin.
 - Evitar duas montagens simultâneas pode exigir coordenação de breakpoint em runtime; caso CSS puro não seja suficiente sem duplicar a árvore, a implementação pode adotar comportamento React mínimo e bem encapsulado para preservar uma única instância lógica da navegação.
+- Estratégias baseadas em viewport no runtime podem causar divergência de SSR/hidratação; por isso o primeiro render deve permanecer determinístico e compatível com ambientes sem DOM.
+- Um trigger móvel totalmente customizável aumenta a responsabilidade de composição; por isso o shell deve encapsular estado e ARIA, deixando ao consumidor apenas a apresentação quando possível.
 
 ## Open Questions
 
-Nenhuma decisão externa é necessária para iniciar a implementação. A nomenclatura final das partes compostas, o breakpoint exato e a forma concreta de declarar a dependência entre pacotes podem ser refinados durante a implementação, desde que preservem as requirements desta change, os contratos públicos de empacotamento/CSS e a separação de responsabilidades definida acima.
+Nenhuma decisão externa é necessária para iniciar a implementação. A nomenclatura final das partes compostas, o breakpoint exato, a forma concreta de declarar a dependência entre pacotes e a técnica interna SSR-safe podem ser refinados durante a implementação, desde que preservem as requirements desta change, os contratos públicos de empacotamento/CSS, acessibilidade e a separação de responsabilidades definida acima.

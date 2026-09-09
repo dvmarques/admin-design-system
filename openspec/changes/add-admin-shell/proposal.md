@@ -10,6 +10,7 @@ O Admin Design System já fornece primitivas, formulários, overlays, navegaçã
 - Permitir estado expandido/recolhido da sidebar em desktop e abertura/fechamento da navegação móvel de forma controlada ou não controlada, sem persistência obrigatória no design system.
 - Permitir que aplicações componham branding, navegação, ações, usuário e preferências no shell sem acoplamento a Next.js ou a um roteador específico.
 - Respeitar tokens, temas claro/escuro, foco visível, reduced motion e demais contratos visuais do design system.
+- Declarar explicitamente qualquer dependência de runtime e requisito de estilos entre `@admin-ds/admin` e `@admin-ds/components`, evitando funcionamento dependente apenas da resolução interna do monorepo.
 - Documentar a API pública no Storybook, adicionar exemplos no admin demo e cobrir comportamento, acessibilidade, responsividade, consumo público e snapshots visuais.
 
 Fora do escopo: autenticação, autorização, roteamento, carregamento de dados, breadcrumbs automáticos, menus derivados de permissões, persistência de preferências em backend/localStorage, dashboards, filtros avançados e evolução completa do `apps/admin-demo` para uma aplicação administrativa final. Esses itens pertencem à aplicação consumidora ou às próximas changes do roadmap.
@@ -28,9 +29,9 @@ Nenhuma.
 
 ## Impact
 
-- Pacote `@admin-ds/admin`: substituição do placeholder atual por componentes React, tipos públicos, exports e estilos distribuídos do Admin Shell.
-- Pacote `@admin-ds/components`: reutilização de componentes públicos existentes como `AdsDrawer`, `AdsButton`, `AdsIcon`, `AdsNav` e `ThemeToggle`; alterações nesse pacote somente se uma lacuna genérica indispensável for identificada durante a implementação.
+- Pacote `@admin-ds/admin`: substituição do placeholder atual por componentes React, tipos públicos, exports, estilos distribuídos do Admin Shell e declaração explícita das dependências públicas necessárias ao runtime.
+- Pacote `@admin-ds/components`: reutilização de componentes públicos existentes como `AdsDrawer`, `AdsButton`, `AdsIcon`, `AdsNav` e `ThemeToggle`; alterações nesse pacote somente se uma lacuna genérica indispensável for identificada durante a implementação. Se houver import de runtime a partir de `@admin-ds/admin`, a relação entre os pacotes e o consumo de `@admin-ds/components/styles.css` devem ficar explicitamente definidos e testados.
 - Pacote de tokens: possível adição de tokens semânticos exclusivamente para conceitos estruturais ausentes, como dimensões do shell, superfícies ou divisores, priorizando reuso dos tokens existentes.
 - Aplicação `apps/docs`: documentação e histórias do shell, seus estados e breakpoints representativos.
 - Aplicação `apps/admin-demo`: exemplo integrado mínimo para validar a composição sem antecipar a change `add-nextjs-admin-demo`.
-- Qualidade: testes unitários, acessibilidade, consumo público, responsividade, teclado, Playwright e snapshots visuais nos temas claro e escuro.
+- Qualidade: testes unitários, acessibilidade, consumo público, dependências/estilos declarados, responsividade, teclado, Playwright e snapshots visuais nos temas claro e escuro.

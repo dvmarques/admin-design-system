@@ -93,7 +93,7 @@ A estratégia responsiva deve manter uma única instância lógica do conteúdo 
 
 O shell deve fornecer um contrato público para o controle que abre a navegação móvel, preferencialmente uma primitive/parte composicional como `AdsAdminShell.MobileMenuTrigger` ou API equivalente. O consumidor continua livre para definir conteúdo visual, ícone, rótulo e posicionamento no header, mas não deve precisar reproduzir manualmente a coordenação interna do estado móvel.
 
-Esse contrato deve coordenar `aria-expanded`, associação com a navegação móvel, abertura/fechamento nos modos controlado e não controlado e retorno de foco ao elemento que iniciou a abertura. A implementação pode permitir composição customizada do controle, desde que preserve esses atributos e comportamentos.
+Esse contrato deve coordenar `aria-expanded`, associação com a navegação móvel, abertura/fechamento nos modos controlado e não controlado e retorno de foco ao elemento que iniciou a abertura. `aria-expanded` deve refletir a apresentação móvel efetivamente aberta/operável no breakpoint atual, e não apenas o valor bruto de uma prop controlada que esteja temporariamente suprimida durante a transição para desktop. A implementação pode permitir composição customizada do controle, desde que preserve esses atributos e comportamentos.
 
 ### 11. A estratégia responsiva deve ser segura para SSR e hidratação
 
@@ -107,19 +107,25 @@ Quando a viewport deixa o breakpoint móvel enquanto o drawer está aberto, o sh
 
 No modo não controlado, o shell deve fechar/resetar seu estado interno `mobileOpen` (ou equivalente) durante essa transição. Esse estado não pode permanecer latente e provocar reabertura inesperada do drawer caso a viewport volte ao mobile depois.
 
-No modo controlado, o shell não altera a prop recebida nem cria estado concorrente, mas deve disparar o callback de mudança solicitando `false` quando o breakpoint deixa de ser móvel. Enquanto o consumidor ainda não refletir a nova prop, o shell deve impedir que backdrop, portal, focus trap ou uma segunda instância operável da navegação permaneçam ativos no layout desktop. A composição deve continuar obedecendo ao princípio de uma única instância lógica da navegação.
+No modo controlado, o shell não altera a prop recebida nem cria uma segunda fonte pública de verdade, mas deve disparar o callback de mudança solicitando `false` quando o breakpoint deixa de ser móvel. Enquanto o consumidor ainda não refletir a nova prop, o shell deve impedir que backdrop, portal, focus trap ou uma segunda instância operável da navegação permaneçam ativos no layout desktop. A composição deve continuar obedecendo ao princípio de uma única instância lógica da navegação.
 
-Se a viewport retornar ao mobile após o fechamento coordenado, o drawer deve permanecer fechado até nova ação explícita do usuário ou nova prop controlada do consumidor. A preferência desktop `collapsed` permanece independente dessa transição.
+A implementação pode manter coordenação transitória interna apenas para marcar que aquele `true` controlado já foi invalidado por uma solicitação de fechamento causada pelo breakpoint. Essa coordenação não substitui a prop controlada, não vira API pública e não representa um segundo estado controlável; serve somente para impedir que o mesmo `true` antigo reabra o drawer caso a viewport retorne ao mobile antes de o consumidor reconhecer o fechamento.
+
+Depois dessa solicitação, uma nova abertura controlada deve exigir reconhecimento do fechamento (`mobileOpen=false`) seguido de nova intenção explícita de abertura (`false → true`), ou contrato público equivalente. Um `true` contínuo que nunca reconheceu o fechamento não deve ser tratado como nova abertura.
+
+Se a viewport retornar ao mobile após o fechamento coordenado, o drawer deve permanecer fechado até nova ação explícita do usuário no modo não controlado ou nova intenção controlada reconhecida conforme esse contrato. A preferência desktop `collapsed` permanece independente dessa transição.
+
+Se o trigger que iniciou a abertura deixar de estar montado, visível ou focável no desktop, o shell não deve forçar retorno de foco para ele. O foco deve terminar em elemento válido ainda operável conforme a estratégia acessível adotada, sem permanecer preso ao overlay desmontado.
 
 ## Accessibility
 
 - O conteúdo principal deve ser exposto por landmark `main` e permanecer alcançável por teclado.
 - A navegação lateral deve ter nome acessível configurável quando necessário.
-- O trigger móvel deve expor nome acessível, `aria-expanded` e associação apropriada com a navegação controlada pelo shell.
+- O trigger móvel deve expor nome acessível, `aria-expanded` e associação apropriada com a navegação controlada pelo shell; o estado anunciado deve corresponder à apresentação móvel efetivamente operável.
 - Ao abrir a navegação móvel, foco, Escape, backdrop e retorno de foco devem seguir os contratos acessíveis já fornecidos pelo overlay reutilizado.
 - Ao recolher a sidebar desktop, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis; a composição consumidora é responsável por adaptar seu conteúdo ao estado estrutural exposto pelo shell.
 - O drawer mobile deve manter apresentação completa por padrão, sem ocultar labels ou reduzir largura em função do estado `collapsed` da sidebar desktop.
-- Ao cruzar de mobile aberto para desktop, focus trap, backdrop e portal do overlay devem ser encerrados e o foco deve ser restaurado ou transferido para um elemento válido ainda montado.
+- Ao cruzar de mobile aberto para desktop, focus trap, backdrop e portal do overlay devem ser encerrados e o foco deve ser restaurado ou transferido para um elemento válido ainda montado; triggers ocultos/desmontados não podem receber foco forçado.
 - Estados visuais não podem depender apenas de cor e devem manter contraste adequado nos temas claro e escuro.
 - Foco visível deve permanecer consistente em controles do header, sidebar e conteúdo.
 - Transições estruturais devem respeitar `prefers-reduced-motion`.
@@ -133,6 +139,9 @@ Se a viewport retornar ao mobile após o fechamento coordenado, o drawer deve pe
 - Testes específicos para garantir que a navegação responsiva não mantenha duas montagens simultâneas do mesmo conteúdo arbitrário.
 - Testes garantindo que `collapsed`/`defaultCollapsed` afetem somente a sidebar desktop e que o drawer mobile permaneça em apresentação completa por padrão.
 - Testes de transição mobile aberto → desktop nos modos não controlado e controlado, incluindo reset/solicitação de fechamento de `mobileOpen`, ausência de backdrop/portal/focus trap residual, foco válido e nenhuma segunda instância simultânea da navegação.
+- Teste controlado em que `mobileOpen` permanece `true` após a solicitação de fechamento e a viewport retorna ao mobile, garantindo ausência de reabertura até reconhecimento `false` seguido de nova abertura explícita.
+- Teste de `aria-expanded` durante supressão controlada no desktop para garantir que o trigger reflita a apresentação efetivamente operável.
+- Teste de foco quando o trigger mobile deixa de estar focável durante a transição para desktop.
 - Teste de desktop → mobile após o fechamento para garantir ausência de reabertura inesperada do drawer.
 - Testes de SSR/hidratação garantindo markup inicial compatível e ausência de acesso a APIs de viewport no servidor.
 - Storybook cobrindo shell desktop expandido, desktop recolhido, mobile fechado/aberto e composição com ações/tema.
@@ -151,7 +160,7 @@ Se a viewport retornar ao mobile após o fechamento coordenado, o drawer deve pe
 - Evitar duas montagens simultâneas pode exigir coordenação de breakpoint em runtime; caso CSS puro não seja suficiente sem duplicar a árvore, a implementação pode adotar comportamento React mínimo e bem encapsulado para preservar uma única instância lógica da navegação.
 - Estratégias baseadas em viewport no runtime podem causar divergência de SSR/hidratação; por isso o primeiro render deve permanecer determinístico e compatível com ambientes sem DOM.
 - Um trigger móvel totalmente customizável aumenta a responsabilidade de composição; por isso o shell deve encapsular estado e ARIA, deixando ao consumidor apenas a apresentação quando possível.
-- No modo móvel controlado, cruzar para desktop exige solicitar fechamento sem mutar a prop do consumidor; a implementação deve desativar imediatamente os efeitos do overlay no desktop e evitar reabertura/duplicação enquanto aguarda a atualização externa.
+- No modo móvel controlado, cruzar para desktop exige solicitar fechamento sem mutar a prop do consumidor; a implementação deve desativar imediatamente os efeitos do overlay no desktop e invalidar a intenção antiga até reconhecimento do fechamento, evitando reabertura/duplicação enquanto aguarda a atualização externa.
 
 ## Open Questions
 

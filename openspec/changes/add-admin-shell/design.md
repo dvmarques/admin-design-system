@@ -73,6 +73,18 @@ Dimensões que não precisarem ser customizadas por consumidores podem permanece
 
 O `apps/admin-demo` receberá somente uma página ou seção suficiente para validar o shell, seus estados, responsividade e composição com componentes públicos. A remodelação completa da aplicação demo como admin final pertence ao item seguinte do roadmap.
 
+### 8. Dependências entre `@admin-ds/admin` e `@admin-ds/components` serão explícitas
+
+Se `@admin-ds/admin` importar componentes de runtime de `@admin-ds/components`, essa relação deve ser declarada de forma explícita no pacote, seguindo a estratégia adotada pelo workspace para consumo/publicação. A implementação deve validar se `@admin-ds/components` entra como dependency/peer dependency compatível com o modelo do monorepo, evitando que o pacote admin funcione apenas por resolução incidental do workspace.
+
+O contrato de estilos também deve permanecer explícito. O shell não deve depender silenciosamente de CSS não declarado: estilos próprios de `@admin-ds/admin` devem ser exportados pelo pacote, e qualquer estilo requerido de `@admin-ds/components` deve permanecer compatível com a forma pública de consumo já existente. A documentação e os testes de consumo devem demonstrar quais imports de CSS são necessários para uma aplicação consumidora.
+
+### 9. A navegação responsiva não deve manter duas montagens simultâneas do mesmo conteúdo
+
+A implementação deve evitar renderizar simultaneamente a mesma composição de sidebar em uma árvore desktop e em outra árvore mobile/drawer. Duplicar children arbitrários pode duplicar IDs, estado interno, efeitos, listeners e integrações de roteamento, mesmo quando uma das cópias está visualmente oculta.
+
+A estratégia responsiva deve manter uma única instância lógica do conteúdo de navegação por vez. Se a solução escolhida exigir troca de montagem entre desktop e mobile, essa transição deve preservar os contratos de acessibilidade e estado documentados. Uma solução com duas montagens simultâneas só poderá ser aceita se houver justificativa técnica explícita e testes que provem ausência de colisões de IDs, estado ou efeitos; ela não é o comportamento padrão esperado desta change.
+
 ## Accessibility
 
 - O conteúdo principal deve ser exposto por landmark `main` e permanecer alcançável por teclado.
@@ -89,7 +101,8 @@ O `apps/admin-demo` receberá somente uma página ou seção suficiente para val
 - Testes unitários para estrutura, landmarks, props públicas e contratos controlado/não controlado.
 - Testes de acessibilidade para nomes de navegação, controles de abertura/recolhimento, foco e uso por teclado.
 - Testes de integração com componentes públicos existentes, sem imports privados de `@admin-ds/components`.
-- Testes de consumo público garantindo exports, tipos, peer dependencies e CSS compilado do pacote `@admin-ds/admin`.
+- Testes de consumo público garantindo exports, tipos, peer dependencies/dependencies declaradas e CSS compilado/importável do pacote `@admin-ds/admin`.
+- Testes específicos para garantir que a navegação responsiva não mantenha duas montagens simultâneas do mesmo conteúdo arbitrário.
 - Storybook cobrindo shell desktop expandido, desktop recolhido, mobile fechado/aberto e composição com ações/tema.
 - Admin demo com exemplo realista e mínimo, consumindo apenas APIs públicas.
 - Playwright e snapshots visuais para temas claro/escuro, viewport desktop e móvel, abertura da navegação e navegação por teclado.
@@ -102,7 +115,9 @@ O `apps/admin-demo` receberá somente uma página ou seção suficiente para val
 - Reutilizar `AdsDrawer` pode exigir adaptação visual para representar navegação lateral; qualquer mudança necessária deve permanecer genérica e não degradar os contratos existentes de overlay.
 - Estado controlado e não controlado aumenta a superfície da API; a convenção deve seguir padrões React previsíveis e ser testada para evitar divergência entre props e estado interno.
 - Reaproveitar `AdsNav` na sidebar pode exigir uma orientação vertical ainda inexistente; essa evolução só deve ocorrer se resultar em capacidade genérica reutilizável, evitando acoplamento do componente ao Admin Shell.
+- Reutilizar componentes de `@admin-ds/components` cria uma relação de runtime que precisa estar refletida no contrato de empacotamento e consumo de CSS do pacote admin.
+- Evitar duas montagens simultâneas pode exigir coordenação de breakpoint em runtime; caso CSS puro não seja suficiente sem duplicar a árvore, a implementação pode adotar comportamento React mínimo e bem encapsulado para preservar uma única instância lógica da navegação.
 
 ## Open Questions
 
-Nenhuma decisão externa é necessária para iniciar a implementação. A nomenclatura final das partes compostas e o breakpoint exato podem ser refinados durante a implementação, desde que preservem as requirements desta change, os tokens existentes e a separação de responsabilidades definida acima.
+Nenhuma decisão externa é necessária para iniciar a implementação. A nomenclatura final das partes compostas, o breakpoint exato e a forma concreta de declarar a dependência entre pacotes podem ser refinados durante a implementação, desde que preservem as requirements desta change, os contratos públicos de empacotamento/CSS e a separação de responsabilidades definida acima.

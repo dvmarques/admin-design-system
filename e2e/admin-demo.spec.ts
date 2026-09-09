@@ -29,11 +29,18 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 	await expect(page.getByRole('heading', { name: 'Tokens públicos' })).toBeVisible();
 
+	const darkBackground = await page.locator('body').evaluate((element) => {
+		return getComputedStyle(element).backgroundColor;
+	});
 	const toggle = page.getByRole('button', { name: 'Usar tema claro' });
 	await toggle.focus();
 	await toggle.press('Enter');
 
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+	const lightBackground = await page.locator('body').evaluate((element) => {
+		return getComputedStyle(element).backgroundColor;
+	});
+	expect(lightBackground).not.toBe(darkBackground);
 	expect(hydrationErrors).toEqual([]);
 });
 

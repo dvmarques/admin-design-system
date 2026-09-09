@@ -44,6 +44,9 @@ export default async function HomePage() {
 					<div className="demo-hero__tools">
 						<span className="demo-theme-label">Aparência</span>
 						<ThemeControl initialTheme={theme} />
+						<a className="demo-data-display-link" href="/data-display">
+							Ver componentes de exibição de dados
+						</a>
 					</div>
 				</header>
 

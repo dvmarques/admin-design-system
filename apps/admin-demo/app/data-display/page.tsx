@@ -20,12 +20,22 @@ import {
 	AdsTableRow,
 	AdsTypography,
 } from '@admin-ds/components';
+import { ThemeControl } from '../theme-control';
 
 export default function DataDisplayPage() {
 	return (
 		<main className="demo-page">
 			<div className="demo-shell">
 				<header className="demo-section">
+					<div className="demo-page-navigation">
+						<a className="demo-data-display-link" href="/">
+							Voltar para a página inicial
+						</a>
+						<div className="demo-hero__tools">
+							<span className="demo-theme-label">Aparência</span>
+							<ThemeControl />
+						</div>
+					</div>
 					<p className="demo-kicker">Data display</p>
 					<AdsTypography as="h1" variant="heading1">
 						Apresentação de dados administrativos

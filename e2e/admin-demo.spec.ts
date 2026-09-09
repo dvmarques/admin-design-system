@@ -23,6 +23,7 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 		},
 	]);
 	await page.goto('/');
+	await expect(page.getByRole('link', { name: /exibi/i })).toHaveAttribute('href', '/data-display');
 
 	await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');

@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-data-display-components` - Adicionados `AdsTable`, `AdsList`, `AdsCard`,
+  `AdsProgress` e `AdsEmptyState` para apresentação acessível e tematizável de
+  dados administrativos, com CSS público, histórias Storybook e exemplos no
+  admin demo.
 - `automate-release-process` - Automatizado o fluxo de preparação, validação,
   publicação recuperável e documentação operacional de releases.
 

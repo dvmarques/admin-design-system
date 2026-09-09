@@ -55,6 +55,25 @@ Em viewports estreitas, a navegação estrutural MUST deixar de reservar permane
 - **WHEN** a navegação móvel está aberta e o usuário pressiona `Escape`
 - **THEN** a navegação fecha e o foco retorna ao controle que iniciou a abertura conforme o contrato do overlay utilizado
 
+### Requirement: Shell fornece contrato público para o trigger da navegação móvel
+
+O shell MUST fornecer uma API pública para compor o controle que abre a navegação móvel, como uma primitive `MobileMenuTrigger` ou contrato equivalente. Essa API MUST coordenar o estado móvel e os atributos acessíveis necessários, sem exigir que o consumidor reproduza manualmente detalhes internos do shell. O consumidor MAY customizar a apresentação e o conteúdo do trigger.
+
+#### Scenario: Consumidor posiciona trigger no header
+
+- **WHEN** a aplicação compõe o trigger móvel dentro de seu header
+- **THEN** o controle usa o estado coordenado pelo shell, comunica `aria-expanded`, mantém associação com a navegação móvel e abre o drawer correspondente
+
+#### Scenario: Aplicação usa estado móvel controlado
+
+- **WHEN** a navegação móvel é controlada externamente por prop e callback
+- **THEN** a ativação do trigger solicita a mudança pelo contrato público sem manter estado concorrente interno
+
+#### Scenario: Drawer fecha e foco retorna ao trigger
+
+- **WHEN** a navegação móvel é fechada após ter sido aberta por um trigger do shell
+- **THEN** o foco pode retornar ao elemento que iniciou a abertura conforme o contrato acessível do overlay utilizado
+
 ### Requirement: Shell não depende de roteador para navegação
 
 O shell MUST NOT importar ou exigir Next.js, React Router ou outra biblioteca de roteamento. Links, callbacks, item atual e fechamento da navegação após uma ação MUST ser controláveis pelo conteúdo ou pela aplicação consumidora.
@@ -82,3 +101,22 @@ A mudança entre modos desktop e móvel MUST NOT manter duas montagens simultân
 
 - **WHEN** uma solução técnica só puder ser implementada com duas montagens simultâneas
 - **THEN** essa exceção deve ser justificada explicitamente e coberta por testes que demonstrem ausência de colisões de IDs, estado, efeitos e exposição duplicada à árvore de acessibilidade
+
+### Requirement: Responsividade é segura para SSR e hidratação
+
+O comportamento responsivo MUST ser compatível com renderização sem DOM e MUST NOT depender de `window`, `matchMedia` ou leitura de viewport durante SSR. O markup do primeiro render do cliente MUST ser compatível com o produzido no servidor, evitando hydration mismatch. Qualquer coordenação de breakpoint em runtime MUST ocorrer de forma encapsulada e segura após hidratação ou por estratégia equivalente.
+
+#### Scenario: Shell é renderizado no servidor
+
+- **WHEN** `AdsAdminShell` é renderizado em ambiente sem `window` ou `matchMedia`
+- **THEN** a renderização conclui sem erro e produz markup determinístico que pode ser hidratado pelo cliente
+
+#### Scenario: Cliente hidrata em viewport móvel
+
+- **WHEN** o markup gerado no servidor é hidratado em uma viewport estreita
+- **THEN** o primeiro render do cliente permanece compatível com o servidor e a adaptação ao modo móvel ocorre sem hydration mismatch
+
+#### Scenario: Breakpoint muda após hidratação
+
+- **WHEN** a viewport cruza o breakpoint depois que a aplicação já foi hidratada
+- **THEN** o shell atualiza a apresentação responsiva preservando seus contratos de estado, foco e instância lógica da navegação

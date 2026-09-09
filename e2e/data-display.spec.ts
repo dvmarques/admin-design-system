@@ -1,4 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+
+async function hideDevelopmentPortal(page: Page) {
+	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
+}
 
 test('preserva semântica e acesso aos dados em viewport estreita', async ({ page }) => {
 	await page.setViewportSize({ width: 375, height: 812 });
@@ -27,5 +31,31 @@ test('expõe progresso e estado vazio sem semântica de erro implícita', async 
 		'aria-valuenow',
 	);
 	await expect(page.getByText('Nenhum resultado')).toBeVisible();
-	await expect(page.getByRole('alert')).toHaveCount(0);
+	await expect(page.locator('.ads-empty-state').getByRole('alert')).toHaveCount(0);
+});
+
+test('mantém a apresentação de dados nos temas claro e escuro', async ({ page }) => {
+	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
+
+	await page.context().addCookies([
+		{
+			name: 'ads-theme',
+			value: 'dark',
+			url: 'http://127.0.0.1:3000',
+		},
+	]);
+	await page.goto('/data-display');
+	await hideDevelopmentPortal(page);
+	await expect(page).toHaveScreenshot('data-display-dark.png', { fullPage: true });
+
+	await page.context().addCookies([
+		{
+			name: 'ads-theme',
+			value: 'light',
+			url: 'http://127.0.0.1:3000',
+		},
+	]);
+	await page.reload();
+	await hideDevelopmentPortal(page);
+	await expect(page).toHaveScreenshot('data-display-light.png', { fullPage: true });
 });

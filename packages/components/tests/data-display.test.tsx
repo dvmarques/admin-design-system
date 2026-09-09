@@ -154,9 +154,7 @@ describe('AdsProgress', () => {
 	});
 
 	it('ignores range validation while indeterminate', () => {
-		expect(() =>
-			render(<AdsProgress label="Processando" min={10} max={10} />),
-		).not.toThrow();
+		expect(() => render(<AdsProgress label="Processando" min={10} max={10} />)).not.toThrow();
 	});
 
 	it('rejects invalid numeric input deterministically in determinate mode', () => {

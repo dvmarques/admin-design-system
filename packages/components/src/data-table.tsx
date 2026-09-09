@@ -31,7 +31,9 @@ export function AdsTableHead({ className, ...props }: AdsTableHeadProps) {
 
 export type AdsTableBodyProps = HTMLAttributes<HTMLTableSectionElement>;
 export function AdsTableBody({ className, ...props }: AdsTableBodyProps) {
-	return <tbody {...props} className={classNames('ads-table-body divide-y divide-border', className)} />;
+	return (
+		<tbody {...props} className={classNames('ads-table-body divide-y divide-border', className)} />
+	);
 }
 
 export type AdsTableRowProps = HTMLAttributes<HTMLTableRowElement>;
@@ -46,8 +48,7 @@ export function AdsTableRow({ className, ...props }: AdsTableRowProps) {
 
 export type AdsTableAlignment = 'start' | 'center' | 'end';
 
-export interface AdsTableHeaderProps
-	extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'> {
+export interface AdsTableHeaderProps extends Omit<ThHTMLAttributes<HTMLTableCellElement>, 'align'> {
 	align?: AdsTableAlignment;
 }
 
@@ -84,11 +85,7 @@ export function AdsTableCell({ align = 'start', className, ...props }: AdsTableC
 	return (
 		<td
 			{...props}
-			className={classNames(
-				'ads-table-cell px-4 py-3 align-middle',
-				alignment[align],
-				className,
-			)}
+			className={classNames('ads-table-cell px-4 py-3 align-middle', alignment[align], className)}
 		/>
 	);
 }

@@ -39,6 +39,6 @@
 
 - [x] 6.1 Atualizar testes de consumo público para todos os novos exports, tipos e folha de estilos compilada de `@admin-ds/components`.
 - [x] 6.2 Atualizar a aplicação Next.js de demonstração para consumir os componentes exclusivamente pelas APIs e CSS públicos.
-- [ ] 6.3 Atualizar snapshots visuais nos temas claro e escuro e executar fluxos Playwright relevantes de responsividade, teclado e acessibilidade.
+- [x] 6.3 Atualizar snapshots visuais nos temas claro e escuro e executar fluxos Playwright relevantes de responsividade, teclado e acessibilidade.
 - [ ] 6.4 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
-- [ ] 6.5 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #8 antes de concluir e arquivar a change.
+- [x] 6.5 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #8 antes de concluir e arquivar a change.

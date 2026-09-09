@@ -3,8 +3,10 @@
 - [ ] 1.1 Revisar o placeholder atual de `@admin-ds/admin`, dependências do workspace e contratos públicos existentes em `@admin-ds/components` que serão reutilizados pelo shell.
 - [ ] 1.2 Definir a API pública final de `AdsAdminShell` e suas partes estruturais (`Header`, `Sidebar`, `Content` ou contrato equivalente), incluindo tipos React, atributos HTML suportados, nomes acessíveis e forma de expor o estado estrutural da sidebar à composição consumidora.
 - [ ] 1.3 Substituir `createAdminShell` pelo componente React real, preservando `react`/`react-dom` como peer dependencies e sem introduzir dependência de runtime desnecessária.
-- [ ] 1.4 Mapear tokens existentes para superfícies, bordas, texto, foco, espaçamento, sombras e motion; criar novos tokens somente quando houver conceito estrutural público realmente ausente.
-- [ ] 1.5 Garantir CSS distribuído consumível sem Tailwind na aplicação final e atualizar verificação de pacote/exports de `@admin-ds/admin`.
+- [ ] 1.4 Definir explicitamente a relação de runtime entre `@admin-ds/admin` e `@admin-ds/components` caso o shell importe componentes públicos como `AdsDrawer`, usando dependency/peer dependency compatível com o modelo de publicação do workspace e evitando resolução incidental do monorepo.
+- [ ] 1.5 Mapear tokens existentes para superfícies, bordas, texto, foco, espaçamento, sombras e motion; criar novos tokens somente quando houver conceito estrutural público realmente ausente.
+- [ ] 1.6 Garantir CSS distribuído consumível sem Tailwind na aplicação final, exportar estilos próprios de `@admin-ds/admin` quando necessários e documentar explicitamente quaisquer imports públicos de CSS requeridos de `@admin-ds/components`.
+- [ ] 1.7 Atualizar verificação de pacote/exports e testes de consumo para detectar dependências ou estilos não declarados.
 
 ## 2. Estrutura do Admin Shell
 
@@ -29,8 +31,10 @@
 - [ ] 4.2 Em viewports estreitas, retirar a sidebar persistente do fluxo e disponibilizar controle acessível para abertura da navegação móvel.
 - [ ] 4.3 Reutilizar `AdsDrawer` para a navegação móvel quando compatível, preservando portal, backdrop, foco, Escape e retorno de foco sem duplicar lógica de overlay.
 - [ ] 4.4 Implementar contrato controlado e não controlado para abertura da navegação móvel e callback de alteração para coordenação pela aplicação.
-- [ ] 4.5 Garantir que somente uma representação operável da navegação esteja exposta por vez e que elementos ocultos não permaneçam focáveis ou duplicados na árvore de acessibilidade.
-- [ ] 4.6 Respeitar `prefers-reduced-motion` nas transições estruturais e validar navegação por teclado em desktop e mobile.
+- [ ] 4.5 Implementar a transição desktop/mobile preservando uma única instância lógica do conteúdo arbitrário da sidebar por vez; não manter duas montagens simultâneas como estratégia padrão.
+- [ ] 4.6 Validar que mudança de breakpoint não produz IDs duplicados, estado interno duplicado, efeitos/listeners duplicados ou duas representações operáveis na árvore de acessibilidade.
+- [ ] 4.7 Caso uma exceção exija duas montagens simultâneas, registrar a justificativa técnica no design e cobrir explicitamente colisões de IDs, estado, efeitos e acessibilidade antes de aceitar a solução.
+- [ ] 4.8 Respeitar `prefers-reduced-motion` nas transições estruturais e validar navegação por teclado em desktop e mobile.
 
 ## 5. Integração com componentes e temas
 
@@ -47,14 +51,15 @@
 - [ ] 6.3 Demonstrar como o consumidor adapta o conteúdo da sidebar ao estado recolhido sem depender de transformação automática feita pelo shell.
 - [ ] 6.4 Atualizar `apps/admin-demo` com uma demonstração mínima do Admin Shell usando apenas `@admin-ds/admin`, `@admin-ds/components` e CSS públicos.
 - [ ] 6.5 Manter a demo desta change limitada à validação do shell, sem antecipar a remodelação completa prevista em `add-nextjs-admin-demo`.
-- [ ] 6.6 Documentar responsabilidades do consumidor: roteamento, autenticação, autorização, persistência de preferências, definição dos itens de navegação, adaptação do conteúdo recolhido e conteúdo do header.
+- [ ] 6.6 Documentar responsabilidades do consumidor: roteamento, autenticação, autorização, persistência de preferências, definição dos itens de navegação, adaptação do conteúdo recolhido, conteúdo do header e imports de estilos públicos necessários.
 
 ## 7. Testes e validação
 
 - [ ] 7.1 Criar testes unitários para landmarks, composição, atributos públicos, expansão/recolhimento e contratos controlado/não controlado.
 - [ ] 7.2 Criar testes de acessibilidade para nomes de navegação, estado dos controles, foco, Escape, retorno de foco e ausência de conteúdo interativo duplicado.
-- [ ] 7.3 Atualizar testes de consumo público para exports, tipos, peer dependencies, build e CSS compilado de `@admin-ds/admin`.
-- [ ] 7.4 Criar/atualizar Playwright para fluxo desktop, fluxo mobile, abertura/fechamento da navegação, teclado e mudança de viewport.
-- [ ] 7.5 Atualizar snapshots visuais representativos nos temas claro e escuro para desktop expandido/recolhido e mobile.
-- [ ] 7.6 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
-- [ ] 7.7 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #15 antes de concluir e arquivar a change.
+- [ ] 7.3 Atualizar testes de consumo público para exports, tipos, dependencies/peer dependencies declaradas, build e CSS compilado/importável de `@admin-ds/admin` e integrações requeridas de `@admin-ds/components`.
+- [ ] 7.4 Criar testes com conteúdo de sidebar que possua ID, estado interno e efeito próprio para garantir ausência de duas montagens simultâneas entre desktop e mobile.
+- [ ] 7.5 Criar/atualizar Playwright para fluxo desktop, fluxo mobile, abertura/fechamento da navegação, teclado e mudança de viewport.
+- [ ] 7.6 Atualizar snapshots visuais representativos nos temas claro e escuro para desktop expandido/recolhido e mobile.
+- [ ] 7.7 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
+- [ ] 7.8 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #15 antes de concluir e arquivar a change.

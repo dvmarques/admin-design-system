@@ -113,8 +113,22 @@ A change está arquivada em
 Adicionar tabelas, listas, cards, indicadores de progresso, estados
 vazios e padrões de apresentação de dados administrativos.
 
-**Próximo passo:** iniciar o planejamento desta change com
-`openspec-propose add-data-display-components`.
+**Status: concluída e arquivada em 2026-09-09.**
+
+Entregas principais:
+
+- `AdsTable`, `AdsList`, `AdsCard`, `AdsProgress` e `AdsEmptyState`, com
+  tipos e exports públicos;
+- estrutura semântica, composição sem acoplamento a dados ou fetching e
+  suporte aos temas claro e escuro;
+- CSS distribuído, documentação no Storybook e exemplos integrados no admin
+  demo;
+- testes unitários, de acessibilidade, consumo público, Playwright e snapshots
+  visuais.
+
+As specs `data-tables`, `data-collections` e `data-feedback` foram
+sincronizadas ao conjunto principal e a change foi arquivada em
+`openspec/changes/archive/2026-09-09-add-data-display-components`.
 
 ## 7. `add-admin-shell`
 

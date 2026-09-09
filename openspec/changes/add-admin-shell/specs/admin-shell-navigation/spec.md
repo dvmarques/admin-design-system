@@ -18,6 +18,29 @@ Em viewports amplas, `AdsAdminShell` MUST apresentar a sidebar como parte persis
 - **WHEN** o consumidor recolhe a sidebar em viewport ampla
 - **THEN** o shell reduz a ocupação estrutural da navegação sem remover o conteúdo principal nem quebrar a ordem de teclado
 
+### Requirement: Conteúdo da sidebar permanece responsabilidade da composição consumidora
+
+A sidebar MUST aceitar conteúdo React arbitrário por API pública e MUST NOT presumir que um componente de navegação existente possui orientação ou comportamento visual adequado ao contexto lateral. O shell MAY ser composto com `AdsNav` quando sua API pública atender ao caso; caso uma orientação vertical genérica seja necessária, ela MUST ser tratada como evolução reutilizável de `AdsNav`, e não como comportamento implícito ou específico do Admin Shell.
+
+#### Scenario: Consumidor usa navegação compatível com sidebar
+
+- **WHEN** o consumidor fornece uma estrutura de navegação pública adequada ao contexto lateral
+- **THEN** o shell organiza essa estrutura sem reinterpretar seus itens, rotas ou semântica
+
+#### Scenario: AdsNav atual não atende ao layout lateral
+
+- **WHEN** a implementação constata que `AdsNav` não oferece orientação adequada para a sidebar
+- **THEN** o shell não força estilos privados ou acoplados e a capacidade de orientação só é adicionada a `AdsNav` se for genérica e reutilizável fora do Admin Shell
+
+### Requirement: Estado recolhido controla estrutura, não transforma conteúdo arbitrário
+
+O estado recolhido da sidebar MUST controlar sua ocupação estrutural. O shell MUST expor esse estado por contrato suficiente para que o consumidor adapte o conteúdo apresentado quando necessário e MUST NOT inferir automaticamente como converter texto, labels ou outros elementos em uma representação compacta.
+
+#### Scenario: Aplicação adapta navegação ao estado recolhido
+
+- **WHEN** a sidebar está recolhida e a aplicação deseja manter itens por ícones
+- **THEN** o consumidor consegue reagir ao estado do shell e fornecer uma representação acessível, mantendo nomes acessíveis e ordem de teclado válida
+
 ### Requirement: Navegação móvel usa apresentação sobreposta acessível
 
 Em viewports estreitas, a navegação estrutural MUST deixar de reservar permanentemente a largura da sidebar e MUST poder ser aberta por um controle acessível. A apresentação móvel MUST reutilizar o comportamento público de overlay/drawer existente quando adequado, incluindo foco gerenciado, fechamento por `Escape`, backdrop e retorno de foco.

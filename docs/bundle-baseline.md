@@ -8,3 +8,7 @@ até 10% antes de exigir uma atualização explícita do baseline.
 Dependências de runtime devem ser justificadas na change que as introduzir.
 React e React DOM são peer dependencies dos pacotes de renderização e não
 devem ser incluídos nos artefatos distribuídos.
+
+O baseline de `@admin-ds/components` foi atualizado na change
+`add-data-display-components` para incluir os módulos e estilos distribuídos
+de tabela, coleções, progresso e estado vazio, sem novas dependências de runtime.

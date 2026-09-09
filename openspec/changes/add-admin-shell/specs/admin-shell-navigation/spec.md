@@ -32,18 +32,30 @@ A sidebar MUST aceitar conteúdo React arbitrário por API pública e MUST NOT p
 - **WHEN** a implementação constata que `AdsNav` não oferece orientação adequada para a sidebar
 - **THEN** o shell não força estilos privados ou acoplados e a capacidade de orientação só é adicionada a `AdsNav` se for genérica e reutilizável fora do Admin Shell
 
-### Requirement: Estado recolhido controla estrutura, não transforma conteúdo arbitrário
+### Requirement: Estado recolhido controla somente a sidebar desktop
 
-O estado recolhido da sidebar MUST controlar sua ocupação estrutural. O shell MUST expor esse estado por contrato suficiente para que o consumidor adapte o conteúdo apresentado quando necessário e MUST NOT inferir automaticamente como converter texto, labels ou outros elementos em uma representação compacta.
+O estado `collapsed`/`defaultCollapsed` MUST controlar somente a ocupação estrutural da sidebar persistente em viewports amplas. O shell MUST expor esse estado por contrato suficiente para que o consumidor adapte explicitamente o conteúdo apresentado no desktop quando necessário e MUST NOT inferir automaticamente como converter texto, labels ou outros elementos em uma representação compacta.
 
-#### Scenario: Aplicação adapta navegação ao estado recolhido
+Em viewports estreitas, a navegação móvel MUST usar sua apresentação completa por padrão e MUST NOT herdar largura reduzida, labels ocultos ou outra representação compacta apenas porque a sidebar desktop está recolhida. O consumidor MAY adaptar explicitamente o conteúdo para mobile, mas essa adaptação MUST NOT ocorrer automaticamente em função de `collapsed`.
 
-- **WHEN** a sidebar está recolhida e a aplicação deseja manter itens por ícones
-- **THEN** o consumidor consegue reagir ao estado do shell e fornecer uma representação acessível, mantendo nomes acessíveis e ordem de teclado válida
+#### Scenario: Aplicação adapta navegação desktop ao estado recolhido
+
+- **WHEN** a sidebar desktop está recolhida e a aplicação deseja manter itens por ícones
+- **THEN** o consumidor consegue reagir ao estado do shell e fornecer uma representação acessível no desktop, mantendo nomes acessíveis e ordem de teclado válida
+
+#### Scenario: Sidebar desktop recolhida não compacta o drawer mobile
+
+- **WHEN** `collapsed` é verdadeiro e a viewport entra no modo móvel
+- **THEN** o drawer apresenta a navegação em sua forma completa por padrão, sem herdar largura reduzida ou ocultação automática de labels
+
+#### Scenario: Consumidor adapta explicitamente o conteúdo mobile
+
+- **WHEN** a aplicação decide fornecer uma apresentação específica para mobile
+- **THEN** essa adaptação ocorre por composição explícita do consumidor e não como efeito implícito do estado `collapsed`
 
 ### Requirement: Navegação móvel usa apresentação sobreposta acessível
 
-Em viewports estreitas, a navegação estrutural MUST deixar de reservar permanentemente a largura da sidebar e MUST poder ser aberta por um controle acessível. A apresentação móvel MUST reutilizar o comportamento público de overlay/drawer existente quando adequado, incluindo foco gerenciado, fechamento por `Escape`, backdrop e retorno de foco.
+Em viewports estreitas, a navegação estrutural MUST deixar de reservar permanentemente a largura da sidebar e MUST poder ser aberta por um controle acessível. A apresentação móvel MUST reutilizar o comportamento público de overlay/drawer existente quando adequado, incluindo foco gerenciado, fechamento por `Escape`, backdrop e retorno de foco. O estado de abertura móvel MUST permanecer separado da preferência `collapsed` da sidebar desktop.
 
 #### Scenario: Usuário abre a navegação no mobile
 
@@ -54,6 +66,11 @@ Em viewports estreitas, a navegação estrutural MUST deixar de reservar permane
 
 - **WHEN** a navegação móvel está aberta e o usuário pressiona `Escape`
 - **THEN** a navegação fecha e o foco retorna ao controle que iniciou a abertura conforme o contrato do overlay utilizado
+
+#### Scenario: Drawer mobile ignora preferência collapsed do desktop
+
+- **WHEN** a navegação móvel é aberta enquanto a preferência desktop está recolhida
+- **THEN** o drawer não aplica automaticamente largura compacta, ocultação de labels ou representação reduzida da sidebar desktop
 
 ### Requirement: Shell fornece contrato público para o trigger da navegação móvel
 
@@ -101,6 +118,39 @@ A mudança entre modos desktop e móvel MUST NOT manter duas montagens simultân
 
 - **WHEN** uma solução técnica só puder ser implementada com duas montagens simultâneas
 - **THEN** essa exceção deve ser justificada explicitamente e coberta por testes que demonstrem ausência de colisões de IDs, estado, efeitos e exposição duplicada à árvore de acessibilidade
+
+### Requirement: Mobile aberto é encerrado ao entrar no layout desktop
+
+Quando a viewport deixa o breakpoint móvel enquanto a navegação overlay está aberta, o shell MUST encerrar ou coordenar o encerramento da apresentação mobile antes ou de forma coordenada com a ativação da sidebar desktop. Backdrop, portal e focus trap MUST NOT permanecer ativos quando o layout desktop estiver visível, o foco MUST terminar em um elemento válido ainda montado e a transição MUST NOT produzir uma segunda instância simultânea/operável da navegação.
+
+No modo não controlado, o shell MUST fechar/resetar o estado interno `mobileOpen` ou equivalente. Esse estado interno MUST NOT permanecer latente a ponto de reabrir o drawer inesperadamente caso a viewport retorne ao mobile.
+
+No modo controlado, o shell MUST NOT alterar a prop externamente, mas MUST disparar o callback de mudança solicitando fechamento. Enquanto o consumidor ainda não refletir a prop atualizada, o shell MUST desativar os efeitos do overlay no layout desktop e MUST NOT manter backdrop, portal, focus trap ou navegação duplicada operáveis.
+
+#### Scenario: Mobile aberto muda para desktop em modo não controlado
+
+- **WHEN** o drawer está aberto por estado interno e a viewport cruza para desktop
+- **THEN** o overlay é encerrado, o estado interno móvel é resetado para fechado, não permanece backdrop/focus trap/portal ativo e somente a navegação desktop fica operável
+
+#### Scenario: Mobile aberto muda para desktop em modo controlado
+
+- **WHEN** o drawer está aberto por prop controlada e a viewport cruza para desktop
+- **THEN** o shell solicita `false` pelo callback sem mutar a prop, remove/desativa os efeitos do overlay no desktop e mantém somente uma instância operável da navegação
+
+#### Scenario: Desktop retorna ao mobile após fechamento coordenado
+
+- **WHEN** a viewport volta ao breakpoint móvel depois que a transição anterior fechou ou solicitou o fechamento do drawer
+- **THEN** a navegação móvel permanece fechada até nova ação explícita ou nova prop controlada que solicite abertura
+
+#### Scenario: Overlay não deixa resíduos após transição
+
+- **WHEN** o layout desktop fica ativo após um drawer mobile aberto
+- **THEN** não existe backdrop residual, focus trap ativo, portal overlay operável nem foco preso em conteúdo desmontado
+
+#### Scenario: Estado móvel não reabre inesperadamente
+
+- **WHEN** a viewport alterna mobile aberto → desktop → mobile sem nova ação de abertura
+- **THEN** o drawer não reabre por estado interno latente ou por coordenação de breakpoint incorreta
 
 ### Requirement: Responsividade é segura para SSR e hidratação
 

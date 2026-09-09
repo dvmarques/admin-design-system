@@ -76,6 +76,8 @@ Em viewports estreitas, a navegação estrutural MUST deixar de reservar permane
 
 O shell MUST fornecer uma API pública para compor o controle que abre a navegação móvel, como uma primitive `MobileMenuTrigger` ou contrato equivalente. Essa API MUST coordenar o estado móvel e os atributos acessíveis necessários, sem exigir que o consumidor reproduza manualmente detalhes internos do shell. O consumidor MAY customizar a apresentação e o conteúdo do trigger.
 
+`aria-expanded` MUST refletir se a apresentação móvel está efetivamente aberta e operável no breakpoint atual, e não apenas o valor bruto de uma prop controlada temporariamente suprimida durante uma transição para desktop.
+
 #### Scenario: Consumidor posiciona trigger no header
 
 - **WHEN** a aplicação compõe o trigger móvel dentro de seu header
@@ -86,9 +88,14 @@ O shell MUST fornecer uma API pública para compor o controle que abre a navega�
 - **WHEN** a navegação móvel é controlada externamente por prop e callback
 - **THEN** a ativação do trigger solicita a mudança pelo contrato público sem manter estado concorrente interno
 
+#### Scenario: Prop controlada permanece verdadeira durante desktop
+
+- **WHEN** o shell solicitou fechamento ao sair do mobile mas a prop controlada ainda permanece verdadeira no layout desktop
+- **THEN** o trigger não comunica falsamente um overlay operável e `aria-expanded` reflete a apresentação móvel efetiva como fechada/inativa
+
 #### Scenario: Drawer fecha e foco retorna ao trigger
 
-- **WHEN** a navegação móvel é fechada após ter sido aberta por um trigger do shell
+- **WHEN** a navegação móvel é fechada após ter sido aberta por um trigger do shell e esse trigger continua visível e focável
 - **THEN** o foco pode retornar ao elemento que iniciou a abertura conforme o contrato acessível do overlay utilizado
 
 ### Requirement: Shell não depende de roteador para navegação
@@ -125,7 +132,9 @@ Quando a viewport deixa o breakpoint móvel enquanto a navegação overlay está
 
 No modo não controlado, o shell MUST fechar/resetar o estado interno `mobileOpen` ou equivalente. Esse estado interno MUST NOT permanecer latente a ponto de reabrir o drawer inesperadamente caso a viewport retorne ao mobile.
 
-No modo controlado, o shell MUST NOT alterar a prop externamente, mas MUST disparar o callback de mudança solicitando fechamento. Enquanto o consumidor ainda não refletir a prop atualizada, o shell MUST desativar os efeitos do overlay no layout desktop e MUST NOT manter backdrop, portal, focus trap ou navegação duplicada operáveis.
+No modo controlado, o shell MUST NOT alterar a prop externamente, mas MUST disparar o callback de mudança solicitando fechamento. Enquanto o consumidor ainda não refletir a prop atualizada, o shell MUST desativar os efeitos do overlay no layout desktop e MUST NOT manter backdrop, portal, focus trap ou navegação duplicada operáveis. O valor controlado ainda verdadeiro após essa solicitação MUST ser tratado como uma abertura pendente já invalidada pela troca de breakpoint, e não como autorização suficiente para reabrir automaticamente o drawer ao retornar ao mobile. Essa supressão de apresentação é coordenação transitória do breakpoint, não uma segunda fonte pública de verdade para `mobileOpen`.
+
+Uma nova abertura controlada após esse fechamento MUST exigir que o consumidor primeiro reconheça o fechamento (`mobileOpen=false`) e depois produza uma nova transição explícita para aberto (`false → true`), ou outra sinalização pública equivalente que represente uma nova intenção de abertura. Um `true` antigo que nunca reconheceu o fechamento solicitado MUST NOT causar reabertura inesperada.
 
 #### Scenario: Mobile aberto muda para desktop em modo não controlado
 
@@ -137,20 +146,35 @@ No modo controlado, o shell MUST NOT alterar a prop externamente, mas MUST dispa
 - **WHEN** o drawer está aberto por prop controlada e a viewport cruza para desktop
 - **THEN** o shell solicita `false` pelo callback sem mutar a prop, remove/desativa os efeitos do overlay no desktop e mantém somente uma instância operável da navegação
 
+#### Scenario: Consumidor não reconhece imediatamente o fechamento controlado
+
+- **WHEN** o callback de fechamento já foi disparado, a prop continua `true` e a viewport retorna ao mobile
+- **THEN** o drawer permanece fechado e o valor `true` anterior não é interpretado como uma nova solicitação de abertura
+
+#### Scenario: Consumidor reconhece e solicita nova abertura controlada
+
+- **WHEN** após a solicitação de fechamento o consumidor atualiza `mobileOpen` para `false` e posteriormente realiza nova transição explícita para `true`
+- **THEN** o drawer pode abrir novamente no breakpoint móvel
+
 #### Scenario: Desktop retorna ao mobile após fechamento coordenado
 
 - **WHEN** a viewport volta ao breakpoint móvel depois que a transição anterior fechou ou solicitou o fechamento do drawer
-- **THEN** a navegação móvel permanece fechada até nova ação explícita ou nova prop controlada que solicite abertura
+- **THEN** a navegação móvel permanece fechada até nova ação explícita no modo não controlado ou nova intenção controlada reconhecida pelo contrato de fechamento e reabertura
 
 #### Scenario: Overlay não deixa resíduos após transição
 
 - **WHEN** o layout desktop fica ativo após um drawer mobile aberto
 - **THEN** não existe backdrop residual, focus trap ativo, portal overlay operável nem foco preso em conteúdo desmontado
 
+#### Scenario: Foco não retorna para trigger indisponível
+
+- **WHEN** a troca para desktop desmonta, oculta ou torna não focável o trigger que abriu o drawer
+- **THEN** o shell não força foco para esse trigger e garante que o foco termine em um elemento válido ainda montado/operável segundo a estratégia acessível adotada
+
 #### Scenario: Estado móvel não reabre inesperadamente
 
 - **WHEN** a viewport alterna mobile aberto → desktop → mobile sem nova ação de abertura
-- **THEN** o drawer não reabre por estado interno latente ou por coordenação de breakpoint incorreta
+- **THEN** o drawer não reabre por estado interno latente, prop controlada antiga ainda verdadeira ou coordenação de breakpoint incorreta
 
 ### Requirement: Responsividade é segura para SSR e hidratação
 

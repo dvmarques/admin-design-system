@@ -90,7 +90,11 @@ foco, teclado, temas, CSS distribuído, documentação, testes e integração no
 admin demo. A change `add-navigation-components` concluiu `AdsBreadcrumb`,
 `AdsNav`, `AdsTabs`, `AdsDropdown` e `AdsPagination`, com interações por
 teclado, temas, CSS distribuído, documentação, testes, snapshots visuais e
-consumo pela aplicação Next.js de demonstração.
+consumo pela aplicação Next.js de demonstração. A change
+`add-data-display-components` concluiu `AdsTable`, `AdsList`, `AdsCard`,
+`AdsProgress` e `AdsEmptyState`, com semântica acessível, composição sem
+acoplamento a dados ou fetching, temas, CSS distribuído, documentação, testes
+e integração no admin demo.
 
 O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:
@@ -113,13 +117,13 @@ Get-ChildItem openspec/changes/archive
 
 ## Próximo passo
 
-Planejar a change `add-data-display-components`, começando por tabelas,
-listas, cards, indicadores de progresso, estados vazios e padrões de
-apresentação de dados administrativos:
+Planejar a change `add-admin-shell`, começando pela composição estrutural do
+admin, incluindo header, sidebar, área de conteúdo, navegação responsiva e
+preferências de layout:
 
 ```powershell
-openspec-propose add-data-display-components
+openspec-propose add-admin-shell
 ```
 
-Isso criará a proposta, specs, design e tarefas da próxima família de
-componentes.
+Isso criará a proposta, specs, design e tarefas da próxima composição de
+layout administrativo.

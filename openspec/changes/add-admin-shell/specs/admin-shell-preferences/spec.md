@@ -4,28 +4,75 @@ Define os contratos de estado e preferências estruturais do Admin Shell sem imp
 
 ## ADDED Requirements
 
-### Requirement: Sidebar suporta estado controlado e não controlado
+### Requirement: Sidebar desktop suporta estado controlado e não controlado
 
-`AdsAdminShell` MUST permitir que o estado expandido/recolhido da sidebar seja controlado pela aplicação por prop e callback ou mantido internamente a partir de um valor inicial/default. O comportamento MUST seguir convenções React previsíveis e MUST NOT sobrescrever um valor controlado recebido do consumidor.
+`AdsAdminShell` MUST permitir que o estado expandido/recolhido da sidebar desktop seja controlado pela aplicação por prop e callback ou mantido internamente a partir de um valor inicial/default. O comportamento MUST seguir convenções React previsíveis e MUST NOT sobrescrever um valor controlado recebido do consumidor.
 
-#### Scenario: Aplicação controla a sidebar
+O contrato `collapsed`/`defaultCollapsed` (ou equivalente) MUST representar exclusivamente a preferência estrutural da sidebar persistente em viewports amplas. Esse estado MAY ser exposto ao consumidor para composição explícita de labels, ícones ou outras representações no desktop, mas MUST NOT compactar automaticamente a navegação móvel.
 
-- **WHEN** o consumidor fornece o estado da sidebar e callback de alteração
-- **THEN** o shell solicita alterações pelo callback e renderiza de acordo com o valor controlado recebido
+#### Scenario: Aplicação controla a sidebar desktop
 
-#### Scenario: Shell mantém estado local
+- **WHEN** o consumidor fornece o estado `collapsed` da sidebar e callback de alteração
+- **THEN** o shell solicita alterações pelo callback e renderiza a sidebar desktop de acordo com o valor controlado recebido
 
-- **WHEN** o consumidor fornece apenas um valor inicial/default
-- **THEN** o shell mantém internamente as alterações de expansão e recolhimento durante seu ciclo de vida
+#### Scenario: Shell mantém estado local da sidebar desktop
 
-### Requirement: Navegação móvel suporta estado controlado e não controlado
+- **WHEN** o consumidor fornece apenas `defaultCollapsed` ou valor inicial equivalente
+- **THEN** o shell mantém internamente as alterações de expansão e recolhimento da sidebar desktop durante seu ciclo de vida
 
-A abertura da navegação móvel MUST poder ser controlada externamente ou mantida internamente. O shell MUST expor callback de alteração suficiente para que a aplicação coordene esse estado quando necessário.
+#### Scenario: Preferência recolhida não compacta mobile
+
+- **WHEN** a preferência desktop está recolhida e a viewport passa ao modo móvel
+- **THEN** o drawer mobile usa apresentação completa por padrão e não herda automaticamente largura reduzida, labels ocultos ou representação compacta
+
+#### Scenario: Consumidor usa estado recolhido para composição desktop
+
+- **WHEN** a aplicação precisa adaptar explicitamente o conteúdo da sidebar desktop ao estado recolhido
+- **THEN** ela consegue consumir o estado exposto pelo shell sem que essa adaptação seja aplicada implicitamente ao drawer mobile
+
+### Requirement: Navegação móvel possui estado separado controlado e não controlado
+
+A abertura da navegação móvel MUST ser representada por estado separado da preferência `collapsed`, como `mobileOpen`/`defaultMobileOpen` ou contrato equivalente. Esse estado MUST poder ser controlado externamente ou mantido internamente. O shell MUST expor callback de alteração suficiente para que a aplicação coordene esse estado quando necessário.
+
+Alterações em `collapsed` MUST NOT abrir, fechar ou compactar automaticamente o drawer móvel. Alterações em `mobileOpen` MUST NOT redefinir a preferência expandida/recolhida da sidebar desktop.
 
 #### Scenario: Aplicação fecha menu após navegação
 
 - **WHEN** a aplicação controla o estado móvel e uma ação de navegação é concluída
 - **THEN** ela consegue fechar a navegação atualizando a prop correspondente sem depender de API interna do shell
+
+#### Scenario: Estados desktop e mobile permanecem independentes
+
+- **WHEN** a aplicação altera `collapsed` enquanto `mobileOpen` possui outro valor
+- **THEN** cada estado afeta somente sua responsabilidade estrutural e o shell não deriva automaticamente um a partir do outro
+
+### Requirement: Estado móvel não controlado é resetado ao sair do breakpoint mobile
+
+Quando o drawer está aberto por estado interno e a viewport deixa o breakpoint móvel, o shell MUST fechar/resetar `mobileOpen` (ou equivalente) para evitar estado latente. Se a viewport voltar ao mobile depois, o drawer MUST permanecer fechado até uma nova ação explícita de abertura.
+
+#### Scenario: Mobile aberto não controlado muda para desktop
+
+- **WHEN** `mobileOpen` é mantido internamente, está aberto e a viewport entra no layout desktop
+- **THEN** o shell reseta o estado interno para fechado durante a transição
+
+#### Scenario: Viewport retorna ao mobile após reset
+
+- **WHEN** a viewport retorna ao modo móvel depois do reset realizado na transição anterior
+- **THEN** o drawer permanece fechado e não reabre inesperadamente por valor interno latente
+
+### Requirement: Estado móvel controlado solicita fechamento ao sair do breakpoint mobile
+
+Quando `mobileOpen` é controlado externamente e está aberto, cruzar para desktop MUST NOT fazer o shell mutar ou substituir a prop recebida. O shell MUST disparar o callback de mudança solicitando fechamento. Enquanto a aplicação ainda não refletir a atualização, a apresentação desktop MUST permanecer livre dos efeitos do overlay móvel, incluindo backdrop, portal e focus trap ativos.
+
+#### Scenario: Mobile aberto controlado muda para desktop
+
+- **WHEN** `mobileOpen` é controlado externamente, está verdadeiro e a viewport entra no layout desktop
+- **THEN** o shell solicita `false` pelo callback, preserva o valor controlado como responsabilidade do consumidor e desativa os efeitos operáveis do overlay no desktop
+
+#### Scenario: Consumidor demora a refletir fechamento controlado
+
+- **WHEN** o callback de fechamento foi disparado mas a prop controlada ainda permanece verdadeira durante o layout desktop
+- **THEN** o shell não mantém backdrop, portal, focus trap ou segunda navegação móvel operável enquanto aguarda a atualização externa
 
 ### Requirement: Persistência de preferências pertence ao consumidor
 
@@ -33,7 +80,7 @@ O shell MUST NOT gravar estado automaticamente em localStorage, cookies, sessão
 
 #### Scenario: Aplicação restaura preferência persistida
 
-- **WHEN** uma aplicação recupera externamente que o usuário prefere sidebar recolhida
+- **WHEN** uma aplicação recupera externamente que o usuário prefere sidebar desktop recolhida
 - **THEN** ela consegue inicializar ou controlar o shell nesse estado sem que o design system conheça o mecanismo de persistência
 
 ### Requirement: Tema permanece fora do estado do shell

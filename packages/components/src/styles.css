@@ -91,7 +91,14 @@
 	.ads-dropdown-content,
 	.ads-dropdown-item,
 	.ads-pagination,
-	.ads-pagination-item {
+	.ads-pagination-item,
+	.ads-admin-shell,
+	.ads-admin-shell-header,
+	.ads-admin-shell-body,
+	.ads-admin-shell-sidebar,
+	.ads-admin-shell-sidebar-desktop,
+	.ads-admin-shell-main,
+	.ads-admin-shell-navigation-trigger {
 		isolation: isolate;
 	}
 }

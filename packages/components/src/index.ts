@@ -110,3 +110,12 @@ export type {
 } from './data-collection.js';
 export { AdsEmptyState, AdsProgress } from './data-feedback.js';
 export type { AdsEmptyStateProps, AdsProgressProps } from './data-feedback.js';
+export { AdsAdminShell } from './admin-shell.js';
+export type {
+	AdsAdminShellBodyProps,
+	AdsAdminShellHeaderProps,
+	AdsAdminShellMainProps,
+	AdsAdminShellNavigationTriggerProps,
+	AdsAdminShellProps,
+	AdsAdminShellSidebarProps,
+} from './admin-shell.js';

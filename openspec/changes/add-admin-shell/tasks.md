@@ -82,7 +82,7 @@ Cada incremento abaixo deve terminar em um estado verificável. Uma seção só 
 - [ ] Atualizar snapshots somente quando a mudança visual for intencional e revisada.
 - [x] Executar Prettier nos arquivos alterados conforme a orientação do projeto.
 - [x] Executar `npm run format` e corrigir todas as falhas.
-- [ ] Executar validação OpenSpec estrita antes do PR.
+- [x] Executar validação OpenSpec estrita antes do PR.
 
 **Concluído quando:** todos os comandos obrigatórios passam e qualquer atualização visual de snapshot está explicitamente revisada.
 
@@ -106,6 +106,3 @@ apps/admin-demo/tsconfig.json` retorna JSON válido e o typecheck do workspace
   download solicitado por `npx playwright install chromium` retornou um arquivo
   inválido do proxy. Por isso não foram validados hidratação nem snapshots e a
   change permanece aberta.
-- O executável OpenSpec (`openspec`/`openspec.cmd`) não está disponível neste
-  ambiente, portanto a validação estrita ainda precisa ser executada onde a CLI
-  do projeto estiver instalada.

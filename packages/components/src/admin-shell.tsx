@@ -5,6 +5,7 @@ import {
 	useContext,
 	useId,
 	useState,
+	type ButtonHTMLAttributes,
 	type HTMLAttributes,
 	type ReactNode,
 } from 'react';
@@ -14,7 +15,7 @@ import { AdsDrawer } from './overlay-dialog.js';
 interface AdminShellContextValue {
 	mobileNavigationOpen: boolean;
 	setMobileNavigationOpen: (open: boolean) => void;
-	navigationId: string;
+	mobileNavigationId: string;
 }
 
 const AdminShellContext = createContext<AdminShellContextValue | null>(null);
@@ -39,7 +40,7 @@ function AdsAdminShellRoot({
 	onNavigationOpenChange,
 	...props
 }: AdsAdminShellProps) {
-	const navigationId = useId();
+	const mobileNavigationId = useId();
 	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultNavigationOpen);
 	const mobileNavigationOpen = navigationOpen ?? uncontrolledOpen;
 	const setMobileNavigationOpen = (open: boolean) => {
@@ -49,7 +50,7 @@ function AdsAdminShellRoot({
 
 	return (
 		<AdminShellContext.Provider
-			value={{ mobileNavigationOpen, setMobileNavigationOpen, navigationId }}
+			value={{ mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId }}
 		>
 			<div
 				{...props}
@@ -78,7 +79,7 @@ function AdsAdminShellHeader({ className, ...props }: AdsAdminShellHeaderProps) 
 }
 
 export interface AdsAdminShellNavigationTriggerProps
-	extends HTMLAttributes<HTMLButtonElement> {
+	extends ButtonHTMLAttributes<HTMLButtonElement> {
 	label?: string;
 }
 function AdsAdminShellNavigationTrigger({
@@ -87,11 +88,11 @@ function AdsAdminShellNavigationTrigger({
 	onClick,
 	...props
 }: AdsAdminShellNavigationTriggerProps) {
-	const { mobileNavigationOpen, setMobileNavigationOpen, navigationId } = useAdminShell();
+	const { mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId } = useAdminShell();
 	return (
 		<button
 			{...props}
-			aria-controls={navigationId}
+			aria-controls={mobileNavigationId}
 			aria-expanded={mobileNavigationOpen}
 			aria-label={label}
 			className={classNames(
@@ -102,7 +103,7 @@ function AdsAdminShellNavigationTrigger({
 				onClick?.(event);
 				if (!event.defaultPrevented) setMobileNavigationOpen(true);
 			}}
-			type="button"
+			type={props.type ?? 'button'}
 		>
 			<span aria-hidden="true" className="flex flex-col gap-1">
 				<span className="block h-0.5 w-5 bg-current" />
@@ -124,37 +125,34 @@ function AdsAdminShellSidebar({
 	mobileTitle = 'Navegação',
 	...props
 }: AdsAdminShellSidebarProps) {
-	const { mobileNavigationOpen, setMobileNavigationOpen, navigationId } = useAdminShell();
-	const navigation = (
-		<nav
-			{...props}
-			aria-label={label}
-			className={classNames(
-				'ads-admin-shell-sidebar h-full overflow-y-auto bg-surface-raised p-4 text-text',
-				className,
-			)}
-			id={navigationId}
-		>
-			{children}
-		</nav>
+	const { mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId } = useAdminShell();
+	const navigationClassName = classNames(
+		'ads-admin-shell-sidebar h-full overflow-y-auto bg-surface-raised p-4 text-text',
+		className,
 	);
 
 	return (
 		<>
 			<aside className="ads-admin-shell-sidebar-desktop hidden w-64 shrink-0 border-r border-border md:block">
-				{navigation}
+				<nav {...props} aria-label={label} className={navigationClassName}>
+					{children}
+				</nav>
 			</aside>
-			<div className="md:hidden">
-				<AdsDrawer
-					closeLabel="Fechar navegação"
-					onOpenChange={setMobileNavigationOpen}
-					open={mobileNavigationOpen}
-					placement="left"
-					title={mobileTitle}
-				>
-					{navigation}
-				</AdsDrawer>
-			</div>
+			<AdsDrawer
+				aria-label={label}
+				className="md:hidden"
+				closeLabel="Fechar navegação"
+				id={mobileNavigationId}
+				onOpenChange={setMobileNavigationOpen}
+				open={mobileNavigationOpen}
+				placement="left"
+				role="dialog"
+				title={mobileTitle}
+			>
+				<nav {...props} aria-label={label} className={navigationClassName}>
+					{children}
+				</nav>
+			</AdsDrawer>
 		</>
 	);
 }

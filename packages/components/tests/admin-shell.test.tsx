@@ -26,18 +26,25 @@ describe('AdsAdminShell', () => {
 		render(<ExampleShell />);
 		expect(screen.getByRole('banner')).toHaveTextContent('Admin Abril');
 		expect(screen.getByRole('main')).toHaveTextContent('Visão geral');
-		expect(screen.getAllByRole('navigation', { name: 'Navegação principal' }).length).toBeGreaterThan(0);
+		expect(screen.getByRole('navigation', { name: 'Navegação principal' })).toHaveTextContent(
+			'Dashboard',
+		);
 	});
 
-	it('opens responsive navigation from the accessible trigger', () => {
+	it('opens responsive navigation from the accessible trigger without duplicate ids', () => {
 		const onNavigationOpenChange = vi.fn();
-		render(<ExampleShell onNavigationOpenChange={onNavigationOpenChange} />);
+		const { container } = render(<ExampleShell onNavigationOpenChange={onNavigationOpenChange} />);
 		const trigger = screen.getByRole('button', { name: 'Abrir navegação' });
 		expect(trigger).toHaveAttribute('aria-expanded', 'false');
 		fireEvent.click(trigger);
 		expect(onNavigationOpenChange).toHaveBeenCalledWith(true);
 		expect(trigger).toHaveAttribute('aria-expanded', 'true');
-		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		const dialog = screen.getByRole('dialog', { name: 'Navegação principal' });
+		expect(dialog).toHaveAttribute('id', trigger.getAttribute('aria-controls'));
+		const controlledId = trigger.getAttribute('aria-controls');
+		expect(controlledId).toBeTruthy();
+		expect(container.ownerDocument.querySelectorAll(`[id="${controlledId}"]`)).toHaveLength(1);
+		expect(screen.getAllByRole('navigation', { name: 'Navegação principal' })).toHaveLength(2);
 	});
 
 	it('supports controlled responsive navigation state', () => {

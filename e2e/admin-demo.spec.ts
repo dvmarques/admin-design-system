@@ -69,3 +69,22 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 	await hideDevelopmentPortal(page);
 	await expect(page).toHaveScreenshot('admin-demo-light.png', { fullPage: true });
 });
+
+test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	const trigger = page.getByRole('button', { name: 'Abrir navegação' });
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await trigger.focus();
+	await trigger.press('Enter');
+
+	const drawer = page.getByRole('dialog', { name: 'Navegação do demo' });
+	await expect(drawer).toBeVisible();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+	await expect(drawer.getByRole('link', { name: 'Formulários' })).toBeVisible();
+
+	await page.getByRole('button', { name: 'Fechar navegação' }).press('Enter');
+	await expect(drawer).toBeHidden();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});

@@ -128,6 +128,11 @@ A cobertura deve incluir:
 - O shell é infraestrutura visual e não um framework de aplicação.
 - Autenticação, autorização e roteamento ficam fora do pacote.
 - O componente reutiliza primitivas e navegação existentes antes de criar abstrações novas.
-- A interatividade será isolada no menor limite Client Component necessário.
+- A interatividade fica em `admin-shell-navigation.tsx`, um Client Component que
+  contém somente o provedor de estado, o trigger e o Drawer móvel. `Root`,
+  `Header`, `Body`, `Sidebar` e `Main` permanecem no módulo server-safe e passam
+  o conteúdo do consumidor como children através desse limite. Isso preserva a
+  ergonomia da API composta sem promover a página ou as regiões estruturais a
+  Client Components.
 - Não serão adicionadas dependências de runtime sem justificativa explícita.
 - Padrões avançados de administração permanecem fora deste incremento.

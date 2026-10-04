@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
 	AdsAvatar,
+	AdsAdminShell,
 	AdsBadge,
 	AdsBreadcrumb,
 	AdsButton,
@@ -89,7 +90,8 @@ describe('public component consumption', () => {
 			AdsToast,
 			AdsTooltip,
 			AdsTypography,
-		]).toHaveLength(41);
+			AdsAdminShell,
+		]).toHaveLength(42);
 	});
 
 	it('includes component styles in the distributed CSS', async () => {
@@ -114,5 +116,16 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.overflow-x-auto/);
 		expect(css).toMatch(/\.border-dashed/);
 		expect(css).toMatch(/motion-reduce/);
+		expect(css).toMatch(/\.ads-admin-shell/);
+		expect(css).toMatch(/min-height:calc\(100vh - 4rem\)/);
+	});
+
+	it('keeps the reference application on public package imports', async () => {
+		const page = await readFile(
+			resolve(process.cwd(), '../../apps/admin-demo/app/page.tsx'),
+			'utf8',
+		);
+		expect(page).toContain("from '@admin-ds/components'");
+		expect(page).not.toMatch(/@admin-ds\/components\/src|packages\/components\/src/);
 	});
 });

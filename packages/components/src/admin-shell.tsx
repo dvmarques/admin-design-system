@@ -1,30 +1,11 @@
-'use client';
-
-import {
-	createContext,
-	useContext,
-	useId,
-	useState,
-	type ButtonHTMLAttributes,
-	type HTMLAttributes,
-	type ReactNode,
-} from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import { classNames } from './class-names.js';
-import { AdsDrawer } from './overlay-dialog.js';
-
-interface AdminShellContextValue {
-	mobileNavigationOpen: boolean;
-	setMobileNavigationOpen: (open: boolean) => void;
-	mobileNavigationId: string;
-}
-
-const AdminShellContext = createContext<AdminShellContextValue | null>(null);
-
-function useAdminShell() {
-	const context = useContext(AdminShellContext);
-	if (!context) throw new Error('AdsAdminShell components must be used inside AdsAdminShell');
-	return context;
-}
+import {
+	AdsAdminShellMobileSidebar,
+	AdsAdminShellNavigationProvider,
+	AdsAdminShellNavigationTrigger,
+	type AdsAdminShellNavigationTriggerProps,
+} from './admin-shell-navigation.js';
 
 export interface AdsAdminShellProps extends HTMLAttributes<HTMLDivElement> {
 	defaultNavigationOpen?: boolean;
@@ -35,33 +16,27 @@ export interface AdsAdminShellProps extends HTMLAttributes<HTMLDivElement> {
 function AdsAdminShellRoot({
 	children,
 	className,
-	defaultNavigationOpen = false,
+	defaultNavigationOpen,
 	navigationOpen,
 	onNavigationOpenChange,
 	...props
 }: AdsAdminShellProps) {
-	const mobileNavigationId = useId();
-	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultNavigationOpen);
-	const mobileNavigationOpen = navigationOpen ?? uncontrolledOpen;
-	const setMobileNavigationOpen = (open: boolean) => {
-		if (navigationOpen === undefined) setUncontrolledOpen(open);
-		onNavigationOpenChange?.(open);
-	};
-
 	return (
-		<AdminShellContext.Provider
-			value={{ mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId }}
+		<div
+			{...props}
+			className={classNames(
+				'ads-admin-shell min-h-screen bg-background font-sans text-text',
+				className,
+			)}
 		>
-			<div
-				{...props}
-				className={classNames(
-					'ads-admin-shell min-h-screen bg-background font-sans text-text',
-					className,
-				)}
+			<AdsAdminShellNavigationProvider
+				defaultNavigationOpen={defaultNavigationOpen}
+				navigationOpen={navigationOpen}
+				onNavigationOpenChange={onNavigationOpenChange}
 			>
 				{children}
-			</div>
-		</AdminShellContext.Provider>
+			</AdsAdminShellNavigationProvider>
+		</div>
 	);
 }
 
@@ -78,42 +53,6 @@ function AdsAdminShellHeader({ className, ...props }: AdsAdminShellHeaderProps) 
 	);
 }
 
-export interface AdsAdminShellNavigationTriggerProps
-	extends ButtonHTMLAttributes<HTMLButtonElement> {
-	label?: string;
-}
-function AdsAdminShellNavigationTrigger({
-	className,
-	label = 'Abrir navegação',
-	onClick,
-	...props
-}: AdsAdminShellNavigationTriggerProps) {
-	const { mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId } = useAdminShell();
-	return (
-		<button
-			{...props}
-			aria-controls={mobileNavigationId}
-			aria-expanded={mobileNavigationOpen}
-			aria-label={label}
-			className={classNames(
-				'ads-admin-shell-navigation-trigger inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text transition-colors hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring md:hidden',
-				className,
-			)}
-			onClick={(event) => {
-				onClick?.(event);
-				if (!event.defaultPrevented) setMobileNavigationOpen(true);
-			}}
-			type={props.type ?? 'button'}
-		>
-			<span aria-hidden="true" className="flex flex-col gap-1">
-				<span className="block h-0.5 w-5 bg-current" />
-				<span className="block h-0.5 w-5 bg-current" />
-				<span className="block h-0.5 w-5 bg-current" />
-			</span>
-		</button>
-	);
-}
-
 export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
 	label?: string;
 	mobileTitle?: ReactNode;
@@ -122,10 +61,9 @@ function AdsAdminShellSidebar({
 	children,
 	className,
 	label = 'Navegação principal',
-	mobileTitle = 'Navegação',
+	mobileTitle,
 	...props
 }: AdsAdminShellSidebarProps) {
-	const { mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId } = useAdminShell();
 	const navigationClassName = classNames(
 		'ads-admin-shell-sidebar h-full overflow-y-auto bg-surface-raised p-4 text-text',
 		className,
@@ -138,21 +76,14 @@ function AdsAdminShellSidebar({
 					{children}
 				</nav>
 			</aside>
-			<AdsDrawer
-				aria-label={label}
-				className="md:hidden"
-				closeLabel="Fechar navegação"
-				id={mobileNavigationId}
-				onOpenChange={setMobileNavigationOpen}
-				open={mobileNavigationOpen}
-				placement="left"
-				role="dialog"
-				title={mobileTitle}
+			<AdsAdminShellMobileSidebar
+				{...props}
+				className={className}
+				label={label}
+				mobileTitle={mobileTitle}
 			>
-				<nav {...props} aria-label={label} className={navigationClassName}>
-					{children}
-				</nav>
-			</AdsDrawer>
+				{children}
+			</AdsAdminShellMobileSidebar>
 		</>
 	);
 }
@@ -188,3 +119,5 @@ export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
 	Sidebar: AdsAdminShellSidebar,
 	Main: AdsAdminShellMain,
 });
+
+export type { AdsAdminShellNavigationTriggerProps };

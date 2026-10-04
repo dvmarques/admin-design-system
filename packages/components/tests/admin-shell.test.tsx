@@ -2,7 +2,11 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsAdminShell } from '../src/index.js';
 
-function ExampleShell({ onNavigationOpenChange }: { onNavigationOpenChange?: (open: boolean) => void }) {
+function ExampleShell({
+	onNavigationOpenChange,
+}: {
+	onNavigationOpenChange?: (open: boolean) => void;
+}) {
 	return (
 		<AdsAdminShell onNavigationOpenChange={onNavigationOpenChange}>
 			<AdsAdminShell.Header>

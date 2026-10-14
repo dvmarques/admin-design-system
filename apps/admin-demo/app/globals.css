@@ -85,6 +85,36 @@ body {
 	outline: 2px solid var(--ads-color-focus-ring);
 	outline-offset: 3px;
 }
+.demo-shell-nav-link {
+	display: flex;
+	align-items: center;
+	gap: 0.5rem;
+	border-radius: var(--ads-radius-md);
+	padding: 0.5rem 0.5rem;
+	color: var(--ads-color-text);
+	font-size: 0.875rem;
+	text-decoration: none;
+}
+.demo-shell-nav-link:hover {
+	background-color: var(--ads-color-surface-hover);
+}
+.demo-shell-nav-link:focus-visible {
+	outline: 2px solid var(--ads-color-focus-ring);
+	outline-offset: 2px;
+}
+.demo-nav-initial {
+	display: inline-flex;
+	width: 1.5rem;
+	height: 1.5rem;
+	flex-shrink: 0;
+	align-items: center;
+	justify-content: center;
+	border-radius: var(--ads-radius-sm);
+	border: 1px solid var(--ads-color-border);
+	background-color: var(--ads-color-surface);
+	font-size: 0.75rem;
+	font-weight: var(--ads-typography-font-weight-medium);
+}
 .demo-page-navigation {
 	display: flex;
 	align-items: flex-start;

@@ -32,6 +32,7 @@ export default async function HomePage() {
 		<AdsAdminShell>
 			<AdsAdminShell.Header>
 				<AdsAdminShell.NavigationTrigger />
+				<AdsAdminShell.SidebarToggle />
 				<AdsTypography as="strong" variant="heading4">
 					Admin Design System
 				</AdsTypography>
@@ -45,18 +46,27 @@ export default async function HomePage() {
 				<AdsAdminShell.Sidebar label="Navegação do demo">
 					<ul className="m-0 grid list-none gap-1 p-0">
 						<li>
-							<a className="block rounded-md px-3 py-2 hover:bg-surface-hover" href="#fundamentos">
-								Fundamentos
+							<a className="demo-shell-nav-link" href="#fundamentos">
+								<span aria-hidden="true" className="demo-nav-initial">
+									F
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Fundamentos</span>
 							</a>
 						</li>
 						<li>
-							<a className="block rounded-md px-3 py-2 hover:bg-surface-hover" href="#forms">
-								Formulários
+							<a className="demo-shell-nav-link" href="#forms">
+								<span aria-hidden="true" className="demo-nav-initial">
+									F
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Formulários</span>
 							</a>
 						</li>
 						<li>
-							<a className="block rounded-md px-3 py-2 hover:bg-surface-hover" href="/data-display">
-								Exibição de dados
+							<a className="demo-shell-nav-link" href="/data-display">
+								<span aria-hidden="true" className="demo-nav-initial">
+									E
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Exibição de dados</span>
 							</a>
 						</li>
 					</ul>

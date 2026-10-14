@@ -61,6 +61,33 @@ function ExampleShell(props: Omit<ComponentProps<typeof AdsAdminShell>, 'childre
 	);
 }
 
+function ConsumerTrigger() {
+	const { setMobileOpen } = useAdsAdminShell();
+	return (
+		<button onClick={() => setMobileOpen(true)} type="button">
+			Menu do consumidor
+		</button>
+	);
+}
+
+function ConsumerTriggerShell() {
+	return (
+		<AdsAdminShell>
+			<AdsAdminShell.Header>
+				<ConsumerTrigger />
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar>
+					<a href="/dashboard">Dashboard</a>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					<h1>Visão geral</h1>
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	);
+}
+
 const trigger = () => screen.getByRole('button', { name: 'Abrir navegação' });
 const navigations = () => screen.queryAllByRole('navigation', { name: 'Navegação principal' });
 const backdrop = () => document.querySelector('[data-overlay="backdrop"]');
@@ -294,6 +321,33 @@ describe('breakpoint transitions', () => {
 		expect(active).not.toBe(document.body);
 		expect(active?.isConnected).toBe(true);
 		expect(active).toBe(navigations()[0]);
+	});
+
+	it('moves focus away from a consumer trigger that is hidden on desktop', () => {
+		render(<ConsumerTriggerShell />);
+		const consumerTrigger = screen.getByRole('button', { name: 'Menu do consumidor' });
+		consumerTrigger.focus();
+		fireEvent.click(consumerTrigger);
+		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		// The consumer hides its own trigger on desktop; jsdom has no layout, so simulate it.
+		consumerTrigger.checkVisibility = () => false;
+		// Simulate the drawer restoring focus to its opener while the layout switches.
+		consumerTrigger.focus();
+
+		viewport.setDesktop(true);
+		expect(consumerTrigger).not.toHaveFocus();
+		expect(document.activeElement).toBe(navigations()[0]);
+	});
+
+	it('keeps focus on a consumer trigger that remains visible on desktop', () => {
+		render(<ConsumerTriggerShell />);
+		const consumerTrigger = screen.getByRole('button', { name: 'Menu do consumidor' });
+		fireEvent.click(consumerTrigger);
+		consumerTrigger.checkVisibility = () => true;
+		consumerTrigger.focus();
+
+		viewport.setDesktop(true);
+		expect(consumerTrigger).toHaveFocus();
 	});
 
 	it('does not steal focus when the drawer was closed during the transition', () => {

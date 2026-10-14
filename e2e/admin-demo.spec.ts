@@ -112,3 +112,30 @@ test('encerra a navegação móvel ao entrar no desktop e não a reabre ao volta
 	await expect(page.getByRole('dialog')).toHaveCount(0);
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
+
+test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro e escuro', async ({
+	page,
+}) => {
+	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
+
+	for (const theme of ['dark', 'light'] as const) {
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+
+		await page.setViewportSize({ width: 1280, height: 720 });
+		await page.goto('/');
+		await hideDevelopmentPortal(page);
+		await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+		const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
+		await expect(navigation.getByRole('link', { name: 'Formulários' })).toBeVisible();
+		await expect(page).toHaveScreenshot(`admin-shell-collapsed-${theme}.png`);
+
+		await page.setViewportSize({ width: 390, height: 844 });
+		await page.goto('/');
+		await hideDevelopmentPortal(page);
+		await page.getByRole('button', { name: 'Abrir navegação' }).click();
+		await expect(page.getByRole('dialog', { name: 'Navegação do demo' })).toBeVisible();
+		await expect(page).toHaveScreenshot(`admin-shell-mobile-open-${theme}.png`);
+	}
+});

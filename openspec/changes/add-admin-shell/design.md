@@ -44,6 +44,8 @@ Em viewports amplas, a sidebar deve participar do layout e poder permanecer expa
 
 O estado `collapsed`/`defaultCollapsed` é exclusivamente uma preferência estrutural da sidebar desktop. Ele pode alterar a largura/ocupação da sidebar persistente e continua exposto para que a composição consumidora adapte explicitamente seu conteúdo no desktop. Ao entrar no modo móvel, o drawer não deve herdar largura reduzida, labels ocultos ou outra representação compacta apenas porque a sidebar desktop está recolhida. A aplicação ainda pode adaptar explicitamente o conteúdo apresentado no mobile, mas essa adaptação não deve ocorrer automaticamente em função de `collapsed`.
 
+Como apoio opcional a essa adaptação explícita, o shell publica a classe `ads-admin-shell-sidebar-label`: quando o consumidor a aplica ao texto de um item, a sidebar desktop recolhida oculta esse texto apenas visualmente, preservando o nome acessível e o foco do item, sem rótulos cortados. O drawer mobile sempre exibe o rótulo completo.
+
 A implementação deve reutilizar `AdsDrawer` quando seus contratos de foco, Escape, backdrop e portal atenderem ao caso. O shell pode coordenar a abertura/fechamento, mas não deve copiar internamente toda a lógica de overlay existente.
 
 A troca entre os modos desktop e móvel deve ser definida por CSS responsivo e comportamento React mínimo, evitando listeners de viewport quando CSS puder resolver a apresentação.

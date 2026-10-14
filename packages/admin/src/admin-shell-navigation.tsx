@@ -76,6 +76,22 @@ export function AdsAdminShellSidebarToggle({
 	);
 }
 
+function isHidden(element: Element): boolean {
+	return typeof element.checkVisibility === 'function' && !element.checkVisibility();
+}
+
+/** Decides whether focus must leave its current element after the mobile navigation closes. */
+function shouldRedirectFocus(active: Element | null, mobileNavigationId: string): boolean {
+	if (!active || active === document.body || !active.isConnected) return true;
+	const mobileNavigation = document.getElementById(mobileNavigationId);
+	if (mobileNavigation?.contains(active) || active.closest('.ads-admin-shell-mobile-drawer')) {
+		return true;
+	}
+	const controlsNavigation = active.getAttribute('aria-controls') === mobileNavigationId;
+	const shellTrigger = active.matches('.ads-admin-shell-navigation-trigger');
+	return controlsNavigation || shellTrigger || isHidden(active);
+}
+
 export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
 	label?: string;
 	mobileTitle?: ReactNode;
@@ -99,16 +115,15 @@ export function AdsAdminShellSidebar({
 
 	useEffect(() => {
 		// The drawer is unmounted when the desktop layout takes over, so its own focus restoration
-		// cannot run and the trigger is hidden. Move focus to a valid mounted element instead.
+		// cannot run reliably and any mobile trigger may be hidden. Move focus to a valid mounted
+		// element when it was lost, left inside the mobile navigation, or sits on a mobile trigger
+		// (the shell's own or one composed by the consumer) that is no longer rendered.
 		if (isDesktop && wasMobileOpenRef.current) {
 			const active = document.activeElement;
-			const lost = !active || active === document.body || !active.isConnected;
-			// The shell hides its own mobile trigger on desktop, so it cannot keep focus either.
-			const hiddenTrigger = active?.matches('.ads-admin-shell-navigation-trigger') ?? false;
-			if (lost || hiddenTrigger) desktopNavigationRef.current?.focus();
+			if (shouldRedirectFocus(active, mobileNavigationId)) desktopNavigationRef.current?.focus();
 		}
 		wasMobileOpenRef.current = mobileOpen;
-	}, [isDesktop, mobileOpen]);
+	}, [isDesktop, mobileNavigationId, mobileOpen]);
 
 	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
 

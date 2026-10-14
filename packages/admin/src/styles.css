@@ -46,6 +46,27 @@
 		width: var(--ads-admin-shell-sidebar-width-collapsed);
 	}
 
+	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] .ads-admin-shell-sidebar {
+		overflow-x: hidden;
+	}
+
+	/*
+	 * Opt-in label for sidebar items. On the collapsed desktop sidebar the text is hidden only
+	 * visually, so items keep their accessible name and stay focusable without clipped labels.
+	 * The mobile drawer always shows the complete label.
+	 */
+	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] .ads-admin-shell-sidebar-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+
 	.ads-admin-shell-sidebar {
 		isolation: isolate;
 		height: 100%;

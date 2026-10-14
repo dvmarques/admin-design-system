@@ -1,6 +1,7 @@
 # admin-shell-navigation Specification
 
 ## Purpose
+
 Define o comportamento responsivo e acessível da navegação estrutural do Admin Shell em viewports amplas e estreitas.
 
 ## Requirements

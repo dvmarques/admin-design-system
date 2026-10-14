@@ -1,6 +1,7 @@
 # admin-shell-preferences Specification
 
 ## Purpose
+
 Define os contratos de estado e preferências estruturais do Admin Shell sem impor persistência ou um sistema global de configurações.
 
 ## Requirements

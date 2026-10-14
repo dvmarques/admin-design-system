@@ -1,6 +1,7 @@
 # admin-shell-layout Specification
 
 ## Purpose
+
 Fornece a composição estrutural reutilizável de aplicações administrativas com header, sidebar e conteúdo principal sem acoplamento a framework de aplicação, roteador ou domínio.
 
 ## Requirements

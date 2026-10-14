@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAdminShell, AdsBadge, AdsButton, AdsCard, AdsTypography } from '@admin-ds/components';
+import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsBadge, AdsButton, AdsCard, AdsTypography } from '@admin-ds/components';
 
 const meta = {
 	title: 'Layout/Admin Shell',

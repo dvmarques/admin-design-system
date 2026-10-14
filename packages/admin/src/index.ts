@@ -1,8 +1,9 @@
-export interface AdminShellProps {
-	children: unknown;
-}
-
-/** Composition boundary for future administrative layouts without router coupling. */
-export function createAdminShell(props: AdminShellProps) {
-	return props;
-}
+export { AdsAdminShell } from './admin-shell.js';
+export type {
+	AdsAdminShellBodyProps,
+	AdsAdminShellHeaderProps,
+	AdsAdminShellMainProps,
+	AdsAdminShellNavigationTriggerProps,
+	AdsAdminShellProps,
+	AdsAdminShellSidebarProps,
+} from './admin-shell.js';

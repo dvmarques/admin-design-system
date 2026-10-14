@@ -1,9 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { AdsAdminShell } from '@admin-ds/admin';
 import {
 	AdsAvatar,
-	AdsAdminShell,
 	AdsBadge,
 	AdsBreadcrumb,
 	AdsButton,
@@ -116,8 +116,17 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.overflow-x-auto/);
 		expect(css).toMatch(/\.border-dashed/);
 		expect(css).toMatch(/motion-reduce/);
-		expect(css).toMatch(/\.ads-admin-shell/);
-		expect(css).toMatch(/min-height:calc\(100vh - 4rem\)/);
+	});
+
+	it('includes the Admin Shell styles in its own distributed CSS', async () => {
+		const css = await readFile(
+			resolve(process.cwd(), '../../packages/admin/dist/styles.css'),
+			'utf8',
+		);
+
+		expect(css).toMatch(/\.ads-admin-shell-header/);
+		expect(css).toMatch(/min-height:\s*calc\(100vh - 4rem\)/);
+		expect(css).not.toMatch(/@source|@import/);
 	});
 
 	it('keeps the reference application on public package imports', async () => {
@@ -126,6 +135,9 @@ describe('public component consumption', () => {
 			'utf8',
 		);
 		expect(page).toContain("from '@admin-ds/components'");
-		expect(page).not.toMatch(/@admin-ds\/components\/src|packages\/components\/src/);
+		expect(page).toContain("from '@admin-ds/admin'");
+		expect(page).not.toMatch(
+			/@admin-ds\/(components|admin)\/src|packages\/(components|admin)\/src/,
+		);
 	});
 });

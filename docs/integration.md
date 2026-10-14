@@ -39,7 +39,7 @@ autorização ou roteamento. Os links pertencem à aplicação consumidora, que 
 usar `a`, `next/link` ou sua própria abstração de navegação dentro da sidebar.
 
 ```tsx
-import { AdsAdminShell } from '@admin-ds/components';
+import { AdsAdminShell } from '@admin-ds/admin';
 
 export default function AdminPage() {
 	return (
@@ -62,5 +62,8 @@ export default function AdminPage() {
 Header, Body, Sidebar e Main permanecem compatíveis com Server Components. O
 estado da navegação móvel, o trigger e o Drawer ficam em um limite Client
 Component interno; não é necessário transformar a página consumidora em cliente.
-Os estilos do shell já estão em `@admin-ds/components/styles.css` e usam os
-tokens públicos `--ads-*`, portanto não exigem Tailwind no consumidor.
+Os estilos do shell ficam em `@admin-ds/admin/styles.css`, que deve ser importado
+junto com `@admin-ds/tokens/styles.css` e `@admin-ds/components/styles.css`. Eles
+usam apenas os tokens públicos `--ads-*`, portanto não exigem Tailwind no
+consumidor. `@admin-ds/admin` declara `@admin-ds/components` como peer
+dependency, pois reutiliza `AdsDrawer` na navegação móvel.

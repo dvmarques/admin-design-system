@@ -1,6 +1,5 @@
 import {
 	AdsAvatar,
-	AdsAdminShell,
 	AdsBadge,
 	AdsButton,
 	AdsCheckbox,
@@ -16,6 +15,7 @@ import {
 	AdsSwitch,
 	AdsTextarea,
 } from '@admin-ds/components';
+import { AdsAdminShell } from '@admin-ds/admin';
 import { tokenValues } from '@admin-ds/tokens';
 import { cookies } from 'next/headers';
 import { resolveTheme } from '../lib/theme';

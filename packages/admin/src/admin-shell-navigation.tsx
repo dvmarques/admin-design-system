@@ -10,7 +10,7 @@ import {
 	type ReactNode,
 } from 'react';
 import { classNames } from './class-names.js';
-import { AdsDrawer } from './overlay-dialog.js';
+import { AdsDrawer } from '@admin-ds/components';
 
 interface AdminShellContextValue {
 	mobileNavigationOpen: boolean;
@@ -73,20 +73,17 @@ export function AdsAdminShellNavigationTrigger({
 			aria-controls={mobileNavigationId}
 			aria-expanded={mobileNavigationOpen}
 			aria-label={label}
-			className={classNames(
-				'ads-admin-shell-navigation-trigger inline-flex h-10 w-10 items-center justify-center rounded-md border border-border bg-surface text-text transition-colors hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring md:hidden',
-				className,
-			)}
+			className={classNames('ads-admin-shell-navigation-trigger', className)}
 			onClick={(event) => {
 				onClick?.(event);
 				if (!event.defaultPrevented) setMobileNavigationOpen(true);
 			}}
 			type={props.type ?? 'button'}
 		>
-			<span aria-hidden="true" className="flex flex-col gap-1">
-				<span className="block h-0.5 w-5 bg-current" />
-				<span className="block h-0.5 w-5 bg-current" />
-				<span className="block h-0.5 w-5 bg-current" />
+			<span aria-hidden="true" className="ads-admin-shell-navigation-icon">
+				<span className="ads-admin-shell-navigation-icon-bar" />
+				<span className="ads-admin-shell-navigation-icon-bar" />
+				<span className="ads-admin-shell-navigation-icon-bar" />
 			</span>
 		</button>
 	);
@@ -108,7 +105,7 @@ export function AdsAdminShellMobileSidebar({
 	return (
 		<AdsDrawer
 			aria-label={label}
-			className="md:hidden"
+			className="ads-admin-shell-mobile-drawer"
 			closeLabel="Fechar navegação"
 			id={mobileNavigationId}
 			onOpenChange={setMobileNavigationOpen}
@@ -119,10 +116,7 @@ export function AdsAdminShellMobileSidebar({
 			<nav
 				{...props}
 				aria-label={label}
-				className={classNames(
-					'ads-admin-shell-sidebar h-full overflow-y-auto bg-surface-raised p-4 text-text',
-					className,
-				)}
+				className={classNames('ads-admin-shell-sidebar', className)}
 			>
 				{children}
 			</nav>

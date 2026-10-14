@@ -6,8 +6,8 @@ componentes administrativos.
 - `packages/components` contém atualmente fixtures de estilo e o controle de
   tema; componentes como Button, Table, Modal e Sidebar ainda serão changes
   independentes.
-- `packages/admin` estabelece o ponto de distribuição, mas ainda não contém
-  composições completas de dashboard ou regras de negócio.
+- `packages/admin` contém o `AdsAdminShell` e seus estilos próprios, mas ainda
+  não contém composições completas de dashboard ou regras de negócio.
 - A aplicação consumidora decide como persistir a preferência de tema e deve
   aplicá-la no servidor quando quiser evitar uma troca visual na hidratação.
 - Os snapshots visuais usam Chromium e devem ser atualizados conscientemente

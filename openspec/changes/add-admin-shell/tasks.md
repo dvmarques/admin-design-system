@@ -1,20 +1,20 @@
 ## 1. Fundação e contratos públicos
 
-- [ ] 1.1 Revisar o placeholder atual de `@admin-ds/admin`, dependências do workspace e contratos públicos existentes em `@admin-ds/components` que serão reutilizados pelo shell.
+- [x] 1.1 Revisar o placeholder atual de `@admin-ds/admin`, dependências do workspace e contratos públicos existentes em `@admin-ds/components` que serão reutilizados pelo shell.
 - [ ] 1.2 Definir a API pública final de `AdsAdminShell` e suas partes estruturais (`Header`, `Sidebar`, `Content` ou contrato equivalente), incluindo tipos React, atributos HTML suportados, nomes acessíveis, forma de expor o estado estrutural da sidebar e contrato público do trigger mobile.
-- [ ] 1.3 Substituir `createAdminShell` pelo componente React real, preservando `react`/`react-dom` como peer dependencies e sem introduzir dependência de runtime desnecessária.
-- [ ] 1.4 Definir explicitamente a relação de runtime entre `@admin-ds/admin` e `@admin-ds/components` caso o shell importe componentes públicos como `AdsDrawer`, usando dependency/peer dependency compatível com o modelo de publicação do workspace e evitando resolução incidental do monorepo.
+- [x] 1.3 Substituir `createAdminShell` pelo componente React real, preservando `react`/`react-dom` como peer dependencies e sem introduzir dependência de runtime desnecessária.
+- [x] 1.4 Definir explicitamente a relação de runtime entre `@admin-ds/admin` e `@admin-ds/components` caso o shell importe componentes públicos como `AdsDrawer`, usando dependency/peer dependency compatível com o modelo de publicação do workspace e evitando resolução incidental do monorepo.
 - [ ] 1.5 Mapear tokens existentes para superfícies, bordas, texto, foco, espaçamento, sombras e motion; criar novos tokens somente quando houver conceito estrutural público realmente ausente.
-- [ ] 1.6 Garantir CSS distribuído consumível sem Tailwind na aplicação final, exportar estilos próprios de `@admin-ds/admin` quando necessários e documentar explicitamente quaisquer imports públicos de CSS requeridos de `@admin-ds/components`.
-- [ ] 1.7 Atualizar verificação de pacote/exports e testes de consumo para detectar dependências ou estilos não declarados.
+- [x] 1.6 Garantir CSS distribuído consumível sem Tailwind na aplicação final, exportar estilos próprios de `@admin-ds/admin` quando necessários e documentar explicitamente quaisquer imports públicos de CSS requeridos de `@admin-ds/components`.
+- [x] 1.7 Atualizar verificação de pacote/exports e testes de consumo para detectar dependências ou estilos não declarados.
 
 ## 2. Estrutura do Admin Shell
 
-- [ ] 2.1 Implementar o root `AdsAdminShell` com organização responsiva de header, sidebar e conteúdo principal.
-- [ ] 2.2 Implementar região de header composicional para branding, ações, usuário e controles fornecidos pela aplicação, sem props de domínio específicas.
-- [ ] 2.3 Implementar região de sidebar composicional com nome acessível configurável e suporte a conteúdo React arbitrário por APIs públicas, sem assumir que `AdsNav` atual atende automaticamente ao layout vertical.
-- [ ] 2.4 Implementar região principal com landmark `main`, dimensionamento seguro, overflow adequado e preservação do fluxo de foco.
-- [ ] 2.5 Implementar classes, data attributes e/ou CSS variables públicas apenas quando necessárias para estilização e integração previsível pelo consumidor.
+- [x] 2.1 Implementar o root `AdsAdminShell` com organização responsiva de header, sidebar e conteúdo principal.
+- [x] 2.2 Implementar região de header composicional para branding, ações, usuário e controles fornecidos pela aplicação, sem props de domínio específicas.
+- [x] 2.3 Implementar região de sidebar composicional com nome acessível configurável e suporte a conteúdo React arbitrário por APIs públicas, sem assumir que `AdsNav` atual atende automaticamente ao layout vertical.
+- [x] 2.4 Implementar região principal com landmark `main`, dimensionamento seguro, overflow adequado e preservação do fluxo de foco.
+- [x] 2.5 Implementar classes, data attributes e/ou CSS variables públicas apenas quando necessárias para estilização e integração previsível pelo consumidor.
 
 ## 3. Sidebar desktop e preferências
 
@@ -29,13 +29,13 @@
 
 ## 4. Navegação responsiva
 
-- [ ] 4.1 Definir e implementar o breakpoint estrutural do shell usando CSS responsivo sempre que possível, evitando listeners de viewport desnecessários.
-- [ ] 4.2 Em viewports estreitas, retirar a sidebar persistente do fluxo e disponibilizar contrato público para abertura da navegação móvel.
+- [x] 4.1 Definir e implementar o breakpoint estrutural do shell usando CSS responsivo sempre que possível, evitando listeners de viewport desnecessários.
+- [x] 4.2 Em viewports estreitas, retirar a sidebar persistente do fluxo e disponibilizar contrato público para abertura da navegação móvel.
 - [ ] 4.3 Garantir que o drawer mobile use apresentação completa por padrão, sem herdar largura recolhida, labels ocultos ou representação compacta da sidebar desktop quando `collapsed` estiver ativo; adaptações específicas para mobile devem depender de composição explícita do consumidor.
-- [ ] 4.4 Implementar `MobileMenuTrigger` ou API equivalente, permitindo composição visual pelo consumidor enquanto o shell coordena `aria-expanded`, associação com a navegação, abertura/fechamento e retorno de foco.
+- [x] 4.4 Implementar `MobileMenuTrigger` ou API equivalente, permitindo composição visual pelo consumidor enquanto o shell coordena `aria-expanded`, associação com a navegação, abertura/fechamento e retorno de foco.
 - [ ] 4.5 Garantir que `aria-expanded` e demais atributos de estado do trigger reflitam a apresentação móvel efetivamente aberta/operável, e não apenas uma prop controlada temporariamente suprimida no desktop.
-- [ ] 4.6 Reutilizar `AdsDrawer` para a navegação móvel quando compatível, preservando portal, backdrop, foco, Escape e retorno de foco sem duplicar lógica de overlay.
-- [ ] 4.7 Implementar contrato controlado e não controlado para abertura da navegação móvel e callback de alteração para coordenação pela aplicação, garantindo que o trigger não mantenha estado concorrente.
+- [x] 4.6 Reutilizar `AdsDrawer` para a navegação móvel quando compatível, preservando portal, backdrop, foco, Escape e retorno de foco sem duplicar lógica de overlay.
+- [x] 4.7 Implementar contrato controlado e não controlado para abertura da navegação móvel e callback de alteração para coordenação pela aplicação, garantindo que o trigger não mantenha estado concorrente.
 - [ ] 4.8 Implementar a transição desktop/mobile preservando uma única instância lógica do conteúdo arbitrário da sidebar por vez; não manter duas montagens simultâneas como estratégia padrão.
 - [ ] 4.9 Implementar mobile aberto → desktop no modo não controlado encerrando o overlay e resetando o estado interno `mobileOpen`/equivalente para impedir estado latente e reabertura inesperada ao voltar para mobile.
 - [ ] 4.10 Implementar mobile aberto → desktop no modo controlado sem mutar a prop externa, disparando callback de fechamento e desativando imediatamente backdrop, portal, focus trap e qualquer representação mobile operável enquanto o layout desktop estiver ativo.
@@ -52,9 +52,9 @@
 
 - [ ] 5.1 Validar se `AdsNav` atende ao uso lateral apenas por sua API pública; se faltar orientação vertical e a capacidade for genérica, evoluir `AdsNav` minimamente e cobrir essa evolução separadamente. Caso contrário, demonstrar a sidebar com outra composição pública apropriada.
 - [ ] 5.2 Demonstrar composição do shell com componentes públicos adequados como `AdsButton`, `AdsIcon`, `AdsDrawer` e `ThemeToggle`, sem imports privados.
-- [ ] 5.3 Garantir que tema claro/escuro seja herdado pelo shell pelos tokens existentes, sem estado de tema próprio em `@admin-ds/admin`.
+- [x] 5.3 Garantir que tema claro/escuro seja herdado pelo shell pelos tokens existentes, sem estado de tema próprio em `@admin-ds/admin`.
 - [ ] 5.4 Validar foco visível, contraste, divisores, superfícies e estados estruturais em ambos os temas.
-- [ ] 5.5 Confirmar que nenhuma mudança em `@admin-ds/components` é necessária além de eventual capacidade genérica indispensável identificada no item 5.1.
+- [x] 5.5 Confirmar que nenhuma mudança em `@admin-ds/components` é necessária além de eventual capacidade genérica indispensável identificada no item 5.1.
 
 ## 6. Documentação e demonstração
 
@@ -62,7 +62,7 @@
 - [ ] 6.2 Adicionar exemplo de composição com branding, navegação, ações e controle de tema sem acoplamento a um domínio específico.
 - [ ] 6.3 Demonstrar como o consumidor posiciona/customiza o trigger mobile sem reproduzir a coordenação interna de estado e acessibilidade do shell.
 - [ ] 6.4 Demonstrar como o consumidor adapta o conteúdo da sidebar ao estado recolhido no desktop sem depender de transformação automática feita pelo shell e deixar explícito que o drawer mobile permanece completo por padrão.
-- [ ] 6.5 Atualizar `apps/admin-demo` com uma demonstração mínima do Admin Shell usando apenas `@admin-ds/admin`, `@admin-ds/components` e CSS públicos.
+- [x] 6.5 Atualizar `apps/admin-demo` com uma demonstração mínima do Admin Shell usando apenas `@admin-ds/admin`, `@admin-ds/components` e CSS públicos.
 - [ ] 6.6 Manter a demo desta change limitada à validação do shell, sem antecipar a remodelação completa prevista em `add-nextjs-admin-demo`.
 - [ ] 6.7 Documentar responsabilidades do consumidor: roteamento, autenticação, autorização, persistência de preferências, definição dos itens de navegação, adaptação explícita do conteúdo recolhido, conteúdo do header e imports de estilos públicos necessários.
 
@@ -70,7 +70,7 @@
 
 - [ ] 7.1 Criar testes unitários para landmarks, composição, atributos públicos, expansão/recolhimento, trigger mobile e contratos controlado/não controlado.
 - [ ] 7.2 Criar testes de acessibilidade para nomes de navegação, estado e associação ARIA do trigger, foco, Escape, retorno de foco e ausência de conteúdo interativo duplicado.
-- [ ] 7.3 Atualizar testes de consumo público para exports, tipos, dependencies/peer dependencies declaradas, build e CSS compilado/importável de `@admin-ds/admin` e integrações requeridas de `@admin-ds/components`.
+- [x] 7.3 Atualizar testes de consumo público para exports, tipos, dependencies/peer dependencies declaradas, build e CSS compilado/importável de `@admin-ds/admin` e integrações requeridas de `@admin-ds/components`.
 - [ ] 7.4 Criar testes com conteúdo de sidebar que possua ID, estado interno e efeito próprio para garantir ausência de duas montagens simultâneas entre desktop e mobile.
 - [ ] 7.5 Criar testes específicos garantindo que `collapsed`/`defaultCollapsed` afetem somente a sidebar desktop e que o drawer mobile permaneça completo por padrão, inclusive quando a preferência desktop estiver recolhida.
 - [ ] 7.6 Criar testes de mobile aberto → desktop no modo não controlado validando reset de `mobileOpen`, fechamento do drawer, foco válido e ausência de backdrop, portal e focus trap residual.

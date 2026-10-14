@@ -135,7 +135,7 @@ sincronizadas ao conjunto principal e a change foi arquivada em
 Adicionar a composição estrutural do admin, incluindo header, sidebar,
 área de conteúdo, navegação responsiva e preferências de layout.
 
-**Status: concluída.**
+**Status: concluída e arquivada em 2026-10-14.**
 
 Entregas principais:
 
@@ -156,9 +156,11 @@ Entregas principais:
 - `@admin-ds/components` declarado como peer dependency do pacote;
 - documentação no Storybook e em `docs/integration.md`, integração no admin
   demo, testes unitários, de SSR e hidratação, acessibilidade com `axe-core`,
-  consumo público e Playwright;
-- specs `admin-shell-layout`, `admin-shell-navigation` e
-  `admin-shell-preferences`.
+  consumo público e Playwright.
+
+As specs `admin-shell-layout`, `admin-shell-navigation` e
+`admin-shell-preferences` foram sincronizadas ao conjunto principal e a change
+foi arquivada em `openspec/changes/archive/2026-10-14-add-admin-shell`.
 
 ## 8. `add-nextjs-admin-demo`
 

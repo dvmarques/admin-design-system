@@ -1,138 +1,167 @@
-# Design — add-admin-shell
+## Context
 
-## Visão geral
+O roadmap do Admin Design System prevê uma composição estrutural reutilizável para aplicações administrativas depois da consolidação das famílias básicas de componentes. O pacote `@admin-ds/admin` já existe como boundary para essas composições, porém hoje contém apenas um placeholder e ainda não oferece layout React real.
 
-O Admin Shell será uma composição estrutural do design system, responsável por organizar regiões administrativas recorrentes sem assumir regras de negócio, autenticação ou roteamento da aplicação consumidora.
+A implementação deve preservar os contratos existentes do projeto: APIs públicas `Ads*`, CSS distribuído consumível sem Tailwind na aplicação cliente, tokens semânticos, temas claro/escuro, acessibilidade, documentação no Storybook, exemplos no admin demo e validação automatizada. O shell deve compor componentes existentes em vez de duplicar navegação, overlay ou controle de tema.
 
-A API privilegia composição React e mantém as regiões semanticamente separadas para que consumidores forneçam marca, navegação, ações e conteúdo utilizando somente APIs públicas.
+## Goals / Non-Goals
 
-## Estrutura proposta
+### Goals
 
-O shell é composto por três regiões principais:
+- Fornecer uma composição estrutural pública para header, sidebar e conteúdo principal.
+- Permitir composição livre de branding, navegação, ações, usuário e preferências pela aplicação consumidora.
+- Suportar layout responsivo com sidebar persistente em desktop e navegação sobreposta em telas estreitas.
+- Oferecer contratos controlados e não controlados para estados de layout relevantes sem impor mecanismo de persistência.
+- Manter independência de Next.js, React Router, autenticação, autorização, fetching e domínio de negócio.
+- Reutilizar tokens e componentes existentes antes de criar novos contratos visuais.
 
-1. **Header** — região superior para identidade, contexto e ações globais.
-2. **Sidebar** — navegação primária administrativa, persistente em viewport ampla e acionável em viewport reduzida.
-3. **Main** — conteúdo principal da página, com dimensionamento e espaçamento coerentes com os tokens do design system.
+### Non-Goals
 
-A implementação deve permitir composição de conteúdo pelo consumidor em vez de codificar menus ou ações específicos.
+- Implementar autenticação, sessão, autorização ou filtragem de menu por permissão.
+- Implementar roteamento, geração automática de breadcrumbs ou conhecimento de URL atual.
+- Persistir preferências em localStorage, cookie ou backend.
+- Transformar o `apps/admin-demo` em aplicação administrativa completa nesta change.
+- Implementar dashboards, filtros avançados, data grids inteligentes ou outros padrões da change `add-advanced-admin-patterns`.
+- Duplicar `AdsDrawer`, `AdsNav`, `ThemeToggle` ou outras APIs já públicas em `@admin-ds/components`.
 
-## API pública e limites entre pacotes
+## Decisions
 
-Componentes React e tipos públicos introduzidos por esta change usarão o prefixo `Ads`. Classes CSS públicas usarão `ads-` e novas variáveis públicas, quando necessárias, usarão `--ads-`.
+### 1. O shell será uma composição React no pacote `@admin-ds/admin`
 
-Os elementos necessários ao shell serão exportados pelas entradas públicas do pacote de componentes. Tokens permanecem separados dos componentes React e nenhuma API pública deverá expor classes Tailwind internas.
+`@admin-ds/admin` continuará sendo a boundary para padrões administrativos compostos. O placeholder atual será substituído por uma API React pública. A API deve favorecer composição explícita, preferencialmente com partes como `AdsAdminShell.Header`, `AdsAdminShell.Sidebar` e `AdsAdminShell.Content`, ou contrato equivalente que mantenha regiões claras e extensíveis.
 
-O admin demo e o Storybook devem consumir as mesmas entradas públicas disponibilizadas a aplicações externas.
+A aplicação consumidora continua responsável pelo conteúdo de cada região. O shell não conhece usuários, produtos, permissões, rotas ou backend.
 
-## Server Components e Client Components
+### 2. Header, sidebar e main manterão semântica estrutural explícita
 
-A estrutura estática do shell deve permanecer compatível com React Server Components sempre que não houver necessidade de estado ou efeitos no cliente.
+O shell deve produzir landmarks adequados para que tecnologias assistivas consigam distinguir banner/header, navegação lateral e conteúdo principal. Deve existir apenas um `main` estrutural fornecido pelo shell no caso comum, e a API não deve exigir que o consumidor recrie landmarks internamente.
 
-A interação da sidebar responsiva exige estado no cliente. Essa responsabilidade deve ficar isolada no menor limite Client Component possível, evitando transformar regiões puramente estruturais ou conteúdo fornecido pelo consumidor em Client Components sem necessidade.
+O header deve permitir branding e ações arbitrárias. A sidebar deve permitir conteúdo de navegação fornecido pelo consumidor por APIs públicas. O shell não deve assumir que `AdsNav` atual atende automaticamente a navegação vertical: durante a implementação, o componente existente deve ser validado nesse contexto e somente receber uma evolução genérica de orientação se essa capacidade fizer sentido fora do Admin Shell. Caso contrário, a sidebar permanece composicional e aceita outra estrutura pública de navegação fornecida pelo consumidor.
 
-A API não dependerá diretamente de Next.js, `next/link`, `useRouter` ou App Router. A aplicação consumidora continua responsável por links e roteamento.
+### 3. Responsividade será comportamento do shell, não do roteador
 
-## Responsividade
+Em viewports amplas, a sidebar deve participar do layout e poder permanecer expandida ou recolhida. Em viewports estreitas, a navegação estrutural deve sair do fluxo principal e ser apresentada como overlay/drawer acessível em sua apresentação completa.
 
-Em telas amplas, sidebar e conteúdo coexistem. Em telas menores, a navegação lateral deixa de ocupar espaço permanente e passa a ser acessível por um controle explícito no header ou região equivalente.
+O estado `collapsed`/`defaultCollapsed` é exclusivamente uma preferência estrutural da sidebar desktop. Ele pode alterar a largura/ocupação da sidebar persistente e continua exposto para que a composição consumidora adapte explicitamente seu conteúdo no desktop. Ao entrar no modo móvel, o drawer não deve herdar largura reduzida, labels ocultos ou outra representação compacta apenas porque a sidebar desktop está recolhida. A aplicação ainda pode adaptar explicitamente o conteúdo apresentado no mobile, mas essa adaptação não deve ocorrer automaticamente em função de `collapsed`.
 
-O estado de abertura da navegação responsiva deve possuir comportamento previsível e acessível, incluindo foco, teclado e atributos ARIA adequados quando aplicável.
+A implementação deve reutilizar `AdsDrawer` quando seus contratos de foco, Escape, backdrop e portal atenderem ao caso. O shell pode coordenar a abertura/fechamento, mas não deve copiar internamente toda a lógica de overlay existente.
 
-Os breakpoints existentes do projeto devem ser reutilizados; novos contratos públicos de breakpoint só devem ser introduzidos se o levantamento demonstrar necessidade.
+A troca entre os modos desktop e móvel deve ser definida por CSS responsivo e comportamento React mínimo, evitando listeners de viewport quando CSS puder resolver a apresentação.
 
-## Acessibilidade
+### 4. Estados de layout terão modo controlado e não controlado
 
-- utilizar landmarks semânticos adequados (`header`, `nav`, `main` quando compatíveis com a composição);
-- permitir identificação acessível da navegação;
-- garantir operação por teclado do controle responsivo;
-- manter ordem de foco coerente;
-- evitar que conteúdo oculto da sidebar permaneça interativo;
-- preservar contraste e estados de foco dos componentes existentes;
-- buscar conformidade WCAG 2.2 AA.
+Estados relevantes como sidebar expandida/recolhida e navegação móvel aberta/fechada devem poder ser:
 
-## Tailwind CSS, tokens e distribuição de estilos
+- controlados pela aplicação por prop + callback; ou
+- mantidos internamente com valor inicial/default.
 
-Tailwind CSS será utilizado somente como ferramenta interna de implementação. As classes devem consumir variáveis CSS semânticas existentes e evitar concatenação dinâmica de utilitários.
+O design system não persistirá esses estados. A aplicação poderá persistir preferências externamente e alimentar o shell por props.
 
-A customização pública ocorrerá por tokens `--ads-*`; aplicações consumidoras não precisarão escanear o código-fonte da biblioteca, utilizar Tailwind ou recompilar os componentes para personalizar valores suportados.
+### 5. Preferências são estruturais, não um sistema de configurações
 
-Os estilos do shell serão incorporados à folha CSS compilada já distribuída pela biblioteca e validados no admin demo Next.js. O build deve continuar removendo classes Tailwind não utilizadas sem remover estilos necessários ao shell.
+Nesta primeira versão, preferência de layout significa apenas estado necessário ao shell, principalmente expansão/recolhimento da sidebar desktop. Densidade global, posição alternativa do header, múltiplas sidebars e layouts arbitrários ficam fora do escopo até existir demanda concreta.
 
-## Isolamento e conflitos de CSS
+O estado recolhido controla a ocupação estrutural da sidebar desktop, não a transformação semântica do conteúdo arbitrário recebido nem a apresentação do drawer mobile. O shell deve expor esse estado de forma suficiente para que a composição consumidora adapte rótulos, ícones ou outras representações quando necessário no desktop, preservando nomes acessíveis e ordem de teclado. O design system não deve inferir automaticamente como converter conteúdo textual em uma versão compacta.
 
-Classes públicas específicas do shell devem seguir o prefixo `ads-`. A implementação não deve depender de seletores globais genéricos que possam alterar elementos da aplicação consumidora.
+A abertura móvel (`mobileOpen` ou contrato equivalente) é um estado separado de `collapsed`: ela controla somente a existência/visibilidade da apresentação overlay no breakpoint móvel e não redefine a preferência estrutural desktop.
 
-A personalização segura continuará disponível via `className` onde a API do componente permitir, sem expor detalhes internos do Tailwind como contrato público.
+O tema não será gerenciado pelo shell. O header poderá receber `ThemeToggle` ou outro controle fornecido pelo consumidor, preservando o mecanismo existente.
 
-## Temas
+### 6. Tokens existentes serão priorizados
 
-O shell utiliza tokens semânticos e deve funcionar nos temas claro e escuro. Cores, bordas, superfícies, foco e espaçamento não devem introduzir valores desconectados da fundação existente.
+Superfícies, texto, borda, foco, sombra, espaçamento e motion existentes devem ser reutilizados. Novos tokens somente serão adicionados para conceitos estruturais realmente ausentes e estáveis, como largura expandida/recolhida da sidebar ou altura estrutural do header, se isso trouxer valor público de customização.
 
-Quando um consumidor sobrescrever tokens públicos suportados, o shell deve refletir os novos valores sem recompilação.
+Dimensões que não precisarem ser customizadas por consumidores podem permanecer como estilos internos e não devem virar tokens apenas por conveniência de implementação.
 
-## Dependências e bundle
+### 7. A change não deve antecipar `add-nextjs-admin-demo`
 
-A implementação deve reutilizar React, utilitários e componentes já existentes. Não há justificativa inicial para adicionar dependências de runtime.
+O `apps/admin-demo` receberá somente uma página ou seção suficiente para validar o shell, seus estados, responsividade e composição com componentes públicos. A remodelação completa da aplicação demo como admin final pertence ao item seguinte do roadmap.
 
-O código interativo da navegação responsiva deve ser mantido pequeno e isolado para reduzir impacto no bundle cliente e preservar a maior parte possível da estrutura como código compatível com Server Components.
+### 8. Dependências entre `@admin-ds/admin` e `@admin-ds/components` serão explícitas
 
-Qualquer nova dependência identificada durante a implementação deverá ser justificada no OpenSpec antes de ser adicionada.
+Se `@admin-ds/admin` importar componentes de runtime de `@admin-ds/components`, essa relação deve ser declarada de forma explícita no pacote, seguindo a estratégia adotada pelo workspace para consumo/publicação. A implementação deve validar se `@admin-ds/components` entra como dependency/peer dependency compatível com o modelo do monorepo, evitando que o pacote admin funcione apenas por resolução incidental do workspace.
 
-## Alternativas consideradas
+O contrato de estilos também deve permanecer explícito. O shell não deve depender silenciosamente de CSS não declarado: estilos próprios de `@admin-ds/admin` devem ser exportados pelo pacote, e qualquer estilo requerido de `@admin-ds/components` deve permanecer compatível com a forma pública de consumo já existente. A documentação e os testes de consumo devem demonstrar quais imports de CSS são necessários para uma aplicação consumidora.
 
-### Shell monolítico totalmente client-side
+### 9. A navegação responsiva não deve manter duas montagens simultâneas do mesmo conteúdo
 
-Simplificaria o controle da sidebar, porém aumentaria JavaScript enviado ao cliente e reduziria a compatibilidade natural com Server Components. Rejeitado em favor de limites interativos menores.
+A implementação deve evitar renderizar simultaneamente a mesma composição de sidebar em uma árvore desktop e em outra árvore mobile/drawer. Duplicar children arbitrários pode duplicar IDs, estado interno, efeitos, listeners e integrações de roteamento, mesmo quando uma das cópias está visualmente oculta.
 
-### API baseada em configuração completa
+A estratégia responsiva deve manter uma única instância lógica do conteúdo de navegação por vez. Se a solução escolhida exigir troca de montagem entre desktop e mobile, essa transição deve preservar os contratos de acessibilidade e estado documentados. Uma solução com duas montagens simultâneas só poderá ser aceita se houver justificativa técnica explícita e testes que provem ausência de colisões de IDs, estado ou efeitos; ela não é o comportamento padrão esperado desta change.
 
-Um único objeto descrevendo branding, menu e ações reduziria JSX no consumidor, mas acoplaria o design system a modelos específicos e tornaria extensões mais difíceis. Rejeitado em favor de composição React.
+### 10. O trigger mobile será uma API pública coordenada pelo shell
 
-### Integração direta com Next.js
+O shell deve fornecer um contrato público para o controle que abre a navegação móvel, preferencialmente uma primitive/parte composicional como `AdsAdminShell.MobileMenuTrigger` ou API equivalente. O consumidor continua livre para definir conteúdo visual, ícone, rótulo e posicionamento no header, mas não deve precisar reproduzir manualmente a coordenação interna do estado móvel.
 
-Poderia facilitar navegação no admin demo, porém impediria reutilização neutra e contrariaria a arquitetura existente. Rejeitada; roteamento permanece responsabilidade do consumidor.
+Esse contrato deve coordenar `aria-expanded`, associação com a navegação móvel, abertura/fechamento nos modos controlado e não controlado e retorno de foco ao elemento que iniciou a abertura. `aria-expanded` deve refletir a apresentação móvel efetivamente aberta/operável no breakpoint atual, e não apenas o valor bruto de uma prop controlada que esteja temporariamente suprimida durante a transição para desktop. A implementação pode permitir composição customizada do controle, desde que preserve esses atributos e comportamentos.
 
-### CSS dependente do Tailwind da aplicação
+### 11. A estratégia responsiva deve ser segura para SSR e hidratação
 
-Reduziria parte do CSS distribuído, mas obrigaria consumidores a usar/configurar Tailwind e escanear fontes internas. Rejeitado; o shell será entregue no CSS compilado da biblioteca.
+A decisão entre desktop e mobile não deve depender de leitura de viewport no servidor nem produzir markup inicial incompatível entre renderização server-side e primeiro render do cliente. Caso seja necessário comportamento React para preservar uma única instância lógica da sidebar, ele deve ser encapsulado de forma SSR-safe.
 
-## Documentação
+A implementação pode usar CSS para apresentação inicial e somente ativar coordenação de runtime após hidratação, ou outra estratégia equivalente, desde que evite hydration mismatch, acesso indevido a `window`/`matchMedia` durante SSR e remounts desnecessários que quebrem estado ou foco.
 
-O Storybook deve demonstrar ao menos:
+### 12. A transição de mobile aberto para desktop encerra o overlay antes de consolidar o layout desktop
 
-- shell básico;
-- composição com header, sidebar e conteúdo;
-- navegação com itens suficientes para representar uso administrativo;
-- comportamento em viewport reduzida;
-- temas claro e escuro;
-- customização suportada por design tokens.
+Quando a viewport deixa o breakpoint móvel enquanto o drawer está aberto, o shell deve encerrar ou coordenar o encerramento da apresentação overlay de forma compatível com a ativação da sidebar desktop. Backdrop, portal e focus trap não podem permanecer ativos quando o layout desktop estiver visível, e o foco deve terminar em um elemento válido da interface, nunca preso em conteúdo desmontado.
 
-O admin demo deve incluir uma utilização integrada do shell sem transformar esta change na evolução completa prevista pelo item seguinte do roadmap.
+No modo não controlado, o shell deve fechar/resetar seu estado interno `mobileOpen` (ou equivalente) durante essa transição. Esse estado não pode permanecer latente e provocar reabertura inesperada do drawer caso a viewport volte ao mobile depois.
 
-## Testes
+No modo controlado, o shell não altera a prop recebida nem cria uma segunda fonte pública de verdade, mas deve disparar o callback de mudança solicitando `false` quando o breakpoint deixa de ser móvel. Enquanto o consumidor ainda não refletir a nova prop, o shell deve impedir que backdrop, portal, focus trap ou uma segunda instância operável da navegação permaneçam ativos no layout desktop. A composição deve continuar obedecendo ao princípio de uma única instância lógica da navegação.
 
-A cobertura deve incluir:
+A implementação pode manter coordenação transitória interna apenas para marcar que aquele `true` controlado já foi invalidado por uma solicitação de fechamento causada pelo breakpoint. Essa coordenação não substitui a prop controlada, não vira API pública e não representa um segundo estado controlável; serve somente para impedir que o mesmo `true` antigo reabra o drawer caso a viewport retorne ao mobile antes de o consumidor reconhecer o fechamento.
 
-- renderização das regiões estruturais;
-- composição de conteúdo fornecido pelo consumidor;
-- abertura e fechamento da navegação responsiva;
-- operação por teclado e semântica acessível;
-- exports públicos;
-- customização por tokens;
-- consumo da folha CSS compilada;
-- integração no admin demo Next.js App Router;
-- validação E2E e snapshots quando a mudança alterar intencionalmente o baseline visual.
+Depois dessa solicitação, uma nova abertura controlada deve exigir reconhecimento do fechamento (`mobileOpen=false`) seguido de nova intenção explícita de abertura (`false → true`), ou contrato público equivalente. Um `true` contínuo que nunca reconheceu o fechamento não deve ser tratado como nova abertura.
 
-## Decisões
+Se a viewport retornar ao mobile após o fechamento coordenado, o drawer deve permanecer fechado até nova ação explícita do usuário no modo não controlado ou nova intenção controlada reconhecida conforme esse contrato. A preferência desktop `collapsed` permanece independente dessa transição.
 
-- O shell é infraestrutura visual e não um framework de aplicação.
-- Autenticação, autorização e roteamento ficam fora do pacote.
-- O componente reutiliza primitivas e navegação existentes antes de criar abstrações novas.
-- A interatividade fica em `admin-shell-navigation.tsx`, um Client Component que
-  contém somente o provedor de estado, o trigger e o Drawer móvel. `Root`,
-  `Header`, `Body`, `Sidebar` e `Main` permanecem no módulo server-safe e passam
-  o conteúdo do consumidor como children através desse limite. Isso preserva a
-  ergonomia da API composta sem promover a página ou as regiões estruturais a
-  Client Components.
-- Não serão adicionadas dependências de runtime sem justificativa explícita.
-- Padrões avançados de administração permanecem fora deste incremento.
+Se o trigger que iniciou a abertura deixar de estar montado, visível ou focável no desktop, o shell não deve forçar retorno de foco para ele. O foco deve terminar em elemento válido ainda operável conforme a estratégia acessível adotada, sem permanecer preso ao overlay desmontado.
+
+## Accessibility
+
+- O conteúdo principal deve ser exposto por landmark `main` e permanecer alcançável por teclado.
+- A navegação lateral deve ter nome acessível configurável quando necessário.
+- O trigger móvel deve expor nome acessível, `aria-expanded` e associação apropriada com a navegação controlada pelo shell; o estado anunciado deve corresponder à apresentação móvel efetivamente operável.
+- Ao abrir a navegação móvel, foco, Escape, backdrop e retorno de foco devem seguir os contratos acessíveis já fornecidos pelo overlay reutilizado.
+- Ao recolher a sidebar desktop, informações essenciais não podem depender apenas de ícones sem nomes acessíveis ou tooltips quando a aplicação optar por manter itens visíveis; a composição consumidora é responsável por adaptar seu conteúdo ao estado estrutural exposto pelo shell.
+- O drawer mobile deve manter apresentação completa por padrão, sem ocultar labels ou reduzir largura em função do estado `collapsed` da sidebar desktop.
+- Ao cruzar de mobile aberto para desktop, focus trap, backdrop e portal do overlay devem ser encerrados e o foco deve ser restaurado ou transferido para um elemento válido ainda montado; triggers ocultos/desmontados não podem receber foco forçado.
+- Estados visuais não podem depender apenas de cor e devem manter contraste adequado nos temas claro e escuro.
+- Foco visível deve permanecer consistente em controles do header, sidebar e conteúdo.
+- Transições estruturais devem respeitar `prefers-reduced-motion`.
+
+## Testing Strategy
+
+- Testes unitários para estrutura, landmarks, props públicas e contratos controlado/não controlado.
+- Testes de acessibilidade para nomes de navegação, trigger móvel, controles de abertura/recolhimento, foco e uso por teclado.
+- Testes de integração com componentes públicos existentes, sem imports privados de `@admin-ds/components`.
+- Testes de consumo público garantindo exports, tipos, peer dependencies/dependencies declaradas e CSS compilado/importável do pacote `@admin-ds/admin`.
+- Testes específicos para garantir que a navegação responsiva não mantenha duas montagens simultâneas do mesmo conteúdo arbitrário.
+- Testes garantindo que `collapsed`/`defaultCollapsed` afetem somente a sidebar desktop e que o drawer mobile permaneça em apresentação completa por padrão.
+- Testes de transição mobile aberto → desktop nos modos não controlado e controlado, incluindo reset/solicitação de fechamento de `mobileOpen`, ausência de backdrop/portal/focus trap residual, foco válido e nenhuma segunda instância simultânea da navegação.
+- Teste controlado em que `mobileOpen` permanece `true` após a solicitação de fechamento e a viewport retorna ao mobile, garantindo ausência de reabertura até reconhecimento `false` seguido de nova abertura explícita.
+- Teste de `aria-expanded` durante supressão controlada no desktop para garantir que o trigger reflita a apresentação efetivamente operável.
+- Teste de foco quando o trigger mobile deixa de estar focável durante a transição para desktop.
+- Teste de desktop → mobile após o fechamento para garantir ausência de reabertura inesperada do drawer.
+- Testes de SSR/hidratação garantindo markup inicial compatível e ausência de acesso a APIs de viewport no servidor.
+- Storybook cobrindo shell desktop expandido, desktop recolhido, mobile fechado/aberto e composição com ações/tema.
+- Admin demo com exemplo realista e mínimo, consumindo apenas APIs públicas.
+- Playwright e snapshots visuais para temas claro/escuro, viewport desktop e móvel, abertura da navegação, mudança de breakpoint e navegação por teclado.
+- Validação final com format, lint, typecheck, testes, build, E2E e OpenSpec strict.
+
+## Risks / Trade-offs
+
+- Uma API excessivamente opinativa pode limitar diferentes aplicações administrativas; por isso o shell deve estruturar regiões e estados, mas deixar conteúdo e roteamento ao consumidor.
+- Uma API excessivamente genérica pode não entregar valor além de CSS de layout; a primeira versão deve encapsular comportamento responsivo, acessibilidade e coordenação de navegação suficientes para justificar o pacote admin.
+- Reutilizar `AdsDrawer` pode exigir adaptação visual para representar navegação lateral; qualquer mudança necessária deve permanecer genérica e não degradar os contratos existentes de overlay.
+- Estado controlado e não controlado aumenta a superfície da API; a convenção deve seguir padrões React previsíveis e ser testada para evitar divergência entre props e estado interno.
+- Reaproveitar `AdsNav` na sidebar pode exigir uma orientação vertical ainda inexistente; essa evolução só deve ocorrer se resultar em capacidade genérica reutilizável, evitando acoplamento do componente ao Admin Shell.
+- Reutilizar componentes de `@admin-ds/components` cria uma relação de runtime que precisa estar refletida no contrato de empacotamento e consumo de CSS do pacote admin.
+- Evitar duas montagens simultâneas pode exigir coordenação de breakpoint em runtime; caso CSS puro não seja suficiente sem duplicar a árvore, a implementação pode adotar comportamento React mínimo e bem encapsulado para preservar uma única instância lógica da navegação.
+- Estratégias baseadas em viewport no runtime podem causar divergência de SSR/hidratação; por isso o primeiro render deve permanecer determinístico e compatível com ambientes sem DOM.
+- Um trigger móvel totalmente customizável aumenta a responsabilidade de composição; por isso o shell deve encapsular estado e ARIA, deixando ao consumidor apenas a apresentação quando possível.
+- No modo móvel controlado, cruzar para desktop exige solicitar fechamento sem mutar a prop do consumidor; a implementação deve desativar imediatamente os efeitos do overlay no desktop e invalidar a intenção antiga até reconhecimento do fechamento, evitando reabertura/duplicação enquanto aguarda a atualização externa.
+
+## Open Questions
+
+Nenhuma decisão externa é necessária para iniciar a implementação. A nomenclatura final das partes compostas, o breakpoint exato, a forma concreta de declarar a dependência entre pacotes e a técnica interna SSR-safe podem ser refinados durante a implementação, desde que preservem as requirements desta change, os contratos públicos de empacotamento/CSS, acessibilidade e a separação de responsabilidades definida acima.

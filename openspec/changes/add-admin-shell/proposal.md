@@ -1,66 +1,37 @@
-# Proposal — add-admin-shell
+## Why
 
-## Contexto
+O Admin Design System já fornece primitivas, formulários, overlays, navegação e componentes de apresentação de dados, mas aplicações administrativas ainda precisam reconstruir a estrutura principal de layout: header, sidebar, área de conteúdo, navegação responsiva e preferências de apresentação. Esta change cria uma composição pública e reutilizável para essa estrutura, mantendo independência de roteador, framework de aplicação e regras de negócio.
 
-O Admin Design System já possui fundação visual, primitivas e famílias de componentes de formulário, overlay, navegação e exibição de dados. O próximo incremento do roadmap é fornecer uma estrutura reutilizável para aplicações administrativas, evitando que cada aplicação consumidora tenha de reconstruir layout, navegação responsiva e organização de conteúdo.
+## What Changes
 
-## Objetivo
+- Adicionar `AdsAdminShell` como composição estrutural pública no pacote `@admin-ds/admin`.
+- Disponibilizar regiões explícitas para header, sidebar e conteúdo principal, com semântica HTML adequada e composição por React children/slots.
+- Implementar sidebar persistente em viewports amplas e navegação móvel sobreposta em viewports estreitas, reutilizando padrões e componentes existentes quando apropriado.
+- Permitir estado expandido/recolhido da sidebar em desktop e abertura/fechamento da navegação móvel de forma controlada ou não controlada, sem persistência obrigatória no design system.
+- Permitir que aplicações componham branding, navegação, ações, usuário e preferências no shell sem acoplamento a Next.js ou a um roteador específico.
+- Respeitar tokens, temas claro/escuro, foco visível, reduced motion e demais contratos visuais do design system.
+- Declarar explicitamente qualquer dependência de runtime e requisito de estilos entre `@admin-ds/admin` e `@admin-ds/components`, evitando funcionamento dependente apenas da resolução interna do monorepo.
+- Documentar a API pública no Storybook, adicionar exemplos no admin demo e cobrir comportamento, acessibilidade, responsividade, consumo público e snapshots visuais.
 
-Adicionar um Admin Shell público e reutilizável que componha header, sidebar e área principal de conteúdo, integrado aos tokens, temas e componentes existentes do design system.
+Fora do escopo: autenticação, autorização, roteamento, carregamento de dados, breadcrumbs automáticos, menus derivados de permissões, persistência de preferências em backend/localStorage, dashboards, filtros avançados e evolução completa do `apps/admin-demo` para uma aplicação administrativa final. Esses itens pertencem à aplicação consumidora ou às próximas changes do roadmap.
 
-## Valor para aplicações consumidoras
+## Capabilities
 
-O shell fornece uma base administrativa consistente, reduz duplicação entre aplicações e permite que produtos Next.js App Router adotem a mesma estrutura, responsividade, acessibilidade e tematização sem depender da implementação interna da biblioteca ou de Tailwind CSS na aplicação consumidora.
+### New Capabilities
 
-## Pacotes e APIs públicas afetadas
+- `admin-shell-layout`: composição estrutural reutilizável com header, sidebar e conteúdo principal.
+- `admin-shell-navigation`: comportamento responsivo e acessível da navegação estrutural, incluindo sidebar desktop e navegação móvel.
+- `admin-shell-preferences`: contratos para preferências de layout controladas pelo consumidor, especialmente expansão/recolhimento da sidebar.
 
-### Biblioteca reutilizável
+### Modified Capabilities
 
-- pacote público de componentes React do Admin Design System;
-- nova família pública de componentes do shell, com nomes React e tipos seguindo o prefixo `Ads`;
-- folha de estilos compilada distribuída pela biblioteca, utilizando classes públicas `ads-*` e tokens `--ads-*` quando novos contratos públicos forem necessários;
-- pontos de entrada públicos do pacote para exportar o shell e seus tipos sem imports internos.
+Nenhuma.
 
-A API final será confirmada durante o levantamento da implementação, preservando composição e compatibilidade com Next.js App Router sem criar dependência direta do roteador.
+## Impact
 
-### Aplicação de demonstração
-
-- admin demo Next.js receberá somente uma integração de referência do novo shell;
-- o demo deverá consumir os componentes e o CSS da mesma forma que uma aplicação externa;
-- a evolução funcional completa do demo permanece fora desta change.
-
-## Escopo — biblioteca reutilizável
-
-- estrutura principal do Admin Shell;
-- header administrativo;
-- sidebar com suporte à composição da navegação existente;
-- área principal de conteúdo;
-- comportamento responsivo para desktop e telas menores;
-- mecanismo acessível para abrir/fechar a navegação quando necessário;
-- suporte aos temas claro e escuro e aos tokens públicos;
-- composição extensível por aplicações consumidoras sem imports internos;
-- documentação e exemplos no Storybook;
-- testes de comportamento, acessibilidade, CSS distribuído e consumo público.
-
-## Escopo — aplicação de demonstração
-
-- exemplo integrado do Admin Shell no admin demo;
-- validação de consumo das APIs públicas e da folha de estilos compilada em Next.js App Router.
-
-## Fora de escopo
-
-- autenticação e autorização;
-- regras de negócio específicas de uma aplicação;
-- implementação ou abstração proprietária do roteamento do Next.js;
-- dashboards, filtros complexos e tabelas inteligentes, que pertencem ao incremento de padrões avançados;
-- evolução completa do admin demo, tratada separadamente no item seguinte do roadmap;
-- famílias de componentes sem relação direta com a estrutura administrativa.
-
-## Resultado esperado
-
-Aplicações administrativas devem conseguir montar sua estrutura principal utilizando exclusivamente APIs públicas e o CSS distribuído pelo design system, com comportamento consistente entre temas e tamanhos de tela, customização por tokens e sem duplicar a infraestrutura visual do shell.
-
-## Referências
-
-- GitHub Issue #15 — Adicionar estrutura de administração (Admin Shell)
-- `docs/roadmap.md` — item `7. add-admin-shell`
+- Pacote `@admin-ds/admin`: substituição do placeholder atual por componentes React, tipos públicos, exports, estilos distribuídos do Admin Shell e declaração explícita das dependências públicas necessárias ao runtime.
+- Pacote `@admin-ds/components`: reutilização de componentes públicos existentes como `AdsDrawer`, `AdsButton`, `AdsIcon`, `AdsNav` e `ThemeToggle`; alterações nesse pacote somente se uma lacuna genérica indispensável for identificada durante a implementação. Se houver import de runtime a partir de `@admin-ds/admin`, a relação entre os pacotes e o consumo de `@admin-ds/components/styles.css` devem ficar explicitamente definidos e testados.
+- Pacote de tokens: possível adição de tokens semânticos exclusivamente para conceitos estruturais ausentes, como dimensões do shell, superfícies ou divisores, priorizando reuso dos tokens existentes.
+- Aplicação `apps/docs`: documentação e histórias do shell, seus estados e breakpoints representativos.
+- Aplicação `apps/admin-demo`: exemplo integrado mínimo para validar a composição sem antecipar a change `add-nextjs-admin-demo`.
+- Qualidade: testes unitários, acessibilidade, consumo público, dependências/estilos declarados, responsividade, teclado, Playwright e snapshots visuais nos temas claro e escuro.

@@ -91,3 +91,24 @@ test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ p
 	await expect(drawer).toBeHidden();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });
+
+test('encerra a navegação móvel ao entrar no desktop e não a reabre ao voltar', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	const trigger = page.getByRole('button', { name: 'Abrir navegação' });
+	await trigger.click();
+	await expect(page.getByRole('dialog', { name: 'Navegação do demo' })).toBeVisible();
+
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+	const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
+	await expect(navigation).toHaveCount(1);
+	await expect(navigation.getByRole('link', { name: 'Formulários' })).toBeVisible();
+
+	await page.setViewportSize({ width: 390, height: 844 });
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});

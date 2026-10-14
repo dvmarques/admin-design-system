@@ -1,35 +1,41 @@
-import type { HTMLAttributes, ReactNode } from 'react';
-import { classNames } from './class-names.js';
+import type { HTMLAttributes } from 'react';
 import {
-	AdsAdminShellMobileSidebar,
-	AdsAdminShellNavigationProvider,
 	AdsAdminShellNavigationTrigger,
+	AdsAdminShellSidebar,
+	AdsAdminShellSidebarToggle,
 	type AdsAdminShellNavigationTriggerProps,
+	type AdsAdminShellSidebarProps,
+	type AdsAdminShellSidebarToggleProps,
 } from './admin-shell-navigation.js';
+import { AdsAdminShellStateProvider, type AdsAdminShellStateProps } from './admin-shell-state.js';
+import { classNames } from './class-names.js';
 
-export interface AdsAdminShellProps extends HTMLAttributes<HTMLDivElement> {
-	defaultNavigationOpen?: boolean;
-	navigationOpen?: boolean;
-	onNavigationOpenChange?: (open: boolean) => void;
-}
+export interface AdsAdminShellProps
+	extends HTMLAttributes<HTMLDivElement>, Omit<AdsAdminShellStateProps, 'children'> {}
 
 function AdsAdminShellRoot({
 	children,
 	className,
-	defaultNavigationOpen,
-	navigationOpen,
-	onNavigationOpenChange,
+	collapsed,
+	defaultCollapsed,
+	onCollapsedChange,
+	mobileOpen,
+	defaultMobileOpen,
+	onMobileOpenChange,
 	...props
 }: AdsAdminShellProps) {
 	return (
 		<div {...props} className={classNames('ads-admin-shell', className)}>
-			<AdsAdminShellNavigationProvider
-				defaultNavigationOpen={defaultNavigationOpen}
-				navigationOpen={navigationOpen}
-				onNavigationOpenChange={onNavigationOpenChange}
+			<AdsAdminShellStateProvider
+				collapsed={collapsed}
+				defaultCollapsed={defaultCollapsed}
+				defaultMobileOpen={defaultMobileOpen}
+				mobileOpen={mobileOpen}
+				onCollapsedChange={onCollapsedChange}
+				onMobileOpenChange={onMobileOpenChange}
 			>
 				{children}
-			</AdsAdminShellNavigationProvider>
+			</AdsAdminShellStateProvider>
 		</div>
 	);
 }
@@ -37,38 +43,6 @@ function AdsAdminShellRoot({
 export type AdsAdminShellHeaderProps = HTMLAttributes<HTMLElement>;
 function AdsAdminShellHeader({ className, ...props }: AdsAdminShellHeaderProps) {
 	return <header {...props} className={classNames('ads-admin-shell-header', className)} />;
-}
-
-export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
-	label?: string;
-	mobileTitle?: ReactNode;
-}
-function AdsAdminShellSidebar({
-	children,
-	className,
-	label = 'Navegação principal',
-	mobileTitle,
-	...props
-}: AdsAdminShellSidebarProps) {
-	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
-
-	return (
-		<>
-			<aside className="ads-admin-shell-sidebar-desktop">
-				<nav {...props} aria-label={label} className={navigationClassName}>
-					{children}
-				</nav>
-			</aside>
-			<AdsAdminShellMobileSidebar
-				{...props}
-				className={className}
-				label={label}
-				mobileTitle={mobileTitle}
-			>
-				{children}
-			</AdsAdminShellMobileSidebar>
-		</>
-	);
 }
 
 export type AdsAdminShellBodyProps = HTMLAttributes<HTMLDivElement>;
@@ -85,9 +59,14 @@ export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
 	Root: AdsAdminShellRoot,
 	Header: AdsAdminShellHeader,
 	NavigationTrigger: AdsAdminShellNavigationTrigger,
+	SidebarToggle: AdsAdminShellSidebarToggle,
 	Body: AdsAdminShellBody,
 	Sidebar: AdsAdminShellSidebar,
 	Main: AdsAdminShellMain,
 });
 
-export type { AdsAdminShellNavigationTriggerProps };
+export type {
+	AdsAdminShellNavigationTriggerProps,
+	AdsAdminShellSidebarProps,
+	AdsAdminShellSidebarToggleProps,
+};

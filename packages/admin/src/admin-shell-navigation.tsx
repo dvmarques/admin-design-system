@@ -1,60 +1,15 @@
 'use client';
 
+import { AdsDrawer } from '@admin-ds/components';
 import {
-	createContext,
-	useContext,
-	useId,
-	useState,
+	useEffect,
+	useRef,
 	type ButtonHTMLAttributes,
 	type HTMLAttributes,
 	type ReactNode,
 } from 'react';
+import { useAdminShellContext } from './admin-shell-state.js';
 import { classNames } from './class-names.js';
-import { AdsDrawer } from '@admin-ds/components';
-
-interface AdminShellContextValue {
-	mobileNavigationOpen: boolean;
-	setMobileNavigationOpen: (open: boolean) => void;
-	mobileNavigationId: string;
-}
-
-const AdminShellContext = createContext<AdminShellContextValue | null>(null);
-
-function useAdminShell() {
-	const context = useContext(AdminShellContext);
-	if (!context) throw new Error('AdsAdminShell components must be used inside AdsAdminShell');
-	return context;
-}
-
-export interface AdsAdminShellNavigationProviderProps {
-	children: ReactNode;
-	defaultNavigationOpen?: boolean | undefined;
-	navigationOpen?: boolean | undefined;
-	onNavigationOpenChange?: ((open: boolean) => void) | undefined;
-}
-
-export function AdsAdminShellNavigationProvider({
-	children,
-	defaultNavigationOpen = false,
-	navigationOpen,
-	onNavigationOpenChange,
-}: AdsAdminShellNavigationProviderProps) {
-	const mobileNavigationId = useId();
-	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultNavigationOpen);
-	const mobileNavigationOpen = navigationOpen ?? uncontrolledOpen;
-	const setMobileNavigationOpen = (open: boolean) => {
-		if (navigationOpen === undefined) setUncontrolledOpen(open);
-		onNavigationOpenChange?.(open);
-	};
-
-	return (
-		<AdminShellContext.Provider
-			value={{ mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId }}
-		>
-			{children}
-		</AdminShellContext.Provider>
-	);
-}
 
 export interface AdsAdminShellNavigationTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 	label?: string;
@@ -66,17 +21,17 @@ export function AdsAdminShellNavigationTrigger({
 	onClick,
 	...props
 }: AdsAdminShellNavigationTriggerProps) {
-	const { mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId } = useAdminShell();
+	const { mobileOpen, setMobileOpen, mobileNavigationId } = useAdminShellContext();
 	return (
 		<button
 			{...props}
 			aria-controls={mobileNavigationId}
-			aria-expanded={mobileNavigationOpen}
+			aria-expanded={mobileOpen}
 			aria-label={label}
 			className={classNames('ads-admin-shell-navigation-trigger', className)}
 			onClick={(event) => {
 				onClick?.(event);
-				if (!event.defaultPrevented) setMobileNavigationOpen(true);
+				if (!event.defaultPrevented) setMobileOpen(true);
 			}}
 			type={props.type ?? 'button'}
 		>
@@ -89,35 +44,106 @@ export function AdsAdminShellNavigationTrigger({
 	);
 }
 
-export interface AdsAdminShellMobileSidebarProps extends HTMLAttributes<HTMLElement> {
-	label: string;
-	mobileTitle: ReactNode;
+export interface AdsAdminShellSidebarToggleProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	collapseLabel?: string;
+	expandLabel?: string;
 }
 
-export function AdsAdminShellMobileSidebar({
+/** Collapses or expands the desktop sidebar. Hidden in the mobile layout. */
+export function AdsAdminShellSidebarToggle({
+	className,
+	collapseLabel = 'Recolher barra lateral',
+	expandLabel = 'Expandir barra lateral',
+	onClick,
+	...props
+}: AdsAdminShellSidebarToggleProps) {
+	const { collapsed, setCollapsed, desktopSidebarId } = useAdminShellContext();
+	return (
+		<button
+			{...props}
+			aria-controls={desktopSidebarId}
+			aria-expanded={!collapsed}
+			aria-label={collapsed ? expandLabel : collapseLabel}
+			className={classNames('ads-admin-shell-sidebar-toggle', className)}
+			onClick={(event) => {
+				onClick?.(event);
+				if (!event.defaultPrevented) setCollapsed(!collapsed);
+			}}
+			type={props.type ?? 'button'}
+		>
+			<span aria-hidden="true" className="ads-admin-shell-sidebar-toggle-icon" />
+		</button>
+	);
+}
+
+export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
+	label?: string;
+	mobileTitle?: ReactNode;
+}
+
+/**
+ * Keeps a single logical instance of the navigation content: the persistent sidebar on desktop
+ * and the drawer on mobile are never mounted at the same time.
+ */
+export function AdsAdminShellSidebar({
 	children,
 	className,
-	label,
+	label = 'Navegação principal',
 	mobileTitle,
 	...props
-}: AdsAdminShellMobileSidebarProps) {
-	const { mobileNavigationOpen, setMobileNavigationOpen, mobileNavigationId } = useAdminShell();
+}: AdsAdminShellSidebarProps) {
+	const { collapsed, desktopSidebarId, isDesktop, mobileNavigationId, mobileOpen, setMobileOpen } =
+		useAdminShellContext();
+	const desktopNavigationRef = useRef<HTMLElement>(null);
+	const wasMobileOpenRef = useRef(mobileOpen);
+
+	useEffect(() => {
+		// The drawer is unmounted when the desktop layout takes over, so its own focus restoration
+		// cannot run and the trigger is hidden. Move focus to a valid mounted element instead.
+		if (isDesktop && wasMobileOpenRef.current) {
+			const active = document.activeElement;
+			const lost = !active || active === document.body || !active.isConnected;
+			// The shell hides its own mobile trigger on desktop, so it cannot keep focus either.
+			const hiddenTrigger = active?.matches('.ads-admin-shell-navigation-trigger') ?? false;
+			if (lost || hiddenTrigger) desktopNavigationRef.current?.focus();
+		}
+		wasMobileOpenRef.current = mobileOpen;
+	}, [isDesktop, mobileOpen]);
+
+	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
+
+	if (isDesktop) {
+		return (
+			<aside
+				className="ads-admin-shell-sidebar-desktop"
+				data-collapsed={collapsed ? 'true' : 'false'}
+				id={desktopSidebarId}
+			>
+				<nav
+					{...props}
+					aria-label={label}
+					className={navigationClassName}
+					ref={desktopNavigationRef}
+					tabIndex={-1}
+				>
+					{children}
+				</nav>
+			</aside>
+		);
+	}
+
 	return (
 		<AdsDrawer
 			aria-label={label}
 			className="ads-admin-shell-mobile-drawer"
 			closeLabel="Fechar navegação"
 			id={mobileNavigationId}
-			onOpenChange={setMobileNavigationOpen}
-			open={mobileNavigationOpen}
+			onOpenChange={setMobileOpen}
+			open={mobileOpen}
 			placement="left"
 			title={mobileTitle}
 		>
-			<nav
-				{...props}
-				aria-label={label}
-				className={classNames('ads-admin-shell-sidebar', className)}
-			>
+			<nav {...props} aria-label={label} className={navigationClassName}>
 				{children}
 			</nav>
 		</AdsDrawer>

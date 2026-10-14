@@ -4,6 +4,8 @@
  */
 @layer components {
 	.ads-admin-shell {
+		--ads-admin-shell-sidebar-width: 16rem;
+		--ads-admin-shell-sidebar-width-collapsed: 4.5rem;
 		isolation: isolate;
 		min-height: 100vh;
 		background-color: var(--ads-color-background);
@@ -34,9 +36,14 @@
 
 	.ads-admin-shell-sidebar-desktop {
 		display: none;
-		width: 16rem;
+		width: var(--ads-admin-shell-sidebar-width);
 		flex-shrink: 0;
 		border-right: 1px solid var(--ads-color-border);
+		transition: width 150ms;
+	}
+
+	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] {
+		width: var(--ads-admin-shell-sidebar-width-collapsed);
 	}
 
 	.ads-admin-shell-sidebar {
@@ -79,6 +86,42 @@
 		outline-offset: 2px;
 	}
 
+	.ads-admin-shell-sidebar-toggle {
+		isolation: isolate;
+		display: none;
+		width: 2.5rem;
+		height: 2.5rem;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background-color: var(--ads-color-surface);
+		color: var(--ads-color-text);
+		transition: background-color 150ms;
+	}
+
+	.ads-admin-shell-sidebar-toggle:hover {
+		background-color: var(--ads-color-surface-hover);
+	}
+
+	.ads-admin-shell-sidebar-toggle:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-admin-shell-sidebar-toggle-icon {
+		display: block;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-bottom: 2px solid currentColor;
+		border-left: 2px solid currentColor;
+		transform: rotate(45deg);
+	}
+
+	.ads-admin-shell-sidebar-toggle[aria-expanded='false'] .ads-admin-shell-sidebar-toggle-icon {
+		transform: rotate(-135deg);
+	}
+
 	.ads-admin-shell-navigation-icon {
 		display: flex;
 		flex-direction: column;
@@ -105,9 +148,21 @@
 			padding: 1.5rem;
 		}
 
+		.ads-admin-shell-sidebar-toggle {
+			display: inline-flex;
+		}
+
 		.ads-admin-shell-navigation-trigger,
 		.ads-admin-shell-mobile-drawer {
 			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ads-admin-shell-sidebar-desktop,
+		.ads-admin-shell-navigation-trigger,
+		.ads-admin-shell-sidebar-toggle {
+			transition: none;
 		}
 	}
 }

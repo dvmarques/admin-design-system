@@ -87,7 +87,25 @@ test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ p
 	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 	await expect(drawer.getByRole('link', { name: 'Formulários' })).toBeVisible();
 
-	await page.getByRole('button', { name: 'Fechar navegação' }).press('Enter');
+	await expect(drawer.getByRole('heading', { name: 'Navegação do demo' })).toBeVisible();
+	const closeButton = page.getByRole('button', { name: 'Fechar navegação' });
+	await expect(closeButton).toBeVisible();
+	// The close button must be the topmost element at its center, not covered by the navigation,
+	// with or without a drawer title (consumers may omit `mobileTitle`).
+	const closeButtonOnTop = () =>
+		closeButton.evaluate((button) => {
+			const rect = button.getBoundingClientRect();
+			const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+			return hit !== null && button.contains(hit);
+		});
+	expect(await closeButtonOnTop()).toBe(true);
+	await drawer.getByRole('heading', { name: 'Navegação do demo' }).evaluate((heading) => {
+		heading.nextElementSibling?.classList.remove('mt-5');
+		heading.remove();
+	});
+	expect(await closeButtonOnTop()).toBe(true);
+
+	await closeButton.press('Enter');
 	await expect(drawer).toBeHidden();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
 });

@@ -43,12 +43,12 @@ export default async function HomePage() {
 				</div>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
-				<AdsAdminShell.Sidebar label="Navegação do demo">
+				<AdsAdminShell.Sidebar label="Navegação do demo" mobileTitle="Navegação do demo">
 					<ul className="m-0 grid list-none gap-1 p-0">
 						<li>
 							<a className="demo-shell-nav-link" href="#fundamentos">
 								<span aria-hidden="true" className="demo-nav-initial">
-									F
+									Fu
 								</span>
 								<span className="ads-admin-shell-sidebar-label">Fundamentos</span>
 							</a>
@@ -56,7 +56,7 @@ export default async function HomePage() {
 						<li>
 							<a className="demo-shell-nav-link" href="#forms">
 								<span aria-hidden="true" className="demo-nav-initial">
-									F
+									Fo
 								</span>
 								<span className="ads-admin-shell-sidebar-label">Formulários</span>
 							</a>
@@ -64,7 +64,7 @@ export default async function HomePage() {
 						<li>
 							<a className="demo-shell-nav-link" href="/data-display">
 								<span aria-hidden="true" className="demo-nav-initial">
-									E
+									Ex
 								</span>
 								<span className="ads-admin-shell-sidebar-label">Exibição de dados</span>
 							</a>

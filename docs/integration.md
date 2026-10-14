@@ -98,6 +98,18 @@ Há dois estados independentes, ambos com modo controlado e não controlado:
 não converte o conteúdo da sidebar para uma versão compacta: use `useAdsAdminShell()`
 dentro da sidebar para adaptar rótulos e ícones no desktop, mantendo nomes acessíveis.
 
+Para o caso comum de esconder o texto dos itens na sidebar recolhida, aplique a classe
+opcional `ads-admin-shell-sidebar-label` ao rótulo. Na sidebar desktop recolhida o texto
+fica oculto só visualmente: o item mantém o nome acessível e o foco, sem rótulos
+cortados. O drawer mobile sempre mostra o rótulo completo.
+
+```tsx
+<a href="/clientes">
+	<span aria-hidden="true">Cl</span>
+	<span className="ads-admin-shell-sidebar-label">Clientes</span>
+</a>
+```
+
 Quando a viewport sai do layout móvel com o drawer aberto, o shell encerra o overlay,
 move o foco para a navegação desktop e chama `onMobileOpenChange(false)`. No modo
 controlado, a prop não é alterada pelo shell; um `true` que continue chegando após o

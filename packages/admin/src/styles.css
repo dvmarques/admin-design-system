@@ -76,6 +76,18 @@
 		color: var(--ads-color-text);
 	}
 
+	/*
+	 * Inside AdsDrawer the panel already provides background, padding and scrolling. Without its own
+	 * stacking context or background, the navigation no longer paints over the drawer close button.
+	 */
+	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar {
+		isolation: auto;
+		height: auto;
+		overflow: visible;
+		background-color: transparent;
+		padding: 0;
+	}
+
 	.ads-admin-shell-main {
 		isolation: isolate;
 		min-width: 0;

@@ -12,6 +12,10 @@ componentes administrativos.
   aplicá-la no servidor quando quiser evitar uma troca visual na hidratação.
 - Os snapshots visuais usam Chromium e devem ser atualizados conscientemente
   quando tokens, fontes ou o layout de referência mudarem.
+- Os baselines visuais existem apenas para `win32`. Por isso os testes de
+  snapshot, incluindo o do Admin Shell recolhido e móvel em
+  `e2e/admin-demo.spec.ts`, são pulados na CI (Linux) e devem ser executados e
+  atualizados localmente no Windows.
 - O baseline de tamanho cobre os artefatos atuais e permite crescimento de
   até 10%; mudanças maiores exigem revisão explícita do baseline.
 - A validação automatizada de `axe-core` e Playwright não substitui revisão

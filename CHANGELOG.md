@@ -20,6 +20,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 - `automate-release-process` - Automatizado o fluxo de preparação, validação,
   publicação recuperável e documentação operacional de releases.
 
+#### Changed
+
+- `update-node-24` - Atualizados `engines.node` (`>=24.0.0`), CI, release e
+  `@types/node` para o Node.js 24; adicionado `.nvmrc` e documentada a versão
+  exigida no README. Quem usa Node.js 22 precisa atualizar o runtime.
+
 ### [0.0.1] - 08-set-2026
 
 #### Changed

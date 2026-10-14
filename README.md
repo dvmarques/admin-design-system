@@ -15,6 +15,11 @@ O desenvolvimento é orientado por especificações com OpenSpec. Cada
 mudança relevante passa por proposta, requisitos, design, tarefas,
 implementação, validação e arquivamento.
 
+## Requisitos
+
+- Node.js 24 ou superior (veja `.nvmrc`; use `nvm use` ou equivalente);
+- npm `11.19.1`, fixado em `packageManager`.
+
 ## Executar as aplicações
 
 Instale as dependências uma vez, na raiz do repositório:

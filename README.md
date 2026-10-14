@@ -94,7 +94,11 @@ consumo pela aplicação Next.js de demonstração. A change
 `add-data-display-components` concluiu `AdsTable`, `AdsList`, `AdsCard`,
 `AdsProgress` e `AdsEmptyState`, com semântica acessível, composição sem
 acoplamento a dados ou fetching, temas, CSS distribuído, documentação, testes
-e integração no admin demo.
+e integração no admin demo. A change `add-admin-shell` concluiu o
+`AdsAdminShell` em `@admin-ds/admin`, com header, sidebar recolhível, área de
+conteúdo e navegação móvel em drawer, estados controlados e não controlados,
+transição segura entre breakpoints, compatibilidade com SSR, CSS próprio
+distribuído e integração no admin demo.
 
 O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:
@@ -117,13 +121,13 @@ Get-ChildItem openspec/changes/archive
 
 ## Próximo passo
 
-Planejar a change `add-admin-shell`, começando pela composição estrutural do
-admin, incluindo header, sidebar, área de conteúdo, navegação responsiva e
-preferências de layout:
+Planejar a change `add-nextjs-admin-demo`, que evolui a aplicação Next.js de
+referência para um admin demonstrativo consumindo exclusivamente as APIs
+públicas do design system:
 
 ```powershell
-openspec-propose add-admin-shell
+openspec-propose add-nextjs-admin-demo
 ```
 
-Isso criará a proposta, specs, design e tarefas da próxima composição de
-layout administrativo.
+Isso criará a proposta, specs, design e tarefas da evolução da aplicação de
+referência.

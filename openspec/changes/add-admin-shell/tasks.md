@@ -82,5 +82,5 @@
 - [x] 7.12 Criar teste de renderização sem DOM/SSR e hidratação para garantir ausência de acesso a APIs de viewport no servidor e ausência de hydration mismatch no primeiro render do cliente.
 - [x] 7.13 Criar/atualizar Playwright para fluxo desktop, fluxo mobile, abertura/fechamento pelo trigger, teclado e mudanças de viewport, incluindo mobile aberto → desktop → mobile.
 - [x] 7.14 Atualizar snapshots visuais representativos nos temas claro e escuro para desktop expandido/recolhido e mobile.
-- [ ] 7.15 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
+- [x] 7.15 Executar format, lint, typecheck, testes, build, E2E e validação OpenSpec strict; corrigir falhas relacionadas à change.
 - [x] 7.16 Revisar o diff final e confirmar que a implementação permanece dentro do escopo da Issue #15 antes de concluir e arquivar a change.

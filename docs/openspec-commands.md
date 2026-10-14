@@ -7,8 +7,8 @@ Execute os comandos na raiz do repositório.
 ### Inicialização e atualização
 
 ```powershell
-# Inicializar o OpenSpec e configurar a integração com o Codex
-openspec.cmd init . --tools codex
+# Inicializar o OpenSpec e configurar as integrações com Codex e Claude Code
+openspec.cmd init . --tools codex,claude
 
 # Atualizar instruções e skills após atualizar o CLI
 openspec.cmd update .

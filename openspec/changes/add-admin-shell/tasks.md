@@ -53,7 +53,7 @@
 - [x] 5.1 Validar se `AdsNav` atende ao uso lateral apenas por sua API pública; se faltar orientação vertical e a capacidade for genérica, evoluir `AdsNav` minimamente e cobrir essa evolução separadamente. Caso contrário, demonstrar a sidebar com outra composição pública apropriada.
 - [x] 5.2 Demonstrar composição do shell com componentes públicos adequados como `AdsButton`, `AdsIcon`, `AdsDrawer` e `ThemeToggle`, sem imports privados.
 - [x] 5.3 Garantir que tema claro/escuro seja herdado pelo shell pelos tokens existentes, sem estado de tema próprio em `@admin-ds/admin`.
-- [ ] 5.4 Validar foco visível, contraste, divisores, superfícies e estados estruturais em ambos os temas.
+- [x] 5.4 Validar foco visível, contraste, divisores, superfícies e estados estruturais em ambos os temas.
 - [x] 5.5 Confirmar que nenhuma mudança em `@admin-ds/components` é necessária além de eventual capacidade genérica indispensável identificada no item 5.1.
 
 ## 6. Documentação e demonstração

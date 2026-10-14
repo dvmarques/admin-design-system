@@ -23,7 +23,10 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 		},
 	]);
 	await page.goto('/');
-	await expect(page.getByRole('link', { name: /exibi/i })).toHaveAttribute('href', '/data-display');
+	await expect(page.getByRole('main').getByRole('link', { name: /exibi/i })).toHaveAttribute(
+		'href',
+		'/data-display',
+	);
 
 	await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -68,4 +71,89 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 	await page.reload();
 	await hideDevelopmentPortal(page);
 	await expect(page).toHaveScreenshot('admin-demo-light.png', { fullPage: true });
+});
+
+test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	const trigger = page.getByRole('button', { name: 'Abrir navegação' });
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+	await trigger.focus();
+	await trigger.press('Enter');
+
+	const drawer = page.getByRole('dialog', { name: 'Navegação do demo' });
+	await expect(drawer).toBeVisible();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+	await expect(drawer.getByRole('link', { name: 'Formulários' })).toBeVisible();
+
+	await expect(drawer.getByRole('heading', { name: 'Navegação do demo' })).toBeVisible();
+	const closeButton = page.getByRole('button', { name: 'Fechar navegação' });
+	await expect(closeButton).toBeVisible();
+	// The close button must be the topmost element at its center, not covered by the navigation,
+	// with or without a drawer title (consumers may omit `mobileTitle`).
+	const closeButtonOnTop = () =>
+		closeButton.evaluate((button) => {
+			const rect = button.getBoundingClientRect();
+			const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
+			return hit !== null && button.contains(hit);
+		});
+	expect(await closeButtonOnTop()).toBe(true);
+	await drawer.getByRole('heading', { name: 'Navegação do demo' }).evaluate((heading) => {
+		heading.nextElementSibling?.classList.remove('mt-5');
+		heading.remove();
+	});
+	expect(await closeButtonOnTop()).toBe(true);
+
+	await closeButton.press('Enter');
+	await expect(drawer).toBeHidden();
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('encerra a navegação móvel ao entrar no desktop e não a reabre ao voltar', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	const trigger = page.getByRole('button', { name: 'Abrir navegação' });
+	await trigger.click();
+	await expect(page.getByRole('dialog', { name: 'Navegação do demo' })).toBeVisible();
+
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+	const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
+	await expect(navigation).toHaveCount(1);
+	await expect(navigation.getByRole('link', { name: 'Formulários' })).toBeVisible();
+
+	await page.setViewportSize({ width: 390, height: 844 });
+	await expect(page.getByRole('dialog')).toHaveCount(0);
+	await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+});
+
+test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro e escuro', async ({
+	page,
+}) => {
+	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
+
+	for (const theme of ['dark', 'light'] as const) {
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+
+		await page.setViewportSize({ width: 1280, height: 720 });
+		await page.goto('/');
+		await hideDevelopmentPortal(page);
+		await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+		const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
+		await expect(navigation.getByRole('link', { name: 'Formulários' })).toBeVisible();
+		await expect(page).toHaveScreenshot(`admin-shell-collapsed-${theme}.png`);
+
+		await page.setViewportSize({ width: 390, height: 844 });
+		await page.goto('/');
+		await hideDevelopmentPortal(page);
+		await page.getByRole('button', { name: 'Abrir navegação' }).click();
+		await expect(page.getByRole('dialog', { name: 'Navegação do demo' })).toBeVisible();
+		await expect(page).toHaveScreenshot(`admin-shell-mobile-open-${theme}.png`);
+	}
 });

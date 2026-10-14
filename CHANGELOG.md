@@ -10,6 +10,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-admin-shell` - Adicionado `AdsAdminShell` responsivo, com sidebar
+  recolhível e navegação móvel em drawer, substituindo `createAdminShell` e
+  `AdminShellProps`, removidos da API pública.
 - `add-data-display-components` - Adicionados `AdsTable`, `AdsList`, `AdsCard`,
   `AdsProgress` e `AdsEmptyState` para apresentação acessível e tematizável de
   dados administrativos, com CSS público, histórias Storybook e exemplos no

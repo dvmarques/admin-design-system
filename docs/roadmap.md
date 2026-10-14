@@ -135,6 +135,31 @@ sincronizadas ao conjunto principal e a change foi arquivada em
 Adicionar a composição estrutural do admin, incluindo header, sidebar,
 área de conteúdo, navegação responsiva e preferências de layout.
 
+**Status: concluída.**
+
+Entregas principais:
+
+- `AdsAdminShell` em `@admin-ds/admin`, com `Header`, `Body`, `Sidebar`,
+  `Main`, `NavigationTrigger` e `SidebarToggle`, e o hook `useAdsAdminShell`,
+  com tipos e exports públicos;
+- sidebar persistente no desktop e navegação móvel em drawer, reutilizando
+  `AdsDrawer`, sem nunca montar as duas ao mesmo tempo;
+- sidebar recolhível (`collapsed`) e navegação móvel (`mobileOpen`) como
+  estados independentes, ambos controlados ou não controlados, sem persistência
+  automática;
+- encerramento coordenado do overlay ao mudar de breakpoint, com foco em um
+  elemento válido e sem reabertura inesperada;
+- renderização segura para SSR e hidratação, compatível com Server Components
+  e sem dependência de roteador;
+- CSS próprio em `@admin-ds/admin/styles.css`, sem Tailwind no consumidor, com
+  tokens públicos `--ads-*` e suporte a `prefers-reduced-motion`;
+- `@admin-ds/components` declarado como peer dependency do pacote;
+- documentação no Storybook e em `docs/integration.md`, integração no admin
+  demo, testes unitários, de SSR e hidratação, acessibilidade com `axe-core`,
+  consumo público e Playwright;
+- specs `admin-shell-layout`, `admin-shell-navigation` e
+  `admin-shell-preferences`.
+
 ## 8. `add-nextjs-admin-demo`
 
 Evoluir a aplicação Next.js de referência para um admin demonstrativo

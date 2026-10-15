@@ -174,7 +174,7 @@ test.describe('clientes', () => {
 	}
 
 	function pageButton(page: Page, number: number) {
-		return page.getByRole('button', { name: `Página ${number}`, exact: true });
+		return page.getByRole('link', { name: `Página ${number}`, exact: true });
 	}
 
 	test('lista os registros da página e navega pela paginação', async ({ page }) => {

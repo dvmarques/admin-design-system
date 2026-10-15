@@ -58,6 +58,10 @@ servidor e cliente.
 aplicação e localiza os testes no diretório `e2e/`. O Chromium necessário já
 foi instalado localmente.
 
+Por padrão o E2E serve o build de produção do admin demo (`next start`), então
+execute `npm run build` antes de rodar os testes. Para usar o servidor de
+desenvolvimento (`next dev`, mais lento), defina `E2E_DEV=1`.
+
 ```powershell
 # Executar os testes end-to-end pela entrada oficial do repositório
 npm run test:e2e

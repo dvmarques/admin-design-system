@@ -1,0 +1,21 @@
+# Texto sempre em LF, no repositório e no checkout, inclusive no Windows com
+# core.autocrlf=true: o Prettier (endOfLine padrão "lf") e os demais checks
+# comparam conteúdo com LF.
+* text=auto eol=lf
+
+# Binários (imagens, fontes, PDF e ZIP): sem conversão de fim de linha nem diff.
+# SVG segue como texto.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.ico binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.otf binary
+*.eot binary
+*.avif binary
+*.pdf binary
+*.zip binary

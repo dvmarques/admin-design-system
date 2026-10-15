@@ -511,7 +511,8 @@ chave, então filtros de um `AdsFilterBar` na mesma URL são preservados. Ordena
 volta à primeira página (apaga `pagina`), e a URL não fica com `?` vazio. A
 seleção guarda ids de todas as páginas; o contador mostra quantas estão na
 página exibida, e o exemplo oferece um botão para limpá-la. Com `AdsListFlow` e
-ações em massa, o foco após limpar a seleção é tratado pelo pacote `admin`.
+ações em massa, o foco após limpar a seleção é tratado pelo pacote `admin` (ver
+abaixo).
 
 ```tsx
 // app/usuarios/usuarios-tabela.tsx
@@ -521,7 +522,7 @@ import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
 import { AdsButton } from '@admin-ds/components';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -529,6 +530,11 @@ interface Usuario {
 	id: string;
 	nome: string;
 	perfil: string;
+}
+
+function formatReadableSearchQuery(serialized: string) {
+	if (!serialized) return '';
+	return serialized.replace(/%3A/gi, ':');
 }
 
 // Parte dos parâmetros atuais e troca só as chaves informadas (null apaga a chave).
@@ -541,7 +547,31 @@ function withParams(params: Params, changes: Record<string, string | null>) {
 		if (value === null) query.delete(key);
 		else query.set(key, value);
 	}
-	return query.toString();
+	return formatReadableSearchQuery(query.toString());
+}
+
+function selectionFocusWasLost(doc: Document = document) {
+	const active = doc.activeElement;
+	return !active || active === doc.body;
+}
+
+function applyPendingClearSelectionFocus(
+	pending: HTMLElement | null,
+	root: HTMLElement | null,
+	doc: Document = document,
+): 'idle' | 'waiting' | 'dropped' | 'applied' {
+	if (pending === null) return 'idle';
+	const focusLost = selectionFocusWasLost(doc);
+	if (!focusLost && root && !root.contains(doc.activeElement)) return 'dropped';
+	if (pending.isConnected) return 'waiting';
+	if (!focusLost) return 'dropped';
+	const selectAll = root?.querySelector<HTMLInputElement>(
+		'thead .ads-smart-table-select-cell input[type="checkbox"]',
+	);
+	const scrollRegion = root?.querySelector<HTMLElement>('.ads-smart-table-scroll');
+	if (selectAll && !selectAll.disabled) selectAll.focus();
+	else scrollRegion?.focus();
+	return 'applied';
 }
 
 export function UsuariosTabela({
@@ -561,6 +591,8 @@ export function UsuariosTabela({
 	const pathname = usePathname();
 	const [selected, setSelected] = useState<string[]>([]);
 	const [hidden, setHidden] = useState<string[]>([]);
+	const rootRef = useRef<HTMLDivElement>(null);
+	const pendingClearRef = useRef<HTMLElement | null>(null);
 	const href = (changes: Record<string, string | null>) => {
 		const query = withParams(params, changes);
 		return query ? `${pathname}?${query}` : pathname;
@@ -572,10 +604,20 @@ export function UsuariosTabela({
 		router.replace(href({ ordem, pagina: null }), { scroll: false });
 	}
 
+	function clearSelection(event: MouseEvent<HTMLButtonElement>) {
+		pendingClearRef.current = event.currentTarget;
+		setSelected([]);
+	}
+
+	useLayoutEffect(() => {
+		const result = applyPendingClearSelectionFocus(pendingClearRef.current, rootRef.current);
+		if (result === 'dropped' || result === 'applied') pendingClearRef.current = null;
+	}, [selected]);
+
 	return (
-		<>
+		<div ref={rootRef}>
 			{selected.length > 0 ? (
-				<AdsButton onClick={() => setSelected([])} size="sm" variant="secondary">
+				<AdsButton onClick={clearSelection} size="sm" variant="secondary">
 					Limpar seleção
 				</AdsButton>
 			) : null}
@@ -608,14 +650,14 @@ export function UsuariosTabela({
 				selectedIds={selected}
 				sort={sort}
 			/>
-		</>
+		</div>
 	);
 }
 ```
 
-Com `AdsListFlow` e `bulkActions`, ao limpar a seleção o foco vai ao checkbox do
-cabeçalho (seleção múltipla) ou à região `.ads-smart-table-scroll`, e só quando o
-botão some e o foco se perdeu (`body` ou `null`).
+Ao limpar a seleção, o foco vai ao checkbox "Selecionar todas as linhas da página"
+ou, se ele não existir, à região rolável da tabela, e só quando o botão some e o
+foco se perdeu (`body` ou `null`), no mesmo espírito da barra de ações em massa.
 
 Para combinar com o `AdsFilterBar`, passe-o em `filters`; os dois seguem
 independentes. Como os links partem dos parâmetros atuais, mudar de página ou de

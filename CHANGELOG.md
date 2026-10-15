@@ -19,7 +19,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   controlada com ordenação (`aria-sort`), seleção de linhas com estado
   indeterminado, visibilidade de colunas, estados de carregamento, vazio e erro,
   rolagem horizontal acessível e paginação e filtros opcionais. `AdsTable` ganha
-  `containerProps` opcional, compatível retroativamente.
+  `containerProps` opcional e `AdsTableRow` ganha `interactive`, compatível
+  retroativamente.
 - `add-filter-bar` - Adicionado `AdsFilterBar` em `@admin-ds/admin`: barra de
   filtros controlada (`value`/`onChange`), com texto, seleção, seleção múltipla
   e data, chips removíveis, layout responsivo e estados, sem acesso à URL ou ao

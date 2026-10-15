@@ -32,6 +32,6 @@
 
 - [x] 7.1 `npx prettier --write` nos arquivos alterados.
 - [x] 7.2 `npm run lint`, `npm run build`, `npm run typecheck` (todos os workspaces) e `npm run test:quiet`.
-- [x] 7.3 `CI=1 npm run test:e2e` sem falhas (96 passaram, 7 pulados); snapshots visuais só no Windows.
+- [x] 7.3 `CI=1 npm run test:e2e` sem falhas (98 passaram, 7 pulados); snapshots visuais só no Windows.
 - [x] 7.4 `openspec validate --all --strict` e `inspect:packages` dentro do baseline.
-- [x] 7.5 Arquivar a change e rodar `npm run format`.
+- [ ] 7.5 Arquivar a change (no closeout, a pedido do revisor). `npm run format` já executado na validação.

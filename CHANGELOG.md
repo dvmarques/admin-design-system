@@ -22,6 +22,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `npm run validate` passa no Windows: checkout novo em LF (`.gitattributes`).
 - Build, testes unitários e E2E mais rápidos: `npm run build` constrói os
   pacotes uma vez (apps em paralelo), o Vitest roda uma vez na raiz e o E2E
   serve o build de produção (rode `npm run build` antes; `E2E_DEV=1` usa o

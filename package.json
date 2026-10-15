@@ -32,7 +32,7 @@
 		"release:prepare": "node ./scripts/prepare-release.mjs",
 		"release:validate": "node ./scripts/validate-release.mjs",
 		"release:notes": "node ./scripts/extract-release-notes.mjs",
-		"validate": "npm run format && npm run lint && npm run typecheck && npm run test:quality && npm run build && npm run test:e2e"
+		"validate": "npm run format && npm run lint && npm run build && npm run typecheck && npm run test:quality && npm run test:e2e"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",

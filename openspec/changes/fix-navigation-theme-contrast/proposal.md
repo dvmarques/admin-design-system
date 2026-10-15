@@ -68,6 +68,8 @@ Nenhuma.
 
 - `navigation-structure`: adiciona o requisito de contraste e de seleção visível
   de tabs e breadcrumb nos dois temas (os requisitos atuais permanecem).
+- `form-field-composition`: adiciona o requisito de que o `fieldset` e a
+  `legend` de `AdsSelectionGroup` não exibam a moldura nativa do navegador.
 
 ## Impact
 

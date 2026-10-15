@@ -6,7 +6,7 @@
 - [x] 1.2 Criar `packages/components/tests/navigation-styles.test.ts`, que lê `dist/styles.css` e verifica que as classes usadas (`text-text-secondary`, `hover:text-text`, `text-text-muted`, `hover:bg-surface-hover`, `bg-surface-selected`, `text-on-surface-selected`, `border-b-primary`, `border-b-border`) existem; verificar rodando `npm run test --workspace @admin-ds/components`, que compila o CSS antes. O `styles.test.mjs` existente não é executado por nenhum script do pacote, por isso não é estendido.
 - [x] 1.3 Estender o teste de pares de contraste em `packages/tokens/tests/generation.test.mjs` com `text` e `textSecondary` contra `canvas`, `surface`, `surfaceRaised`, `surfaceMuted` e `surfaceHover`, e `onSurfaceSelected` contra `surfaceSelected`, a 4,5:1 nos dois temas; verificar que o teste passa e que falha ao reduzir temporariamente o contraste de um dos tokens.
 - [x] 1.4 Atualizar a story de navegação em `apps/docs/src/navigation.stories.tsx` com tabs e breadcrumb sobre superfície elevada nos temas claro e escuro; verificar que o Storybook compila (`npm run build --workspace @admin-ds/docs`, se existir).
-- [x] 1.5 Em `packages/components/src/field.tsx`, remover a moldura padrão do navegador do `fieldset` de `AdsSelectionGroup` (`m-0 min-w-0 border-0 p-0`, e `p-0` na `legend`); verificar em `form-controls.test.tsx` que o grupo tem essas classes, em `navigation-styles.test.ts` que existem no `dist/styles.css`, e regerar e revisar no Windows os snapshots visuais afetados.
+- [x] 1.5 Em `packages/components/src/field.tsx`, remover a moldura padrão do navegador do `fieldset` de `AdsSelectionGroup` (`m-0 min-w-0 border-0 p-0`, e `p-0` na `legend`); verificar em `form-controls.test.tsx` que o grupo tem essas classes, em `form-controls-styles.test.ts` que existem no `dist/styles.css`, registrar o requisito na delta de `form-field-composition`, e regerar e revisar no Windows os snapshots visuais afetados.
 
 ## 2. Integração e documentação
 
@@ -23,5 +23,5 @@
 
 ## Workflow follow-up
 
-- Arquivar esta change antes de `add-nextjs-admin-demo`, com sincronização da spec `navigation-structure`.
+- Arquivar esta change antes de `add-nextjs-admin-demo`, com sincronização das specs `navigation-structure` e `form-field-composition`.
 - Revisar e regenerar no Windows os snapshots visuais afetados (admin demo e Storybook) antes de aceitar.

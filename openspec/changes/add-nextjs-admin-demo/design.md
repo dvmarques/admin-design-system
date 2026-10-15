@@ -99,14 +99,18 @@ pacote e deve mostrar o produto integrado.
   (`?estado=vazio|carregando|erro`) lido no servidor, para que e2e e snapshots
   sejam estáveis sem timers. Valor desconhecido equivale a ausência do
   parâmetro (dados normais). O erro usa `AdsEmptyState` (que repassa props) com
-  `role="alert"` e, em `actions`, um link "Tentar novamente" para a rota sem o
-  parâmetro `estado`; não há componente de alerta dedicado na biblioteca. O
-  estado vazio usa `AdsEmptyState` com mensagem e a ação "Limpar seleção" (link
-  para a rota sem `estado`).
+  `role="alert"` e, em `actions`, um `next/link` "Tentar novamente" para a rota
+  sem o parâmetro `estado`; não há componente de alerta dedicado na biblioteca.
+  O estado vazio usa `AdsEmptyState` com mensagem e a ação "Ver todos os
+  clientes" (`next/link` para a rota sem `estado`). `next/link` pode ser
+  renderizado direto de Server Components; um `<a>` simples causaria navegação
+  completa e perderia o estado do shell (decisão 2).
 - Paginação por `?pagina=N` lida no servidor; a mudança de página é feita pelo
-  Client Component fino descrito na decisão 2. Valor ausente, não numérico ou
-  fora do intervalo é normalizado para a página válida mais próxima antes de
-  filtrar os dados e renderizar `AdsPagination`.
+  Client Component fino descrito na decisão 2. Normalização do parâmetro: ausente
+  ou não numérico vale 1; numérico é truncado para inteiro e limitado ao
+  intervalo [1, total de páginas] (negativos e zero valem 1, acima do total vale
+  o total). O valor normalizado alimenta tanto o filtro dos dados quanto
+  `AdsPagination`.
 
 ### 3.1 Páginas existentes dentro do layout
 

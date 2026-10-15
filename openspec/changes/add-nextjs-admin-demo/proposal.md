@@ -39,7 +39,10 @@ os padrões avançados (item 9 do roadmap).
 **Documentação**
 
 - Atualizar `docs/integration.md` com o padrão de layout compartilhado e
-  navegação por links no App Router; atualizar `docs/roadmap.md` (item 8).
+  navegação por links no App Router; registrar em `docs/limitations.md` que
+  `AdsNav` e `AdsBreadcrumb` não aceitam elemento de link customizado; atualizar
+  `docs/roadmap.md` (item 8), o passo de próximos passos do `README.md` e, se
+  houver e2e novos, a árvore de `docs/quality.md`.
 
 ## Objetivos e fora do escopo
 
@@ -67,7 +70,8 @@ autenticação, persistência e fetching real; i18n; mudanças em tokens.
 ## Impact
 
 - **Código**: `apps/admin-demo/app/**` (rotas, layout, componentes de
-  demonstração), `apps/admin-demo/tests/**`, `e2e/**` e seus snapshots.
+  demonstração), `apps/admin-demo/lib/**` (dados estáticos e tema),
+  `apps/admin-demo/tests/**`, `e2e/**` e seus snapshots.
 - **Pacotes públicos**: `@admin-ds/components`, `@admin-ds/admin` e
   `@admin-ds/tokens` apenas consumidos; sem alteração de exports nem de
   compatibilidade retroativa.

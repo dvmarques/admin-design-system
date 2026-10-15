@@ -59,8 +59,8 @@ O admin-demo MUST oferecer uma rota de listagem com tabela e paginação que dem
 
 #### Scenario: Página solicitada é inválida
 
-- **WHEN** a página solicitada está ausente, não é numérica ou excede o total de páginas
-- **THEN** a listagem exibe a página válida mais próxima e a paginação indica essa página
+- **WHEN** a página solicitada está ausente, não é numérica, é menor que 1 ou excede o total de páginas
+- **THEN** a listagem exibe a primeira página (ausente, não numérica ou menor que 1) ou a última (acima do total) e a paginação indica essa página
 
 #### Scenario: Listagem sem registros
 

@@ -85,3 +85,31 @@ O texto de links de `AdsBreadcrumb` e o texto de gatilhos de `AdsTabs`, ativos o
 
 - **WHEN** o consumidor sobrescreve tokens públicos de texto ou de seleção em um escopo de tema
 - **THEN** tabs e breadcrumb refletem os novos valores sem recompilar a biblioteca
+
+### Requirement: Links de AdsNav sem sublinhado nativo
+
+Os itens de `AdsNav` renderizados como link MUST NOT exibir o sublinhado padrão do navegador, em nenhum estado, e MUST comunicar o item atual por `aria-current`, borda e superfície.
+
+#### Scenario: Item de navegação com href
+
+- **WHEN** um `AdsNav` com itens que possuem `href` é renderizado
+- **THEN** o CSS distribuído remove o sublinhado dos links e o item atual mantém `aria-current="page"`
+
+### Requirement: Links do consumidor em AdsNav e AdsBreadcrumb
+
+`AdsNav` e `AdsBreadcrumb` MUST permitir que o consumidor forneça o elemento de link de cada item, recebendo as props de estilo, `aria-current` e conteúdo para aplicá-las ao link. O item MUST conter um único elemento interativo, o link do consumidor MUST receber o estilo e o foco visível do item, e a biblioteca MUST NOT acessar o roteador. Itens desabilitados de `AdsNav` MUST permanecer botões desabilitados, e o item atual de `AdsBreadcrumb` MUST permanecer sem link com `aria-current="page"`.
+
+#### Scenario: Consumo em Next.js em AdsNav
+
+- **WHEN** uma aplicação Next.js fornece `next/link` para os itens de `AdsNav`
+- **THEN** cada item é um único link com o estilo da biblioteca, o item atual expõe `aria-current="page"` e não há `<button>` nem interativo aninhado
+
+#### Scenario: Link do consumidor em AdsBreadcrumb
+
+- **WHEN** uma aplicação fornece um link para um item anterior de `AdsBreadcrumb`
+- **THEN** o link recebe cor de texto, hover e foco visível do breadcrumb
+
+#### Scenario: Compatibilidade com href
+
+- **WHEN** um item usa apenas `href` ou `onClick`
+- **THEN** o comportamento anterior é preservado

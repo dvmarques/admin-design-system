@@ -26,6 +26,14 @@ export interface AdsButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> 
 	variant?: AdsButtonVariant;
 }
 
+const buttonBase =
+	'ads-button inline-flex items-center justify-center gap-2 rounded-md border font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50';
+
+/** Internal: the button look for non-button elements (consumer links); not part of the public API. */
+export function adsButtonClassName(variant: AdsButtonVariant, size: AdsButtonSize) {
+	return classNames(buttonBase, buttonVariants[variant], buttonSizes[size]);
+}
+
 /** A native button with design-system variants, sizes, and loading state. */
 export const AdsButton = forwardRef<HTMLButtonElement, AdsButtonProps>(function AdsButton(
 	{
@@ -45,12 +53,7 @@ export const AdsButton = forwardRef<HTMLButtonElement, AdsButtonProps>(function 
 		<button
 			{...props}
 			aria-busy={isLoading || undefined}
-			className={classNames(
-				'ads-button inline-flex items-center justify-center gap-2 rounded-md border font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-				buttonVariants[variant],
-				buttonSizes[size],
-				className,
-			)}
+			className={classNames(adsButtonClassName(variant, size), className)}
 			disabled={disabled || isLoading}
 			ref={ref}
 			type={type}

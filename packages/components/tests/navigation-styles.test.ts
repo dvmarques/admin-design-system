@@ -14,6 +14,7 @@ const classes = [
 	'text-on-surface-selected',
 	'border-b-primary',
 	'border-b-border',
+	'no-underline',
 ] as const;
 
 describe('navigation styles in the distributed CSS', () => {

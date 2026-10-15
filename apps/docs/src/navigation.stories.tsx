@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
@@ -99,4 +100,45 @@ export const Pagination: Story = {
 		const [page, setPage] = useState(5);
 		return <AdsPagination page={page} pageCount={20} onPageChange={setPage} />;
 	},
+};
+
+const ConsumerLink = ({
+	href,
+	...props
+}: {
+	href: string;
+	className: string;
+	children: ReactNode;
+}) => <a href={href} {...props} onClick={(event) => event.preventDefault()} />;
+
+/** Consumer-provided links (e.g. `next/link`) keep the library style and `aria-current` without nesting interactive content. */
+export const ConsumerLinks: Story = {
+	render: () => (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<AdsBreadcrumb
+				items={[
+					{ label: 'Início', renderLink: (props) => <ConsumerLink href="/" {...props} /> },
+					{ label: 'Relatórios' },
+				]}
+			/>
+			<AdsNav
+				items={[
+					{
+						current: true,
+						label: 'Painel',
+						renderLink: (props) => <ConsumerLink href="/painel" {...props} />,
+					},
+					{
+						label: 'Clientes',
+						renderLink: (props) => <ConsumerLink href="/clientes" {...props} />,
+					},
+				]}
+			/>
+			<AdsPagination
+				page={2}
+				pageCount={5}
+				renderPageLink={(page, props) => <ConsumerLink href={`/?pagina=${page}`} {...props} />}
+			/>
+		</div>
+	),
 };

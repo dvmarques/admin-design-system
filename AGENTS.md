@@ -72,7 +72,8 @@ histórico Git. Em especial:
 - a publicação só ocorre após o back-merge da mesma release para `develop`;
 - toda PR de release — `release/X.Y.Z -> master` e o respectivo back-merge — usa o label `release`, tem como assignee quem estiver conduzindo o processo e é integrada com merge commit;
 - PRs que não tiverem o label `release` e tenham `develop` como base são integradas por squash;
-- para relacionar uma PR a uma issue sem fechá-la, use o vínculo manual em Development e não use palavras-chave de fechamento, como `Closes #123`;
+- PRs sem o label `release` e com base `develop` fecham a issue correspondente com uma palavra-chave de fechamento no corpo, como `Closes #123`; PRs de release não usam palavras-chave de fechamento;
+- para relacionar uma PR a uma issue sem fechá-la, use o vínculo manual em Development;
 - não mover, substituir ou recriar tags de release existentes.
 
 ## Implementação de componentes

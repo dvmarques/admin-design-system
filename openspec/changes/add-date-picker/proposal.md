@@ -26,7 +26,7 @@ Nenhuma.
 
 ## Impact
 
-- Pacote `@admin-ds/components`: novos exports públicos `AdsDatePicker`, `AdsDatePickerProps`, `AdsDateRange` e `AdsDatePickerLabels`; classes públicas `ads-date-picker*`. Nenhuma API existente é alterada (compatível retroativamente).
+- Pacote `@admin-ds/components`: novos exports públicos `AdsDatePicker`, `AdsDatePickerProps` (`AdsDatePickerSingleProps` e `AdsDatePickerRangeProps`), `AdsDateRange` e `AdsDatePickerLabels`; `AdsIconName` ganha `calendar`, `chevronLeft` e `chevronRight` (adição compatível); classes públicas `ads-date-picker*`. Nenhuma API existente é alterada (compatível retroativamente).
 - Pacote `@admin-ds/admin` e `apps/admin-demo`: sem alterações.
 - Pacote de tokens: sem novos tokens; reuso de tokens existentes.
 - `apps/docs`: story `AdsDatePicker`.

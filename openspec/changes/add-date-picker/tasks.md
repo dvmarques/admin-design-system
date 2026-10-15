@@ -21,6 +21,7 @@
 
 ## 4. Validação
 
-- [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck`, `test:quiet` e `test:e2e`, e `openspec validate --all --strict`.
+- [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck`, `test:quiet` e `openspec validate --all --strict`. O `test:e2e` roda, mas os 7 snapshots visuais falham fora do Windows (ver 4.2); os demais 85 testes passam.
 - [x] 4.2 Registrar que os snapshots visuais (baseline `win32`) são pulados fora do Windows.
-- [x] 4.3 Confirmar o consumo do CSS compilado e que nenhuma dependência de runtime foi adicionada.
+- [x] 4.3 Confirmar que nenhuma dependência de runtime foi adicionada.
+- [ ] 4.4 Validar o consumo do CSS compilado do date picker em uma aplicação Next.js: pendente, pois a demonstração em `apps/admin-demo` é a issue #62; até lá o CSS é coberto pelo build, `inspect:css` e pelos testes de componente.

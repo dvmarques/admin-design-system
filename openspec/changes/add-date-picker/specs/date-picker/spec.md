@@ -42,6 +42,11 @@ O sistema MUST fornecer `AdsDatePicker` que permita selecionar uma data única, 
 - **WHEN** a segunda data escolhida é anterior à primeira
 - **THEN** a data anterior vira o início do intervalo
 
+#### Scenario: Início digitado depois do fim
+
+- **WHEN** a pessoa digita uma data inicial posterior à data final atual
+- **THEN** o valor não é alterado e a entrada é marcada como inválida
+
 ### Requirement: Valor controlado e não controlado
 
 O componente MUST aceitar `value` com `onValueChange` (controlado) ou `defaultValue` (não controlado), sem manter estado concorrente no modo controlado.
@@ -95,7 +100,7 @@ O calendário MUST ser uma grade (`role="grid"`) nomeada pelo mês exibido, com 
 
 ### Requirement: Integração com formulários
 
-`AdsDatePicker` MUST funcionar dentro de `AdsField`, herdando `id`, `aria-describedby` e `validationState`, e MUST suportar `disabled` e `validationState="error"`. Quando `name` for informado, o componente MUST expor o valor ISO em campos ocultos para envio de formulário.
+`AdsDatePicker` MUST funcionar dentro de `AdsField`, herdando `id`, `aria-describedby` e `validationState`, e MUST suportar `disabled` e `validationState="error"`. Quando `name` (data única) ou `startName`/`endName` (intervalo) forem informados, o componente MUST expor o valor ISO em campos ocultos para envio de formulário.
 
 #### Scenario: Dentro de AdsField
 

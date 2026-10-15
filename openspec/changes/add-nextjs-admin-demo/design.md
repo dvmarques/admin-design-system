@@ -166,6 +166,16 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   observer na mutação seguinte.
 - Estilos do demo ficam em `globals.css` e usam apenas variáveis `--ads-*`
   públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida.
+- CSS compilado e distribuído: cada pacote publica sua folha compilada
+  (`@admin-ds/tokens/styles.css`, `@admin-ds/components/styles.css`,
+  `@admin-ds/admin/styles.css`), importadas uma única vez no `app/layout.tsx`
+  raiz, e o demo não compila nem escaneia classes dos pacotes. Conflitos de CSS
+  com a aplicação consumidora são evitados pelos prefixos: as classes públicas
+  usam `ads-`, as do demo usam `demo-`, e o demo não redefine seletores `ads-*`.
+  A personalização é feita sobrescrevendo `--ads-*` no escopo da aplicação,
+  sem recompilar componentes; um teste verifica que a sobrescrita chega às
+  rotas (tarefa 6.2). Sem novas dependências de runtime, o impacto no bundle é
+  nulo.
 - Acessibilidade: um `h1` por rota e `main` único fornecido pelo shell, verificados
   em `e2e/admin-demo-routes.spec.ts` (criado na tarefa 1.2 e estendido a cada
   rota) e pelo `axe-core`. A ausência de Tailwind no demo é verificada na

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Definir o comportamento observável da aplicação administrativa de demonstração, que integra os componentes e o shell do design system em rotas navegáveis e serve como referência prática de consumo para aplicações Next.js.
+Definir o comportamento observável da aplicação administrativa de demonstração, que integra os componentes e o shell do design system em rotas navegáveis e serve como referência prática de consumo para aplicações Next.js. Os requisitos abaixo são o escopo obrigatório (MVP) da demonstração; filtros complexos, tabelas inteligentes, seletores de data e dashboards avançados são melhorias futuras, tratadas na issue #17, e não são exigidos aqui.
 
 ## ADDED Requirements
 
@@ -140,6 +140,15 @@ O admin-demo MUST importar componentes, tipos, tokens e estilos apenas pelos pon
 
 - **WHEN** uma rota importa um caminho interno de um pacote do design system
 - **THEN** a validação de consumo público falha
+
+### Requirement: Personalização por design tokens sem recompilar
+
+O admin-demo MUST refletir em todas as rotas a sobrescrita de variáveis CSS públicas `--ads-*`, sem exigir recompilar os componentes nem alterar suas folhas de estilo.
+
+#### Scenario: Variável pública é sobrescrita no demo
+
+- **WHEN** uma variável `--ads-*` de cor é sobrescrita no escopo da aplicação
+- **THEN** os componentes de todas as rotas exibem o novo valor, nos temas claro e escuro, sem recompilar os pacotes
 
 ### Requirement: Catálogo de avaliação permanece disponível
 

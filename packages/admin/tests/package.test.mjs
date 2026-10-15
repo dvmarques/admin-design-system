@@ -58,6 +58,25 @@ test('dashboard grid columns follow the grid width, not the viewport', async () 
 	}
 });
 
+test('admin flow styles hide inactive steps, keep announcements accessible and use tokens', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.match(css, /\.ads-step-form-panel\[hidden\]\s*\{[^}]*display:\s*none/);
+	assert.match(
+		css,
+		/\.ads-bulk-action-bar-status,\s*\.ads-step-form-visually-hidden\s*\{[^}]*clip-path:\s*inset\(50%\)/,
+	);
+	assert.match(css, /\.ads-step-form-heading:focus-visible\s*\{[^}]*--ads-color-focus-ring/);
+	assert.match(
+		css,
+		/\.ads-step-form-step\[data-state='current'\] \.ads-step-form-marker\s*\{[^}]*--ads-color-primary/,
+	);
+	assert.match(css, /\.ads-bulk-action-bar\s*\{[^}]*flex-wrap:\s*wrap/);
+	const start = css.indexOf('.ads-bulk-action-bar-status');
+	assert.ok(start > 0, 'missing admin flow styles');
+	assert.doesNotMatch(css.slice(start), /#[0-9a-fA-F]{3,8}\b|rgb\(|hsl\(/);
+});
+
 test('smart table styles use public tokens, a focusable scroll region and the selected row state', async () => {
 	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
 	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');

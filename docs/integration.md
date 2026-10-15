@@ -510,7 +510,9 @@ de página e a ordenação partem dos parâmetros atuais e trocam só a própria
 chave, então filtros de um `AdsFilterBar` na mesma URL são preservados. Ordenar
 volta à primeira página (apaga `pagina`), e a URL não fica com `?` vazio. A
 seleção guarda ids de todas as páginas; o contador mostra quantas estão na
-página exibida, e o exemplo oferece um botão para limpá-la.
+página exibida, e o exemplo oferece um botão para limpá-la. Com `AdsListFlow` e
+ações em massa, o foco após limpar a seleção é tratado pelo pacote `admin` (ver
+abaixo).
 
 ```tsx
 // app/usuarios/usuarios-tabela.tsx
@@ -661,3 +663,169 @@ Para combinar com o `AdsFilterBar`, passe-o em `filters`; os dois seguem
 independentes. Como os links partem dos parâmetros atuais, mudar de página ou de
 ordenação mantém os filtros. O consumidor decide, por exemplo, limpar a seleção
 quando o filtro muda.
+
+## Fluxos administrativos
+
+`@admin-ds/admin` compõe os componentes públicos em fluxos recorrentes. Todo o
+estado (seleção, filtros, etapa ativa, abertura do diálogo) é do consumidor: os
+fluxos não persistem nem enviam dados, não leem a URL e não usam o roteador do
+Next.js. São Client Components; funções como `validate` e `cell` não atravessam
+a fronteira de um Server Component, então use-os dentro de um Client Component
+(`"use client"`).
+
+### Listagem com ações em massa (`AdsListFlow`)
+
+`AdsListFlow` aceita as props de `AdsSmartTable` e acrescenta `filterBar` (props
+de `AdsFilterBar`), `bulkActions` e `onClearSelection`. A `AdsBulkActionBar` só
+aparece com itens em `selectedIds`, anuncia a quantidade por uma região de
+status e, para não duplicar o anúncio, a contagem da própria tabela fica vazia
+quando `bulkActions` é informado. "Limpar seleção" chama `onClearSelection` ou,
+por padrão, `onSelectionChange([])`. Quando a barra some com o foco num controle
+dela, o foco vai ao checkbox do cabeçalho ou à região da tabela. O slot `filters`
+da tabela é ocupado pelo fluxo; para outro arranjo, componha `AdsSmartTable`
+diretamente.
+
+O exemplo abaixo exclui os selecionados com confirmação. `pending` impede o
+envio duplo enquanto a exclusão acontece; no sucesso, o diálogo fecha e a
+seleção é limpa no mesmo passo, e no erro o diálogo continua aberto com a
+mensagem.
+
+```tsx
+'use client';
+
+import {
+	AdsConfirmDialog,
+	AdsListFlow,
+	type AdsFilterDefinition,
+	type AdsFilterValues,
+	type AdsSmartTableColumn,
+} from '@admin-ds/admin';
+import { AdsButton, type AdsPaginationProps } from '@admin-ds/components';
+import { useState } from 'react';
+
+interface Usuario {
+	id: string;
+	nome: string;
+	email: string;
+}
+
+const columns: AdsSmartTableColumn<Usuario>[] = [
+	{ id: 'nome', label: 'Nome', cell: (u) => u.nome },
+	{ id: 'email', label: 'E-mail', cell: (u) => u.email },
+];
+
+const filterDefinitions: AdsFilterDefinition[] = [{ id: 'q', type: 'text', label: 'Busca' }];
+
+export function Usuarios({
+	rows,
+	filters,
+	onFiltersChange,
+	pagination,
+	deleteUsers,
+}: {
+	rows: Usuario[];
+	filters: AdsFilterValues;
+	onFiltersChange: (next: AdsFilterValues) => void;
+	pagination: AdsPaginationProps;
+	deleteUsers: (ids: string[]) => Promise<void>;
+}) {
+	const [selected, setSelected] = useState<string[]>([]);
+	const [confirming, setConfirming] = useState(false);
+	const [pending, setPending] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const count = selected.length;
+
+	async function confirmDelete() {
+		setPending(true);
+		setError(null);
+		try {
+			await deleteUsers(selected);
+			setSelected([]);
+			setConfirming(false);
+		} catch {
+			setError('Não foi possível excluir. Tente novamente.');
+		} finally {
+			setPending(false);
+		}
+	}
+
+	return (
+		<>
+			<AdsListFlow<Usuario>
+				bulkActions={
+					<AdsButton onClick={() => setConfirming(true)} size="sm" variant="danger">
+						Excluir selecionados
+					</AdsButton>
+				}
+				caption="Usuários"
+				columns={columns}
+				filterBar={{ filters: filterDefinitions, value: filters, onChange: onFiltersChange }}
+				getRowId={(u) => u.id}
+				getRowLabel={(u) => u.nome}
+				onSelectionChange={setSelected}
+				pagination={pagination}
+				rows={rows}
+				selectedIds={selected}
+			/>
+			<AdsConfirmDialog
+				description="Esta ação não pode ser desfeita."
+				onConfirm={confirmDelete}
+				onOpenChange={(open) => {
+					setConfirming(open);
+					if (!open) setError(null);
+				}}
+				open={confirming}
+				pending={pending}
+				title={count === 1 ? 'Excluir 1 item?' : `Excluir ${count} itens?`}
+			>
+				{error ? <p role="alert">{error}</p> : null}
+			</AdsConfirmDialog>
+		</>
+	);
+}
+```
+
+`AdsConfirmDialog` usa `AdsDialog`: o foco inicial vai a "Cancelar", `Escape` e o
+clique fora cancelam (`onOpenChange(false)`) e `onConfirm` não fecha o diálogo.
+`pending` deixa as ações indisponíveis com `aria-disabled` (o botão focado não
+perde o foco) e suspende `Escape` e o clique fora, mesmo com `closeOnEscape` ou
+`closeOnBackdrop` informados. Ao fechar, o foco volta ao elemento que abriu o
+diálogo; se ele saiu da página, vai a `returnFocusRef`, quando informado.
+`destructive` (padrão) usa a variante de perigo. O tipo `AdsDialogProps` não
+expõe `role`, então o diálogo usa `role="dialog"` com título e descrição
+associados, e não `alertdialog`.
+
+### Formulário em etapas (`AdsStepForm`)
+
+O consumidor guarda os dados e a etapa ativa; o componente cuida do indicador,
+da validação por etapa, do foco e da confirmação final.
+
+```tsx
+const [step, setStep] = useState('account');
+const steps = [
+	{ id: 'account', label: 'Conta', validate: () => name !== '', content: <AccountFields /> },
+	{ id: 'review', label: 'Confirmação', content: <Summary /> },
+];
+
+<AdsStepForm
+	activeStepId={step}
+	aria-label="Novo usuário"
+	onActiveStepChange={setStep}
+	onSubmit={save}
+	steps={steps}
+/>;
+```
+
+- `validate` (síncrona) roda ao avançar e ao confirmar; com `false`, a etapa não
+  muda, um alerta é exibido e o foco vai ao primeiro campo `aria-invalid="true"`
+  (ou ao título da etapa). Os erros de campo são do consumidor e devem ser
+  definidos no mesmo ciclo em que `validate` retorna: com `AdsField`, informe
+  `validationState="error"` (é ele que define `aria-invalid`) e a mensagem em
+  `error`. O alerta some quando uma edição torna a etapa válida.
+- Ao mudar `activeStepId`, o foco vai ao título da etapa e "Etapa X de N: rótulo"
+  é anunciado; na renderização inicial o foco não se move.
+- As etapas inativas ficam montadas e ocultas, então os dados (inclusive de campos
+  não controlados) permanecem ao voltar. Voltar não valida.
+- A última etapa mostra "Confirmar" (`labels.submit`), que valida e chama
+  `onSubmit`. Inclua nela um resumo para revisão. `submitting` desabilita as
+  ações e define `aria-busy`. `Enter` em um campo não envia nem avança.

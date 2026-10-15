@@ -40,6 +40,10 @@ for (const selector of [
 	'.ads-smart-table',
 	'.ads-smart-table-sort',
 	'.ads-smart-table .ads-table-row[data-selected]',
+	'.ads-bulk-action-bar',
+	'.ads-step-form',
+	'.ads-step-form-panel[hidden]',
+	'.ads-confirm-dialog-actions',
 ]) {
 	if (!css.includes(selector)) throw new Error(`Missing selector: ${selector}`);
 }

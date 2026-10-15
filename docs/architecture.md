@@ -46,8 +46,10 @@ packages/
 - `admin/` contém composições administrativas reutilizáveis, como AdminShell,
   SidebarLayout, PageHeader e os padrões de dashboard (`AdsMetricCard`,
   `AdsDashboardGrid` e `AdsDashboardPanel`), a barra de filtros
-  (`AdsFilterBar`) e a tabela inteligente (`AdsSmartTable`). Ele não inclui
-  regras de negócio nem depende do roteamento do Next.js.
+  (`AdsFilterBar`), a tabela inteligente (`AdsSmartTable`) e os fluxos
+  administrativos (`AdsListFlow`, `AdsBulkActionBar`, `AdsStepForm` e
+  `AdsConfirmDialog`). Ele não inclui regras de negócio nem depende do
+  roteamento do Next.js.
 
 ## Relação entre os diretórios
 

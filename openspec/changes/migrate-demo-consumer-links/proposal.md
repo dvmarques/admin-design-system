@@ -12,7 +12,9 @@ externa e exemplificar o caminho recomendado (issue #54).
 
 **Biblioteca reutilizável (`packages/components`)**
 
-- Nenhuma mudança.
+- `AdsPagination`: os botões (anterior e próxima desabilitados e páginas com
+  `onPageChange`) passam a herdar a fonte da página (`font-family: inherit`),
+  como os links de `renderPageLink`. Encontrado na revisão da PR.
 
 **Aplicações de demonstração (`apps/admin-demo`)**
 
@@ -30,7 +32,8 @@ externa e exemplificar o caminho recomendado (issue #54).
 Objetivos: demo sem conteúdo interativo aninhado, navegação por links reais e
 consumo apenas de caminhos públicos.
 
-Fora do escopo: mudanças em `packages/components`; a sidebar de `AdsAdminShell`,
+Fora do escopo: outras mudanças em `packages/components`, além da fonte dos
+botões de `AdsPagination`; a sidebar de `AdsAdminShell`,
 que usa `next/link` diretamente.
 
 ## Capabilities
@@ -41,10 +44,12 @@ Nenhuma.
 
 ### Modified Capabilities
 
-- `nextjs-consumption`: requisito da aplicação de referência para links do consumidor.
+- `nextjs-consumption`: o requisito "Aplicação de referência" passa a exigir os
+  links do consumidor (`renderLink` e `renderPageLink`).
 
 ## Impact
 
-- **Pacotes e APIs públicas**: nenhum pacote publicado nem API pública é afetado.
+- **Pacotes e APIs públicas**: em `@admin-ds/components`, muda apenas a fonte
+  dos botões de `AdsPagination`; nenhuma API pública é afetada.
 - **Dependências**: nenhuma. **Bundle**: sem impacto nas bibliotecas.
 - **Consumidores**: ganham um exemplo funcional de `renderLink` e `renderPageLink`.

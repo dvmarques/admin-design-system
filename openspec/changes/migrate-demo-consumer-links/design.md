@@ -25,8 +25,11 @@ função ARIA e nome acessível.
 
 ## Tailwind, CSS e bundle
 
-Sem mudança de estilos: as classes vêm das props recebidas, espalhadas no link.
-Sem novas dependências.
+No demo, as classes vêm das props recebidas, espalhadas no link. Os links herdam
+a fonte da página, mas o botão nativo não (a biblioteca não usa o preflight do
+Tailwind), então o "Anterior" desabilitado destoava das páginas. Os botões de
+`AdsPagination` recebem `[font-family:inherit]`; o `AdsButton` em geral não
+muda nesta change. Sem novas dependências.
 
 ## Alternativas
 

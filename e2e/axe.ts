@@ -15,6 +15,16 @@ const requireFromRoot = createRequire(join(process.cwd(), 'noop.js'));
  * excluded from the audited context.
  */
 export async function expectNoAxeViolations(page: Page) {
+	// Theme changes animate colors; auditing mid-transition measures intermediate colors. Only
+	// transitions are awaited, since looping animations (spinners, skeletons) never finish.
+	await page.evaluate(() =>
+		Promise.all(
+			document
+				.getAnimations()
+				.filter((animation) => animation instanceof CSSTransition)
+				.map((animation) => animation.finished.catch(() => undefined)),
+		),
+	);
 	await page.addScriptTag({ path: requireFromRoot.resolve('axe-core/axe.min.js') });
 	const violations = await page.evaluate(async () => {
 		const axe = (

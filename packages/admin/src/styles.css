@@ -527,8 +527,34 @@
 		font-size: 0.875rem;
 	}
 
+	/* Indicador discreto de carregamento: uma faixa animada no topo da barra, visível também em touch. */
 	.ads-filter-bar[data-loading] {
+		position: relative;
 		cursor: progress;
+	}
+
+	.ads-filter-bar[data-loading]::before {
+		position: absolute;
+		top: 0;
+		right: 0.5rem;
+		left: 0.5rem;
+		height: 2px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, transparent, var(--ads-color-primary), transparent);
+		background-size: 200% 100%;
+		animation: ads-filter-bar-loading 1.2s linear infinite;
+		content: '';
+		pointer-events: none;
+	}
+
+	@keyframes ads-filter-bar-loading {
+		from {
+			background-position: 100% 0;
+		}
+
+		to {
+			background-position: -100% 0;
+		}
 	}
 
 	.ads-filter-bar-status {
@@ -562,6 +588,12 @@
 		.ads-filter-bar-toggle,
 		.ads-filter-bar-chip-remove {
 			transition: none;
+		}
+
+		.ads-filter-bar[data-loading]::before {
+			background: var(--ads-color-primary);
+			animation: none;
+			opacity: 0.6;
 		}
 	}
 }

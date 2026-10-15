@@ -33,6 +33,10 @@ for (const selector of [
 	'.ads-dashboard-grid',
 	'.ads-dashboard-grid-items',
 	'.ads-dashboard-panel',
+	'.ads-filter-bar',
+	'.ads-filter-bar-header',
+	'@container ads-filter-bar (max-width: 40rem)',
+	".ads-filter-bar-body[data-expanded='false']",
 ]) {
 	if (!css.includes(selector)) throw new Error(`Missing selector: ${selector}`);
 }

@@ -349,8 +349,10 @@ export function AdsFilterBar({
 				);
 			case 'multiselect': {
 				const selected = asList(current);
-				const descriptionId = filter.description ? `${idBase}-${filter.id}-description` : undefined;
-				const errorId = filter.error ? `${idBase}-${filter.id}-error` : undefined;
+				// O id do filtro pode ter espaços, que quebrariam a lista do aria-describedby.
+				const fieldId = `${idBase}-${filter.id.replace(/[^\w-]/g, '')}`;
+				const descriptionId = filter.description ? `${fieldId}-description` : undefined;
+				const errorId = filter.error ? `${fieldId}-error` : undefined;
 				const describedBy = [descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 				return (
 					<div className={classNames('ads-filter-bar-field', filter.className)} key={filter.id}>

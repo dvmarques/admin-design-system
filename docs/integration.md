@@ -356,8 +356,11 @@ cobrem os demais estados, e `labels` e `locale` ajustam os textos.
 
 O exemplo abaixo persiste o filtro em `searchParams`. A página (Server
 Component) repassa os parâmetros, e o Client Component os converte em valores e
-navega ao alterar. Como o texto é emitido a cada digitação, aplique debounce ao
-atualizar a URL em listagens reais.
+navega ao alterar. O texto fica em estado local, inicializado pelos parâmetros,
+para aparecer a cada tecla; a URL só é atualizada depois de uma pausa
+(debounce). Os demais filtros atualizam a URL na hora. `router.replace` usa
+`{ scroll: false }` para a página não voltar ao topo, e `useTransition`, que é
+opcional, liga o `loading` da barra enquanto a navegação acontece.
 
 ```tsx
 // app/usuarios/page.tsx (Server Component)
@@ -377,6 +380,9 @@ export default async function Page({
 
 import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@admin-ds/admin';
 import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState, useTransition } from 'react';
+
+type Params = Record<string, string | string[] | undefined>;
 
 const filters: AdsFilterDefinition[] = [
 	{ id: 'q', type: 'text', label: 'Busca' },
@@ -392,32 +398,53 @@ const filters: AdsFilterDefinition[] = [
 	{ id: 'periodo', type: 'date-range', label: 'Período' },
 ];
 
-export function UsuariosFiltros({
-	params,
-}: {
-	params: Record<string, string | string[] | undefined>;
-}) {
+const first = (params: Params, key: string) => [params[key]].flat()[0];
+
+function toQuery(next: AdsFilterValues) {
+	const query = new URLSearchParams();
+	if (typeof next.q === 'string') query.set('q', next.q);
+	if (typeof next.status === 'string') query.set('status', next.status);
+	if (next.periodo && !Array.isArray(next.periodo) && typeof next.periodo === 'object') {
+		if (next.periodo.start) query.set('de', next.periodo.start);
+		if (next.periodo.end) query.set('ate', next.periodo.end);
+	}
+	return query.toString();
+}
+
+export function UsuariosFiltros({ params }: { params: Params }) {
 	const router = useRouter();
 	const pathname = usePathname();
-	const first = (key: string) => [params[key]].flat()[0];
-	const value: AdsFilterValues = {};
-	if (first('q')) value.q = first('q') as string;
-	if (first('status')) value.status = first('status') as string;
-	if (first('de') || first('ate')) {
-		value.periodo = { start: first('de') ?? null, end: first('ate') ?? null };
+	const [pending, startTransition] = useTransition();
+	// O texto fica em estado local para aparecer a cada tecla; a URL vem depois.
+	const [text, setText] = useState(first(params, 'q') ?? '');
+	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+	useEffect(() => () => clearTimeout(timer.current), []);
+
+	const value: AdsFilterValues = text ? { q: text } : {};
+	const status = first(params, 'status');
+	if (status) value.status = status;
+	const start = first(params, 'de');
+	const end = first(params, 'ate');
+	if (start || end) value.periodo = { start: start ?? null, end: end ?? null };
+
+	function navigate(next: AdsFilterValues) {
+		const query = toQuery(next);
+		startTransition(() => {
+			router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+		});
 	}
 
 	function onChange(next: AdsFilterValues) {
-		const query = new URLSearchParams();
-		if (typeof next.q === 'string') query.set('q', next.q);
-		if (typeof next.status === 'string') query.set('status', next.status);
-		if (next.periodo && !Array.isArray(next.periodo) && typeof next.periodo === 'object') {
-			if (next.periodo.start) query.set('de', next.periodo.start);
-			if (next.periodo.end) query.set('ate', next.periodo.end);
+		const nextText = typeof next.q === 'string' ? next.q : '';
+		clearTimeout(timer.current);
+		if (nextText !== text) {
+			setText(nextText);
+			timer.current = setTimeout(() => navigate(next), 300);
+			return;
 		}
-		router.replace(`${pathname}?${query}`);
+		navigate(next);
 	}
 
-	return <AdsFilterBar filters={filters} onChange={onChange} value={value} />;
+	return <AdsFilterBar filters={filters} loading={pending} onChange={onChange} value={value} />;
 }
 ```

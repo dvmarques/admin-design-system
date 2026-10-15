@@ -99,6 +99,22 @@ describe('AdsFilterBar', () => {
 		expect(onChange).toHaveBeenLastCalledWith({ criado: '2026-03-15' });
 	});
 
+	it('emits date ranges as start and end, keeping an open end', () => {
+		const onChange = vi.fn();
+		render(<Harness onChange={onChange} />);
+		const field = screen.getByText('Período').closest('.ads-field') as HTMLElement;
+		const [start, end] = Array.from(field.querySelectorAll('input'));
+		fireEvent.change(start as HTMLInputElement, { target: { value: '01/03/2026' } });
+		fireEvent.blur(start as HTMLInputElement);
+		expect(onChange).toHaveBeenLastCalledWith({ periodo: { start: '2026-03-01', end: null } });
+		fireEvent.change(end as HTMLInputElement, { target: { value: '31/03/2026' } });
+		fireEvent.blur(end as HTMLInputElement);
+		expect(onChange).toHaveBeenLastCalledWith({
+			periodo: { start: '2026-03-01', end: '2026-03-31' },
+		});
+		expect(screen.getByText('Período: 01/03/2026 – 31/03/2026')).toBeTruthy();
+	});
+
 	it('shows active filters as removable chips with accessible names', () => {
 		render(
 			<Harness
@@ -213,6 +229,18 @@ describe('AdsFilterBar', () => {
 		).toBe(true);
 	});
 
+	it('keeps the toggle operable when disabled, only to expand and collapse', () => {
+		const onChange = vi.fn();
+		render(<Harness disabled initial={{ status: 'ativo' }} onChange={onChange} />);
+		const toggle = screen.getByRole('button', { name: /^Filtros/ }) as HTMLButtonElement;
+		expect(toggle.disabled).toBe(false);
+		fireEvent.click(toggle);
+		expect(toggle.getAttribute('aria-expanded')).toBe('true');
+		fireEvent.click(toggle);
+		expect(toggle.getAttribute('aria-expanded')).toBe('false');
+		expect(onChange).not.toHaveBeenCalled();
+	});
+
 	it('announces loading with aria-busy and stays usable', () => {
 		const onChange = vi.fn();
 		render(<Harness loading onChange={onChange} />);
@@ -299,6 +327,32 @@ describe('AdsFilterBar', () => {
 		);
 		expect(screen.getByLabelText('A').hasAttribute('aria-invalid')).toBe(false);
 		expect(screen.queryByRole('alert')).toBeNull();
+	});
+
+	it('builds valid describedby ids for multiselect filters whose id has spaces', () => {
+		render(
+			<Harness
+				filters={[
+					{
+						id: 'perfis de acesso',
+						type: 'multiselect',
+						label: 'Perfis',
+						description: 'Dica',
+						error: 'Erro',
+						options: [{ value: 'a', label: 'A' }],
+					},
+				]}
+			/>,
+		);
+		const ids = (
+			screen.getByRole('group', { name: 'Perfis' }).getAttribute('aria-describedby') ?? ''
+		).split(' ');
+		expect(ids).toHaveLength(2);
+		for (const id of ids) {
+			expect(id).toMatch(/^[\w-]+$/);
+			expect(document.getElementById(id)).not.toBeNull();
+		}
+		expect(ids.map((id) => document.getElementById(id)?.textContent)).toEqual(['Dica', 'Erro']);
 	});
 
 	it('has no axe violations in any state', async () => {

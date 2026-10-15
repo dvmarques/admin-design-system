@@ -124,12 +124,14 @@ Em telas estreitas, `AdsFilterBar` MUST recolher os campos atrás de um botão d
 #### Scenario: Desabilitada
 
 - **WHEN** `disabled` é verdadeiro
-- **THEN** nenhum campo ou botão da barra pode ser alterado e os filtros ativos continuam legíveis
+- **THEN** nenhum campo, botão de remoção de chip ou "Limpar filtros" pode ser acionado, e os filtros ativos continuam legíveis
+- **AND** o botão de alternância "Filtros" continua operável apenas para expandir e recolher os campos, sem alterar valores
 
 #### Scenario: Carregando
 
 - **WHEN** `loading` é verdadeiro
 - **THEN** a região fica com `aria-busy="true"`, o carregamento é anunciado e a pessoa ainda pode alterar filtros
+- **AND** um indicador visual discreto aparece na barra sem depender de cursor ou hover, e fica estático com `prefers-reduced-motion: reduce`
 
 #### Scenario: Sem filtros ativos
 

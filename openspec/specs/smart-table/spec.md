@@ -1,6 +1,7 @@
 # smart-table Specification
 
 ## Purpose
+
 Permite listar dados administrativos com ordenação por coluna, seleção de linhas, visibilidade de colunas e estados de carregamento, vazio e erro, com todo o estado controlado pela aplicação consumidora.
 
 ## Requirements

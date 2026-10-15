@@ -25,6 +25,13 @@ if (css.includes('@source') || css.includes('@import') || css.includes('/src/'))
 	throw new Error('The stylesheet must be self-contained and free of source directives');
 if (css.includes('*,:after,:before'))
 	throw new Error('The stylesheet must not include a global reset');
-for (const selector of ['.ads-admin-shell', '.ads-admin-shell-sidebar', '.ads-admin-shell-main']) {
+for (const selector of [
+	'.ads-admin-shell',
+	'.ads-admin-shell-sidebar',
+	'.ads-admin-shell-main',
+	'.ads-metric-card',
+	'.ads-dashboard-grid',
+	'.ads-dashboard-panel',
+]) {
 	if (!css.includes(selector)) throw new Error(`Missing selector: ${selector}`);
 }

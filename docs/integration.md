@@ -126,6 +126,29 @@ cookie (para renderizar no servidor sem troca visual) ou `localStorage`.
 O `AdsNav` atual é horizontal. Por isso a sidebar permanece composicional e aceita
 qualquer estrutura de navegação fornecida pela aplicação, como uma lista de links.
 
+## Padrões de dashboard
+
+`@admin-ds/admin` também exporta `AdsMetricCard`, `AdsDashboardGrid` e
+`AdsDashboardPanel`, com os mesmos estilos de `@admin-ds/admin/styles.css` (sem
+Tailwind no consumidor). Eles não buscam dados nem conhecem rotas: a aplicação
+decide quando exibir cada estado.
+
+```tsx
+<AdsDashboardGrid>
+	<AdsMetricCard title="Receita" value="R$ 48.200" change="+12,4%" trend="up" />
+	<AdsDashboardPanel title="Pedidos recentes" span={3} loading={isLoading} error={error}>
+		{conteudo}
+	</AdsDashboardPanel>
+</AdsDashboardGrid>
+```
+
+- `trend` (`up`, `down`, `neutral`) define o ícone e o texto acessível; `sentiment`
+  (`positive`, `negative`, `neutral`) define a cor, pois uma alta pode ser ruim.
+- O grid usa 1, 2 e 4 colunas conforme a largura e nunca reordena painéis; `span`
+  (1 a 4) só se aplica quando há colunas suficientes.
+- `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos não
+  fazem parte desta entrega.
+
 ## Aplicação de referência (`admin-demo`)
 
 O `apps/admin-demo` consome os pacotes como uma aplicação externa e serve de

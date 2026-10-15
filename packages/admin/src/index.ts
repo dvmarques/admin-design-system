@@ -10,3 +10,14 @@ export type {
 } from './admin-shell.js';
 export { useAdsAdminShell } from './admin-shell-state.js';
 export type { AdsAdminShellState } from './admin-shell-state.js';
+export { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from './dashboard.js';
+export type {
+	AdsDashboardEmpty,
+	AdsDashboardGridProps,
+	AdsDashboardPanelHeadingLevel,
+	AdsDashboardPanelProps,
+	AdsDashboardPanelSpan,
+	AdsMetricCardProps,
+	AdsMetricSentiment,
+	AdsMetricTrend,
+} from './dashboard.js';

@@ -45,8 +45,7 @@ os padrões avançados (item 9 do roadmap).
   `docs/limitations.md` que `AdsNav` não comporta link do consumidor sem gerar
   conteúdo interativo aninhado e `AdsBreadcrumb` só aplica estilo e foco de link
   quando recebe `href` (um `next/link` em `label` perde esse estilo), ambos
-  divergindo da spec `navigation-structure` e a corrigir em change própria, que `AdsPagination.renderPage` sempre envolve o `<button>` da
-  página (divergência da spec `pagination`, a corrigir em change própria) e que a sobrescrita com `:root[data-theme=…]` documentada em
+  divergindo da spec `navigation-structure` e a corrigir em change própria, que `AdsPagination.renderPage` só recebe o botão pronto da página: envolvê-lo em `next/link` ou `<a>` gera conteúdo interativo aninhado, e substituí-lo por um link perde o `aria-current="page"` e o estilo de item da biblioteca (divergência do cenário "Integração com Next.js" da spec `pagination`, a corrigir em change própria) e que a sobrescrita com `:root[data-theme=…]` documentada em
   `packages/tokens/README.md` não alcança overlays em portal; adicionar a entrada da change ao `CHANGELOG.md`; atualizar
   `docs/roadmap.md` (item 8), o passo de próximos passos do `README.md` e a
   árvore de `e2e/` em `docs/quality.md`, que deve listar todos os arquivos

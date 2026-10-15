@@ -89,13 +89,16 @@ pacote e deve mostrar o produto integrado.
   é usado para isso: ele renderiza `<a href>` simples (sem elemento de link
   customizável) e causaria navegação completa, perdendo o estado do shell.
   `AdsNav` continua apenas no catálogo de componentes.
-- `AdsPagination` **não** usa `renderPage` com `next/link`: o componente envolve
-  cada página em um `<button>`, e um link contendo botão é interativo aninhado
-  (HTML inválido, falha no `axe-core`). O demo usa um Client Component fino que
-  passa `onPageChange` e chama `router.push` com `?pagina=N`.
-  Isso diverge do cenário "Integração com Next.js" da spec `pagination`, que
-  promete renderizar links fornecidos pela aplicação; a divergência é registrada
-  em `docs/limitations.md` e corrigida na biblioteca em change própria.
+- `AdsPagination` **não** usa `renderPage` com `next/link`: `renderPage(page,
+content)` só recebe o botão pronto da página (`content`), e o valor retornado
+  substitui o item. Envolver o botão em um link gera conteúdo interativo
+  aninhado (HTML inválido, falha no `axe-core`); substituí-lo por um link perde
+  o `aria-current="page"` e o estilo de item da biblioteca. O demo usa um Client
+  Component fino que passa `onPageChange` e chama `router.push` com
+  `?pagina=N`. Isso diverge do cenário "Integração com Next.js" da spec
+  `pagination`, que promete renderizar links fornecidos pela aplicação; a
+  divergência é registrada em `docs/limitations.md` e corrigida na biblioteca
+  em change própria.
 
 ### 3. Dados e estados
 

@@ -22,6 +22,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `add-nextjs-admin-demo` - O admin demo passa a ser uma aplicação multi-rota
+  com layout administrativo compartilhado (visão geral, clientes, novo cliente,
+  preferências, catálogo de componentes e exibição de dados), navegação por
+  `next/link` com página atual identificada, estado de tema compartilhado e
+  testes de consumo público, acessibilidade e responsividade por rota. Restrito
+  ao admin demo, sem mudança de API pública.
 - `update-node-24` - Atualizados `engines.node` (`>=24.0.0`), CI, release e
   `@types/node` para o Node.js 24; adicionado `.nvmrc` e documentada a versão
   exigida no README. Quem usa Node.js 22 precisa atualizar o runtime.

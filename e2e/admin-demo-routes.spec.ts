@@ -470,3 +470,26 @@ test.describe('preferências', () => {
 		});
 	}
 });
+
+test.describe('snapshots visuais', () => {
+	const snapshotRoutes = [
+		{ path: '/componentes', name: 'componentes' },
+		{ path: '/clientes', name: 'clientes' },
+		{ path: '/clientes/novo', name: 'clientes-novo' },
+		{ path: '/preferencias', name: 'preferencias' },
+	] as const;
+
+	for (const route of snapshotRoutes) {
+		test(`mantém a apresentação de ${route.path} nos temas claro e escuro`, async ({ page }) => {
+			test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
+
+			for (const theme of ['dark', 'light'] as const) {
+				await useTheme(page, theme);
+				await page.setViewportSize({ width: 1280, height: 800 });
+				await page.goto(route.path);
+				await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
+				await expect(page).toHaveScreenshot(`${route.name}-${theme}.png`, { fullPage: true });
+			}
+		});
+	}
+});

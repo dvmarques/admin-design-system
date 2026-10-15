@@ -167,6 +167,24 @@ foi arquivada em `openspec/changes/archive/2026-10-14-add-admin-shell`.
 Evoluir a aplicação Next.js de referência para um admin demonstrativo
 que consuma exclusivamente as APIs públicas do design system.
 
+**Status: em implementação.**
+
+Entregas principais:
+
+- layout administrativo compartilhado no App Router, com um único
+  `AdsAdminShell`, navegação por `next/link` com `aria-current`, fechamento do
+  drawer móvel ao trocar de rota e estado do shell preservado entre rotas;
+- rotas de visão geral, clientes (tabela, paginação e estados vazio,
+  carregando e erro), novo cliente (formulário validado), preferências (tema e
+  sidebar), catálogo de componentes e exibição de dados;
+- estado de tema compartilhado entre o toggle do cabeçalho e as preferências,
+  sem perder o foco do teclado;
+- testes de consumo público (imports, dependências, Tailwind, seletores e
+  classes), de acessibilidade com `axe-core`, de responsividade e de
+  hidratação por rota, e snapshots visuais;
+- documentação em `docs/integration.md` e limitações registradas em
+  `docs/limitations.md`.
+
 ## 9. `add-advanced-admin-patterns`
 
 Adicionar padrões avançados depois que os componentes básicos estiverem

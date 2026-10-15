@@ -76,8 +76,16 @@ claro e escuro.
 
 ```text
 e2e/
-└── admin-demo.spec.ts
+├── admin-demo.spec.ts
+├── admin-demo-all-routes.spec.ts
+├── admin-demo-routes.spec.ts
+├── data-display.spec.ts
+└── overlay.spec.ts
 ```
+
+Os arquivos `e2e/axe.ts` e `e2e/routes.ts` são apoio compartilhado, não
+testes: o primeiro injeta o `axe-core` da raiz na página (excluindo o
+`nextjs-portal` do `next dev`) e o segundo lista as rotas do admin demo.
 
 Esses testes abrem o admin de referência, alternam temas, validam controles por
 teclado, verificam a ausência de divergências de hidratação e capturam

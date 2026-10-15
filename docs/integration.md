@@ -125,3 +125,150 @@ cookie (para renderizar no servidor sem troca visual) ou `localStorage`.
 
 O `AdsNav` atual é horizontal. Por isso a sidebar permanece composicional e aceita
 qualquer estrutura de navegação fornecida pela aplicação, como uma lista de links.
+
+## Aplicação de referência (`admin-demo`)
+
+O `apps/admin-demo` consome os pacotes como uma aplicação externa e serve de
+referência para integrar o shell, a navegação, formulários e dados em um Next.js
+App Router. Os exemplos abaixo vêm do código do demo.
+
+### Layout compartilhado entre rotas
+
+Monte o `AdsAdminShell` uma única vez em um `layout.tsx` de um grupo de rotas.
+O estado do shell (sidebar recolhida, navegação móvel) sobrevive à navegação no
+cliente porque o layout não é remontado entre rotas do mesmo grupo:
+
+```tsx
+// app/(admin)/layout.tsx
+export default async function AdminLayout({ children }: { children: ReactNode }) {
+	return (
+		<AdsAdminShell>
+			<RouteChangeHandler />
+			<AdsAdminShell.Header>{/* gatilhos, título e tema */}</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar label="Navegação do demo" mobileTitle="Navegação do demo">
+					<DemoNavigation />
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>{children}</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	);
+}
+```
+
+### Navegação com `next/link`
+
+Os links ficam como filhos da sidebar, em um Client Component da aplicação, que
+usa `usePathname` para marcar a página atual. A biblioteca não conhece o roteador:
+
+```tsx
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+
+export function DemoNavigation() {
+	const pathname = usePathname();
+
+	return (
+		<ul className="demo-shell-nav-list">
+			{items.map((item) => (
+				<li key={item.href}>
+					<Link
+						aria-current={pathname === item.href ? 'page' : undefined}
+						className="demo-shell-nav-link"
+						href={item.href}
+					>
+						{item.label}
+					</Link>
+				</li>
+			))}
+		</ul>
+	);
+}
+```
+
+Como o estado do shell sobrevive à navegação, o drawer móvel não fecha sozinho ao
+trocar de rota. Renderize um componente sempre montado, dentro de `AdsAdminShell`
+e fora de `Sidebar`, que o feche quando o `pathname` muda. Ele **não** pode viver
+na sidebar: no celular o `AdsDrawer` só monta os filhos com o drawer aberto, e um
+efeito que fecha o drawer na montagem o fecharia ao abri-lo.
+
+```tsx
+'use client';
+
+import { useAdsAdminShell } from '@admin-ds/admin';
+import { usePathname } from 'next/navigation';
+import { useEffect, useRef } from 'react';
+
+export function RouteChangeHandler() {
+	const pathname = usePathname();
+	const { setMobileOpen } = useAdsAdminShell();
+	const previousPathname = useRef(pathname);
+
+	useEffect(() => {
+		if (previousPathname.current === pathname) return;
+		previousPathname.current = pathname;
+		setMobileOpen(false);
+	}, [pathname, setMobileOpen]);
+
+	return null;
+}
+```
+
+### Paginação por `onPageChange`
+
+`AdsPagination` renderiza botões e não conhece URL nem roteador. Traduza cada
+mudança de página em uma navegação na aplicação, com um Client Component fino:
+
+```tsx
+'use client';
+
+export function CustomersPagination({ page, pageCount }: CustomersPaginationProps) {
+	const router = useRouter();
+
+	return (
+		<AdsPagination
+			onPageChange={(next) => router.push(`/clientes?pagina=${next}`)}
+			page={page}
+			pageCount={pageCount}
+		/>
+	);
+}
+```
+
+Não use `renderPage` para envolver a página em um link: o conteúdo recebido já é
+um botão, e um link contendo um botão é conteúdo interativo aninhado (veja
+`docs/limitations.md`).
+
+### Parâmetros de URL do demo
+
+`?pagina=N` e `?estado=vazio|carregando|erro` em `/clientes` são **recursos do
+demo**, não API do design system. Servem para que os testes e os snapshots
+alcancem cada estado sem depender de temporizadores. Um `?pagina` ausente, não
+numérico ou menor que 1 vale 1; valores acima do total valem a última página; um
+`?estado` desconhecido exibe os dados normais.
+
+### Sobrescrita de tokens
+
+Sobrescreva variáveis `--ads-*` no CSS da aplicação, **depois** de importar
+`@admin-ds/tokens/styles.css`, com seletores `[data-theme='light']` e
+`[data-theme='dark']` (sem `:root`), e sem recompilar os componentes:
+
+```css
+[data-theme='light'] {
+	--ads-color-primary: #0369a1;
+}
+
+[data-theme='dark'] {
+	--ads-color-primary: #38bdf8;
+}
+```
+
+Os seletores precisam ter a mesma forma dos gerados pelo pacote de tokens
+(`:root, [data-theme="light"]` e `[data-theme="dark"]`) e vir depois deles: com
+essa especificidade, vale a ordem de carga. O seletor sem `:root` é necessário
+porque os overlays (dialog, drawer e toast) são renderizados em um `div` com
+`data-theme` próprio, fora do `<html>`. Uma sobrescrita em `:root[data-theme=…]`
+não os alcança. O demo não traz essa sobrescrita de forma permanente: ela é
+injetada apenas no teste `e2e/admin-demo-all-routes.spec.ts`, com `--ads-color-text`.

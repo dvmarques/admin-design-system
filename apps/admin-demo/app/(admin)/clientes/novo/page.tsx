@@ -14,7 +14,7 @@ export default function NewCustomerPage() {
 						Formulário com validação de campos obrigatórios. Nenhum dado é salvo ou enviado.
 					</AdsTypography>
 				</header>
-				<section aria-label="Dados do cliente" className="demo-section">
+				<section aria-label="Formulário de cadastro" className="demo-section">
 					<NewCustomerForm />
 				</section>
 			</div>

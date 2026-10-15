@@ -177,20 +177,30 @@ test.describe('clientes', () => {
 		return page.getByRole('link', { name: `Página ${number}`, exact: true });
 	}
 
+	function bodyRows(page: Page) {
+		return customersTable(page).locator('tbody tr');
+	}
+
 	test('lista os registros da página e navega pela paginação', async ({ page }) => {
 		await page.goto('/clientes');
 
 		await expect(page.getByRole('heading', { level: 1, name: 'Clientes' })).toBeVisible();
 		await expect(customersTable(page).getByRole('row')).toHaveCount(6);
-		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
 		await expect(pageButton(page, 1)).toHaveAttribute('aria-current', 'page');
 
 		await pageButton(page, 2).click();
 
 		await expect(page).toHaveURL('/clientes?pagina=2');
 		await expect(pageButton(page, 2)).toHaveAttribute('aria-current', 'page');
-		await expect(customersTable(page).getByRole('cell', { name: 'Eduardo Pires' })).toBeVisible();
-		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toHaveCount(0);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Eduardo Pires', exact: true }),
+		).toBeVisible();
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toHaveCount(0);
 	});
 
 	for (const [value, expected] of [
@@ -206,14 +216,127 @@ test.describe('clientes', () => {
 			await page.goto(value === undefined ? '/clientes' : `/clientes?pagina=${value}`);
 
 			await expect(pageButton(page, expected)).toHaveAttribute('aria-current', 'page');
-			await expect(customersTable(page).getByRole('row')).not.toHaveCount(0);
+			await expect(bodyRows(page)).not.toHaveCount(0);
 		});
 	}
 
-	test('estado vazio substitui a tabela e oferece a volta à lista', async ({ page }) => {
+	test('filtra pela busca, guarda o filtro na URL e volta para a página 1', async ({ page }) => {
+		await page.goto('/clientes?pagina=3');
+
+		await page.getByRole('textbox', { name: 'Busca' }).fill('mariana');
+
+		await expect(page).toHaveURL('/clientes?q=mariana');
+		await expect(bodyRows(page)).toHaveCount(1);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
+		await expect(page.getByText('1 cliente encontrado')).toBeVisible();
+		await expect(page.getByRole('button', { name: /Remover filtro Busca: mariana/ })).toBeVisible();
+	});
+
+	test('filtra por status e limpa os filtros', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await page.getByRole('combobox', { name: 'Status' }).selectOption('Inativo');
+
+		await expect(page).toHaveURL('/clientes?status=Inativo');
+		const rows = await bodyRows(page).count();
+		expect(rows).toBeGreaterThan(0);
+		await expect(customersTable(page).getByText('Ativo', { exact: true })).toHaveCount(0);
+
+		await page.getByRole('button', { name: 'Limpar filtros' }).click();
+
+		await expect(page).toHaveURL('/clientes');
+		await expect(bodyRows(page)).toHaveCount(5);
+	});
+
+	test('aplica filtros da URL de forma determinística no servidor', async ({ page }) => {
+		const url = '/clientes?status=Ativo&plano=Empresarial,Essencial&de=2022-01-01&ate=2023-12-31';
+		await page.goto(url);
+		const first = await customersTable(page).locator('tbody').innerText();
+		await page.reload();
+
+		expect(await customersTable(page).locator('tbody').innerText()).toBe(first);
+		expect(first).not.toBe('');
+		await expect(page.getByRole('textbox', { name: 'Busca' })).toHaveValue('');
+		await expect(page.getByRole('button', { name: /Remover filtro Status: Ativo/ })).toBeVisible();
+	});
+
+	test('ordena pelos cabeçalhos, alterna a direção e preserva a ordenação na paginação', async ({
+		page,
+	}) => {
+		await page.goto('/clientes');
+		const sortByName = customersTable(page).getByRole('button', { name: 'Nome' });
+
+		await sortByName.click();
+		await expect(page).toHaveURL('/clientes?ordem=name%3Aasc');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'Nome' })).toHaveAttribute(
+			'aria-sort',
+			'ascending',
+		);
+		await expect(bodyRows(page).first()).toContainText('Beatriz Almeida');
+
+		await pageButton(page, 2).click();
+		await expect(page).toHaveURL('/clientes?ordem=name%3Aasc&pagina=2');
+
+		await customersTable(page).getByRole('button', { name: 'Nome' }).click();
+		await expect(page).toHaveURL('/clientes?ordem=name%3Adesc');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'Nome' })).toHaveAttribute(
+			'aria-sort',
+			'descending',
+		);
+	});
+
+	test('ordenação e filtros inválidos na URL são ignorados', async ({ page }) => {
+		await page.goto('/clientes?ordem=email:asc&status=Desconhecido&de=ontem&plano=x');
+
+		await expect(bodyRows(page)).toHaveCount(5);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
+		await expect(page.getByText('Nenhum filtro ativo')).toBeVisible();
+	});
+
+	test('seleciona linhas e anuncia a quantidade', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await expect(page.getByRole('status').filter({ hasText: '1 item selecionado' })).toBeVisible();
+
+		await page
+			.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' })
+			.press('Space');
+		await expect(
+			page.getByRole('status').filter({ hasText: '5 itens selecionados' }),
+		).toBeVisible();
+	});
+
+	test('oculta e mostra colunas, sem ocultar o nome', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await page.getByRole('button', { name: 'Colunas' }).click();
+		await page.getByRole('checkbox', { name: 'E-mail' }).press('Space');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'E-mail' })).toHaveCount(0);
+		await expect(page.getByRole('checkbox', { name: 'Nome' })).toBeDisabled();
+
+		await page.getByRole('checkbox', { name: 'E-mail' }).press('Space');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'E-mail' })).toBeVisible();
+	});
+
+	test('filtros sem resultado mostram o estado vazio e a ação de limpar', async ({ page }) => {
+		await page.goto('/clientes?q=zzz-sem-resultado');
+
+		await expect(page.getByText('Nenhum cliente encontrado')).toBeVisible();
+		await expect(page.getByRole('textbox', { name: 'Busca' })).toHaveValue('zzz-sem-resultado');
+		await page.getByRole('link', { name: 'Limpar filtros' }).click();
+
+		await expect(page).toHaveURL('/clientes');
+		await expect(bodyRows(page)).toHaveCount(5);
+	});
+
+	test('estado vazio exibe a mensagem e oferece a volta à lista', async ({ page }) => {
 		await page.goto('/clientes?estado=vazio');
 
-		await expect(page.getByRole('table')).toHaveCount(0);
 		await expect(page.getByText('Nenhum cliente encontrado')).toBeVisible();
 		await expect(page.getByText('Nenhum cliente corresponde à seleção atual.')).toBeVisible();
 		await expect(page.getByRole('link', { name: 'Ver todos os clientes' })).toHaveAttribute(
@@ -222,50 +345,173 @@ test.describe('clientes', () => {
 		);
 	});
 
-	test('estado de erro é anunciado e oferece tentar novamente', async ({ page }) => {
+	test('estado de erro é anunciado e permite tentar novamente', async ({ page }) => {
 		await page.goto('/clientes?estado=erro');
 
 		await expect(
 			page.getByRole('alert').filter({ hasText: 'Não foi possível carregar os clientes' }),
 		).toBeVisible();
-		await expect(page.getByRole('table')).toHaveCount(0);
-		await expect(page.getByRole('link', { name: 'Tentar novamente' })).toHaveAttribute(
-			'href',
-			'/clientes',
-		);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toHaveCount(0);
+
+		await page.getByRole('button', { name: 'Tentar novamente' }).click();
+
+		await expect(page).toHaveURL('/clientes');
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
 	});
 
 	test('estado carregando preserva a estrutura sem valores dos registros', async ({ page }) => {
 		await page.goto('/clientes?estado=carregando');
 
-		await expect(page.locator('[aria-busy="true"]')).toHaveCount(1);
-		await expect(customersTable(page)).toBeVisible();
-		await expect(customersTable(page).getByRole('columnheader')).toHaveCount(6);
-		await expect(page.getByRole('status', { name: 'Carregando clientes' })).toHaveCount(1);
+		await expect(customersTable(page)).toHaveAttribute('aria-busy', 'true');
+		await expect(page.getByRole('status').filter({ hasText: 'Carregando clientes' })).toHaveCount(
+			1,
+		);
 		await expect(page.getByText('Mariana Costa')).toHaveCount(0);
+		await expect(bodyRows(page)).toHaveCount(5);
 		const cellTexts = await customersTable(page).locator('tbody td').allTextContents();
-		expect(cellTexts).toHaveLength(30);
 		expect(cellTexts.join('').trim()).toBe('');
 	});
 
 	test('?estado desconhecido exibe os dados normais', async ({ page }) => {
 		await page.goto('/clientes?estado=desconhecido');
 
-		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
 	});
 
 	test('a tabela rola dentro do contêiner em 375 px sem rolar a página', async ({ page }) => {
 		await page.setViewportSize({ width: 375, height: 812 });
 		await page.goto('/clientes');
 
-		const overflow = await page.locator('.ads-table-container').evaluate((element) => ({
-			content: element.scrollWidth,
-			visible: element.clientWidth,
-		}));
+		const overflow = await page
+			.getByRole('region', { name: 'Clientes', exact: true })
+			.evaluate((element) => ({
+				content: element.scrollWidth,
+				visible: element.clientWidth,
+			}));
 		expect(overflow.content).toBeGreaterThan(overflow.visible);
 	});
 
-	for (const query of ['', '?estado=vazio', '?estado=carregando', '?estado=erro']) {
+	test('a tabela cabe no contêiner em 1280 px com todas as colunas visíveis', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/clientes');
+
+		const container = page.getByRole('main');
+		const table = customersTable(page);
+		const bounds = await container.evaluate((element) => {
+			const rect = element.getBoundingClientRect();
+			return { left: rect.left, right: rect.right };
+		});
+		const tableBounds = await table.evaluate((element) => {
+			const rect = element.getBoundingClientRect();
+			return { left: rect.left, right: rect.right };
+		});
+
+		expect(tableBounds.left).toBeGreaterThanOrEqual(bounds.left - 1);
+		expect(tableBounds.right).toBeLessThanOrEqual(bounds.right + 1);
+
+		for (const column of ['Nome', 'E-mail', 'Status', 'Plano', 'Pedidos', 'Cliente desde']) {
+			await expect(customersTable(page).getByRole('columnheader', { name: column })).toBeVisible();
+		}
+	});
+
+	test('exibe ações em massa com confirmação destrutiva na seleção', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		const bulk = page.getByRole('group', { name: 'Ações em massa' });
+		await expect(bulk).toBeVisible();
+		await bulk.getByRole('button', { name: 'Excluir selecionados' }).click();
+
+		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		await expect(dialog).toBeVisible();
+		await dialog.getByRole('button', { name: 'Excluir' }).click();
+		await expect.poll(async () => await dialog.count()).toBe(0);
+		await expect(page.getByText('Exclusão demonstrada com sucesso.')).toBeVisible();
+		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+	});
+
+	test('mantém o diálogo e o foco fora do body enquanto a exclusão está pendente', async ({
+		page,
+	}) => {
+		await page.goto('/clientes');
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await page
+			.getByRole('group', { name: 'Ações em massa' })
+			.getByRole('button', { name: 'Excluir selecionados' })
+			.click();
+
+		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		const cancel = dialog.getByRole('button', { name: 'Cancelar' });
+		const confirm = dialog.getByRole('button', { name: 'Excluir' });
+		await confirm.click();
+
+		const isPending = async () =>
+			(await cancel.getAttribute('aria-disabled')) === 'true' &&
+			(await confirm.getAttribute('aria-disabled')) === 'true' &&
+			(await confirm.locator('.ads-loading-indicator').count()) > 0;
+
+		await expect.poll(isPending).toBe(true);
+
+		await page.keyboard.press('Escape');
+		await expect(dialog).toBeVisible();
+		await expect.poll(isPending).toBe(true);
+		await expect
+			.poll(async () =>
+				dialog.evaluate((dialogEl) => {
+					const active = document.activeElement;
+					return active !== null && active !== document.body && dialogEl.contains(active);
+				}),
+			)
+			.toBe(true);
+
+		await expect.poll(async () => await dialog.count()).toBe(0);
+		await expect(page.getByText('Exclusão demonstrada com sucesso.')).toBeVisible();
+	});
+
+	test('limpar seleção move o foco para selecionar todas no cabeçalho', async ({ page }) => {
+		await page.goto('/clientes');
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await page.getByRole('button', { name: 'Limpar seleção' }).click();
+
+		const selectAll = page.locator('thead .ads-smart-table-select-cell input[type="checkbox"]');
+		await expect(selectAll).toBeFocused();
+		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+	});
+
+	test('devolve o foco ao checkbox selecionar todas após excluir', async ({ page }) => {
+		await page.goto('/clientes');
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await page
+			.getByRole('group', { name: 'Ações em massa' })
+			.getByRole('button', { name: 'Excluir selecionados' })
+			.click();
+
+		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		await dialog.getByRole('button', { name: 'Excluir' }).click();
+		await expect.poll(async () => await dialog.count()).toBe(0);
+
+		const selectAll = page.locator('thead .ads-smart-table-select-cell input[type="checkbox"]');
+		await expect(selectAll).toBeFocused();
+		await expect(page.evaluate(() => document.activeElement === document.body)).resolves.toBe(
+			false,
+		);
+	});
+
+	const queries = [
+		'',
+		'?estado=vazio',
+		'?estado=carregando',
+		'?estado=erro',
+		'?status=Ativo&plano=Essencial&ordem=name:asc',
+	];
+	for (const query of queries) {
 		test(`a página não rola na horizontal em 375 px (${query || 'com dados'})`, async ({
 			page,
 		}) => {
@@ -292,13 +538,14 @@ test.describe('clientes', () => {
 });
 
 test.describe('novo cliente', () => {
+	const nextButton = (page: Page) => page.getByRole('button', { name: 'Próxima' });
 	const submitButton = (page: Page) => page.getByRole('button', { name: 'Cadastrar cliente' });
 
 	test('valida os campos obrigatórios e leva o foco ao primeiro inválido', async ({ page }) => {
 		await page.goto('/clientes/novo');
 		await expect(page.getByRole('heading', { level: 1, name: 'Novo cliente' })).toBeVisible();
 
-		await submitButton(page).click();
+		await nextButton(page).click();
 
 		await expect(page.getByLabel('Nome')).toBeFocused();
 		await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
@@ -313,9 +560,11 @@ test.describe('novo cliente', () => {
 		await page.goto('/clientes/novo');
 		await page.getByLabel('Nome').fill('Ana Souza');
 		await page.getByLabel('E-mail').fill('ana.souza@exemplo.com.br');
+		await nextButton(page).click();
 		// The radio input is visually hidden; people click its label.
 		await page.getByText('Trimestral', { exact: true }).click();
 		await expect(page.getByRole('radio', { name: 'Trimestral' })).toBeChecked();
+		await nextButton(page).click();
 
 		const sent: string[] = [];
 		page.on('request', (request) => {
@@ -350,25 +599,13 @@ test.describe('novo cliente', () => {
 
 		// As cores de borda e do indicador têm transição; uma leitura única logo após o erro
 		// ou a troca de tema pode pegar o início dela, então as comparações usam retry.
-		const borderOf = (locator: ReturnType<Page['getByLabel']>) =>
+		const borderOf = (locator: ReturnType<Page['getByLabel']> | ReturnType<Page['getByRole']>) =>
 			locator.evaluate((element) => getComputedStyle(element).borderTopColor);
+		const neutralControl = page.getByRole('button', { name: 'Próxima' });
 		await expect
-			.poll(
-				async () => (await borderOf(nameField)) !== (await borderOf(page.getByLabel('Status'))),
-				{ message: 'a borda do campo com erro deve diferir da do campo sem erro' },
-			)
-			.toBe(true);
-
-		const indicatorBackground = (name: string) =>
-			page
-				.getByRole('radio', { name })
-				.locator('xpath=following-sibling::span[1]')
-				.evaluate((element) => getComputedStyle(element).backgroundColor);
-		await expect
-			.poll(
-				async () => (await indicatorBackground('Mensal')) !== (await indicatorBackground('Anual')),
-				{ message: 'o indicador da opção selecionada deve diferir do da não selecionada' },
-			)
+			.poll(async () => (await borderOf(nameField)) !== (await borderOf(neutralControl)), {
+				message: 'a borda do campo com erro deve diferir da de um controle neutro',
+			})
 			.toBe(true);
 	}
 
@@ -378,7 +615,7 @@ test.describe('novo cliente', () => {
 		}) => {
 			await useTheme(page, theme);
 			await page.goto('/clientes/novo');
-			await submitButton(page).click();
+			await nextButton(page).click();
 			await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
 
 			await expectDistinguishableControls(page);

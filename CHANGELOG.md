@@ -15,6 +15,11 @@ por versão e pelas changes correspondentes do OpenSpec.
   `AdsStepForm` (formulário em etapas com validação por etapa, foco, anúncio e
   confirmação final) e `AdsConfirmDialog` (confirmação destrutiva), sem regras de
   negócio nem dependência do roteador.
+- `demo-advanced-patterns` - O `admin-demo` passa a demonstrar `AdsFilterBar` e
+  `AdsListFlow` (com `AdsBulkActionBar` e `AdsConfirmDialog`) em `/clientes`,
+  `AdsStepForm` em `/clientes/novo`, filtros, ordenação e página em
+  `searchParams` no servidor, e `AdsMetricCard`, `AdsDashboardGrid` e
+  `AdsDashboardPanel` na visão geral.
 - `add-smart-table` - Adicionado `AdsSmartTable` em `@admin-ds/admin`: tabela
   controlada com ordenação (`aria-sort`), seleção de linhas com estado
   indeterminado, visibilidade de colunas, estados de carregamento, vazio e erro,

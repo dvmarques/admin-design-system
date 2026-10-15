@@ -34,6 +34,18 @@ describe('OverviewContent', () => {
 		}
 	});
 
+	it('renders the indicators as metric cards with an accessible trend and the panels in a grid', () => {
+		const html = renderOverview();
+
+		expect(html).toContain('ads-metric-card');
+		expect(html).toContain('Em alta');
+		expect(html).toContain('Em queda');
+		expect(html).toContain('ads-dashboard-grid');
+		expect((html.match(/ads-dashboard-panel"/g) ?? []).length).toBe(2);
+		expect(html).toMatch(/<h2[^>]*>Progresso<\/h2>/);
+		expect(html).toMatch(/<h2[^>]*>Atividade recente<\/h2>/);
+	});
+
 	it('exposes a single main heading', () => {
 		expect(renderOverview().match(/<h1[\s>]/g)).toHaveLength(1);
 	});

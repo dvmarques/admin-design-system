@@ -2,43 +2,42 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import { afterEach, describe, expect, it, vi } from 'vitest';
 import { NewCustomerForm } from '../app/(admin)/clientes/novo/new-customer-form';
 
-function submit() {
-	fireEvent.submit(screen.getByRole('button', { name: 'Cadastrar cliente' }).closest('form')!);
+const push = vi.fn();
+
+vi.mock('next/navigation', () => ({
+	useRouter: () => ({ push }),
+}));
+
+function goNext() {
+	fireEvent.click(screen.getByRole('button', { name: 'Próxima' }));
+}
+
+function submitFinal() {
+	fireEvent.click(screen.getByRole('button', { name: 'Cadastrar cliente' }));
+}
+
+function fillIdentity(nome = '', email = '') {
+	if (nome) fireEvent.change(screen.getByLabelText('Nome'), { target: { value: nome } });
+	if (email) fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: email } });
 }
 
 afterEach(() => {
-	vi.restoreAllMocks();
+	vi.clearAllMocks();
 });
 
 describe('NewCustomerForm', () => {
-	it('moves focus to the first invalid field on the first invalid submit', () => {
+	it('moves focus to the first invalid field when advancing from the identity step', () => {
 		render(<NewCustomerForm />);
 
-		submit();
+		goNext();
 
 		expect(screen.getByLabelText('Nome')).toHaveFocus();
 	});
 
-	it('moves focus back again on a second submit that leaves the errors unchanged', () => {
-		render(<NewCustomerForm />);
-		submit();
-		expect(screen.getByLabelText('Nome')).toHaveFocus();
-
-		// fireEvent does not move focus: put it elsewhere first, otherwise this would pass even
-		// without the submission counter that re-runs the focus effect.
-		const submitButton = screen.getByRole('button', { name: 'Cadastrar cliente' });
-		submitButton.focus();
-		expect(submitButton).toHaveFocus();
-
-		submit();
-
-		expect(screen.getByLabelText('Nome')).toHaveFocus();
-	});
-
-	it('associates each error message with its invalid field', () => {
+	it('blocks advancing with empty required fields and shows accessible errors', () => {
 		render(<NewCustomerForm />);
 
-		submit();
+		goNext();
 
 		for (const [label, message] of [
 			['Nome', 'Informe o nome do cliente.'],
@@ -52,11 +51,11 @@ describe('NewCustomerForm', () => {
 		}
 	});
 
-	it('flags only the empty required field and focuses it', () => {
+	it('flags only the empty required field on the identity step', () => {
 		render(<NewCustomerForm />);
-		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana Souza' } });
+		fillIdentity('Ana Souza');
 
-		submit();
+		goNext();
 
 		expect(screen.getByLabelText('Nome')).not.toHaveAttribute('aria-invalid', 'true');
 		expect(screen.getByLabelText('E-mail')).toHaveAttribute('aria-invalid', 'true');
@@ -65,10 +64,9 @@ describe('NewCustomerForm', () => {
 
 	it('rejects an e-mail without a valid format with an accessible message', () => {
 		render(<NewCustomerForm />);
-		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana Souza' } });
-		fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'abc' } });
+		fillIdentity('Ana Souza', 'abc');
 
-		submit();
+		goNext();
 
 		const field = screen.getByLabelText('E-mail');
 		expect(field).toHaveAttribute('aria-invalid', 'true');
@@ -82,27 +80,17 @@ describe('NewCustomerForm', () => {
 		'rejects the malformed e-mail %s',
 		(value) => {
 			render(<NewCustomerForm />);
-			fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana Souza' } });
-			fireEvent.change(screen.getByLabelText('E-mail'), { target: { value } });
+			fillIdentity('Ana Souza', value);
 
-			submit();
+			goNext();
 
 			expect(screen.getByLabelText('E-mail')).toHaveAttribute('aria-invalid', 'true');
 		},
 	);
 
-	it('keeps the required message, not the format one, for an empty e-mail', () => {
-		render(<NewCustomerForm />);
-
-		submit();
-
-		expect(screen.getByText('Informe o e-mail do cliente.')).toBeInTheDocument();
-		expect(screen.queryByText(/e-mail válido/)).not.toBeInTheDocument();
-	});
-
 	it('clears a field error when the person edits that field', () => {
 		render(<NewCustomerForm />);
-		submit();
+		goNext();
 
 		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana' } });
 
@@ -111,33 +99,45 @@ describe('NewCustomerForm', () => {
 		expect(screen.getByLabelText('E-mail')).toHaveAttribute('aria-invalid', 'true');
 	});
 
+	it('shows the step indicator and advances through plan and review', () => {
+		render(<NewCustomerForm />);
+		fillIdentity('Ana Souza', 'ana@exemplo.com.br');
+
+		goNext();
+		expect(screen.getByRole('heading', { name: 'Plano e status' })).toBeVisible();
+
+		goNext();
+		expect(screen.getByRole('heading', { name: 'Revisão' })).toBeVisible();
+		expect(screen.getByText('ana@exemplo.com.br')).toBeInTheDocument();
+	});
+
 	it('shows a confirmation, no errors and sends nothing on a valid submit', () => {
 		const fetchSpy = vi.spyOn(globalThis, 'fetch');
 		render(<NewCustomerForm />);
-		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana Souza' } });
-		fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'ana@exemplo.com.br' } });
+		fillIdentity('Ana Souza', 'ana@exemplo.com.br');
+		goNext();
+		goNext();
 
-		submit();
+		submitFinal();
 
 		expect(screen.getByText('Cliente cadastrado com sucesso.')).toBeInTheDocument();
 		expect(document.querySelector('[aria-invalid="true"]')).toBeNull();
-		expect(screen.queryByText(/Informe o/)).not.toBeInTheDocument();
 		expect(fetchSpy).not.toHaveBeenCalled();
 	});
 
-	it('does not confirm an invalid submission', () => {
+	it('navigates back to the listing when cancel is chosen', () => {
 		render(<NewCustomerForm />);
 
-		submit();
+		fireEvent.click(screen.getByRole('button', { name: 'Cancelar' }));
 
-		expect(screen.queryByText('Cliente cadastrado com sucesso.')).not.toBeInTheDocument();
+		expect(push).toHaveBeenCalledWith('/clientes');
 	});
 
-	it('keeps the browser validation from blocking the submit event', () => {
+	it('uses noValidate on the form so the browser does not block step validation', () => {
 		render(<NewCustomerForm />);
 
-		expect(
-			screen.getByRole('button', { name: 'Cadastrar cliente' }).closest('form'),
-		).toHaveAttribute('novalidate');
+		expect(screen.getByRole('button', { name: 'Próxima' }).closest('form')).toHaveAttribute(
+			'novalidate',
+		);
 	});
 });

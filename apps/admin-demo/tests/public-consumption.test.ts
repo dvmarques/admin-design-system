@@ -1,6 +1,17 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+	findAdsSelectors,
+	findForbiddenClassTokens,
+	findInternalPackageImports,
+	findTailwindDirectives,
+	findUndeclaredDependencies,
+	importSpecifiers,
+	listDemoRootFiles,
+	readDemoFiles,
+	readDemoPackageJson,
+} from './support/demo-contract';
 import { AdsAdminShell } from '@admin-ds/admin';
 import {
 	AdsAvatar,
@@ -45,21 +56,6 @@ import {
 	AdsTooltip,
 	AdsTypography,
 } from '@admin-ds/components';
-
-const demoRoot = resolve(import.meta.dirname, '..');
-
-/** Reads every `app/**` and `lib/**` TypeScript source of the demo, except test files. */
-async function readAppSources() {
-	const files: string[] = [];
-	for (const dir of ['app', 'lib']) {
-		for (const entry of await readdir(resolve(demoRoot, dir), { recursive: true })) {
-			if (/\.(ts|tsx)$/.test(entry) && !/\.test\.tsx?$/.test(entry)) {
-				files.push(resolve(demoRoot, dir, entry));
-			}
-		}
-	}
-	return Promise.all(files.map((file) => readFile(file, 'utf8')));
-}
 
 describe('public component consumption', () => {
 	it('resolves all component exports without internal package paths', () => {
@@ -145,12 +141,51 @@ describe('public component consumption', () => {
 	});
 
 	it('keeps the reference application on public package imports', async () => {
-		const sources = (await readAppSources()).join('\n');
+		const files = await readDemoFiles(['app', 'lib'], /\.(ts|tsx)$/);
+		const sources = files.map((file) => file.content).join('\n');
 
 		expect(sources).toContain("from '@admin-ds/components'");
 		expect(sources).toContain("from '@admin-ds/admin'");
-		expect(sources).not.toMatch(
-			/@admin-ds\/(components|admin)\/src|packages\/(components|admin)\/src/,
-		);
+		for (const file of files) {
+			expect(findInternalPackageImports(importSpecifiers(file.content)), file.path).toEqual([]);
+		}
+	});
+
+	it('imports only packages that its own package.json declares', async () => {
+		const files = await readDemoFiles(['app', 'lib'], /\.(ts|tsx)$/);
+		const { dependencies = {} } = await readDemoPackageJson();
+
+		for (const file of files) {
+			expect(
+				findUndeclaredDependencies(importSpecifiers(file.content), Object.keys(dependencies)),
+				file.path,
+			).toEqual([]);
+		}
+	});
+
+	it('does not depend on or configure Tailwind', async () => {
+		const { dependencies = {}, devDependencies = {} } = await readDemoPackageJson();
+		const declared = [...Object.keys(dependencies), ...Object.keys(devDependencies)];
+		expect(declared.filter((name) => /tailwind/i.test(name))).toEqual([]);
+
+		expect(
+			(await listDemoRootFiles()).filter((name) => /^(tailwind|postcss)\.config\./.test(name)),
+		).toEqual([]);
+
+		for (const file of await readDemoFiles(['app'], /\.css$/)) {
+			expect(findTailwindDirectives(file.content), file.path).toEqual([]);
+		}
+	});
+
+	it('does not redefine the internal look of public ads- classes', async () => {
+		for (const file of await readDemoFiles(['app'], /\.css$/)) {
+			expect(findAdsSelectors(file.content), file.path).toEqual([]);
+		}
+	});
+
+	it('uses only demo- and public ads- classes in literal className values', async () => {
+		for (const file of await readDemoFiles(['app'], /\.tsx$/)) {
+			expect(findForbiddenClassTokens(file.content), file.path).toEqual([]);
+		}
 	});
 });

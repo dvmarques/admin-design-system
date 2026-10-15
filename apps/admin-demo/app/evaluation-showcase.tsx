@@ -59,9 +59,9 @@ export function EvaluationShowcase() {
 					</p>
 					<div aria-label="Carregando resumo da conta" className="demo-loading-preview">
 						<div className="demo-skeleton-stack">
-							<AdsSkeleton className="h-3 w-24" />
-							<AdsSkeleton className="h-8 w-40" />
-							<AdsSkeleton className="h-3 w-full" />
+							<AdsSkeleton className="demo-skeleton-label" />
+							<AdsSkeleton className="demo-skeleton-heading" />
+							<AdsSkeleton className="demo-skeleton-text" />
 						</div>
 						<AdsLoadingIndicator label="Sincronizando dados" />
 					</div>

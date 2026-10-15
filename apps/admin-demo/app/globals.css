@@ -309,6 +309,18 @@ body {
 	border-radius: var(--ads-radius-md);
 	background: var(--ads-color-surface-muted);
 }
+.demo-skeleton-label {
+	width: 6rem;
+	height: 0.75rem;
+}
+.demo-skeleton-heading {
+	width: 10rem;
+	height: 2rem;
+}
+.demo-skeleton-text {
+	width: 100%;
+	height: 0.75rem;
+}
 .demo-skeleton-stack {
 	display: grid;
 	gap: 0.65rem;

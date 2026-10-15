@@ -1,22 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
-
-const routes = [
-	{ path: '/', label: 'Visão geral' },
-	{ path: '/clientes', label: 'Clientes' },
-	{ path: '/clientes/novo', label: 'Novo cliente' },
-	{ path: '/preferencias', label: 'Preferências' },
-	{ path: '/componentes', label: 'Componentes' },
-	{ path: '/data-display', label: 'Exibição de dados' },
-] as const;
-
-const themes = ['light', 'dark'] as const;
+import { routes, themes, type Theme } from './routes';
 
 function mainNavigation(page: Page) {
 	return page.getByRole('navigation', { name: 'Navegação do demo' });
 }
 
-async function useTheme(page: Page, theme: (typeof themes)[number]) {
+async function useTheme(page: Page, theme: Theme) {
 	await page
 		.context()
 		.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);

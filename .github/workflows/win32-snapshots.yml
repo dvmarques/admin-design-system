@@ -1,0 +1,86 @@
+name: Win32 visual snapshots (temporário)
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - feat/demo-advanced-patterns
+    paths:
+      - .github/workflows/win32-snapshots.yml
+
+permissions:
+  contents: write
+
+jobs:
+  update-snapshots:
+    name: Gerar snapshots win32
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: feat/demo-advanced-patterns
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - name: Instalar npm e dependências
+        shell: bash
+        run: |
+          npm install --global npm@11.19.1
+          npm ci --ignore-scripts
+
+      - name: Instalar Chromium (Playwright)
+        shell: bash
+        run: npx playwright install --with-deps chromium
+
+      - name: Build dos pacotes e admin-demo
+        shell: bash
+        run: |
+          npm run build --workspace @admin-ds/tokens
+          npm run build --workspace @admin-ds/components
+          npm run build --workspace @admin-ds/admin
+          npm run build --workspace @admin-ds/admin-demo
+
+      - name: Atualizar snapshots win32 (6 PNGs da task 4.2)
+        shell: bash
+        env:
+          CI: ''
+        run: |
+          npx playwright test --update-snapshots \
+            --grep "mantém a apresentação de (/clientes nos temas|referência nos temas|Admin Shell recolhido)"
+
+      - name: Commitar PNGs na branch (se houver alterações)
+        id: commit
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          FILES=(
+            "e2e/admin-demo-routes.spec.ts-snapshots/clientes-dark-chromium-win32.png"
+            "e2e/admin-demo-routes.spec.ts-snapshots/clientes-light-chromium-win32.png"
+            "e2e/admin-demo.spec.ts-snapshots/admin-demo-dark-chromium-win32.png"
+            "e2e/admin-demo.spec.ts-snapshots/admin-demo-light-chromium-win32.png"
+            "e2e/admin-demo.spec.ts-snapshots/admin-shell-collapsed-dark-chromium-win32.png"
+            "e2e/admin-demo.spec.ts-snapshots/admin-shell-collapsed-light-chromium-win32.png"
+          )
+          git add "${FILES[@]}"
+          if git diff --staged --quiet; then
+            echo "changed=false" >> "$GITHUB_OUTPUT"
+            echo "Nenhum PNG alterado."
+          else
+            git commit -m "test(e2e): snapshots win32 gerados em windows-latest"
+            git push
+            echo "changed=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Upload snapshots win32 (fallback)
+        uses: actions/upload-artifact@v4
+        with:
+          name: win32-snapshots
+          if-no-files-found: error
+          path: |
+            e2e/admin-demo-routes.spec.ts-snapshots/clientes-*-chromium-win32.png
+            e2e/admin-demo.spec.ts-snapshots/admin-demo-*-chromium-win32.png
+            e2e/admin-demo.spec.ts-snapshots/admin-shell-collapsed-*-chromium-win32.png

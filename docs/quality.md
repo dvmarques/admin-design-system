@@ -58,6 +58,14 @@ servidor e cliente.
 aplicação e localiza os testes no diretório `e2e/`. O Chromium necessário já
 foi instalado localmente.
 
+Por padrão o E2E serve o build de produção do admin demo (`next start`), então
+execute `npm run build` antes de rodar os testes. Para usar o servidor de
+desenvolvimento (`next dev`, mais lento), defina `E2E_DEV=1`. Sem `E2E_DEV`, o
+Playwright recusa um build ausente ou desatualizado: o build do admin demo grava
+em `.next/e2e-build-stamp.json` uma impressão digital do código do demo, do
+`dist` e do `package.json` dos pacotes, do `tsconfig.base.json` e do
+`package-lock.json`, comparada antes dos testes.
+
 ```powershell
 # Executar os testes end-to-end pela entrada oficial do repositório
 npm run test:e2e
@@ -76,8 +84,16 @@ claro e escuro.
 
 ```text
 e2e/
-└── admin-demo.spec.ts
+├── admin-demo.spec.ts
+├── admin-demo-all-routes.spec.ts
+├── admin-demo-routes.spec.ts
+├── data-display.spec.ts
+└── overlay.spec.ts
 ```
+
+Os arquivos `e2e/axe.ts` e `e2e/routes.ts` são apoio compartilhado, não
+testes: o primeiro injeta o `axe-core` da raiz na página (excluindo o
+`nextjs-portal` do `next dev`) e o segundo lista as rotas do admin demo.
 
 Esses testes abrem o admin de referência, alternam temas, validam controles por
 teclado, verificam a ausência de divergências de hidratação e capturam
@@ -95,11 +111,30 @@ confirme que não há falhas:
 ```powershell
 npm run format
 npm run lint
+npm run build
 npm run typecheck
 npm run test:quiet
-npm run build
 npm run test:e2e
 ```
+
+O build vem antes de tipos e testes porque o admin demo importa os pacotes pelo
+`dist`. O `.gitattributes` mantém o checkout em LF, inclusive no Windows com
+`core.autocrlf=true`, para o `npm run format` passar sem ajuste local em um
+checkout novo.
+
+Uma working copy criada antes do `.gitattributes` continua com os arquivos em
+CRLF mesmo após o `git pull`, e o `npm run format` falha;
+`git add --renormalize .`, `git update-index --really-refresh` e `git checkout`
+não resolvem. Execute uma única vez, na raiz:
+
+```powershell
+git status --short # precisa sair vazio
+git rm --cached -r -q .
+git reset --hard
+```
+
+A árvore precisa estar limpa: o `git reset --hard` descarta alterações não
+commitadas. Faça commit ou `git stash` antes.
 
 O comando `npm run validate` combina essa sequência de qualidade e também
 executa o E2E após o build. Se uma alteração visual intencional modificar um

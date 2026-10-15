@@ -1,5 +1,6 @@
-.codex/
 .agents/
+.claude/
+.cursor/
 node_modules/
 dist/
 .next/

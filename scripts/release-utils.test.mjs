@@ -109,6 +109,20 @@ test('coordinated manifests and internal deps', () => {
 	const updated = updateManifestVersions(manifests, '2.0.0');
 	assert.equal(updated[1].json.dependencies.root, '2.0.0');
 	assert.equal(updated[1].json.dependencies.react, '^19');
+	assert.throws(() =>
+		validateCoordinatedManifests([
+			{ rel: 'package.json', json: { version: '1.0.0' } },
+			{ rel: 'packages/a/package.json', json: { version: '1.0.1' } },
+		]),
+	);
+});
+
+test('preparation rejects an inconsistent post-release state', () => {
+	const parsed = parseChangelog('### [1.0.1] - Em andamento\n\n### [1.0.0] - 01-set-2026\n');
+	assert.throws(() => validateTargetAgainstState({ target: '1.0.1', current: '0.9.0', parsed }));
+	assert.throws(() =>
+		prepareChangelog('### [1.0.1] - Em andamento\n\n### [1.0.1] - 01-set-2026\n', '1.0.1'),
+	);
 });
 
 test('release file allowlist', () => {

@@ -57,6 +57,7 @@ export { AdsBreadcrumb, AdsNav, AdsTabs } from './navigation.js';
 export type {
 	AdsBreadcrumbItem,
 	AdsBreadcrumbProps,
+	AdsLinkRenderProps,
 	AdsNavItem,
 	AdsNavProps,
 	AdsTabsListProps,
@@ -72,4 +73,53 @@ export type {
 	AdsDropdownTriggerProps,
 } from './dropdown.js';
 export { AdsPagination, getAdsPaginationItems } from './pagination.js';
-export type { AdsPaginationPage, AdsPaginationProps } from './pagination.js';
+export type {
+	AdsPaginationLinkProps,
+	AdsPaginationPage,
+	AdsPaginationProps,
+} from './pagination.js';
+export {
+	AdsTable,
+	AdsTableBody,
+	AdsTableCaption,
+	AdsTableCell,
+	AdsTableHead,
+	AdsTableHeader,
+	AdsTableRow,
+} from './data-table.js';
+export type {
+	AdsTableAlignment,
+	AdsTableBodyProps,
+	AdsTableCaptionProps,
+	AdsTableCellProps,
+	AdsTableHeadProps,
+	AdsTableHeaderProps,
+	AdsTableProps,
+	AdsTableRowProps,
+} from './data-table.js';
+export {
+	AdsCard,
+	AdsCardActions,
+	AdsCardContent,
+	AdsCardHeader,
+	AdsList,
+	AdsListItem,
+} from './data-collection.js';
+export type {
+	AdsCardActionsProps,
+	AdsCardContentProps,
+	AdsCardHeaderProps,
+	AdsCardProps,
+	AdsListItemProps,
+	AdsListProps,
+} from './data-collection.js';
+export { AdsEmptyState, AdsProgress } from './data-feedback.js';
+export type { AdsEmptyStateProps, AdsProgressProps } from './data-feedback.js';
+export { AdsDatePicker } from './date-picker.js';
+export type {
+	AdsDatePickerLabels,
+	AdsDatePickerProps,
+	AdsDatePickerRangeProps,
+	AdsDatePickerSingleProps,
+	AdsDateRange,
+} from './date-picker.js';

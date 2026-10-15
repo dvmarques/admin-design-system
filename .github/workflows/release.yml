@@ -39,7 +39,7 @@ jobs:
           fetch-depth: 0
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
@@ -65,7 +65,7 @@ jobs:
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
       - run: npm run release:validate -- "$VERSION"
-      - run: npm run release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
+      - run: npm run --silent release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
       - uses: actions/checkout@v6
         with:
           ref: develop
@@ -105,6 +105,6 @@ jobs:
           persist-credentials: false
       - uses: actions/setup-node@v6
         with:
-          node-version: 22
+          node-version: 24
       - name: Re-resolver, revalidar e publicar
         run: node ./.github/scripts/publish-release.mjs

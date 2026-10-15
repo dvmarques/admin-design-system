@@ -1,13 +1,24 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { classNames } from './class-names.js';
-import { AdsButton } from './button.js';
+import { AdsButton, adsButtonClassName } from './button.js';
+
+/** Props the consumer must spread on the link it renders for a page, so the item keeps the library look and `aria-current`. */
+export interface AdsPaginationLinkProps {
+	'aria-current'?: 'page' | undefined;
+	'aria-label'?: string | undefined;
+	children: ReactNode;
+	className: string;
+}
 
 export type AdsPaginationPage = number | 'ellipsis';
 export interface AdsPaginationProps extends Omit<HTMLAttributes<HTMLElement>, 'onChange'> {
 	page: number;
 	pageCount: number;
 	onPageChange?: (page: number) => void;
+	/** @deprecated Receives a ready-made button; wrapping it in a link nests interactive content. Prefer `renderPageLink`. */
 	renderPage?: (page: number, content: ReactNode) => ReactNode;
+	/** Renders the consumer's link (for example `next/link`) for an enabled page, previous or next target. */
+	renderPageLink?: (page: number, props: AdsPaginationLinkProps) => ReactNode;
 	siblingCount?: number;
 	'aria-label'?: string;
 }
@@ -35,6 +46,7 @@ export function AdsPagination({
 	pageCount,
 	onPageChange,
 	renderPage,
+	renderPageLink,
 	siblingCount = 1,
 	className,
 	'aria-label': ariaLabel = 'Paginação',
@@ -44,22 +56,34 @@ export function AdsPagination({
 	const change = (next: number) => {
 		if (next >= 1 && next <= pageCount && next !== safePage) onPageChange?.(next);
 	};
-	const button = (content: ReactNode, target: number, disabled = false, label?: string) => (
-		<AdsButton
-			aria-label={label}
-			aria-current={target === safePage ? 'page' : undefined}
-			className={classNames(
-				'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums',
-				target === safePage ? 'border-transparent' : undefined,
-			)}
-			disabled={disabled}
-			onClick={() => change(target)}
-			size="sm"
-			variant={target === safePage ? 'primary' : 'secondary'}
-		>
-			{content}
-		</AdsButton>
-	);
+	const button = (content: ReactNode, target: number, disabled = false, label?: string) =>
+		renderPageLink && !disabled ? (
+			renderPageLink(target, {
+				'aria-current': target === safePage ? 'page' : undefined,
+				'aria-label': label,
+				children: content,
+				className: classNames(
+					adsButtonClassName(target === safePage ? 'primary' : 'secondary', 'sm'),
+					'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums no-underline',
+					target === safePage ? 'border-transparent' : undefined,
+				),
+			})
+		) : (
+			<AdsButton
+				aria-label={label}
+				aria-current={target === safePage ? 'page' : undefined}
+				className={classNames(
+					'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums',
+					target === safePage ? 'border-transparent' : undefined,
+				)}
+				disabled={disabled}
+				onClick={() => change(target)}
+				size="sm"
+				variant={target === safePage ? 'primary' : 'secondary'}
+			>
+				{content}
+			</AdsButton>
+		);
 	return (
 		<nav
 			{...props}
@@ -77,7 +101,7 @@ export function AdsPagination({
 							<span aria-hidden="true" className="px-1 text-text-muted">
 								…
 							</span>
-						) : renderPage ? (
+						) : renderPage && !renderPageLink ? (
 							renderPage(item, button(item, item, false, `Página ${item}`))
 						) : (
 							button(item, item, false, `Página ${item}`)

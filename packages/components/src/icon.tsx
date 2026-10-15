@@ -2,7 +2,12 @@ import type { SVGAttributes } from 'react';
 import { classNames } from './class-names.js';
 
 const iconPaths = {
+	calendar: (
+		<path d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+	),
 	check: <path d="m5 12 4 4L19 6" />,
+	chevronLeft: <path d="m15 6-6 6 6 6" />,
+	chevronRight: <path d="m9 6 6 6-6 6" />,
 	close: <path d="m6 6 12 12M18 6 6 18" />,
 	info: <path d="M12 16v-4m0-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />,
 	plus: <path d="M12 5v14M5 12h14" />,

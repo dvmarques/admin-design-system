@@ -160,6 +160,22 @@ describe('selection form controls', () => {
 });
 
 describe('field composition', () => {
+	it('gives the label the <control id>-label id', () => {
+		render(
+			<>
+				<AdsField label="Vencimento">
+					<AdsInput id="due" />
+				</AdsField>
+				<AdsField label="Nome">
+					<AdsInput />
+				</AdsField>
+			</>,
+		);
+		expect(screen.getByText('Vencimento')).toHaveAttribute('id', 'due-label');
+		const generated = screen.getByRole('textbox', { name: 'Nome' });
+		expect(screen.getByText('Nome')).toHaveAttribute('id', `${generated.id}-label`);
+	});
+
 	it('associates label, description and error with the control', () => {
 		render(
 			<AdsField
@@ -197,6 +213,13 @@ describe('field composition', () => {
 		);
 		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveClass('rounded-md');
 		expect(screen.getByRole('group', { name: 'Canais' })).toBeInTheDocument();
+		// Resets the browser fieldset frame, which otherwise shows a default border in dark themes.
+		expect(screen.getByRole('group', { name: 'Canais' })).toHaveClass(
+			'm-0',
+			'min-w-0',
+			'border-0',
+			'p-0',
+		);
 		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });

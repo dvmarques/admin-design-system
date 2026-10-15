@@ -70,6 +70,10 @@ histórico Git. Em especial:
   acontece ao marcar Ready for review;
 - `release:prepare` exige npm `11.19.1`, branch `release/X.Y.Z` e working tree limpa;
 - a publicação só ocorre após o back-merge da mesma release para `develop`;
+- toda PR de release — `release/X.Y.Z -> master` e o respectivo back-merge — usa o label `release`, tem como assignee quem estiver conduzindo o processo e é integrada com merge commit;
+- PRs que não tiverem o label `release` e tenham `develop` como base são integradas por squash;
+- PRs sem o label `release` e com base `develop` fecham a issue correspondente com uma palavra-chave de fechamento no corpo, como `Closes #123`; PRs de release não usam palavras-chave de fechamento;
+- para relacionar uma PR a uma issue sem fechá-la, use o vínculo manual em Development;
 - não mover, substituir ou recriar tags de release existentes.
 
 ## Implementação de componentes
@@ -96,7 +100,7 @@ npm run validate
 
 Antes de abrir ou atualizar um PR, prefira a saída concisa dos comandos
 oficiais. A sequência equivalente é `npm run format`, `npm run lint`,
-`npm run typecheck`, `npm run test:quiet`, `npm run build` e
+`npm run build`, `npm run typecheck`, `npm run test:quiet` e
 `npm run test:e2e`. Para diagnosticar falhas, use `npm run test:verbose` ou
 `npm run test:e2e:verbose`.
 

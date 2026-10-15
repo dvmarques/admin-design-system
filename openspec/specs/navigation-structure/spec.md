@@ -61,3 +61,55 @@ Tabs e navegação persistente MUST comunicar seleção por indicador, borda ou 
 
 - **WHEN** tabs não cabem na largura do contêiner
 - **THEN** todos os destinos continuam alcançáveis e a tab ativa permanece identificável sem assumir aparência de botão de chamada principal
+
+### Requirement: Tabs e breadcrumb mantêm contraste e seleção visíveis nos dois temas
+
+O texto de links de `AdsBreadcrumb` e o texto de gatilhos de `AdsTabs`, ativos ou inativos, MUST atingir contraste mínimo de `4.5:1` contra `canvas`, `surface`, `surface-raised`, `surface-muted` e `surface-hover` nos temas claro e escuro. Os links MUST usar tokens públicos de texto, sem depender da cor padrão do navegador. A tab ativa MUST ser distinguível das inativas por superfície, cor de texto e borda, independentemente da ordem das utilidades no CSS distribuído.
+
+#### Scenario: Links do breadcrumb em superfície elevada no tema escuro
+
+- **WHEN** um `AdsBreadcrumb` com links é renderizado sobre `surface-raised` no tema escuro
+- **THEN** a cor do texto vem de um token público de texto e atinge contraste mínimo de `4.5:1`
+
+#### Scenario: Tabs inativas em superfície elevada nos dois temas
+
+- **WHEN** um `AdsTabs` é renderizado sobre `surface-raised` no tema claro ou escuro
+- **THEN** o texto das tabs inativas, inclusive com hover, atinge contraste mínimo de `4.5:1`
+
+#### Scenario: Tab ativa distinguível da inativa
+
+- **WHEN** uma tab é a ativa
+- **THEN** ela apresenta superfície de seleção, cor de texto de seleção e borda inferior de destaque diferentes das tabs inativas, nos dois temas
+
+#### Scenario: Personalização por tokens
+
+- **WHEN** o consumidor sobrescreve tokens públicos de texto ou de seleção em um escopo de tema
+- **THEN** tabs e breadcrumb refletem os novos valores sem recompilar a biblioteca
+
+### Requirement: Links de AdsNav sem sublinhado nativo
+
+Os itens de `AdsNav` renderizados como link MUST NOT exibir o sublinhado padrão do navegador, em nenhum estado, e MUST comunicar o item atual por `aria-current`, borda e superfície.
+
+#### Scenario: Item de navegação com href
+
+- **WHEN** um `AdsNav` com itens que possuem `href` é renderizado
+- **THEN** o CSS distribuído remove o sublinhado dos links e o item atual mantém `aria-current="page"`
+
+### Requirement: Links do consumidor em AdsNav e AdsBreadcrumb
+
+`AdsNav` e `AdsBreadcrumb` MUST permitir que o consumidor forneça o elemento de link de cada item, recebendo as props de estilo, `aria-current` e conteúdo para aplicá-las ao link. O item MUST conter um único elemento interativo, o link do consumidor MUST receber o estilo e o foco visível do item, e a biblioteca MUST NOT acessar o roteador. Itens desabilitados de `AdsNav` MUST permanecer botões desabilitados, e o item atual de `AdsBreadcrumb` MUST permanecer sem link com `aria-current="page"`.
+
+#### Scenario: Consumo em Next.js em AdsNav
+
+- **WHEN** uma aplicação Next.js fornece `next/link` para os itens de `AdsNav`
+- **THEN** cada item é um único link com o estilo da biblioteca, o item atual expõe `aria-current="page"` e não há `<button>` nem interativo aninhado
+
+#### Scenario: Link do consumidor em AdsBreadcrumb
+
+- **WHEN** uma aplicação fornece um link para um item anterior de `AdsBreadcrumb`
+- **THEN** o link recebe cor de texto, hover e foco visível do breadcrumb
+
+#### Scenario: Compatibilidade com href
+
+- **WHEN** um item usa apenas `href` ou `onClick`
+- **THEN** o comportamento anterior é preservado

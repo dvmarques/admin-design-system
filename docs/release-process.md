@@ -18,6 +18,15 @@ Enquanto um Pull Request estiver em **Draft**, os jobs automáticos de PR ficam 
 
 Ao marcar o PR como **Ready for review**, o evento `ready_for_review` dispara uma nova execução completa sobre o commit corrente. `push` para `develop` e `master` continua executando CI normalmente. Se um PR Ready voltar para Draft, não é necessário cancelar retroativamente uma execução que já começou; novos disparos enquanto Draft permanecem skipped.
 
+## Metadados e estratégia de merge
+
+- Toda PR `release/X.Y.Z -> master` e o respectivo back-merge `release/X.Y.Z -> develop` devem usar o label `release` e ter como assignee a pessoa que estiver conduzindo a operação.
+- PRs com o label `release` são integradas com **merge commit**; não use squash nem rebase merge para elas.
+- As demais PRs com base `develop` são integradas por **squash**.
+- PRs sem o label `release` e com base `develop` devem fechar a issue correspondente com uma palavra-chave de fechamento no corpo, como `Closes #123`; como `develop` é a branch padrão, a issue é fechada no merge. PRs de release (`release/X.Y.Z -> master` e o back-merge) não usam palavras-chave de fechamento.
+- Para relacionar uma PR a uma issue sem fechá-la, crie o vínculo manualmente pela seção **Development** da issue.
+- A exclusão automática de branches após merge deve permanecer desabilitada. A branch `release/X.Y.Z` só pode ser removida depois do back-merge e da publicação concluídos.
+
 ## Preparar uma release
 
 1. Confirme que a release anterior, quando existir, está publicada e reconciliada em `develop`.
@@ -36,7 +45,7 @@ O changelog fecha a versão com a data civil de `America/Sao_Paulo` no formato `
 
 ## PR para master
 
-Abra PR same-repo `release/X.Y.Z -> master`. Enquanto Draft, a CI de PR fica skipped. Ao tornar Ready, `release-check` valida:
+Abra PR same-repo `release/X.Y.Z -> master`, aplique o label `release` e atribua-a à pessoa que conduz a operação. Enquanto Draft, a CI de PR fica skipped. Ao tornar Ready, `release-check` valida:
 
 - branch e versão preparada coerentes;
 - origem no mesmo repositório;
@@ -64,7 +73,7 @@ Como um required check precisa existir antes de ser selecionado, deixe `release-
 
 ## Back-merge para develop
 
-Depois do merge em `master`, mantenha `release/X.Y.Z` e não adicione novo delta funcional. Abra PR `release/X.Y.Z -> develop`.
+Depois do merge em `master`, mantenha `release/X.Y.Z` e não adicione novo delta funcional. Abra PR `release/X.Y.Z -> develop`, aplique o label `release` e atribua-a à pessoa que conduz a operação.
 
 `develop-policy` distingue PR comum de back-merge. Em PR comum, preserva versão coordenada, uma única seção `Em andamento` e blocos fechados já existentes. Em back-merge, além disso:
 

@@ -8,11 +8,23 @@ import {
 } from 'react';
 import { classNames } from './class-names.js';
 
+/** Props the consumer must spread on the link it renders for an item, so it keeps the library look and `aria-current`. */
+export interface AdsLinkRenderProps {
+	'aria-current'?: 'page' | undefined;
+	children: ReactNode;
+	className: string;
+}
+
 export interface AdsBreadcrumbItem {
 	label: ReactNode;
 	href?: string;
 	current?: boolean;
+	/** Renders the consumer's link (for example `next/link`) in place of the built-in `<a>`; takes precedence over `href`. */
+	renderLink?: (props: AdsLinkRenderProps) => ReactNode;
 }
+
+const breadcrumbLinkClassName =
+	'rounded-sm text-text-muted underline-offset-2 hover:text-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus';
 
 export interface AdsBreadcrumbProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
 	items: AdsBreadcrumbItem[];
@@ -41,18 +53,17 @@ export function AdsBreadcrumb({
 									/
 								</span>
 							) : null}
-							{current || !item.href ? (
+							{current || !(item.href || item.renderLink) ? (
 								<span
 									aria-current={current ? 'page' : undefined}
 									className={current ? 'font-medium text-text' : undefined}
 								>
 									{item.label}
 								</span>
+							) : item.renderLink ? (
+								item.renderLink({ children: item.label, className: breadcrumbLinkClassName })
 							) : (
-								<a
-									className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
-									href={item.href}
-								>
+								<a className={breadcrumbLinkClassName} href={item.href}>
 									{item.label}
 								</a>
 							)}
@@ -70,11 +81,22 @@ export interface AdsNavItem {
 	current?: boolean;
 	disabled?: boolean;
 	onClick?: () => void;
+	/** Renders the consumer's link (for example `next/link`) in place of the built-in `<a>`/`<button>`; takes precedence over `href` unless `disabled`. */
+	renderLink?: (props: AdsLinkRenderProps) => ReactNode;
 }
 
 export interface AdsNavProps extends Omit<HTMLAttributes<HTMLElement>, 'children'> {
 	items: AdsNavItem[];
 	'aria-label'?: string;
+}
+
+const navItemBase =
+	'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none';
+
+function navItemState(current: boolean | undefined) {
+	return current
+		? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
+		: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover';
 }
 
 export function AdsNav({
@@ -92,15 +114,16 @@ export function AdsNav({
 			<ul className="m-0 flex min-w-max list-none flex-nowrap items-center gap-1 p-0">
 				{items.map((item, index) => (
 					<li key={`${index}-${String(item.label)}`}>
-						{item.href && !item.disabled ? (
+						{item.renderLink && !item.disabled ? (
+							item.renderLink({
+								'aria-current': item.current ? 'page' : undefined,
+								children: item.label,
+								className: classNames(navItemBase, 'no-underline', navItemState(item.current)),
+							})
+						) : item.href && !item.disabled ? (
 							<a
 								aria-current={item.current ? 'page' : undefined}
-								className={classNames(
-									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none',
-									item.current
-										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
-										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
-								)}
+								className={classNames(navItemBase, 'no-underline', navItemState(item.current))}
 								href={item.href}
 							>
 								{item.label}
@@ -112,10 +135,9 @@ export function AdsNav({
 								onClick={item.onClick}
 								type="button"
 								className={classNames(
-									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
-									item.current
-										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
-										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',
+									navItemBase,
+									'disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50',
+									navItemState(item.current),
 								)}
 							>
 								{item.label}
@@ -207,8 +229,12 @@ function AdsTabsTrigger({
 			aria-controls={panelId}
 			aria-selected={active}
 			className={classNames(
-				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent border-b-border bg-transparent px-4 py-2 text-sm font-medium text-primary hover:bg-surface-hover hover:text-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
-				active && 'border-primary border-b-2 bg-surface-selected text-on-surface-selected',
+				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent px-4 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
+				// One explicit set per state: conflicting utilities would be resolved by their order
+				// in the compiled CSS, and the active styles used to lose.
+				active
+					? 'border-b-2 border-b-primary bg-surface-selected text-on-surface-selected'
+					: 'border-b-border bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text',
 				className,
 			)}
 			data-state={active ? 'active' : 'inactive'}

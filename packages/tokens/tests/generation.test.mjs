@@ -89,3 +89,23 @@ test('semantic content, actions, states, and focus meet AA contrast in both them
 		);
 	}
 });
+
+test('tab and breadcrumb text meets AA contrast on every default surface in both themes', () => {
+	const surfaces = ['canvas', 'surface', 'surfaceRaised', 'surfaceMuted', 'surfaceHover'];
+
+	for (const themeName of ['light', 'dark']) {
+		const theme = tokenSource.color.semantic[themeName];
+		const pair = (foreground, background) =>
+			assert.ok(
+				contrast(resolveThemeValue(theme[foreground]), resolveThemeValue(theme[background])) >= 4.5,
+				`${themeName}: ${foreground} on ${background}`,
+			);
+
+		for (const surface of surfaces) {
+			pair('text', surface);
+			pair('textSecondary', surface);
+			pair('textMuted', surface);
+		}
+		pair('onSurfaceSelected', 'surfaceSelected');
+	}
+});

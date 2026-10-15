@@ -15,6 +15,11 @@ O desenvolvimento é orientado por especificações com OpenSpec. Cada
 mudança relevante passa por proposta, requisitos, design, tarefas,
 implementação, validação e arquivamento.
 
+## Requisitos
+
+- Node.js 24 ou superior (veja `.nvmrc`; use `nvm use` ou equivalente);
+- npm `11.19.1`, fixado em `packageManager`.
+
 ## Executar as aplicações
 
 Instale as dependências uma vez, na raiz do repositório:
@@ -66,7 +71,7 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 
 ## Documentação
 
-- [Roadmap do projeto](docs/roadmap.md)
+- [Projeto e issues no GitHub](https://github.com/users/dvmarques/projects/2)
 - [Estrutura e arquitetura do monorepo](docs/architecture.md)
 - [Critérios de qualidade](docs/quality.md)
 - [Processo de release](docs/release-process.md)
@@ -90,7 +95,18 @@ foco, teclado, temas, CSS distribuído, documentação, testes e integração no
 admin demo. A change `add-navigation-components` concluiu `AdsBreadcrumb`,
 `AdsNav`, `AdsTabs`, `AdsDropdown` e `AdsPagination`, com interações por
 teclado, temas, CSS distribuído, documentação, testes, snapshots visuais e
-consumo pela aplicação Next.js de demonstração.
+consumo pela aplicação Next.js de demonstração. A change
+`add-data-display-components` concluiu `AdsTable`, `AdsList`, `AdsCard`,
+`AdsProgress` e `AdsEmptyState`, com semântica acessível, composição sem
+acoplamento a dados ou fetching, temas, CSS distribuído, documentação, testes
+e integração no admin demo. A change `add-admin-shell` concluiu o
+`AdsAdminShell` em `@admin-ds/admin`, com header, sidebar recolhível, área de
+conteúdo e navegação móvel em drawer, estados controlados e não controlados,
+transição segura entre breakpoints, compatibilidade com SSR, CSS próprio
+distribuído e integração no admin demo. A change `add-dashboard-patterns` adicionou
+`AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel` em `@admin-ds/admin`,
+com tendência por ícone e texto, grid responsivo e estados de carregamento,
+vazio e erro por painel, sem gráficos.
 
 O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:
@@ -110,16 +126,3 @@ Get-ChildItem openspec/changes/archive
 - Vitest e React Testing Library
 - Playwright
 - OpenSpec
-
-## Próximo passo
-
-Planejar a change `add-data-display-components`, começando por tabelas,
-listas, cards, indicadores de progresso, estados vazios e padrões de
-apresentação de dados administrativos:
-
-```powershell
-openspec-propose add-data-display-components
-```
-
-Isso criará a proposta, specs, design e tarefas da próxima família de
-componentes.

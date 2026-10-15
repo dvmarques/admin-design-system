@@ -1,0 +1,894 @@
+/*
+ * Estilos do Admin Shell. CSS simples, sem Tailwind, que depende apenas dos
+ * tokens públicos --ads-* publicados por @admin-ds/tokens/styles.css.
+ */
+@layer components {
+	.ads-admin-shell {
+		--ads-admin-shell-sidebar-width: 16rem;
+		--ads-admin-shell-sidebar-width-collapsed: 4.5rem;
+		isolation: isolate;
+		min-height: 100vh;
+		background-color: var(--ads-color-background);
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+	}
+
+	.ads-admin-shell-header {
+		position: sticky;
+		top: 0;
+		z-index: 30;
+		isolation: isolate;
+		display: flex;
+		min-height: 4rem;
+		align-items: center;
+		gap: 1rem;
+		border-bottom: 1px solid var(--ads-color-border);
+		background-color: var(--ads-color-surface);
+		padding-inline: 1rem;
+		box-shadow: var(--ads-elevation-sm);
+	}
+
+	.ads-admin-shell-body {
+		isolation: isolate;
+		display: flex;
+		min-height: calc(100vh - 4rem);
+	}
+
+	.ads-admin-shell-sidebar-desktop {
+		display: none;
+		width: var(--ads-admin-shell-sidebar-width);
+		flex-shrink: 0;
+		border-right: 1px solid var(--ads-color-border);
+		transition: width 150ms;
+	}
+
+	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] {
+		width: var(--ads-admin-shell-sidebar-width-collapsed);
+	}
+
+	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] .ads-admin-shell-sidebar {
+		overflow-x: hidden;
+	}
+
+	/*
+	 * Opt-in label for sidebar items. On the collapsed desktop sidebar the text is hidden only
+	 * visually, so items keep their accessible name and stay focusable without clipped labels.
+	 * The mobile drawer always shows the complete label.
+	 */
+	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] .ads-admin-shell-sidebar-label {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+
+	.ads-admin-shell-sidebar {
+		isolation: isolate;
+		height: 100%;
+		overflow-y: auto;
+		background-color: var(--ads-color-surface-raised);
+		padding: 1rem;
+		color: var(--ads-color-text);
+	}
+
+	/*
+	 * Inside AdsDrawer the panel already provides background, padding and scrolling. Without its own
+	 * stacking context or background, the navigation no longer paints over the drawer close button.
+	 */
+	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar {
+		isolation: auto;
+		height: auto;
+		overflow: visible;
+		background-color: transparent;
+		padding: 0;
+	}
+
+	.ads-admin-shell-main {
+		isolation: isolate;
+		min-width: 0;
+		flex: 1 1 0%;
+		background-color: var(--ads-color-background);
+		padding: 1rem;
+	}
+
+	.ads-admin-shell-navigation-trigger {
+		isolation: isolate;
+		display: inline-flex;
+		width: 2.5rem;
+		height: 2.5rem;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background-color: var(--ads-color-surface);
+		color: var(--ads-color-text);
+		transition: background-color 150ms;
+	}
+
+	.ads-admin-shell-navigation-trigger:hover {
+		background-color: var(--ads-color-surface-hover);
+	}
+
+	.ads-admin-shell-navigation-trigger:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-admin-shell-sidebar-toggle {
+		isolation: isolate;
+		display: none;
+		width: 2.5rem;
+		height: 2.5rem;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background-color: var(--ads-color-surface);
+		color: var(--ads-color-text);
+		transition: background-color 150ms;
+	}
+
+	.ads-admin-shell-sidebar-toggle:hover {
+		background-color: var(--ads-color-surface-hover);
+	}
+
+	.ads-admin-shell-sidebar-toggle:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-admin-shell-sidebar-toggle-icon {
+		display: block;
+		width: 0.5rem;
+		height: 0.5rem;
+		border-bottom: 2px solid currentColor;
+		border-left: 2px solid currentColor;
+		transform: rotate(45deg);
+	}
+
+	.ads-admin-shell-sidebar-toggle[aria-expanded='false'] .ads-admin-shell-sidebar-toggle-icon {
+		transform: rotate(-135deg);
+	}
+
+	.ads-admin-shell-navigation-icon {
+		display: flex;
+		flex-direction: column;
+		gap: 0.25rem;
+	}
+
+	.ads-admin-shell-navigation-icon-bar {
+		display: block;
+		width: 1.25rem;
+		height: 0.125rem;
+		background-color: currentColor;
+	}
+
+	/* Padrões de dashboard: AdsMetricCard, AdsDashboardGrid e AdsDashboardPanel. */
+	.ads-dashboard-visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+
+	.ads-metric-card {
+		gap: 0.5rem;
+	}
+
+	.ads-metric-card p,
+	.ads-dashboard-panel-title,
+	.ads-dashboard-panel-description {
+		margin: 0;
+	}
+
+	.ads-metric-card-title {
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-metric-card-value {
+		color: var(--ads-color-text-primary);
+		font-size: 1.875rem;
+		font-weight: 600;
+		line-height: 1.2;
+		overflow-wrap: anywhere;
+	}
+
+	.ads-metric-card-change {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+		font-weight: 500;
+	}
+
+	.ads-metric-card-change[data-sentiment='positive'] {
+		color: var(--ads-color-success);
+	}
+
+	.ads-metric-card-change[data-sentiment='negative'] {
+		color: var(--ads-color-danger);
+	}
+
+	.ads-metric-card-trend-icon {
+		width: 1rem;
+		height: 1rem;
+		flex-shrink: 0;
+	}
+
+	.ads-metric-card-description,
+	.ads-metric-card-message {
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-metric-card-message[data-state='error'] {
+		color: var(--ads-color-danger);
+	}
+
+	.ads-metric-card-loading,
+	.ads-dashboard-panel-loading {
+		display: grid;
+		gap: 0.5rem;
+	}
+
+	.ads-metric-card-skeleton-value {
+		display: block;
+		width: 60%;
+		height: 2rem;
+	}
+
+	.ads-metric-card-skeleton-change {
+		display: block;
+		width: 35%;
+		height: 1rem;
+	}
+
+	.ads-dashboard-panel-skeleton {
+		display: block;
+		width: 100%;
+		height: 2.5rem;
+	}
+
+	/*
+	 * O grid é um container: as colunas seguem a largura disponível dele (por exemplo, ao lado
+	 * da sidebar), não a viewport. Sem `order` nem `grid-auto-flow: dense`: a ordem do DOM é a
+	 * ordem visual e de foco.
+	 */
+	.ads-dashboard-grid {
+		--ads-dashboard-grid-gap: 1rem;
+		--ads-dashboard-grid-columns: 1;
+		container: ads-dashboard-grid / inline-size;
+	}
+
+	.ads-dashboard-grid-items {
+		display: grid;
+		grid-template-columns: repeat(var(--ads-dashboard-grid-columns), minmax(0, 1fr));
+		gap: var(--ads-dashboard-grid-gap);
+	}
+
+	.ads-dashboard-panel {
+		min-width: 0;
+	}
+
+	.ads-dashboard-panel-card {
+		height: 100%;
+	}
+
+	.ads-dashboard-panel-header {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.ads-dashboard-panel-heading {
+		min-width: 0;
+	}
+
+	.ads-dashboard-panel-title {
+		color: var(--ads-color-text-primary);
+		font-size: 1rem;
+		font-weight: 600;
+	}
+
+	.ads-dashboard-panel-description {
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-dashboard-panel-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+	}
+
+	.ads-dashboard-panel-body {
+		min-width: 0;
+		flex: 1 1 auto;
+	}
+
+	.ads-dashboard-panel-error {
+		display: grid;
+		gap: 0.75rem;
+		border: 1px solid var(--ads-color-danger-border);
+		border-radius: var(--ads-radius-md);
+		background-color: var(--ads-color-danger-background);
+		padding: 1rem;
+		color: var(--ads-color-danger);
+	}
+
+	.ads-dashboard-panel-error-message {
+		margin: 0;
+	}
+
+	@container ads-dashboard-grid (min-width: 40rem) {
+		.ads-dashboard-grid-items {
+			--ads-dashboard-grid-columns: 2;
+		}
+
+		.ads-dashboard-panel[data-span='2'],
+		.ads-dashboard-panel[data-span='3'],
+		.ads-dashboard-panel[data-span='4'] {
+			grid-column: span 2;
+		}
+	}
+
+	@container ads-dashboard-grid (min-width: 64rem) {
+		.ads-dashboard-grid-items {
+			--ads-dashboard-grid-columns: 4;
+		}
+
+		.ads-dashboard-panel[data-span='2'] {
+			grid-column: span 2;
+		}
+
+		.ads-dashboard-panel[data-span='3'] {
+			grid-column: span 3;
+		}
+
+		.ads-dashboard-panel[data-span='4'] {
+			grid-column: span 4;
+		}
+	}
+
+	@media (min-width: 48rem) {
+		.ads-admin-shell-header {
+			padding-inline: 1.5rem;
+		}
+
+		.ads-admin-shell-sidebar-desktop {
+			display: block;
+		}
+
+		.ads-admin-shell-main {
+			padding: 1.5rem;
+		}
+
+		.ads-admin-shell-sidebar-toggle {
+			display: inline-flex;
+		}
+
+		.ads-admin-shell-navigation-trigger,
+		.ads-admin-shell-mobile-drawer {
+			display: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ads-admin-shell-sidebar-desktop,
+		.ads-admin-shell-navigation-trigger,
+		.ads-admin-shell-sidebar-toggle {
+			transition: none;
+		}
+	}
+
+	/*
+	 * Barra de filtros. A própria barra é o container: o recolhimento segue a largura disponível
+	 * (por exemplo, ao lado da sidebar), não a viewport. Os controles internos usam as classes de
+	 * @admin-ds/components.
+	 */
+	.ads-filter-bar {
+		container: ads-filter-bar / inline-size;
+		display: grid;
+		gap: 0.75rem;
+		border: 1px solid var(--ads-color-border);
+		border-radius: 0.5rem;
+		background-color: var(--ads-color-surface);
+		padding: 1rem;
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+	}
+
+	.ads-filter-bar-header {
+		display: none;
+	}
+
+	.ads-filter-bar-toggle {
+		display: inline-flex;
+		min-height: 2.5rem;
+		align-items: center;
+		gap: 0.5rem;
+		border: 1px solid var(--ads-color-border);
+		border-radius: 0.375rem;
+		background-color: var(--ads-color-surface);
+		padding-inline: 0.75rem;
+		color: var(--ads-color-text);
+		font: inherit;
+		font-weight: 500;
+		cursor: pointer;
+	}
+
+	.ads-filter-bar-toggle:hover {
+		background-color: var(--ads-color-surface-hover);
+	}
+
+	.ads-filter-bar-toggle:focus-visible,
+	.ads-filter-bar-chip-remove:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-filter-bar-count {
+		min-width: 1.5rem;
+		border-radius: 999px;
+		background-color: var(--ads-color-primary);
+		padding-inline: 0.375rem;
+		color: var(--ads-color-on-primary);
+		font-size: 0.75rem;
+		line-height: 1.5rem;
+		text-align: center;
+	}
+
+	.ads-filter-bar-fields {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: flex-start;
+		gap: 0.75rem 1rem;
+	}
+
+	.ads-filter-bar-field {
+		flex: 1 1 14rem;
+		min-width: 0;
+		max-width: 22rem;
+	}
+
+	.ads-filter-bar-active {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+	}
+
+	.ads-filter-bar-chips {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.ads-filter-bar-chip {
+		display: inline-flex;
+		max-width: 100%;
+		align-items: center;
+		gap: 0.25rem;
+		border: 1px solid var(--ads-color-border);
+		border-radius: 999px;
+		background-color: var(--ads-color-surface-muted);
+		padding: 0.125rem 0.25rem 0.125rem 0.75rem;
+		font-size: 0.875rem;
+	}
+
+	.ads-filter-bar-chip-text {
+		overflow-wrap: anywhere;
+	}
+
+	.ads-filter-bar-chip-remove {
+		display: inline-flex;
+		width: 1.75rem;
+		height: 1.75rem;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		border: 0;
+		border-radius: 999px;
+		background: transparent;
+		color: var(--ads-color-text-muted);
+		cursor: pointer;
+	}
+
+	.ads-filter-bar-chip-remove:hover:not(:disabled) {
+		background-color: var(--ads-color-surface-hover);
+		color: var(--ads-color-text);
+	}
+
+	.ads-filter-bar-chip-remove:disabled {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+
+	.ads-filter-bar-empty {
+		margin: 0;
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	/* Indicador discreto de carregamento: uma faixa animada no topo da barra, visível também em touch. */
+	.ads-filter-bar[data-loading] {
+		position: relative;
+		cursor: progress;
+	}
+
+	.ads-filter-bar[data-loading]::before {
+		position: absolute;
+		top: 0;
+		right: 0.5rem;
+		left: 0.5rem;
+		height: 2px;
+		border-radius: 999px;
+		background: linear-gradient(90deg, transparent, var(--ads-color-primary), transparent);
+		background-size: 200% 100%;
+		animation: ads-filter-bar-loading 1.2s linear infinite;
+		content: '';
+		pointer-events: none;
+	}
+
+	@keyframes ads-filter-bar-loading {
+		from {
+			background-position: 100% 0;
+		}
+
+		to {
+			background-position: -100% 0;
+		}
+	}
+
+	.ads-filter-bar-status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+
+	@container ads-filter-bar (max-width: 40rem) {
+		.ads-filter-bar-header {
+			display: block;
+		}
+
+		.ads-filter-bar-body[data-expanded='false'] {
+			display: none;
+		}
+
+		.ads-filter-bar-field {
+			flex-basis: 100%;
+			max-width: none;
+		}
+	}
+
+	@media (prefers-reduced-motion: reduce) {
+		.ads-filter-bar-toggle,
+		.ads-filter-bar-chip-remove {
+			transition: none;
+		}
+
+		.ads-filter-bar[data-loading]::before {
+			background: var(--ads-color-primary);
+			animation: none;
+		}
+	}
+}
+
+@layer components {
+	/*
+	 * Tabela inteligente. Compõe AdsTable (classes de @admin-ds/components); aqui ficam apenas a
+	 * barra de ferramentas, a região rolável, o botão de ordenação e a linha selecionada.
+	 */
+	.ads-smart-table {
+		display: grid;
+		/* minmax(0, 1fr): o min-content da paginação ou da tabela não alarga a grade. */
+		grid-template-columns: minmax(0, 1fr);
+		gap: 0.75rem;
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+	}
+
+	.ads-smart-table-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.ads-smart-table-selection-summary {
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-smart-table-columns {
+		margin-inline-start: auto;
+	}
+
+	/* Painel inline: ocupa uma linha inteira da barra e empurra a tabela, sem sobrepor. */
+	.ads-smart-table-columns-panel {
+		flex-basis: 100%;
+		border: 1px solid var(--ads-color-border);
+		border-radius: 0.5rem;
+		background-color: var(--ads-color-surface);
+		padding: 0.75rem;
+	}
+
+	.ads-smart-table-columns-panel[hidden] {
+		display: none;
+	}
+
+	.ads-smart-table-scroll {
+		border: 1px solid var(--ads-color-border);
+		border-radius: 0.5rem;
+		background-color: var(--ads-color-surface);
+	}
+
+	.ads-smart-table-scroll:focus-visible,
+	.ads-smart-table-sort:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-smart-table-sort {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		border: 0;
+		background: transparent;
+		padding: 0;
+		color: inherit;
+		font: inherit;
+		font-weight: inherit;
+		cursor: pointer;
+	}
+
+	.ads-smart-table-sort-icon {
+		flex-shrink: 0;
+		color: var(--ads-color-text-muted);
+	}
+
+	.ads-smart-table-sort-icon path {
+		opacity: 0.45;
+	}
+
+	.ads-smart-table-sort-icon[data-direction='asc'] path[data-part='up'],
+	.ads-smart-table-sort-icon[data-direction='desc'] path[data-part='down'] {
+		opacity: 1;
+		color: var(--ads-color-primary);
+	}
+
+	/*
+	 * Largura não percentual: com o min-width: max-content da tabela, uma largura em % faria a
+	 * coluna de seleção valer essa fração da tabela inteira (1% de 52 px = 5200 px).
+	 */
+	.ads-smart-table-select-cell {
+		width: 1px;
+		white-space: nowrap;
+	}
+
+	.ads-smart-table .ads-table-row[data-selected] {
+		background-color: var(--ads-color-surface-muted);
+		box-shadow: inset 3px 0 0 var(--ads-color-primary);
+	}
+
+	.ads-smart-table-state {
+		padding: 1rem;
+	}
+
+	.ads-smart-table-skeleton {
+		width: 100%;
+		height: 1rem;
+	}
+
+	.ads-smart-table[data-loading] {
+		cursor: progress;
+	}
+
+	.ads-smart-table-pagination {
+		display: flex;
+		justify-content: flex-end;
+		min-width: 0;
+	}
+
+	/* A paginação rola dentro do próprio contêiner em vez de alargar a página. */
+	.ads-smart-table-pagination > .ads-pagination {
+		min-width: 0;
+	}
+
+	.ads-smart-table-visually-hidden,
+	.ads-smart-table-status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+}
+
+@layer components {
+	/*
+	 * Fluxos administrativos: barra de ações em massa, formulário em etapas e confirmação
+	 * destrutiva. A listagem (`ads-list-flow`) reutiliza os estilos da tabela inteligente.
+	 */
+	.ads-bulk-action-bar-status,
+	.ads-step-form-visually-hidden {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+
+	.ads-bulk-action-bar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem 0.75rem;
+		border: 1px solid var(--ads-color-primary);
+		border-radius: var(--ads-radius-md);
+		background-color: var(--ads-color-surface-muted);
+		padding: 0.5rem 0.75rem;
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+		font-size: 0.875rem;
+	}
+
+	.ads-bulk-action-bar-count {
+		font-weight: 600;
+	}
+
+	.ads-bulk-action-bar-actions {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		margin-inline-end: auto;
+	}
+
+	.ads-list-flow {
+		gap: 1rem;
+	}
+
+	.ads-step-form {
+		display: grid;
+		gap: 1rem;
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+	}
+
+	.ads-step-form-steps {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 0.5rem 1.25rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.ads-step-form-step {
+		display: flex;
+		align-items: center;
+		gap: 0.5rem;
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-step-form-marker {
+		display: inline-flex;
+		width: 1.5rem;
+		height: 1.5rem;
+		flex-shrink: 0;
+		align-items: center;
+		justify-content: center;
+		border: 1px solid var(--ads-color-border);
+		border-radius: 9999px;
+		background-color: var(--ads-color-surface);
+		font-size: 0.75rem;
+		font-weight: 600;
+	}
+
+	.ads-step-form-step[data-state='current'] {
+		color: var(--ads-color-text);
+		font-weight: 600;
+	}
+
+	.ads-step-form-step[data-state='current'] .ads-step-form-marker {
+		border-color: var(--ads-color-primary);
+		background-color: var(--ads-color-primary);
+		color: var(--ads-color-on-primary);
+	}
+
+	.ads-step-form-step[data-state='completed'] .ads-step-form-marker {
+		border-color: var(--ads-color-success);
+		color: var(--ads-color-success);
+	}
+
+	.ads-step-form-panel {
+		display: grid;
+		gap: 0.75rem;
+	}
+
+	.ads-step-form-panel[hidden] {
+		display: none;
+	}
+
+	.ads-step-form-heading {
+		margin: 0;
+		font-size: 1.125rem;
+		font-weight: 600;
+	}
+
+	.ads-step-form-heading:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-step-form-description {
+		margin: 0;
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-step-form-error {
+		margin: 0;
+		border: 1px solid var(--ads-color-danger-border);
+		border-radius: var(--ads-radius-md);
+		background-color: var(--ads-color-danger-background);
+		padding: 0.5rem 0.75rem;
+		color: var(--ads-color-danger);
+		font-size: 0.875rem;
+	}
+
+	.ads-step-form-actions,
+	.ads-confirm-dialog-actions {
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: flex-end;
+		gap: 0.5rem;
+	}
+
+	.ads-confirm-dialog-actions {
+		margin-top: 1.25rem;
+	}
+
+	/* Ações indisponíveis durante `pending`: continuam focáveis, mas não respondem ao clique. */
+	.ads-confirm-dialog-actions .ads-button[aria-disabled='true'] {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+
+	.ads-step-form-cancel {
+		margin-inline-end: auto;
+	}
+}

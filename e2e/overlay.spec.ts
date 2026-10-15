@@ -15,7 +15,7 @@ test.describe('public overlays', () => {
 		await page
 			.context()
 			.addCookies([{ name: 'ads-theme', value: 'light', url: 'http://127.0.0.1:3000' }]);
-		await page.goto('/');
+		await page.goto('/componentes');
 
 		await page.getByRole('button', { name: 'Abrir diálogo' }).first().click();
 		const dialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
@@ -70,7 +70,7 @@ test.describe('public overlays', () => {
 	});
 
 	test('keeps dialog focus and closes with Escape', async ({ page }) => {
-		await page.goto('/');
+		await page.goto('/componentes');
 		const trigger = page.getByRole('button', { name: 'Abrir diálogo' }).first();
 		await trigger.focus();
 		await trigger.click();
@@ -82,7 +82,7 @@ test.describe('public overlays', () => {
 	});
 
 	test('supports drawer, anchored context, and toast flows', async ({ page }) => {
-		await page.goto('/');
+		await page.goto('/componentes');
 		await page.getByRole('button', { name: 'Abrir drawer' }).click();
 		await expect(page.getByRole('dialog', { name: 'Exemplo de drawer' })).toBeVisible();
 		await page.keyboard.press('Escape');

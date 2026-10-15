@@ -1,6 +1,17 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import {
+	findAdsSelectors,
+	findForbiddenClassTokens,
+	findInternalPackageImports,
+	findTailwindDirectives,
+	findUndeclaredDependencies,
+	importSpecifiers,
+	listDemoRootFiles,
+	readDemoFiles,
+	readDemoPackageJson,
+} from './support/demo-contract';
 import { AdsAdminShell } from '@admin-ds/admin';
 import {
 	AdsAvatar,
@@ -130,14 +141,51 @@ describe('public component consumption', () => {
 	});
 
 	it('keeps the reference application on public package imports', async () => {
-		const page = await readFile(
-			resolve(process.cwd(), '../../apps/admin-demo/app/page.tsx'),
-			'utf8',
-		);
-		expect(page).toContain("from '@admin-ds/components'");
-		expect(page).toContain("from '@admin-ds/admin'");
-		expect(page).not.toMatch(
-			/@admin-ds\/(components|admin)\/src|packages\/(components|admin)\/src/,
-		);
+		const files = await readDemoFiles(['app', 'lib'], /\.(ts|tsx)$/);
+		const sources = files.map((file) => file.content).join('\n');
+
+		expect(sources).toContain("from '@admin-ds/components'");
+		expect(sources).toContain("from '@admin-ds/admin'");
+		for (const file of files) {
+			expect(findInternalPackageImports(importSpecifiers(file.content)), file.path).toEqual([]);
+		}
+	});
+
+	it('imports only packages that its own package.json declares', async () => {
+		const files = await readDemoFiles(['app', 'lib'], /\.(ts|tsx)$/);
+		const { dependencies = {} } = await readDemoPackageJson();
+
+		for (const file of files) {
+			expect(
+				findUndeclaredDependencies(importSpecifiers(file.content), Object.keys(dependencies)),
+				file.path,
+			).toEqual([]);
+		}
+	});
+
+	it('does not depend on or configure Tailwind', async () => {
+		const { dependencies = {}, devDependencies = {} } = await readDemoPackageJson();
+		const declared = [...Object.keys(dependencies), ...Object.keys(devDependencies)];
+		expect(declared.filter((name) => /tailwind/i.test(name))).toEqual([]);
+
+		expect(
+			(await listDemoRootFiles()).filter((name) => /^(tailwind|postcss)\.config\./.test(name)),
+		).toEqual([]);
+
+		for (const file of await readDemoFiles(['app'], /\.css$/)) {
+			expect(findTailwindDirectives(file.content), file.path).toEqual([]);
+		}
+	});
+
+	it('does not redefine the internal look of public ads- classes', async () => {
+		for (const file of await readDemoFiles(['app'], /\.css$/)) {
+			expect(findAdsSelectors(file.content), file.path).toEqual([]);
+		}
+	});
+
+	it('uses only demo- and public ads- classes in literal className values', async () => {
+		for (const file of await readDemoFiles(['app'], /\.tsx$/)) {
+			expect(findForbiddenClassTokens(file.content), file.path).toEqual([]);
+		}
 	});
 });

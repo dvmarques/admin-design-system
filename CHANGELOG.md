@@ -22,6 +22,21 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-navigation-theme-contrast` - Corrigido o contraste de `AdsBreadcrumb` e
+  `AdsTabs` nos temas claro e escuro. Os links do breadcrumb deixam de usar a
+  cor padrão do navegador (`text-text-muted`, com `hover:text-text`). A tab
+  ativa passa a mostrar a superfície, a cor de texto e a borda de seleção, que
+  perdiam a disputa de cascata, e a tab inativa passa de `text-primary` para
+  `text-text-secondary`. Nenhuma prop, tipo, classe `ads-*` ou variável
+  `--ads-*` muda; a aparência de tabs e breadcrumb muda de forma intencional.
+  O `fieldset` de `AdsSelectionGroup` deixa de mostrar a moldura padrão do
+  navegador, que no tema escuro aparecia como borda clara.
+- `add-nextjs-admin-demo` - O admin demo passa a ser uma aplicação multi-rota
+  com layout administrativo compartilhado (visão geral, clientes, novo cliente,
+  preferências, catálogo de componentes e exibição de dados), navegação por
+  `next/link` com página atual identificada, estado de tema compartilhado e
+  testes de consumo público, acessibilidade e responsividade por rota. Restrito
+  ao admin demo, sem mudança de API pública.
 - `update-node-24` - Atualizados `engines.node` (`>=24.0.0`), CI, release e
   `@types/node` para o Node.js 24; adicionado `.nvmrc` e documentada a versão
   exigida no README. Quem usa Node.js 22 precisa atualizar o runtime.

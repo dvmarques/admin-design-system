@@ -126,13 +126,13 @@ Get-ChildItem openspec/changes/archive
 
 ## Próximo passo
 
-Planejar a change `add-nextjs-admin-demo`, que evolui a aplicação Next.js de
+Concluir a change `add-nextjs-admin-demo`, que evolui a aplicação Next.js de
 referência para um admin demonstrativo consumindo exclusivamente as APIs
-públicas do design system:
+públicas do design system, e arquivá-la ao final:
 
 ```powershell
-openspec-propose add-nextjs-admin-demo
+openspec.cmd validate --all --strict
 ```
 
-Isso criará a proposta, specs, design e tarefas da evolução da aplicação de
-referência.
+Depois, planejar `add-advanced-admin-patterns` (padrões avançados de
+administração).

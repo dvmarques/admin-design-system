@@ -58,9 +58,75 @@ describe('navigation components', () => {
 		expect(second).toHaveClass(
 			'bg-surface-selected',
 			'text-on-surface-selected',
-			'border-primary',
+			'border-b-primary',
 			'border-b-2',
 		);
+	});
+
+	it('gives each tab state one explicit set of classes, with no conflicting utilities', () => {
+		render(
+			<AdsTabs defaultValue="one">
+				<AdsTabs.List>
+					<AdsTabs.Trigger value="one">Um</AdsTabs.Trigger>
+					<AdsTabs.Trigger value="two">Dois</AdsTabs.Trigger>
+				</AdsTabs.List>
+			</AdsTabs>,
+		);
+		const active = screen.getByRole('tab', { name: 'Um' });
+		const inactive = screen.getByRole('tab', { name: 'Dois' });
+
+		expect(active).toHaveClass(
+			'bg-surface-selected',
+			'text-on-surface-selected',
+			'border-b-primary',
+		);
+		expect(active).not.toHaveClass('bg-transparent', 'text-text-secondary', 'text-primary');
+		expect(active).not.toHaveClass('border-b-border', 'border-primary');
+
+		expect(inactive).toHaveClass(
+			'bg-transparent',
+			'text-text-secondary',
+			'border-b-border',
+			'hover:text-text',
+			'hover:bg-surface-hover',
+		);
+		expect(inactive).not.toHaveClass('text-primary', 'bg-surface-selected', 'border-b-primary');
+	});
+
+	it('moves the selected styles with the active tab', () => {
+		render(
+			<AdsTabs defaultValue="one">
+				<AdsTabs.List>
+					<AdsTabs.Trigger value="one">Um</AdsTabs.Trigger>
+					<AdsTabs.Trigger value="two">Dois</AdsTabs.Trigger>
+				</AdsTabs.List>
+			</AdsTabs>,
+		);
+		const first = screen.getByRole('tab', { name: 'Um' });
+		const second = screen.getByRole('tab', { name: 'Dois' });
+
+		fireEvent.click(second);
+
+		expect(second).toHaveClass('bg-surface-selected', 'border-b-primary');
+		expect(first).not.toHaveClass('bg-surface-selected', 'border-b-primary');
+		expect(first).toHaveClass('bg-transparent', 'text-text-secondary');
+	});
+
+	it('colors breadcrumb links with public text tokens instead of the browser default', () => {
+		render(
+			<AdsBreadcrumb
+				items={[
+					{ href: '/home', label: 'Início' },
+					{ href: '/reports', label: 'Relatórios' },
+					{ label: 'Mensal' },
+				]}
+			/>,
+		);
+
+		for (const name of ['Início', 'Relatórios']) {
+			expect(screen.getByRole('link', { name })).toHaveClass('text-text-muted', 'hover:text-text');
+		}
+		expect(screen.getByText('Mensal')).toHaveClass('text-text');
 	});
 
 	it('opens dropdown and restores focus after Escape', () => {

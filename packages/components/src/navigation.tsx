@@ -50,7 +50,7 @@ export function AdsBreadcrumb({
 								</span>
 							) : (
 								<a
-									className="rounded-sm underline-offset-2 hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+									className="rounded-sm text-text-muted underline-offset-2 hover:text-text hover:underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 									href={item.href}
 								>
 									{item.label}
@@ -207,8 +207,12 @@ function AdsTabsTrigger({
 			aria-controls={panelId}
 			aria-selected={active}
 			className={classNames(
-				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent border-b-border bg-transparent px-4 py-2 text-sm font-medium text-primary hover:bg-surface-hover hover:text-primary-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
-				active && 'border-primary border-b-2 bg-surface-selected text-on-surface-selected',
+				'ads-tabs-trigger -mb-px min-h-10 shrink-0 rounded-t-md border border-transparent px-4 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
+				// One explicit set per state: conflicting utilities would be resolved by their order
+				// in the compiled CSS, and the active styles used to lose.
+				active
+					? 'border-b-2 border-b-primary bg-surface-selected text-on-surface-selected'
+					: 'border-b-border bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text',
 				className,
 			)}
 			data-state={active ? 'active' : 'inactive'}

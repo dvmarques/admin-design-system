@@ -448,18 +448,28 @@ test.describe('clientes', () => {
 			.click();
 
 		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
-		await dialog.getByRole('button', { name: 'Excluir' }).click();
+		const cancel = dialog.getByRole('button', { name: 'Cancelar' });
+		const confirm = dialog.getByRole('button', { name: 'Excluir' });
+		await confirm.click();
 
+		const isPending = async () =>
+			(await cancel.getAttribute('aria-disabled')) === 'true' &&
+			(await confirm.getAttribute('aria-disabled')) === 'true' &&
+			(await confirm.locator('.ads-loading-indicator').count()) > 0;
+
+		await expect.poll(isPending).toBe(true);
+
+		await page.keyboard.press('Escape');
+		await expect(dialog).toBeVisible();
+		await expect.poll(isPending).toBe(true);
 		await expect
 			.poll(async () =>
-				page.evaluate(() => {
+				dialog.evaluate((dialogEl) => {
 					const active = document.activeElement;
-					return active !== null && active !== document.body;
+					return active !== null && active !== document.body && dialogEl.contains(active);
 				}),
 			)
 			.toBe(true);
-		await page.keyboard.press('Escape');
-		await expect(dialog).toBeVisible();
 
 		await expect.poll(async () => await dialog.count()).toBe(0);
 		await expect(page.getByText('Exclusão demonstrada com sucesso.')).toBeVisible();

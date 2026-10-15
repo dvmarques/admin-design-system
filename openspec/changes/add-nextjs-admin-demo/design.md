@@ -45,8 +45,13 @@ Estado atual do `apps/admin-demo` (ver proposal.md — Why):
 
 Itens da navegação principal: Visão geral (`/`), Clientes (`/clientes`), Novo
 cliente (`/clientes/novo`), Preferências, Componentes e Exibição de dados. A
-rota atual é a de correspondência **exata** com o `pathname`, de modo que toda
-rota tem exatamente um item marcado com `aria-current="page"`.
+rota atual é a de correspondência **exata** com o `pathname`, de modo que, no
+nav principal ("Navegação do demo"), toda rota tem exatamente um item marcado
+com `aria-current="page"`. Outros `aria-current` (por exemplo, no catálogo de
+navegação) não contam, e os testes escopam suas asserções ao nav principal. O
+item atual tem estilo próprio (`[aria-current='page']`) com variáveis `--ads-*`.
+O layout (Server Component) renderiza `AdsAdminShell.Sidebar` com `label` e
+`mobileTitle` "Navegação do demo", e `DemoNavigation` é apenas seu conteúdo.
 
 **Por quê**: `/data-display` e seus testes são contrato estável do e2e; manter a
 URL evita churn de snapshots sem valor. O catálogo sai de `/` para liberar a
@@ -120,7 +125,11 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
 
 - Client Component com validação local e `aria-describedby`/`aria-invalid`
   fornecidos por `AdsField`; no envio, o foco vai ao primeiro elemento
-  `[aria-invalid="true"]` do formulário, sem depender de refs nos controles.
+  `[aria-invalid="true"]` do formulário, sem depender de refs nos controles. Como
+  `AdsField` só define `aria-invalid` quando `validationState="error"`, a página
+  guarda os erros em estado e passa `validationState` ao campo; o foco é movido
+  em um efeito executado depois da atualização do estado, não de forma síncrona
+  no handler de envio.
 - Sucesso dispara `AdsToast`; nada é persistido.
 
 ### 5. Tema e estilos
@@ -138,12 +147,16 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   que observa o atributo `data-theme` do `<html>` (`MutationObserver`), com
   snapshot de servidor igual ao tema do cookie. Assim a mudança feita em um
   controle é refletida no outro nos dois sentidos, sem divergência de
-  hidratação. O `ThemeControl` atual (estado local com `key={theme}`) passa a
-  usar esse hook.
+  hidratação. O `ThemeToggle` público não aceita tema controlado, então o
+  `ThemeControl` o remonta por `key` para refletir mudanças externas; a `key`
+  só muda quando a alteração não vem do próprio toggle, para não remontar o
+  botão (e perder o foco do teclado) a cada clique.
 - Estilos do demo ficam em `globals.css` e usam apenas variáveis `--ads-*`
   públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida.
-- Acessibilidade: um `h1` por rota, `main` único fornecido pelo shell, link para
-  pular ao conteúdo se o shell não o oferecer (verificar na implementação).
+- Acessibilidade: um `h1` por rota e `main` único fornecido pelo shell, verificados
+  em `e2e/admin-demo-routes.spec.ts` (criado na tarefa 1.2 e estendido a cada
+  rota) e pelo `axe-core`. A ausência de Tailwind no demo é verificada na
+  tarefa 6.1.
 
 ### 6. Testes
 

@@ -71,7 +71,7 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 
 ## Documentação
 
-- [Roadmap do projeto](docs/roadmap.md)
+- [Projeto e issues no GitHub](https://github.com/users/dvmarques/projects/2)
 - [Estrutura e arquitetura do monorepo](docs/architecture.md)
 - [Critérios de qualidade](docs/quality.md)
 - [Processo de release](docs/release-process.md)
@@ -123,16 +123,3 @@ Get-ChildItem openspec/changes/archive
 - Vitest e React Testing Library
 - Playwright
 - OpenSpec
-
-## Próximo passo
-
-Concluir a change `add-nextjs-admin-demo`, que evolui a aplicação Next.js de
-referência para um admin demonstrativo consumindo exclusivamente as APIs
-públicas do design system, e arquivá-la ao final:
-
-```powershell
-openspec.cmd validate --all --strict
-```
-
-Depois, planejar `add-advanced-admin-patterns` (padrões avançados de
-administração).

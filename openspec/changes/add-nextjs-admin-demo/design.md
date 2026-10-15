@@ -64,9 +64,15 @@ pacote e deve mostrar o produto integrado.
   **somente** em um Client Component do demo (`demo-navigation.tsx`) que define
   `aria-current="page"` nos links. Nada disso entra em `packages/*`.
 - Como o estado do shell sobrevive à navegação, o drawer móvel **não** fecha
-  sozinho ao trocar de rota. O mesmo Client Component usa `useAdsAdminShell`
-  (API pública) para chamar `setMobileOpen(false)` quando o `pathname` muda.
-  A biblioteca segue sem conhecer o roteador.
+  sozinho ao trocar de rota. No celular, `AdsDrawer` não monta os filhos quando
+  fechado, então `demo-navigation.tsx` só existe com o drawer aberto e **não**
+  pode ser o lugar do efeito: um efeito dependente de `pathname` rodaria na
+  montagem e fecharia o drawer ao abri-lo. Um Client Component próprio e
+  sempre montado (`route-change-handler.tsx`, renderizado dentro de
+  `AdsAdminShell`, fora de `Sidebar`) usa `useAdsAdminShell` (API pública) e
+  guarda o `pathname` anterior em `useRef`, chamando `setMobileOpen(false)`
+  somente quando ele muda em relação ao anterior. A biblioteca segue sem
+  conhecer o roteador.
 - Estado de `collapsed` e `mobileOpen` permanece no `AdsAdminShell` não
   controlado: como o layout não é remontado entre rotas do mesmo grupo, o estado
   é preservado sem persistência automática (spec: sidebar mantida ao navegar).
@@ -123,6 +129,10 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   as rotas mantém o único `ThemeControl`. A página de preferências oferece o
   tema como grupo de seleção (`AdsSelectionGroup`/`AdsRadio`), com nome acessível
   distinto, para não duplicar o botão "Usar tema ..." no mesmo documento.
+- O controle de sidebar das preferências usa `useAdsAdminShell` e só se aplica ao
+  layout desktop: quando `isDesktop` é falso (a sidebar desktop não existe e o
+  `SidebarToggle` fica oculto), o controle fica desabilitado e informa o motivo.
+  O estado não é persistido.
 - Os dois controles compartilham um estado de tema em `lib/theme.ts`: uma função
   que grava cookie e `data-theme` e um hook baseado em `useSyncExternalStore`
   que observa o atributo `data-theme` do `<html>` (`MutationObserver`), com

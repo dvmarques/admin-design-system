@@ -92,8 +92,13 @@ O admin-demo MUST oferecer uma rota de preferências que permita escolher o tema
 
 #### Scenario: Sidebar é alterada pelas preferências
 
-- **WHEN** a pessoa recolhe ou expande a sidebar pelas preferências
-- **THEN** a sidebar do shell reflete o estado imediatamente, sem persistência após recarregar
+- **WHEN** a pessoa, em layout desktop, recolhe ou expande a sidebar pelas preferências
+- **THEN** a sidebar do shell reflete o estado imediatamente e volta ao padrão após recarregar
+
+#### Scenario: Controle de sidebar em largura de celular
+
+- **WHEN** as preferências são abertas em largura de celular
+- **THEN** o controle de sidebar fica indisponível e informa que se aplica ao layout desktop
 
 #### Scenario: Tema escolhido é restaurado
 

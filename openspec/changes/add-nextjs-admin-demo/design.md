@@ -54,7 +54,8 @@ O layout (Server Component) renderiza `AdsAdminShell.Sidebar` com `label` e
 `mobileTitle` "Navegação do demo", e `DemoNavigation` é apenas seu conteúdo.
 
 **Por quê**: `/data-display` e seus testes são contrato estável do e2e; manter a
-URL evita churn de snapshots sem valor. O catálogo sai de `/` para liberar a
+URL preserva os links e os seletores existentes (os snapshots dela mudam de
+qualquer forma, porque a página ganha o shell, e são regenerados na tarefa 6.4). O catálogo sai de `/` para liberar a
 raiz como visão geral, e seus snapshots serão regenerados com revisão do diff.
 
 **Alternativa descartada**: manter o catálogo em `/` e criar o admin em
@@ -140,6 +141,10 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   no handler de envio. O efeito depende de um contador de envios incrementado a
   cada submissão, para refocar também quando os erros não mudam entre dois
   envios.
+- O formulário usa `noValidate`: com `required` ou `type="email"`, a validação
+  nativa do navegador bloquearia o evento de envio e mostraria o balão próprio,
+  e os erros por campo nunca apareceriam. Só a obrigatoriedade é validada; a
+  obrigatoriedade continua exposta com `required`.
 - Sucesso dispara `AdsToast`; nada é persistido.
 
 ### 5. Tema e estilos
@@ -182,8 +187,11 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   raiz, e o demo não compila nem escaneia classes dos pacotes. Conflitos de CSS
   com a aplicação consumidora são evitados pelos prefixos: as classes públicas
   usam `ads-`, as do demo usam `demo-`, e o demo não redefine seletores `ads-*`.
-  A personalização é feita sobrescrevendo `--ads-*` no escopo da aplicação,
-  sem recompilar componentes; um teste verifica que a sobrescrita chega às
+  A personalização é feita sobrescrevendo `--ads-*` no escopo da aplicação com o
+  seletor documentado em `packages/tokens/README.md` (`:root[data-theme='light']`
+  e `:root[data-theme='dark']`), sem recompilar componentes. Esse seletor tem
+  especificidade maior que os gerados (`:root, [data-theme="light"]` e
+  `[data-theme="dark"]`), então não depende da ordem de carga das folhas; um teste verifica que a sobrescrita chega às
   rotas (tarefa 6.2). Sem novas dependências de runtime, o impacto no bundle é
   nulo.
 - Acessibilidade: um `h1` por rota e `main` único fornecido pelo shell, verificados
@@ -202,8 +210,8 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   carregamento de cada rota.
   `next/navigation` é mockado nos testes de componentes que usam `usePathname`
   ou `useRouter`.
-- Extensão do teste de imports públicos para varrer `app/**` em busca de
-  caminhos internos.
+- Extensão do teste de imports públicos para varrer `app/**/*.{ts,tsx}` e
+  `lib/**/*.ts` em busca de caminhos internos.
 - `axe-core` por rota em ambos os temas, executado no Playwright: o
   `axe-core/axe.min.js`, já instalado na raiz, é injetado com
   `page.addScriptTag`. Em jsdom não há CSS, então tema e contraste não seriam

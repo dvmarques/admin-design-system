@@ -2,8 +2,9 @@
 
 ## Why
 
-O `admin-demo` é hoje uma página-vitrine de componentes (`app/page.tsx`) mais uma
-rota isolada (`/data-display`), cada uma montando seu próprio `AdsAdminShell`.
+O `admin-demo` é hoje uma página-vitrine de componentes (`app/page.tsx`), que
+monta seu próprio `AdsAdminShell`, mais uma rota isolada (`/data-display`) que
+não usa o shell.
 Com componentes básicos, navegação, exibição de dados e o shell administrativo
 arquivados, falta provar que esses blocos funcionam **juntos** como uma aplicação
 administrativa real. Esta change entrega essa validação de consumo e uma

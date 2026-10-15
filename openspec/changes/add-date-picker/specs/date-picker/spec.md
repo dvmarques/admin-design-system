@@ -30,7 +30,7 @@ O sistema MUST fornecer `AdsDatePicker` que permita selecionar uma data única, 
 
 ### Requirement: Seleção de intervalo
 
-`AdsDatePicker` com `mode="range"` MUST permitir selecionar uma data inicial e uma final, representadas por `{ start, end }`. O sistema MUST ordenar as extremidades quando a segunda data escolhida for anterior à primeira. No calendário, a primeira data ativada MUST ficar apenas pendente, sem alterar o valor, até a segunda; fechar o calendário antes MUST manter o valor anterior.
+`AdsDatePicker` com `mode="range"` MUST permitir selecionar uma data inicial e uma final, representadas por `{ start, end }`. O sistema MUST ordenar as extremidades quando a segunda data escolhida for anterior à primeira. No calendário, a primeira data ativada MUST ficar apenas pendente, sem alterar o valor, até a segunda; fechar o calendário antes MUST manter o valor anterior. A data pendente MUST ser anunciada por uma região `aria-live="polite"` visualmente oculta, com texto configurável em `labels.pendingStart`, e digitar uma data MUST descartá-la.
 
 #### Scenario: Escolher um intervalo no calendário
 
@@ -41,6 +41,16 @@ O sistema MUST fornecer `AdsDatePicker` que permita selecionar uma data única, 
 
 - **WHEN** a pessoa ativa uma data e fecha o calendário antes de ativar a segunda
 - **THEN** o valor não muda e o intervalo anterior continua destacado ao reabrir
+
+#### Scenario: Anúncio da data pendente
+
+- **WHEN** a pessoa ativa a primeira data do intervalo
+- **THEN** leitores de tela anunciam, sem mover o foco, a data inicial escolhida e que falta a data final
+
+#### Scenario: Digitar com data pendente
+
+- **WHEN** há uma data pendente no calendário e a pessoa confirma uma data digitada
+- **THEN** a data pendente é descartada e o próximo clique começa um novo intervalo
 
 #### Scenario: Extremidades invertidas
 

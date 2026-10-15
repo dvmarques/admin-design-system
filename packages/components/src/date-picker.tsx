@@ -47,6 +47,8 @@ export interface AdsDatePickerLabels {
 	endDate?: string;
 	nextMonth?: string;
 	openCalendar?: string;
+	/** Announced while a range waits for its second date; `{date}` is replaced by the pending start. */
+	pendingStart?: string;
 	previousMonth?: string;
 	startDate?: string;
 }
@@ -57,6 +59,7 @@ const defaultLabels: Required<AdsDatePickerLabels> = {
 	endDate: 'Data final',
 	nextMonth: 'Próximo mês',
 	openCalendar: 'Abrir calendário',
+	pendingStart: 'Início em {date}. Escolha a data final.',
 	previousMonth: 'Mês anterior',
 	startDate: 'Data inicial',
 };
@@ -138,6 +141,7 @@ interface CalendarProps {
 	max: string | undefined;
 	min: string | undefined;
 	onSelect: (iso: string) => void;
+	pendingText: string;
 	value: AdsDateRange;
 }
 
@@ -150,6 +154,7 @@ function DatePickerCalendar({
 	max,
 	min,
 	onSelect,
+	pendingText,
 	value,
 }: CalendarProps) {
 	const titleId = useId();
@@ -342,6 +347,9 @@ function DatePickerCalendar({
 					))}
 				</tbody>
 			</table>
+			<p aria-live="polite" className="ads-date-picker__status sr-only">
+				{pendingText}
+			</p>
 		</div>
 	);
 }
@@ -409,6 +417,8 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 	};
 
 	const commitTyped = (index: 0 | 1, text: string) => {
+		// Typing replaces any pending calendar start, so a later click starts a new range.
+		setAnchor(null);
 		const key = index === 0 ? 'start' : 'end';
 		const flag = (value: boolean) =>
 			setInvalid((previous) => (index === 0 ? [value, previous[1]] : [previous[0], value]));
@@ -452,6 +462,11 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 		commit({ start, end });
 		setOpen(false);
 	};
+
+	const pendingDate = parseIso(anchor);
+	const pendingText = pendingDate
+		? labels.pendingStart.replace('{date}', formatLongDate(locale, pendingDate))
+		: '';
 
 	const changeOpen = (next: boolean) => {
 		if (disabled) return;
@@ -529,6 +544,7 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 						max={maxIso}
 						min={minIso}
 						onSelect={selectFromCalendar}
+						pendingText={pendingText}
 						value={anchor === null ? current : { start: anchor, end: null }}
 					/>
 				}

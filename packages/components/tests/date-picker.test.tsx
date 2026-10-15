@@ -325,6 +325,56 @@ describe('AdsDatePicker range', () => {
 		).toHaveAttribute('aria-selected', 'true');
 	});
 
+	it('announces the pending start in a polite live region', async () => {
+		render(
+			<AdsDatePicker
+				defaultValue={{ start: null, end: null }}
+				labels={{ pendingStart: 'Start {date}. Pick the end date.' }}
+				locale="en-US"
+				mode="range"
+			/>,
+		);
+		const grid = await openCalendar();
+		const status = document.querySelector('.ads-date-picker__status')!;
+		expect(status).toHaveAttribute('aria-live', 'polite');
+		expect(status).toHaveClass('sr-only');
+		expect(status).toHaveTextContent(/^$/);
+		const day = (grid.querySelectorAll('button[data-date]') as NodeListOf<HTMLButtonElement>)[19]!;
+		fireEvent.click(day);
+		expect(status).toHaveTextContent(`Start ${day.getAttribute('aria-label')}. Pick the end date.`);
+	});
+
+	it('uses the pt-BR pending text by default', async () => {
+		render(<AdsDatePicker defaultValue={{ start: '2026-03-10', end: null }} mode="range" />);
+		const grid = await openCalendar();
+		fireEvent.click(within(grid).getByRole('button', { name: /(^|\s)20 de março/ }));
+		expect(document.querySelector('.ads-date-picker__status')).toHaveTextContent(
+			/^Início em .*20 de março de 2026\. Escolha a data final\.$/,
+		);
+	});
+
+	it('drops the pending start when a date is typed', async () => {
+		const onValueChange = vi.fn();
+		render(
+			<AdsDatePicker
+				defaultValue={{ start: '2026-03-01', end: '2026-03-28' }}
+				mode="range"
+				onValueChange={onValueChange}
+			/>,
+		);
+		const grid = await openCalendar();
+		fireEvent.click(within(grid).getByRole('button', { name: /(^|\s)20 de março/ }));
+		const [start] = screen.getAllByRole('textbox');
+		fireEvent.change(start!, { target: { value: '05/03/2026' } });
+		fireEvent.keyDown(start!, { key: 'Enter' });
+		expect(onValueChange).toHaveBeenLastCalledWith({ start: '2026-03-05', end: '2026-03-28' });
+		fireEvent.click(
+			within(screen.getByRole('grid')).getByRole('button', { name: /(^|\s)25 de março/ }),
+		);
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(onValueChange).not.toHaveBeenCalledWith({ start: '2026-03-20', end: '2026-03-25' });
+	});
+
 	it('clears the invalid mark only on the edited input', () => {
 		render(<AdsDatePicker defaultValue={{ start: null, end: null }} mode="range" />);
 		const [start, end] = screen.getAllByRole('textbox');

@@ -17,7 +17,8 @@ import {
 } from '@admin-ds/components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useEffect, useRef, useState, useTransition } from 'react';
+import { useEffect, useLayoutEffect, useRef, useState, useTransition } from 'react';
+import { waitForDemoBulkDelete } from './demo-bulk-delete';
 import type { Customer, CustomerStatus } from '../../../lib/data/customers';
 import {
 	customerPlans,
@@ -122,7 +123,18 @@ export function CustomersListing({
 	const [value, setValue] = useState(() => toValues(query));
 	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
 	const ownHrefs = useRef(new Set<string>());
+	const returnFocusRef = useRef<HTMLElement | null>(null);
+	const listFlowId = 'customers-list-flow';
 	const urlHref = customersHref(query, { state });
+
+	useLayoutEffect(() => {
+		const selectAll = document
+			.getElementById(listFlowId)
+			?.querySelector<HTMLInputElement>(
+				'thead .ads-smart-table-select-cell input[type="checkbox"]',
+			);
+		returnFocusRef.current = selectAll ?? null;
+	});
 
 	useEffect(() => () => clearTimeout(timer.current), []);
 	useEffect(() => {
@@ -170,7 +182,7 @@ export function CustomersListing({
 	async function confirmDemoDelete() {
 		setDeletePending(true);
 		setDeleteError(null);
-		await new Promise((resolve) => setTimeout(resolve, 0));
+		await waitForDemoBulkDelete();
 		setSelected([]);
 		setConfirming(false);
 		setDeletePending(false);
@@ -183,6 +195,7 @@ export function CustomersListing({
 	return (
 		<>
 			<AdsListFlow<Customer>
+				id={listFlowId}
 				bulkActions={
 					<AdsButton onClick={() => setConfirming(true)} size="sm" variant="danger">
 						Excluir selecionados
@@ -251,6 +264,7 @@ export function CustomersListing({
 				}}
 				open={confirming}
 				pending={deletePending}
+				returnFocusRef={returnFocusRef}
 				title={selectedCount === 1 ? 'Excluir 1 cliente?' : `Excluir ${selectedCount} clientes?`}
 			>
 				{deleteError ? <p role="alert">{deleteError}</p> : null}

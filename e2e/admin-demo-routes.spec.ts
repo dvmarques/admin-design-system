@@ -432,9 +432,66 @@ test.describe('clientes', () => {
 		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
 		await expect(dialog).toBeVisible();
 		await dialog.getByRole('button', { name: 'Excluir' }).click();
-		await expect(dialog).toHaveCount(0);
+		await expect.poll(async () => await dialog.count()).toBe(0);
 		await expect(page.getByText('Exclusão demonstrada com sucesso.')).toBeVisible();
 		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+	});
+
+	test('mantém o diálogo e o foco fora do body enquanto a exclusão está pendente', async ({
+		page,
+	}) => {
+		await page.goto('/clientes');
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await page
+			.getByRole('group', { name: 'Ações em massa' })
+			.getByRole('button', { name: 'Excluir selecionados' })
+			.click();
+
+		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		await dialog.getByRole('button', { name: 'Excluir' }).click();
+
+		await expect
+			.poll(async () =>
+				page.evaluate(() => {
+					const active = document.activeElement;
+					return active !== null && active !== document.body;
+				}),
+			)
+			.toBe(true);
+		await page.keyboard.press('Escape');
+		await expect(dialog).toBeVisible();
+
+		await expect.poll(async () => await dialog.count()).toBe(0);
+		await expect(page.getByText('Exclusão demonstrada com sucesso.')).toBeVisible();
+	});
+
+	test('limpar seleção move o foco para selecionar todas no cabeçalho', async ({ page }) => {
+		await page.goto('/clientes');
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await page.getByRole('button', { name: 'Limpar seleção' }).click();
+
+		const selectAll = page.locator('thead .ads-smart-table-select-cell input[type="checkbox"]');
+		await expect(selectAll).toBeFocused();
+		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+	});
+
+	test('devolve o foco ao checkbox selecionar todas após excluir', async ({ page }) => {
+		await page.goto('/clientes');
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await page
+			.getByRole('group', { name: 'Ações em massa' })
+			.getByRole('button', { name: 'Excluir selecionados' })
+			.click();
+
+		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		await dialog.getByRole('button', { name: 'Excluir' }).click();
+		await expect.poll(async () => await dialog.count()).toBe(0);
+
+		const selectAll = page.locator('thead .ads-smart-table-select-cell input[type="checkbox"]');
+		await expect(selectAll).toBeFocused();
+		await expect(page.evaluate(() => document.activeElement === document.body)).resolves.toBe(
+			false,
+		);
 	});
 
 	const queries = [

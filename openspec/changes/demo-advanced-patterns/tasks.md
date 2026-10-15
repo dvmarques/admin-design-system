@@ -19,6 +19,7 @@
 
 - [x] 4.1 E2E em funções ARIA e nomes acessíveis: filtrar, ordenar, paginar, selecionar, ocultar colunas, URLs inválidas, estado vazio, 375 px; axe nos temas claro e escuro.
 - [x] 4.2 Snapshots afetados: revisar e regerar no Windows. Regerados em `windows-latest` (run 38796637664); 4 PNGs atualizados (clientes e admin-demo claro/escuro), 2 inalterados (admin-shell-collapsed claro/escuro).
+- [x] 4.3 E2E do `pending` da exclusão em massa, `Escape` durante o pending, "Limpar seleção" e foco após excluir (`returnFocusRef`).
 
 ## 5. Documentação
 

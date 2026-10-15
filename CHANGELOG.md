@@ -10,6 +10,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-dashboard-patterns` - Adicionados cards de métrica e grid de painéis.
 - `add-admin-shell` - Adicionado `AdsAdminShell` responsivo, com sidebar
   recolhível e navegação móvel em drawer, substituindo `createAdminShell` e
   `AdminShellProps`, removidos da API pública.

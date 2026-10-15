@@ -19,5 +19,5 @@
 - [x] 4.1 Testes de comportamento: valores, tendência, `span`, headings e estados.
 - [x] 4.2 Testes de acessibilidade com axe e verificação de pacote/CSS.
 - [x] 4.3 Executar format, lint, build, typecheck, testes, E2E e `openspec validate --all --strict`.
-- [x] 4.4 Registrar que os snapshots visuais só têm baseline win32: no Linux (Chromium do Playwright, sem baseline) 7 testes de snapshot falharam por ausência de baseline linux e os 85 demais passaram; nenhum snapshot foi aceito ou criado.
+- [x] 4.4 Registrar que os snapshots visuais só têm baseline win32: no Linux (Chromium do Playwright, sem baseline) 7 testes de snapshot falharam por ausência de baseline linux e os 85 demais passaram; nenhum snapshot foi aceito ou criado. No Windows, o E2E completo com os baselines win32 passou (92 de 92), sem regerar baselines.
 - [x] 4.5 Revisar o diff, confirmar o escopo da Issue #60 e arquivar a change.

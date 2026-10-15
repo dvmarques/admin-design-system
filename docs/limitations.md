@@ -31,3 +31,8 @@ componentes administrativos.
   `Intl` do ambiente, e os textos de interface (`labels`) têm padrão em pt-BR.
   Sem baseline visual (`win32`) para ele, o comportamento é coberto por testes
   de componente e `axe`.
+- O `AdsFilterBar` só emite o estado do filtro: não consulta nem filtra dados,
+  não persiste na URL e não oferece filtros salvos nem operadores lógicos. O
+  texto é emitido a cada digitação, e o consumidor aplica debounce quando
+  necessário. Sem baseline visual (`win32`) para ele, o comportamento é coberto
+  por testes de componente, SSR e `axe`.

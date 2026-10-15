@@ -45,7 +45,8 @@ packages/
   distribuem CSS compilado.
 - `admin/` contém composições administrativas reutilizáveis, como AdminShell,
   SidebarLayout, PageHeader e os padrões de dashboard (`AdsMetricCard`,
-  `AdsDashboardGrid` e `AdsDashboardPanel`). Ele não inclui regras de
+  `AdsDashboardGrid` e `AdsDashboardPanel`) e a barra de filtros
+  (`AdsFilterBar`). Ele não inclui regras de
   negócio nem depende do roteamento do Next.js.
 
 ## Relação entre os diretórios

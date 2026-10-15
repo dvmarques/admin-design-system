@@ -341,3 +341,83 @@ horário, e `min`, `max` e `isDateDisabled` usam o mesmo formato.
 O locale padrão é `pt-BR`; use `locale`, `firstDayOfWeek` e `labels` para outros
 idiomas. A renderização inicial depende só das props, o que evita erros de
 hidratação; a data atual só é lida ao abrir o calendário.
+
+## Barra de filtros
+
+O `AdsFilterBar`, de `@admin-ds/admin`, compõe filtros de texto, seleção
+(`select`), seleção múltipla (`multiselect`), data (`date`) e intervalo
+(`date-range`), com os filtros ativos como chips removíveis e a ação "Limpar
+filtros". É um Client Component e o estado é do consumidor: `value` é um objeto
+por `id` de filtro e `onChange` recebe o objeto completo, sem chaves vazias. A
+barra não consulta dados, não lê a URL e não importa o roteador do Next.js.
+Em telas estreitas os campos ficam recolhidos atrás de um botão (use
+`defaultExpanded` ou `expanded`/`onExpandedChange`); `disabled` e `loading`
+cobrem os demais estados, e `labels` e `locale` ajustam os textos.
+
+O exemplo abaixo persiste o filtro em `searchParams`. A página (Server
+Component) repassa os parâmetros, e o Client Component os converte em valores e
+navega ao alterar. Como o texto é emitido a cada digitação, aplique debounce ao
+atualizar a URL em listagens reais.
+
+```tsx
+// app/usuarios/page.tsx (Server Component)
+export default async function Page({
+	searchParams,
+}: {
+	searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+	const params = await searchParams;
+	return <UsuariosFiltros params={params} />;
+}
+```
+
+```tsx
+// app/usuarios/usuarios-filtros.tsx
+'use client';
+
+import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@admin-ds/admin';
+import { usePathname, useRouter } from 'next/navigation';
+
+const filters: AdsFilterDefinition[] = [
+	{ id: 'q', type: 'text', label: 'Busca' },
+	{
+		id: 'status',
+		type: 'select',
+		label: 'Status',
+		options: [
+			{ value: 'ativo', label: 'Ativo' },
+			{ value: 'inativo', label: 'Inativo' },
+		],
+	},
+	{ id: 'periodo', type: 'date-range', label: 'Período' },
+];
+
+export function UsuariosFiltros({
+	params,
+}: {
+	params: Record<string, string | string[] | undefined>;
+}) {
+	const router = useRouter();
+	const pathname = usePathname();
+	const first = (key: string) => [params[key]].flat()[0];
+	const value: AdsFilterValues = {};
+	if (first('q')) value.q = first('q') as string;
+	if (first('status')) value.status = first('status') as string;
+	if (first('de') || first('ate')) {
+		value.periodo = { start: first('de') ?? null, end: first('ate') ?? null };
+	}
+
+	function onChange(next: AdsFilterValues) {
+		const query = new URLSearchParams();
+		if (typeof next.q === 'string') query.set('q', next.q);
+		if (typeof next.status === 'string') query.set('status', next.status);
+		if (next.periodo && !Array.isArray(next.periodo) && typeof next.periodo === 'object') {
+			if (next.periodo.start) query.set('de', next.periodo.start);
+			if (next.periodo.end) query.set('ate', next.periodo.end);
+		}
+		router.replace(`${pathname}?${query}`);
+	}
+
+	return <AdsFilterBar filters={filters} onChange={onChange} value={value} />;
+}
+```

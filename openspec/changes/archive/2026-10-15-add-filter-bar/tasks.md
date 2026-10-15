@@ -1,0 +1,28 @@
+## 1. API e tipos
+
+- [x] 1.1 Definir tipos públicos (`AdsFilterBarProps`, `AdsFilterBarLabels`, `AdsFilterDefinition` e variantes, `AdsFilterOption`, `AdsFilterValue`, `AdsFilterValues`) e utilitários internos (valor vazio, normalização, descrição dos chips). Concluída quando os tipos exportam sem `any` e passam no `typecheck`.
+- [x] 1.2 Exportar a API pelo ponto de entrada de `@admin-ds/admin`.
+
+## 2. Componente
+
+- [x] 2.1 Renderizar filtros `text`, `select`, `multiselect`, `date` e `date-range` com `AdsField`, `AdsInput`, `AdsSelect`, `AdsSelectionGroup`/`AdsCheckbox` e `AdsDatePicker`, em modo controlado, com `description` e `error`.
+- [x] 2.2 Implementar chips de filtros ativos, remoção individual, "Limpar filtros", anúncio da quantidade e gestão de foco.
+- [x] 2.3 Implementar recolhimento responsivo (botão com `aria-expanded`/`aria-controls`, `defaultExpanded`, `expanded`, `onExpandedChange`) sem leitura de `window`.
+- [x] 2.4 Implementar estados `disabled`, `loading` e sem filtros ativos.
+- [x] 2.5 Adicionar estilos `ads-filter-bar*` em `packages/admin/src/styles.css` com tokens, temas claro e escuro e container query, sem Tailwind.
+
+## 3. Testes e documentação
+
+- [x] 3.1 Testes de comportamento: cada tipo de filtro, chips, remoção, limpar tudo, foco, recolhimento, estados, controle estrito, SSR e `axe`; teste de que o pacote não importa `next/*`.
+- [x] 3.2 Story no Storybook (padrão, todos os tipos, recolhida/estreita, desabilitada, carregando, sem filtros, com erro, tema escuro) e atualização do teste de pacote do `admin`, se necessário.
+- [x] 3.3 Atualizar `docs/integration.md` (exemplo com `searchParams`), `docs/architecture.md` e `docs/limitations.md`.
+
+## 4. Validação
+
+- [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck`, `test:quiet`, `inspect:packages`, `openspec validate --all --strict` e `npm run test:e2e`, confirmando que nenhum teste E2E falha.
+- [x] 4.2 Registrar que os snapshots visuais têm baseline só `win32`: são pulados fora do Windows e esta change não adiciona nem altera baseline.
+- [x] 4.3 Confirmar que nenhuma dependência de runtime foi adicionada e que `apps/admin-demo` não foi alterado.
+- [x] 4.4 Validar o consumo do CSS compilado em uma aplicação Next.js (build de produção do `admin-demo` com página temporária não commitada, temas claro e escuro, sem erro de hidratação).
+- [x] 4.5 Atualizar o baseline de `@admin-ds/admin` em `docs/bundle-baseline.json` e `docs/bundle-baseline.md` somente se `inspect:packages` exigir.
+
+Notas de validação (ambiente Linux): o `test:e2e` passou com 85 testes; os 7 snapshots visuais falharam por não haver baseline `linux` (só `win32` existe, e eles são pulados na CI). Nenhum baseline foi criado ou alterado. O `openspec validate --all --strict` reporta um warning já existente em `spec/date-picker` (requisito com mais de 500 caracteres), fora do escopo desta change.

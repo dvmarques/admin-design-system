@@ -24,3 +24,8 @@ que media 33247) para incluir `AdsMetricCard`, `AdsDashboardGrid` e
 do dashboard (+3817) e exports (+621), sem novas dependências de runtime. O
 valor é medido com LF, como na CI; num checkout com CRLF o `styles.css` copiado
 para `dist/` soma 1 byte por linha.
+
+O baseline de `@admin-ds/admin` foi atualizado na change `add-filter-bar` de
+51658 para 83046 bytes (+31388) para incluir `AdsFilterBar`: módulo JavaScript,
+source maps e declarações (+27345), CSS da barra (+3.9 mil) e exports, sem
+novas dependências de runtime. O valor é medido com LF, como na CI.

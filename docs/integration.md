@@ -293,6 +293,36 @@ A biblioteca não acessa o roteador. `renderPage` (que recebe um botão pronto)
 continua funcionando, mas está obsoleto: envolver o botão em um link gera
 conteúdo interativo aninhado.
 
+### Filtros e tabela inteligente (`/clientes`)
+
+`/clientes` combina `AdsFilterBar` e `AdsSmartTable` (`apps/admin-demo`), usando
+só caminhos públicos. O estado vive na URL e é tratado no servidor:
+
+| Parâmetro   | Valor                                                                           |
+| ----------- | ------------------------------------------------------------------------------- |
+| `q`         | texto, no nome ou no e-mail                                                     |
+| `status`    | `Ativo`, `Pendente` ou `Inativo`                                                |
+| `plano`     | lista separada por vírgula (`Essencial,Empresarial`)                            |
+| `de`, `ate` | datas ISO `AAAA-MM-DD` de "cliente desde" (inclusivas)                          |
+| `ordem`     | `coluna:direção` (`name`, `status`, `plan`, `orders`, `since`; `asc` ou `desc`) |
+| `pagina`    | número da página                                                                |
+
+A página (Server Component) lê `searchParams` com `parseCustomersQuery`, aplica
+`applyCustomersQuery` (funções puras: mesma URL, mesmo HTML) e repassa linhas,
+filtros e ordenação. Valores inválidos são ignorados e a página é normalizada.
+O Client Component `customers-listing.tsx` mantém os filtros em estado local (com
+debounce no texto, como na seção "Barra de filtros"), grava filtros e ordenação
+com `router.replace` sem rolar a página e volta para a página 1 a cada mudança.
+Os links da paginação usam `renderPageLink` e preservam filtros e ordenação.
+Seleção de linhas e colunas ocultas são locais e não vão para a URL. A
+paginação fica abaixo do `AdsSmartTable`, e não na prop `pagination`, por causa
+da limitação registrada em `docs/limitations.md`.
+
+### Visão geral (`/`)
+
+Os indicadores usam `AdsMetricCard` (variação com ícone e texto) e o progresso e a
+atividade recente ficam em painéis de `AdsDashboardGrid` e `AdsDashboardPanel`.
+
 ### Parâmetros de URL do demo
 
 `?pagina=N` e `?estado=vazio|carregando|erro` em `/clientes` são **recursos do

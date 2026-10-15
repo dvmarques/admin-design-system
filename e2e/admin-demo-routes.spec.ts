@@ -177,20 +177,30 @@ test.describe('clientes', () => {
 		return page.getByRole('link', { name: `Página ${number}`, exact: true });
 	}
 
+	function bodyRows(page: Page) {
+		return customersTable(page).locator('tbody tr');
+	}
+
 	test('lista os registros da página e navega pela paginação', async ({ page }) => {
 		await page.goto('/clientes');
 
 		await expect(page.getByRole('heading', { level: 1, name: 'Clientes' })).toBeVisible();
 		await expect(customersTable(page).getByRole('row')).toHaveCount(6);
-		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
 		await expect(pageButton(page, 1)).toHaveAttribute('aria-current', 'page');
 
 		await pageButton(page, 2).click();
 
 		await expect(page).toHaveURL('/clientes?pagina=2');
 		await expect(pageButton(page, 2)).toHaveAttribute('aria-current', 'page');
-		await expect(customersTable(page).getByRole('cell', { name: 'Eduardo Pires' })).toBeVisible();
-		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toHaveCount(0);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Eduardo Pires', exact: true }),
+		).toBeVisible();
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toHaveCount(0);
 	});
 
 	for (const [value, expected] of [
@@ -206,14 +216,125 @@ test.describe('clientes', () => {
 			await page.goto(value === undefined ? '/clientes' : `/clientes?pagina=${value}`);
 
 			await expect(pageButton(page, expected)).toHaveAttribute('aria-current', 'page');
-			await expect(customersTable(page).getByRole('row')).not.toHaveCount(0);
+			await expect(bodyRows(page)).not.toHaveCount(0);
 		});
 	}
 
-	test('estado vazio substitui a tabela e oferece a volta à lista', async ({ page }) => {
+	test('filtra pela busca, guarda o filtro na URL e volta para a página 1', async ({ page }) => {
+		await page.goto('/clientes?pagina=3');
+
+		await page.getByRole('textbox', { name: 'Busca' }).fill('mariana');
+
+		await expect(page).toHaveURL('/clientes?q=mariana');
+		await expect(bodyRows(page)).toHaveCount(1);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
+		await expect(page.getByText('1 cliente encontrado')).toBeVisible();
+		await expect(page.getByRole('button', { name: /Remover filtro Busca: mariana/ })).toBeVisible();
+	});
+
+	test('filtra por status e limpa os filtros', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await page.getByRole('combobox', { name: 'Status' }).selectOption('Inativo');
+
+		await expect(page).toHaveURL('/clientes?status=Inativo');
+		const rows = await bodyRows(page).count();
+		expect(rows).toBeGreaterThan(0);
+		await expect(customersTable(page).getByText('Ativo', { exact: true })).toHaveCount(0);
+
+		await page.getByRole('button', { name: 'Limpar filtros' }).click();
+
+		await expect(page).toHaveURL('/clientes');
+		await expect(bodyRows(page)).toHaveCount(5);
+	});
+
+	test('aplica filtros da URL de forma determinística no servidor', async ({ page }) => {
+		const url = '/clientes?status=Ativo&plano=Empresarial,Essencial&de=2022-01-01&ate=2023-12-31';
+		await page.goto(url);
+		const first = await customersTable(page).locator('tbody').innerText();
+		await page.reload();
+
+		expect(await customersTable(page).locator('tbody').innerText()).toBe(first);
+		expect(first).not.toBe('');
+		await expect(page.getByRole('textbox', { name: 'Busca' })).toHaveValue('');
+		await expect(page.getByRole('button', { name: /Remover filtro Status: Ativo/ })).toBeVisible();
+	});
+
+	test('ordena pelos cabeçalhos, alterna a direção e preserva a ordenação na paginação', async ({
+		page,
+	}) => {
+		await page.goto('/clientes');
+		const sortByName = customersTable(page).getByRole('button', { name: 'Nome' });
+
+		await sortByName.click();
+		await expect(page).toHaveURL('/clientes?ordem=name%3Aasc');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'Nome' })).toHaveAttribute(
+			'aria-sort',
+			'ascending',
+		);
+		await expect(bodyRows(page).first()).toContainText('Beatriz Almeida');
+
+		await pageButton(page, 2).click();
+		await expect(page).toHaveURL('/clientes?ordem=name%3Aasc&pagina=2');
+
+		await customersTable(page).getByRole('button', { name: 'Nome' }).click();
+		await expect(page).toHaveURL('/clientes?ordem=name%3Adesc');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'Nome' })).toHaveAttribute(
+			'aria-sort',
+			'descending',
+		);
+	});
+
+	test('ordenação e filtros inválidos na URL são ignorados', async ({ page }) => {
+		await page.goto('/clientes?ordem=email:asc&status=Desconhecido&de=ontem&plano=x');
+
+		await expect(bodyRows(page)).toHaveCount(5);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
+		await expect(page.getByText('Nenhum filtro ativo')).toBeVisible();
+	});
+
+	test('seleciona linhas e anuncia a quantidade', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		await expect(page.getByText('1 linha selecionada')).toBeVisible();
+
+		await page
+			.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' })
+			.press('Space');
+		await expect(page.getByText('5 linhas selecionadas')).toBeVisible();
+	});
+
+	test('oculta e mostra colunas, sem ocultar o nome', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await page.getByRole('button', { name: 'Colunas' }).click();
+		await page.getByRole('checkbox', { name: 'E-mail' }).press('Space');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'E-mail' })).toHaveCount(0);
+		await expect(page.getByRole('checkbox', { name: 'Nome' })).toBeDisabled();
+
+		await page.getByRole('checkbox', { name: 'E-mail' }).press('Space');
+		await expect(customersTable(page).getByRole('columnheader', { name: 'E-mail' })).toBeVisible();
+	});
+
+	test('filtros sem resultado mostram o estado vazio e a ação de limpar', async ({ page }) => {
+		await page.goto('/clientes?q=zzz-sem-resultado');
+
+		await expect(page.getByText('Nenhum cliente encontrado')).toBeVisible();
+		await expect(page.getByRole('textbox', { name: 'Busca' })).toHaveValue('zzz-sem-resultado');
+		await page.getByRole('link', { name: 'Limpar filtros' }).click();
+
+		await expect(page).toHaveURL('/clientes');
+		await expect(bodyRows(page)).toHaveCount(5);
+	});
+
+	test('estado vazio exibe a mensagem e oferece a volta à lista', async ({ page }) => {
 		await page.goto('/clientes?estado=vazio');
 
-		await expect(page.getByRole('table')).toHaveCount(0);
 		await expect(page.getByText('Nenhum cliente encontrado')).toBeVisible();
 		await expect(page.getByText('Nenhum cliente corresponde à seleção atual.')).toBeVisible();
 		await expect(page.getByRole('link', { name: 'Ver todos os clientes' })).toHaveAttribute(
@@ -222,50 +343,66 @@ test.describe('clientes', () => {
 		);
 	});
 
-	test('estado de erro é anunciado e oferece tentar novamente', async ({ page }) => {
+	test('estado de erro é anunciado e permite tentar novamente', async ({ page }) => {
 		await page.goto('/clientes?estado=erro');
 
 		await expect(
 			page.getByRole('alert').filter({ hasText: 'Não foi possível carregar os clientes' }),
 		).toBeVisible();
-		await expect(page.getByRole('table')).toHaveCount(0);
-		await expect(page.getByRole('link', { name: 'Tentar novamente' })).toHaveAttribute(
-			'href',
-			'/clientes',
-		);
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toHaveCount(0);
+
+		await page.getByRole('button', { name: 'Tentar novamente' }).click();
+
+		await expect(page).toHaveURL('/clientes');
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
 	});
 
 	test('estado carregando preserva a estrutura sem valores dos registros', async ({ page }) => {
 		await page.goto('/clientes?estado=carregando');
 
-		await expect(page.locator('[aria-busy="true"]')).toHaveCount(1);
-		await expect(customersTable(page)).toBeVisible();
-		await expect(customersTable(page).getByRole('columnheader')).toHaveCount(6);
-		await expect(page.getByRole('status', { name: 'Carregando clientes' })).toHaveCount(1);
+		await expect(customersTable(page)).toHaveAttribute('aria-busy', 'true');
+		await expect(page.getByRole('status').filter({ hasText: 'Carregando clientes' })).toHaveCount(
+			1,
+		);
 		await expect(page.getByText('Mariana Costa')).toHaveCount(0);
+		await expect(bodyRows(page)).toHaveCount(5);
 		const cellTexts = await customersTable(page).locator('tbody td').allTextContents();
-		expect(cellTexts).toHaveLength(30);
 		expect(cellTexts.join('').trim()).toBe('');
 	});
 
 	test('?estado desconhecido exibe os dados normais', async ({ page }) => {
 		await page.goto('/clientes?estado=desconhecido');
 
-		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
+		await expect(
+			customersTable(page).getByRole('cell', { name: 'Mariana Costa', exact: true }),
+		).toBeVisible();
 	});
 
 	test('a tabela rola dentro do contêiner em 375 px sem rolar a página', async ({ page }) => {
 		await page.setViewportSize({ width: 375, height: 812 });
 		await page.goto('/clientes');
 
-		const overflow = await page.locator('.ads-table-container').evaluate((element) => ({
-			content: element.scrollWidth,
-			visible: element.clientWidth,
-		}));
+		const overflow = await page
+			.getByRole('region', { name: 'Clientes', exact: true })
+			.evaluate((element) => ({
+				content: element.scrollWidth,
+				visible: element.clientWidth,
+			}));
 		expect(overflow.content).toBeGreaterThan(overflow.visible);
 	});
 
-	for (const query of ['', '?estado=vazio', '?estado=carregando', '?estado=erro']) {
+	const queries = [
+		'',
+		'?estado=vazio',
+		'?estado=carregando',
+		'?estado=erro',
+		'?status=Ativo&plano=Essencial&ordem=name:asc',
+	];
+	for (const query of queries) {
 		test(`a página não rola na horizontal em 375 px (${query || 'com dados'})`, async ({
 			page,
 		}) => {

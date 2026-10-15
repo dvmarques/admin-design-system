@@ -1,12 +1,5 @@
-import {
-	AdsCard,
-	AdsCardContent,
-	AdsCardHeader,
-	AdsList,
-	AdsListItem,
-	AdsProgress,
-	AdsTypography,
-} from '@admin-ds/components';
+import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@admin-ds/admin';
+import { AdsList, AdsListItem, AdsProgress, AdsTypography } from '@admin-ds/components';
 import type {
 	OverviewActivity,
 	OverviewIndicator,
@@ -40,51 +33,45 @@ export function OverviewContent({ indicators, progress, activity }: OverviewCont
 					</AdsTypography>
 					<div className="demo-metrics-grid">
 						{indicators.map((indicator) => (
-							<AdsCard
-								aria-labelledby={`indicator-${indicator.id}`}
+							<AdsMetricCard
+								aria-label={indicator.label}
+								change={indicator.change}
+								description={indicator.note}
 								key={indicator.id}
 								role="group"
-							>
-								<AdsCardHeader>
-									<AdsTypography as="h3" id={`indicator-${indicator.id}`} variant="heading4">
-										{indicator.label}
+								title={indicator.label}
+								trend={indicator.trend}
+								value={indicator.value}
+							/>
+						))}
+					</div>
+				</section>
+
+				<AdsDashboardGrid className="demo-section">
+					<AdsDashboardPanel
+						description="Andamento das metas e importações."
+						span={2}
+						title="Progresso"
+					>
+						<div className="demo-progress-list">
+							{progress.map((item) => (
+								<div className="demo-progress-item" key={item.id}>
+									<AdsTypography>
+										{item.label}: {item.value}%
 									</AdsTypography>
-								</AdsCardHeader>
-								<AdsCardContent>
-									<p className="demo-metric-value">{indicator.value}</p>
-									<AdsTypography variant="muted">{indicator.note}</AdsTypography>
-								</AdsCardContent>
-							</AdsCard>
-						))}
-					</div>
-				</section>
-
-				<section aria-labelledby="overview-progress" className="demo-section">
-					<AdsTypography as="h2" id="overview-progress" variant="heading2">
-						Progresso
-					</AdsTypography>
-					<div className="demo-progress-list">
-						{progress.map((item) => (
-							<div className="demo-progress-item" key={item.id}>
-								<AdsTypography>
-									{item.label}: {item.value}%
-								</AdsTypography>
-								<AdsProgress label={item.label} value={item.value} />
-							</div>
-						))}
-					</div>
-				</section>
-
-				<section aria-labelledby="overview-activity" className="demo-section">
-					<AdsTypography as="h2" id="overview-activity" variant="heading2">
-						Atividade recente
-					</AdsTypography>
-					<AdsList aria-label="Atividade recente">
-						{activity.map((item) => (
-							<AdsListItem key={item.id}>{item.text}</AdsListItem>
-						))}
-					</AdsList>
-				</section>
+									<AdsProgress label={item.label} value={item.value} />
+								</div>
+							))}
+						</div>
+					</AdsDashboardPanel>
+					<AdsDashboardPanel span={2} title="Atividade recente">
+						<AdsList aria-label="Atividade recente">
+							{activity.map((item) => (
+								<AdsListItem key={item.id}>{item.text}</AdsListItem>
+							))}
+						</AdsList>
+					</AdsDashboardPanel>
+				</AdsDashboardGrid>
 			</div>
 		</div>
 	);

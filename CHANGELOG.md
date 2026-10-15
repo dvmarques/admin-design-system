@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `demo-advanced-patterns` - O `admin-demo` passa a demonstrar `AdsFilterBar` e
+  `AdsSmartTable` em `/clientes`, com filtros, ordenação e página em
+  `searchParams` tratados no servidor, e `AdsMetricCard`, `AdsDashboardGrid` e
+  `AdsDashboardPanel` na visão geral. Fluxos compostos (#61) pendentes.
 - `add-smart-table` - Adicionado `AdsSmartTable` em `@admin-ds/admin`: tabela
   controlada com ordenação (`aria-sort`), seleção de linhas com estado
   indeterminado, visibilidade de colunas, estados de carregamento, vazio e erro,

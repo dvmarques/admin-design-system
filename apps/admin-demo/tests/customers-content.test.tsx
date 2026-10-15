@@ -3,16 +3,21 @@ import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { CustomersContent } from '../app/(admin)/clientes/customers-content';
 import { customers, customersPageSize } from '../lib/data/customers';
-import type { CustomersState } from '../lib/customers-query';
+import {
+	applyCustomersQuery,
+	parseCustomersQuery,
+	type CustomersState,
+} from '../lib/customers-query';
 
 vi.mock('next/navigation', () => ({
-	useRouter: () => ({ push: vi.fn() }),
+	useRouter: () => ({ replace: vi.fn() }),
 	usePathname: () => '/clientes',
 }));
 
-const pageCount = Math.ceil(customers.length / customersPageSize);
-
-function renderListing(state: CustomersState, page = 1) {
+function renderListing(state: CustomersState, params: Record<string, string> = {}, page = 1) {
+	const query = parseCustomersQuery(params);
+	const matches = applyCustomersQuery(query, customers);
+	const pageCount = Math.max(1, Math.ceil(matches.length / customersPageSize));
 	const start = (page - 1) * customersPageSize;
 	return renderToString(
 		<AdsAdminShell>
@@ -20,8 +25,10 @@ function renderListing(state: CustomersState, page = 1) {
 				page={page}
 				pageCount={pageCount}
 				placeholderRows={customersPageSize}
-				rows={customers.slice(start, start + customersPageSize)}
+				query={query}
+				rows={matches.slice(start, start + customersPageSize)}
 				state={state}
+				total={matches.length}
 			/>
 		</AdsAdminShell>,
 	);
@@ -41,47 +48,73 @@ describe('CustomersContent', () => {
 		},
 	);
 
-	it('shows the table with the page rows and marks the current page', () => {
-		const view = parse(renderListing('dados', 2));
+	it('shows the smart table with the page rows, the filter bar and the current page', () => {
+		const view = parse(renderListing('dados', {}, 2));
 
-		expect(view.querySelector('table[aria-label="Clientes"]')).not.toBeNull();
+		expect(view.querySelector('table')?.textContent).toContain('Clientes');
 		expect(view.querySelectorAll('tbody tr')).toHaveLength(customersPageSize);
 		expect(view.textContent).toContain(customers[customersPageSize]?.name);
 		expect(view.textContent).not.toContain(customers[0]?.name);
-		const current = view.querySelector('a[aria-current="page"]');
-		expect(current?.getAttribute('aria-label')).toBe('Página 2');
+		expect(view.querySelector('[aria-label="Filtros de clientes"]')).not.toBeNull();
+		expect(view.querySelector('a[aria-current="page"]')?.getAttribute('aria-label')).toBe(
+			'Página 2',
+		);
 	});
 
-	it('replaces the table with an empty state that offers a way back', () => {
+	it('keeps filters and sorting in the pagination links', () => {
+		const view = parse(renderListing('dados', { status: 'Ativo', ordem: 'orders:desc' }));
+
+		const next = view.querySelector('a[aria-label="Página 2"]');
+		expect(next?.getAttribute('href')).toBe('/clientes?status=Ativo&ordem=orders%3Adesc&pagina=2');
+	});
+
+	it('marks the sorted column and applies the filter on the server', () => {
+		const view = parse(renderListing('dados', { status: 'Inativo', ordem: 'name:asc' }));
+
+		expect(view.querySelector('th[aria-sort="ascending"]')?.textContent).toContain('Nome');
+		const inactive = customers.filter((customer) => customer.status === 'Inativo');
+		expect(view.querySelectorAll('tbody tr')).toHaveLength(inactive.length);
+		expect(view.textContent).toContain(`${inactive.length} clientes encontrados`);
+	});
+
+	it('shows an empty state that offers to clear the filters when nothing matches', () => {
+		const view = parse(renderListing('dados', { q: 'zzz-sem-resultado' }));
+
+		expect(view.textContent).toContain('Nenhum cliente encontrado');
+		expect(view.querySelector('a[href="/clientes"]')?.textContent).toBe('Limpar filtros');
+		expect(view.querySelector('[aria-label="Filtros de clientes"]')).not.toBeNull();
+	});
+
+	it('offers a way back to the full list in the empty state', () => {
 		const view = parse(renderListing('vazio'));
 
-		expect(view.querySelector('table')).toBeNull();
 		expect(view.textContent).toContain('Nenhum cliente encontrado');
+		expect(view.querySelectorAll('tbody tr')).toHaveLength(1);
 		expect(view.querySelector('a[href="/clientes"]')?.textContent).toBe('Ver todos os clientes');
 	});
 
-	it('keeps the table structure with a single labelled placeholder while loading', () => {
+	it('keeps the table structure with a single labelled status while loading', () => {
 		const view = parse(renderListing('carregando'));
 
-		expect(view.querySelector('[aria-busy="true"]')).not.toBeNull();
-		expect(view.querySelector('table[aria-label="Clientes"]')).not.toBeNull();
-		expect(view.querySelectorAll('th[scope="col"]')).toHaveLength(6);
-		expect(view.querySelectorAll('[role="status"]')).toHaveLength(1);
-		expect(view.querySelector('[role="status"]')?.getAttribute('aria-label')).toBe(
-			'Carregando clientes',
-		);
+		expect(view.querySelector('table[aria-busy="true"]')).not.toBeNull();
+		expect(view.querySelectorAll('th[scope="col"]').length).toBeGreaterThanOrEqual(6);
+		expect(view.querySelectorAll('tbody tr')).toHaveLength(customersPageSize);
+		expect(view.textContent).toContain('Carregando clientes');
 		for (const customer of customers) {
 			expect(view.textContent).not.toContain(customer.name);
 		}
 	});
 
-	it('announces the error with a retry link', () => {
+	it('announces the error with a retry button', () => {
 		const view = parse(renderListing('erro'));
 
-		expect(view.querySelector('table')).toBeNull();
 		expect(view.querySelector('[role="alert"]')?.textContent).toContain(
 			'Não foi possível carregar os clientes',
 		);
-		expect(view.querySelector('a[href="/clientes"]')?.textContent).toBe('Tentar novamente');
+		expect(
+			[...view.querySelectorAll('button')].some(
+				(button) => button.textContent === 'Tentar novamente',
+			),
+		).toBe(true);
 	});
 });

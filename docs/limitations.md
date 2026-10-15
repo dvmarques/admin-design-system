@@ -44,3 +44,11 @@ componentes administrativos.
   Client Component: `cell` e `getRowId` são funções e não atravessam a fronteira
   de um Server Component. Sem baseline visual (`win32`) para ele, o
   comportamento é coberto por testes de componente, SSR e `axe`.
+- O `admin-demo` ainda não demonstra a listagem com ações em massa nem o
+  formulário em etapas, que dependem dos fluxos compostos da issue #61. A
+  seleção de linhas do `AdsSmartTable` é exibida sem barra de ações.
+- Com a prop `pagination`, o `AdsSmartTable` pode estourar a largura da página em
+  telas estreitas (375 px): o `ul` com `min-w-max` de `AdsPagination` alarga a
+  coluna do grid do componente. O demo evita isso renderizando `AdsPagination`
+  abaixo da tabela. A correção (por exemplo, `min-width: 0` em
+  `.ads-smart-table-pagination`) pede uma issue própria na biblioteca.

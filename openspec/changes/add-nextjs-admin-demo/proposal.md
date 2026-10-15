@@ -43,7 +43,8 @@ os padrões avançados (item 9 do roadmap).
   navegação por links no App Router, sobrescrita de tokens e os parâmetros
   `?estado` e `?pagina` como recursos do demo, não API do design system; registrar em
   `docs/limitations.md` que `AdsNav` e `AdsBreadcrumb` não aceitam elemento de
-  link customizado e que a sobrescrita com `:root[data-theme=…]` documentada em
+  link customizado, que `AdsPagination.renderPage` sempre envolve o `<button>` da
+  página (divergência da spec `pagination`, a corrigir em change própria) e que a sobrescrita com `:root[data-theme=…]` documentada em
   `packages/tokens/README.md` não alcança overlays em portal; adicionar a entrada da change ao `CHANGELOG.md`; atualizar
   `docs/roadmap.md` (item 8), o passo de próximos passos do `README.md` e a
   árvore de `e2e/` em `docs/quality.md`, que deve listar todos os arquivos

@@ -93,6 +93,9 @@ pacote e deve mostrar o produto integrado.
   cada página em um `<button>`, e um link contendo botão é interativo aninhado
   (HTML inválido, falha no `axe-core`). O demo usa um Client Component fino que
   passa `onPageChange` e chama `router.push` com `?pagina=N`.
+  Isso diverge do cenário "Integração com Next.js" da spec `pagination`, que
+  promete renderizar links fornecidos pela aplicação; a divergência é registrada
+  em `docs/limitations.md` e corrigida na biblioteca em change própria.
 
 ### 3. Dados e estados
 

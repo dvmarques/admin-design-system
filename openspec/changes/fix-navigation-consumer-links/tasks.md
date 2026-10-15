@@ -10,6 +10,6 @@
 
 - [x] 2.1 `npx prettier --write` nos arquivos alterados.
 - [x] 2.2 `npm run lint`, `npm run typecheck`, `npm run test:quiet` e `npm run build`.
-- [ ] 2.3 `CI=1 npm run test:e2e` (fora do Windows, snapshots sem baseline são pulados).
+- [x] 2.3 `CI=1 npm run test:e2e` (fora do Windows, snapshots sem baseline são pulados).
 - [x] 2.4 `openspec validate --all --strict`.
 - [x] 2.5 Tarefa final: `npm run format`.

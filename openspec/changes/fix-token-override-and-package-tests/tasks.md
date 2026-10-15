@@ -22,6 +22,6 @@
 
 - [x] 5.1 Executar `npx prettier --write` nos arquivos alterados; verificar que conclui sem erros.
 - [x] 5.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` e `npm run build`; verificar que passam.
-- [ ] 5.3 Executar `CI=1 npm run test:e2e` (snapshots sem baseline são pulados fora do Windows; relatar que a validação visual não foi feita).
+- [x] 5.3 Executar `CI=1 npm run test:e2e` (snapshots sem baseline são pulados fora do Windows; relatar que a validação visual não foi feita).
 - [x] 5.4 Executar `openspec validate --all --strict`; verificar que passa.
 - [x] 5.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.

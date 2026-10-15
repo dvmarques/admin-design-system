@@ -24,3 +24,9 @@ componentes administrativos.
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`
   literal usar outra coisa.
+- O `AdsDatePicker` não tem seletor de hora, fusos horários nem calendários não
+  gregorianos. Um intervalo pode conter datas desabilitadas, e as regras de
+  negócio sobre isso ficam com a aplicação. Os nomes e o formato dependem do
+  `Intl` do ambiente, e os textos de interface (`labels`) têm padrão em pt-BR.
+  Sem baseline visual (`win32`) para ele, o comportamento é coberto por testes
+  de componente e `axe`.

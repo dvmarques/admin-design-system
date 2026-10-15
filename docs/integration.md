@@ -291,3 +291,20 @@ porque os overlays (dialog, drawer e toast) são renderizados em um `div` com
 `data-theme` próprio, fora do `<html>`. Uma sobrescrita em `:root[data-theme=…]`
 não os alcança. O demo não traz essa sobrescrita de forma permanente: ela é
 injetada apenas no teste `e2e/admin-demo-all-routes.spec.ts`, com `--ads-color-text`.
+
+## Seletor de data
+
+O `AdsDatePicker` seleciona uma data ou um intervalo (`mode="range"`) por
+digitação ou calendário. É um Client Component e funciona dentro de `AdsField`.
+Os valores são strings ISO `AAAA-MM-DD` (intervalo: `{ start, end }`), sem fuso
+horário, e `min`, `max` e `isDateDisabled` usam o mesmo formato.
+
+```tsx
+<AdsField label="Período">
+	<AdsDatePicker mode="range" onValueChange={setPeriodo} value={periodo} />
+</AdsField>
+```
+
+O locale padrão é `pt-BR`; use `locale`, `firstDayOfWeek` e `labels` para outros
+idiomas. A renderização inicial depende só das props, o que evita erros de
+hidratação; a data atual só é lida ao abrir o calendário.

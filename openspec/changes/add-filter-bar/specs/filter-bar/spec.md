@@ -72,7 +72,8 @@ O sistema MUST fornecer `AdsFilterBar` em `@admin-ds/admin`, que renderize os fi
 - **WHEN** a pessoa remove um item pelo teclado ou aciona "Limpar filtros"
 - **THEN** o foco vai para o próximo item ou, se não houver, para o anterior
 - **AND** se não restar nenhum item e os campos estiverem recolhidos pelo estado do componente (`expanded` falso), o foco vai para o botão "Filtros"; quando esse botão não está visível (tela larga) ou os campos estão expandidos, o foco vai para o primeiro controle da barra
-- **AND** quando o consumidor atualiza `value` de forma assíncrona (por exemplo, com `startTransition`), renders intermediários com o valor antigo não consomem o foco pendente: ele só é aplicado quando a lista de chips muda, e é descartado se a pessoa alterar um campo antes disso
+- **AND** o foco só é reposto quando se perdeu com a remoção do botão acionado (o botão sumiu e o foco ficou no documento); enquanto esse botão existir, como quando o consumidor aplica o `value` em etapas ou de forma assíncrona (por exemplo, com `startTransition`), a barra aguarda
+- **AND** o foco pendente é descartado se a pessoa alterar um campo ou levar o foco para outro lugar, e a barra não move o foco se o `value` nunca chegar ou mudar por fora sem remover o botão acionado
 
 ### Requirement: Teclado e semântica
 

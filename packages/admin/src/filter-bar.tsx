@@ -18,7 +18,9 @@ import {
 	useLayoutEffect,
 	useRef,
 	useState,
+	type FocusEvent,
 	type HTMLAttributes,
+	type MouseEvent,
 	type ReactNode,
 } from 'react';
 import { classNames } from './class-names.js';
@@ -113,8 +115,16 @@ export interface AdsFilterBarProps extends Omit<
 	'onChange' | 'children'
 > {
 	filters: readonly AdsFilterDefinition[];
+	/**
+	 * Valores atuais. Cada emissão de `onChange` parte deste `value`: aplique as mudanças em
+	 * sequência (atualize o estado na hora ou use um updater funcional), senão duas ações
+	 * seguidas antes do novo `value` fazem a segunda desfazer a primeira.
+	 */
 	value: AdsFilterValues;
-	/** Recebe os valores completos, sem as chaves de filtros vazios. */
+	/**
+	 * Recebe os valores completos, sem as chaves de filtros vazios, calculados a partir do
+	 * `value` atual.
+	 */
 	onChange: (value: AdsFilterValues) => void;
 	disabled?: boolean;
 	/** Mantém a barra utilizável, define `aria-busy` e anuncia `labels.loading`. */
@@ -251,27 +261,30 @@ export function AdsFilterBar({
 	const toggleRef = useRef<HTMLButtonElement>(null);
 	const chipsRef = useRef<HTMLUListElement>(null);
 	const sectionRef = useRef<HTMLElement>(null);
-	/** Foco pendente após remover ou limpar: posição do chip e chaves dos chips no clique. */
-	const pendingFocus = useRef<{ index: number; chipKeys: string } | null>(null);
+	/** Foco pendente após remover ou limpar: o botão acionado e a posição do chip. */
+	const pendingFocus = useRef<{ trigger: HTMLElement; index: number } | null>(null);
 
 	const chips = collectChips(filters, value, locale, labels);
-	const chipKeys = chips.map((chip) => chip.key).join('\n');
 	const count = chips.length;
 	const countText = fill(count === 1 ? labels.activeCountOne : labels.activeCountOther, { count });
 
 	useLayoutEffect(() => {
 		const pending = pendingFocus.current;
 		if (pending === null) return;
-		// Consumidores assíncronos (por exemplo, com startTransition) podem renderizar de novo com o
-		// value antigo; o foco pendente só é usado quando a lista de chips muda de fato.
-		if (pending.chipKeys === chipKeys) return;
-		pendingFocus.current = null;
-		// Não rouba o foco se a pessoa já foi para fora da barra enquanto o value chegava.
-		const section = sectionRef.current;
-		const active = section?.ownerDocument.activeElement;
-		if (section && active && active !== section.ownerDocument.body && !section.contains(active)) {
+		const doc = pending.trigger.ownerDocument;
+		const active = doc.activeElement;
+		const focusLost = !active || active === doc.body;
+		// A pessoa levou o foco para fora da barra: o pendente é descartado.
+		if (!focusLost && !sectionRef.current?.contains(active)) {
+			pendingFocus.current = null;
 			return;
 		}
+		// Enquanto o botão acionado existe, o foco não se perdeu: o consumidor pode aplicar o value
+		// em etapas (por exemplo, com startTransition) ou rejeitá-lo. Tenta de novo no próximo render.
+		if (pending.trigger.isConnected) return;
+		pendingFocus.current = null;
+		// Só repõe o foco se ele se perdeu com a remoção do botão.
+		if (!focusLost) return;
 		const index = pending.index;
 		const buttons = chipsRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
 		if (buttons?.length) {
@@ -305,8 +318,8 @@ export function AdsFilterBar({
 		onChange(result);
 	}
 
-	function removeChip(chip: ActiveChip, index: number) {
-		pendingFocus.current = { index, chipKeys };
+	function removeChip(chip: ActiveChip, index: number, event: MouseEvent<HTMLElement>) {
+		pendingFocus.current = { trigger: event.currentTarget, index };
 		if (chip.optionValue === undefined) {
 			commit(chip.filterId, undefined);
 		} else {
@@ -317,9 +330,21 @@ export function AdsFilterBar({
 		}
 	}
 
-	function clearAll() {
-		pendingFocus.current = { index: -1, chipKeys };
+	function clearAll(event: MouseEvent<HTMLElement>) {
+		pendingFocus.current = { trigger: event.currentTarget, index: -1 };
 		onChange({});
+	}
+
+	function handleTriggerBlur(event: FocusEvent<HTMLElement>) {
+		const trigger = event.currentTarget;
+		if (pendingFocus.current?.trigger !== trigger) return;
+		// A remoção do botão também pode gerar blur; só descarta se ele continua na página, ou seja,
+		// se a pessoa levou o foco para outro lugar (inclusive uma área vazia).
+		queueMicrotask(() => {
+			if (trigger.isConnected && pendingFocus.current?.trigger === trigger) {
+				pendingFocus.current = null;
+			}
+		});
 	}
 
 	function toggle() {
@@ -474,7 +499,8 @@ export function AdsFilterBar({
 										aria-label={fill(labels.removeFilter, { label: chip.label, value: chip.text })}
 										className="ads-filter-bar-chip-remove"
 										disabled={disabled}
-										onClick={() => removeChip(chip, index)}
+										onBlur={handleTriggerBlur}
+										onClick={(event) => removeChip(chip, index, event)}
 										type="button"
 									>
 										<AdsIcon name="close" size="sm" />
@@ -485,6 +511,7 @@ export function AdsFilterBar({
 						<AdsButton
 							className="ads-filter-bar-clear"
 							disabled={disabled}
+							onBlur={handleTriggerBlur}
 							onClick={clearAll}
 							size="sm"
 							variant="ghost"

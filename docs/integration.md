@@ -358,13 +358,17 @@ Em telas estreitas os campos ficam recolhidos atrás de um botão (use
 cobrem os demais estados, e `labels` e `locale` ajustam os textos.
 
 O exemplo abaixo persiste o filtro em `searchParams`. A página (Server
-Component) repassa os parâmetros, e o Client Component os converte em valores e
-navega ao alterar. O texto fica em estado local, inicializado pelos parâmetros,
-para aparecer a cada tecla; a URL só é atualizada depois de uma pausa
-(debounce). "Limpar filtros" e os demais filtros atualizam a URL na hora,
-cancelando a atualização pendente do texto. `router.replace` usa
-`{ scroll: false }` para a página não voltar ao topo, e `useTransition`, que é
-opcional, liga o `loading` da barra enquanto a navegação acontece.
+Component) repassa os parâmetros, e o Client Component guarda os valores em
+estado local, inicializado por eles, e atualiza esse estado na hora a cada
+`onChange`. Cada emissão de `onChange` parte do `value` atual; se o
+consumidor só aplicasse o valor quando a URL mudasse, duas ações seguidas antes
+da navegação fariam a segunda desfazer a primeira. A URL é atualizada depois:
+a digitação usa uma pausa (debounce), e "Limpar filtros" e os demais filtros
+navegam na hora, cancelando a atualização pendente do texto. Se a URL mudar por
+fora (por exemplo, com Voltar), os parâmetros são reaplicados.
+`router.replace` usa `{ scroll: false }` para a página não voltar ao topo, e
+`useTransition`, que é opcional, liga o `loading` da barra enquanto a navegação
+acontece.
 
 ```tsx
 // app/usuarios/page.tsx (Server Component)
@@ -404,6 +408,18 @@ const filters: AdsFilterDefinition[] = [
 
 const first = (params: Params, key: string) => [params[key]].flat()[0];
 
+function fromParams(params: Params): AdsFilterValues {
+	const value: AdsFilterValues = {};
+	const q = first(params, 'q');
+	if (q) value.q = q;
+	const status = first(params, 'status');
+	if (status) value.status = status;
+	const start = first(params, 'de');
+	const end = first(params, 'ate');
+	if (start || end) value.periodo = { start: start ?? null, end: end ?? null };
+	return value;
+}
+
 function toQuery(next: AdsFilterValues) {
 	const query = new URLSearchParams();
 	if (typeof next.q === 'string') query.set('q', next.q);
@@ -419,34 +435,36 @@ export function UsuariosFiltros({ params }: { params: Params }) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const [pending, startTransition] = useTransition();
-	// O texto fica em estado local para aparecer a cada tecla; a URL vem depois.
-	const [text, setText] = useState(first(params, 'q') ?? '');
+	// Estado local aplicado na hora: o texto aparece a cada tecla e ações seguidas partem
+	// sempre do valor mais recente. A URL é atualizada depois.
+	const [value, setValue] = useState(() => fromParams(params));
 	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+	const ownQueries = useRef(new Set<string>());
+	const urlQuery = toQuery(fromParams(params));
 	useEffect(() => () => clearTimeout(timer.current), []);
-
-	const value: AdsFilterValues = text ? { q: text } : {};
-	const status = first(params, 'status');
-	if (status) value.status = status;
-	const start = first(params, 'de');
-	const end = first(params, 'ate');
-	if (start || end) value.periodo = { start: start ?? null, end: end ?? null };
+	useEffect(() => {
+		// URL alterada fora deste componente (por exemplo, com Voltar): reaplica os parâmetros.
+		if (ownQueries.current.delete(urlQuery)) return;
+		setValue(fromParams(params));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [urlQuery]);
 
 	function navigate(next: AdsFilterValues) {
 		const query = toQuery(next);
+		if (query !== urlQuery) ownQueries.current.add(query);
 		startTransition(() => {
 			router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
 		});
 	}
 
 	function onChange(next: AdsFilterValues) {
-		const nextText = typeof next.q === 'string' ? next.q : '';
-		const { q: _nextQ, ...nextOthers } = next;
-		const { q: _q, ...others } = value;
+		const { q: nextText = '', ...nextOthers } = next;
+		const { q: text = '', ...others } = value;
 		// Só a digitação usa debounce; "Limpar filtros" e os outros filtros navegam na hora.
 		const cleared = Object.keys(next).length === 0;
 		const typing = !cleared && nextText !== text && toQuery(nextOthers) === toQuery(others);
 		clearTimeout(timer.current);
-		setText(nextText);
+		setValue(next);
 		if (typing) {
 			timer.current = setTimeout(() => navigate(next), 300);
 			return;

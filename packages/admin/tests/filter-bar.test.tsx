@@ -224,6 +224,57 @@ describe('AdsFilterBar', () => {
 		expect(document.activeElement).toBe(screen.getByRole('button', { name: /^Filtros/ }));
 	});
 
+	it('keeps the pending focus of "Limpar filtros" through a partial value and then the empty value', () => {
+		for (const expanded of [false, true]) {
+			const onChange = vi.fn();
+			const bar = (value: AdsFilterValues) => (
+				<AdsFilterBar expanded={expanded} filters={filters} onChange={onChange} value={value} />
+			);
+			const { rerender, unmount } = render(bar({ status: 'ativo', q: 'ana' }));
+			fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+			expect(onChange).toHaveBeenLastCalledWith({});
+			// O consumidor aplica o texto na hora e o restante depois (por exemplo, via URL).
+			rerender(bar({ status: 'ativo' }));
+			rerender(bar({}));
+			expect(document.activeElement).toBe(
+				expanded
+					? screen.getByLabelText('Busca')
+					: screen.getByRole('button', { name: /^Filtros/ }),
+			);
+			unmount();
+		}
+	});
+
+	it('does not move focus when the value never arrives and the person moved away', async () => {
+		const onChange = vi.fn();
+		const bar = (value: AdsFilterValues) => (
+			<AdsFilterBar defaultExpanded filters={filters} onChange={onChange} value={value} />
+		);
+		const { rerender } = render(bar({ status: 'ativo', perfis: ['admin'] }));
+		const trigger = screen.getByRole('button', { name: 'Remover filtro Status: Ativo' });
+		trigger.focus();
+		fireEvent.click(trigger);
+		// O consumidor rejeita a mudança e a pessoa clica em uma área vazia.
+		trigger.blur();
+		await Promise.resolve();
+		expect(document.activeElement).toBe(document.body);
+		rerender(bar({ perfis: ['admin'] }));
+		expect(document.activeElement).toBe(document.body);
+	});
+
+	it('does not move focus when an external value changes the chips while the trigger remains', () => {
+		const onChange = vi.fn();
+		const bar = (value: AdsFilterValues) => (
+			<AdsFilterBar defaultExpanded filters={filters} onChange={onChange} value={value} />
+		);
+		const { rerender } = render(bar({ status: 'ativo', perfis: ['admin'] }));
+		fireEvent.click(screen.getByRole('button', { name: 'Remover filtro Status: Ativo' }));
+		const other = screen.getByRole('button', { name: 'Remover filtro Perfis: Administrador' });
+		other.focus();
+		rerender(bar({ status: 'ativo', perfis: ['admin'], criado: '2026-03-15' }));
+		expect(document.activeElement).toBe(other);
+	});
+
 	it('drops the pending focus when the person edits a field before the value arrives', () => {
 		const onChange = vi.fn();
 		const initial: AdsFilterValues = { status: 'ativo' };

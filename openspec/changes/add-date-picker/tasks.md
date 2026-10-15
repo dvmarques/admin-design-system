@@ -21,7 +21,7 @@
 
 ## 4. Validação
 
-- [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck`, `test:quiet` e `openspec validate --all --strict`. O `test:e2e` roda, mas os 7 snapshots visuais falham fora do Windows (ver 4.2); os demais 85 testes passam.
-- [x] 4.2 Registrar que os snapshots visuais (baseline `win32`) são pulados fora do Windows.
+- [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck`, `test:quality` e `openspec validate --all --strict`, e o `test:e2e` completo no Windows, com os snapshots visuais `win32`, sem baseline alterado.
+- [x] 4.2 Registrar que os snapshots visuais têm baseline só `win32`: são pulados na CI e falham em execução local fora do Windows.
 - [x] 4.3 Confirmar que nenhuma dependência de runtime foi adicionada.
-- [ ] 4.4 Validar o consumo do CSS compilado do date picker em uma aplicação Next.js: pendente, pois a demonstração em `apps/admin-demo` é a issue #62; até lá o CSS é coberto pelo build, `inspect:css` e pelos testes de componente.
+- [x] 4.4 Validar o consumo do CSS compilado do date picker em uma aplicação Next.js: página temporária no `apps/admin-demo` (build de produção, temas claro e escuro, sem erro de hidratação no console). A validação revelou que as classes de fundo, texto e borda da base do dia sobrepunham as dos estados selecionado, intervalo e hoje no CSS gerado; essas classes passam a ficar só em cada estado, com teste de regressão.

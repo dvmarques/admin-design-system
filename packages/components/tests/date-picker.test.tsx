@@ -248,3 +248,22 @@ describe('AdsDatePicker range', () => {
 		).toHaveAttribute('aria-selected', 'false');
 	});
 });
+
+describe('AdsDatePicker day styles', () => {
+	it('keeps the base day classes from overriding the selected, range and today states', async () => {
+		render(
+			<AdsDatePicker defaultValue={{ start: '2026-03-10', end: '2026-03-14' }} mode="range" />,
+		);
+		const grid = await openCalendar();
+		const day = (n: number) =>
+			within(grid).getByRole('button', { name: new RegExp(`(^|\\s)${n} de março de 2026`) });
+		const conflicting = ['bg-transparent', 'text-text', 'hover:bg-surface-hover'];
+		for (const edge of [day(10), day(14)]) {
+			expect(edge).toHaveClass('bg-primary', 'border-transparent');
+			expect(edge).not.toHaveClass(...conflicting);
+		}
+		expect(day(12)).toHaveClass('bg-surface-selected', 'text-on-surface-selected');
+		expect(day(12)).not.toHaveClass(...conflicting);
+		expect(day(20)).toHaveClass('bg-transparent', 'text-text', 'border-transparent');
+	});
+});

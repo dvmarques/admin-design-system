@@ -46,11 +46,11 @@ A renderização inicial depende apenas de props e `Intl`; a data atual só é l
 
 ### 8. Estilos
 
-Classes `ads-date-picker*` e utilitários Tailwind estáticos compilados no CSS distribuído, com tokens existentes (superfícies, foco, `--ads-color-*`) e suporte aos temas claro e escuro. Em telas estreitas o popover usa a largura disponível.
+Classes `ads-date-picker*` e utilitários Tailwind estáticos compilados no CSS distribuído, com tokens existentes (superfícies, foco, `--ads-color-*`) e suporte aos temas claro e escuro. Em telas estreitas o popover usa a largura disponível. Fundo, texto e borda do dia ficam só nas classes de cada estado (normal, hoje, intervalo e extremidade), nunca na base: utilitários do mesmo atributo competem pela ordem do CSS gerado, e uma classe da base sobreporia a do estado.
 
 ## Risks / Trade-offs
 
 - Intervalos podem conter datas desabilitadas; o consumidor valida regras de negócio.
 - Sem seletor de hora e de fuso; o calendário gregoriano é o único suportado.
-- Os snapshots visuais só têm baseline `win32` e são pulados fora do Windows; esta change não adiciona baseline visual novo e o comportamento é coberto por testes de componente e `axe`.
+- Os snapshots visuais só têm baseline `win32` e são pulados na CI; esta change não adiciona baseline visual novo e o comportamento é coberto por testes de componente e `axe`.
 - Impacto no bundle: pequeno acréscimo no JS/CSS do pacote, dentro da margem do baseline.

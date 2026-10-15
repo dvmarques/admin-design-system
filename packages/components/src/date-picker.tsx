@@ -117,12 +117,12 @@ function normalizeRange(value: string | null | undefined | AdsDateRange): AdsDat
 }
 
 const dayBase =
-	'ads-date-picker__day inline-flex h-9 w-9 items-center justify-center rounded-md border border-transparent bg-transparent text-sm text-text [font-family:inherit] transition-colors duration-[var(--ads-motion-normal)] hover:bg-surface-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:cursor-not-allowed aria-disabled:opacity-40 aria-disabled:hover:bg-transparent max-md:h-10 max-md:w-10';
+	'ads-date-picker__day inline-flex h-9 w-9 items-center justify-center rounded-md border text-sm [font-family:inherit] transition-colors duration-[var(--ads-motion-normal)] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring aria-disabled:cursor-not-allowed aria-disabled:opacity-40 aria-disabled:hover:bg-transparent max-md:h-10 max-md:w-10';
 const dayStates = {
-	edge: 'bg-primary text-[var(--ads-color-on-primary)] hover:bg-primary-hover',
-	inRange: 'bg-surface-selected text-on-surface-selected',
-	today: 'border-border-strong',
-	normal: '',
+	edge: 'border-transparent bg-primary text-[var(--ads-color-on-primary)] hover:bg-primary-hover',
+	inRange: 'border-transparent bg-surface-selected text-on-surface-selected',
+	today: 'border-border-strong bg-transparent text-text hover:bg-surface-hover',
+	normal: 'border-transparent bg-transparent text-text hover:bg-surface-hover',
 } as const;
 
 interface CalendarProps {
@@ -242,7 +242,7 @@ function DatePickerCalendar({
 				</AdsButton>
 				<div
 					aria-live="polite"
-					className="ads-date-picker__title text-sm font-semibold capitalize text-text"
+					className="ads-date-picker__title text-sm font-semibold text-text first-letter:uppercase"
 					id={titleId}
 				>
 					{formatMonthTitle(locale, focused.year, focused.month)}

@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-date-picker` - Adicionado `AdsDatePicker`, de data única e intervalo,
+  com entrada digitada, calendário acessível por teclado, locale configurável
+  (`pt-BR` padrão) e integração com `AdsField`, sem dependência de runtime.
+  `AdsIconName` ganha `calendar`, `chevronLeft` e `chevronRight`.
 - `add-admin-shell` - Adicionado `AdsAdminShell` responsivo, com sidebar
   recolhível e navegação móvel em drawer, substituindo `createAdminShell` e
   `AdminShellProps`, removidos da API pública.

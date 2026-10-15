@@ -59,9 +59,48 @@ O projeto MUST manter uma aplicação Next.js de referência que consuma os arte
 #### Scenario: Paginação de clientes por links
 
 - **WHEN** a página `/clientes` é exibida
-- **THEN** cada página da paginação é um link com nome acessível "Página N", a página atual expõe `aria-current="page"` e acionar uma página navega para `/clientes?pagina=N`
+- **THEN** cada página da paginação é um link com nome acessível "Página N", a página atual expõe `aria-current="page"` e acionar uma página navega para `/clientes?pagina=N`, preservando os filtros e a ordenação ativos
 
 #### Scenario: Navegação e breadcrumb por links
 
 - **WHEN** o catálogo de componentes exibe `AdsNav` e `AdsBreadcrumb` com destinos
 - **THEN** cada destino é um único link do `next/link`, sem elemento interativo aninhado
+
+### Requirement: Padrões avançados na aplicação de referência
+
+A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`, mantendo filtros, ordenação e página de `/clientes` em `searchParams`, tratados de forma determinística no servidor, com dados estáticos.
+
+#### Scenario: Filtros e ordenação de clientes na URL
+
+- **WHEN** a página `/clientes` é aberta com `?q=`, `?status=`, `?plano=`, `?de=`, `?ate=` ou `?ordem=`
+- **THEN** o servidor exibe somente os clientes correspondentes, na ordem pedida, e abrir a mesma URL de novo produz o mesmo resultado
+
+#### Scenario: Parâmetros inválidos são normalizados
+
+- **WHEN** a URL contém filtro desconhecido, data inválida, ordenação por coluna inexistente ou página fora do intervalo
+- **THEN** o parâmetro inválido é ignorado ou normalizado e a página não falha
+
+#### Scenario: Alterar filtro ou ordenação
+
+- **WHEN** a pessoa altera um filtro ou a ordenação em `/clientes`
+- **THEN** a URL é atualizada, a lista é recalculada no servidor e a paginação volta para a página 1
+
+#### Scenario: Filtros sem resultado
+
+- **WHEN** os filtros não correspondem a nenhum cliente
+- **THEN** a tabela exibe um estado vazio com a ação "Limpar filtros" e a barra de filtros continua utilizável
+
+#### Scenario: Visão geral com padrões de dashboard
+
+- **WHEN** a página `/` é exibida
+- **THEN** os indicadores usam `AdsMetricCard` e o progresso e a atividade recente ficam em painéis de `AdsDashboardGrid`, com títulos e nomes acessíveis estáveis
+
+#### Scenario: Listagem com ações em massa no demo
+
+- **WHEN** a pessoa seleciona linhas em `/clientes`
+- **THEN** a barra de ações em massa aparece e a exclusão demonstrada exige confirmação destrutiva, sem persistir dados
+
+#### Scenario: Formulário em etapas no demo
+
+- **WHEN** a página `/clientes/novo` é exibida
+- **THEN** o cadastro usa `AdsStepForm` com validação por etapa e confirmação final sem enviar dados

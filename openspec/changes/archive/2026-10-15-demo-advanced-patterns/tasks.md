@@ -38,4 +38,4 @@
 
 ## 8. Achado da biblioteca
 
-- [x] 8.1 Registrar em `docs/limitations.md` que a prop `pagination` do `AdsSmartTable` estoura a largura em 375 px; o demo usa `AdsPagination` abaixo da tabela. Correção na biblioteca fica para issue própria.
+- [x] 8.1 Corrigir o estouro de largura em 375 px do `AdsSmartTable` com paginação (`grid-template-columns: minmax(0, 1fr)`), na change `fix-smart-table-narrow-overflow`; o demo usa a prop `pagination`.

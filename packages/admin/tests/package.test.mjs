@@ -67,4 +67,5 @@ test('smart table styles use public tokens, a focusable scroll region and the se
 		/\.ads-smart-table \.ads-table-row\[data-selected\]\s*\{[^}]*--ads-color-primary/,
 	);
 	assert.match(css, /\.ads-smart-table-columns-panel\[hidden\]\s*\{[^}]*display:\s*none/);
+	assert.match(css, /\.ads-smart-table\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
 });

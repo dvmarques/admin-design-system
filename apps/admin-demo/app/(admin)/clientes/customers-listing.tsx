@@ -8,7 +8,7 @@ import {
 	type AdsSmartTableColumn,
 	type AdsSmartTableSort,
 } from '@admin-ds/admin';
-import { AdsBadge, AdsEmptyState, AdsPagination, type AdsBadgeVariant } from '@admin-ds/components';
+import { AdsBadge, AdsEmptyState, type AdsBadgeVariant } from '@admin-ds/components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
@@ -160,63 +160,59 @@ export function CustomersListing({
 	const hasFilters = Object.keys(value).length > 0;
 
 	return (
-		<>
-			<AdsSmartTable<Customer>
-				caption="Clientes"
-				columns={columns}
-				emptyState={
-					<AdsEmptyState
-						actions={
-							<Link className="demo-action-link" href="/clientes">
-								{hasFilters ? 'Limpar filtros' : 'Ver todos os clientes'}
-							</Link>
-						}
-						description="Nenhum cliente corresponde à seleção atual."
-						title="Nenhum cliente encontrado"
-					/>
-				}
-				error={
-					state === 'erro'
-						? 'Ocorreu uma falha ao buscar a lista. Tente novamente em instantes.'
-						: undefined
-				}
-				filters={
-					<AdsFilterBar
-						aria-label="Filtros de clientes"
-						filters={filters}
-						loading={pending}
-						onChange={onFiltersChange}
-						value={value}
-					/>
-				}
-				getRowId={(row) => row.id}
-				getRowLabel={(row) => row.name}
-				hiddenColumnIds={hidden}
-				labels={{
-					loading: 'Carregando clientes',
-					errorTitle: 'Não foi possível carregar os clientes',
-				}}
-				loading={state === 'carregando'}
-				loadingRows={placeholderRows}
-				onHiddenColumnsChange={setHidden}
-				onRetry={() => navigate(toQuery(value, query.sort), 'dados')}
-				onSelectionChange={setSelected}
-				onSortChange={onSortChange}
-				rows={state === 'vazio' ? [] : rows}
-				selectedIds={selected}
-				sort={query.sort}
-			/>
-			{pageCount > 1 ? (
-				<div className="demo-table-pagination">
-					<AdsPagination
-						page={page}
-						pageCount={pageCount}
-						renderPageLink={(target, props) => (
-							<Link href={customersHref(query, { page: target, state })} {...props} />
-						)}
-					/>
-				</div>
-			) : null}
-		</>
+		<AdsSmartTable<Customer>
+			caption="Clientes"
+			columns={columns}
+			emptyState={
+				<AdsEmptyState
+					actions={
+						<Link className="demo-action-link" href="/clientes">
+							{hasFilters ? 'Limpar filtros' : 'Ver todos os clientes'}
+						</Link>
+					}
+					description="Nenhum cliente corresponde à seleção atual."
+					title="Nenhum cliente encontrado"
+				/>
+			}
+			error={
+				state === 'erro'
+					? 'Ocorreu uma falha ao buscar a lista. Tente novamente em instantes.'
+					: undefined
+			}
+			filters={
+				<AdsFilterBar
+					aria-label="Filtros de clientes"
+					filters={filters}
+					loading={pending}
+					onChange={onFiltersChange}
+					value={value}
+				/>
+			}
+			getRowId={(row) => row.id}
+			getRowLabel={(row) => row.name}
+			hiddenColumnIds={hidden}
+			labels={{
+				loading: 'Carregando clientes',
+				errorTitle: 'Não foi possível carregar os clientes',
+			}}
+			loading={state === 'carregando'}
+			loadingRows={placeholderRows}
+			onHiddenColumnsChange={setHidden}
+			onRetry={() => navigate(toQuery(value, query.sort), 'dados')}
+			onSelectionChange={setSelected}
+			onSortChange={onSortChange}
+			{...(pageCount > 1 && {
+				pagination: {
+					page,
+					pageCount,
+					renderPageLink: (target: number, props: object) => (
+						<Link href={customersHref(query, { page: target, state })} {...props} />
+					),
+				},
+			})}
+			rows={state === 'vazio' ? [] : rows}
+			selectedIds={selected}
+			sort={query.sort}
+		/>
 	);
 }

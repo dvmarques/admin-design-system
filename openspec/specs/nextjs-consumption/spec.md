@@ -44,7 +44,7 @@ Os componentes MUST produzir marcação inicial determinística para as mesmas p
 
 ### Requirement: Aplicação de referência
 
-O projeto MUST manter uma aplicação Next.js de referência que consuma os artefatos distribuíveis como uma aplicação externa, organizada em múltiplas rotas com layout compartilhado e validada quanto a renderização no servidor e hidratação em cada rota. Quando os itens navegam, a aplicação MUST usar `renderLink` em `AdsNav` e `AdsBreadcrumb` e `renderPageLink` em `AdsPagination` com `next/link`, sem conteúdo interativo aninhado, consumindo a biblioteca apenas por caminhos públicos. A aplicação MUST demonstrar os padrões avançados de administração já disponíveis (`AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`), mantendo filtros, ordenação e página de `/clientes` em `searchParams`, tratados de forma determinística no servidor, com dados estáticos.
+O projeto MUST manter uma aplicação Next.js de referência que consuma os artefatos distribuíveis como uma aplicação externa, organizada em múltiplas rotas com layout compartilhado e validada quanto a renderização no servidor e hidratação em cada rota. Quando os itens navegam, a aplicação MUST usar `renderLink` em `AdsNav` e `AdsBreadcrumb` e `renderPageLink` em `AdsPagination` com `next/link`, sem conteúdo interativo aninhado, consumindo a biblioteca apenas por caminhos públicos.
 
 #### Scenario: Contrato público é verificado
 
@@ -65,6 +65,10 @@ O projeto MUST manter uma aplicação Next.js de referência que consuma os arte
 
 - **WHEN** o catálogo de componentes exibe `AdsNav` e `AdsBreadcrumb` com destinos
 - **THEN** cada destino é um único link do `next/link`, sem elemento interativo aninhado
+
+### Requirement: Padrões avançados na aplicação de referência
+
+A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`, mantendo filtros, ordenação e página de `/clientes` em `searchParams`, tratados de forma determinística no servidor, com dados estáticos.
 
 #### Scenario: Filtros e ordenação de clientes na URL
 

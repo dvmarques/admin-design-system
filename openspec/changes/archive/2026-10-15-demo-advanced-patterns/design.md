@@ -15,12 +15,11 @@
   ocultas em estado local, que não vão para a URL.
 - **Ordenação por `AdsSmartTable`**: `ordem` tem coluna e direção; clicar de novo
   alterna e a terceira ação remove, como o componente já emite.
-- **Paginação**: `AdsPagination` com `renderPageLink` e `next/link` abaixo do
-  `AdsSmartTable`, com o `href` construído a partir dos parâmetros atuais. Não
-  usa a prop `pagination` porque, dentro do grid do componente, o `ul` com
-  `min-w-max` alarga a coluna e a página rola na horizontal em 375 px. É um
-  achado da biblioteca (PR #67), registrado em `docs/limitations.md`; a correção
-  fica para uma issue própria, pois esta change não altera `packages/*`.
+- **Paginação**: `pagination.renderPageLink` do `AdsSmartTable` com `next/link`,
+  com o `href` construído a partir dos parâmetros atuais. Em 375 px a página
+  rolava na horizontal por um achado da biblioteca (coluna do grid do
+  `AdsSmartTable` alargada pelo `min-w-max` da paginação), corrigido na change
+  `fix-smart-table-narrow-overflow`.
 - **Visão geral**: `AdsMetricCard` com variação e tendência (ícone e texto) e
   `AdsDashboardGrid`/`AdsDashboardPanel` para progresso e atividade. Os
   contratos E2E atuais (títulos, grupos e barras de progresso) são mantidos.

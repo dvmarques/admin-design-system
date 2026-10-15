@@ -10,6 +10,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `fix-smart-table-narrow-overflow` - Corrigido o estouro de largura da página em
+  telas estreitas com paginação no `AdsSmartTable` (coluna do grid com
+  `minmax(0, 1fr)`); sem mudança de API.
 - `demo-advanced-patterns` - O `admin-demo` passa a demonstrar `AdsFilterBar` e
   `AdsSmartTable` em `/clientes`, com filtros, ordenação e página em
   `searchParams` tratados no servidor, e `AdsMetricCard`, `AdsDashboardGrid` e

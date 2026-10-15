@@ -313,10 +313,9 @@ filtros e ordenação. Valores inválidos são ignorados e a página é normaliz
 O Client Component `customers-listing.tsx` mantém os filtros em estado local (com
 debounce no texto, como na seção "Barra de filtros"), grava filtros e ordenação
 com `router.replace` sem rolar a página e volta para a página 1 a cada mudança.
-Os links da paginação usam `renderPageLink` e preservam filtros e ordenação.
-Seleção de linhas e colunas ocultas são locais e não vão para a URL. A
-paginação fica abaixo do `AdsSmartTable`, e não na prop `pagination`, por causa
-da limitação registrada em `docs/limitations.md`.
+Os links da paginação usam `renderPageLink`, pela prop `pagination` do
+`AdsSmartTable`, e preservam filtros e ordenação. Seleção de linhas e colunas
+ocultas são locais e não vão para a URL.
 
 ### Visão geral (`/`)
 

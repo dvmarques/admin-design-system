@@ -604,6 +604,8 @@
 	 */
 	.ads-smart-table {
 		display: grid;
+		/* minmax(0, ...) impede que a paginação (min-w-max) alargue a coluna além do contêiner. */
+		grid-template-columns: minmax(0, 1fr);
 		gap: 0.75rem;
 		color: var(--ads-color-text);
 		font-family: var(--ads-typography-font-family);

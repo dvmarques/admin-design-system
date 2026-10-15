@@ -329,13 +329,12 @@ export function AdsSmartTable<Row>({
 					{caption}
 				</AdsTableCaption>
 				<AdsTableHead>
-					<AdsTableRow className="hover:bg-transparent">
+					<AdsTableRow>
 						{selectable ? (
 							<AdsTableHeader className="ads-smart-table-select-cell">
 								{selectionMode === 'multiple' ? (
 									<span ref={selectAllRef}>
 										<AdsCheckbox
-											aria-checked={partiallySelected ? 'mixed' : allSelected}
 											aria-label={labels.selectAll}
 											checked={allSelected}
 											disabled={blocked || selectableIds.length === 0}
@@ -384,14 +383,14 @@ export function AdsSmartTable<Row>({
 				</AdsTableHead>
 				<AdsTableBody>
 					{body ? (
-						<AdsTableRow className="hover:bg-transparent">
+						<AdsTableRow>
 							<AdsTableCell className="ads-smart-table-state" colSpan={colSpan}>
 								{body}
 							</AdsTableCell>
 						</AdsTableRow>
 					) : loading ? (
 						Array.from({ length: Math.max(1, loadingRows) }, (_, index) => (
-							<AdsTableRow className="hover:bg-transparent" key={index}>
+							<AdsTableRow key={index}>
 								{Array.from({ length: colSpan }, (_, cell) => (
 									<AdsTableCell key={cell}>
 										<AdsSkeleton className="ads-smart-table-skeleton" />

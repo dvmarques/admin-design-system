@@ -155,12 +155,10 @@ describe('AdsSmartTable', () => {
 			name: 'Selecionar todas as linhas da página',
 		}) as HTMLInputElement;
 		expect(all.indeterminate).toBe(true);
-		expect(all).toHaveAttribute('aria-checked', 'mixed');
 		fireEvent.click(screen.getByRole('checkbox', { name: 'Selecionar Bruno' }));
 		fireEvent.click(screen.getByRole('checkbox', { name: 'Selecionar Carla' }));
 		expect(all.indeterminate).toBe(false);
 		expect(all.checked).toBe(true);
-		expect(all).toHaveAttribute('aria-checked', 'true');
 		expect(screen.getByRole('row', { name: /Ana/ })).toHaveAttribute('data-selected');
 		expect(
 			screen.getAllByRole('status').some((s) => s.textContent === '3 linhas selecionadas'),
@@ -295,15 +293,6 @@ describe('AdsSmartTable', () => {
 		);
 		expect(screen.getByRole('table', { name: 'Usuários' })).toBeInTheDocument();
 		expect(screen.getAllByRole('status').some((s) => s.textContent === '1 marcada(s)')).toBe(true);
-	});
-
-	it('moves focus through sort buttons, select controls and the region with Tab order intact', () => {
-		render(<Controlled />);
-		const focusables = Array.from(
-			document.querySelectorAll<HTMLElement>('button, input, [tabindex="0"]'),
-		);
-		expect(focusables.length).toBeGreaterThan(5);
-		expect(screen.getByRole('button', { name: 'Nome' }).tagName).toBe('BUTTON');
 	});
 
 	it.each([

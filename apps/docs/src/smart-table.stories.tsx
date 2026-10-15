@@ -40,7 +40,7 @@ const columns: AdsSmartTableColumn<User>[] = [
 
 const meta = {
 	title: 'Layout/SmartTable',
-	component: AdsSmartTable,
+	component: AdsSmartTable<User>,
 	tags: ['autodocs'],
 	parameters: {
 		layout: 'padded',
@@ -51,7 +51,7 @@ const meta = {
 			},
 		},
 	},
-} satisfies Meta<typeof AdsSmartTable>;
+} satisfies Meta<typeof AdsSmartTable<User>>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 

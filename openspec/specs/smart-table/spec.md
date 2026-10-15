@@ -1,6 +1,7 @@
 # smart-table Specification
 
 ## Purpose
+
 Permite listar dados administrativos com ordenação por coluna, seleção de linhas, visibilidade de colunas e estados de carregamento, vazio e erro, com todo o estado controlado pela aplicação consumidora.
 
 ## Requirements
@@ -65,7 +66,7 @@ Com `onSelectionChange`, `AdsSmartTable` MUST oferecer uma coluna de seleção c
 #### Scenario: Estado indeterminado
 
 - **WHEN** apenas parte das linhas selecionáveis da página está selecionada
-- **THEN** o checkbox do cabeçalho está indeterminado (`indeterminate` e `aria-checked="mixed"`); com todas selecionadas está marcado e sem nenhuma está desmarcado
+- **THEN** o checkbox do cabeçalho está indeterminado (propriedade `indeterminate`, exposta como "misto" pelo navegador); com todas selecionadas está marcado e sem nenhuma está desmarcado
 
 #### Scenario: Linha não selecionável
 

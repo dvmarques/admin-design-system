@@ -604,6 +604,8 @@
 	 */
 	.ads-smart-table {
 		display: grid;
+		/* minmax(0, 1fr): o min-content da paginação ou da tabela não alarga a grade. */
+		grid-template-columns: minmax(0, 1fr);
 		gap: 0.75rem;
 		color: var(--ads-color-text);
 		font-family: var(--ads-typography-font-family);
@@ -623,21 +625,16 @@
 	}
 
 	.ads-smart-table-columns {
-		position: relative;
 		margin-inline-start: auto;
 	}
 
+	/* Painel inline: ocupa uma linha inteira da barra e empurra a tabela, sem sobrepor. */
 	.ads-smart-table-columns-panel {
-		position: absolute;
-		inset-inline-end: 0;
-		z-index: 10;
-		min-width: 14rem;
-		margin-top: 0.25rem;
+		flex-basis: 100%;
 		border: 1px solid var(--ads-color-border);
 		border-radius: 0.5rem;
 		background-color: var(--ads-color-surface);
 		padding: 0.75rem;
-		box-shadow: var(--ads-elevation-md);
 	}
 
 	.ads-smart-table-columns-panel[hidden] {
@@ -684,8 +681,12 @@
 		color: var(--ads-color-primary);
 	}
 
+	/*
+	 * Largura não percentual: com o min-width: max-content da tabela, uma largura em % faria a
+	 * coluna de seleção valer essa fração da tabela inteira (1% de 52 px = 5200 px).
+	 */
 	.ads-smart-table-select-cell {
-		width: 1%;
+		width: 1px;
 		white-space: nowrap;
 	}
 
@@ -710,6 +711,12 @@
 	.ads-smart-table-pagination {
 		display: flex;
 		justify-content: flex-end;
+		min-width: 0;
+	}
+
+	/* A paginação rola dentro do próprio contêiner em vez de alargar a página. */
+	.ads-smart-table-pagination > .ads-pagination {
+		min-width: 0;
 	}
 
 	.ads-smart-table-visually-hidden,

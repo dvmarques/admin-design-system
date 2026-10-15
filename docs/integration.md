@@ -504,14 +504,30 @@ busca, ordena nem pagina dados, e as `rows` já chegam processadas. Como `cell` 
 - A tabela rola na horizontal dentro de uma região nomeada e focável por teclado,
   sem ocultar colunas. `labels` ajusta os textos (pt-BR por padrão).
 
+A página (Server Component) lê `searchParams`, consulta e ordena os dados e
+repassa `rows`, `page`, `pageCount`, `sort` e os próprios parâmetros. Os links
+de página e a ordenação partem dos parâmetros atuais e trocam só a própria
+chave, então filtros de um `AdsFilterBar` na mesma URL são preservados. Ordenar
+volta à primeira página (apaga `pagina`), e a URL não fica com `?` vazio. A
+seleção guarda ids de todas as páginas; o contador mostra quantas estão na
+página exibida, e o exemplo oferece um botão para limpá-la. Os helpers
+`withParams`, `formatReadableSearchQuery`, `applyPendingClearSelectionFocus` e
+`restoreFocusAfterClearSelection` abaixo espelham a lógica testada em
+`apps/admin-demo/lib/url-search-params.ts`, `clear-selection-pending-focus.ts` e
+`selection-clear-focus.ts` (referência para copiar na aplicação, não rota do
+demo).
+
 ```tsx
 // app/usuarios/usuarios-tabela.tsx
 'use client';
 
 import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
+import { AdsButton } from '@admin-ds/components';
 import Link from 'next/link';
-import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+
+type Params = Record<string, string | string[] | undefined>;
 
 interface Usuario {
 	id: string;
@@ -519,62 +535,149 @@ interface Usuario {
 	perfil: string;
 }
 
+function formatReadableSearchQuery(serialized: string) {
+	if (!serialized) return '';
+	return serialized.replace(/%3A/gi, ':');
+}
+
+// Parte dos parâmetros atuais e troca só as chaves informadas (null apaga a chave).
+function withParams(params: Params, changes: Record<string, string | null>) {
+	const query = new URLSearchParams();
+	for (const [key, value] of Object.entries(params)) {
+		for (const item of [value].flat()) if (item !== undefined) query.append(key, item);
+	}
+	for (const [key, value] of Object.entries(changes)) {
+		if (value === null) query.delete(key);
+		else query.set(key, value);
+	}
+	return formatReadableSearchQuery(query.toString());
+}
+
+function restoreFocusAfterClearSelection(
+	trigger: HTMLElement | null,
+	targets: {
+		selectAll?: HTMLInputElement | null;
+		scrollRegion?: HTMLElement | null;
+	},
+) {
+	if (!trigger || trigger.isConnected) return;
+	const active = document.activeElement;
+	const focusLost = !active || active === document.body;
+	if (!focusLost) return;
+	if (targets.selectAll && !targets.selectAll.disabled) {
+		targets.selectAll.focus();
+		return;
+	}
+	targets.scrollRegion?.focus();
+}
+
+function applyPendingClearSelectionFocus(
+	pending: HTMLElement | null,
+	root: HTMLElement | null,
+): 'idle' | 'waiting' | 'dropped' | 'applied' {
+	if (pending === null) return 'idle';
+	const active = document.activeElement;
+	const focusLost = !active || active === document.body;
+	if (!focusLost && root && !root.contains(active)) return 'dropped';
+	if (pending.isConnected) return 'waiting';
+	if (!focusLost) return 'dropped';
+	const selectAll = root?.querySelector<HTMLInputElement>(
+		'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
+	);
+	const scrollRegion = root?.querySelector<HTMLElement>('.ads-smart-table-scroll');
+	restoreFocusAfterClearSelection(pending, { selectAll, scrollRegion });
+	return 'applied';
+}
+
 export function UsuariosTabela({
 	rows,
 	page,
 	pageCount,
 	sort,
+	params,
 }: {
 	rows: Usuario[];
 	page: number;
 	pageCount: number;
 	sort: AdsSmartTableSort | null;
+	params: Params;
 }) {
 	const router = useRouter();
 	const pathname = usePathname();
 	const [selected, setSelected] = useState<string[]>([]);
 	const [hidden, setHidden] = useState<string[]>([]);
+	const rootRef = useRef<HTMLDivElement>(null);
+	const pendingClearRef = useRef<HTMLElement | null>(null);
+	const href = (changes: Record<string, string | null>) => {
+		const query = withParams(params, changes);
+		return query ? `${pathname}?${query}` : pathname;
+	};
 
 	function onSortChange(next: AdsSmartTableSort | null) {
-		const params = new URLSearchParams();
-		if (next) params.set('ordem', `${next.columnId}:${next.direction}`);
-		router.replace(`${pathname}?${params}`, { scroll: false });
+		// Ordenar volta à primeira página; os demais parâmetros (filtros) são mantidos.
+		const ordem = next ? `${next.columnId}:${next.direction}` : null;
+		router.replace(href({ ordem, pagina: null }), { scroll: false });
 	}
 
+	function clearSelection(event: MouseEvent<HTMLButtonElement>) {
+		pendingClearRef.current = event.currentTarget;
+		setSelected([]);
+	}
+
+	useLayoutEffect(() => {
+		const result = applyPendingClearSelectionFocus(pendingClearRef.current, rootRef.current);
+		if (result === 'dropped' || result === 'applied') pendingClearRef.current = null;
+	}, [selected]);
+
 	return (
-		<AdsSmartTable<Usuario>
-			caption="Usuários"
-			columns={[
-				{ id: 'nome', label: 'Nome', sortable: true, hideable: false, cell: (u) => u.nome },
-				{ id: 'perfil', label: 'Perfil', sortable: true, cell: (u) => u.perfil },
-			]}
-			getRowId={(u) => u.id}
-			getRowLabel={(u) => u.nome}
-			hiddenColumnIds={hidden}
-			onHiddenColumnsChange={setHidden}
-			onSelectionChange={setSelected}
-			onSortChange={onSortChange}
-			pagination={{
-				page,
-				pageCount,
-				renderPageLink: (target, { children, ...props }) => (
-					<Link href={`${pathname}?pagina=${target}`} {...props}>
-						{children}
-					</Link>
-				),
-			}}
-			rows={rows}
-			selectedIds={selected}
-			sort={sort}
-		/>
+		<div ref={rootRef}>
+			{selected.length > 0 ? (
+				<AdsButton onClick={clearSelection} size="sm" variant="secondary">
+					Limpar seleção
+				</AdsButton>
+			) : null}
+			<AdsSmartTable<Usuario>
+				caption="Usuários"
+				columns={[
+					{ id: 'nome', label: 'Nome', sortable: true, hideable: false, cell: (u) => u.nome },
+					{ id: 'perfil', label: 'Perfil', sortable: true, cell: (u) => u.perfil },
+				]}
+				getRowId={(u) => u.id}
+				getRowLabel={(u) => u.nome}
+				hiddenColumnIds={hidden}
+				onHiddenColumnsChange={setHidden}
+				onSelectionChange={setSelected}
+				onSortChange={onSortChange}
+				pagination={{
+					page,
+					pageCount,
+					renderPageLink: (target, { children, ...props }) => (
+						<Link
+							href={href({ pagina: target > 1 ? String(target) : null })}
+							scroll={false}
+							{...props}
+						>
+							{children}
+						</Link>
+					),
+				}}
+				rows={rows}
+				selectedIds={selected}
+				sort={sort}
+			/>
+		</div>
 	);
 }
 ```
 
-A página (Server Component) lê `searchParams`, consulta e ordena os dados e
-repassa `rows`, `page`, `pageCount` e `sort`. Para combinar com o `AdsFilterBar`,
-passe-o em `filters`; os dois seguem independentes, e o consumidor decide, por
-exemplo, limpar a seleção quando o filtro ou a página mudam.
+Ao limpar a seleção, o foco vai ao checkbox "Selecionar todas as linhas da página"
+ou, se ele não existir, à região rolável da tabela, e só quando o botão some e o
+foco se perdeu (`body` ou `null`), no mesmo espírito da barra de ações em massa.
+
+Para combinar com o `AdsFilterBar`, passe-o em `filters`; os dois seguem
+independentes. Como os links partem dos parâmetros atuais, mudar de página ou de
+ordenação mantém os filtros. O consumidor decide, por exemplo, limpar a seleção
+quando o filtro muda.
 
 ## Fluxos administrativos
 

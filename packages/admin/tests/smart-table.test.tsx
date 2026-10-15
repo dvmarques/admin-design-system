@@ -314,6 +314,71 @@ describe('AdsSmartTable', () => {
 		expect(await violations(container)).toEqual([]);
 	});
 
+	it('does not repeat the sort announcement when a later load finishes', () => {
+		const { rerender } = render(<Harness onSortChange={() => {}} />);
+		fireEvent.click(screen.getByRole('button', { name: 'Nome' }));
+		const sortRegion = screen
+			.getAllByRole('status')
+			.find((s) => s.textContent === 'Ordenado por Nome, ascendente');
+		expect(sortRegion).toBeDefined();
+		const mutations: MutationRecord[] = [];
+		const observer = new MutationObserver((records) => mutations.push(...records));
+		observer.observe(sortRegion!, { characterData: true, childList: true, subtree: true });
+		rerender(<Harness loading onSortChange={() => {}} />);
+		expect(screen.getAllByRole('status').some((s) => s.textContent === 'Carregando dados')).toBe(
+			true,
+		);
+		rerender(<Harness onSortChange={() => {}} />);
+		mutations.push(...observer.takeRecords());
+		observer.disconnect();
+		expect(mutations).toHaveLength(0);
+		expect(sortRegion).toHaveTextContent('Ordenado por Nome, ascendente');
+		expect(screen.getAllByRole('status').some((s) => s.textContent === 'Carregando dados')).toBe(
+			false,
+		);
+	});
+
+	it('tells selections on other pages apart from the current page in the counter', () => {
+		const { rerender } = render(<Controlled initialSelected={['u1', 'u2']} />);
+		expect(
+			screen.getAllByRole('status').some((s) => s.textContent === '2 linhas selecionadas'),
+		).toBe(true);
+		rerender(<Controlled initialSelected={['x1', 'x2', 'x3', 'u1']} key="other" />);
+		expect(
+			screen
+				.getAllByRole('status')
+				.some((s) => s.textContent === '4 linhas selecionadas, 1 nesta página'),
+		).toBe(true);
+	});
+
+	it('keeps the hover highlight only on data rows', () => {
+		const { rerender } = render(<Controlled />);
+		const [header, ...dataRows] = screen.getAllByRole('row');
+		expect(header).toHaveClass('ads-table-row');
+		expect(header!.className).not.toMatch(/hover:/);
+		for (const row of dataRows) expect(row.className).toMatch(/hover:bg-surface-hover/);
+		for (const props of [{ loading: true }, { rows: [] }, { error: 'Falha' }] as Props[]) {
+			rerender(<Controlled {...props} />);
+			for (const row of screen.getAllByRole('row')) {
+				expect(row).toHaveClass('ads-table-row');
+				expect(row.className).not.toMatch(/hover:/);
+			}
+		}
+	});
+
+	it('renders the column panel inline, after the button and before the table', () => {
+		render(<Controlled />);
+		const button = screen.getByRole('button', { name: 'Colunas' });
+		fireEvent.click(button);
+		const panel = document.getElementById(button.getAttribute('aria-controls')!)!;
+		expect(panel).toBeVisible();
+		expect(panel.parentElement).toHaveClass('ads-smart-table-toolbar');
+		expect(button.closest('.ads-smart-table-columns')).not.toContainElement(panel);
+		expect(
+			panel.compareDocumentPosition(screen.getByRole('table')) & Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+	});
+
 	it('does not depend on the Next.js router or URL', () => {
 		const source = readFileSync(join(process.cwd(), 'packages/admin/src/smart-table.tsx'), 'utf8');
 		expect(source).not.toMatch(/from 'next\//);

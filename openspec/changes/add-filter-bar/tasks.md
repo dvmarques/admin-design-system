@@ -6,7 +6,7 @@
 ## 2. Componente
 
 - [x] 2.1 Renderizar filtros `text`, `select`, `multiselect`, `date` e `date-range` com `AdsField`, `AdsInput`, `AdsSelect`, `AdsSelectionGroup`/`AdsCheckbox` e `AdsDatePicker`, em modo controlado, com `description` e `error`; na seleção múltipla, `AdsFieldDescription`/`AdsFieldMessage` ligados ao grupo por `aria-describedby` e `aria-invalid` nas opções.
-- [x] 2.2 Implementar chips de filtros ativos, remoção individual, "Limpar filtros", anúncio da quantidade (por chip) e gestão de foco, que vai ao botão "Filtros" quando os campos estão recolhidos.
+- [x] 2.2 Implementar chips de filtros ativos, remoção individual, "Limpar filtros", anúncio da quantidade (por chip) e gestão de foco, que vai ao botão "Filtros" quando os campos estão recolhidos e só é aplicada quando a lista de chips muda (consumidores assíncronos).
 - [x] 2.3 Implementar recolhimento responsivo (botão com `aria-expanded`/`aria-controls`, `defaultExpanded`, `expanded`, `onExpandedChange`) sem leitura de `window`.
 - [x] 2.4 Implementar estados `disabled` (botão "Filtros" operável só para expandir e recolher), `loading` (com indicador visual discreto, também em touch) e sem filtros ativos.
 - [x] 2.5 Adicionar estilos `ads-filter-bar*` em `packages/admin/src/styles.css` com tokens, temas claro e escuro e container query, sem Tailwind.

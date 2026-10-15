@@ -350,6 +350,9 @@ O `AdsFilterBar`, de `@admin-ds/admin`, compõe filtros de texto, seleção
 filtros". É um Client Component e o estado é do consumidor: `value` é um objeto
 por `id` de filtro e `onChange` recebe o objeto completo, sem chaves vazias. A
 barra não consulta dados, não lê a URL e não importa o roteador do Next.js.
+O `id` de cada filtro deve ser único na barra também depois da sanitização
+usada nos ids do DOM, que remove caracteres fora de `[A-Za-z0-9_-]` (`a b` e
+`ab` colidem).
 Em telas estreitas os campos ficam recolhidos atrás de um botão (use
 `defaultExpanded` ou `expanded`/`onExpandedChange`); `disabled` e `loading`
 cobrem os demais estados, e `labels` e `locale` ajustam os textos.
@@ -358,7 +361,8 @@ O exemplo abaixo persiste o filtro em `searchParams`. A página (Server
 Component) repassa os parâmetros, e o Client Component os converte em valores e
 navega ao alterar. O texto fica em estado local, inicializado pelos parâmetros,
 para aparecer a cada tecla; a URL só é atualizada depois de uma pausa
-(debounce). Os demais filtros atualizam a URL na hora. `router.replace` usa
+(debounce). "Limpar filtros" e os demais filtros atualizam a URL na hora,
+cancelando a atualização pendente do texto. `router.replace` usa
 `{ scroll: false }` para a página não voltar ao topo, e `useTransition`, que é
 opcional, liga o `loading` da barra enquanto a navegação acontece.
 
@@ -436,9 +440,14 @@ export function UsuariosFiltros({ params }: { params: Params }) {
 
 	function onChange(next: AdsFilterValues) {
 		const nextText = typeof next.q === 'string' ? next.q : '';
+		const { q: _nextQ, ...nextOthers } = next;
+		const { q: _q, ...others } = value;
+		// Só a digitação usa debounce; "Limpar filtros" e os outros filtros navegam na hora.
+		const cleared = Object.keys(next).length === 0;
+		const typing = !cleared && nextText !== text && toQuery(nextOthers) === toQuery(others);
 		clearTimeout(timer.current);
-		if (nextText !== text) {
-			setText(nextText);
+		setText(nextText);
+		if (typing) {
 			timer.current = setTimeout(() => navigate(next), 300);
 			return;
 		}

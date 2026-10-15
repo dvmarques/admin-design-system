@@ -30,7 +30,11 @@ export interface AdsFilterOption {
 }
 
 interface AdsFilterBase {
-	/** Chave do filtro em `AdsFilterValues`. Deve ser única na barra. */
+	/**
+	 * Chave do filtro em `AdsFilterValues`. Deve ser única na barra, inclusive depois da
+	 * sanitização usada nos ids do DOM, que remove caracteres fora de `[A-Za-z0-9_-]`
+	 * (`'a b'` e `'ab'` colidem).
+	 */
 	id: string;
 	label: string;
 	description?: ReactNode;
@@ -246,16 +250,29 @@ export function AdsFilterBar({
 	const fieldsRef = useRef<HTMLDivElement>(null);
 	const toggleRef = useRef<HTMLButtonElement>(null);
 	const chipsRef = useRef<HTMLUListElement>(null);
-	const pendingFocus = useRef<number | null>(null);
+	const sectionRef = useRef<HTMLElement>(null);
+	/** Foco pendente após remover ou limpar: posição do chip e chaves dos chips no clique. */
+	const pendingFocus = useRef<{ index: number; chipKeys: string } | null>(null);
 
 	const chips = collectChips(filters, value, locale, labels);
+	const chipKeys = chips.map((chip) => chip.key).join('\n');
 	const count = chips.length;
 	const countText = fill(count === 1 ? labels.activeCountOne : labels.activeCountOther, { count });
 
 	useLayoutEffect(() => {
-		const index = pendingFocus.current;
-		if (index === null) return;
+		const pending = pendingFocus.current;
+		if (pending === null) return;
+		// Consumidores assíncronos (por exemplo, com startTransition) podem renderizar de novo com o
+		// value antigo; o foco pendente só é usado quando a lista de chips muda de fato.
+		if (pending.chipKeys === chipKeys) return;
 		pendingFocus.current = null;
+		// Não rouba o foco se a pessoa já foi para fora da barra enquanto o value chegava.
+		const section = sectionRef.current;
+		const active = section?.ownerDocument.activeElement;
+		if (section && active && active !== section.ownerDocument.body && !section.contains(active)) {
+			return;
+		}
+		const index = pending.index;
 		const buttons = chipsRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
 		if (buttons?.length) {
 			buttons[Math.min(Math.max(index, 0), buttons.length - 1)]?.focus();
@@ -274,6 +291,12 @@ export function AdsFilterBar({
 	});
 
 	function emit(filterId: string, next: AdsFilterValue | undefined) {
+		// Uma alteração feita pela pessoa em um campo cancela o foco pendente de uma remoção.
+		pendingFocus.current = null;
+		commit(filterId, next);
+	}
+
+	function commit(filterId: string, next: AdsFilterValue | undefined) {
 		const result: AdsFilterValues = {};
 		for (const [key, current] of Object.entries(value)) {
 			if (key !== filterId && !isEmpty(current)) result[key] = current;
@@ -283,11 +306,11 @@ export function AdsFilterBar({
 	}
 
 	function removeChip(chip: ActiveChip, index: number) {
-		pendingFocus.current = index;
+		pendingFocus.current = { index, chipKeys };
 		if (chip.optionValue === undefined) {
-			emit(chip.filterId, undefined);
+			commit(chip.filterId, undefined);
 		} else {
-			emit(
+			commit(
 				chip.filterId,
 				asList(value[chip.filterId]).filter((item) => item !== chip.optionValue),
 			);
@@ -295,7 +318,7 @@ export function AdsFilterBar({
 	}
 
 	function clearAll() {
-		pendingFocus.current = -1;
+		pendingFocus.current = { index: -1, chipKeys };
 		onChange({});
 	}
 
@@ -417,6 +440,7 @@ export function AdsFilterBar({
 			className={classNames('ads-filter-bar', className)}
 			data-disabled={disabled || undefined}
 			data-loading={loading || undefined}
+			ref={sectionRef}
 		>
 			<div className="ads-filter-bar-header">
 				<button

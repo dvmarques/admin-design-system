@@ -180,6 +180,71 @@ describe('AdsFilterBar', () => {
 		expect(document.activeElement).toBe(screen.getByLabelText('Busca'));
 	});
 
+	it('keeps the pending focus through an intermediate render until the removed chip is gone', () => {
+		const onChange = vi.fn();
+		const initial: AdsFilterValues = { status: 'ativo', perfis: ['admin', 'editor'] };
+		const { rerender } = render(
+			<AdsFilterBar defaultExpanded filters={filters} onChange={onChange} value={initial} />,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Remover filtro Perfis: Administrador' }));
+		expect(onChange).toHaveBeenLastCalledWith({ status: 'ativo', perfis: ['editor'] });
+		// Consumidor assíncrono (por exemplo, startTransition): renderiza antes do value novo.
+		rerender(
+			<AdsFilterBar
+				defaultExpanded
+				filters={filters}
+				loading
+				onChange={onChange}
+				value={initial}
+			/>,
+		);
+		rerender(
+			<AdsFilterBar
+				defaultExpanded
+				filters={filters}
+				onChange={onChange}
+				value={{ status: 'ativo', perfis: ['editor'] }}
+			/>,
+		);
+		expect(document.activeElement).toBe(
+			screen.getByRole('button', { name: 'Remover filtro Perfis: Editor' }),
+		);
+	});
+
+	it('keeps the pending focus of "Limpar filtros" through an intermediate render', () => {
+		const onChange = vi.fn();
+		const initial: AdsFilterValues = { status: 'ativo', q: 'ana' };
+		const { rerender } = render(
+			<AdsFilterBar filters={filters} onChange={onChange} value={initial} />,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+		expect(onChange).toHaveBeenLastCalledWith({});
+		rerender(<AdsFilterBar filters={filters} loading onChange={onChange} value={initial} />);
+		rerender(<AdsFilterBar filters={filters} onChange={onChange} value={{}} />);
+		expect(document.activeElement).toBe(screen.getByRole('button', { name: /^Filtros/ }));
+	});
+
+	it('drops the pending focus when the person edits a field before the value arrives', () => {
+		const onChange = vi.fn();
+		const initial: AdsFilterValues = { status: 'ativo' };
+		const { rerender } = render(
+			<AdsFilterBar defaultExpanded filters={filters} onChange={onChange} value={initial} />,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Remover filtro Status: Ativo' }));
+		const input = screen.getByLabelText('Busca');
+		input.focus();
+		fireEvent.change(input, { target: { value: 'x' } });
+		rerender(
+			<AdsFilterBar
+				defaultExpanded
+				filters={filters}
+				onChange={onChange}
+				value={{ status: 'ativo', q: 'x' }}
+			/>,
+		);
+		expect(document.activeElement).toBe(input);
+	});
+
 	it('is strictly controlled', () => {
 		render(<AdsFilterBar filters={filters} onChange={() => {}} value={{ q: 'fixo' }} />);
 		const input = screen.getByLabelText('Busca') as HTMLInputElement;

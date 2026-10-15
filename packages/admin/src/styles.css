@@ -593,7 +593,6 @@
 		.ads-filter-bar[data-loading]::before {
 			background: var(--ads-color-primary);
 			animation: none;
-			opacity: 0.6;
 		}
 	}
 }

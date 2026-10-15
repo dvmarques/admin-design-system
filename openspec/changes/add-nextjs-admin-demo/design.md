@@ -100,7 +100,9 @@ pacote e deve mostrar o produto integrado.
   sejam estáveis sem timers. Valor desconhecido equivale a ausência do
   parâmetro (dados normais). O erro usa `AdsEmptyState` (que repassa props) com
   `role="alert"` e, em `actions`, um link "Tentar novamente" para a rota sem o
-  parâmetro `estado`; não há componente de alerta dedicado na biblioteca.
+  parâmetro `estado`; não há componente de alerta dedicado na biblioteca. O
+  estado vazio usa `AdsEmptyState` com mensagem e a ação "Limpar seleção" (link
+  para a rota sem `estado`).
 - Paginação por `?pagina=N` lida no servidor; a mudança de página é feita pelo
   Client Component fino descrito na decisão 2. Valor ausente, não numérico ou
   fora do intervalo é normalizado para a página válida mais próxima antes de
@@ -129,7 +131,9 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   `AdsField` só define `aria-invalid` quando `validationState="error"`, a página
   guarda os erros em estado e passa `validationState` ao campo; o foco é movido
   em um efeito executado depois da atualização do estado, não de forma síncrona
-  no handler de envio.
+  no handler de envio. O efeito depende de um contador de envios incrementado a
+  cada submissão, para refocar também quando os erros não mudam entre dois
+  envios.
 - Sucesso dispara `AdsToast`; nada é persistido.
 
 ### 5. Tema e estilos
@@ -142,15 +146,24 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   layout desktop: quando `isDesktop` é falso (a sidebar desktop não existe e o
   `SidebarToggle` fica oculto), o controle fica desabilitado e informa o motivo.
   O estado não é persistido.
-- Os dois controles compartilham um estado de tema em `lib/theme.ts`: uma função
-  que grava cookie e `data-theme` e um hook baseado em `useSyncExternalStore`
-  que observa o atributo `data-theme` do `<html>` (`MutationObserver`), com
-  snapshot de servidor igual ao tema do cookie. Assim a mudança feita em um
-  controle é refletida no outro nos dois sentidos, sem divergência de
-  hidratação. O `ThemeToggle` público não aceita tema controlado, então o
+- Os dois controles compartilham um estado de tema. `lib/theme.ts` continua puro
+  e seguro para servidor, pois é importado pelo layout (Server Component): mantém
+  `resolveTheme`, constantes e uma função que grava cookie e `data-theme` (só
+  toca em `document` quando chamada). O hook fica em módulo próprio com
+  `'use client'` (`app/use-theme.ts`), porque `useSyncExternalStore` não existe
+  no build de servidor do React e marcar `lib/theme.ts` como cliente tornaria
+  `resolveTheme` uma referência de cliente, inutilizável no layout. O hook usa
+  `useSyncExternalStore`, observa o atributo `data-theme` do `<html>`
+  (`MutationObserver`) e recebe o tema inicial do servidor como argumento, que
+  serve de snapshot de servidor (igual ao cookie); o layout lê o cookie e a
+  página `/preferencias`, também Server Component, o repassa. Assim a mudança
+  feita em um controle é refletida no outro nos dois sentidos, sem divergência
+  de hidratação. O `ThemeToggle` público não aceita tema controlado, então o
   `ThemeControl` o remonta por `key` para refletir mudanças externas; a `key`
   só muda quando a alteração não vem do próprio toggle, para não remontar o
-  botão (e perder o foco do teclado) a cada clique.
+  botão (e perder o foco do teclado) a cada clique. A origem é sinalizada por um
+  `useRef` (`ownChangeRef`) ligado no `onThemeChange` do toggle e consumido pelo
+  observer na mutação seguinte.
 - Estilos do demo ficam em `globals.css` e usam apenas variáveis `--ads-*`
   públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida.
 - Acessibilidade: um `h1` por rota e `main` único fornecido pelo shell, verificados

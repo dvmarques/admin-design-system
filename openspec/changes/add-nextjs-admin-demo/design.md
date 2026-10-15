@@ -165,7 +165,10 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   `useRef` (`ownChangeRef`) ligado no `onThemeChange` do toggle e consumido pelo
   observer na mutação seguinte.
 - Estilos do demo ficam em `globals.css` e usam apenas variáveis `--ads-*`
-  públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida.
+  públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida, e nenhum
+  utilitário Tailwind em `className`: só tokens `demo-*` (do demo) e `ads-*`
+  públicos. Utilitários como `ml-auto` ou `h-3` só funcionariam por existirem no
+  CSS distribuído da biblioteca, o que é detalhe interno.
 - CSS compilado e distribuído: cada pacote publica sua folha compilada
   (`@admin-ds/tokens/styles.css`, `@admin-ds/components/styles.css`,
   `@admin-ds/admin/styles.css`), importadas uma única vez no `app/layout.tsx`

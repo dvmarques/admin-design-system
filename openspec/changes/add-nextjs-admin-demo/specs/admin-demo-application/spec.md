@@ -134,7 +134,7 @@ Cada rota administrativa MUST ter um único título principal, regiões de refer
 
 ### Requirement: Demo consome somente contratos públicos
 
-O admin-demo MUST importar componentes, tipos, tokens e estilos apenas pelos pontos de entrada públicos dos pacotes, sem importar arquivos internos, sem configurar Tailwind e sem redefinir a aparência interna dos componentes.
+O admin-demo MUST importar componentes, tipos, tokens e estilos apenas pelos pontos de entrada públicos dos pacotes, sem importar arquivos internos, sem configurar Tailwind, sem depender de classes utilitárias internas e sem redefinir a aparência interna dos componentes.
 
 #### Scenario: Import interno é introduzido
 

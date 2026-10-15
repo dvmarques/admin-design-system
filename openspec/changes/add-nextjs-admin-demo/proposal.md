@@ -17,8 +17,8 @@ os padrões avançados (item 9 do roadmap).
 - Introduzir um layout administrativo compartilhado no App Router, com o
   `AdsAdminShell`, navegação principal e controle de tema montados uma única vez.
 - Organizar o demo em rotas administrativas navegáveis, cada uma com cenários
-  integrados: visão geral (indicadores e progresso), listagem com tabela, filtros
-  simples, paginação e estados vazio/carregando/erro, formulário de cadastro com
+  integrados: visão geral (indicadores e progresso), listagem com tabela,
+  paginação e estados vazio/carregando/erro, formulário de cadastro com
   validação e confirmação, e uma página de preferências (tema e layout).
 - Navegar entre rotas por links fornecidos pela aplicação, indicando a página
   atual de forma acessível (`aria-current`), sem exigir roteador na biblioteca.

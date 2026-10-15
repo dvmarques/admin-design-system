@@ -15,6 +15,11 @@ O admin-demo MUST apresentar o mesmo shell administrativo, com cabeçalho, naveg
 - **WHEN** uma pessoa navega da visão geral para outra rota administrativa
 - **THEN** o cabeçalho, a navegação e o tema escolhido permanecem os mesmos e o conteúdo principal é substituído
 
+#### Scenario: Navegação móvel fecha ao trocar de rota
+
+- **WHEN** a navegação móvel está aberta e a pessoa ativa um link para outra rota
+- **THEN** a navegação móvel fecha, o conteúdo da nova rota fica visível e o foco permanece em um elemento disponível
+
 #### Scenario: Sidebar recolhida é mantida ao navegar
 
 - **WHEN** a sidebar está recolhida e a pessoa navega para outra rota

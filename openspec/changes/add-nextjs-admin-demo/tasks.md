@@ -4,9 +4,10 @@
 
 - [ ] 1.1 Criar o grupo de rotas `app/(admin)` com `layout.tsx` (Server Component) contendo `AdsAdminShell`, cabeçalho e `ThemeControl`; verificar que `/` renderiza o shell uma única vez (teste Vitest de SSR da rota).
 - [ ] 1.2 Criar `demo-navigation.tsx` (Client Component) com `next/link` e `usePathname` dentro de `AdsAdminShell.Sidebar`, marcando `aria-current="page"` apenas na rota atual; verificar com teste de componente que somente um item é marcado.
-- [ ] 1.3 Mover o conteúdo atual de `app/page.tsx` para `app/(admin)/componentes/page.tsx` e fazer `/data-display` usar o layout compartilhado, removendo `<main>`, link "Voltar" e `ThemeControl` duplicados e mantendo URL e headings; verificar que cada rota tem um único `main` e um único toggle de tema.
+- [ ] 1.3 Mover o conteúdo atual de `app/page.tsx` para `app/(admin)/componentes/page.tsx` e mover `/data-display` para `app/(admin)/data-display` para usar o layout compartilhado, removendo `<main>`, link "Voltar" e `ThemeControl` duplicados e mantendo URL e headings; verificar que cada rota tem um único `main` e um único toggle de tema.
 - [ ] 1.4 Atualizar `e2e/admin-demo.spec.ts`, `e2e/overlay.spec.ts` (de `/` para `/componentes`) e `e2e/data-display.spec.ts` (sem o link "Voltar"), mantendo seletores por papel e nome acessível; verificar que os três arquivos passam.
-- [ ] 1.5 Cobrir em Playwright: navegar entre rotas mantém tema e sidebar recolhida, e a navegação por teclado mostra foco visível e ativa com Enter.
+- [ ] 1.5 Fechar o drawer móvel ao mudar de rota com `useAdsAdminShell` em `demo-navigation.tsx`; verificar em Playwright (375 px) que o drawer fecha ao navegar e o foco fica em um elemento válido.
+- [ ] 1.6 Cobrir em Playwright: navegar entre rotas mantém tema e sidebar recolhida no desktop, e a navegação por teclado mostra foco visível e ativa com Enter.
 
 ## 2. Visão geral
 
@@ -21,13 +22,14 @@
 
 ## 4. Formulário de cadastro
 
-- [ ] 4.1 Criar `/clientes/novo` com `AdsField` e controles, validação de obrigatórios, erro associado ao campo e foco no primeiro campo inválido; verificar com testes de componente (envio inválido e válido).
+- [ ] 4.1 Criar `/clientes/novo` com `AdsField` e controles, validação de obrigatórios, erro associado ao campo e foco no primeiro campo inválido (`[aria-invalid="true"]`); verificar com testes de componente (envio inválido e válido).
 - [ ] 4.2 Exibir `AdsToast` de sucesso sem persistir dados; verificar em Playwright o fluxo completo por papéis e nomes acessíveis.
 - [ ] 4.3 Verificar o formulário em estado de erro ao alternar o tema (`axe-core` e e2e).
 
 ## 5. Preferências
 
-- [ ] 5.1 Criar `/preferencias` com `ThemeControl` e controle do estado da sidebar; verificar em e2e que o tema escolhido é restaurado na renderização inicial seguinte, sem alternância visível.
+- [ ] 5.1 Extrair a gravação de tema (cookie e `data-theme`) para `lib/theme.ts`, reutilizada pelo header e pela página; verificar com teste unitário em `tests/theme.test.ts`.
+- [ ] 5.2 Criar `/preferencias` com o tema em `AdsSelectionGroup`/`AdsRadio` e controle do estado da sidebar via `useAdsAdminShell`; verificar em e2e que o tema escolhido é restaurado na renderização inicial seguinte, sem alternância visível, e que não há nomes de botão duplicados.
 
 ## 6. Contrato público, documentação e snapshots
 
@@ -45,5 +47,5 @@
 
 ## Workflow follow-up
 
-- Abrir PR a partir de `develop` com squash, vinculando a issue #16 manualmente em Development, sem palavras-chave de fechamento.
+- Abrir PR com base em `develop` e integrar por squash, vinculando a issue #16 manualmente em Development, sem palavras-chave de fechamento.
 - Arquivar a change após a validação, com sincronização das specs `admin-demo-application` e `nextjs-consumption`.

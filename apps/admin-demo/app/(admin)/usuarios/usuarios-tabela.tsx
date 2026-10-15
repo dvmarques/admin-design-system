@@ -4,12 +4,7 @@ import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
 import { AdsButton } from '@admin-ds/components';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import {
-	useLayoutEffect,
-	useRef,
-	useState,
-	type MouseEvent as ReactMouseEvent,
-} from 'react';
+import { useLayoutEffect, useRef, useState, type MouseEvent as ReactMouseEvent } from 'react';
 import type { Usuario } from '../../../lib/data/usuarios';
 import { restoreFocusAfterClearSelection } from '../../../lib/selection-clear-focus';
 import { hrefWithParams, type SearchParams } from '../../../lib/url-search-params';
@@ -87,7 +82,11 @@ export function UsuariosTabela({ rows, page, pageCount, sort, params }: Usuarios
 					page,
 					pageCount,
 					renderPageLink: (target, { children, ...props }) => (
-						<Link href={href({ pagina: target > 1 ? String(target) : null })} scroll={false} {...props}>
+						<Link
+							href={href({ pagina: target > 1 ? String(target) : null })}
+							scroll={false}
+							{...props}
+						>
 							{children}
 						</Link>
 					),

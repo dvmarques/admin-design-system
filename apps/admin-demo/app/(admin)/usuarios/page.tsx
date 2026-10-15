@@ -16,13 +16,7 @@ export default async function UsuariosPage({ searchParams }: UsuariosPageProps) 
 
 	return (
 		<div className="demo-page">
-			<UsuariosTabela
-				page={page}
-				pageCount={pageCount}
-				params={params}
-				rows={rows}
-				sort={sort}
-			/>
+			<UsuariosTabela page={page} pageCount={pageCount} params={params} rows={rows} sort={sort} />
 		</div>
 	);
 }

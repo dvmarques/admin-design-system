@@ -12,14 +12,7 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('next/link', () => ({
-	default: ({
-		children,
-		href,
-		...props
-	}: {
-		children: ReactNode;
-		href: string;
-	}) => (
+	default: ({ children, href, ...props }: { children: ReactNode; href: string }) => (
 		<a href={href} {...props}>
 			{children}
 		</a>
@@ -40,16 +33,13 @@ describe('UsuariosTabela', () => {
 			/>,
 		);
 		fireEvent.click(screen.getByRole('button', { name: 'Nome' }));
-		expect(replace).toHaveBeenCalledWith(
-			'/usuarios?q=ana&status=ativo&ordem=nome:asc',
-			{ scroll: false },
-		);
+		expect(replace).toHaveBeenCalledWith('/usuarios?q=ana&status=ativo&ordem=nome:asc', {
+			scroll: false,
+		});
 	});
 
 	it('moves focus to the select-all checkbox when clearing selection', () => {
-		render(
-			<UsuariosTabela page={1} pageCount={1} params={{}} rows={rows} sort={null} />,
-		);
+		render(<UsuariosTabela page={1} pageCount={1} params={{}} rows={rows} sort={null} />);
 		fireEvent.click(screen.getByRole('checkbox', { name: 'Selecionar Ana Silva' }));
 		const clear = screen.getByRole('button', { name: 'Limpar seleção' });
 		clear.focus();

@@ -48,3 +48,12 @@ de 272527 para 272938 bytes (+411) por causa do `containerProps` opcional de
 `AdsTable` (`data-table.*`, com declarações e source maps): 346 da prop e 65 do
 tipo que exclui `children` e `dangerouslySetInnerHTML`. O valor é medido com
 LF, como na CI.
+
+O baseline de `@admin-ds/components` foi atualizado na R2 de `add-smart-table`
+de 272938 para 273237 bytes (+299) por causa da prop `interactive` em
+`AdsTableRow`, usada nas linhas estáticas de `AdsSmartTable`. O valor é medido
+com LF, como na CI.
+
+O baseline de `@admin-ds/admin` foi ajustado na R2 de `add-smart-table` para
+122232 bytes (−92), medido em LF após `AdsTableRow` com `interactive={false}`
+no lugar da marcação manual das linhas estáticas.

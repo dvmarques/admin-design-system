@@ -188,8 +188,14 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
 - Estilos do demo ficam em `globals.css` e usam apenas variáveis `--ads-*`
   públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida, e nenhum
   utilitário Tailwind em `className`: só tokens `demo-*` (do demo) e `ads-*`
-  públicos. Utilitários como `ml-auto` ou `h-3` só funcionariam por existirem no
-  CSS distribuído da biblioteca, o que é detalhe interno.
+  públicos. Utilitários como `ml-auto` só funcionam por existirem no CSS
+  distribuído da biblioteca, o que é detalhe interno; e nem todos existem: o
+  CSS dos componentes só gera classes encontradas em `packages/components/src`
+  (`@source`), e `h-3`, `w-24` e `w-40`, usados nos skeletons de
+  `evaluation-showcase.tsx`, não estão lá. Por isso dois desses skeletons hoje
+  ficam com altura zero (invisíveis). Substituí-los por classes `demo-*` com
+  dimensões explícitas corrige esse defeito pré-existente e é uma mudança visual
+  intencional, revisada no snapshot de `/componentes`.
 - CSS compilado e distribuído: cada pacote publica sua folha compilada
   (`@admin-ds/tokens/styles.css`, `@admin-ds/components/styles.css`,
   `@admin-ds/admin/styles.css`), importadas uma única vez no `app/layout.tsx`
@@ -265,7 +271,11 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   baseline de `docs/bundle-baseline.json`, mas o build do app é validado.
 - **[Auditoria `axe-core` em páginas existentes]** → `/componentes` e
   `/data-display` nunca foram auditadas no e2e; violações pré-existentes que a
-  tarefa 6.2 revelar são corrigidas no demo se forem do demo, ou registradas em
-  `docs/limitations.md` e tratadas em change própria se forem da biblioteca.
+  tarefa 6.2 revelar são corrigidas no demo se forem do demo. Se forem da
+  biblioteca, a 6.2 não é concluída: a violação é registrada em
+  `docs/limitations.md` e a implementação para e pede à pessoa responsável a
+  decisão entre corrigir a biblioteca em change própria antes do arquivamento
+  ou ajustar a spec com uma ressalva explícita; nenhuma regra do `axe-core` é
+  desabilitada sem essa decisão.
 - **[Parâmetros de URL para estados]** → São recurso de demonstração, não API do
   design system; documentados como tal.

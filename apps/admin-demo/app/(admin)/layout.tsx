@@ -2,14 +2,14 @@ import { AdsTypography } from '@admin-ds/components';
 import { AdsAdminShell } from '@admin-ds/admin';
 import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
-import { resolveTheme } from '../../lib/theme';
+import { resolveTheme, themeCookieName } from '../../lib/theme';
 import { DemoNavigation } from '../demo-navigation';
 import { RouteChangeHandler } from '../route-change-handler';
 import { ThemeControl } from '../theme-control';
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
 	const cookieStore = await cookies();
-	const theme = resolveTheme(cookieStore.get('ads-theme')?.value);
+	const theme = resolveTheme(cookieStore.get(themeCookieName)?.value);
 
 	return (
 		<AdsAdminShell>

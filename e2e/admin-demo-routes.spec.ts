@@ -5,6 +5,7 @@ const routes = [
 	{ path: '/', label: 'Visão geral' },
 	{ path: '/clientes', label: 'Clientes' },
 	{ path: '/clientes/novo', label: 'Novo cliente' },
+	{ path: '/preferencias', label: 'Preferências' },
 	{ path: '/componentes', label: 'Componentes' },
 	{ path: '/data-display', label: 'Exibição de dados' },
 ] as const;
@@ -389,6 +390,92 @@ test.describe('novo cliente', () => {
 			await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
 
 			await expectDistinguishableControls(page);
+			await expectNoAxeViolations(page);
+		});
+	}
+});
+
+test.describe('preferências', () => {
+	const sidebar = (page: Page) => page.locator('.ads-admin-shell-sidebar-desktop');
+	const sidebarSwitch = (page: Page) =>
+		page.getByRole('checkbox', { name: 'Recolher a barra lateral' });
+
+	test('recolhe e expande a sidebar pelas preferências e volta ao padrão ao recarregar', async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/preferencias');
+		await expect(page.getByRole('heading', { level: 1, name: 'Preferências' })).toBeVisible();
+		await expect(sidebar(page)).toHaveAttribute('data-collapsed', 'false');
+
+		await sidebarSwitch(page).check();
+		await expect(sidebar(page)).toHaveAttribute('data-collapsed', 'true');
+
+		await sidebarSwitch(page).uncheck();
+		await expect(sidebar(page)).toHaveAttribute('data-collapsed', 'false');
+
+		await sidebarSwitch(page).check();
+		await expect(sidebar(page)).toHaveAttribute('data-collapsed', 'true');
+		await page.reload();
+		await expect(sidebar(page)).toHaveAttribute('data-collapsed', 'false');
+		await expect(sidebarSwitch(page)).not.toBeChecked();
+	});
+
+	test('em 375 px o controle da sidebar fica desabilitado e informa o motivo', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 812 });
+		await page.goto('/preferencias');
+
+		await expect(sidebarSwitch(page)).toBeDisabled();
+		await expect(page.getByText('Disponível apenas no layout desktop.')).toBeVisible();
+		await expect(sidebarSwitch(page)).toHaveAccessibleDescription(
+			'Disponível apenas no layout desktop.',
+		);
+	});
+
+	test('o tema escolhido é restaurado pelo servidor na renderização seguinte', async ({ page }) => {
+		await useTheme(page, 'light');
+		await page.goto('/preferencias');
+
+		await page.getByText('Escuro', { exact: true }).click();
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+		const html = await (await page.request.get('/preferencias')).text();
+		expect(html).toMatch(/<html[^>]*data-theme="dark"/);
+		expect(html).toMatch(
+			/<input[^>]*type="radio"[^>]*value="dark"[^>]*checked|<input[^>]*checked[^>]*value="dark"/,
+		);
+
+		await page.reload();
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await expect(page.getByRole('radio', { name: 'Escuro' })).toBeChecked();
+	});
+
+	test('o grupo de tema e o botão do cabeçalho se atualizam mutuamente', async ({ page }) => {
+		await useTheme(page, 'light');
+		await page.goto('/preferencias');
+		await expect(page.getByRole('radio', { name: 'Claro' })).toBeChecked();
+
+		await page.getByRole('button', { name: 'Usar tema escuro' }).click();
+		await expect(page.getByRole('radio', { name: 'Escuro' })).toBeChecked();
+		await expect(page.getByRole('radio', { name: 'Claro' })).not.toBeChecked();
+
+		await page.getByText('Claro', { exact: true }).click();
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+		await expect(page.getByRole('button', { name: 'Usar tema escuro' })).toBeVisible();
+		await expect(page.getByRole('button', { name: 'Usar tema claro' })).toHaveCount(0);
+	});
+
+	test('não repete o botão de tema no documento', async ({ page }) => {
+		await page.goto('/preferencias');
+
+		await expect(page.getByRole('button', { name: /Usar tema/ })).toHaveCount(1);
+	});
+
+	for (const theme of themes) {
+		test(`não tem violações de acessibilidade no tema ${theme}`, async ({ page }) => {
+			await useTheme(page, theme);
+			await page.goto('/preferencias');
+
 			await expectNoAxeViolations(page);
 		});
 	}

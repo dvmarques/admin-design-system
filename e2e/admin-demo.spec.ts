@@ -47,6 +47,19 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	expect(hydrationErrors).toEqual([]);
 });
 
+test('mantém o foco no botão de tema depois de ativá-lo pelo teclado', async ({ page }) => {
+	await page
+		.context()
+		.addCookies([{ name: 'ads-theme', value: 'light', url: 'http://127.0.0.1:3000' }]);
+	await page.goto('/');
+
+	await page.getByRole('button', { name: 'Usar tema escuro' }).focus();
+	await page.keyboard.press('Enter');
+
+	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+	await expect(page.getByRole('button', { name: 'Usar tema claro' })).toBeFocused();
+});
+
 test('apresenta o catálogo de componentes com os tokens públicos', async ({ page }) => {
 	await page.goto('/componentes');
 

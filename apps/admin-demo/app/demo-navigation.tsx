@@ -7,6 +7,7 @@ export const demoNavigationItems = [
 	{ href: '/', initials: 'Vg', label: 'Visão geral' },
 	{ href: '/clientes', initials: 'Cl', label: 'Clientes' },
 	{ href: '/clientes/novo', initials: 'Nc', label: 'Novo cliente' },
+	{ href: '/preferencias', initials: 'Pr', label: 'Preferências' },
 	{ href: '/componentes', initials: 'Co', label: 'Componentes' },
 	{ href: '/data-display', initials: 'Ex', label: 'Exibição de dados' },
 ] as const;

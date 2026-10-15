@@ -148,6 +148,11 @@ body {
 	align-items: center;
 	gap: 1rem;
 }
+.demo-preference-help {
+	margin: 0.5rem 0 0;
+	color: var(--ads-color-text-muted);
+	font-size: 0.875rem;
+}
 .demo-shell-nav-list {
 	display: grid;
 	gap: 0.25rem;

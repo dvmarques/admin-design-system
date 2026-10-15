@@ -18,7 +18,7 @@
 ## 4. E2E e acessibilidade
 
 - [x] 4.1 E2E em funções ARIA e nomes acessíveis: filtrar, ordenar, paginar, selecionar, ocultar colunas, URLs inválidas, estado vazio, 375 px; axe nos temas claro e escuro.
-- [ ] 4.2 Snapshots afetados: revisar e regerar no Windows. **Pendente**: regenerar no Windows os 6 PNGs de clientes, admin-demo e admin-shell-collapsed, claro e escuro.
+- [x] 4.2 Snapshots afetados: revisar e regerar no Windows. Regerados em `windows-latest` (run 38796637664); 4 PNGs atualizados (clientes e admin-demo claro/escuro), 2 inalterados (admin-shell-collapsed claro/escuro).
 
 ## 5. Documentação
 

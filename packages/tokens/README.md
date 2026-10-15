@@ -18,20 +18,20 @@ Overlays portados preservam o tema explícito do escopo que os abriu. Os tokens
 `--ads-color-overlay-close-background-hover` personalizam o controle de fechar
 de dialogs, drawers e toasts nos dois temas.
 
+Para sobrescrever tokens, declare as variáveis **depois** de importar
+`@admin-ds/tokens/styles.css`, com `[data-theme='light']` e
+`[data-theme='dark']` (sem `:root`). Overlays em portal (dialog, drawer e
+toast) são renderizados em um `div` com `data-theme` próprio, fora do `<html>`;
+`:root[data-theme=…]` não os alcança.
+
 ```css
-:root[data-theme='dark'] {
+[data-theme='dark'] {
 	--ads-color-primary: #0ea5e9;
 }
 ```
 
 A aplicação consumidora é responsável por persistir a preferência do
 usuário e aplicar o atributo antes da hidratação, quando necessário.
-
-Overlays portados preservam o tema explícito do escopo que os abriu. Os
-tokens `--ads-color-overlay-close-background`,
-`--ads-color-overlay-close-content` e
-`--ads-color-overlay-close-background-hover` personalizam o controle de
-fechar de dialogs, drawers e toasts nos dois temas.
 
 ## Tipografia
 

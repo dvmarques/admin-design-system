@@ -96,7 +96,7 @@ export function AdsNav({
 							<a
 								aria-current={item.current ? 'page' : undefined}
 								className={classNames(
-									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none',
+									'ads-nav-item inline-flex min-h-10 items-center justify-center gap-2 rounded-md border px-4 text-sm font-medium no-underline transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset motion-reduce:transform-none',
 									item.current
 										? 'border-primary bg-surface-selected text-on-surface-selected shadow-sm hover:bg-surface-hover'
 										: 'border-border bg-surface text-text hover:border-border-strong hover:bg-surface-hover',

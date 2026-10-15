@@ -22,6 +22,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-token-override-and-package-tests` - O README de `@admin-ds/tokens` passa a
+  indicar `[data-theme='light']` e `[data-theme='dark']` para sobrescrever
+  tokens, seletores que alcançam overlays em portal; `:root[data-theme=…]` não
+  os alcança. O teste de CSS distribuído de `@admin-ds/components` passa a ser
+  executado pelo Vitest, e os links de `AdsNav` deixam de mostrar o sublinhado
+  nativo. Nenhuma prop, tipo, classe `ads-*` ou variável `--ads-*` muda.
 - `fix-navigation-theme-contrast` - Corrigido o contraste de `AdsBreadcrumb` e
   `AdsTabs` nos temas claro e escuro. Os links do breadcrumb deixam de usar a
   cor padrão do navegador (`text-text-muted`, com `hover:text-text`). A tab

@@ -129,6 +129,20 @@ describe('navigation components', () => {
 		expect(screen.getByText('Mensal')).toHaveClass('text-text');
 	});
 
+	it('removes the native underline from AdsNav links and keeps aria-current', () => {
+		render(
+			<AdsNav
+				items={[
+					{ href: '/a', label: 'A', current: true },
+					{ href: '/b', label: 'B' },
+				]}
+			/>,
+		);
+		expect(screen.getByRole('link', { name: 'A' })).toHaveClass('no-underline');
+		expect(screen.getByRole('link', { name: 'A' })).toHaveAttribute('aria-current', 'page');
+		expect(screen.getByRole('link', { name: 'B' })).toHaveClass('no-underline');
+	});
+
 	it('opens dropdown and restores focus after Escape', () => {
 		render(
 			<AdsDropdown>

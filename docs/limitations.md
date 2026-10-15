@@ -34,12 +34,6 @@ componentes administrativos.
   diverge do cenário "Integração com Next.js" da spec `pagination` e deve ser
   corrigido em change própria. O admin demo usa `onPageChange` com
   `router.push`.
-- A sobrescrita de tokens com `:root[data-theme=…]`, documentada em
-  `packages/tokens/README.md`, não alcança overlays em portal (dialog, drawer e
-  toast), porque o `OverlayPortal` renderiza cada overlay em um `div` com
-  `data-theme` próprio, que casa com as regras geradas e redeclara todas as
-  variáveis. Use `[data-theme='light']` e `[data-theme='dark']` depois do CSS
-  de tokens, como descrito em `docs/integration.md`.
 - Os utilitários Tailwind só existem no CSS distribuído se aparecerem nas
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`

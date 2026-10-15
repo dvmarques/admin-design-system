@@ -237,9 +237,26 @@ export function CustomersPagination({ page, pageCount }: CustomersPaginationProp
 }
 ```
 
-Não use `renderPage` para envolver a página em um link: o conteúdo recebido já é
-um botão, e um link contendo um botão é conteúdo interativo aninhado (veja
-`docs/limitations.md`).
+### Links do consumidor em `AdsNav`, `AdsBreadcrumb` e `AdsPagination`
+
+Para usar `next/link` (ou outro link) sem conteúdo interativo aninhado, use
+`renderLink` nos itens de `AdsNav` e `AdsBreadcrumb`, e `renderPageLink` em
+`AdsPagination`. Espalhe as props recebidas no link: elas trazem `className`,
+`aria-current` e o conteúdo.
+
+```tsx
+<AdsNav items={[{ label: 'Clientes', renderLink: (props) => <Link href="/clientes" {...props} /> }]} />
+
+<AdsPagination
+	page={page}
+	pageCount={pageCount}
+	renderPageLink={(target, props) => <Link href={`/clientes?pagina=${target}`} {...props} />}
+/>
+```
+
+A biblioteca não acessa o roteador. `renderPage` (que recebe um botão pronto)
+continua funcionando, mas está obsoleto: envolver o botão em um link gera
+conteúdo interativo aninhado.
 
 ### Parâmetros de URL do demo
 

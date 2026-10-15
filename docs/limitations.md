@@ -20,20 +20,6 @@ componentes administrativos.
   até 10%; mudanças maiores exigem revisão explícita do baseline.
 - A validação automatizada de `axe-core` e Playwright não substitui revisão
   manual com teclado, leitor de tela e testes em navegadores adicionais.
-- `AdsNav` não comporta um link do consumidor sem gerar conteúdo interativo
-  aninhado: com `href` ele renderiza o próprio `<a>` e, sem `href`, um
-  `<button>`. `AdsBreadcrumb` aceita um `next/link` em `label`, mas só aplica o
-  estilo e o foco de link quando recebe `href`. Os dois divergem da spec
-  `navigation-structure` ("Cada item MUST aceitar conteúdo de link…" e o
-  cenário "Consumo em Next.js sem acoplamento ao roteador") e devem ser
-  corrigidos em change própria. O admin demo usa `next/link` direto na sidebar
-  do shell.
-- `AdsPagination.renderPage` só recebe o botão pronto da página: envolvê-lo em
-  `next/link` ou `<a>` gera conteúdo interativo aninhado, e substituí-lo por um
-  link perde o `aria-current="page"` e o estilo de item da biblioteca. Isso
-  diverge do cenário "Integração com Next.js" da spec `pagination` e deve ser
-  corrigido em change própria. O admin demo usa `onPageChange` com
-  `router.push`.
 - Os utilitários Tailwind só existem no CSS distribuído se aparecerem nas
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`

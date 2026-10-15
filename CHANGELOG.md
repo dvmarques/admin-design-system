@@ -22,6 +22,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-pagination-consumer-links` e `fix-navigation-consumer-links` - Adicionados
+  `renderLink` aos itens de `AdsNav` e `AdsBreadcrumb` e `renderPageLink` a
+  `AdsPagination`, para o consumidor fornecer o link (por exemplo `next/link`)
+  sem conteúdo interativo aninhado, mantendo estilo, foco e `aria-current`.
+  `renderPage` fica obsoleto, mas continua funcionando. Nenhuma prop existente
+  muda.
 - `fix-token-override-and-package-tests` - O README de `@admin-ds/tokens` passa a
   indicar `[data-theme='light']` e `[data-theme='dark']` para sobrescrever
   tokens, seletores que alcançam overlays em portal; `:root[data-theme=…]` não

@@ -57,6 +57,7 @@ export { AdsBreadcrumb, AdsNav, AdsTabs } from './navigation.js';
 export type {
 	AdsBreadcrumbItem,
 	AdsBreadcrumbProps,
+	AdsLinkRenderProps,
 	AdsNavItem,
 	AdsNavProps,
 	AdsTabsListProps,
@@ -72,7 +73,11 @@ export type {
 	AdsDropdownTriggerProps,
 } from './dropdown.js';
 export { AdsPagination, getAdsPaginationItems } from './pagination.js';
-export type { AdsPaginationPage, AdsPaginationProps } from './pagination.js';
+export type {
+	AdsPaginationLinkProps,
+	AdsPaginationPage,
+	AdsPaginationProps,
+} from './pagination.js';
 export {
 	AdsTable,
 	AdsTableBody,

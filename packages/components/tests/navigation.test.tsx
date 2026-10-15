@@ -184,6 +184,14 @@ describe('navigation components', () => {
 		);
 	});
 
+	it('keeps the inherited page font on AdsPagination buttons, which use AdsButton', () => {
+		render(<AdsPagination page={1} pageCount={3} onPageChange={vi.fn()} />);
+		const previous = screen.getByRole('button', { name: 'Página anterior' });
+		expect(previous).toBeDisabled();
+		expect(previous).toHaveClass('[font-family:inherit]');
+		expect(screen.getByRole('button', { name: 'Página 2' })).toHaveClass('[font-family:inherit]');
+	});
+
 	it('calculates compact pagination and disables boundaries', () => {
 		expect(getAdsPaginationItems(5, 10)).toEqual([1, 'ellipsis', 4, 5, 6, 'ellipsis', 10]);
 		render(<AdsPagination page={1} pageCount={3} onPageChange={vi.fn()} />);

@@ -48,7 +48,7 @@ describe('CustomersContent', () => {
 		expect(view.querySelectorAll('tbody tr')).toHaveLength(customersPageSize);
 		expect(view.textContent).toContain(customers[customersPageSize]?.name);
 		expect(view.textContent).not.toContain(customers[0]?.name);
-		const current = view.querySelector('button[aria-current="page"]');
+		const current = view.querySelector('a[aria-current="page"]');
 		expect(current?.getAttribute('aria-label')).toBe('Página 2');
 	});
 

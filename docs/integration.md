@@ -216,26 +216,28 @@ export function RouteChangeHandler() {
 }
 ```
 
-### Paginação por `onPageChange`
+### Paginação por links (`renderPageLink`)
 
-`AdsPagination` renderiza botões e não conhece URL nem roteador. Traduza cada
-mudança de página em uma navegação na aplicação, com um Client Component fino:
+`AdsPagination` não conhece URL nem roteador. Forneça o link de cada página com
+`renderPageLink` e `next/link`, em um Client Component fino (a função é passada
+ao componente). Cada página é um link real, sem botão aninhado:
 
 ```tsx
 'use client';
 
 export function CustomersPagination({ page, pageCount }: CustomersPaginationProps) {
-	const router = useRouter();
-
 	return (
 		<AdsPagination
-			onPageChange={(next) => router.push(`/clientes?pagina=${next}`)}
 			page={page}
 			pageCount={pageCount}
+			renderPageLink={(target, props) => <Link href={`/clientes?pagina=${target}`} {...props} />}
 		/>
 	);
 }
 ```
+
+Use `onPageChange` apenas quando a mudança de página não for uma navegação (por
+exemplo, estado local).
 
 ### Links do consumidor em `AdsNav`, `AdsBreadcrumb` e `AdsPagination`
 

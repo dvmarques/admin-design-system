@@ -44,7 +44,9 @@ Estado atual do `apps/admin-demo` (ver proposal.md — Why):
 | `/data-display`  | Mantida com a mesma URL e headings; passa a usar o layout      |
 
 Itens da navegação principal: Visão geral (`/`), Clientes (`/clientes`), Novo
-cliente (`/clientes/novo`), Preferências, Componentes e Exibição de dados. A
+cliente (`/clientes/novo`), Preferências, Componentes e Exibição de dados. Cada
+item entra na navegação na mesma tarefa que cria sua rota, para que nenhum link
+leve a uma página inexistente durante a implementação. A
 rota atual é a de correspondência **exata** com o `pathname`, de modo que, no
 nav principal ("Navegação do demo"), toda rota tem exatamente um item marcado
 com `aria-current="page"`. Outros `aria-current` (por exemplo, no catálogo de
@@ -99,8 +101,9 @@ pacote e deve mostrar o produto integrado.
 - Estados carregando/vazio/erro selecionados por parâmetro de URL
   (`?estado=vazio|carregando|erro`) lido no servidor, para que e2e e snapshots
   sejam estáveis sem timers. No estado carregando, a região da tabela expõe
-  `aria-busy="true"` e `AdsSkeleton` recebe `label` (sem ele fica `aria-hidden`),
-  sem linhas de dados. Valor desconhecido equivale a ausência do
+  `aria-busy="true"` e apenas um `AdsSkeleton` recebe `label` (cada `label` vira
+  um `role="status"`; sem ele o skeleton fica `aria-hidden`), sem nenhuma célula
+  com valores dos registros. Valor desconhecido equivale a ausência do
   parâmetro (dados normais). O erro usa `AdsEmptyState` (que repassa props) com
   `role="alert"` e, em `actions`, um `next/link` "Tentar novamente" para a rota
   sem o parâmetro `estado`; não há componente de alerta dedicado na biblioteca.
@@ -188,17 +191,19 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   com a aplicação consumidora são evitados pelos prefixos: as classes públicas
   usam `ads-`, as do demo usam `demo-`, e o demo não redefine seletores `ads-*`.
   A personalização é feita sobrescrevendo `--ads-*` no escopo da aplicação com
-  `[data-theme='light']` e `[data-theme='dark']` (sem `:root`), em `globals.css`,
-  que o layout raiz importa depois de `@admin-ds/tokens/styles.css`. O seletor
-  sem `:root` é necessário porque `OverlayPortal` renderiza cada overlay em um
-  `div` com `data-theme` próprio, que casa com as regras geradas
-  (`:root, [data-theme="light"]` e `[data-theme="dark"]`) e redeclara todas as
-  variáveis: uma sobrescrita em `:root[data-theme=…]`, como a do
-  `packages/tokens/README.md`, não chega a drawer, dialog e toast. Com mesma
-  especificidade das regras geradas, a sobrescrita depende da ordem de carga, o
-  que o layout garante. Essa limitação do padrão documentado é registrada em
-  `docs/limitations.md` e não é corrigida nesta change. Um teste verifica que a
-  sobrescrita chega às rotas, incluindo um overlay (tarefa 6.2). Sem novas dependências de runtime, o impacto no bundle é
+  `[data-theme='light']` e `[data-theme='dark']` (sem `:root`), carregados depois
+  de `@admin-ds/tokens/styles.css`. O seletor sem `:root` é necessário porque
+  `OverlayPortal` renderiza cada overlay em um `div` com `data-theme` próprio,
+  que casa com as regras geradas (`:root, [data-theme="light"]` e
+  `[data-theme="dark"]`) e redeclara todas as variáveis: uma sobrescrita em
+  `:root[data-theme=…]`, como a do `packages/tokens/README.md`, não chega a
+  drawer, dialog e toast. Com mesma especificidade das regras geradas, a
+  sobrescrita depende da ordem de carga. Essa limitação do padrão documentado é
+  registrada em `docs/limitations.md` e não é corrigida nesta change. O demo
+  **não** traz sobrescrita permanente, porque ela mudaria o visual, as
+  asserções de cor fixas de `e2e/overlay.spec.ts`, o contraste auditado e os
+  snapshots: a sobrescrita é injetada apenas no teste da tarefa 6.2, e o padrão
+  é documentado em `docs/integration.md`. Sem novas dependências de runtime, o impacto no bundle é
   nulo.
 - Acessibilidade: um `h1` por rota e `main` único fornecido pelo shell, verificados
   em `e2e/admin-demo-routes.spec.ts` (criado na tarefa 1.2 e estendido a cada

@@ -167,7 +167,7 @@ foi arquivada em `openspec/changes/archive/2026-10-14-add-admin-shell`.
 Evoluir a aplicação Next.js de referência para um admin demonstrativo
 que consuma exclusivamente as APIs públicas do design system.
 
-**Status: em implementação.**
+**Status: concluída e arquivada em 2026-10-15.**
 
 Entregas principais:
 
@@ -184,6 +184,14 @@ Entregas principais:
   hidratação por rota, e snapshots visuais;
 - documentação em `docs/integration.md` e limitações registradas em
   `docs/limitations.md`.
+
+A auditoria de acessibilidade do demo revelou defeitos de contraste e de estado
+ativo em `AdsBreadcrumb` e `AdsTabs`, corrigidos na change
+`fix-navigation-theme-contrast`, arquivada junto com esta.
+
+As specs `admin-demo-application` e `nextjs-consumption` foram sincronizadas ao
+conjunto principal e a change foi arquivada em
+`openspec/changes/archive/2026-10-15-add-nextjs-admin-demo`.
 
 ## 9. `add-advanced-admin-patterns`
 

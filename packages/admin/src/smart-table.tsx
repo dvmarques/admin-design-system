@@ -131,12 +131,9 @@ export interface AdsSmartTableProps<Row> extends Omit<
 
 const emptyIds: readonly string[] = [];
 
-/**
- * Linha sem o realce de hover de `AdsTableRow`, para o cabeçalho e as linhas de estado
- * (vazio, erro e carregamento), que não são linhas de dados.
- */
+/** Cabeçalho e linhas de estado (vazio, erro e carregamento), sem realce de hover. */
 function StaticRow({ children }: { children: ReactNode }) {
-	return <tr className="ads-table-row ads-smart-table-static-row">{children}</tr>;
+	return <AdsTableRow interactive={false}>{children}</AdsTableRow>;
 }
 
 function SortIndicator({ direction }: { direction: AdsSmartTableSortDirection | null }) {

@@ -520,7 +520,7 @@ import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
 import { AdsButton } from '@admin-ds/components';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -540,7 +540,8 @@ function withParams(params: Params, changes: Record<string, string | null>) {
 		if (value === null) query.delete(key);
 		else query.set(key, value);
 	}
-	return query.toString();
+	const serialized = query.toString();
+	return serialized ? serialized.replace(/%3A/gi, ':') : '';
 }
 
 export function UsuariosTabela({
@@ -560,6 +561,8 @@ export function UsuariosTabela({
 	const pathname = usePathname();
 	const [selected, setSelected] = useState<string[]>([]);
 	const [hidden, setHidden] = useState<string[]>([]);
+	const rootRef = useRef<HTMLDivElement>(null);
+	const pendingClearRef = useRef<HTMLElement | null>(null);
 	const href = (changes: Record<string, string | null>) => {
 		const query = withParams(params, changes);
 		return query ? `${pathname}?${query}` : pathname;
@@ -571,10 +574,38 @@ export function UsuariosTabela({
 		router.replace(href({ ordem, pagina: null }), { scroll: false });
 	}
 
+	function clearSelection(event: MouseEvent<HTMLButtonElement>) {
+		pendingClearRef.current = event.currentTarget;
+		setSelected([]);
+	}
+
+	useLayoutEffect(() => {
+		const pending = pendingClearRef.current;
+		if (pending === null) return;
+		const active = document.activeElement;
+		const focusLost = !active || active === document.body;
+		if (!focusLost && !rootRef.current?.contains(active)) {
+			pendingClearRef.current = null;
+			return;
+		}
+		if (pending.isConnected) return;
+		pendingClearRef.current = null;
+		if (!focusLost) return;
+		const root = rootRef.current;
+		const selectAll = root?.querySelector<HTMLInputElement>(
+			'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
+		);
+		if (selectAll && !selectAll.disabled) {
+			selectAll.focus();
+			return;
+		}
+		root?.querySelector<HTMLElement>('.ads-smart-table-scroll')?.focus();
+	}, [selected]);
+
 	return (
-		<>
+		<div ref={rootRef}>
 			{selected.length > 0 ? (
-				<AdsButton onClick={() => setSelected([])} size="sm" variant="secondary">
+				<AdsButton onClick={clearSelection} size="sm" variant="secondary">
 					Limpar seleção
 				</AdsButton>
 			) : null}
@@ -607,10 +638,14 @@ export function UsuariosTabela({
 				selectedIds={selected}
 				sort={sort}
 			/>
-		</>
+		</div>
 	);
 }
 ```
+
+Ao limpar a seleção, o foco vai ao checkbox "Selecionar todas as linhas da página"
+ou, se ele não existir, à região rolável da tabela, e só quando o botão some e o
+foco se perdeu (`body` ou `null`), no mesmo espírito da barra de ações em massa.
 
 Para combinar com o `AdsFilterBar`, passe-o em `filters`; os dois seguem
 independentes. Como os links partem dos parâmetros atuais, mudar de página ou de

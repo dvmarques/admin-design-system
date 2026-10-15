@@ -60,6 +60,24 @@ describe('AdsTable', () => {
 		expect(region).toHaveClass('ads-table-container');
 	});
 
+	it('omits row hover highlight when interactive is false', () => {
+		render(
+			<AdsTable aria-label="Estático">
+				<AdsTableBody>
+					<AdsTableRow interactive={false}>
+						<AdsTableCell>Cabeçalho</AdsTableCell>
+					</AdsTableRow>
+					<AdsTableRow>
+						<AdsTableCell>Dado</AdsTableCell>
+					</AdsTableRow>
+				</AdsTableBody>
+			</AdsTable>,
+		);
+		const rows = screen.getAllByRole('row');
+		expect(rows[0].className).not.toMatch(/hover:/);
+		expect(rows[1].className).toMatch(/hover:bg-surface-hover/);
+	});
+
 	it('keeps interactive cell content keyboard focusable', () => {
 		render(
 			<AdsTable aria-label="Ações de clientes">

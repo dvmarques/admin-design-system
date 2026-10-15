@@ -114,6 +114,22 @@ describe('AdsConfirmDialog', () => {
 		expect(screen.getByRole('button', { name: /Confirmar/ })).toBeDisabled();
 	});
 
+	it('cancels with a click on the backdrop, but not on the panel', () => {
+		render(<Harness />);
+		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+		fireEvent.mouseDown(screen.getByRole('dialog'));
+		expect(screen.getByRole('dialog')).toBeTruthy();
+		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
+		expect(screen.queryByRole('dialog')).toBeNull();
+	});
+
+	it('does not cancel with a click on the backdrop while pending', () => {
+		render(<Harness pending />);
+		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
+		expect(screen.getByRole('dialog')).toBeTruthy();
+	});
+
 	it('does not cancel with Escape while pending', () => {
 		render(<Harness pending />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));

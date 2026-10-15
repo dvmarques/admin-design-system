@@ -4,6 +4,7 @@ import { expectNoAxeViolations } from './axe';
 const routes = [
 	{ path: '/', label: 'Visão geral' },
 	{ path: '/clientes', label: 'Clientes' },
+	{ path: '/clientes/novo', label: 'Novo cliente' },
 	{ path: '/componentes', label: 'Componentes' },
 	{ path: '/data-display', label: 'Exibição de dados' },
 ] as const;
@@ -296,5 +297,99 @@ test.describe('clientes', () => {
 				await expectNoAxeViolations(page);
 			});
 		}
+	}
+});
+
+test.describe('novo cliente', () => {
+	const submitButton = (page: Page) => page.getByRole('button', { name: 'Cadastrar cliente' });
+
+	test('valida os campos obrigatórios e leva o foco ao primeiro inválido', async ({ page }) => {
+		await page.goto('/clientes/novo');
+		await expect(page.getByRole('heading', { level: 1, name: 'Novo cliente' })).toBeVisible();
+
+		await submitButton(page).click();
+
+		await expect(page.getByLabel('Nome')).toBeFocused();
+		await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
+		await expect(page.getByLabel('E-mail')).toHaveAttribute('aria-invalid', 'true');
+		await expect(page.getByText('Informe o nome do cliente.')).toBeVisible();
+		await expect(page.getByText('Informe o e-mail do cliente.')).toBeVisible();
+	});
+
+	test('conclui o cadastro com confirmação, sem mudar a URL nem enviar requisições', async ({
+		page,
+	}) => {
+		await page.goto('/clientes/novo');
+		await page.getByLabel('Nome').fill('Ana Souza');
+		await page.getByLabel('E-mail').fill('ana.souza@exemplo.com.br');
+		// The radio input is visually hidden; people click its label.
+		await page.getByText('Trimestral', { exact: true }).click();
+		await expect(page.getByRole('radio', { name: 'Trimestral' })).toBeChecked();
+
+		const sent: string[] = [];
+		page.on('request', (request) => {
+			if (request.method() !== 'GET' || request.isNavigationRequest()) {
+				sent.push(`${request.method()} ${request.url()}`);
+			}
+		});
+
+		await submitButton(page).click();
+
+		const confirmation = page
+			.getByRole('status')
+			.filter({ hasText: 'Cliente cadastrado com sucesso.' });
+		await expect(confirmation).toBeVisible();
+		await expect(page.locator('[aria-invalid="true"]')).toHaveCount(0);
+		await expect(page).toHaveURL('/clientes/novo');
+
+		await page.getByRole('button', { name: 'Fechar notificação' }).click();
+		await expect(confirmation).toBeHidden();
+		expect(sent).toEqual([]);
+	});
+
+	async function expectDistinguishableControls(page: Page) {
+		const nameField = page.getByLabel('Nome');
+		await nameField.focus();
+		const focusOutline = await nameField.evaluate((element) => {
+			const style = getComputedStyle(element);
+			return { style: style.outlineStyle, width: style.outlineWidth };
+		});
+		expect(focusOutline.style).not.toBe('none');
+		expect(focusOutline.width).not.toBe('0px');
+
+		const borderOf = (locator: ReturnType<Page['getByLabel']>) =>
+			locator.evaluate((element) => getComputedStyle(element).borderTopColor);
+		expect(await borderOf(nameField)).not.toBe(await borderOf(page.getByLabel('Status')));
+
+		const indicatorBackground = (name: string) =>
+			page
+				.getByRole('radio', { name })
+				.locator('xpath=following-sibling::span[1]')
+				.evaluate((element) => getComputedStyle(element).backgroundColor);
+		expect(await indicatorBackground('Mensal')).not.toBe(await indicatorBackground('Anual'));
+	}
+
+	for (const theme of themes) {
+		test(`mantém erro, foco e seleção distinguíveis ao alternar o tema (a partir do ${theme})`, async ({
+			page,
+		}) => {
+			await useTheme(page, theme);
+			await page.goto('/clientes/novo');
+			await submitButton(page).click();
+			await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
+
+			await expectDistinguishableControls(page);
+			await expectNoAxeViolations(page);
+
+			const other = theme === 'light' ? 'dark' : 'light';
+			await page
+				.getByRole('button', { name: `Usar tema ${other === 'dark' ? 'escuro' : 'claro'}` })
+				.click();
+			await expect(page.locator('html')).toHaveAttribute('data-theme', other);
+			await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
+
+			await expectDistinguishableControls(page);
+			await expectNoAxeViolations(page);
+		});
 	}
 });

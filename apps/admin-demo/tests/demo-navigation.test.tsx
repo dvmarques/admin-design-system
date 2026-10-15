@@ -33,7 +33,7 @@ describe('DemoNavigation', () => {
 	);
 
 	it('marks nothing for a route without a navigation item', () => {
-		pathname = '/clientes/novo';
+		pathname = '/rota-sem-item';
 		render(<DemoNavigation />);
 
 		expect(screen.getAllByRole('link').some((link) => link.hasAttribute('aria-current'))).toBe(

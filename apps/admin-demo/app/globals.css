@@ -137,6 +137,17 @@ body {
 	width: 6rem;
 	height: 0.75rem;
 }
+.demo-new-customer-form {
+	display: grid;
+	gap: 1.25rem;
+	max-width: 32rem;
+}
+.demo-new-customer-actions {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 1rem;
+}
 .demo-shell-nav-list {
 	display: grid;
 	gap: 0.25rem;

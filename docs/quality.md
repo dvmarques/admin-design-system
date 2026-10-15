@@ -111,11 +111,15 @@ confirme que não há falhas:
 ```powershell
 npm run format
 npm run lint
+npm run build
 npm run typecheck
 npm run test:quiet
-npm run build
 npm run test:e2e
 ```
+
+O build vem antes de tipos e testes porque o admin demo importa os pacotes pelo
+`dist`. O `.gitattributes` mantém o checkout em LF, inclusive no Windows com
+`core.autocrlf=true`, para o `npm run format` passar sem ajuste local.
 
 O comando `npm run validate` combina essa sequência de qualidade e também
 executa o E2E após o build. Se uma alteração visual intencional modificar um

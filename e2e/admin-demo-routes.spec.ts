@@ -3,6 +3,7 @@ import { expectNoAxeViolations } from './axe';
 
 const routes = [
 	{ path: '/', label: 'Visão geral' },
+	{ path: '/clientes', label: 'Clientes' },
 	{ path: '/componentes', label: 'Componentes' },
 	{ path: '/data-display', label: 'Exibição de dados' },
 ] as const;
@@ -170,5 +171,130 @@ test.describe('visão geral', () => {
 
 			await expectNoAxeViolations(page);
 		});
+	}
+});
+
+test.describe('clientes', () => {
+	const pageCount = 5;
+
+	function customersTable(page: Page) {
+		return page.getByRole('table', { name: 'Clientes' });
+	}
+
+	function pageButton(page: Page, number: number) {
+		return page.getByRole('button', { name: `Página ${number}`, exact: true });
+	}
+
+	test('lista os registros da página e navega pela paginação', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await expect(page.getByRole('heading', { level: 1, name: 'Clientes' })).toBeVisible();
+		await expect(customersTable(page).getByRole('row')).toHaveCount(6);
+		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
+		await expect(pageButton(page, 1)).toHaveAttribute('aria-current', 'page');
+
+		await pageButton(page, 2).click();
+
+		await expect(page).toHaveURL('/clientes?pagina=2');
+		await expect(pageButton(page, 2)).toHaveAttribute('aria-current', 'page');
+		await expect(customersTable(page).getByRole('cell', { name: 'Eduardo Pires' })).toBeVisible();
+		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toHaveCount(0);
+	});
+
+	for (const [value, expected] of [
+		[undefined, 1],
+		['abc', 1],
+		['0', 1],
+		['-3', 1],
+		['1.7', 1],
+		['3', 3],
+		['999', pageCount],
+	] as const) {
+		test(`?pagina=${value ?? '(ausente)'} exibe a página ${expected}`, async ({ page }) => {
+			await page.goto(value === undefined ? '/clientes' : `/clientes?pagina=${value}`);
+
+			await expect(pageButton(page, expected)).toHaveAttribute('aria-current', 'page');
+			await expect(customersTable(page).getByRole('row')).not.toHaveCount(0);
+		});
+	}
+
+	test('estado vazio substitui a tabela e oferece a volta à lista', async ({ page }) => {
+		await page.goto('/clientes?estado=vazio');
+
+		await expect(page.getByRole('table')).toHaveCount(0);
+		await expect(page.getByText('Nenhum cliente encontrado')).toBeVisible();
+		await expect(page.getByText('Nenhum cliente corresponde à seleção atual.')).toBeVisible();
+		await expect(page.getByRole('link', { name: 'Ver todos os clientes' })).toHaveAttribute(
+			'href',
+			'/clientes',
+		);
+	});
+
+	test('estado de erro é anunciado e oferece tentar novamente', async ({ page }) => {
+		await page.goto('/clientes?estado=erro');
+
+		await expect(
+			page.getByRole('alert').filter({ hasText: 'Não foi possível carregar os clientes' }),
+		).toBeVisible();
+		await expect(page.getByRole('table')).toHaveCount(0);
+		await expect(page.getByRole('link', { name: 'Tentar novamente' })).toHaveAttribute(
+			'href',
+			'/clientes',
+		);
+	});
+
+	test('estado carregando preserva a estrutura sem valores dos registros', async ({ page }) => {
+		await page.goto('/clientes?estado=carregando');
+
+		await expect(page.locator('[aria-busy="true"]')).toHaveCount(1);
+		await expect(customersTable(page)).toBeVisible();
+		await expect(customersTable(page).getByRole('columnheader')).toHaveCount(6);
+		await expect(page.getByRole('status', { name: 'Carregando clientes' })).toHaveCount(1);
+		await expect(page.getByText('Mariana Costa')).toHaveCount(0);
+		const cellTexts = await customersTable(page).locator('tbody td').allTextContents();
+		expect(cellTexts).toHaveLength(30);
+		expect(cellTexts.join('').trim()).toBe('');
+	});
+
+	test('?estado desconhecido exibe os dados normais', async ({ page }) => {
+		await page.goto('/clientes?estado=desconhecido');
+
+		await expect(customersTable(page).getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
+	});
+
+	test('a tabela rola dentro do contêiner em 375 px sem rolar a página', async ({ page }) => {
+		await page.setViewportSize({ width: 375, height: 812 });
+		await page.goto('/clientes');
+
+		const overflow = await page.locator('.ads-table-container').evaluate((element) => ({
+			content: element.scrollWidth,
+			visible: element.clientWidth,
+		}));
+		expect(overflow.content).toBeGreaterThan(overflow.visible);
+	});
+
+	for (const query of ['', '?estado=vazio', '?estado=carregando', '?estado=erro']) {
+		test(`a página não rola na horizontal em 375 px (${query || 'com dados'})`, async ({
+			page,
+		}) => {
+			await page.setViewportSize({ width: 375, height: 812 });
+			await page.goto(`/clientes${query}`);
+
+			const horizontalOverflow = await page.evaluate(
+				() => document.documentElement.scrollWidth > document.documentElement.clientWidth,
+			);
+			expect(horizontalOverflow).toBe(false);
+		});
+
+		for (const theme of themes) {
+			test(`não tem violações de acessibilidade (${query || 'com dados'}, tema ${theme})`, async ({
+				page,
+			}) => {
+				await useTheme(page, theme);
+				await page.goto(`/clientes${query}`);
+
+				await expectNoAxeViolations(page);
+			});
+		}
 	}
 });

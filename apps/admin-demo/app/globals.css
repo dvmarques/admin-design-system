@@ -119,6 +119,24 @@ body {
 	display: grid;
 	gap: 0.5rem;
 }
+.demo-action-link {
+	color: var(--ads-color-text);
+	font-weight: var(--ads-typography-font-weight-medium);
+	text-decoration: underline;
+	text-underline-offset: 0.25em;
+}
+.demo-action-link:focus-visible {
+	border-radius: var(--ads-radius-sm);
+	outline: 2px solid var(--ads-color-focus-ring);
+	outline-offset: 3px;
+}
+.demo-table-pagination {
+	margin-top: 1rem;
+}
+.demo-skeleton-cell {
+	width: 6rem;
+	height: 0.75rem;
+}
 .demo-shell-nav-list {
 	display: grid;
 	gap: 0.25rem;

@@ -12,3 +12,7 @@ devem ser incluídos nos artefatos distribuídos.
 O baseline de `@admin-ds/components` foi atualizado na change
 `add-data-display-components` para incluir os módulos e estilos distribuídos
 de tabela, coleções, progresso e estado vazio, sem novas dependências de runtime.
+
+O baseline de `@admin-ds/components` foi atualizado na change `add-date-picker`
+para incluir os módulos distribuídos do seletor de data (`date-picker` e
+`date-utils`, com declarações e source maps), sem novas dependências de runtime.

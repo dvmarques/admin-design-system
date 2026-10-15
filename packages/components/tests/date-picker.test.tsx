@@ -107,6 +107,30 @@ describe('AdsDatePicker single date', () => {
 		);
 	});
 
+	it('keeps keyboard navigation within min and max', async () => {
+		render(<AdsDatePicker defaultValue="2026-03-18" max="2026-03-20" min="2026-03-05" />);
+		const grid = await openCalendar();
+		await waitFor(() => expect(document.activeElement).toHaveAttribute('data-date', '2026-03-18'));
+		fireEvent.keyDown(grid, { key: 'ArrowDown' });
+		await waitFor(() => expect(document.activeElement).toHaveAttribute('data-date', '2026-03-20'));
+		fireEvent.keyDown(grid, { key: 'PageDown' });
+		await waitFor(() => expect(document.activeElement).toHaveAttribute('data-date', '2026-03-20'));
+		expect(screen.getByText('março de 2026')).toBeInTheDocument();
+		fireEvent.keyDown(grid, { key: 'PageUp', shiftKey: true });
+		await waitFor(() => expect(document.activeElement).toHaveAttribute('data-date', '2026-03-05'));
+		expect(screen.getByText('março de 2026')).toBeInTheDocument();
+	});
+
+	it('dims the month buttons that are aria-disabled', async () => {
+		render(<AdsDatePicker defaultValue="2026-03-10" max="2026-03-31" min="2026-03-01" />);
+		await openCalendar();
+		for (const name of ['Mês anterior', 'Próximo mês']) {
+			const button = screen.getByRole('button', { name });
+			expect(button).toHaveAttribute('aria-disabled', 'true');
+			expect(button).toHaveClass('aria-disabled:opacity-50', 'aria-disabled:cursor-not-allowed');
+		}
+	});
+
 	it('navigates the grid with the keyboard', async () => {
 		render(<AdsDatePicker defaultValue="2026-03-10" />);
 		const grid = await openCalendar();
@@ -161,6 +185,39 @@ describe('AdsDatePicker single date', () => {
 		expect(screen.getByRole('button', { name: 'Abrir calendário' })).toBeDisabled();
 	});
 
+	it('does not submit the hidden fields while disabled', () => {
+		const { container, rerender } = render(
+			<form>
+				<AdsDatePicker defaultValue="2026-03-10" name="due" />
+				<AdsDatePicker
+					defaultValue={{ start: '2026-03-01', end: '2026-03-09' }}
+					endName="to"
+					mode="range"
+					startName="from"
+				/>
+			</form>,
+		);
+		const form = container.querySelector('form')!;
+		expect(Object.fromEntries(new FormData(form))).toEqual({
+			due: '2026-03-10',
+			from: '2026-03-01',
+			to: '2026-03-09',
+		});
+		rerender(
+			<form>
+				<AdsDatePicker defaultValue="2026-03-10" disabled name="due" />
+				<AdsDatePicker
+					defaultValue={{ start: '2026-03-01', end: '2026-03-09' }}
+					disabled
+					endName="to"
+					mode="range"
+					startName="from"
+				/>
+			</form>,
+		);
+		expect(Object.fromEntries(new FormData(form))).toEqual({});
+	});
+
 	it('renders identical markup for the same initial value on the server and client', () => {
 		const html = renderToString(<AdsDatePicker defaultValue="2026-03-10" />);
 		const { container } = render(<AdsDatePicker defaultValue="2026-03-10" />);
@@ -194,8 +251,19 @@ describe('AdsDatePicker range', () => {
 		);
 		let grid = await openCalendar();
 		fireEvent.click(within(grid).getByRole('button', { name: /(^|\s)20 de março/ }));
-		expect(onValueChange).toHaveBeenLastCalledWith({ start: '2026-03-20', end: null });
+		// The first click only marks the pending start.
+		expect(onValueChange).not.toHaveBeenCalled();
 		grid = screen.getByRole('grid');
+		expect(
+			within(grid)
+				.getByRole('button', { name: /(^|\s)20 de março/ })
+				.closest('td'),
+		).toHaveAttribute('aria-selected', 'true');
+		expect(
+			within(grid)
+				.getByRole('button', { name: /(^|\s)10 de março/ })
+				.closest('td'),
+		).toHaveAttribute('aria-selected', 'false');
 		fireEvent.click(within(grid).getByRole('button', { name: /(^|\s)8 de março/ }));
 		expect(onValueChange).toHaveBeenLastCalledWith({ start: '2026-03-08', end: '2026-03-20' });
 		expect(
@@ -230,6 +298,56 @@ describe('AdsDatePicker range', () => {
 			'2026-03-01',
 		);
 		expect(container.querySelector<HTMLInputElement>('input[name="to"]')?.value).toBe('2026-03-20');
+	});
+
+	it('keeps the previous range when the calendar closes before the second date', async () => {
+		const onValueChange = vi.fn();
+		render(
+			<AdsDatePicker
+				defaultValue={{ start: '2026-03-10', end: '2026-03-14' }}
+				mode="range"
+				onValueChange={onValueChange}
+			/>,
+		);
+		const grid = await openCalendar();
+		fireEvent.click(within(grid).getByRole('button', { name: /(^|\s)20 de março/ }));
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('grid')).not.toBeInTheDocument());
+		expect(onValueChange).not.toHaveBeenCalled();
+		expect(
+			screen.getAllByRole('textbox').map((input) => (input as HTMLInputElement).value),
+		).toEqual(['10/03/2026', '14/03/2026']);
+		const reopened = await openCalendar();
+		expect(
+			within(reopened)
+				.getByRole('button', { name: /(^|\s)12 de março/ })
+				.closest('td'),
+		).toHaveAttribute('aria-selected', 'true');
+	});
+
+	it('clears the invalid mark only on the edited input', () => {
+		render(<AdsDatePicker defaultValue={{ start: null, end: null }} mode="range" />);
+		const [start, end] = screen.getAllByRole('textbox');
+		fireEvent.change(start!, { target: { value: 'abc' } });
+		fireEvent.blur(start!);
+		fireEvent.change(end!, { target: { value: 'xyz' } });
+		fireEvent.blur(end!);
+		expect(start).toHaveAttribute('aria-invalid', 'true');
+		expect(end).toHaveAttribute('aria-invalid', 'true');
+		fireEvent.change(end!, { target: { value: '2' } });
+		expect(end).not.toHaveAttribute('aria-invalid', 'true');
+		expect(start).toHaveAttribute('aria-invalid', 'true');
+	});
+
+	it('names the end input with the AdsField label', () => {
+		render(
+			<AdsField label="Período">
+				<AdsDatePicker mode="range" />
+			</AdsField>,
+		);
+		const [start, end] = screen.getAllByRole('textbox');
+		expect(start).toHaveAccessibleName('Período');
+		expect(end).toHaveAccessibleName('Período Data final');
 	});
 
 	it('highlights the selected period', async () => {

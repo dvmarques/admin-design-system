@@ -125,6 +125,10 @@ const dayStates = {
 	normal: 'border-transparent bg-transparent text-text hover:bg-surface-hover',
 } as const;
 
+// AdsButton only dims the native `disabled`; the month buttons stay focusable with aria-disabled.
+const monthNavClassName =
+	'aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:translate-y-0 aria-disabled:hover:bg-transparent';
+
 interface CalendarProps {
 	anchor: string | null;
 	firstDay: number;
@@ -217,7 +221,14 @@ function DatePickerCalendar({
 											: null;
 		if (!next) return;
 		event.preventDefault();
-		moveFocus(next);
+		const nextIso = toIso(next);
+		const bounded =
+			min && compareIso(nextIso, min) < 0
+				? parseIso(min)
+				: max && compareIso(nextIso, max) > 0
+					? parseIso(max)
+					: next;
+		moveFocus(bounded ?? next);
 	};
 
 	const rangeStart = value.start;
@@ -233,6 +244,7 @@ function DatePickerCalendar({
 				<AdsButton
 					aria-disabled={canGoBack ? undefined : true}
 					aria-label={labels.previousMonth}
+					className={monthNavClassName}
 					onClick={() => canGoBack && setFocused(addMonths(focused, -1))}
 					size="sm"
 					type="button"
@@ -250,6 +262,7 @@ function DatePickerCalendar({
 				<AdsButton
 					aria-disabled={canGoForward ? undefined : true}
 					aria-label={labels.nextMonth}
+					className={monthNavClassName}
 					onClick={() => canGoForward && setFocused(addMonths(focused, 1))}
 					size="sm"
 					type="button"
@@ -428,9 +441,10 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 			setOpen(false);
 			return;
 		}
+		// The first click only marks the pending start; the value changes on the second click, so
+		// closing the calendar in between keeps the previous range.
 		if (anchor === null) {
 			setAnchor(iso);
-			commit({ start: iso, end: null });
 			return;
 		}
 		const [start, end] = compareIso(anchor, iso) <= 0 ? [anchor, iso] : [iso, anchor];
@@ -455,6 +469,8 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 			'aria-invalid': ariaInvalid,
 			'aria-label':
 				index === 0 ? (ariaLabel ?? (id === undefined ? fallbackLabel : undefined)) : fallbackLabel,
+			// Inside AdsField the end input is announced as "<field label> <end label>".
+			'aria-labelledby': index === 1 && id ? `${id}-label ${inputId}` : undefined,
 			autoComplete: 'off',
 			disabled,
 			id: inputId,
@@ -463,7 +479,7 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 			onChange: (event: { target: { value: string } }) => {
 				const value = event.target.value;
 				setDrafts((previous) => (index === 0 ? [value, previous[1]] : [previous[0], value]));
-				setInvalid([false, false]);
+				setInvalid((previous) => (index === 0 ? [false, previous[1]] : [previous[0], false]));
 			},
 			onKeyDown: (event: KeyboardEvent<HTMLInputElement>) => {
 				if (event.key === 'Enter' && text !== committed) {
@@ -513,7 +529,7 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 						max={maxIso}
 						min={minIso}
 						onSelect={selectFromCalendar}
-						value={current}
+						value={anchor === null ? current : { start: anchor, end: null }}
 					/>
 				}
 				onOpenChange={changeOpen}
@@ -535,14 +551,24 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 			{props.mode === 'range' ? (
 				<>
 					{props.startName ? (
-						<input name={props.startName} type="hidden" value={current.start ?? ''} />
+						<input
+							name={props.startName}
+							disabled={disabled}
+							type="hidden"
+							value={current.start ?? ''}
+						/>
 					) : null}
 					{props.endName ? (
-						<input name={props.endName} type="hidden" value={current.end ?? ''} />
+						<input
+							name={props.endName}
+							disabled={disabled}
+							type="hidden"
+							value={current.end ?? ''}
+						/>
 					) : null}
 				</>
 			) : props.name ? (
-				<input name={props.name} type="hidden" value={current.start ?? ''} />
+				<input name={props.name} disabled={disabled} type="hidden" value={current.start ?? ''} />
 			) : null}
 		</div>
 	);

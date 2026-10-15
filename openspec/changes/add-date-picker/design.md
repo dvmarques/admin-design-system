@@ -30,7 +30,7 @@ O valor único é `string | null`; o intervalo é `AdsDateRange` (`{ start, end 
 
 ### 4. Composição e limites de cliente
 
-`AdsDatePicker` é Client Component (`"use client"`). Compõe `AdsInput` para a entrada digitada e `AdsPopover` para o calendário, ancorado ao botão que o abre. Ele aceita `id`, `aria-describedby`, `aria-invalid` e `validationState`, os props injetados por `AdsField`; no intervalo, o `id` fica na entrada inicial.
+`AdsDatePicker` é Client Component (`"use client"`). Compõe `AdsInput` para a entrada digitada e `AdsPopover` para o calendário, ancorado ao botão que o abre. Ele aceita `id`, `aria-describedby`, `aria-invalid` e `validationState`, os props injetados por `AdsField`; no intervalo, o `id` fica na entrada inicial, e a entrada final é nomeada por `aria-labelledby` com o rótulo do campo (`AdsField` passa a dar o `id` `<controle>-label` ao rótulo) seguido do próprio rótulo ("Data final"). Os campos ocultos ficam `disabled` junto com o componente, para o formulário não enviar o valor.
 
 ### 5. Entrada digitada
 
@@ -38,7 +38,7 @@ O texto é validado ao perder o foco ou com `Enter`. Texto válido, dentro dos l
 
 ### 6. Calendário acessível
 
-O calendário é um `role="grid"` nomeado pelo título do mês (`aria-live="polite"`), com células `gridcell`, `aria-selected` e um único botão com `tabindex=0` (foco móvel). Teclas: setas (dia/semana), `Home`/`End` (início/fim da semana), `PageUp`/`PageDown` (mês) e `Shift`+`PageUp`/`PageDown` (ano), `Enter`/`Espaço` selecionam. Datas fora dos limites ou desabilitadas usam `aria-disabled` e não são selecionáveis. O foco vai ao dia ativo ao abrir e volta ao acionador ao fechar (comportamento do `AdsPopover`). O mês inicial vem do valor, de `min`/`max` ou da data atual, esta lida apenas no cliente ao abrir.
+O calendário é um `role="grid"` nomeado pelo título do mês (`aria-live="polite"`), com células `gridcell`, `aria-selected` e um único botão com `tabindex=0` (foco móvel). Teclas: setas (dia/semana), `Home`/`End` (início/fim da semana), `PageUp`/`PageDown` (mês) e `Shift`+`PageUp`/`PageDown` (ano), `Enter`/`Espaço` selecionam. Datas fora dos limites ou desabilitadas usam `aria-disabled` e não são selecionáveis; a navegação por teclado para em `min`/`max`, e os botões de mês indisponíveis ficam `aria-disabled` e esmaecidos. No intervalo, o primeiro dia ativado fica só pendente (destacado no calendário) e o valor muda no segundo; fechar antes mantém o intervalo anterior, sem notificar `onValueChange` com um intervalo incompleto. O foco vai ao dia ativo ao abrir e volta ao acionador ao fechar (comportamento do `AdsPopover`). O mês inicial vem do valor, de `min`/`max` ou da data atual, esta lida apenas no cliente ao abrir.
 
 ### 7. Hidratação
 
@@ -53,4 +53,4 @@ Classes `ads-date-picker*` e utilitários Tailwind estáticos compilados no CSS 
 - Intervalos podem conter datas desabilitadas; o consumidor valida regras de negócio.
 - Sem seletor de hora e de fuso; o calendário gregoriano é o único suportado.
 - Os snapshots visuais só têm baseline `win32` e são pulados na CI; esta change não adiciona baseline visual novo e o comportamento é coberto por testes de componente e `axe`.
-- Impacto no bundle: pequeno acréscimo no JS/CSS do pacote, dentro da margem do baseline.
+- Impacto no bundle: o `dist` de `@admin-ds/components` passa de 213.707 para 271.509 bytes (+27%), acima da margem de 10% do `inspect:packages`; o baseline é atualizado em `docs/bundle-baseline.json`, com a justificativa em `docs/bundle-baseline.md`.

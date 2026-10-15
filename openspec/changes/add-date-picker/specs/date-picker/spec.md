@@ -30,12 +30,17 @@ O sistema MUST fornecer `AdsDatePicker` que permita selecionar uma data única, 
 
 ### Requirement: Seleção de intervalo
 
-`AdsDatePicker` com `mode="range"` MUST permitir selecionar uma data inicial e uma final, representadas por `{ start, end }`. O sistema MUST ordenar as extremidades quando a segunda data escolhida for anterior à primeira.
+`AdsDatePicker` com `mode="range"` MUST permitir selecionar uma data inicial e uma final, representadas por `{ start, end }`. O sistema MUST ordenar as extremidades quando a segunda data escolhida for anterior à primeira. No calendário, a primeira data ativada MUST ficar apenas pendente, sem alterar o valor, até a segunda; fechar o calendário antes MUST manter o valor anterior.
 
 #### Scenario: Escolher um intervalo no calendário
 
 - **WHEN** a pessoa ativa uma data inicial e depois uma data final
-- **THEN** o intervalo é atualizado, o período fica destacado e o calendário fecha
+- **THEN** o intervalo só é atualizado na segunda data, o período fica destacado e o calendário fecha
+
+#### Scenario: Fechar antes da segunda data
+
+- **WHEN** a pessoa ativa uma data e fecha o calendário antes de ativar a segunda
+- **THEN** o valor não muda e o intervalo anterior continua destacado ao reabrir
 
 #### Scenario: Extremidades invertidas
 
@@ -86,12 +91,17 @@ O componente MUST aceitar `locale`, com `pt-BR` como padrão, que define nomes d
 
 ### Requirement: Acessibilidade e teclado
 
-O calendário MUST ser uma grade (`role="grid"`) nomeada pelo mês exibido, com um único tab stop, foco visível e navegação por setas, `Home`, `End`, `PageUp`, `PageDown` (e `Shift` para anos), além de seleção com `Enter` ou `Espaço`. O acionador e as entradas MUST ter nome acessível, e `Escape` MUST fechar o calendário.
+O calendário MUST ser uma grade (`role="grid"`) nomeada pelo mês exibido, com um único tab stop, foco visível e navegação por setas, `Home`, `End`, `PageUp`, `PageDown` (e `Shift` para anos), além de seleção com `Enter` ou `Espaço`. A navegação por teclado MUST NOT levar o foco para fora de `min` e `max`, e os botões de mês indisponíveis MUST parecer desabilitados. O acionador e as entradas MUST ter nome acessível, e `Escape` MUST fechar o calendário.
 
 #### Scenario: Navegação por teclado
 
 - **WHEN** o foco está em um dia e a pessoa pressiona `ArrowRight` e `PageDown`
 - **THEN** o foco avança um dia e depois um mês, e o título do mês é atualizado
+
+#### Scenario: Navegação limitada por min e max
+
+- **WHEN** há `min` ou `max` e a pessoa pressiona uma tecla que levaria o foco além do limite
+- **THEN** o foco para na data limite
 
 #### Scenario: Verificação automatizada
 
@@ -105,12 +115,12 @@ O calendário MUST ser uma grade (`role="grid"`) nomeada pelo mês exibido, com 
 #### Scenario: Dentro de AdsField
 
 - **WHEN** o componente é filho de `AdsField` com rótulo e erro
-- **THEN** o rótulo nomeia a entrada e a mensagem de erro é associada por `aria-describedby`
+- **THEN** o rótulo nomeia a entrada (no intervalo, a entrada final é anunciada como o rótulo seguido de "Data final") e a mensagem de erro é associada por `aria-describedby`
 
 #### Scenario: Desabilitado
 
 - **WHEN** `disabled` é verdadeiro
-- **THEN** entradas e acionador ficam desabilitados e o calendário não abre
+- **THEN** entradas, campos ocultos e acionador ficam desabilitados, o calendário não abre e o formulário não envia o valor
 
 ### Requirement: Aparência, temas e hidratação
 

@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-filter-bar` - Adicionado `AdsFilterBar` em `@admin-ds/admin`: barra de
+  filtros controlada (`value`/`onChange`), com texto, seleção, seleção múltipla
+  e data, chips removíveis, layout responsivo e estados, sem acesso à URL ou ao
+  roteador.
 - `add-date-picker` - Adicionado `AdsDatePicker`, de data única e intervalo,
   com entrada digitada, calendário acessível por teclado, locale configurável
   (`pt-BR` padrão) e integração com `AdsField`, sem dependência de runtime.

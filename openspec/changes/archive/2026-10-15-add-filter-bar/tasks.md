@@ -20,9 +20,9 @@
 ## 4. Validação
 
 - [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck`, `test:quiet`, `inspect:packages`, `openspec validate --all --strict` e `npm run test:e2e`, confirmando que nenhum teste E2E falha.
-- [x] 4.2 Registrar que os snapshots visuais têm baseline só `win32`: são pulados fora do Windows e esta change não adiciona nem altera baseline.
+- [x] 4.2 Registrar que os snapshots visuais têm baseline só `win32`: são pulados na CI, falham em execução local fora do Windows, e esta change não adiciona nem altera baseline.
 - [x] 4.3 Confirmar que nenhuma dependência de runtime foi adicionada e que `apps/admin-demo` não foi alterado.
 - [x] 4.4 Validar o consumo do CSS compilado em uma aplicação Next.js (build de produção do `admin-demo` com página temporária não commitada, temas claro e escuro, sem erro de hidratação).
 - [x] 4.5 Atualizar o baseline de `@admin-ds/admin` em `docs/bundle-baseline.json` e `docs/bundle-baseline.md` somente se `inspect:packages` exigir.
 
-Notas de validação (ambiente Linux): o `test:e2e` passou com 85 testes; os 7 snapshots visuais falharam por não haver baseline `linux` (só `win32` existe, e eles são pulados na CI). Nenhum baseline foi criado ou alterado. O `openspec validate --all --strict` reporta um warning já existente em `spec/date-picker` (requisito com mais de 500 caracteres), fora do escopo desta change.
+Notas de validação (Windows, Node 24): `npm run validate` completo passou, com o E2E 92/92 incluindo os snapshots visuais `win32`, e nenhum baseline foi criado ou alterado. A 4.4 foi feita numa página temporária, não commitada, no build de produção do `admin-demo`: temas claro e escuro, 1100 px com os campos visíveis e 375 px com os campos recolhidos atrás do botão "Filtros", sem rolagem horizontal e sem erro ou aviso de hidratação no console. O `openspec validate --all --strict` passa (37/37) e só reporta uma nota INFO já existente em `spec/date-picker` (requisito com mais de 500 caracteres), fora do escopo desta change.

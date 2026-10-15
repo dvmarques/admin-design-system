@@ -6,17 +6,17 @@
 ## 2. Componente
 
 - [x] 2.1 Renderizar legenda, cabeçalho, linhas, região rolável focável e slots `filters`/`pagination`.
-- [x] 2.2 Implementar ordenação (`aria-sort`, botão, ciclo, anúncio).
-- [x] 2.3 Implementar seleção múltipla e única, selecionar todas na página com estado indeterminado, `isRowSelectable` e anúncio da contagem.
-- [x] 2.4 Implementar o seletor de colunas (`aria-expanded`, `Escape`, última coluna visível, `hideable`).
-- [x] 2.5 Implementar estados `loading`, `error` e vazio.
-- [x] 2.6 Adicionar estilos `ads-smart-table*` em `packages/admin/src/styles.css` com tokens, temas claro e escuro, sem Tailwind.
+- [x] 2.2 Implementar ordenação (`aria-sort`, botão, ciclo, anúncio em região separada do carregamento, sem repetir a cada carga).
+- [x] 2.3 Implementar seleção múltipla e única, selecionar todas na página com estado indeterminado, `isRowSelectable` e anúncio da contagem (total e linhas selecionadas na página).
+- [x] 2.4 Implementar o seletor de colunas como painel inline, sem sobrepor a tabela (`aria-expanded`, `Escape`, última coluna visível, `hideable` desabilitada).
+- [x] 2.5 Implementar estados `loading`, `error` e vazio, com o cabeçalho e as linhas de estado sem realce de hover e a paginação operável.
+- [x] 2.6 Adicionar estilos `ads-smart-table*` em `packages/admin/src/styles.css` com tokens, temas claro e escuro, sem Tailwind; célula de seleção sem largura percentual e grade com `minmax(0, 1fr)`, sem alargar a página em 375 px.
 
 ## 3. Testes e documentação
 
-- [x] 3.1 Testes de comportamento: ordenação, seleção, colunas, estados, rolagem, paginação por links, controle estrito, SSR, `axe` e ausência de `next/*`; ajustar `package.test.mjs` e `verify-package.mjs` para o CSS novo.
+- [x] 3.1 Testes de comportamento: ordenação, seleção, colunas, estados, rolagem, paginação por links, controle estrito, SSR, `axe` e ausência de `next/*`; ajustar `package.test.mjs` e `verify-package.mjs` para o CSS novo, inclusive a largura da célula de seleção, o painel inline e a grade.
 - [x] 3.2 Story no Storybook (padrão, ordenação, seleção, colunas, carregando, vazio, erro, estreita, com filtros e paginação por links, tema escuro).
-- [x] 3.3 Atualizar `docs/integration.md` (exemplo em Next.js com `searchParams`, integração com `AdsFilterBar` e `AdsPagination`), `docs/architecture.md`, `docs/limitations.md` e `CHANGELOG.md`.
+- [x] 3.3 Atualizar `docs/integration.md` (exemplo em Next.js com `searchParams`, URLs montadas a partir dos parâmetros atuais, integração com `AdsFilterBar` e `AdsPagination`), `docs/architecture.md`, `docs/limitations.md` e `CHANGELOG.md`.
 
 ## 4. Validação
 

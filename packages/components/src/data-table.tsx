@@ -9,7 +9,10 @@ import { classNames } from './class-names.js';
 export interface AdsTableProps extends TableHTMLAttributes<HTMLTableElement> {
 	containerClassName?: string;
 	/** HTML attributes for the scroll container, for example to make it a labelled, focusable region. */
-	containerProps?: Omit<HTMLAttributes<HTMLDivElement>, 'className'>;
+	containerProps?: Omit<
+		HTMLAttributes<HTMLDivElement>,
+		'className' | 'children' | 'dangerouslySetInnerHTML'
+	>;
 }
 
 export function AdsTable({

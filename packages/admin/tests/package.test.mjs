@@ -68,3 +68,22 @@ test('smart table styles use public tokens, a focusable scroll region and the se
 	);
 	assert.match(css, /\.ads-smart-table-columns-panel\[hidden\]\s*\{[^}]*display:\s*none/);
 });
+
+test('smart table selection cell has no percentage width, so the table is not stretched', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	const block = css.match(/\.ads-smart-table-select-cell\s*\{([^}]*)\}/)?.[1];
+	assert.ok(block, 'missing .ads-smart-table-select-cell');
+	assert.doesNotMatch(block, /width:[^;]*%/);
+	assert.match(block, /white-space:\s*nowrap/);
+});
+
+test('smart table column panel is inline and the grid does not grow past its container', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	const panel = css.match(/\.ads-smart-table-columns-panel\s*\{([^}]*)\}/)?.[1];
+	assert.ok(panel, 'missing .ads-smart-table-columns-panel');
+	assert.doesNotMatch(panel, /position:\s*(absolute|fixed)|z-index/);
+	assert.match(css, /\.ads-smart-table\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+	assert.match(css, /\.ads-smart-table-pagination > \.ads-pagination\s*\{[^}]*min-width:\s*0/);
+});

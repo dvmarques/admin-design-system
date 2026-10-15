@@ -43,3 +43,14 @@ for (const selector of [
 ]) {
 	if (!css.includes(selector)) throw new Error(`Missing selector: ${selector}`);
 }
+
+// A célula de seleção não pode ter largura percentual: com min-width: max-content na tabela,
+// 1% faria a tabela inteira ter 100 vezes a largura da coluna (cerca de 5200 px).
+const selectCell = css.match(/\.ads-smart-table-select-cell\s*\{([^}]*)\}/)?.[1];
+if (selectCell === undefined) throw new Error('Missing selector: .ads-smart-table-select-cell');
+if (/width:[^;]*%/.test(selectCell))
+	throw new Error('.ads-smart-table-select-cell must not use a percentage width');
+const panel = css.match(/\.ads-smart-table-columns-panel\s*\{([^}]*)\}/)?.[1];
+if (panel === undefined) throw new Error('Missing selector: .ads-smart-table-columns-panel');
+if (/position:\s*(absolute|fixed)/.test(panel))
+	throw new Error('.ads-smart-table-columns-panel must be inline, not positioned over the table');

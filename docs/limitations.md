@@ -40,13 +40,6 @@ componentes administrativos.
   `data-theme` próprio, que casa com as regras geradas e redeclara todas as
   variáveis. Use `[data-theme='light']` e `[data-theme='dark']` depois do CSS
   de tokens, como descrito em `docs/integration.md`.
-- Contraste insuficiente no tema escuro, encontrado pela auditoria `axe-core`
-  de `/componentes` no admin demo: os links de `AdsBreadcrumb` não definem cor
-  e usam o azul padrão do navegador (`#0000ee`) sobre `#334155` (1,1:1), e os
-  gatilhos de `AdsTabs` usam `text-primary` (`#60a5fa`) sobre
-  `surface-raised` (`#334155`), com 4,07:1, abaixo dos 4,5:1 exigidos. No tema
-  claro não há violação. A correção cabe à biblioteca e está pendente de
-  decisão.
 - Os utilitários Tailwind só existem no CSS distribuído se aparecerem nas
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`

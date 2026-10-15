@@ -30,9 +30,9 @@ além do contraste AA do `theming`.
 - `AdsBreadcrumb`: os links passam a usar o token público de texto
   (`text-text-muted`, com `hover:text-text`) em vez da cor padrão do navegador.
 - `AdsTabs`: as classes do gatilho passam a ser mapeadas por estado, sem
-  utilidades conflitantes. O estado ativo mantém `border-primary border-b-2
+  utilidades conflitantes. O estado ativo mantém `border-b-2 border-b-primary
 bg-surface-selected text-on-surface-selected`, e o inativo usa
-  `bg-transparent text-text-secondary` com `hover:bg-surface-hover
+  `border-b-border bg-transparent text-text-secondary` com `hover:bg-surface-hover
 hover:text-text`. O texto inativo deixa de ser `text-primary`.
 - Testes de classes por estado, de CSS distribuído e de pares de contraste dos
   tokens usados, em ambos os temas e sobre todas as superfícies.

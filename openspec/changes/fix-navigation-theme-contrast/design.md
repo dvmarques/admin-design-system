@@ -5,14 +5,16 @@
 `AdsTabs` (`packages/components/src/navigation.tsx`) monta as classes do gatilho
 com um conjunto base e, quando ativo, acrescenta outro conjunto:
 
-- base: `bg-transparent ... text-primary hover:bg-surface-hover hover:text-primary-hover`
+- base: `border-transparent border-b-border bg-transparent text-primary hover:bg-surface-hover hover:text-primary-hover`
 - ativo: `border-primary border-b-2 bg-surface-selected text-on-surface-selected`
 
 `classNames` apenas concatena. Utilidades conflitantes têm a mesma
 especificidade, então vale a ordem em que o Tailwind as emite no CSS distribuído.
 Medido no navegador, em ambos os temas, a aba ativa ficou com `background:
 transparent`, `color` igual ao da inativa e borda inferior neutra de 2 px: o
-conjunto ativo perde para o base.
+conjunto ativo perde para o base. A borda tem o mesmo problema: `border-b-border`
+(inferior) e `border-primary` (todos os lados) disputam a borda inferior, por
+isso o novo mapeamento define `border-b-*` em cada estado.
 
 `AdsBreadcrumb` renderiza `<a>` sem classe de cor. O navegador aplica a cor
 padrão de link (`#0000ee`), que passa no tema claro e falha no escuro.
@@ -43,8 +45,8 @@ neutras e `text` tem 16,30.
 
 O gatilho passa a escolher um único conjunto por estado, sem sobreposição:
 
-- ativo: `border-primary border-b-2 bg-surface-selected text-on-surface-selected`
-- inativo: `bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text`
+- ativo: `border-b-2 border-b-primary bg-surface-selected text-on-surface-selected`
+- inativo: `border-b-border bg-transparent text-text-secondary hover:bg-surface-hover hover:text-text`
 
 Cada propriedade (cor, fundo, borda) é definida por exatamente uma utilidade em
 cada estado, o que remove a dependência da ordem do CSS. É o padrão que o

@@ -22,6 +22,13 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-navigation-theme-contrast` - Corrigido o contraste de `AdsBreadcrumb` e
+  `AdsTabs` nos temas claro e escuro. Os links do breadcrumb deixam de usar a
+  cor padrão do navegador (`text-text-muted`, com `hover:text-text`). A tab ativa
+  passa a mostrar a superfície, a cor de texto e a borda de seleção, que perdiam
+  a disputa de cascata, e a tab inativa passa de `text-primary` para
+  `text-text-secondary`. Nenhuma prop, tipo, classe `ads-*` ou variável
+  `--ads-*` muda; a aparência de tabs e breadcrumb muda de forma intencional.
 - `add-nextjs-admin-demo` - O admin demo passa a ser uma aplicação multi-rota
   com layout administrativo compartilhado (visão geral, clientes, novo cliente,
   preferências, catálogo de componentes e exibição de dados), navegação por

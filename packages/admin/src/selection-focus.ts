@@ -18,15 +18,3 @@ export function getSmartTableSelectionFocusTarget(
 	if (selectAll) return selectAll;
 	return root.querySelector<HTMLElement>('.ads-smart-table-scroll');
 }
-
-/**
- * Repõe o foco quando o acionador saiu do DOM e o foco caiu no `<body>`.
- */
-export function restoreFocusAfterDisconnectedTrigger(
-	trigger: HTMLElement | null | undefined,
-	target: HTMLElement | null | undefined,
-	doc: Document = document,
-): void {
-	if (!trigger || trigger.isConnected || !isFocusLost(doc)) return;
-	target?.focus();
-}

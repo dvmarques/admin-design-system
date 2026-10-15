@@ -59,8 +59,13 @@ O baseline de `@admin-ds/admin` foi ajustado na R2 de `add-smart-table` para
 no lugar da marcação manual das linhas estáticas.
 
 O baseline de `@admin-ds/admin` foi atualizado na change `add-admin-flows` de
-122232 para 166676 bytes (+44444) para incluir `AdsBulkActionBar`,
-`AdsConfirmDialog`, `AdsListFlow` e `AdsStepForm`: módulos JavaScript, source
-maps e declarações (+40775, dos quais o formulário em etapas é a maior parte),
-CSS dos fluxos em `styles.css` (+3149) e exports (+520), sem novas dependências
-de runtime. O valor é medido com LF, como na CI.
+122232 para 165809 bytes (+43577), medido em LF com `dist/` limpo após
+`git clean -xfd packages/*/dist`, `npm ci`, `generate`/`check:generated` dos
+tokens e build de tokens, components e admin (`inspect:packages`). O incremento
+se divide em +33670 para `AdsBulkActionBar`, `AdsConfirmDialog`, `AdsListFlow` e
+`AdsStepForm` (JS, maps e declarações +30521, CSS dos fluxos +3149, exports
++1000; `AdsStepForm` é a maior parte do JS) e +9907 na revisão R1 (I3–I6,
+S1/S3): `confirm-dialog` +3584, módulo interno `selection-focus` ~+2061 (não
+exportado em `index`), `step-form` +1864, `bulk-action-bar` +1418, `list-flow`
++772, CSS +208. Não há testes, exemplos nem pacotes extras no `dist/`. Sem novas
+dependências de runtime.

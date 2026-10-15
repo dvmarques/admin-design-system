@@ -52,10 +52,11 @@ export function UsuariosTabela({ rows, page, pageCount, sort, params }: Usuarios
 		if (!focusLost) return;
 		const root = rootRef.current;
 		restoreFocusAfterClearSelection(pending, {
-			selectAll: root?.querySelector<HTMLInputElement>(
-				'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
-			),
-			scrollRegion: root?.querySelector<HTMLElement>('.ads-smart-table-scroll'),
+			selectAll:
+				root?.querySelector<HTMLInputElement>(
+					'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
+				) ?? null,
+			scrollRegion: root?.querySelector<HTMLElement>('.ads-smart-table-scroll') ?? null,
 		});
 	}, [selected]);
 

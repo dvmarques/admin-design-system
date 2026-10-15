@@ -1,5 +1,5 @@
 export interface SelectionClearFocusTargets {
-	selectAll?: HTMLElement | null;
+	selectAll?: HTMLInputElement | null;
 	scrollRegion?: HTMLElement | null;
 }
 

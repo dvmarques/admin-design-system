@@ -57,6 +57,8 @@ import {
 	AdsTypography,
 } from '@admin-ds/components';
 
+const repoRoot = resolve(import.meta.dirname, '../../..');
+
 describe('public component consumption', () => {
 	it('resolves all component exports without internal package paths', () => {
 		expect([
@@ -106,10 +108,7 @@ describe('public component consumption', () => {
 	});
 
 	it('includes component styles in the distributed CSS', async () => {
-		const css = await readFile(
-			resolve(process.cwd(), '../../packages/components/dist/styles.css'),
-			'utf8',
-		);
+		const css = await readFile(resolve(repoRoot, 'packages/components/dist/styles.css'), 'utf8');
 
 		expect(css).toMatch(/\.bg-primary/);
 		expect(css).toMatch(/\.bg-success/);
@@ -130,10 +129,7 @@ describe('public component consumption', () => {
 	});
 
 	it('includes the Admin Shell styles in its own distributed CSS', async () => {
-		const css = await readFile(
-			resolve(process.cwd(), '../../packages/admin/dist/styles.css'),
-			'utf8',
-		);
+		const css = await readFile(resolve(repoRoot, 'packages/admin/dist/styles.css'), 'utf8');
 
 		expect(css).toMatch(/\.ads-admin-shell-header/);
 		expect(css).toMatch(/min-height:\s*calc\(100vh - 4rem\)/);

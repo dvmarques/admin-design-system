@@ -22,6 +22,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- Build, testes unitários e E2E mais rápidos: `npm run build` constrói os
+  pacotes uma vez (apps em paralelo), o Vitest roda uma vez na raiz e o E2E
+  serve o build de produção (rode `npm run build` antes; `E2E_DEV=1` usa o
+  `next dev`). Sem mudança de API pública.
 - `fix-pagination-consumer-links` e `fix-navigation-consumer-links` - Adicionados
   `renderLink` aos itens de `AdsNav` e `AdsBreadcrumb` e `renderPageLink` a
   `AdsPagination`, para o consumidor fornecer o link (por exemplo `next/link`)

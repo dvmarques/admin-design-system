@@ -58,6 +58,14 @@ servidor e cliente.
 aplicação e localiza os testes no diretório `e2e/`. O Chromium necessário já
 foi instalado localmente.
 
+Por padrão o E2E serve o build de produção do admin demo (`next start`), então
+execute `npm run build` antes de rodar os testes. Para usar o servidor de
+desenvolvimento (`next dev`, mais lento), defina `E2E_DEV=1`. Sem `E2E_DEV`, o
+Playwright recusa um build ausente ou desatualizado: o build do admin demo grava
+em `.next/e2e-build-stamp.json` uma impressão digital do código do demo, do
+`dist` e do `package.json` dos pacotes, do `tsconfig.base.json` e do
+`package-lock.json`, comparada antes dos testes.
+
 ```powershell
 # Executar os testes end-to-end pela entrada oficial do repositório
 npm run test:e2e

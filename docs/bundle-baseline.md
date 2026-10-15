@@ -58,6 +58,9 @@ O baseline de `@admin-ds/admin` foi ajustado na R2 de `add-smart-table` para
 122232 bytes (−92), medido em LF após `AdsTableRow` com `interactive={false}`
 no lugar da marcação manual das linhas estáticas.
 
+O baseline de `@admin-ds/tokens` foi ajustado de 26673 para 27039 bytes (+366) na
+medição em LF com `dist/` limpo; não houve mudança de código nos tokens.
+
 O baseline de `@admin-ds/admin` foi atualizado na change `add-admin-flows` de
 122232 para 165809 bytes (+43577), medido em LF com `dist/` limpo após
 `git clean -xfd packages/*/dist`, `npm ci`, `generate`/`check:generated` dos

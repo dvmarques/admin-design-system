@@ -26,11 +26,11 @@ valor é medido com LF, como na CI; num checkout com CRLF o `styles.css` copiado
 para `dist/` soma 1 byte por linha.
 
 O baseline de `@admin-ds/admin` foi atualizado na change `add-filter-bar` de
-51658 para 87686 bytes (+36028) para incluir `AdsFilterBar`: módulo JavaScript,
-source maps e declarações (+31252), CSS da barra em `styles.css` (+4197) e
-exports (+579), sem novas dependências de runtime. As revisões somaram 4640
+51658 para 89246 bytes (+37588) para incluir `AdsFilterBar`: módulo JavaScript,
+source maps e declarações (+32812), CSS da barra em `styles.css` (+4197) e
+exports (+579), sem novas dependências de runtime. As revisões somaram 6200
 bytes ao valor inicial de 83046: 1692 na R1 (foco com os campos recolhidos e
 descrição e erro ligados ao grupo da seleção múltipla), 975 nas sugestões
-(indicador de carregamento e ids sanitizados) e 1973 na R3 (foco pendente com
-`value` assíncrono e documentação do `id`). O valor é medido com LF, como na
-CI.
+(indicador de carregamento e ids sanitizados), 1973 na R3 (foco pendente com
+`value` assíncrono e documentação do `id`) e 1560 na R4 (foco reposto só
+quando o botão acionado sai da página). O valor é medido com LF, como na CI.

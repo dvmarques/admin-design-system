@@ -439,12 +439,15 @@ export function UsuariosFiltros({ params }: { params: Params }) {
 	// sempre do valor mais recente. A URL é atualizada depois.
 	const [value, setValue] = useState(() => fromParams(params));
 	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+	// Set: pode haver várias navegações próprias em andamento ao mesmo tempo.
 	const ownQueries = useRef(new Set<string>());
 	const urlQuery = toQuery(fromParams(params));
 	useEffect(() => () => clearTimeout(timer.current), []);
 	useEffect(() => {
 		// URL alterada fora deste componente (por exemplo, com Voltar): reaplica os parâmetros.
 		if (ownQueries.current.delete(urlQuery)) return;
+		// Cancela a navegação pendente da digitação para não sobrescrever a URL externa.
+		clearTimeout(timer.current);
 		setValue(fromParams(params));
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [urlQuery]);

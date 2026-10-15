@@ -43,7 +43,11 @@ export function AdsField({
 			{...props}
 			className={classNames('ads-field flex flex-col gap-2 max-md:gap-1.5', className)}
 		>
-			<label className="ads-field__label text-sm font-medium text-text" htmlFor={controlId}>
+			<label
+				className="ads-field__label text-sm font-medium text-text"
+				htmlFor={controlId}
+				id={`${controlId}-label`}
+			>
 				{label}
 			</label>
 			{control}

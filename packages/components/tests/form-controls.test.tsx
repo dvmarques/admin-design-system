@@ -160,6 +160,22 @@ describe('selection form controls', () => {
 });
 
 describe('field composition', () => {
+	it('gives the label the <control id>-label id', () => {
+		render(
+			<>
+				<AdsField label="Vencimento">
+					<AdsInput id="due" />
+				</AdsField>
+				<AdsField label="Nome">
+					<AdsInput />
+				</AdsField>
+			</>,
+		);
+		expect(screen.getByText('Vencimento')).toHaveAttribute('id', 'due-label');
+		const generated = screen.getByRole('textbox', { name: 'Nome' });
+		expect(screen.getByText('Nome')).toHaveAttribute('id', `${generated.id}-label`);
+	});
+
 	it('associates label, description and error with the control', () => {
 		render(
 			<AdsField

@@ -9,3 +9,7 @@ test-results/
 debug.log
 .env*
 !.env.example
+
+# Gerados localmente (Next.js e execução do E2E fora do Windows; baselines visuais são só win32)
+apps/admin-demo/AGENTS.md
+e2e/**/*-linux.png

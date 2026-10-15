@@ -115,3 +115,11 @@ export type {
 } from './data-collection.js';
 export { AdsEmptyState, AdsProgress } from './data-feedback.js';
 export type { AdsEmptyStateProps, AdsProgressProps } from './data-feedback.js';
+export { AdsDatePicker } from './date-picker.js';
+export type {
+	AdsDatePickerLabels,
+	AdsDatePickerProps,
+	AdsDatePickerRangeProps,
+	AdsDatePickerSingleProps,
+	AdsDateRange,
+} from './date-picker.js';

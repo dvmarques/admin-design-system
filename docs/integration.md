@@ -510,12 +510,7 @@ de página e a ordenação partem dos parâmetros atuais e trocam só a própria
 chave, então filtros de um `AdsFilterBar` na mesma URL são preservados. Ordenar
 volta à primeira página (apaga `pagina`), e a URL não fica com `?` vazio. A
 seleção guarda ids de todas as páginas; o contador mostra quantas estão na
-página exibida, e o exemplo oferece um botão para limpá-la. Os helpers
-`withParams`, `formatReadableSearchQuery`, `applyPendingClearSelectionFocus` e
-`restoreFocusAfterClearSelection` abaixo espelham a lógica testada em
-`apps/admin-demo/lib/url-search-params.ts`, `clear-selection-pending-focus.ts` e
-`selection-clear-focus.ts` (referência para copiar na aplicação, não rota do
-demo).
+página exibida, e o exemplo oferece um botão para limpá-la.
 
 ```tsx
 // app/usuarios/usuarios-tabela.tsx
@@ -553,39 +548,27 @@ function withParams(params: Params, changes: Record<string, string | null>) {
 	return formatReadableSearchQuery(query.toString());
 }
 
-function restoreFocusAfterClearSelection(
-	trigger: HTMLElement | null,
-	targets: {
-		selectAll?: HTMLInputElement | null;
-		scrollRegion?: HTMLElement | null;
-	},
-) {
-	if (!trigger || trigger.isConnected) return;
-	const active = document.activeElement;
-	const focusLost = !active || active === document.body;
-	if (!focusLost) return;
-	if (targets.selectAll && !targets.selectAll.disabled) {
-		targets.selectAll.focus();
-		return;
-	}
-	targets.scrollRegion?.focus();
+function selectionFocusWasLost(doc: Document = document) {
+	const active = doc.activeElement;
+	return !active || active === doc.body;
 }
 
 function applyPendingClearSelectionFocus(
 	pending: HTMLElement | null,
 	root: HTMLElement | null,
+	doc: Document = document,
 ): 'idle' | 'waiting' | 'dropped' | 'applied' {
 	if (pending === null) return 'idle';
-	const active = document.activeElement;
-	const focusLost = !active || active === document.body;
-	if (!focusLost && root && !root.contains(active)) return 'dropped';
+	const focusLost = selectionFocusWasLost(doc);
+	if (!focusLost && root && !root.contains(doc.activeElement)) return 'dropped';
 	if (pending.isConnected) return 'waiting';
 	if (!focusLost) return 'dropped';
 	const selectAll = root?.querySelector<HTMLInputElement>(
-		'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
+		'thead .ads-smart-table-select-cell input[type="checkbox"]',
 	);
 	const scrollRegion = root?.querySelector<HTMLElement>('.ads-smart-table-scroll');
-	restoreFocusAfterClearSelection(pending, { selectAll, scrollRegion });
+	if (selectAll && !selectAll.disabled) selectAll.focus();
+	else scrollRegion?.focus();
 	return 'applied';
 }
 

@@ -18,6 +18,11 @@ Define os estados de carregamento, vazio e erro dos painéis e cards de métrica
 - **WHEN** `error` é informado e o painel não está carregando
 - **THEN** a mensagem é apresentada com `role="alert"`, junto das ações opcionais de recuperação
 
+#### Scenario: Erro com conteúdo em bloco
+
+- **WHEN** `error` contém elementos de bloco, como uma lista
+- **THEN** o painel e o card produzem HTML válido e a hidratação não emite avisos
+
 #### Scenario: Vazio
 
 - **WHEN** `empty` é informado e não há carregamento nem erro

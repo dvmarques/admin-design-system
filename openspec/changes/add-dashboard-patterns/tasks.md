@@ -18,8 +18,6 @@
 
 - [x] 4.1 Testes de comportamento: valores, tendência, `span`, headings e estados.
 - [x] 4.2 Testes de acessibilidade com axe e verificação de pacote/CSS.
-- [x] 4.3 Executar format, lint, build, typecheck, testes, E2E e `openspec validate --all --strict`.
-- [x] 4.4 Executar o E2E com snapshots win32.
-- [x] 4.5 Revisar o diff e confirmar o escopo da Issue #60.
-- [x] 4.6 Testar a renderização no servidor e a hidratação sem avisos.
-- [x] 4.7 Atualizar o baseline de bundle do admin em `docs/bundle-baseline.json` e executar `inspect:packages`.
+- [x] 4.3 Testar a renderização no servidor e a hidratação sem avisos, inclusive com conteúdo em bloco em `error`.
+- [x] 4.4 Atualizar o baseline de bundle do admin em `docs/bundle-baseline.json`, com o motivo em `docs/bundle-baseline.md`.
+- [x] 4.5 Executar format, lint, build, typecheck, testes, `inspect:packages`, E2E com snapshots win32 e `openspec validate --all --strict`.

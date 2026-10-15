@@ -87,9 +87,9 @@ export function AdsMetricCard({
 		);
 	} else if (error) {
 		body = (
-			<p className="ads-metric-card-message" data-state="error" role="alert">
+			<div className="ads-metric-card-message" data-state="error" role="alert">
 				{error}
-			</p>
+			</div>
 		);
 	} else if (empty) {
 		body = <div className="ads-metric-card-message">{empty}</div>;
@@ -195,7 +195,7 @@ export function AdsDashboardPanel({
 	} else if (error) {
 		body = (
 			<div className="ads-dashboard-panel-error" role="alert">
-				<p className="ads-dashboard-panel-error-message">{error}</p>
+				<div className="ads-dashboard-panel-error-message">{error}</div>
 				{errorActions ? <div className="ads-dashboard-panel-actions">{errorActions}</div> : null}
 			</div>
 		);

@@ -148,11 +148,16 @@ decide quando exibir cada estado.
   disponível do próprio grid, via container query, e não a viewport: ao lado da
   sidebar ele usa menos colunas. Nunca reordena painéis; `span` (1 a 4) só se
   aplica quando há colunas suficientes.
+- Por ser um container de `inline-size`, o grid não tira a largura do conteúdo:
+  o layout precisa defini-la. A largura natural dele é zero, então ele colapsa
+  como item de flex em linha sem `flex: 1` (ou `width`), em `inline-block`, em
+  `float` ou em elemento `absolute` sem largura. Em bloco comum ou como item de
+  grid, ocupa a largura disponível.
 - `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos não
   fazem parte desta entrega.
-- `empty` é um nó nos dois componentes, como `error`: no painel, passe um
-  `AdsEmptyState` (`empty={<AdsEmptyState title="Sem pedidos" />}`); no card, um
-  texto curto.
+- `error` e `empty` são nós nos dois componentes e aceitam elementos de bloco,
+  como uma lista. No painel, passe um `AdsEmptyState` em `empty`
+  (`empty={<AdsEmptyState title="Sem pedidos" />}`); no card, um texto curto.
 
 ## Aplicação de referência (`admin-demo`)
 

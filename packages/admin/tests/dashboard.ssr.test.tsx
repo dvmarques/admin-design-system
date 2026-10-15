@@ -59,4 +59,45 @@ describe('dashboard patterns SSR and hydration', () => {
 		act(() => root.unmount());
 		container.remove();
 	});
+
+	it('accepts block content in error without invalid markup or hydration warnings', async () => {
+		const failure = (
+			<ul>
+				<li>Serviço indisponível</li>
+				<li>Tente novamente em instantes</li>
+			</ul>
+		);
+		const Errors = () => (
+			<AdsDashboardGrid>
+				<AdsMetricCard error={failure} title="Receita" />
+				<AdsDashboardPanel error={failure} title="Vendas" />
+			</AdsDashboardGrid>
+		);
+		const html = renderToString(<Errors />);
+		const container = document.createElement('div');
+		container.innerHTML = html;
+		document.body.appendChild(container);
+		expect(container.innerHTML).toBe(html);
+		for (const list of container.querySelectorAll('ul')) {
+			expect(list.closest('p')).toBeNull();
+			expect(list.closest('[role="alert"]')).not.toBeNull();
+		}
+		const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+		const warn = vi.spyOn(console, 'warn').mockImplementation(() => undefined);
+		const onRecoverableError = vi.fn();
+
+		let root!: ReturnType<typeof hydrateRoot>;
+		await act(async () => {
+			root = hydrateRoot(container, <Errors />, { onRecoverableError });
+		});
+
+		expect(error).not.toHaveBeenCalled();
+		expect(warn).not.toHaveBeenCalled();
+		expect(onRecoverableError).not.toHaveBeenCalled();
+		expect(container.querySelectorAll('[role="alert"] li')).toHaveLength(4);
+		error.mockRestore();
+		warn.mockRestore();
+		act(() => root.unmount());
+		container.remove();
+	});
 });

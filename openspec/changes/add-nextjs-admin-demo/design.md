@@ -160,7 +160,7 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
 - Os dois controles compartilham um estado de tema. `lib/theme.ts` continua puro
   e seguro para servidor, pois é importado pelo layout (Server Component): mantém
   `resolveTheme` e o tipo `Theme` e passa a conter o nome do cookie `ads-theme`
-  (hoje repetido no layout e em `theme-control.tsx`) e uma função que grava
+  (hoje repetido no layout, em `app/page.tsx` e em `theme-control.tsx`) e uma função que grava
   cookie e `data-theme` (só toca em `document` quando chamada). O hook fica em módulo próprio com
   `'use client'` (`app/use-theme.ts`), porque `useSyncExternalStore` não existe
   no build de servidor do React e marcar `lib/theme.ts` como cliente tornaria
@@ -187,12 +187,18 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   raiz, e o demo não compila nem escaneia classes dos pacotes. Conflitos de CSS
   com a aplicação consumidora são evitados pelos prefixos: as classes públicas
   usam `ads-`, as do demo usam `demo-`, e o demo não redefine seletores `ads-*`.
-  A personalização é feita sobrescrevendo `--ads-*` no escopo da aplicação com o
-  seletor documentado em `packages/tokens/README.md` (`:root[data-theme='light']`
-  e `:root[data-theme='dark']`), sem recompilar componentes. Esse seletor tem
-  especificidade maior que os gerados (`:root, [data-theme="light"]` e
-  `[data-theme="dark"]`), então não depende da ordem de carga das folhas; um teste verifica que a sobrescrita chega às
-  rotas (tarefa 6.2). Sem novas dependências de runtime, o impacto no bundle é
+  A personalização é feita sobrescrevendo `--ads-*` no escopo da aplicação com
+  `[data-theme='light']` e `[data-theme='dark']` (sem `:root`), em `globals.css`,
+  que o layout raiz importa depois de `@admin-ds/tokens/styles.css`. O seletor
+  sem `:root` é necessário porque `OverlayPortal` renderiza cada overlay em um
+  `div` com `data-theme` próprio, que casa com as regras geradas
+  (`:root, [data-theme="light"]` e `[data-theme="dark"]`) e redeclara todas as
+  variáveis: uma sobrescrita em `:root[data-theme=…]`, como a do
+  `packages/tokens/README.md`, não chega a drawer, dialog e toast. Com mesma
+  especificidade das regras geradas, a sobrescrita depende da ordem de carga, o
+  que o layout garante. Essa limitação do padrão documentado é registrada em
+  `docs/limitations.md` e não é corrigida nesta change. Um teste verifica que a
+  sobrescrita chega às rotas, incluindo um overlay (tarefa 6.2). Sem novas dependências de runtime, o impacto no bundle é
   nulo.
 - Acessibilidade: um `h1` por rota e `main` único fornecido pelo shell, verificados
   em `e2e/admin-demo-routes.spec.ts` (criado na tarefa 1.2 e estendido a cada

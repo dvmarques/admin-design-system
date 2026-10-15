@@ -1,10 +1,8 @@
-# smart-table Specification
-
 ## Purpose
 
 Permite listar dados administrativos com ordenação por coluna, seleção de linhas, visibilidade de colunas e estados de carregamento, vazio e erro, com todo o estado controlado pela aplicação consumidora.
 
-## Requirements
+## ADDED Requirements
 
 ### Requirement: Composição controlada sobre AdsTable
 
@@ -49,6 +47,11 @@ Colunas com `sortable`, quando `onSortChange` é informado, MUST exibir um botã
 - **WHEN** a pessoa foca o botão com `Tab` e aciona com `Enter` ou `Space`
 - **THEN** a ordenação muda, o foco permanece no botão e uma região `aria-live="polite"` anuncia a coluna e o sentido
 
+#### Scenario: Anúncio não repetido
+
+- **WHEN** a ordenação já foi anunciada e uma carga posterior termina sem mudar `sort` (por exemplo, ao paginar)
+- **THEN** o anúncio da ordenação não se repete, porque o carregamento é anunciado em uma região separada
+
 ### Requirement: Seleção de linhas
 
 Com `onSelectionChange`, `AdsSmartTable` MUST oferecer uma coluna de seleção controlada por `selectedIds`. Em `selectionMode="multiple"` (padrão), cada linha MUST ter um checkbox com nome acessível `labels.selectRow` e o cabeçalho MUST ter um checkbox "selecionar todas as linhas da página". `onSelectionChange` MUST receber a lista completa de ids, preservando ids de outras páginas, e `isRowSelectable` MUST desabilitar linhas.
@@ -78,6 +81,11 @@ Com `onSelectionChange`, `AdsSmartTable` MUST oferecer uma coluna de seleção c
 - **WHEN** a quantidade de linhas selecionadas muda
 - **THEN** uma região `aria-live="polite"` anuncia a quantidade, e a mesma contagem é visível na barra de ferramentas
 
+#### Scenario: Seleção em outras páginas
+
+- **WHEN** `selectedIds` contém ids que não estão na página exibida
+- **THEN** a contagem informa o total e quantas linhas selecionadas estão na página (por exemplo, "4 linhas selecionadas, 0 nesta página"), por `labels.selectedCount(total, naPagina)`
+
 ### Requirement: Seleção única
 
 Em `selectionMode="single"`, cada linha MUST ter um botão de opção (`radio`) do mesmo grupo, `onSelectionChange` MUST receber no máximo um id e o cabeçalho da coluna de seleção MUST NOT ter checkbox, mantendo um nome acessível.
@@ -89,7 +97,7 @@ Em `selectionMode="single"`, cada linha MUST ter um botão de opção (`radio`) 
 
 ### Requirement: Visibilidade de colunas
 
-Com `onHiddenColumnsChange`, `AdsSmartTable` MUST exibir um botão "Colunas" com `aria-expanded` e `aria-controls`, que abre um grupo de checkboxes (um por coluna ocultável) controlado por `hiddenColumnIds`. Colunas ocultas MUST NOT ser renderizadas no cabeçalho nem nas linhas. Ao menos uma coluna MUST permanecer visível, e colunas com `hideable: false` MUST NOT ser ocultáveis.
+Com `onHiddenColumnsChange`, `AdsSmartTable` MUST exibir um botão "Colunas" com `aria-expanded` e `aria-controls`, que abre um painel inline com um grupo de checkboxes (um por coluna, com as colunas fixas desabilitadas) controlado por `hiddenColumnIds`. O painel MUST NOT sobrepor a tabela. Colunas ocultas MUST NOT ser renderizadas no cabeçalho nem nas linhas. Ao menos uma coluna MUST permanecer visível, e colunas com `hideable: false` MUST NOT ser ocultáveis.
 
 #### Scenario: Ocultar uma coluna
 
@@ -105,6 +113,11 @@ Com `onHiddenColumnsChange`, `AdsSmartTable` MUST exibir um botão "Colunas" com
 
 - **WHEN** o seletor está aberto e a pessoa pressiona `Escape`
 - **THEN** o painel fecha e o foco volta ao botão "Colunas"
+
+#### Scenario: Painel inline
+
+- **WHEN** o seletor está aberto
+- **THEN** o painel aparece entre a barra de ferramentas e a tabela, empurrando-a para baixo, sem cobrir o cabeçalho nem as linhas, e colunas com `hideable: false` aparecem desabilitadas
 
 ### Requirement: Estados de carregamento, vazio e erro
 
@@ -132,7 +145,12 @@ Com `onHiddenColumnsChange`, `AdsSmartTable` MUST exibir um botão "Colunas" com
 #### Scenario: Tela estreita
 
 - **WHEN** as colunas excedem a largura disponível
-- **THEN** a região recebe foco por `Tab`, rola horizontalmente com as setas e mantém todas as colunas acessíveis, com foco visível
+- **THEN** a região recebe foco por `Tab`, rola horizontalmente com as setas e mantém todas as colunas acessíveis, com foco visível, e a página em si não rola na horizontal (a paginação rola dentro do próprio contêiner)
+
+#### Scenario: Colunas que cabem
+
+- **WHEN** as colunas cabem na largura disponível, com ou sem a coluna de seleção
+- **THEN** a região não rola na horizontal, e a coluna de seleção ocupa só a largura do controle
 
 #### Scenario: Paginação em tela estreita
 
@@ -166,6 +184,11 @@ Os textos MUST ser configuráveis por `labels`, com padrão em pt-BR. `AdsSmartT
 
 - **WHEN** a tabela é renderizada em `data-theme="dark"`
 - **THEN** superfícies, bordas, seleção e foco usam os tokens do tema com contraste legível
+
+#### Scenario: Realce de hover
+
+- **WHEN** o ponteiro passa sobre o cabeçalho ou sobre as linhas de vazio, erro e carregamento
+- **THEN** essas linhas não mudam de fundo; só as linhas de dados têm realce de hover
 
 #### Scenario: Consumo em Next.js
 

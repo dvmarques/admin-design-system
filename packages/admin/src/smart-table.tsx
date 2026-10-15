@@ -56,7 +56,11 @@ export interface AdsSmartTableLabels {
 	selectAll: string;
 	selectionColumn: string;
 	selectRow: (rowLabel: string) => string;
-	selectedCount: (count: number) => string;
+	/**
+	 * Contagem da seleção. `count` inclui ids de outras páginas; `onPage` conta só as linhas
+	 * selecionadas da página exibida.
+	 */
+	selectedCount: (count: number, onPage: number) => string;
 	columns: string;
 	columnsPanel: string;
 	loading: string;
@@ -73,7 +77,10 @@ const defaultLabels: AdsSmartTableLabels = {
 	selectAll: 'Selecionar todas as linhas da página',
 	selectionColumn: 'Seleção',
 	selectRow: (rowLabel) => `Selecionar ${rowLabel}`,
-	selectedCount: (count) => (count === 1 ? '1 linha selecionada' : `${count} linhas selecionadas`),
+	selectedCount: (count, onPage) => {
+		const total = count === 1 ? '1 linha selecionada' : `${count} linhas selecionadas`;
+		return onPage === count ? total : `${total}, ${onPage} nesta página`;
+	},
 	columns: 'Colunas',
 	columnsPanel: 'Colunas visíveis',
 	loading: 'Carregando dados',
@@ -123,6 +130,11 @@ export interface AdsSmartTableProps<Row> extends Omit<
 }
 
 const emptyIds: readonly string[] = [];
+
+/** Cabeçalho e linhas de estado (vazio, erro e carregamento), sem realce de hover. */
+function StaticRow({ children }: { children: ReactNode }) {
+	return <AdsTableRow interactive={false}>{children}</AdsTableRow>;
+}
 
 function SortIndicator({ direction }: { direction: AdsSmartTableSortDirection | null }) {
 	return (
@@ -196,6 +208,7 @@ export function AdsSmartTable<Row>({
 	}));
 	const selectableIds = pageRows.filter((item) => item.enabled).map((item) => item.id);
 	const selectedOnPage = selectableIds.filter((id) => selected.has(id)).length;
+	const selectedVisible = pageRows.filter((item) => selected.has(item.id)).length;
 	const allSelected = selectableIds.length > 0 && selectedOnPage === selectableIds.length;
 	const partiallySelected = selectedOnPage > 0 && !allSelected;
 
@@ -277,20 +290,25 @@ export function AdsSmartTable<Row>({
 			{showToolbar ? (
 				<div className="ads-smart-table-toolbar" onKeyDown={closeColumns}>
 					<span aria-live="polite" className="ads-smart-table-selection-summary" role="status">
-						{selectable && selectedCount > 0 ? labels.selectedCount(selectedCount) : null}
+						{selectable && selectedCount > 0
+							? labels.selectedCount(selectedCount, selectedVisible)
+							: null}
 					</span>
 					{onHiddenColumnsChange ? (
-						<div className="ads-smart-table-columns">
-							<AdsButton
-								aria-controls={panelId}
-								aria-expanded={columnsOpen}
-								onClick={() => setColumnsOpen((open) => !open)}
-								ref={columnsButtonRef}
-								size="sm"
-								variant="secondary"
-							>
-								{labels.columns}
-							</AdsButton>
+						<>
+							<div className="ads-smart-table-columns">
+								<AdsButton
+									aria-controls={panelId}
+									aria-expanded={columnsOpen}
+									onClick={() => setColumnsOpen((open) => !open)}
+									ref={columnsButtonRef}
+									size="sm"
+									variant="secondary"
+								>
+									{labels.columns}
+								</AdsButton>
+							</div>
+							{/* Painel inline: ocupa a própria linha da barra e empurra a tabela, sem sobrepor. */}
 							<div className="ads-smart-table-columns-panel" hidden={!columnsOpen} id={panelId}>
 								<AdsSelectionGroup legend={labels.columnsPanel}>
 									{columns.map((column) => {
@@ -309,7 +327,7 @@ export function AdsSmartTable<Row>({
 									})}
 								</AdsSelectionGroup>
 							</div>
-						</div>
+						</>
 					) : null}
 				</div>
 			) : null}
@@ -329,7 +347,7 @@ export function AdsSmartTable<Row>({
 					{caption}
 				</AdsTableCaption>
 				<AdsTableHead>
-					<AdsTableRow>
+					<StaticRow>
 						{selectable ? (
 							<AdsTableHeader className="ads-smart-table-select-cell">
 								{selectionMode === 'multiple' ? (
@@ -379,24 +397,24 @@ export function AdsSmartTable<Row>({
 								</AdsTableHeader>
 							);
 						})}
-					</AdsTableRow>
+					</StaticRow>
 				</AdsTableHead>
 				<AdsTableBody>
 					{body ? (
-						<AdsTableRow>
+						<StaticRow>
 							<AdsTableCell className="ads-smart-table-state" colSpan={colSpan}>
 								{body}
 							</AdsTableCell>
-						</AdsTableRow>
+						</StaticRow>
 					) : loading ? (
 						Array.from({ length: Math.max(1, loadingRows) }, (_, index) => (
-							<AdsTableRow key={index}>
+							<StaticRow key={index}>
 								{Array.from({ length: colSpan }, (_, cell) => (
 									<AdsTableCell key={cell}>
 										<AdsSkeleton className="ads-smart-table-skeleton" />
 									</AdsTableCell>
 								))}
-							</AdsTableRow>
+							</StaticRow>
 						))
 					) : (
 						pageRows.map(({ enabled, id, row }, index) => {
@@ -444,8 +462,15 @@ export function AdsSmartTable<Row>({
 					<AdsPagination {...pagination} />
 				</div>
 			) : null}
-			<div className="ads-smart-table-status" role="status">
-				{loading ? labels.loading : sortMessage}
+			{/*
+			 * Regiões separadas: o fim de um carregamento não reescreve a região da ordenação, então
+			 * o último "Ordenado por…" não é anunciado de novo a cada carga (por exemplo, ao paginar).
+			 */}
+			<div className="ads-smart-table-status" data-status="loading" role="status">
+				{loading ? labels.loading : null}
+			</div>
+			<div className="ads-smart-table-status" data-status="sort" role="status">
+				{sortMessage}
 			</div>
 		</div>
 	);

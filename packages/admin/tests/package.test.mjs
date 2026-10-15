@@ -58,6 +58,25 @@ test('dashboard grid columns follow the grid width, not the viewport', async () 
 	}
 });
 
+test('admin flow styles hide inactive steps, keep announcements accessible and use tokens', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.match(css, /\.ads-step-form-panel\[hidden\]\s*\{[^}]*display:\s*none/);
+	assert.match(
+		css,
+		/\.ads-bulk-action-bar-status,\s*\.ads-step-form-visually-hidden\s*\{[^}]*clip-path:\s*inset\(50%\)/,
+	);
+	assert.match(css, /\.ads-step-form-heading:focus-visible\s*\{[^}]*--ads-color-focus-ring/);
+	assert.match(
+		css,
+		/\.ads-step-form-step\[data-state='current'\] \.ads-step-form-marker\s*\{[^}]*--ads-color-primary/,
+	);
+	assert.match(css, /\.ads-bulk-action-bar\s*\{[^}]*flex-wrap:\s*wrap/);
+	const start = css.indexOf('.ads-bulk-action-bar-status');
+	assert.ok(start > 0, 'missing admin flow styles');
+	assert.doesNotMatch(css.slice(start), /#[0-9a-fA-F]{3,8}\b|rgb\(|hsl\(/);
+});
+
 test('smart table styles use public tokens, a focusable scroll region and the selected row state', async () => {
 	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
 	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -68,4 +87,23 @@ test('smart table styles use public tokens, a focusable scroll region and the se
 	);
 	assert.match(css, /\.ads-smart-table-columns-panel\[hidden\]\s*\{[^}]*display:\s*none/);
 	assert.match(css, /\.ads-smart-table\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+});
+
+test('smart table selection cell has no percentage width, so the table is not stretched', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	const block = css.match(/\.ads-smart-table-select-cell\s*\{([^}]*)\}/)?.[1];
+	assert.ok(block, 'missing .ads-smart-table-select-cell');
+	assert.doesNotMatch(block, /width:[^;]*%/);
+	assert.match(block, /white-space:\s*nowrap/);
+});
+
+test('smart table column panel is inline and the grid does not grow past its container', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	const panel = css.match(/\.ads-smart-table-columns-panel\s*\{([^}]*)\}/)?.[1];
+	assert.ok(panel, 'missing .ads-smart-table-columns-panel');
+	assert.doesNotMatch(panel, /position:\s*(absolute|fixed)|z-index/);
+	assert.match(css, /\.ads-smart-table\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
+	assert.match(css, /\.ads-smart-table-pagination > \.ads-pagination\s*\{[^}]*min-width:\s*0/);
 });

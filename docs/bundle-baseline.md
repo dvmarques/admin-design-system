@@ -34,3 +34,26 @@ descrição e erro ligados ao grupo da seleção múltipla), 975 nas sugestões
 (indicador de carregamento e ids sanitizados), 1973 na R3 (foco pendente com
 `value` assíncrono e documentação do `id`) e 1560 na R4 (foco reposto só
 quando o botão acionado sai da página). O valor é medido com LF, como na CI.
+
+O baseline de `@admin-ds/admin` foi atualizado na change `add-smart-table` de
+89246 para 122324 bytes (+33078) para incluir `AdsSmartTable`: módulo JavaScript,
+source maps e declarações (+29520), CSS da tabela em `styles.css` (+3083) e
+exports (+475), sem novas dependências de runtime. A R1 somou 1862 bytes ao
+valor de 120462 (célula de seleção sem largura percentual, painel de colunas
+inline, regiões de anúncio separadas, contador por página e linhas sem hover).
+O valor é medido com LF, como na CI.
+
+O baseline de `@admin-ds/components` foi atualizado na change `add-smart-table`
+de 272527 para 272938 bytes (+411) por causa do `containerProps` opcional de
+`AdsTable` (`data-table.*`, com declarações e source maps): 346 da prop e 65 do
+tipo que exclui `children` e `dangerouslySetInnerHTML`. O valor é medido com
+LF, como na CI.
+
+O baseline de `@admin-ds/components` foi atualizado na R2 de `add-smart-table`
+de 272938 para 273237 bytes (+299) por causa da prop `interactive` em
+`AdsTableRow`, usada nas linhas estáticas de `AdsSmartTable`. O valor é medido
+com LF, como na CI.
+
+O baseline de `@admin-ds/admin` foi ajustado na R2 de `add-smart-table` para
+122232 bytes (−92), medido em LF após `AdsTableRow` com `interactive={false}`
+no lugar da marcação manual das linhas estáticas.

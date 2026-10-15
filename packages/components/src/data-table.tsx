@@ -8,11 +8,24 @@ import { classNames } from './class-names.js';
 
 export interface AdsTableProps extends TableHTMLAttributes<HTMLTableElement> {
 	containerClassName?: string;
+	/** HTML attributes for the scroll container, for example to make it a labelled, focusable region. */
+	containerProps?: Omit<
+		HTMLAttributes<HTMLDivElement>,
+		'className' | 'children' | 'dangerouslySetInnerHTML'
+	>;
 }
 
-export function AdsTable({ className, containerClassName, ...props }: AdsTableProps) {
+export function AdsTable({
+	className,
+	containerClassName,
+	containerProps,
+	...props
+}: AdsTableProps) {
 	return (
-		<div className={classNames('ads-table-container w-full overflow-x-auto', containerClassName)}>
+		<div
+			{...containerProps}
+			className={classNames('ads-table-container w-full overflow-x-auto', containerClassName)}
+		>
 			<table
 				{...props}
 				className={classNames(
@@ -36,12 +49,20 @@ export function AdsTableBody({ className, ...props }: AdsTableBodyProps) {
 	);
 }
 
-export type AdsTableRowProps = HTMLAttributes<HTMLTableRowElement>;
-export function AdsTableRow({ className, ...props }: AdsTableRowProps) {
+export interface AdsTableRowProps extends HTMLAttributes<HTMLTableRowElement> {
+	/** Quando `false`, omite o realce de hover (cabeçalho e linhas não interativas). Padrão: `true`. */
+	interactive?: boolean;
+}
+
+export function AdsTableRow({ className, interactive = true, ...props }: AdsTableRowProps) {
 	return (
 		<tr
 			{...props}
-			className={classNames('ads-table-row transition-colors hover:bg-surface-hover', className)}
+			className={classNames(
+				'ads-table-row transition-colors',
+				interactive && 'hover:bg-surface-hover',
+				className,
+			)}
 		/>
 	);
 }

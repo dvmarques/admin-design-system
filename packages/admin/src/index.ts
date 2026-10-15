@@ -34,3 +34,12 @@ export type {
 	AdsSelectFilter,
 	AdsTextFilter,
 } from './filter-bar.js';
+export { AdsSmartTable } from './smart-table.js';
+export type {
+	AdsSmartTableColumn,
+	AdsSmartTableLabels,
+	AdsSmartTableProps,
+	AdsSmartTableSelectionMode,
+	AdsSmartTableSort,
+	AdsSmartTableSortDirection,
+} from './smart-table.js';

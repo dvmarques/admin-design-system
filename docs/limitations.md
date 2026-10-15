@@ -36,3 +36,11 @@ componentes administrativos.
   texto é emitido a cada digitação, e o consumidor aplica debounce quando
   necessário. Sem baseline visual (`win32`) para ele, o comportamento é coberto
   por testes de componente, SSR e `axe`.
+- O `AdsSmartTable` só apresenta o estado recebido: não busca, ordena, filtra nem
+  pagina dados, não persiste ordenação, seleção ou colunas e não oferece edição
+  em linha, redimensionamento, reordenação de colunas, virtualização nem
+  exportação. "Selecionar todas" vale só para a página exibida; ids de outras
+  páginas em `selectedIds` são preservados e cabe ao consumidor limpá-los. É um
+  Client Component: `cell` e `getRowId` são funções e não atravessam a fronteira
+  de um Server Component. Sem baseline visual (`win32`) para ele, o
+  comportamento é coberto por testes de componente, SSR e `axe`.

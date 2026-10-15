@@ -10,6 +10,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-admin-flows` - Adicionados a `@admin-ds/admin` os fluxos `AdsListFlow`
+  (filtros, tabela, paginação e ações em massa), `AdsBulkActionBar`,
+  `AdsStepForm` (formulário em etapas com validação por etapa, foco, anúncio e
+  confirmação final) e `AdsConfirmDialog` (confirmação destrutiva), sem regras de
+  negócio nem dependência do roteador.
 - `add-smart-table` - Adicionado `AdsSmartTable` em `@admin-ds/admin`: tabela
   controlada com ordenação (`aria-sort`), seleção de linhas com estado
   indeterminado, visibilidade de colunas, estados de carregamento, vazio e erro,

@@ -1,0 +1,27 @@
+## 1. API e tipos
+
+- [x] 1.1 Definir tipos públicos (`AdsBulkActionBarProps`, `AdsBulkActionBarLabels`, `AdsListFlowProps`, `AdsStepFormProps`, `AdsStepFormLabels`, `AdsStepDefinition`, `AdsConfirmDialogProps`) sem `any` e exportá-los por `@admin-ds/admin`. Concluída quando passam no `typecheck`.
+
+## 2. Componentes
+
+- [x] 2.1 Implementar `AdsBulkActionBar` (região de anúncio sempre presente, barra só com seleção, limpar).
+- [x] 2.2 Implementar `AdsConfirmDialog` sobre `AdsDialog` (foco inicial em "Cancelar", `destructive`, `pending`).
+- [x] 2.3 Implementar `AdsListFlow` compondo `AdsFilterBar`, `AdsBulkActionBar`, `AdsSmartTable` e paginação.
+- [x] 2.4 Implementar `AdsStepForm` (indicador, validação por etapa, foco e anúncio, etapas montadas, confirmação final, `submitting`).
+- [x] 2.5 Adicionar estilos `ads-bulk-action-bar*`, `ads-list-flow*` e `ads-step-form*` em `packages/admin/src/styles.css`, com tokens, temas claro e escuro e telas estreitas, sem Tailwind.
+
+## 3. Testes e documentação
+
+- [x] 3.1 Testes de comportamento: barra (anúncio, ausência sem seleção, limpar), fluxo de listagem, confirmação (foco, Escape, confirmar/cancelar), formulário em etapas (validação, foco, anúncio, dados preservados, confirmação final, controle estrito), SSR, `axe` e ausência de `next/*`; ajustar `package.test.mjs` e `verify-package.mjs` para o CSS novo.
+- [x] 3.2 Stories no Storybook (listagem com ações e confirmação, formulário em etapas, com erro de etapa, estreita, tema escuro).
+- [x] 3.3 Atualizar `docs/integration.md`, `docs/architecture.md`, `docs/limitations.md` e `CHANGELOG.md`.
+
+## 4. Validação
+
+- [x] 4.1 Executar `npm run format`, `lint`, `build`, `typecheck` (todos os workspaces), `test:quiet`, `inspect:packages`, `openspec validate --all --strict` e `npm run test:e2e`, confirmando que nenhum teste E2E falha.
+- [x] 4.2 Registrar que os snapshots visuais têm baseline só `win32` (pulados na CI Linux, falham localmente fora do Windows) e que a change não adiciona nem altera baseline.
+- [x] 4.3 Confirmar que nenhuma dependência de runtime foi adicionada e que `apps/admin-demo` não foi alterado.
+- [x] 4.4 Validar o consumo do CSS compilado em Next.js (build de produção do `admin-demo` com página temporária não commitada, temas claro e escuro, estreita, sem erro de hidratação), restaurando `next-env.d.ts`.
+- [x] 4.5 Atualizar `docs/bundle-baseline.json` e `docs/bundle-baseline.md` somente se `inspect:packages` exigir.
+
+Notas de validação (Linux cloud, Node 22): `npm run format`, `lint`, `build`, `typecheck` (todos os workspaces), `test:quiet` e `test:quality` passaram; o Vitest do `admin` tem 122 testes, incluindo os desta change. `inspect:packages` excedeu o baseline de `@admin-ds/admin` (153584 > 120751) e o baseline foi atualizado e justificado em `docs/bundle-baseline.md`. No E2E (Chromium do Playwright em `/opt/pw-browsers`, via configuração temporária fora do repositório), 85 testes passaram e 7 falharam, todos snapshots visuais sem baseline `linux` (os baselines só existem para `win32`); nenhum baseline foi criado ou alterado, e o `npm run test:e2e` completo (com os snapshots `win32`) não pôde ser executado aqui. A 4.4 foi feita numa página temporária, não commitada, no build de produção do `admin-demo`, a 375 px, nos temas claro e escuro: sem rolagem horizontal, foco movido ao título da etapa e sem erro ou aviso de hidratação (apenas um 404 de recurso estático no tema claro, não relacionado). As stories também foram conferidas a 375 px (tema escuro) e 1100 px (claro) no Storybook estático. `openspec validate --all --strict` só reporta o warning pré-existente em `spec/date-picker`. Sem novas dependências de runtime; `apps/admin-demo` não foi alterado. Não foram feitas revisão manual com leitor de tela nem testes em outros navegadores.

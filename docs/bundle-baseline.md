@@ -40,3 +40,10 @@ O baseline de `@admin-ds/admin` foi atualizado na change `add-smart-table` de
 source maps e declarações (+28381), CSS da tabela em `styles.css` (+2649) e
 exports (+475), sem novas dependências de runtime. O valor é medido com LF, como
 na CI.
+
+O baseline de `@admin-ds/admin` foi atualizado na change `add-admin-flows` de
+120751 para 153584 bytes (+32833) para incluir `AdsBulkActionBar`,
+`AdsConfirmDialog`, `AdsListFlow` e `AdsStepForm`: módulos JavaScript, source
+maps e declarações (+29164, dos quais o formulário em etapas é a maior
+parte), CSS dos fluxos em `styles.css` (+3149) e exports (+520), sem novas
+dependências de runtime. O valor é medido com LF, como na CI.

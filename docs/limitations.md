@@ -44,3 +44,11 @@ componentes administrativos.
   Client Component: `cell` e `getRowId` são funções e não atravessam a fronteira
   de um Server Component. Sem baseline visual (`win32`) para ele, o
   comportamento é coberto por testes de componente, SSR e `axe`.
+- Os fluxos administrativos (`AdsListFlow`, `AdsBulkActionBar`, `AdsStepForm` e
+  `AdsConfirmDialog`) só compõem componentes existentes: não persistem nem
+  enviam dados e não usam o roteador. `AdsStepForm` não permite navegar clicando
+  no indicador, não tem etapas condicionais nem validação assíncrona (`validate`
+  é síncrona), e mantém todas as etapas montadas. O `AdsConfirmDialog` usa
+  `role="dialog"`, pois `AdsDialog` não expõe `alertdialog`. Em `AdsListFlow` o
+  slot `filters` da tabela é ocupado pelo fluxo. Sem baseline visual (`win32`)
+  para eles, o comportamento é coberto por testes de componente, SSR e `axe`.

@@ -575,3 +575,100 @@ A página (Server Component) lê `searchParams`, consulta e ordena os dados e
 repassa `rows`, `page`, `pageCount` e `sort`. Para combinar com o `AdsFilterBar`,
 passe-o em `filters`; os dois seguem independentes, e o consumidor decide, por
 exemplo, limpar a seleção quando o filtro ou a página mudam.
+
+## Fluxos administrativos
+
+`@admin-ds/admin` compõe os componentes públicos em fluxos recorrentes. Todo o
+estado (seleção, filtros, etapa ativa, abertura do diálogo) é do consumidor: os
+fluxos não persistem nem enviam dados, não leem a URL e não usam o roteador do
+Next.js. São Client Components; funções como `validate` e `cell` não atravessam
+a fronteira de um Server Component, então use-os dentro de um Client Component
+(`"use client"`).
+
+### Listagem com ações em massa (`AdsListFlow`)
+
+`AdsListFlow` aceita as props de `AdsSmartTable` e acrescenta `filterBar` (props
+de `AdsFilterBar`), `bulkActions` e `onClearSelection`. A `AdsBulkActionBar` só
+aparece com itens em `selectedIds`, anuncia a quantidade por uma região de
+status e, para não duplicar o anúncio, a contagem da própria tabela fica vazia
+quando `bulkActions` é informado. "Limpar seleção" chama `onClearSelection` ou,
+por padrão, `onSelectionChange([])`. O slot `filters` da tabela é ocupado pelo
+fluxo; para outro arranjo, componha `AdsSmartTable` diretamente.
+
+```tsx
+'use client';
+
+import { AdsConfirmDialog, AdsListFlow } from '@admin-ds/admin';
+import { AdsButton } from '@admin-ds/components';
+import { useState } from 'react';
+
+export function Users({ rows, filters, onFiltersChange, pagination }) {
+	const [selected, setSelected] = useState<string[]>([]);
+	const [confirming, setConfirming] = useState(false);
+	return (
+		<>
+			<AdsListFlow
+				bulkActions={
+					<AdsButton onClick={() => setConfirming(true)} size="sm" variant="danger">
+						Excluir selecionados
+					</AdsButton>
+				}
+				caption="Usuários"
+				columns={columns}
+				filterBar={{ filters: filterDefinitions, value: filters, onChange: onFiltersChange }}
+				getRowId={(user) => user.id}
+				onSelectionChange={setSelected}
+				pagination={pagination}
+				rows={rows}
+				selectedIds={selected}
+			/>
+			<AdsConfirmDialog
+				description="Esta ação não pode ser desfeita."
+				onConfirm={() => deleteUsers(selected).then(() => setConfirming(false))}
+				onOpenChange={setConfirming}
+				open={confirming}
+				title={`Excluir ${selected.length} itens?`}
+			/>
+		</>
+	);
+}
+```
+
+`AdsConfirmDialog` usa `AdsDialog`: o foco inicial vai a "Cancelar", `Escape` e o
+clique fora cancelam (`onOpenChange(false)`), `onConfirm` não fecha o diálogo e
+`pending` desabilita as ações. `destructive` (padrão) usa a variante de perigo.
+O `AdsDialog` não expõe `role="alertdialog"`; o diálogo usa `role="dialog"` com
+título e descrição associados.
+
+### Formulário em etapas (`AdsStepForm`)
+
+O consumidor guarda os dados e a etapa ativa; o componente cuida do indicador,
+da validação por etapa, do foco e da confirmação final.
+
+```tsx
+const [step, setStep] = useState('account');
+const steps = [
+	{ id: 'account', label: 'Conta', validate: () => name !== '', content: <AccountFields /> },
+	{ id: 'review', label: 'Confirmação', content: <Summary /> },
+];
+
+<AdsStepForm
+	activeStepId={step}
+	aria-label="Novo usuário"
+	onActiveStepChange={setStep}
+	onSubmit={save}
+	steps={steps}
+/>;
+```
+
+- `validate` (síncrona) roda ao avançar e ao confirmar; com `false`, a etapa não
+  muda, um alerta é exibido e o foco vai ao primeiro campo `aria-invalid="true"`
+  (ou ao título da etapa). Os erros de campo (`aria-invalid`, `AdsField error`) são
+  do consumidor e devem ser definidos no mesmo ciclo em que `validate` retorna.
+- Ao mudar `activeStepId`, o foco vai ao título da etapa e "Etapa X de N: rótulo"
+  é anunciado; na renderização inicial o foco não se move.
+- As etapas inativas ficam montadas e ocultas, então os dados (inclusive de campos
+  não controlados) permanecem ao voltar. Voltar não valida.
+- A última etapa mostra "Confirmar" (`labels.submit`), que valida e chama
+  `onSubmit`. Inclua nela um resumo para revisão. `submitting` desabilita as
+  ações e define `aria-busy`. `Enter` em um campo não envia nem avança.

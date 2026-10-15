@@ -57,3 +57,10 @@ com LF, como na CI.
 O baseline de `@admin-ds/admin` foi ajustado na R2 de `add-smart-table` para
 122232 bytes (−92), medido em LF após `AdsTableRow` com `interactive={false}`
 no lugar da marcação manual das linhas estáticas.
+
+O baseline de `@admin-ds/admin` foi atualizado na change `add-admin-flows` de
+122232 para 166676 bytes (+44444) para incluir `AdsBulkActionBar`,
+`AdsConfirmDialog`, `AdsListFlow` e `AdsStepForm`: módulos JavaScript, source
+maps e declarações (+40775, dos quais o formulário em etapas é a maior parte),
+CSS dos fluxos em `styles.css` (+3149) e exports (+520), sem novas dependências
+de runtime. O valor é medido com LF, como na CI.

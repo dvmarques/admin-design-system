@@ -109,23 +109,38 @@ export function AdsStepForm({
 	const sectionRefs = useRef<Record<string, HTMLElement | null>>({});
 	const headingRefs = useRef<Record<string, HTMLHeadingElement | null>>({});
 	const previousId = useRef<string | undefined>(active?.id);
+	const handledFailures = useRef(0);
+	/** Incrementa quando um campo da etapa inválida muda; a etapa é revalidada depois do render. */
+	const [edits, setEdits] = useState(0);
+	const stepAnnouncement = labels.stepAnnouncement;
 
+	// Dependências completas: as guardas (`previousId`, `handledFailures`) evitam repetir o foco
+	// quando só a identidade de `steps` ou dos textos muda.
 	useEffect(() => {
 		if (!active || previousId.current === active.id) return;
 		previousId.current = active.id;
 		setInvalid(false);
-		setAnnouncement(
-			fill(labels.stepAnnouncement, { current: index + 1, total, label: active.label }),
-		);
+		setAnnouncement(fill(stepAnnouncement, { current: index + 1, total, label: active.label }));
 		headingRefs.current[active.id]?.focus();
-	}, [active?.id]);
+	}, [active, index, total, stepAnnouncement]);
 
 	useEffect(() => {
-		if (failures === 0 || !active) return;
+		if (failures === handledFailures.current || !active) return;
+		handledFailures.current = failures;
 		const section = sectionRefs.current[active.id];
 		const field = section?.querySelector<HTMLElement>('[aria-invalid="true"]');
 		(field ?? headingRefs.current[active.id])?.focus();
-	}, [failures]);
+	}, [failures, active]);
+
+	// Com o alerta visível, revalida depois de cada edição (já com o estado novo do consumidor) e
+	// remove o alerta quando a etapa fica válida. Não move o foco.
+	const handledEdits = useRef(0);
+	useEffect(() => {
+		if (edits === handledEdits.current) return;
+		handledEdits.current = edits;
+		if (!invalid || !active) return;
+		if (!active.validate || active.validate()) setInvalid(false);
+	}, [edits, invalid, active]);
 
 	if (!active) return null;
 	const last = index === total - 1;
@@ -201,6 +216,7 @@ export function AdsStepForm({
 						className="ads-step-form-panel"
 						hidden={position !== index}
 						key={step.id}
+						onChange={position === index && invalid ? () => setEdits((n) => n + 1) : undefined}
 						ref={(node) => {
 							sectionRefs.current[step.id] = node;
 						}}

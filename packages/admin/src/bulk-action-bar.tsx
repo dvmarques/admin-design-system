@@ -1,8 +1,9 @@
 'use client';
 
 import { AdsButton } from '@admin-ds/components';
-import type { HTMLAttributes, ReactNode } from 'react';
+import { useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
+import { isFocusLost } from './selection-focus.js';
 
 /** Textos da interface; os padrões estão em pt-BR. */
 export interface AdsBulkActionBarLabels {
@@ -26,6 +27,11 @@ export interface AdsBulkActionBarProps extends Omit<HTMLAttributes<HTMLDivElemen
 	/** Chamado por "Limpar seleção". O botão só existe quando `onClear` é informado. */
 	onClear?: () => void;
 	labels?: Partial<AdsBulkActionBarLabels>;
+	/**
+	 * Destino do foco quando a barra some (seleção zerada) e o foco, que estava num controle dela,
+	 * caiu no `<body>`. `AdsListFlow` usa o checkbox do cabeçalho ou a região da tabela.
+	 */
+	getFocusTargetOnEmpty?: () => HTMLElement | null | undefined;
 }
 
 /**
@@ -35,6 +41,7 @@ export interface AdsBulkActionBarProps extends Omit<HTMLAttributes<HTMLDivElemen
 export function AdsBulkActionBar({
 	children,
 	className,
+	getFocusTargetOnEmpty,
 	labels: labelOverrides,
 	onClear,
 	selectedCount,
@@ -43,6 +50,16 @@ export function AdsBulkActionBar({
 	const labels = { ...defaultLabels, ...labelOverrides };
 	const count = Number.isFinite(selectedCount) ? Math.max(0, Math.floor(selectedCount)) : 0;
 	const text = count > 0 ? labels.selected(count) : '';
+	const visible = count > 0;
+	const wasVisible = useRef(visible);
+
+	// Quando a barra sai do DOM com o foco num controle dela ("Limpar seleção" ou uma ação), o
+	// navegador manda o foco ao `<body>`. Só nesse caso o foco vai ao destino informado.
+	useEffect(() => {
+		if (wasVisible.current && !visible && isFocusLost()) getFocusTargetOnEmpty?.()?.focus();
+		wasVisible.current = visible;
+	}, [visible, getFocusTargetOnEmpty]);
+
 	return (
 		<>
 			<div aria-live="polite" className="ads-bulk-action-bar-status" role="status">

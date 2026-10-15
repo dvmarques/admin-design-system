@@ -1,9 +1,10 @@
 'use client';
 
-import type { ReactNode } from 'react';
+import { useCallback, useId, type ReactNode } from 'react';
 import { AdsBulkActionBar, type AdsBulkActionBarLabels } from './bulk-action-bar.js';
 import { classNames } from './class-names.js';
 import { AdsFilterBar, type AdsFilterBarProps } from './filter-bar.js';
+import { getSmartTableSelectionFocusTarget } from './selection-focus.js';
 import { AdsSmartTable, type AdsSmartTableProps } from './smart-table.js';
 
 export interface AdsListFlowProps<Row> extends Omit<AdsSmartTableProps<Row>, 'filters'> {
@@ -28,12 +29,18 @@ export function AdsListFlow<Row>({
 	bulkActions,
 	className,
 	filterBar,
+	id,
 	labels,
 	onClearSelection,
 	onSelectionChange,
 	selectedIds = [],
 	...props
 }: AdsListFlowProps<Row>) {
+	const generatedId = useId();
+	const rootId = id ?? generatedId;
+	const focusTarget = useCallback(() => {
+		return getSmartTableSelectionFocusTarget(document.getElementById(rootId));
+	}, [rootId]);
 	const clear = onClearSelection ?? (onSelectionChange ? () => onSelectionChange([]) : undefined);
 	const hasBulk = bulkActions !== undefined && bulkActions !== null && bulkActions !== false;
 	const filters =
@@ -44,6 +51,7 @@ export function AdsListFlow<Row>({
 					<AdsBulkActionBar
 						{...(bulkActionLabels && { labels: bulkActionLabels })}
 						{...(clear && { onClear: clear })}
+						getFocusTargetOnEmpty={focusTarget}
 						selectedCount={selectedIds.length}
 					>
 						{bulkActions}
@@ -55,6 +63,7 @@ export function AdsListFlow<Row>({
 		<AdsSmartTable<Row>
 			{...props}
 			className={classNames('ads-list-flow', className)}
+			id={rootId}
 			{...(filters && { filters })}
 			// A contagem é anunciada pela barra de ações em massa; evita o anúncio duplicado.
 			labels={{ ...labels, ...(hasBulk && { selectedCount: () => '' }) }}

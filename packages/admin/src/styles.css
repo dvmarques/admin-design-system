@@ -882,6 +882,12 @@
 		margin-top: 1.25rem;
 	}
 
+	/* Ações indisponíveis durante `pending`: continuam focáveis, mas não respondem ao clique. */
+	.ads-confirm-dialog-actions .ads-button[aria-disabled='true'] {
+		cursor: not-allowed;
+		opacity: 0.6;
+	}
+
 	.ads-step-form-cancel {
 		margin-inline-end: auto;
 	}

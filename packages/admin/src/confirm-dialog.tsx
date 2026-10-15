@@ -1,7 +1,13 @@
 'use client';
 
-import { AdsButton, AdsDialog, type AdsDialogProps } from '@admin-ds/components';
-import type { ReactNode } from 'react';
+import {
+	AdsButton,
+	AdsDialog,
+	AdsLoadingIndicator,
+	type AdsDialogProps,
+} from '@admin-ds/components';
+import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
+import { isFocusLost } from './selection-focus.js';
 
 export interface AdsConfirmDialogProps extends Omit<
 	AdsDialogProps,
@@ -15,8 +21,17 @@ export interface AdsConfirmDialogProps extends Omit<
 	cancelLabel?: string;
 	/** Usa a variante de perigo na confirmação. Padrão: `true`. */
 	destructive?: boolean;
-	/** Desabilita as ações enquanto o consumidor processa a confirmação. */
+	/**
+	 * Enquanto o consumidor processa a confirmação: as ações ficam indisponíveis
+	 * (`aria-disabled`, sem perder o foco) e `Escape` e o clique fora não cancelam, mesmo com
+	 * `closeOnEscape` ou `closeOnBackdrop` informados.
+	 */
 	pending?: boolean;
+	/**
+	 * Destino do foco ao fechar quando o elemento que abriu o diálogo não está mais na página
+	 * (por exemplo, a barra de ações em massa sumiu depois da exclusão).
+	 */
+	returnFocusRef?: RefObject<HTMLElement | null>;
 	/** Conteúdo adicional entre a descrição e as ações. */
 	children?: ReactNode;
 }
@@ -34,28 +49,67 @@ export function AdsConfirmDialog({
 	onConfirm,
 	onOpenChange,
 	pending = false,
+	returnFocusRef,
 	...props
 }: AdsConfirmDialogProps) {
+	const wasOpen = useRef(props.open);
+	const actionsRef = useRef<HTMLDivElement>(null);
+
+	// O fundo não é focável: sem isto, clicar nele move o foco para o `<body>`, tanto com
+	// `pending` (o diálogo continua aberto) quanto ao cancelar (depois de o foco voltar à origem).
+	useEffect(() => {
+		if (!props.open) return;
+		const keepFocus = (event: MouseEvent) => {
+			const target = event.target;
+			if (
+				target instanceof HTMLElement &&
+				target.dataset['overlay'] === 'backdrop' &&
+				actionsRef.current &&
+				target.contains(actionsRef.current)
+			) {
+				event.preventDefault();
+			}
+		};
+		document.addEventListener('mousedown', keepFocus, true);
+		return () => document.removeEventListener('mousedown', keepFocus, true);
+	}, [props.open]);
+
+	// Roda depois do efeito do `AdsDialog` (filho), que devolve o foco ao elemento de origem. Se ele
+	// saiu da página, o foco ficou no `<body>`: usa `returnFocusRef`.
+	useEffect(() => {
+		if (wasOpen.current && !props.open && isFocusLost()) returnFocusRef?.current?.focus();
+		wasOpen.current = props.open;
+	}, [props.open, returnFocusRef]);
+
 	return (
 		<AdsDialog
-			// Durante o processamento, `Escape` e o clique fora não cancelam.
-			closeOnBackdrop={!pending}
-			closeOnEscape={!pending}
 			{...props}
+			// Durante o processamento, `Escape` e o clique fora não cancelam, mesmo se informados.
+			closeOnBackdrop={!pending && (props.closeOnBackdrop ?? true)}
+			closeOnEscape={!pending && (props.closeOnEscape ?? true)}
 			onOpenChange={onOpenChange}
 			showCloseButton={false}
 		>
 			{children}
-			<div className="ads-confirm-dialog-actions">
-				<AdsButton disabled={pending} onClick={() => onOpenChange(false)} variant="secondary">
+			<div className="ads-confirm-dialog-actions" ref={actionsRef}>
+				{/* `aria-disabled` em vez de `disabled`: o botão focado não perde o foco para o body. */}
+				<AdsButton
+					aria-disabled={pending || undefined}
+					onClick={() => {
+						if (!pending) onOpenChange(false);
+					}}
+					variant="secondary"
+				>
 					{cancelLabel}
 				</AdsButton>
 				<AdsButton
-					disabled={pending}
-					isLoading={pending}
-					onClick={onConfirm}
+					aria-disabled={pending || undefined}
+					onClick={() => {
+						if (!pending) onConfirm();
+					}}
 					variant={destructive ? 'danger' : 'primary'}
 				>
+					{pending ? <AdsLoadingIndicator aria-hidden="true" size="sm" /> : null}
 					{confirmLabel}
 				</AdsButton>
 			</div>

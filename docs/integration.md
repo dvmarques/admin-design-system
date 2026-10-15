@@ -510,12 +510,8 @@ de página e a ordenação partem dos parâmetros atuais e trocam só a própria
 chave, então filtros de um `AdsFilterBar` na mesma URL são preservados. Ordenar
 volta à primeira página (apaga `pagina`), e a URL não fica com `?` vazio. A
 seleção guarda ids de todas as páginas; o contador mostra quantas estão na
-página exibida, e o exemplo oferece um botão para limpá-la. Os helpers
-`withParams`, `formatReadableSearchQuery`, `applyPendingClearSelectionFocus` e
-`restoreFocusAfterClearSelection` abaixo espelham a lógica testada em
-`apps/admin-demo/lib/url-search-params.ts`, `clear-selection-pending-focus.ts` e
-`selection-clear-focus.ts` (referência para copiar na aplicação, não rota do
-demo).
+página exibida, e o exemplo oferece um botão para limpá-la. Com `AdsListFlow` e
+ações em massa, o foco após limpar a seleção é tratado pelo pacote `admin`.
 
 ```tsx
 // app/usuarios/usuarios-tabela.tsx
@@ -525,7 +521,7 @@ import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
 import { AdsButton } from '@admin-ds/components';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { useState } from 'react';
 
 type Params = Record<string, string | string[] | undefined>;
 
@@ -533,11 +529,6 @@ interface Usuario {
 	id: string;
 	nome: string;
 	perfil: string;
-}
-
-function formatReadableSearchQuery(serialized: string) {
-	if (!serialized) return '';
-	return serialized.replace(/%3A/gi, ':');
 }
 
 // Parte dos parâmetros atuais e troca só as chaves informadas (null apaga a chave).
@@ -550,43 +541,7 @@ function withParams(params: Params, changes: Record<string, string | null>) {
 		if (value === null) query.delete(key);
 		else query.set(key, value);
 	}
-	return formatReadableSearchQuery(query.toString());
-}
-
-function restoreFocusAfterClearSelection(
-	trigger: HTMLElement | null,
-	targets: {
-		selectAll?: HTMLInputElement | null;
-		scrollRegion?: HTMLElement | null;
-	},
-) {
-	if (!trigger || trigger.isConnected) return;
-	const active = document.activeElement;
-	const focusLost = !active || active === document.body;
-	if (!focusLost) return;
-	if (targets.selectAll && !targets.selectAll.disabled) {
-		targets.selectAll.focus();
-		return;
-	}
-	targets.scrollRegion?.focus();
-}
-
-function applyPendingClearSelectionFocus(
-	pending: HTMLElement | null,
-	root: HTMLElement | null,
-): 'idle' | 'waiting' | 'dropped' | 'applied' {
-	if (pending === null) return 'idle';
-	const active = document.activeElement;
-	const focusLost = !active || active === document.body;
-	if (!focusLost && root && !root.contains(active)) return 'dropped';
-	if (pending.isConnected) return 'waiting';
-	if (!focusLost) return 'dropped';
-	const selectAll = root?.querySelector<HTMLInputElement>(
-		'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
-	);
-	const scrollRegion = root?.querySelector<HTMLElement>('.ads-smart-table-scroll');
-	restoreFocusAfterClearSelection(pending, { selectAll, scrollRegion });
-	return 'applied';
+	return query.toString();
 }
 
 export function UsuariosTabela({
@@ -606,8 +561,6 @@ export function UsuariosTabela({
 	const pathname = usePathname();
 	const [selected, setSelected] = useState<string[]>([]);
 	const [hidden, setHidden] = useState<string[]>([]);
-	const rootRef = useRef<HTMLDivElement>(null);
-	const pendingClearRef = useRef<HTMLElement | null>(null);
 	const href = (changes: Record<string, string | null>) => {
 		const query = withParams(params, changes);
 		return query ? `${pathname}?${query}` : pathname;
@@ -619,20 +572,10 @@ export function UsuariosTabela({
 		router.replace(href({ ordem, pagina: null }), { scroll: false });
 	}
 
-	function clearSelection(event: MouseEvent<HTMLButtonElement>) {
-		pendingClearRef.current = event.currentTarget;
-		setSelected([]);
-	}
-
-	useLayoutEffect(() => {
-		const result = applyPendingClearSelectionFocus(pendingClearRef.current, rootRef.current);
-		if (result === 'dropped' || result === 'applied') pendingClearRef.current = null;
-	}, [selected]);
-
 	return (
-		<div ref={rootRef}>
+		<>
 			{selected.length > 0 ? (
-				<AdsButton onClick={clearSelection} size="sm" variant="secondary">
+				<AdsButton onClick={() => setSelected([])} size="sm" variant="secondary">
 					Limpar seleção
 				</AdsButton>
 			) : null}
@@ -665,14 +608,14 @@ export function UsuariosTabela({
 				selectedIds={selected}
 				sort={sort}
 			/>
-		</div>
+		</>
 	);
 }
 ```
 
-Ao limpar a seleção, o foco vai ao checkbox "Selecionar todas as linhas da página"
-ou, se ele não existir, à região rolável da tabela, e só quando o botão some e o
-foco se perdeu (`body` ou `null`), no mesmo espírito da barra de ações em massa.
+Com `AdsListFlow` e `bulkActions`, ao limpar a seleção o foco vai ao checkbox do
+cabeçalho (seleção múltipla) ou à região `.ads-smart-table-scroll`, e só quando o
+botão some e o foco se perdeu (`body` ou `null`).
 
 Para combinar com o `AdsFilterBar`, passe-o em `filters`; os dois seguem
 independentes. Como os links partem dos parâmetros atuais, mudar de página ou de
@@ -695,22 +638,78 @@ de `AdsFilterBar`), `bulkActions` e `onClearSelection`. A `AdsBulkActionBar` só
 aparece com itens em `selectedIds`, anuncia a quantidade por uma região de
 status e, para não duplicar o anúncio, a contagem da própria tabela fica vazia
 quando `bulkActions` é informado. "Limpar seleção" chama `onClearSelection` ou,
-por padrão, `onSelectionChange([])`. O slot `filters` da tabela é ocupado pelo
-fluxo; para outro arranjo, componha `AdsSmartTable` diretamente.
+por padrão, `onSelectionChange([])`. Quando a barra some com o foco num controle
+dela, o foco vai ao checkbox do cabeçalho ou à região da tabela. O slot `filters`
+da tabela é ocupado pelo fluxo; para outro arranjo, componha `AdsSmartTable`
+diretamente.
+
+O exemplo abaixo exclui os selecionados com confirmação. `pending` impede o
+envio duplo enquanto a exclusão acontece; no sucesso, o diálogo fecha e a
+seleção é limpa no mesmo passo, e no erro o diálogo continua aberto com a
+mensagem.
 
 ```tsx
 'use client';
 
-import { AdsConfirmDialog, AdsListFlow } from '@admin-ds/admin';
-import { AdsButton } from '@admin-ds/components';
+import {
+	AdsConfirmDialog,
+	AdsListFlow,
+	type AdsFilterDefinition,
+	type AdsFilterValues,
+	type AdsSmartTableColumn,
+} from '@admin-ds/admin';
+import { AdsButton, type AdsPaginationProps } from '@admin-ds/components';
 import { useState } from 'react';
 
-export function Users({ rows, filters, onFiltersChange, pagination }) {
+interface Usuario {
+	id: string;
+	nome: string;
+	email: string;
+}
+
+const columns: AdsSmartTableColumn<Usuario>[] = [
+	{ id: 'nome', label: 'Nome', cell: (u) => u.nome },
+	{ id: 'email', label: 'E-mail', cell: (u) => u.email },
+];
+
+const filterDefinitions: AdsFilterDefinition[] = [{ id: 'q', type: 'text', label: 'Busca' }];
+
+export function Usuarios({
+	rows,
+	filters,
+	onFiltersChange,
+	pagination,
+	deleteUsers,
+}: {
+	rows: Usuario[];
+	filters: AdsFilterValues;
+	onFiltersChange: (next: AdsFilterValues) => void;
+	pagination: AdsPaginationProps;
+	deleteUsers: (ids: string[]) => Promise<void>;
+}) {
 	const [selected, setSelected] = useState<string[]>([]);
 	const [confirming, setConfirming] = useState(false);
+	const [pending, setPending] = useState(false);
+	const [error, setError] = useState<string | null>(null);
+	const count = selected.length;
+
+	async function confirmDelete() {
+		setPending(true);
+		setError(null);
+		try {
+			await deleteUsers(selected);
+			setSelected([]);
+			setConfirming(false);
+		} catch {
+			setError('Não foi possível excluir. Tente novamente.');
+		} finally {
+			setPending(false);
+		}
+	}
+
 	return (
 		<>
-			<AdsListFlow
+			<AdsListFlow<Usuario>
 				bulkActions={
 					<AdsButton onClick={() => setConfirming(true)} size="sm" variant="danger">
 						Excluir selecionados
@@ -719,7 +718,8 @@ export function Users({ rows, filters, onFiltersChange, pagination }) {
 				caption="Usuários"
 				columns={columns}
 				filterBar={{ filters: filterDefinitions, value: filters, onChange: onFiltersChange }}
-				getRowId={(user) => user.id}
+				getRowId={(u) => u.id}
+				getRowLabel={(u) => u.nome}
 				onSelectionChange={setSelected}
 				pagination={pagination}
 				rows={rows}
@@ -727,22 +727,31 @@ export function Users({ rows, filters, onFiltersChange, pagination }) {
 			/>
 			<AdsConfirmDialog
 				description="Esta ação não pode ser desfeita."
-				onConfirm={() => deleteUsers(selected).then(() => setConfirming(false))}
-				onOpenChange={setConfirming}
+				onConfirm={confirmDelete}
+				onOpenChange={(open) => {
+					setConfirming(open);
+					if (!open) setError(null);
+				}}
 				open={confirming}
-				title={`Excluir ${selected.length} itens?`}
-			/>
+				pending={pending}
+				title={count === 1 ? 'Excluir 1 item?' : `Excluir ${count} itens?`}
+			>
+				{error ? <p role="alert">{error}</p> : null}
+			</AdsConfirmDialog>
 		</>
 	);
 }
 ```
 
 `AdsConfirmDialog` usa `AdsDialog`: o foco inicial vai a "Cancelar", `Escape` e o
-clique fora cancelam (`onOpenChange(false)`), `onConfirm` não fecha o diálogo e
-`pending` desabilita as ações e suspende `Escape` e o clique fora.
-`destructive` (padrão) usa a variante de perigo.
-O `AdsDialog` não expõe `role="alertdialog"`; o diálogo usa `role="dialog"` com
-título e descrição associados.
+clique fora cancelam (`onOpenChange(false)`) e `onConfirm` não fecha o diálogo.
+`pending` deixa as ações indisponíveis com `aria-disabled` (o botão focado não
+perde o foco) e suspende `Escape` e o clique fora, mesmo com `closeOnEscape` ou
+`closeOnBackdrop` informados. Ao fechar, o foco volta ao elemento que abriu o
+diálogo; se ele saiu da página, vai a `returnFocusRef`, quando informado.
+`destructive` (padrão) usa a variante de perigo. O tipo `AdsDialogProps` não
+expõe `role`, então o diálogo usa `role="dialog"` com título e descrição
+associados, e não `alertdialog`.
 
 ### Formulário em etapas (`AdsStepForm`)
 
@@ -767,8 +776,10 @@ const steps = [
 
 - `validate` (síncrona) roda ao avançar e ao confirmar; com `false`, a etapa não
   muda, um alerta é exibido e o foco vai ao primeiro campo `aria-invalid="true"`
-  (ou ao título da etapa). Os erros de campo (`aria-invalid`, `AdsField error`) são
-  do consumidor e devem ser definidos no mesmo ciclo em que `validate` retorna.
+  (ou ao título da etapa). Os erros de campo são do consumidor e devem ser
+  definidos no mesmo ciclo em que `validate` retorna: com `AdsField`, informe
+  `validationState="error"` (é ele que define `aria-invalid`) e a mensagem em
+  `error`. O alerta some quando uma edição torna a etapa válida.
 - Ao mudar `activeStepId`, o foco vai ao título da etapa e "Etapa X de N: rótulo"
   é anunciado; na renderização inicial o foco não se move.
 - As etapas inativas ficam montadas e ocultas, então os dados (inclusive de campos

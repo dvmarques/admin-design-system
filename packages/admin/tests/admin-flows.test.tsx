@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import axe from 'axe-core';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsButton } from '@admin-ds/components';
 import {
@@ -107,11 +107,133 @@ describe('AdsConfirmDialog', () => {
 		expect(screen.getByRole('dialog')).toBeTruthy();
 	});
 
-	it('disables both actions while pending', () => {
-		render(<Harness pending />);
+	it('makes both actions unavailable while pending without disabling them', () => {
+		const onConfirm = vi.fn();
+		render(<Harness onConfirm={onConfirm} pending />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
-		expect(screen.getByRole('button', { name: 'Cancelar' })).toBeDisabled();
-		expect(screen.getByRole('button', { name: /Confirmar/ })).toBeDisabled();
+		const cancel = screen.getByRole('button', { name: 'Cancelar' });
+		const confirm = screen.getByRole('button', { name: /Confirmar/ });
+		for (const button of [cancel, confirm]) {
+			expect(button).toHaveAttribute('aria-disabled', 'true');
+			expect(button).not.toBeDisabled();
+		}
+		fireEvent.click(confirm);
+		fireEvent.click(cancel);
+		expect(onConfirm).not.toHaveBeenCalled();
+		expect(screen.getByRole('dialog')).toBeTruthy();
+	});
+
+	it('keeps focus on Confirm while pending and after it ends', () => {
+		const dialog = (pending: boolean) => (
+			<AdsConfirmDialog
+				onConfirm={() => {}}
+				onOpenChange={() => {}}
+				open
+				pending={pending}
+				title="Excluir?"
+			/>
+		);
+		const { rerender } = render(dialog(false));
+		const confirm = screen.getByRole('button', { name: 'Confirmar' });
+		confirm.focus();
+		rerender(dialog(true));
+		expect(confirm).toHaveAttribute('aria-disabled', 'true');
+		expect(confirm).not.toBeDisabled();
+		expect(confirm).toHaveFocus();
+		rerender(dialog(false));
+		expect(confirm).not.toHaveAttribute('aria-disabled');
+		expect(confirm).toHaveFocus();
+	});
+
+	it('keeps Escape and backdrop suspended while pending even when passed explicitly', () => {
+		const onOpenChange = vi.fn();
+		render(
+			<AdsConfirmDialog
+				closeOnBackdrop
+				closeOnEscape
+				onConfirm={() => {}}
+				onOpenChange={onOpenChange}
+				open
+				pending
+				title="Excluir?"
+			/>,
+		);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	it('honors closeOnEscape={false} when not pending', () => {
+		const onOpenChange = vi.fn();
+		render(
+			<AdsConfirmDialog
+				closeOnEscape={false}
+				onConfirm={() => {}}
+				onOpenChange={onOpenChange}
+				open
+				title="Excluir?"
+			/>,
+		);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		expect(onOpenChange).not.toHaveBeenCalled();
+		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
+		expect(onOpenChange).toHaveBeenCalledWith(false);
+	});
+
+	it('moves focus to returnFocusRef when the opener left the page', () => {
+		function Removed() {
+			const [open, setOpen] = useState(false);
+			const [gone, setGone] = useState(false);
+			const fallback = useRef<HTMLButtonElement>(null);
+			return (
+				<>
+					<button ref={fallback} type="button">
+						Destino
+					</button>
+					{gone ? null : (
+						<button onClick={() => setOpen(true)} type="button">
+							Abrir
+						</button>
+					)}
+					<AdsConfirmDialog
+						onConfirm={() => {
+							setGone(true);
+							setOpen(false);
+						}}
+						onOpenChange={setOpen}
+						open={open}
+						returnFocusRef={fallback}
+						title="Excluir?"
+					/>
+				</>
+			);
+		}
+		render(<Removed />);
+		const opener = screen.getByRole('button', { name: 'Abrir' });
+		opener.focus();
+		fireEvent.click(opener);
+		const confirm = screen.getByRole('button', { name: 'Confirmar' });
+		confirm.focus();
+		fireEvent.click(confirm);
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.getByRole('button', { name: 'Destino' })).toHaveFocus();
+	});
+
+	it('keeps a backdrop click from moving focus to the body', () => {
+		const backdrop = () => document.querySelector<HTMLElement>('[data-overlay="backdrop"]');
+		const { unmount } = render(<Harness pending />);
+		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+		expect(fireEvent.mouseDown(backdrop() as HTMLElement)).toBe(false);
+		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		unmount();
+
+		render(<Harness />);
+		const trigger = screen.getByRole('button', { name: 'Excluir' });
+		trigger.focus();
+		fireEvent.click(trigger);
+		expect(fireEvent.mouseDown(backdrop() as HTMLElement)).toBe(false);
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(trigger).toHaveFocus();
 	});
 
 	it('cancels with a click on the backdrop, but not on the panel', () => {
@@ -207,6 +329,60 @@ describe('AdsListFlow', () => {
 		expect(screen.getByRole('checkbox', { name: 'Selecionar Ana' })).not.toBeChecked();
 	});
 
+	it('moves focus to "select all" when "Limpar seleção" removes the bar', () => {
+		render(<Flow />);
+		fireEvent.click(screen.getByRole('checkbox', { name: 'Selecionar Ana' }));
+		const clear = screen.getByRole('button', { name: 'Limpar seleção' });
+		clear.focus();
+		fireEvent.click(clear);
+		expect(screen.queryByRole('group', { name: 'Ações em massa' })).toBeNull();
+		expect(
+			screen.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' }),
+		).toHaveFocus();
+	});
+
+	it('keeps focus off the body after deleting from the bar through the confirm dialog', () => {
+		function Deleting() {
+			const [selected, setSelected] = useState<string[]>(['u1', 'u2']);
+			const [confirming, setConfirming] = useState(false);
+			return (
+				<>
+					<AdsListFlow<User>
+						bulkActions={<AdsButton onClick={() => setConfirming(true)}>Excluir</AdsButton>}
+						caption="Usuários"
+						columns={columns}
+						getRowId={(u) => u.id}
+						getRowLabel={(u) => u.name}
+						onSelectionChange={setSelected}
+						rows={users}
+						selectedIds={selected}
+					/>
+					<AdsConfirmDialog
+						onConfirm={() => {
+							setSelected([]);
+							setConfirming(false);
+						}}
+						onOpenChange={setConfirming}
+						open={confirming}
+						title="Excluir 2 itens?"
+					/>
+				</>
+			);
+		}
+		render(<Deleting />);
+		const trigger = screen.getByRole('button', { name: 'Excluir' });
+		trigger.focus();
+		fireEvent.click(trigger);
+		const confirm = screen.getByRole('button', { name: 'Confirmar' });
+		confirm.focus();
+		fireEvent.click(confirm);
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(document.activeElement).not.toBe(document.body);
+		expect(
+			screen.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' }),
+		).toHaveFocus();
+	});
+
 	it('uses onClearSelection when provided', () => {
 		const onClear = vi.fn();
 		render(<Flow onClearSelection={onClear} />);
@@ -296,6 +472,18 @@ describe('AdsStepForm', () => {
 	}
 
 	const next = () => fireEvent.click(screen.getByRole('button', { name: 'Próxima' }));
+
+	it('removes the invalid-step alert once the field is fixed, without moving focus', () => {
+		render(<Form />);
+		next();
+		expect(screen.getByRole('alert')).toHaveTextContent('Corrija os campos');
+		const field = screen.getByLabelText('Nome');
+		expect(field).toHaveFocus();
+		fireEvent.change(field, { target: { value: 'Ana' } });
+		expect(screen.queryByRole('alert')).toBeNull();
+		expect(field).toHaveFocus();
+		expect(field).not.toHaveAttribute('aria-invalid');
+	});
 
 	it('shows the progress indicator and marks the current step', () => {
 		render(<Form />);

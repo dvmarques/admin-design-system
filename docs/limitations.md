@@ -49,6 +49,7 @@ componentes administrativos.
   enviam dados e não usam o roteador. `AdsStepForm` não permite navegar clicando
   no indicador, não tem etapas condicionais nem validação assíncrona (`validate`
   é síncrona), e mantém todas as etapas montadas. O `AdsConfirmDialog` usa
-  `role="dialog"`, pois `AdsDialog` não expõe `alertdialog`. Em `AdsListFlow` o
+  `role="dialog"`: o painel interno de `@admin-ds/components` aceita
+  `alertdialog`, mas o tipo `AdsDialogProps` não expõe `role`. Em `AdsListFlow` o
   slot `filters` da tabela é ocupado pelo fluxo. Sem baseline visual (`win32`)
   para eles, o comportamento é coberto por testes de componente, SSR e `axe`.

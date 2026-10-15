@@ -56,8 +56,8 @@ pacote e deve mostrar o produto integrado.
 - O shell fica em `app/(admin)/layout.tsx` (Server Component), que renderiza
   `AdsAdminShell`, a lista de navegação e o `ThemeControl`.
 - O realce da página atual precisa de `usePathname`, hook do Next.js. Ele fica
-  **somente** em um Client Component do demo (`demo-navigation.tsx`) que passa
-  `current` aos itens do `AdsNav`. Nada disso entra em `packages/*`.
+  **somente** em um Client Component do demo (`demo-navigation.tsx`) que define
+  `aria-current="page"` nos links. Nada disso entra em `packages/*`.
 - Estado de `collapsed` e `mobileOpen` permanece no `AdsAdminShell` não
   controlado: como o layout não é remontado entre rotas do mesmo grupo, o estado
   é preservado sem persistência automática (spec: sidebar mantida ao navegar).
@@ -66,8 +66,10 @@ pacote e deve mostrar o produto integrado.
   é usado para isso: ele renderiza `<a href>` simples (sem elemento de link
   customizável) e causaria navegação completa, perdendo o estado do shell.
   `AdsNav` continua apenas no catálogo de componentes.
-- `AdsPagination` oferece `renderPage`, que permite ao demo envolver cada página
-  em `next/link` sem mudança na biblioteca.
+- `AdsPagination` **não** usa `renderPage` com `next/link`: o componente envolve
+  cada página em um `<button>`, e um link contendo botão é interativo aninhado
+  (HTML inválido, falha no `axe-core`). O demo usa um Client Component fino que
+  passa `onPageChange` e chama `router.push` com `?pagina=N`.
 
 ### 3. Dados e estados
 
@@ -76,8 +78,18 @@ pacote e deve mostrar o produto integrado.
 - Estados carregando/vazio/erro selecionados por parâmetro de URL
   (`?estado=vazio|carregando|erro`) lido no servidor, para que e2e e snapshots
   sejam estáveis sem timers.
-- Paginação por `?pagina=N` lida no servidor; `AdsPagination` recebe os
-  callbacks/links fornecidos pelo demo.
+- Paginação por `?pagina=N` lida no servidor; a mudança de página é feita pelo
+  Client Component fino descrito na decisão 2.
+
+### 3.1 Páginas existentes dentro do layout
+
+`/data-display` hoje tem `<main>`, link "Voltar para a página inicial" e
+`ThemeControl` próprios. Ao entrar no layout compartilhado, esses três elementos
+são removidos (o shell já fornece `main`, navegação e tema), e o catálogo em
+`/componentes` passa pelo mesmo ajuste. Os e2e que dependem deles
+(`data-display.spec.ts`, `admin-demo.spec.ts`, `overlay.spec.ts`) são
+atualizados na mesma change, mantendo os contratos por papel ARIA e nome
+acessível que continuam válidos.
 
 ### 4. Formulário
 
@@ -109,8 +121,9 @@ pacote e deve mostrar o produto integrado.
   aceitam elemento de link customizado; é uma limitação da biblioteca para
   consumidores com roteamento no cliente, a registrar em `docs/limitations.md`
   e tratar em change própria, fora desta.
-- **[Churn de snapshots visuais em `/`]** → Revisar cada diff; regenerar apenas
-  os intencionais.
+- **[Churn de snapshots visuais]** → Os snapshots só rodam localmente (pulados na
+  CI) e os existentes são `-win32`. Regenerar apenas os intencionais, em
+  Windows, revisando cada diff; este ambiente Linux não os valida.
 - **[Demo vira vitrine de gambiarras]** → Lacunas encontradas são registradas em
   `docs/limitations.md` e tratadas fora desta change.
 - **[Aumento do bundle do demo]** → Sem novas dependências; o demo não entra no

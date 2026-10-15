@@ -80,6 +80,11 @@ O admin-demo MUST oferecer uma rota com formulário que valide campos obrigatór
 
 O admin-demo MUST oferecer uma rota de preferências que permita escolher o tema e o estado da sidebar, aplicando a escolha de tema na renderização inicial seguinte.
 
+#### Scenario: Sidebar é alterada pelas preferências
+
+- **WHEN** a pessoa recolhe ou expande a sidebar pelas preferências
+- **THEN** a sidebar do shell reflete o estado imediatamente, sem persistência após recarregar
+
 #### Scenario: Tema escolhido é restaurado
 
 - **WHEN** a pessoa escolhe um tema e recarrega a página

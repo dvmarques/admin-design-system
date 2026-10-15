@@ -4,8 +4,9 @@
 
 - [ ] 1.1 Criar o grupo de rotas `app/(admin)` com `layout.tsx` (Server Component) contendo `AdsAdminShell`, cabeçalho e `ThemeControl`; verificar que `/` renderiza o shell uma única vez (teste Vitest de SSR da rota).
 - [ ] 1.2 Criar `demo-navigation.tsx` (Client Component) com `next/link` e `usePathname` dentro de `AdsAdminShell.Sidebar`, marcando `aria-current="page"` apenas na rota atual; verificar com teste de componente que somente um item é marcado.
-- [ ] 1.3 Mover o conteúdo atual de `app/page.tsx` para `app/(admin)/componentes/page.tsx` e fazer `/data-display` usar o layout compartilhado, mantendo URL e headings; verificar que `e2e/data-display.spec.ts` continua passando sem alterações de seletores.
-- [ ] 1.4 Cobrir em Playwright: navegar entre rotas mantém tema e sidebar recolhida, e a navegação por teclado mostra foco visível e ativa com Enter.
+- [ ] 1.3 Mover o conteúdo atual de `app/page.tsx` para `app/(admin)/componentes/page.tsx` e fazer `/data-display` usar o layout compartilhado, removendo `<main>`, link "Voltar" e `ThemeControl` duplicados e mantendo URL e headings; verificar que cada rota tem um único `main` e um único toggle de tema.
+- [ ] 1.4 Atualizar `e2e/admin-demo.spec.ts`, `e2e/overlay.spec.ts` (de `/` para `/componentes`) e `e2e/data-display.spec.ts` (sem o link "Voltar"), mantendo seletores por papel e nome acessível; verificar que os três arquivos passam.
+- [ ] 1.5 Cobrir em Playwright: navegar entre rotas mantém tema e sidebar recolhida, e a navegação por teclado mostra foco visível e ativa com Enter.
 
 ## 2. Visão geral
 
@@ -14,7 +15,7 @@
 
 ## 3. Listagem de clientes
 
-- [ ] 3.1 Criar `/clientes` com `AdsTable`, nome acessível e paginação via `?pagina=N` usando `AdsPagination` com `renderPage` e `next/link`; verificar que a mudança de página altera os registros e informa a página atual.
+- [ ] 3.1 Criar `/clientes` com `AdsTable`, nome acessível e paginação via `?pagina=N` usando `AdsPagination` com `onPageChange` e `router.push` em um Client Component fino; verificar que a mudança de página altera os registros e informa a página atual.
 - [ ] 3.2 Implementar os estados `?estado=vazio|carregando|erro` com `AdsEmptyState`, `AdsSkeleton` e erro anunciado com ação de tentar novamente; verificar um teste por estado, incluindo o anúncio do erro.
 - [ ] 3.3 Verificar rolagem horizontal contida na tabela em 375 px, ausência de rolagem horizontal da página e `axe-core` nos dois temas.
 
@@ -32,8 +33,8 @@
 
 - [ ] 6.1 Estender `tests/public-consumption.test.ts` para varrer `app/**` e falhar em qualquer import interno de pacote; verificar introduzindo temporariamente um import interno e confirmando a falha (revertido em seguida).
 - [ ] 6.2 Adicionar teste de SSR/hidratação por rota sem divergências atribuíveis ao design system.
-- [ ] 6.3 Atualizar `docs/integration.md` (layout compartilhado, `next/link` na sidebar, `renderPage`), registrar em `docs/limitations.md` que `AdsNav`/`AdsBreadcrumb` não aceitam elemento de link customizado, e atualizar o item 8 de `docs/roadmap.md`; verificar que os exemplos documentados correspondem ao código do demo.
-- [ ] 6.4 Regenerar snapshots visuais somente das telas alteradas, revisando cada diff antes de aceitar.
+- [ ] 6.3 Atualizar `docs/integration.md` (layout compartilhado, `next/link` na sidebar, paginação por `onPageChange`), registrar em `docs/limitations.md` que `AdsNav`/`AdsBreadcrumb` não aceitam elemento de link customizado, e atualizar o item 8 de `docs/roadmap.md`; verificar que os exemplos documentados correspondem ao código do demo.
+- [ ] 6.4 Regenerar localmente (Windows, nomes `-win32`) os snapshots visuais das telas alteradas, revisando cada diff antes de aceitar; registrar na entrega que a validação visual não roda em Linux nem na CI.
 
 ## 7. Validação final
 

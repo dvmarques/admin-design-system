@@ -23,14 +23,14 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 		},
 	]);
 	await page.goto('/');
-	await expect(page.getByRole('main').getByRole('link', { name: /exibi/i })).toHaveAttribute(
-		'href',
-		'/data-display',
-	);
+	await expect(
+		page
+			.getByRole('navigation', { name: 'Navegação do demo' })
+			.getByRole('link', { name: 'Exibição de dados' }),
+	).toHaveAttribute('href', '/data-display');
 
 	await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-	await expect(page.getByRole('heading', { name: 'Tokens públicos' })).toBeVisible();
 
 	const darkBackground = await page.locator('body').evaluate((element) => {
 		return getComputedStyle(element).backgroundColor;
@@ -45,6 +45,15 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	});
 	expect(lightBackground).not.toBe(darkBackground);
 	expect(hydrationErrors).toEqual([]);
+});
+
+test('apresenta o catálogo de componentes com os tokens públicos', async ({ page }) => {
+	await page.goto('/componentes');
+
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'Catálogo de componentes' }),
+	).toBeVisible();
+	await expect(page.getByRole('heading', { name: 'Tokens públicos' })).toBeVisible();
 });
 
 test('mantém a apresentação de referência nos temas claro e escuro', async ({ page }) => {
@@ -85,7 +94,7 @@ test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ p
 	const drawer = page.getByRole('dialog', { name: 'Navegação do demo' });
 	await expect(drawer).toBeVisible();
 	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
-	await expect(drawer.getByRole('link', { name: 'Formulários' })).toBeVisible();
+	await expect(drawer.getByRole('link', { name: 'Componentes' })).toBeVisible();
 
 	await expect(drawer.getByRole('heading', { name: 'Navegação do demo' })).toBeVisible();
 	const closeButton = page.getByRole('button', { name: 'Fechar navegação' });
@@ -124,7 +133,7 @@ test('encerra a navegação móvel ao entrar no desktop e não a reabre ao volta
 	await expect(page.getByRole('dialog')).toHaveCount(0);
 	const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
 	await expect(navigation).toHaveCount(1);
-	await expect(navigation.getByRole('link', { name: 'Formulários' })).toBeVisible();
+	await expect(navigation.getByRole('link', { name: 'Componentes' })).toBeVisible();
 
 	await page.setViewportSize({ width: 390, height: 844 });
 	await expect(page.getByRole('dialog')).toHaveCount(0);
@@ -146,7 +155,7 @@ test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro
 		await hideDevelopmentPortal(page);
 		await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
 		const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
-		await expect(navigation.getByRole('link', { name: 'Formulários' })).toBeVisible();
+		await expect(navigation.getByRole('link', { name: 'Componentes' })).toBeVisible();
 		await expect(page).toHaveScreenshot(`admin-shell-collapsed-${theme}.png`);
 
 		await page.setViewportSize({ width: 390, height: 844 });

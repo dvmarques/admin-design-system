@@ -1,4 +1,4 @@
-import { readFile } from 'node:fs/promises';
+import { readdir, readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import { AdsAdminShell } from '@admin-ds/admin';
@@ -45,6 +45,21 @@ import {
 	AdsTooltip,
 	AdsTypography,
 } from '@admin-ds/components';
+
+const demoRoot = resolve(import.meta.dirname, '..');
+
+/** Reads every `app/**` and `lib/**` TypeScript source of the demo, except test files. */
+async function readAppSources() {
+	const files: string[] = [];
+	for (const dir of ['app', 'lib']) {
+		for (const entry of await readdir(resolve(demoRoot, dir), { recursive: true })) {
+			if (/\.(ts|tsx)$/.test(entry) && !/\.test\.tsx?$/.test(entry)) {
+				files.push(resolve(demoRoot, dir, entry));
+			}
+		}
+	}
+	return Promise.all(files.map((file) => readFile(file, 'utf8')));
+}
 
 describe('public component consumption', () => {
 	it('resolves all component exports without internal package paths', () => {
@@ -130,13 +145,11 @@ describe('public component consumption', () => {
 	});
 
 	it('keeps the reference application on public package imports', async () => {
-		const page = await readFile(
-			resolve(process.cwd(), '../../apps/admin-demo/app/page.tsx'),
-			'utf8',
-		);
-		expect(page).toContain("from '@admin-ds/components'");
-		expect(page).toContain("from '@admin-ds/admin'");
-		expect(page).not.toMatch(
+		const sources = (await readAppSources()).join('\n');
+
+		expect(sources).toContain("from '@admin-ds/components'");
+		expect(sources).toContain("from '@admin-ds/admin'");
+		expect(sources).not.toMatch(
 			/@admin-ds\/(components|admin)\/src|packages\/(components|admin)\/src/,
 		);
 	});

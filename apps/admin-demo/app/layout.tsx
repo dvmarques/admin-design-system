@@ -17,7 +17,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 	const theme = resolveTheme(cookieStore.get('ads-theme')?.value);
 
 	return (
-		<html lang="pt-BR" data-theme={theme}>
+		<html lang="pt-BR" data-scroll-behavior="smooth" data-theme={theme}>
 			<body>{children}</body>
 		</html>
 	);

@@ -95,8 +95,23 @@ body {
 	font-size: 0.875rem;
 	text-decoration: none;
 }
+.demo-header-tools {
+	margin-left: auto;
+}
+.demo-shell-nav-list {
+	display: grid;
+	gap: 0.25rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
 .demo-shell-nav-link:hover {
 	background-color: var(--ads-color-surface-hover);
+}
+.demo-shell-nav-link[aria-current='page'] {
+	background-color: var(--ads-color-surface-selected);
+	color: var(--ads-color-on-surface-selected);
+	font-weight: var(--ads-typography-font-weight-semibold);
 }
 .demo-shell-nav-link:focus-visible {
 	outline: 2px solid var(--ads-color-focus-ring);

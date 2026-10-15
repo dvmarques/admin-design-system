@@ -34,7 +34,7 @@ test('expõe progresso e estado vazio sem semântica de erro implícita', async 
 	await expect(page.locator('.ads-empty-state').getByRole('alert')).toHaveCount(0);
 });
 
-test('alterna visualmente o tema e permite voltar à página inicial', async ({ page }) => {
+test('alterna visualmente o tema e permite voltar à visão geral pela sidebar', async ({ page }) => {
 	await page.context().addCookies([
 		{
 			name: 'ads-theme',
@@ -53,10 +53,11 @@ test('alterna visualmente o tema e permite voltar à página inicial', async ({ 
 		return getComputedStyle(element).backgroundColor;
 	});
 	expect(darkBackground).not.toBe(lightBackground);
-	await expect(page.getByRole('link', { name: 'Voltar para a página inicial' })).toHaveAttribute(
-		'href',
-		'/',
-	);
+	await page
+		.getByRole('navigation', { name: 'Navegação do demo' })
+		.getByRole('link', { name: 'Visão geral' })
+		.click();
+	await expect(page).toHaveURL('/');
 });
 
 test('mantém a apresentação de dados nos temas claro e escuro', async ({ page }) => {

@@ -1,5 +1,6 @@
 'use client';
 
+import Link from 'next/link';
 import { useState } from 'react';
 import { AdsBreadcrumb, AdsDropdown, AdsNav, AdsPagination, AdsTabs } from '@admin-ds/components';
 
@@ -9,15 +10,28 @@ export function NavigationShowcase() {
 		<div style={{ display: 'grid', gap: '1.5rem' }}>
 			<AdsBreadcrumb
 				items={[
-					{ href: '#home', label: 'Início' },
-					{ href: '#reports', label: 'Relatórios' },
+					{
+						label: 'Início',
+						renderLink: (props) => <Link href="#home" {...props} />,
+					},
+					{
+						label: 'Relatórios',
+						renderLink: (props) => <Link href="#reports" {...props} />,
+					},
 					{ label: 'Mensal' },
 				]}
 			/>
 			<AdsNav
 				items={[
-					{ href: '#overview', label: 'Visão geral', current: true },
-					{ href: '#activity', label: 'Atividade' },
+					{
+						label: 'Visão geral',
+						current: true,
+						renderLink: (props) => <Link href="#overview" {...props} />,
+					},
+					{
+						label: 'Atividade',
+						renderLink: (props) => <Link href="#activity" {...props} />,
+					},
 					{ label: 'Ações', onClick: () => undefined },
 				]}
 			/>

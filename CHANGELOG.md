@@ -49,6 +49,11 @@ por versão e pelas changes correspondentes do OpenSpec.
   `next/link` com página atual identificada, estado de tema compartilhado e
   testes de consumo público, acessibilidade e responsividade por rota. Restrito
   ao admin demo, sem mudança de API pública.
+- `migrate-demo-consumer-links` - O admin demo passa a usar `renderPageLink` na
+  paginação de `/clientes` e `renderLink` com `next/link` em `AdsNav` e
+  `AdsBreadcrumb`, e `docs/integration.md` reflete o exemplo. O `AdsButton`
+  passa a herdar a fonte da página, inclusive na paginação, como os links. Sem
+  mudança de API pública.
 - `update-node-24` - Atualizados `engines.node` (`>=24.0.0`), CI, release e
   `@types/node` para o Node.js 24; adicionado `.nvmrc` e documentada a versão
   exigida no README. Quem usa Node.js 22 precisa atualizar o runtime.

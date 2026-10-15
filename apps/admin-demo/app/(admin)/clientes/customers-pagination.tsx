@@ -1,7 +1,7 @@
 'use client';
 
 import { AdsPagination } from '@admin-ds/components';
-import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 
 interface CustomersPaginationProps {
 	page: number;
@@ -9,17 +9,15 @@ interface CustomersPaginationProps {
 }
 
 /**
- * `AdsPagination` renders buttons and does not know about routing, so the application turns each
- * page change into a navigation here.
+ * `AdsPagination` does not know about routing, so the application provides the link for each page
+ * through `renderPageLink`, which keeps every page a real link without nested interactive content.
  */
 export function CustomersPagination({ page, pageCount }: CustomersPaginationProps) {
-	const router = useRouter();
-
 	return (
 		<AdsPagination
-			onPageChange={(next) => router.push(`/clientes?pagina=${next}`)}
 			page={page}
 			pageCount={pageCount}
+			renderPageLink={(target, props) => <Link href={`/clientes?pagina=${target}`} {...props} />}
 		/>
 	);
 }

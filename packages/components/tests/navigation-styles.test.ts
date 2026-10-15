@@ -17,6 +17,12 @@ const classes = [
 	'no-underline',
 ] as const;
 
+describe('button font in the distributed CSS', () => {
+	it('contains the font-family inherit utility used by AdsButton and AdsPagination', () => {
+		expect(css).toContain('.\\[font-family\\:inherit\\]');
+	});
+});
+
 describe('navigation styles in the distributed CSS', () => {
 	it.each(classes)('contains the %s utility used by tabs and breadcrumb', (name) => {
 		expect(css).toContain(`.${name.replace(':', '\\:')}`);

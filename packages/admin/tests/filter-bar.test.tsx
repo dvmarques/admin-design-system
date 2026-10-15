@@ -137,12 +137,30 @@ describe('AdsFilterBar', () => {
 		expect(onChange).toHaveBeenLastCalledWith({ perfis: ['editor'] });
 	});
 
-	it('clears everything and returns focus to the first control', () => {
+	it('clears everything and returns focus to the first control when the fields are expanded', () => {
 		const onChange = vi.fn();
-		render(<Harness initial={{ status: 'ativo', q: 'ana' }} onChange={onChange} />);
+		render(<Harness defaultExpanded initial={{ status: 'ativo', q: 'ana' }} onChange={onChange} />);
 		fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
 		expect(onChange).toHaveBeenLastCalledWith({});
 		expect(screen.getByText('Nenhum filtro ativo')).toBeTruthy();
+		expect(document.activeElement).toBe(screen.getByLabelText('Busca'));
+	});
+
+	it('returns focus to the toggle when the fields are collapsed', () => {
+		render(<Harness initial={{ status: 'ativo', q: 'ana' }} />);
+		const toggle = screen.getByRole('button', { name: /^Filtros/ });
+		expect(toggle.getAttribute('aria-expanded')).toBe('false');
+		fireEvent.click(screen.getByRole('button', { name: 'Limpar filtros' }));
+		expect(document.activeElement).toBe(toggle);
+	});
+
+	it('moves focus to the toggle after removing the last chip with collapsed fields', () => {
+		const { unmount } = render(<Harness expanded={false} initial={{ status: 'ativo' }} />);
+		fireEvent.click(screen.getByRole('button', { name: 'Remover filtro Status: Ativo' }));
+		expect(document.activeElement).toBe(screen.getByRole('button', { name: /^Filtros/ }));
+		unmount();
+		render(<Harness expanded initial={{ status: 'ativo' }} />);
+		fireEvent.click(screen.getByRole('button', { name: 'Remover filtro Status: Ativo' }));
 		expect(document.activeElement).toBe(screen.getByLabelText('Busca'));
 	});
 
@@ -173,6 +191,12 @@ describe('AdsFilterBar', () => {
 	it('shows the active count on the toggle', () => {
 		render(<Harness initial={{ status: 'ativo', q: 'a' }} />);
 		expect(screen.getByRole('button', { name: 'Filtros 2' })).toBeTruthy();
+	});
+
+	it('counts chips, one per checked option, on the toggle and in the announcement', () => {
+		render(<Harness initial={{ status: 'ativo', perfis: ['admin', 'editor'] }} />);
+		expect(screen.getByRole('button', { name: 'Filtros 3' })).toBeTruthy();
+		expect(screen.getByRole('status').textContent).toBe('3 filtros ativos');
 	});
 
 	it('disables fields and chip actions but keeps chips readable', () => {
@@ -227,6 +251,56 @@ describe('AdsFilterBar', () => {
 		expect(screen.getByRole('button', { name: 'Tirar Busca = a' })).toBeTruthy();
 	});
 
+	it('links the multiselect description and error to the group and marks options invalid', () => {
+		const { rerender } = render(
+			<Harness
+				filters={[
+					{
+						id: 'perfis',
+						type: 'multiselect',
+						label: 'Perfis',
+						description: 'Escolha ao menos um',
+						error: 'Obrigatório',
+						options: [
+							{ value: 'a', label: 'A' },
+							{ value: 'b', label: 'B' },
+						],
+					},
+				]}
+			/>,
+		);
+		const group = screen.getByRole('group', { name: 'Perfis' });
+		const ids = (group.getAttribute('aria-describedby') ?? '').split(' ');
+		expect(ids).toHaveLength(2);
+		expect(ids.map((id) => document.getElementById(id)?.textContent)).toEqual([
+			'Escolha ao menos um',
+			'Obrigatório',
+		]);
+		expect(document.getElementById(ids[1] as string)?.getAttribute('role')).toBe('alert');
+		for (const name of ['A', 'B']) {
+			expect(screen.getByLabelText(name).getAttribute('aria-invalid')).toBe('true');
+		}
+		rerender(
+			<AdsFilterBar
+				filters={[
+					{
+						id: 'perfis',
+						type: 'multiselect',
+						label: 'Perfis',
+						options: [{ value: 'a', label: 'A' }],
+					},
+				]}
+				onChange={() => {}}
+				value={{}}
+			/>,
+		);
+		expect(screen.getByRole('group', { name: 'Perfis' }).hasAttribute('aria-describedby')).toBe(
+			false,
+		);
+		expect(screen.getByLabelText('A').hasAttribute('aria-invalid')).toBe(false);
+		expect(screen.queryByRole('alert')).toBeNull();
+	});
+
 	it('has no axe violations in any state', async () => {
 		for (const props of [
 			{},
@@ -239,6 +313,18 @@ describe('AdsFilterBar', () => {
 			},
 			{ disabled: true, initial: { status: 'ativo' } },
 			{ loading: true },
+			{
+				filters: [
+					{
+						id: 'perfis',
+						type: 'multiselect' as const,
+						label: 'Perfis',
+						description: 'Dica',
+						error: 'Erro',
+						options: [{ value: 'a', label: 'A' }],
+					},
+				],
+			},
 		]) {
 			const { container, unmount } = render(<Harness {...props} />);
 			const result = await axe.run(container, { rules: { 'color-contrast': { enabled: false } } });

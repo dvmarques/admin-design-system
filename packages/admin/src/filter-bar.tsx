@@ -5,6 +5,8 @@ import {
 	AdsCheckbox,
 	AdsDatePicker,
 	AdsField,
+	AdsFieldDescription,
+	AdsFieldMessage,
 	AdsIcon,
 	AdsInput,
 	AdsSelect,
@@ -238,9 +240,11 @@ export function AdsFilterBar({
 }: AdsFilterBarProps) {
 	const labels = { ...defaultLabels, ...labelsProp };
 	const bodyId = useId();
+	const idBase = `ads-filter-bar-${bodyId.replace(/[^\w-]/g, '')}`;
 	const [expandedState, setExpandedState] = useState(defaultExpanded);
 	const expanded = expandedProp ?? expandedState;
 	const fieldsRef = useRef<HTMLDivElement>(null);
+	const toggleRef = useRef<HTMLButtonElement>(null);
 	const chipsRef = useRef<HTMLUListElement>(null);
 	const pendingFocus = useRef<number | null>(null);
 
@@ -253,12 +257,20 @@ export function AdsFilterBar({
 		if (index === null) return;
 		pendingFocus.current = null;
 		const buttons = chipsRef.current?.querySelectorAll<HTMLButtonElement>('button:not(:disabled)');
-		const target = buttons?.length
-			? buttons[Math.min(Math.max(index, 0), buttons.length - 1)]
-			: fieldsRef.current?.querySelector<HTMLElement>(
-					'input:not(:disabled), select:not(:disabled)',
-				);
-		target?.focus();
+		if (buttons?.length) {
+			buttons[Math.min(Math.max(index, 0), buttons.length - 1)]?.focus();
+			return;
+		}
+		const toggleButton = toggleRef.current;
+		if (!expanded && toggleButton) {
+			// Campos recolhidos: o primeiro campo pode estar oculto, então o foco vai para "Filtros".
+			toggleButton.focus();
+			// Em telas largas o botão fica oculto e não recebe foco; os campos estão visíveis.
+			if (toggleButton.ownerDocument.activeElement === toggleButton) return;
+		}
+		fieldsRef.current
+			?.querySelector<HTMLElement>('input:not(:disabled), select:not(:disabled)')
+			?.focus();
 	});
 
 	function emit(filterId: string, next: AdsFilterValue | undefined) {
@@ -337,15 +349,19 @@ export function AdsFilterBar({
 				);
 			case 'multiselect': {
 				const selected = asList(current);
+				const descriptionId = filter.description ? `${idBase}-${filter.id}-description` : undefined;
+				const errorId = filter.error ? `${idBase}-${filter.id}-error` : undefined;
+				const describedBy = [descriptionId, errorId].filter(Boolean).join(' ') || undefined;
 				return (
 					<div className={classNames('ads-filter-bar-field', filter.className)} key={filter.id}>
-						<AdsSelectionGroup legend={filter.label}>
+						<AdsSelectionGroup aria-describedby={describedBy} legend={filter.label}>
 							{filter.options.map((option) => (
 								<AdsCheckbox
 									checked={selected.includes(option.value)}
 									disabled={isDisabled || option.disabled}
 									key={option.value}
 									label={option.label}
+									validationState={filter.error ? 'error' : 'default'}
 									onChange={(event) => {
 										const checked = event.currentTarget.checked;
 										emit(
@@ -361,18 +377,9 @@ export function AdsFilterBar({
 							))}
 						</AdsSelectionGroup>
 						{filter.description ? (
-							<p className="ads-field__description text-xs leading-normal text-text-muted">
-								{filter.description}
-							</p>
+							<AdsFieldDescription id={descriptionId}>{filter.description}</AdsFieldDescription>
 						) : null}
-						{filter.error ? (
-							<p
-								className="ads-field__message text-xs font-medium leading-normal text-form-invalid"
-								role="alert"
-							>
-								{filter.error}
-							</p>
-						) : null}
+						{filter.error ? <AdsFieldMessage id={errorId}>{filter.error}</AdsFieldMessage> : null}
 					</div>
 				);
 			}
@@ -415,6 +422,7 @@ export function AdsFilterBar({
 					aria-expanded={expanded}
 					className="ads-filter-bar-toggle"
 					onClick={toggle}
+					ref={toggleRef}
 					type="button"
 				>
 					{labels.toggle}

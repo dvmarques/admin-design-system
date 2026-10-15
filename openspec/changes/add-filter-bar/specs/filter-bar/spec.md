@@ -1,10 +1,8 @@
-# filter-bar Specification
-
 ## Purpose
 
 Permite compor filtros de listagens administrativas (texto, seleção, seleção múltipla e data), exibir os filtros ativos e removê-los, com o estado controlado pela aplicação consumidora.
 
-## Requirements
+## ADDED Requirements
 
 ### Requirement: Composição de filtros controlada
 
@@ -64,10 +62,16 @@ O sistema MUST fornecer `AdsFilterBar` em `@admin-ds/admin`, que renderize os fi
 - **WHEN** a quantidade de filtros ativos muda
 - **THEN** uma região `aria-live="polite"` visualmente oculta anuncia a nova quantidade
 
+#### Scenario: Contagem por chip
+
+- **WHEN** há filtros ativos e a seleção múltipla tem mais de uma opção marcada
+- **THEN** o contador do botão "Filtros" e o anúncio mostram a quantidade de chips ativos, um por opção marcada, e não a quantidade de filtros (por exemplo, 5 com 4 filtros quando "Perfis" tem 2 valores)
+
 #### Scenario: Foco após remover
 
-- **WHEN** a pessoa remove um item pelo teclado
-- **THEN** o foco vai para o próximo item, ou o anterior, ou, se não restar nenhum, para o primeiro controle da barra
+- **WHEN** a pessoa remove um item pelo teclado ou aciona "Limpar filtros"
+- **THEN** o foco vai para o próximo item ou, se não houver, para o anterior
+- **AND** se não restar nenhum item e os campos estiverem recolhidos pelo estado do componente (`expanded` falso), o foco vai para o botão "Filtros"; quando esse botão não está visível (tela larga) ou os campos estão expandidos, o foco vai para o primeiro controle da barra
 
 ### Requirement: Teclado e semântica
 
@@ -87,6 +91,7 @@ O sistema MUST fornecer `AdsFilterBar` em `@admin-ds/admin`, que renderize os fi
 
 - **WHEN** um filtro recebe `error`
 - **THEN** a mensagem é associada ao campo e anunciada, e o campo é marcado como inválido
+- **AND** na seleção múltipla, a descrição e a mensagem têm `id` e são referenciadas pelo `aria-describedby` do grupo, e cada opção recebe `aria-invalid` enquanto houver erro
 
 ### Requirement: Layout responsivo
 

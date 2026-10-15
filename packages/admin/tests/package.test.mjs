@@ -30,6 +30,20 @@ test('dashboard styles keep panels in DOM order and use public prefixes', async 
 	assert.ok(css.includes('--ads-dashboard-grid-columns'));
 });
 
+test('filter bar collapses by its own width and keeps the header hidden on wide bars', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.match(css, /\.ads-filter-bar\s*\{[^}]*container:\s*ads-filter-bar\s*\/\s*inline-size/);
+	assert.match(css, /\.ads-filter-bar-header\s*\{[^}]*display:\s*none/);
+	const query = css.match(
+		/@container ads-filter-bar \(max-width: 40rem\)\s*\{(?:[^{}]*\{[^}]*\})*[^}]*\}/,
+	)?.[0];
+	assert.ok(query, 'missing @container ads-filter-bar (max-width: 40rem)');
+	assert.match(query, /\.ads-filter-bar-header\s*\{[^}]*display:\s*block/);
+	assert.match(query, /\.ads-filter-bar-body\[data-expanded='false'\]\s*\{[^}]*display:\s*none/);
+	assert.match(css, /\.ads-filter-bar\[data-loading\]::before\s*\{[^}]*animation:/);
+});
+
 test('dashboard grid columns follow the grid width, not the viewport', async () => {
 	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
 	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');

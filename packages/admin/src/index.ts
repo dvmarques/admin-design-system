@@ -20,3 +20,17 @@ export type {
 	AdsMetricSentiment,
 	AdsMetricTrend,
 } from './dashboard.js';
+export { AdsFilterBar } from './filter-bar.js';
+export type {
+	AdsDateFilter,
+	AdsDateRangeFilter,
+	AdsFilterBarLabels,
+	AdsFilterBarProps,
+	AdsFilterDefinition,
+	AdsFilterOption,
+	AdsFilterValue,
+	AdsFilterValues,
+	AdsMultiSelectFilter,
+	AdsSelectFilter,
+	AdsTextFilter,
+} from './filter-bar.js';

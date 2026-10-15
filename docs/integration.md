@@ -341,3 +341,140 @@ horário, e `min`, `max` e `isDateDisabled` usam o mesmo formato.
 O locale padrão é `pt-BR`; use `locale`, `firstDayOfWeek` e `labels` para outros
 idiomas. A renderização inicial depende só das props, o que evita erros de
 hidratação; a data atual só é lida ao abrir o calendário.
+
+## Barra de filtros
+
+O `AdsFilterBar`, de `@admin-ds/admin`, compõe filtros de texto, seleção
+(`select`), seleção múltipla (`multiselect`), data (`date`) e intervalo
+(`date-range`), com os filtros ativos como chips removíveis e a ação "Limpar
+filtros". É um Client Component e o estado é do consumidor: `value` é um objeto
+por `id` de filtro e `onChange` recebe o objeto completo, sem chaves vazias. A
+barra não consulta dados, não lê a URL e não importa o roteador do Next.js.
+O `id` de cada filtro deve ser único na barra também depois da sanitização
+usada nos ids do DOM, que remove caracteres fora de `[A-Za-z0-9_-]` (`a b` e
+`ab` colidem).
+Em telas estreitas os campos ficam recolhidos atrás de um botão (use
+`defaultExpanded` ou `expanded`/`onExpandedChange`); `disabled` e `loading`
+cobrem os demais estados, e `labels` e `locale` ajustam os textos.
+
+O exemplo abaixo persiste o filtro em `searchParams`. A página (Server
+Component) repassa os parâmetros, e o Client Component guarda os valores em
+estado local, inicializado por eles, e atualiza esse estado na hora a cada
+`onChange`. Cada emissão de `onChange` parte do `value` atual; se o
+consumidor só aplicasse o valor quando a URL mudasse, duas ações seguidas antes
+da navegação fariam a segunda desfazer a primeira. A URL é atualizada depois:
+a digitação usa uma pausa (debounce), e "Limpar filtros" e os demais filtros
+navegam na hora, cancelando a atualização pendente do texto. Se a URL mudar por
+fora (por exemplo, com Voltar), os parâmetros são reaplicados.
+`router.replace` usa `{ scroll: false }` para a página não voltar ao topo, e
+`useTransition`, que é opcional, liga o `loading` da barra enquanto a navegação
+acontece.
+
+```tsx
+// app/usuarios/page.tsx (Server Component)
+export default async function Page({
+	searchParams,
+}: {
+	searchParams: Promise<Record<string, string | string[] | undefined>>;
+}) {
+	const params = await searchParams;
+	return <UsuariosFiltros params={params} />;
+}
+```
+
+```tsx
+// app/usuarios/usuarios-filtros.tsx
+'use client';
+
+import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@admin-ds/admin';
+import { usePathname, useRouter } from 'next/navigation';
+import { useEffect, useRef, useState, useTransition } from 'react';
+
+type Params = Record<string, string | string[] | undefined>;
+
+const filters: AdsFilterDefinition[] = [
+	{ id: 'q', type: 'text', label: 'Busca' },
+	{
+		id: 'status',
+		type: 'select',
+		label: 'Status',
+		options: [
+			{ value: 'ativo', label: 'Ativo' },
+			{ value: 'inativo', label: 'Inativo' },
+		],
+	},
+	{ id: 'periodo', type: 'date-range', label: 'Período' },
+];
+
+const first = (params: Params, key: string) => [params[key]].flat()[0];
+
+function fromParams(params: Params): AdsFilterValues {
+	const value: AdsFilterValues = {};
+	const q = first(params, 'q');
+	if (q) value.q = q;
+	const status = first(params, 'status');
+	if (status) value.status = status;
+	const start = first(params, 'de');
+	const end = first(params, 'ate');
+	if (start || end) value.periodo = { start: start ?? null, end: end ?? null };
+	return value;
+}
+
+function toQuery(next: AdsFilterValues) {
+	const query = new URLSearchParams();
+	if (typeof next.q === 'string') query.set('q', next.q);
+	if (typeof next.status === 'string') query.set('status', next.status);
+	if (next.periodo && !Array.isArray(next.periodo) && typeof next.periodo === 'object') {
+		if (next.periodo.start) query.set('de', next.periodo.start);
+		if (next.periodo.end) query.set('ate', next.periodo.end);
+	}
+	return query.toString();
+}
+
+export function UsuariosFiltros({ params }: { params: Params }) {
+	const router = useRouter();
+	const pathname = usePathname();
+	const [pending, startTransition] = useTransition();
+	// Estado local aplicado na hora: o texto aparece a cada tecla e ações seguidas partem
+	// sempre do valor mais recente. A URL é atualizada depois.
+	const [value, setValue] = useState(() => fromParams(params));
+	const timer = useRef<ReturnType<typeof setTimeout>>(undefined);
+	// Set: pode haver várias navegações próprias em andamento ao mesmo tempo.
+	const ownQueries = useRef(new Set<string>());
+	const urlQuery = toQuery(fromParams(params));
+	useEffect(() => () => clearTimeout(timer.current), []);
+	useEffect(() => {
+		// URL alterada fora deste componente (por exemplo, com Voltar): reaplica os parâmetros.
+		if (ownQueries.current.delete(urlQuery)) return;
+		// Cancela a navegação pendente da digitação para não sobrescrever a URL externa.
+		clearTimeout(timer.current);
+		setValue(fromParams(params));
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [urlQuery]);
+
+	function navigate(next: AdsFilterValues) {
+		const query = toQuery(next);
+		if (query !== urlQuery) ownQueries.current.add(query);
+		startTransition(() => {
+			router.replace(query ? `${pathname}?${query}` : pathname, { scroll: false });
+		});
+	}
+
+	function onChange(next: AdsFilterValues) {
+		const { q: nextText = '', ...nextOthers } = next;
+		const { q: text = '', ...others } = value;
+		// Só a digitação usa debounce; "Limpar filtros" e os outros filtros navegam na hora.
+		const cleared = Object.keys(next).length === 0;
+		const typing = !cleared && nextText !== text && toQuery(nextOthers) === toQuery(others);
+		clearTimeout(timer.current);
+		setValue(next);
+		if (typing) {
+			timer.current = setTimeout(() => navigate(next), 300);
+			return;
+		}
+		navigate(next);
+	}
+
+	return <AdsFilterBar filters={filters} loading={pending} onChange={onChange} value={value} />;
+}
+```

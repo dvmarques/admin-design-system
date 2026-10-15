@@ -225,6 +225,9 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   carregamento de cada rota.
   `next/navigation` é mockado nos testes de componentes que usam `usePathname`
   ou `useRouter`.
+- Testes Vitest com `renderToString` existem para os componentes de
+  apresentação de `/` (tarefa 2.1), `/clientes` (tarefa 3.2) e `/preferencias`
+  (tarefa 5.2).
 - Extensão do teste de imports públicos para varrer `app/**/*.{ts,tsx}` e
   `lib/**/*.ts` em busca de caminhos internos.
 - `axe-core` por rota em ambos os temas, executado no Playwright: o
@@ -241,10 +244,15 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
 ## Risks / Trade-offs
 
 - **[Navegação completa perde estado do shell]** → Usar `next/link` na sidebar
-  e cobrir o cenário "sidebar recolhida" em e2e. `AdsNav` e `AdsBreadcrumb` não
-  aceitam elemento de link customizado; é uma limitação da biblioteca para
-  consumidores com roteamento no cliente, a registrar em `docs/limitations.md`
-  e tratar em change própria, fora desta.
+  e cobrir o cenário "sidebar recolhida" em e2e. `AdsNav` não comporta
+  link do consumidor sem gerar conteúdo interativo aninhado (com `href` ele
+  renderiza o próprio `<a>`; sem `href`, um `<button>`), e `AdsBreadcrumb` aceita
+  um `next/link` em `label`, mas só aplica estilo e foco de link quando recebe
+  `href`. Ambos divergem da spec `navigation-structure` ("Cada item MUST aceitar
+  conteúdo de link…" e cenário "Consumo em Next.js sem acoplamento ao
+  roteador"); é uma limitação da biblioteca para consumidores com roteamento no
+  cliente, a registrar em `docs/limitations.md` e corrigir em change própria,
+  fora desta.
 - **[Churn de snapshots visuais]** → Os snapshots só rodam localmente (pulados na
   CI) e os existentes são `-win32`. Regenerar apenas os intencionais, em
   Windows, revisando cada diff; este ambiente Linux não os valida.

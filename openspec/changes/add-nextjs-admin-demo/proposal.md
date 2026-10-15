@@ -40,7 +40,8 @@ os padrões avançados (item 9 do roadmap).
 **Documentação**
 
 - Atualizar `docs/integration.md` com o padrão de layout compartilhado,
-  navegação por links no App Router e sobrescrita de tokens; registrar em
+  navegação por links no App Router, sobrescrita de tokens e os parâmetros
+  `?estado` e `?pagina` como recursos do demo, não API do design system; registrar em
   `docs/limitations.md` que `AdsNav` e `AdsBreadcrumb` não aceitam elemento de
   link customizado e que a sobrescrita com `:root[data-theme=…]` documentada em
   `packages/tokens/README.md` não alcança overlays em portal; adicionar a entrada da change ao `CHANGELOG.md`; atualizar

@@ -73,8 +73,7 @@ export function AdsPagination({
 				aria-label={label}
 				aria-current={target === safePage ? 'page' : undefined}
 				className={classNames(
-					// Native buttons do not inherit the page font; links from renderPageLink do.
-					'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums [font-family:inherit]',
+					'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums',
 					target === safePage ? 'border-transparent' : undefined,
 				)}
 				disabled={disabled}

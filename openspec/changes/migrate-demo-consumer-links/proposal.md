@@ -12,9 +12,10 @@ externa e exemplificar o caminho recomendado (issue #54).
 
 **Biblioteca reutilizável (`packages/components`)**
 
-- `AdsPagination`: os botões (anterior e próxima desabilitados e páginas com
-  `onPageChange`) passam a herdar a fonte da página (`font-family: inherit`),
-  como os links de `renderPageLink`. Encontrado na revisão da PR.
+- `AdsButton`: passa a herdar a fonte da página (`font-family: inherit`) em vez
+  da fonte padrão do navegador. Isso cobre os botões de `AdsPagination`, como o
+  "Anterior" desabilitado, que ficam iguais aos links de `renderPageLink`.
+  Encontrado na revisão da PR.
 
 **Aplicações de demonstração (`apps/admin-demo`)**
 
@@ -32,9 +33,8 @@ externa e exemplificar o caminho recomendado (issue #54).
 Objetivos: demo sem conteúdo interativo aninhado, navegação por links reais e
 consumo apenas de caminhos públicos.
 
-Fora do escopo: outras mudanças em `packages/components`, além da fonte dos
-botões de `AdsPagination`; a sidebar de `AdsAdminShell`,
-que usa `next/link` diretamente.
+Fora do escopo: outras mudanças em `packages/components`, além da fonte do
+`AdsButton`; a sidebar de `AdsAdminShell`, que usa `next/link` diretamente.
 
 ## Capabilities
 
@@ -50,6 +50,8 @@ Nenhuma.
 ## Impact
 
 - **Pacotes e APIs públicas**: em `@admin-ds/components`, muda apenas a fonte
-  dos botões de `AdsPagination`; nenhuma API pública é afetada.
+  do `AdsButton` (e de quem o usa, como `AdsPagination`); nenhuma API pública
+  é afetada. A mudança visual é intencional: botões passam a usar a fonte da
+  aplicação.
 - **Dependências**: nenhuma. **Bundle**: sem impacto nas bibliotecas.
 - **Consumidores**: ganham um exemplo funcional de `renderLink` e `renderPageLink`.

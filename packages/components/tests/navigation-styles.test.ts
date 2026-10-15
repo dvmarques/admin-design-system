@@ -17,8 +17,8 @@ const classes = [
 	'no-underline',
 ] as const;
 
-describe('pagination styles in the distributed CSS', () => {
-	it('contains the font-family inherit utility used by AdsPagination buttons', () => {
+describe('button font in the distributed CSS', () => {
+	it('contains the font-family inherit utility used by AdsButton and AdsPagination', () => {
 		expect(css).toContain('.\\[font-family\\:inherit\\]');
 	});
 });

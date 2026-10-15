@@ -184,7 +184,7 @@ describe('navigation components', () => {
 		);
 	});
 
-	it('makes AdsPagination buttons inherit the page font like consumer links', () => {
+	it('keeps the inherited page font on AdsPagination buttons, which use AdsButton', () => {
 		render(<AdsPagination page={1} pageCount={3} onPageChange={vi.fn()} />);
 		const previous = screen.getByRole('button', { name: 'Página anterior' });
 		expect(previous).toBeDisabled();

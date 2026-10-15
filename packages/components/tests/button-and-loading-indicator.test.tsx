@@ -29,6 +29,11 @@ describe('AdsButton', () => {
 		expect(screen.getByRole('button')).toHaveClass(expectedClass);
 	});
 
+	it('inherits the page font instead of the browser default for buttons', () => {
+		render(<AdsButton>Salvar</AdsButton>);
+		expect(screen.getByRole('button', { name: 'Salvar' })).toHaveClass('[font-family:inherit]');
+	});
+
 	it('prevents activation and reports busy while loading', () => {
 		const onClick = vi.fn();
 		render(

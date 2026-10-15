@@ -69,8 +69,8 @@ pacote e deve mostrar o produto integrado.
 - O shell fica em `app/(admin)/layout.tsx` (Server Component), que renderiza
   `AdsAdminShell`, a lista de navegação e o `ThemeControl`.
 - O realce da página atual precisa de `usePathname`, hook do Next.js. Ele fica
-  **somente** em um Client Component do demo (`demo-navigation.tsx`) que define
-  `aria-current="page"` nos links. Nada disso entra em `packages/*`.
+  **somente** em Client Components do demo: `demo-navigation.tsx`, que define
+  `aria-current="page"` nos links, e `route-change-handler.tsx`, descrito abaixo. Nada disso entra em `packages/*`.
 - Como o estado do shell sobrevive à navegação, o drawer móvel **não** fecha
   sozinho ao trocar de rota. No celular, `AdsDrawer` não monta os filhos quando
   fechado, então `demo-navigation.tsx` só existe com o drawer aberto e **não**
@@ -228,6 +228,9 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   `axe-core/axe.min.js`, já instalado na raiz, é injetado com
   `page.addScriptTag`. Em jsdom não há CSS, então tema e contraste não seriam
   exercitados.
+- A auditoria `axe-core` exclui o `nextjs-portal` (overlay de desenvolvimento
+  injetado pelo `next dev`, contra o qual os e2e rodam), passando-o em `exclude`
+  no contexto do axe, porque esse markup não pertence ao demo nem à biblioteca.
 - Playwright por rota, usando papéis ARIA e nomes acessíveis (AGENTS.md);
   snapshots regenerados para `/` (visão geral), `/data-display` e o shell, e
   criados para as rotas novas, com diff revisado (lista na tarefa 6.4).

@@ -111,11 +111,30 @@ confirme que não há falhas:
 ```powershell
 npm run format
 npm run lint
+npm run build
 npm run typecheck
 npm run test:quiet
-npm run build
 npm run test:e2e
 ```
+
+O build vem antes de tipos e testes porque o admin demo importa os pacotes pelo
+`dist`. O `.gitattributes` mantém o checkout em LF, inclusive no Windows com
+`core.autocrlf=true`, para o `npm run format` passar sem ajuste local em um
+checkout novo.
+
+Uma working copy criada antes do `.gitattributes` continua com os arquivos em
+CRLF mesmo após o `git pull`, e o `npm run format` falha;
+`git add --renormalize .`, `git update-index --really-refresh` e `git checkout`
+não resolvem. Execute uma única vez, na raiz:
+
+```powershell
+git status --short # precisa sair vazio
+git rm --cached -r -q .
+git reset --hard
+```
+
+A árvore precisa estar limpa: o `git reset --hard` descarta alterações não
+commitadas. Faça commit ou `git stash` antes.
 
 O comando `npm run validate` combina essa sequência de qualidade e também
 executa o E2E após o build. Se uma alteração visual intencional modificar um

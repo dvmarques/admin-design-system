@@ -1,8 +1,16 @@
 import { defineConfig, devices } from '@playwright/test';
+import { checkE2eBuild } from './scripts/e2e-build-stamp.mjs';
 
 // Por padrão o E2E serve o build de produção (`next start`), bem mais rápido que
 // `next dev`. Execute `npm run build` antes; use E2E_DEV=1 para o servidor de dev.
 const useDevServer = process.env.E2E_DEV === '1';
+
+// Um build desatualizado daria verde falso; os workers recarregam este arquivo, então só o
+// processo principal verifica.
+if (!useDevServer && !process.env.TEST_WORKER_INDEX) {
+	const problem = checkE2eBuild(__dirname);
+	if (problem) throw new Error(problem);
+}
 
 export default defineConfig({
 	testDir: './e2e',

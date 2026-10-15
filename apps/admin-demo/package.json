@@ -16,7 +16,7 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"test": "vitest run --root ../.. --config vitest.config.ts apps/admin-demo",
 		"test:quiet": "vitest run --root ../.. --config vitest.config.ts --silent=passed-only apps/admin-demo",
-		"build": "next build",
+		"build": "next build && node ../../scripts/e2e-build-stamp.mjs",
 		"start": "next start"
 	}
 }

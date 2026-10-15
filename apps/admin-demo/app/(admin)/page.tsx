@@ -1,13 +1,12 @@
-import { AdsTypography } from '@admin-ds/components';
+import { overviewActivity, overviewIndicators, overviewProgress } from '../../lib/data/overview';
+import { OverviewContent } from './overview-content';
 
 export default function OverviewPage() {
 	return (
-		<div className="demo-page">
-			<div className="demo-shell">
-				<AdsTypography as="h1" variant="heading1">
-					Visão geral
-				</AdsTypography>
-			</div>
-		</div>
+		<OverviewContent
+			activity={overviewActivity}
+			indicators={overviewIndicators}
+			progress={overviewProgress}
+		/>
 	);
 }

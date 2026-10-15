@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { expectNoAxeViolations } from './axe';
 
 const routes = [
 	{ path: '/', label: 'Visão geral' },
@@ -136,4 +137,38 @@ test('abre o catálogo pela navegação principal com os cenários de avaliaçã
 	await expect(page.getByLabel('Erro', { exact: true })).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Excluir registro' })).toBeVisible();
 	await expect(page.getByRole('button', { name: 'Abrir diálogo' }).first()).toBeVisible();
+});
+
+test.describe('visão geral', () => {
+	test('expõe indicadores, progresso e atividade com nomes acessíveis', async ({ page }) => {
+		await page.goto('/');
+
+		await expect(page.getByRole('heading', { level: 1, name: 'Visão geral' })).toBeVisible();
+		for (const name of ['Indicadores', 'Progresso', 'Atividade recente']) {
+			await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
+		}
+		for (const name of ['Clientes ativos', 'Pedidos no mês', 'Receita recorrente']) {
+			await expect(page.getByRole('group', { name })).toBeVisible();
+		}
+		await expect(page.getByRole('progressbar', { name: 'Importação de clientes' })).toHaveAttribute(
+			'aria-valuenow',
+			'65',
+		);
+		await expect(page.getByRole('progressbar', { name: 'Meta mensal de receita' })).toHaveAttribute(
+			'aria-valuenow',
+			'92',
+		);
+		await expect(
+			page.getByRole('list', { name: 'Atividade recente' }).getByRole('listitem'),
+		).toHaveCount(4);
+	});
+
+	for (const theme of themes) {
+		test(`não tem violações de acessibilidade no tema ${theme}`, async ({ page }) => {
+			await useTheme(page, theme);
+			await page.goto('/');
+
+			await expectNoAxeViolations(page);
+		});
+	}
 });

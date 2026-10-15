@@ -98,6 +98,27 @@ body {
 .demo-header-tools {
 	margin-left: auto;
 }
+.demo-metrics-grid {
+	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+	gap: 1rem;
+	margin-top: 1.25rem;
+}
+.demo-metric-value {
+	margin: 0 0 0.25rem;
+	font-size: 1.75rem;
+	font-weight: var(--ads-typography-font-weight-semibold);
+	line-height: 1.2;
+}
+.demo-progress-list {
+	display: grid;
+	gap: 1.25rem;
+	margin-top: 1.25rem;
+}
+.demo-progress-item {
+	display: grid;
+	gap: 0.5rem;
+}
 .demo-shell-nav-list {
 	display: grid;
 	gap: 0.25rem;

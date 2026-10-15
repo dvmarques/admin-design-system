@@ -10,8 +10,8 @@
 
 ## 2. Visão geral
 
-- [ ] 2.1 Criar dados estáticos determinísticos em `lib/data/` e a rota `/` com indicadores (`AdsCard`), `AdsProgress` e `AdsList` de atividade; verificar com teste Vitest do componente de apresentação (`renderToString` duas vezes) que a marcação é idêntica, e com um teste estático que nenhum arquivo de `lib/data/**` usa `Date` ou `Math.random` (renderizar duas vezes no mesmo processo não pegaria um valor calculado no carregamento do módulo).
-- [ ] 2.2 Adicionar teste Playwright por papéis ARIA para a rota, com `axe-core` executado no Playwright (injetando `axe-core/axe.min.js`, já instalado na raiz, via `page.addScriptTag`, e excluindo `nextjs-portal` do contexto auditado), em cada tema; verificar zero violações. Verificar também que `npm run lint`, `npm run typecheck` e `npm run test:quiet` passam.
+- [x] 2.1 Criar dados estáticos determinísticos em `lib/data/` e a rota `/` com indicadores (`AdsCard`), `AdsProgress` e `AdsList` de atividade; verificar com teste Vitest do componente de apresentação (`renderToString` duas vezes) que a marcação é idêntica, e com um teste estático que nenhum arquivo de `lib/data/**` usa `Date` ou `Math.random` (renderizar duas vezes no mesmo processo não pegaria um valor calculado no carregamento do módulo).
+- [x] 2.2 Adicionar teste Playwright por papéis ARIA para a rota, com `axe-core` executado no Playwright (injetando `axe-core/axe.min.js`, já instalado na raiz, via `page.addScriptTag`, e excluindo `nextjs-portal` do contexto auditado), em cada tema; verificar zero violações. Verificar também que `npm run lint`, `npm run typecheck` e `npm run test:quiet` passam.
 
 ## 3. Listagem de clientes
 

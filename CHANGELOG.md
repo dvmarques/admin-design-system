@@ -15,6 +15,9 @@ por versão e pelas changes correspondentes do OpenSpec.
   (`pt-BR` padrão) e integração com `AdsField`, sem dependência de runtime.
   `AdsIconName` ganha `calendar`, `chevronLeft` e `chevronRight`, e o rótulo
   do `AdsField` recebe o id `<id do controle>-label`.
+- `add-dashboard-patterns` - Adicionados `AdsMetricCard`, `AdsDashboardGrid` e
+  `AdsDashboardPanel` em `@admin-ds/admin`, com estados de carregamento, erro e
+  vazio e CSS próprio.
 - `add-admin-shell` - Adicionado `AdsAdminShell` responsivo, com sidebar
   recolhível e navegação móvel em drawer, substituindo `createAdminShell` e
   `AdminShellProps`, removidos da API pública.

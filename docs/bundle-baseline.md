@@ -16,3 +16,11 @@ de tabela, coleções, progresso e estado vazio, sem novas dependências de runt
 O baseline de `@admin-ds/components` foi atualizado na change `add-date-picker`
 para incluir os módulos distribuídos do seletor de data (`date-picker` e
 `date-utils`, com declarações e source maps), sem novas dependências de runtime.
+
+O baseline de `@admin-ds/admin` foi atualizado na change
+`add-dashboard-patterns` de 30975 para 51658 bytes (+18411 sobre a `develop`,
+que media 33247) para incluir `AdsMetricCard`, `AdsDashboardGrid` e
+`AdsDashboardPanel`: módulo JavaScript, source maps e declarações (+13973), CSS
+do dashboard (+3817) e exports (+621), sem novas dependências de runtime. O
+valor é medido com LF, como na CI; num checkout com CRLF o `styles.css` copiado
+para `dist/` soma 1 byte por linha.

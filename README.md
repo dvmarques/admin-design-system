@@ -103,7 +103,10 @@ e integração no admin demo. A change `add-admin-shell` concluiu o
 `AdsAdminShell` em `@admin-ds/admin`, com header, sidebar recolhível, área de
 conteúdo e navegação móvel em drawer, estados controlados e não controlados,
 transição segura entre breakpoints, compatibilidade com SSR, CSS próprio
-distribuído e integração no admin demo.
+distribuído e integração no admin demo. A change `add-dashboard-patterns` adicionou
+`AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel` em `@admin-ds/admin`,
+com tendência por ícone e texto, grid responsivo e estados de carregamento,
+vazio e erro por painel, sem gráficos.
 
 O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:

@@ -32,7 +32,7 @@ A navegação principal MUST listar todas as rotas administrativas e indicar a r
 #### Scenario: Rota atual é identificada
 
 - **WHEN** uma rota administrativa está aberta
-- **THEN** apenas o item correspondente é marcado como página atual para tecnologias assistivas e destacado visualmente
+- **THEN** apenas o item cuja rota é exatamente a atual é marcado como página atual para tecnologias assistivas e destacado visualmente
 
 #### Scenario: Navegação por teclado
 
@@ -57,9 +57,14 @@ O admin-demo MUST oferecer uma rota de listagem com tabela e paginação que dem
 - **WHEN** a listagem possui registros
 - **THEN** a tabela apresenta legenda ou nome acessível e a paginação altera os registros exibidos e informa a página atual
 
+#### Scenario: Página solicitada é inválida
+
+- **WHEN** a página solicitada está ausente, não é numérica ou excede o total de páginas
+- **THEN** a listagem exibe a página válida mais próxima e a paginação indica essa página
+
 #### Scenario: Listagem sem registros
 
-- **WHEN** nenhum registro corresponde à seleção atual
+- **WHEN** a listagem não possui registros a exibir
 - **THEN** um estado vazio com mensagem e ação sugerida substitui a tabela
 
 #### Scenario: Listagem carregando ou com erro
@@ -79,7 +84,7 @@ O admin-demo MUST oferecer uma rota com formulário que valide campos obrigatór
 #### Scenario: Envio válido
 
 - **WHEN** a pessoa envia o formulário com todos os campos válidos
-- **THEN** uma notificação de sucesso é apresentada e nenhum dado é persistido fora do navegador
+- **THEN** uma notificação de sucesso é apresentada e nenhum dado é persistido ou enviado a um servidor
 
 ### Requirement: Preferências de aparência e layout
 

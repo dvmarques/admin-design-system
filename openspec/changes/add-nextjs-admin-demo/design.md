@@ -43,6 +43,11 @@ Estado atual do `apps/admin-demo` (ver proposal.md — Why):
 | `/componentes`   | Catálogo de avaliação atual (conteúdo de `page.tsx` hoje)      |
 | `/data-display`  | Mantida com a mesma URL e headings; passa a usar o layout      |
 
+Itens da navegação principal: Visão geral (`/`), Clientes (`/clientes`), Novo
+cliente (`/clientes/novo`), Preferências, Componentes e Exibição de dados. A
+rota atual é a de correspondência **exata** com o `pathname`, de modo que toda
+rota tem exatamente um item marcado com `aria-current="page"`.
+
 **Por quê**: `/data-display` e seus testes são contrato estável do e2e; manter a
 URL evita churn de snapshots sem valor. O catálogo sai de `/` para liberar a
 raiz como visão geral, e seus snapshots serão regenerados com revisão do diff.
@@ -81,19 +86,29 @@ pacote e deve mostrar o produto integrado.
   `Date.now()`/`Math.random()`) para evitar divergência de hidratação.
 - Estados carregando/vazio/erro selecionados por parâmetro de URL
   (`?estado=vazio|carregando|erro`) lido no servidor, para que e2e e snapshots
-  sejam estáveis sem timers.
+  sejam estáveis sem timers. Valor desconhecido equivale a ausência do
+  parâmetro (dados normais). O erro usa `AdsEmptyState` (que repassa props) com
+  `role="alert"` e, em `actions`, um link "Tentar novamente" para a rota sem o
+  parâmetro `estado`; não há componente de alerta dedicado na biblioteca.
 - Paginação por `?pagina=N` lida no servidor; a mudança de página é feita pelo
-  Client Component fino descrito na decisão 2.
+  Client Component fino descrito na decisão 2. Valor ausente, não numérico ou
+  fora do intervalo é normalizado para a página válida mais próxima antes de
+  filtrar os dados e renderizar `AdsPagination`.
 
 ### 3.1 Páginas existentes dentro do layout
 
 `/data-display` hoje tem `<main>`, link "Voltar para a página inicial" e
-`ThemeControl` próprios. Ao entrar no layout compartilhado, esses três elementos
-são removidos (o shell já fornece `main`, navegação e tema), e o catálogo em
-`/componentes` passa pelo mesmo ajuste. Os e2e que dependem deles
+`ThemeControl` próprios. O `app/page.tsx` atual monta seu próprio
+`AdsAdminShell` (header, sidebar de âncoras, `Main`), um `ThemeControl` no hero
+e links para `/data-display`. Ao entrar no layout compartilhado, todos esses
+elementos são removidos (o shell já fornece `main`, navegação e tema); do
+catálogo permanece apenas o conteúdo das seções, em `/componentes`. Os e2e que dependem deles
 (`data-display.spec.ts`, `admin-demo.spec.ts`, `overlay.spec.ts`) são
 atualizados na mesma change, mantendo os contratos por papel ARIA e nome
-acessível que continuam válidos.
+acessível que continuam válidos. Os testes do shell em `admin-demo.spec.ts`
+(drawer móvel, transição para desktop, sidebar recolhida) permanecem em `/`,
+que também tem o shell; só as asserções de conteúdo do catálogo (por exemplo, o
+heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
 
 ### 4. Formulário
 
@@ -107,9 +122,14 @@ acessível que continuam válidos.
 - Tema continua definido por cookie e `data-theme` no servidor. O header de todas
   as rotas mantém o único `ThemeControl`. A página de preferências oferece o
   tema como grupo de seleção (`AdsSelectionGroup`/`AdsRadio`), com nome acessível
-  distinto, para não duplicar o botão "Usar tema ..." no mesmo documento. Ambos
-  usam uma função compartilhada em `lib/theme.ts` que grava o cookie e o
-  `data-theme`; o grupo reflete mudanças feitas pelo toggle do header.
+  distinto, para não duplicar o botão "Usar tema ..." no mesmo documento.
+- Os dois controles compartilham um estado de tema em `lib/theme.ts`: uma função
+  que grava cookie e `data-theme` e um hook baseado em `useSyncExternalStore`
+  que observa o atributo `data-theme` do `<html>` (`MutationObserver`), com
+  snapshot de servidor igual ao tema do cookie. Assim a mudança feita em um
+  controle é refletida no outro nos dois sentidos, sem divergência de
+  hidratação. O `ThemeControl` atual (estado local com `key={theme}`) passa a
+  usar esse hook.
 - Estilos do demo ficam em `globals.css` e usam apenas variáveis `--ads-*`
   públicas. Nenhum Tailwind, nenhuma classe interna `ads-*` redefinida.
 - Acessibilidade: um `h1` por rota, `main` único fornecido pelo shell, link para
@@ -117,11 +137,21 @@ acessível que continuam válidos.
 
 ### 6. Testes
 
-- Vitest: render de cada rota (SSR via `renderToString`) sem erros, e extensão do
-  teste de imports públicos para varrer `app/**` em busca de caminhos internos.
+- Layouts e páginas são Server Components assíncronos (`cookies()`,
+  `searchParams`) e ficam finos; o conteúdo vai para componentes de apresentação
+  que recebem props (por exemplo, dados, página e estado). O Vitest renderiza
+  esses componentes com `renderToString`; a rota real, incluindo o layout, é
+  validada no Playwright. Hoje só o primeiro teste de `admin-demo.spec.ts`, em
+  `/`, falha em erros de hidratação no console; a tarefa 6.2 estende isso ao
+  carregamento de cada rota.
+  `next/navigation` é mockado nos testes de componentes que usam `usePathname`
+  ou `useRouter`.
+- Extensão do teste de imports públicos para varrer `app/**` em busca de
+  caminhos internos.
 - `axe-core` por rota em ambos os temas.
 - Playwright por rota, usando papéis ARIA e nomes acessíveis (AGENTS.md);
-  snapshots só para as novas rotas e para `/`, com diff revisado.
+  snapshots regenerados para `/` (visão geral), `/data-display` e o shell, e
+  criados para as rotas novas, com diff revisado (lista na tarefa 6.4).
 
 ## Risks / Trade-offs
 

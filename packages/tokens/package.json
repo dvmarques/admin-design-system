@@ -22,6 +22,8 @@
 		"check:generated": "node ./scripts/check-generated.mjs",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"build": "npm run generate && tsc -p tsconfig.build.json",
+		"test": "npm run test:node",
+		"test:quiet": "npm run test:node:quiet",
 		"test:node": "node --test ./tests/**/*.test.mjs",
 		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs"
 	}

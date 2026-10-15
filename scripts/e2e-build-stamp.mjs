@@ -3,8 +3,9 @@ import { existsSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { dirname, join, relative, resolve, sep } from 'node:path';
 
 // Carimbo do build de produção do admin demo usado pelo E2E (`next start`). Guarda uma
-// impressão digital do conteúdo que o build consome (código do demo e `dist` dos
-// pacotes) para o Playwright recusar um build desatualizado, que daria verde falso.
+// impressão digital do conteúdo que o build consome (código do demo, `dist` e
+// `package.json` dos pacotes, `tsconfig.base.json` e `package-lock.json`) para o
+// Playwright recusar um build desatualizado, que daria verde falso.
 // Usa conteúdo, não datas, porque `test:quality` regrava arquivos gerados idênticos.
 // Sem `import.meta`: o Playwright transpila este módulo para CommonJS ao carregar a config.
 
@@ -33,12 +34,17 @@ function listFiles(dir) {
 
 export function buildFingerprint(root) {
 	const { demo } = paths(root);
+	const packages = ['tokens', 'components', 'admin'].map((name) => join(root, 'packages', name));
 	const inputs = [
 		...listFiles(demo),
-		...['tokens', 'components', 'admin'].flatMap((name) =>
-			listFiles(join(root, 'packages', name, 'dist')),
-		),
-	].sort();
+		...packages.flatMap((dir) => listFiles(join(dir, 'dist'))),
+		// Dependências e configuração compartilhada mudam o build sem tocar no código.
+		...packages.map((dir) => join(dir, 'package.json')),
+		join(root, 'tsconfig.base.json'),
+		join(root, 'package-lock.json'),
+	]
+		.filter((file) => existsSync(file))
+		.sort();
 	const hash = createHash('sha256');
 	for (const file of inputs) {
 		hash.update(relative(root, file).split(sep).join('/'));

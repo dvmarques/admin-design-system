@@ -15,13 +15,11 @@ por versão e pelas changes correspondentes do OpenSpec.
   `AdsStepForm` (formulário em etapas com validação por etapa, foco, anúncio e
   confirmação final) e `AdsConfirmDialog` (confirmação destrutiva), sem regras de
   negócio nem dependência do roteador.
-- `fix-smart-table-narrow-overflow` - Corrigido o estouro de largura da página em
-  telas estreitas com paginação no `AdsSmartTable` (coluna do grid com
-  `minmax(0, 1fr)`); sem mudança de API.
 - `demo-advanced-patterns` - O `admin-demo` passa a demonstrar `AdsFilterBar` e
-  `AdsSmartTable` em `/clientes`, com filtros, ordenação e página em
-  `searchParams` tratados no servidor, e `AdsMetricCard`, `AdsDashboardGrid` e
-  `AdsDashboardPanel` na visão geral. Fluxos compostos (#61) pendentes.
+  `AdsListFlow` (com `AdsBulkActionBar` e `AdsConfirmDialog`) em `/clientes`,
+  `AdsStepForm` em `/clientes/novo`, filtros, ordenação e página em
+  `searchParams` no servidor, e `AdsMetricCard`, `AdsDashboardGrid` e
+  `AdsDashboardPanel` na visão geral.
 - `add-smart-table` - Adicionado `AdsSmartTable` em `@admin-ds/admin`: tabela
   controlada com ordenação (`aria-sort`), seleção de linhas com estado
   indeterminado, visibilidade de colunas, estados de carregamento, vazio e erro,

@@ -18,7 +18,7 @@
 ## 4. E2E e acessibilidade
 
 - [x] 4.1 E2E em funções ARIA e nomes acessíveis: filtrar, ordenar, paginar, selecionar, ocultar colunas, URLs inválidas, estado vazio, 375 px; axe nos temas claro e escuro.
-- [ ] 4.2 Snapshots afetados: revisar e regerar no Windows. **Pendente**: só existem baselines `win32`; no ambiente cloud (Linux) foram pulados e nenhuma baseline foi criada ou alterada.
+- [ ] 4.2 Snapshots afetados: revisar e regerar no Windows. **Pendente**: regenerar no Windows os 6 PNGs de clientes, admin-demo e admin-shell-collapsed, claro e escuro.
 
 ## 5. Documentação
 
@@ -26,7 +26,7 @@
 
 ## 6. Pendências por dependência
 
-- [ ] 6.1 Exemplo de listagem com ações em massa e de formulário em etapas. **Pendente** da issue #61 (sem branch nem PR). A integração desta change depende da PR #67.
+- [x] 6.1 Exemplo de listagem com ações em massa (`AdsListFlow`, `AdsBulkActionBar`, `AdsConfirmDialog`) e formulário em etapas (`AdsStepForm`) no `admin-demo`, com testes de unidade e E2E não visuais.
 
 ## 7. Validação final
 
@@ -35,7 +35,3 @@
 - [x] 7.3 `CI=1 npm run test:e2e` sem falhas (96 passaram, 7 pulados); snapshots visuais só no Windows.
 - [x] 7.4 `openspec validate --all --strict` e `inspect:packages` dentro do baseline.
 - [x] 7.5 Arquivar a change e rodar `npm run format`.
-
-## 8. Achado da biblioteca
-
-- [x] 8.1 Corrigir o estouro de largura em 375 px do `AdsSmartTable` com paginação (`grid-template-columns: minmax(0, 1fr)`), na change `fix-smart-table-narrow-overflow`; o demo usa a prop `pagination`.

@@ -301,12 +301,14 @@ test.describe('clientes', () => {
 		await page.goto('/clientes');
 
 		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
-		await expect(page.getByText('1 linha selecionada')).toBeVisible();
+		await expect(page.getByRole('status').filter({ hasText: '1 item selecionado' })).toBeVisible();
 
 		await page
 			.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' })
 			.press('Space');
-		await expect(page.getByText('5 linhas selecionadas')).toBeVisible();
+		await expect(
+			page.getByRole('status').filter({ hasText: '5 itens selecionados' }),
+		).toBeVisible();
 	});
 
 	test('oculta e mostra colunas, sem ocultar o nome', async ({ page }) => {
@@ -395,6 +397,46 @@ test.describe('clientes', () => {
 		expect(overflow.content).toBeGreaterThan(overflow.visible);
 	});
 
+	test('a tabela cabe no contêiner em 1280 px com todas as colunas visíveis', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/clientes');
+
+		const container = page.getByRole('main');
+		const table = customersTable(page);
+		const bounds = await container.evaluate((element) => {
+			const rect = element.getBoundingClientRect();
+			return { left: rect.left, right: rect.right };
+		});
+		const tableBounds = await table.evaluate((element) => {
+			const rect = element.getBoundingClientRect();
+			return { left: rect.left, right: rect.right };
+		});
+
+		expect(tableBounds.left).toBeGreaterThanOrEqual(bounds.left - 1);
+		expect(tableBounds.right).toBeLessThanOrEqual(bounds.right + 1);
+
+		for (const column of ['Nome', 'E-mail', 'Status', 'Plano', 'Pedidos', 'Cliente desde']) {
+			await expect(customersTable(page).getByRole('columnheader', { name: column })).toBeVisible();
+		}
+	});
+
+	test('exibe ações em massa com confirmação destrutiva na seleção', async ({ page }) => {
+		await page.goto('/clientes');
+
+		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+		await page.getByRole('checkbox', { name: 'Selecionar Mariana Costa' }).press('Space');
+		const bulk = page.getByRole('group', { name: 'Ações em massa' });
+		await expect(bulk).toBeVisible();
+		await bulk.getByRole('button', { name: 'Excluir selecionados' }).click();
+
+		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		await expect(dialog).toBeVisible();
+		await dialog.getByRole('button', { name: 'Excluir' }).click();
+		await expect(dialog).toHaveCount(0);
+		await expect(page.getByText('Exclusão demonstrada com sucesso.')).toBeVisible();
+		await expect(page.getByRole('group', { name: 'Ações em massa' })).toHaveCount(0);
+	});
+
 	const queries = [
 		'',
 		'?estado=vazio',
@@ -429,13 +471,14 @@ test.describe('clientes', () => {
 });
 
 test.describe('novo cliente', () => {
+	const nextButton = (page: Page) => page.getByRole('button', { name: 'Próxima' });
 	const submitButton = (page: Page) => page.getByRole('button', { name: 'Cadastrar cliente' });
 
 	test('valida os campos obrigatórios e leva o foco ao primeiro inválido', async ({ page }) => {
 		await page.goto('/clientes/novo');
 		await expect(page.getByRole('heading', { level: 1, name: 'Novo cliente' })).toBeVisible();
 
-		await submitButton(page).click();
+		await nextButton(page).click();
 
 		await expect(page.getByLabel('Nome')).toBeFocused();
 		await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
@@ -450,9 +493,11 @@ test.describe('novo cliente', () => {
 		await page.goto('/clientes/novo');
 		await page.getByLabel('Nome').fill('Ana Souza');
 		await page.getByLabel('E-mail').fill('ana.souza@exemplo.com.br');
+		await nextButton(page).click();
 		// The radio input is visually hidden; people click its label.
 		await page.getByText('Trimestral', { exact: true }).click();
 		await expect(page.getByRole('radio', { name: 'Trimestral' })).toBeChecked();
+		await nextButton(page).click();
 
 		const sent: string[] = [];
 		page.on('request', (request) => {
@@ -487,25 +532,13 @@ test.describe('novo cliente', () => {
 
 		// As cores de borda e do indicador têm transição; uma leitura única logo após o erro
 		// ou a troca de tema pode pegar o início dela, então as comparações usam retry.
-		const borderOf = (locator: ReturnType<Page['getByLabel']>) =>
+		const borderOf = (locator: ReturnType<Page['getByLabel']> | ReturnType<Page['getByRole']>) =>
 			locator.evaluate((element) => getComputedStyle(element).borderTopColor);
+		const neutralControl = page.getByRole('button', { name: 'Próxima' });
 		await expect
-			.poll(
-				async () => (await borderOf(nameField)) !== (await borderOf(page.getByLabel('Status'))),
-				{ message: 'a borda do campo com erro deve diferir da do campo sem erro' },
-			)
-			.toBe(true);
-
-		const indicatorBackground = (name: string) =>
-			page
-				.getByRole('radio', { name })
-				.locator('xpath=following-sibling::span[1]')
-				.evaluate((element) => getComputedStyle(element).backgroundColor);
-		await expect
-			.poll(
-				async () => (await indicatorBackground('Mensal')) !== (await indicatorBackground('Anual')),
-				{ message: 'o indicador da opção selecionada deve diferir do da não selecionada' },
-			)
+			.poll(async () => (await borderOf(nameField)) !== (await borderOf(neutralControl)), {
+				message: 'a borda do campo com erro deve diferir da de um controle neutro',
+			})
 			.toBe(true);
 	}
 
@@ -515,7 +548,7 @@ test.describe('novo cliente', () => {
 		}) => {
 			await useTheme(page, theme);
 			await page.goto('/clientes/novo');
-			await submitButton(page).click();
+			await nextButton(page).click();
 			await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
 
 			await expectDistinguishableControls(page);

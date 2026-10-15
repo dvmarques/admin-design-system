@@ -1,14 +1,20 @@
 'use client';
 
 import {
-	AdsFilterBar,
-	AdsSmartTable,
+	AdsConfirmDialog,
+	AdsListFlow,
 	type AdsFilterDefinition,
 	type AdsFilterValues,
 	type AdsSmartTableColumn,
 	type AdsSmartTableSort,
 } from '@admin-ds/admin';
-import { AdsBadge, AdsEmptyState, type AdsBadgeVariant } from '@admin-ds/components';
+import {
+	AdsBadge,
+	AdsButton,
+	AdsEmptyState,
+	AdsToast,
+	type AdsBadgeVariant,
+} from '@admin-ds/components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
@@ -108,6 +114,10 @@ export function CustomersListing({
 	const [pending, startTransition] = useTransition();
 	const [selected, setSelected] = useState<string[]>([]);
 	const [hidden, setHidden] = useState<string[]>([]);
+	const [confirming, setConfirming] = useState(false);
+	const [deletePending, setDeletePending] = useState(false);
+	const [deleteError, setDeleteError] = useState<string | null>(null);
+	const [deletedToast, setDeletedToast] = useState(false);
 	// Applied immediately so typing and consecutive filter actions always start from the latest value.
 	const [value, setValue] = useState(() => toValues(query));
 	const timer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
@@ -157,62 +167,97 @@ export function CustomersListing({
 		navigate(toQuery(value, sort));
 	}
 
+	async function confirmDemoDelete() {
+		setDeletePending(true);
+		setDeleteError(null);
+		await new Promise((resolve) => setTimeout(resolve, 0));
+		setSelected([]);
+		setConfirming(false);
+		setDeletePending(false);
+		setDeletedToast(true);
+	}
+
 	const hasFilters = Object.keys(value).length > 0;
+	const selectedCount = selected.length;
 
 	return (
-		<AdsSmartTable<Customer>
-			caption="Clientes"
-			columns={columns}
-			emptyState={
-				<AdsEmptyState
-					actions={
-						<Link className="demo-action-link" href="/clientes">
-							{hasFilters ? 'Limpar filtros' : 'Ver todos os clientes'}
-						</Link>
+		<>
+			<AdsListFlow<Customer>
+				bulkActions={
+					<AdsButton onClick={() => setConfirming(true)} size="sm" variant="danger">
+						Excluir selecionados
+					</AdsButton>
+				}
+				caption="Clientes"
+				columns={columns}
+				emptyState={
+					<AdsEmptyState
+						actions={
+							<Link className="demo-action-link" href="/clientes">
+								{hasFilters ? 'Limpar filtros' : 'Ver todos os clientes'}
+							</Link>
+						}
+						description="Nenhum cliente corresponde à seleção atual."
+						title="Nenhum cliente encontrado"
+					/>
+				}
+				error={
+					state === 'erro'
+						? 'Ocorreu uma falha ao buscar a lista. Tente novamente em instantes.'
+						: undefined
+				}
+				filterBar={{
+					'aria-label': 'Filtros de clientes',
+					filters,
+					loading: pending,
+					onChange: onFiltersChange,
+					value,
+				}}
+				getRowId={(row) => row.id}
+				getRowLabel={(row) => row.name}
+				hiddenColumnIds={hidden}
+				labels={{
+					loading: 'Carregando clientes',
+					errorTitle: 'Não foi possível carregar os clientes',
+				}}
+				loading={state === 'carregando'}
+				loadingRows={placeholderRows}
+				onHiddenColumnsChange={setHidden}
+				onRetry={() => navigate(toQuery(value, query.sort), 'dados')}
+				onSelectionChange={setSelected}
+				onSortChange={onSortChange}
+				{...(pageCount > 1 && {
+					pagination: {
+						page,
+						pageCount,
+						renderPageLink: (target: number, props: object) => (
+							<Link href={customersHref(query, { page: target, state })} {...props} />
+						),
+					},
+				})}
+				rows={state === 'vazio' ? [] : rows}
+				selectedIds={selected}
+				sort={query.sort}
+			/>
+			<AdsConfirmDialog
+				confirmLabel="Excluir"
+				description="Nenhum dado será removido de verdade: é só uma demonstração da confirmação."
+				onConfirm={() => void confirmDemoDelete()}
+				onOpenChange={(open) => {
+					if (!open && !deletePending) {
+						setConfirming(false);
+						setDeleteError(null);
 					}
-					description="Nenhum cliente corresponde à seleção atual."
-					title="Nenhum cliente encontrado"
-				/>
-			}
-			error={
-				state === 'erro'
-					? 'Ocorreu uma falha ao buscar a lista. Tente novamente em instantes.'
-					: undefined
-			}
-			filters={
-				<AdsFilterBar
-					aria-label="Filtros de clientes"
-					filters={filters}
-					loading={pending}
-					onChange={onFiltersChange}
-					value={value}
-				/>
-			}
-			getRowId={(row) => row.id}
-			getRowLabel={(row) => row.name}
-			hiddenColumnIds={hidden}
-			labels={{
-				loading: 'Carregando clientes',
-				errorTitle: 'Não foi possível carregar os clientes',
-			}}
-			loading={state === 'carregando'}
-			loadingRows={placeholderRows}
-			onHiddenColumnsChange={setHidden}
-			onRetry={() => navigate(toQuery(value, query.sort), 'dados')}
-			onSelectionChange={setSelected}
-			onSortChange={onSortChange}
-			{...(pageCount > 1 && {
-				pagination: {
-					page,
-					pageCount,
-					renderPageLink: (target: number, props: object) => (
-						<Link href={customersHref(query, { page: target, state })} {...props} />
-					),
-				},
-			})}
-			rows={state === 'vazio' ? [] : rows}
-			selectedIds={selected}
-			sort={query.sort}
-		/>
+				}}
+				open={confirming}
+				pending={deletePending}
+				title={selectedCount === 1 ? 'Excluir 1 cliente?' : `Excluir ${selectedCount} clientes?`}
+			>
+				{deleteError ? <p role="alert">{deleteError}</p> : null}
+			</AdsConfirmDialog>
+			<AdsToast onClose={() => setDeletedToast(false)} open={deletedToast} variant="success">
+				Exclusão demonstrada com sucesso.
+			</AdsToast>
+		</>
 	);
 }

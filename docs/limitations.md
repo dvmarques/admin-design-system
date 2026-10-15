@@ -53,6 +53,3 @@ componentes administrativos.
   `alertdialog`, mas o tipo `AdsDialogProps` não expõe `role`. Em `AdsListFlow` o
   slot `filters` da tabela é ocupado pelo fluxo. Sem baseline visual (`win32`)
   para eles, o comportamento é coberto por testes de componente, SSR e `axe`.
-- O `admin-demo` ainda não demonstra a listagem com ações em massa nem o
-  formulário em etapas, que dependem dos fluxos compostos da issue #61. A
-  seleção de linhas do `AdsSmartTable` é exibida sem barra de ações.

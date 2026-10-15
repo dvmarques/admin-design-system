@@ -57,7 +57,12 @@ A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `A
 - **WHEN** a página `/` é exibida
 - **THEN** os indicadores usam `AdsMetricCard` e o progresso e a atividade recente ficam em painéis de `AdsDashboardGrid`, com títulos e nomes acessíveis estáveis
 
-#### Scenario: Fluxos compostos pendentes
+#### Scenario: Listagem com ações em massa no demo
 
-- **WHEN** os fluxos compostos da issue #61 ainda não estão disponíveis na biblioteca
-- **THEN** a demonstração de ações em massa e de formulário em etapas permanece pendente e registrada nesta change, sem implementação própria no demo
+- **WHEN** a pessoa seleciona linhas em `/clientes`
+- **THEN** a barra de ações em massa aparece e a exclusão demonstrada exige confirmação destrutiva, sem persistir dados
+
+#### Scenario: Formulário em etapas no demo
+
+- **WHEN** a página `/clientes/novo` é exibida
+- **THEN** o cadastro usa `AdsStepForm` com validação por etapa e confirmação final sem enviar dados

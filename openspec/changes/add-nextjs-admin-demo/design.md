@@ -152,8 +152,10 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   envios.
 - O formulário usa `noValidate`: com `required` ou `type="email"`, a validação
   nativa do navegador bloquearia o evento de envio e mostraria o balão próprio,
-  e os erros por campo nunca apareceriam. Só a obrigatoriedade é validada; a
-  obrigatoriedade continua exposta com `required`.
+  e os erros por campo nunca apareceriam. Valida-se localmente a
+  obrigatoriedade de Nome e E-mail e o formato do e-mail (parte local, `@` e
+  domínio com ponto, sem espaços); a obrigatoriedade continua exposta com
+  `required`. E-mail vazio mostra a mensagem de obrigatório, não a de formato.
 - Sucesso dispara `AdsToast`; nada é persistido.
 
 ### 5. Tema e estilos

@@ -34,6 +34,10 @@ além do contraste AA do `theming`.
 bg-surface-selected text-on-surface-selected`, e o inativo usa
   `border-b-border bg-transparent text-text-secondary` com `hover:bg-surface-hover
 hover:text-text`. O texto inativo deixa de ser `text-primary`.
+- `AdsSelectionGroup`: o `fieldset` deixa de mostrar a moldura padrão do
+  navegador, que no tema escuro aparecia como borda clara sem token
+  (`m-0 min-w-0 border-0 p-0`, e `p-0` na `legend`). Encontrado na revisão da
+  PR do admin demo.
 - Testes de classes por estado, de CSS distribuído e de pares de contraste dos
   tokens usados, em ambos os temas e sobre todas as superfícies.
 - Story do Storybook para tabs e breadcrumb em superfície elevada nos dois temas.
@@ -51,7 +55,8 @@ visível e independente da ordem do CSS, sem mudar a API pública.
 
 Fora do escopo: links de consumidor em `AdsNav`, `AdsBreadcrumb` e
 `AdsPagination` (limitação já registrada, change própria); alterar valores de
-tokens; novos tokens; outros componentes.
+tokens; novos tokens; outros componentes, exceto o reset do `fieldset` de
+`AdsSelectionGroup` descrito acima.
 
 ## Capabilities
 

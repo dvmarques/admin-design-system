@@ -169,9 +169,12 @@ export function AdsSelectionGroup({
 	return (
 		<fieldset
 			{...props}
-			className={classNames('ads-selection-group flex flex-col gap-2', className)}
+			className={classNames(
+				'ads-selection-group m-0 flex min-w-0 flex-col gap-2 border-0 p-0',
+				className,
+			)}
 		>
-			<legend className="text-sm font-medium text-text">{legend}</legend>
+			<legend className="p-0 text-sm font-medium text-text">{legend}</legend>
 			{children}
 		</fieldset>
 	);

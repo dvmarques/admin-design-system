@@ -20,11 +20,18 @@ const requiredMessages: Record<FieldName, string> = {
 	email: 'Informe o e-mail do cliente.',
 };
 
+const invalidEmailMessage = 'Informe um e-mail válido, como nome@exemplo.com.br.';
+
+/** Local part, `@` and a domain with at least one dot, without spaces. */
+const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
 function validate(data: FormData): FieldErrors {
 	const errors: FieldErrors = {};
 	for (const field of ['nome', 'email'] as const) {
 		if (String(data.get(field) ?? '').trim() === '') errors[field] = requiredMessages[field];
 	}
+	const email = String(data.get('email') ?? '').trim();
+	if (errors.email === undefined && !emailPattern.test(email)) errors.email = invalidEmailMessage;
 	return errors;
 }
 

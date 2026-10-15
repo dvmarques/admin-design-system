@@ -29,6 +29,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   perdiam a disputa de cascata, e a tab inativa passa de `text-primary` para
   `text-text-secondary`. Nenhuma prop, tipo, classe `ads-*` ou variável
   `--ads-*` muda; a aparência de tabs e breadcrumb muda de forma intencional.
+  O `fieldset` de `AdsSelectionGroup` deixa de mostrar a moldura padrão do
+  navegador, que no tema escuro aparecia como borda clara.
 - `add-nextjs-admin-demo` - O admin demo passa a ser uma aplicação multi-rota
   com layout administrativo compartilhado (visão geral, clientes, novo cliente,
   preferências, catálogo de componentes e exibição de dados), navegação por

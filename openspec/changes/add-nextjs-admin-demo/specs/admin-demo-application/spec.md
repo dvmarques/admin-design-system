@@ -79,12 +79,17 @@ O admin-demo MUST oferecer uma rota de listagem com tabela e paginação que dem
 
 ### Requirement: Formulário de cadastro com validação e confirmação
 
-O admin-demo MUST oferecer uma rota com formulário que valide campos obrigatórios, associe cada mensagem de erro ao seu campo e apresente notificação de resultado ao concluir.
+O admin-demo MUST oferecer uma rota com formulário que valide campos obrigatórios e o formato do e-mail, associe cada mensagem de erro ao seu campo e apresente notificação de resultado ao concluir.
 
 #### Scenario: Envio com campo inválido
 
 - **WHEN** a pessoa envia o formulário com um campo obrigatório vazio
 - **THEN** o erro é exibido junto ao campo, associado a ele de forma acessível, e o foco vai para o primeiro campo inválido
+
+#### Scenario: E-mail com formato inválido
+
+- **WHEN** a pessoa envia o formulário com um e-mail preenchido sem formato válido, como `abc`
+- **THEN** o campo de e-mail é marcado como inválido com mensagem própria de formato, associada a ele de forma acessível, e nenhuma confirmação é apresentada
 
 #### Scenario: Envio válido
 

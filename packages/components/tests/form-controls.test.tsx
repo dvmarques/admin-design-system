@@ -197,6 +197,13 @@ describe('field composition', () => {
 		);
 		expect(screen.getByRole('textbox', { name: 'Valor' })).toHaveClass('rounded-md');
 		expect(screen.getByRole('group', { name: 'Canais' })).toBeInTheDocument();
+		// Resets the browser fieldset frame, which otherwise shows a default border in dark themes.
+		expect(screen.getByRole('group', { name: 'Canais' })).toHaveClass(
+			'm-0',
+			'min-w-0',
+			'border-0',
+			'p-0',
+		);
 		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });

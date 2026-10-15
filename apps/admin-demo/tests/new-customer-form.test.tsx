@@ -63,6 +63,43 @@ describe('NewCustomerForm', () => {
 		expect(screen.getByLabelText('E-mail')).toHaveFocus();
 	});
 
+	it('rejects an e-mail without a valid format with an accessible message', () => {
+		render(<NewCustomerForm />);
+		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana Souza' } });
+		fireEvent.change(screen.getByLabelText('E-mail'), { target: { value: 'abc' } });
+
+		submit();
+
+		const field = screen.getByLabelText('E-mail');
+		expect(field).toHaveAttribute('aria-invalid', 'true');
+		expect(field).toHaveFocus();
+		const message = screen.getByText('Informe um e-mail válido, como nome@exemplo.com.br.');
+		expect(field.getAttribute('aria-describedby')?.split(' ')).toContain(message.id);
+		expect(screen.queryByText('Cliente cadastrado com sucesso.')).not.toBeInTheDocument();
+	});
+
+	it.each(['ana@exemplo', 'ana exemplo@x.com', '@exemplo.com', 'ana@'])(
+		'rejects the malformed e-mail %s',
+		(value) => {
+			render(<NewCustomerForm />);
+			fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana Souza' } });
+			fireEvent.change(screen.getByLabelText('E-mail'), { target: { value } });
+
+			submit();
+
+			expect(screen.getByLabelText('E-mail')).toHaveAttribute('aria-invalid', 'true');
+		},
+	);
+
+	it('keeps the required message, not the format one, for an empty e-mail', () => {
+		render(<NewCustomerForm />);
+
+		submit();
+
+		expect(screen.getByText('Informe o e-mail do cliente.')).toBeInTheDocument();
+		expect(screen.queryByText(/e-mail válido/)).not.toBeInTheDocument();
+	});
+
 	it('clears a field error when the person edits that field', () => {
 		render(<NewCustomerForm />);
 		submit();

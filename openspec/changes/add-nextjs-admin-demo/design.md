@@ -97,7 +97,9 @@ pacote e deve mostrar o produto integrado.
   `Date.now()`/`Math.random()`) para evitar divergência de hidratação.
 - Estados carregando/vazio/erro selecionados por parâmetro de URL
   (`?estado=vazio|carregando|erro`) lido no servidor, para que e2e e snapshots
-  sejam estáveis sem timers. Valor desconhecido equivale a ausência do
+  sejam estáveis sem timers. No estado carregando, a região da tabela expõe
+  `aria-busy="true"` e `AdsSkeleton` recebe `label` (sem ele fica `aria-hidden`),
+  sem linhas de dados. Valor desconhecido equivale a ausência do
   parâmetro (dados normais). O erro usa `AdsEmptyState` (que repassa props) com
   `role="alert"` e, em `actions`, um `next/link` "Tentar novamente" para a rota
   sem o parâmetro `estado`; não há componente de alerta dedicado na biblioteca.
@@ -152,8 +154,9 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   O estado não é persistido.
 - Os dois controles compartilham um estado de tema. `lib/theme.ts` continua puro
   e seguro para servidor, pois é importado pelo layout (Server Component): mantém
-  `resolveTheme`, constantes e uma função que grava cookie e `data-theme` (só
-  toca em `document` quando chamada). O hook fica em módulo próprio com
+  `resolveTheme` e o tipo `Theme` e passa a conter o nome do cookie `ads-theme`
+  (hoje repetido no layout e em `theme-control.tsx`) e uma função que grava
+  cookie e `data-theme` (só toca em `document` quando chamada). O hook fica em módulo próprio com
   `'use client'` (`app/use-theme.ts`), porque `useSyncExternalStore` não existe
   no build de servidor do React e marcar `lib/theme.ts` como cliente tornaria
   `resolveTheme` uma referência de cliente, inutilizável no layout. O hook usa
@@ -201,7 +204,10 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   ou `useRouter`.
 - Extensão do teste de imports públicos para varrer `app/**` em busca de
   caminhos internos.
-- `axe-core` por rota em ambos os temas.
+- `axe-core` por rota em ambos os temas, executado no Playwright: o
+  `axe-core/axe.min.js`, já instalado na raiz, é injetado com
+  `page.addScriptTag`. Em jsdom não há CSS, então tema e contraste não seriam
+  exercitados.
 - Playwright por rota, usando papéis ARIA e nomes acessíveis (AGENTS.md);
   snapshots regenerados para `/` (visão geral), `/data-display` e o shell, e
   criados para as rotas novas, com diff revisado (lista na tarefa 6.4).

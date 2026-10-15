@@ -67,10 +67,15 @@ O admin-demo MUST oferecer uma rota de listagem com tabela e paginação que dem
 - **WHEN** a listagem não possui registros a exibir
 - **THEN** um estado vazio com mensagem e ação sugerida substitui a tabela
 
-#### Scenario: Listagem carregando ou com erro
+#### Scenario: Listagem carregando
 
-- **WHEN** a listagem está carregando ou falhou
-- **THEN** o carregamento preserva a estrutura esperada e o erro é anunciado a tecnologias assistivas com ação para tentar novamente
+- **WHEN** a listagem está carregando
+- **THEN** a estrutura esperada da tabela é preservada com placeholders, a região é indicada como ocupada a tecnologias assistivas e nenhuma linha de dados é apresentada
+
+#### Scenario: Listagem com erro
+
+- **WHEN** a listagem falhou
+- **THEN** o erro é anunciado a tecnologias assistivas com ação para tentar novamente
 
 ### Requirement: Formulário de cadastro com validação e confirmação
 

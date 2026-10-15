@@ -11,24 +11,24 @@
 ## 2. Visão geral
 
 - [ ] 2.1 Criar dados estáticos determinísticos em `lib/data/` e a rota `/` com indicadores (`AdsCard`), `AdsProgress` e `AdsList` de atividade; verificar com teste Vitest do componente de apresentação (`renderToString` duas vezes) que a marcação é idêntica.
-- [ ] 2.2 Adicionar teste `axe-core` e teste Playwright por papéis ARIA para a rota, nos temas claro e escuro; verificar zero violações.
+- [ ] 2.2 Adicionar teste Playwright por papéis ARIA para a rota, com `axe-core` executado no Playwright (injetando `axe-core/axe.min.js`, já instalado na raiz, via `page.addScriptTag`), em cada tema; verificar zero violações.
 
 ## 3. Listagem de clientes
 
-- [ ] 3.1 Criar `/clientes` com `AdsTable`, nome acessível e paginação via `?pagina=N` usando `AdsPagination` com `onPageChange` e `router.push` em um Client Component fino; verificar que a mudança de página altera os registros e informa a página atual, e que `?pagina` ausente ou `abc` exibe a página 1, `?pagina=0`, `-3` e `1.7` também exibem a página 1, e `?pagina=999` exibe a última página.
-- [ ] 3.2 Implementar os estados `?estado=vazio|carregando|erro` com `AdsEmptyState` (no estado vazio, ação "Ver todos os clientes" com `next/link` para `/clientes` sem `?estado`), `AdsSkeleton` e o erro em `AdsEmptyState` com `role="alert"` e ação "Tentar novamente" (`next/link` para `/clientes` sem `?estado`); verificar um teste por estado, incluindo o anúncio do erro e a ação do estado vazio localizada por papel e nome acessível, e que `?estado=desconhecido` exibe os dados normais.
-- [ ] 3.3 Verificar rolagem horizontal contida na tabela em 375 px, ausência de rolagem horizontal da página e `axe-core` nos dois temas.
+- [ ] 3.1 Criar `/clientes` com `AdsTable`, nome acessível e paginação via `?pagina=N` usando `AdsPagination` com `onPageChange` e `router.push` em um Client Component fino; verificar que a mudança de página altera os registros e informa a página atual, e que `?pagina` ausente ou `abc` exibe a página 1, `?pagina=0`, `-3` e `1.7` também exibem a página 1, e `?pagina=999` exibe a última página. Incluir a rota em `e2e/admin-demo-routes.spec.ts` (shell, `main` e `h1`).
+- [ ] 3.2 Implementar os estados `?estado=vazio|carregando|erro` com `AdsEmptyState` (no estado vazio, ação "Ver todos os clientes" com `next/link` para `/clientes` sem `?estado`), `AdsSkeleton` (no estado carregando, a região da tabela expõe `aria-busy="true"`, mostra linhas de skeleton com `label` "Carregando clientes" e nenhuma linha de dados) e o erro em `AdsEmptyState` com `role="alert"` e ação "Tentar novamente" (`next/link` para `/clientes` sem `?estado`); verificar um teste por estado, incluindo o anúncio do erro e a ação do estado vazio localizada por papel e nome acessível, e que `?estado=desconhecido` exibe os dados normais.
+- [ ] 3.3 Verificar rolagem horizontal contida na tabela em 375 px, ausência de rolagem horizontal da página e auditoria com `axe-core` executado no Playwright (injetando `axe-core/axe.min.js`, já instalado na raiz, via `page.addScriptTag`), em cada tema.
 
 ## 4. Formulário de cadastro
 
-- [ ] 4.1 Criar `/clientes/novo` com `AdsField` e controles, validação de obrigatórios, erro associado ao campo (a página passa `validationState="error"` e a mensagem ao `AdsField`) e foco no primeiro `[aria-invalid="true"]` aplicado em efeito após a atualização do estado; verificar com testes de componente que o foco vai ao primeiro campo inválido no primeiro envio inválido e de novo em um segundo envio sem alterar os campos, e que o envio válido não exibe erros.
+- [ ] 4.1 Criar `/clientes/novo` com `AdsField` e os controles Nome e E-mail (`AdsInput`, obrigatórios), Status (`AdsSelect`) e Periodicidade (`AdsSelectionGroup` com `AdsRadio`), validação de obrigatórios, erro associado ao campo (a página passa `validationState="error"` e a mensagem ao `AdsField`) e foco no primeiro `[aria-invalid="true"]` aplicado em efeito após a atualização do estado; verificar com testes de componente que o foco vai ao primeiro campo inválido no primeiro envio inválido e de novo em um segundo envio sem alterar os campos, e que o envio válido não exibe erros. Incluir a rota em `e2e/admin-demo-routes.spec.ts` (shell, `main` e `h1`).
 - [ ] 4.2 Exibir `AdsToast` de sucesso sem persistir dados; verificar em Playwright o fluxo completo por papéis e nomes acessíveis.
-- [ ] 4.3 Verificar o formulário em estado de erro ao alternar o tema (`axe-core` e e2e).
+- [ ] 4.3 Verificar o formulário em estado de erro ao alternar o tema (auditoria com `axe-core` executado no Playwright (injetando `axe-core/axe.min.js`, já instalado na raiz, via `page.addScriptTag`), em cada tema, e verificar que o controle de seleção também permanece distinguível).
 
 ## 5. Preferências
 
 - [ ] 5.1 Extrair para `lib/theme.ts` (puro, sem `'use client'` e sem hooks) a gravação de tema (cookie e `data-theme`) e criar `app/use-theme.ts` (`'use client'`) com um hook `useSyncExternalStore` que observa `data-theme` e recebe o tema inicial do servidor, e fazer o `ThemeControl` usá-lo, remontando o `ThemeToggle` (`key`) somente quando a mudança é externa, nunca no clique do próprio toggle; verificar que `npm run build --workspace @admin-ds/admin-demo` conclui com o layout importando `lib/theme.ts`, com testes em `tests/theme.test.ts` (função) e em teste de componente do hook (`app/use-theme.ts`), com o e2e de que o botão "Usar tema …" mantém o foco após Enter e com a alternância de tema de `e2e/data-display.spec.ts`.
-- [ ] 5.2 Criar `/preferencias` com o tema em `AdsSelectionGroup`/`AdsRadio` e controle do estado da sidebar via `useAdsAdminShell`, recebendo o tema do cookie lido no servidor, desabilitado fora do layout desktop; verificar em e2e que recolher a sidebar pelas preferências reflete no shell e volta ao padrão após `reload`, que em 375 px o controle fica desabilitado e informa o motivo, que o tema escolhido é restaurado na renderização inicial seguinte, sem alternância visível, que alterar o grupo atualiza o toggle do header e vice-versa, e que não há nomes de botão duplicados.
+- [ ] 5.2 Criar `/preferencias` com o tema em `AdsSelectionGroup`/`AdsRadio` e controle do estado da sidebar via `useAdsAdminShell`, recebendo o tema do cookie lido no servidor, desabilitado fora do layout desktop; verificar em e2e que recolher a sidebar pelas preferências reflete no shell e volta ao padrão após `reload`, que em 375 px o controle fica desabilitado e informa o motivo, que o tema escolhido é restaurado na renderização inicial seguinte, sem alternância visível, que alterar o grupo atualiza o toggle do header e vice-versa, e que não há nomes de botão duplicados. Incluir a rota em `e2e/admin-demo-routes.spec.ts` (shell, `main` e `h1`).
 
 ## 6. Contrato público, documentação e snapshots
 
@@ -39,10 +39,10 @@
 
 ## 7. Validação final
 
-- [ ] 7.1 Executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows) e `npm run format`; verificar saída sem falhas.
-- [ ] 7.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` e `npm run build`; verificar que todos passam.
-- [ ] 7.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita.
-- [ ] 7.4 Executar `openspec validate --all --strict`; verificar que passa.
+- [ ] 7.1 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` e `npm run build`; verificar que todos passam.
+- [ ] 7.2 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita.
+- [ ] 7.3 Executar `openspec validate --all --strict`; verificar que passa.
+- [ ] 7.4 Tarefa final: executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows) e `npm run format`; verificar saída sem falhas.
 
 ## Workflow follow-up
 

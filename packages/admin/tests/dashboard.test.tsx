@@ -1,3 +1,4 @@
+import { AdsEmptyState } from '@admin-ds/components';
 import { render, screen, within } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it } from 'vitest';
@@ -56,6 +57,13 @@ describe('AdsMetricCard', () => {
 		expect(screen.getByRole('alert').textContent).toBe('Falha ao carregar');
 		rerender(<AdsMetricCard empty="Sem dados" title="Receita" value="1" />);
 		expect(screen.getByText('Sem dados')).toBeTruthy();
+		expect(screen.queryByText('1')).toBeNull();
+	});
+
+	it('accepts a node as the empty content, like the panel', () => {
+		render(<AdsMetricCard empty={<a href="/importar">Importar dados</a>} title="Receita" />);
+		expect(screen.getByRole('link', { name: 'Importar dados' })).toBeTruthy();
+		expect(screen.getByText('Receita')).toBeTruthy();
 	});
 });
 
@@ -86,7 +94,7 @@ describe('AdsDashboardPanel', () => {
 	});
 
 	it('prioritizes loading, then error, then empty, then content', () => {
-		const empty = { title: 'Nada por aqui' };
+		const empty = <AdsEmptyState title="Nada por aqui" />;
 		const { rerender } = render(
 			<AdsDashboardPanel
 				empty={empty}
@@ -102,7 +110,7 @@ describe('AdsDashboardPanel', () => {
 		expect(screen.queryByText('Nada por aqui')).toBeNull();
 		rerender(
 			<AdsDashboardPanel
-				empty={{ title: 'Nada por aqui', description: 'Tente outro período' }}
+				empty={<AdsEmptyState description="Tente outro período" title="Nada por aqui" />}
 				title="Painel"
 			>
 				<p>Conteúdo</p>
@@ -123,6 +131,8 @@ describe('AdsDashboardPanel', () => {
 		const headings = screen.getAllByRole('heading').map((h) => h.textContent);
 		expect(headings).toEqual(['Primeiro', 'Segundo']);
 		expect(container.firstElementChild?.className).toContain('ads-dashboard-grid custom');
+		const items = container.querySelector('.ads-dashboard-grid > .ads-dashboard-grid-items');
+		expect(items?.children).toHaveLength(2);
 		expect(screen.getByRole('button', { name: 'Exportar' })).toBeTruthy();
 	});
 
@@ -136,7 +146,8 @@ describe('AdsDashboardPanel', () => {
 				</AdsDashboardPanel>
 				<AdsDashboardPanel loading title="Carregando" />
 				<AdsDashboardPanel error="Falhou" title="Erro" />
-				<AdsDashboardPanel empty={{ title: 'Vazio' }} title="Vazio" />
+				<AdsDashboardPanel empty={<AdsEmptyState title="Nada por aqui" />} title="Vazio" />
+				<AdsMetricCard empty="Sem dados" title="Pedidos" />
 			</AdsDashboardGrid>,
 		);
 		const results = await axe.run(container);

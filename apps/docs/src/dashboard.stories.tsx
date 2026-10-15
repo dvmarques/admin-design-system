@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@admin-ds/admin';
-import { AdsButton } from '@admin-ds/components';
+import { AdsButton, AdsEmptyState } from '@admin-ds/components';
 
 const meta = {
 	title: 'Layout/Dashboard',
@@ -10,7 +10,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Padrões de dashboard sem regras de negócio: `AdsMetricCard` (valor, variação e tendência por ícone e texto), `AdsDashboardGrid` (grid responsivo que preserva a ordem do DOM) e `AdsDashboardPanel` (largura variável e estados de carregamento, erro e vazio). Gráficos ficam fora do escopo; o consumidor decide quando cada estado é exibido.',
+					'Padrões de dashboard sem regras de negócio: `AdsMetricCard` (valor, variação e tendência por ícone e texto), `AdsDashboardGrid` (colunas pela largura disponível do grid, via container query, preservando a ordem do DOM) e `AdsDashboardPanel` (largura variável e estados de carregamento, erro e vazio). Gráficos ficam fora do escopo; o consumidor decide quando cada estado é exibido.',
 			},
 		},
 	},
@@ -78,7 +78,12 @@ export const States: Story = {
 				title="Faturas"
 			/>
 			<AdsDashboardPanel
-				empty={{ title: 'Nada por aqui', description: 'Nenhum registro no período selecionado.' }}
+				empty={
+					<AdsEmptyState
+						description="Nenhum registro no período selecionado."
+						title="Nada por aqui"
+					/>
+				}
 				span={4}
 				title="Atividade recente"
 			/>

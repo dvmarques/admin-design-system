@@ -1,10 +1,4 @@
-import {
-	AdsCard,
-	AdsEmptyState,
-	AdsProgress,
-	AdsSkeleton,
-	type AdsProgressProps,
-} from '@admin-ds/components';
+import { AdsCard, AdsProgress, AdsSkeleton, type AdsProgressProps } from '@admin-ds/components';
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 
@@ -47,12 +41,6 @@ function TrendIcon({ trend }: { trend: AdsMetricTrend }) {
 	);
 }
 
-export interface AdsDashboardEmpty {
-	title: ReactNode;
-	description?: ReactNode;
-	actions?: ReactNode;
-}
-
 export interface AdsMetricCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
 	title: ReactNode;
 	value?: ReactNode;
@@ -68,6 +56,7 @@ export interface AdsMetricCardProps extends Omit<HTMLAttributes<HTMLDivElement>,
 	loading?: boolean;
 	loadingLabel?: string;
 	error?: ReactNode;
+	/** Conteúdo exibido quando não há dados, por exemplo um texto curto. */
 	empty?: ReactNode;
 }
 
@@ -103,7 +92,7 @@ export function AdsMetricCard({
 			</p>
 		);
 	} else if (empty) {
-		body = <p className="ads-metric-card-message">{empty}</p>;
+		body = <div className="ads-metric-card-message">{empty}</div>;
 	} else {
 		body = (
 			<>
@@ -143,9 +132,16 @@ export function AdsMetricCard({
 
 export type AdsDashboardGridProps = HTMLAttributes<HTMLDivElement>;
 
-/** Grid responsivo de painéis. Não reordena itens: a ordem do DOM é a ordem visual. */
-export function AdsDashboardGrid({ className, ...props }: AdsDashboardGridProps) {
-	return <div {...props} className={classNames('ads-dashboard-grid', className)} />;
+/**
+ * Grid responsivo de painéis. As colunas seguem a largura disponível do próprio grid
+ * (container query), não a viewport. Não reordena itens: a ordem do DOM é a ordem visual.
+ */
+export function AdsDashboardGrid({ children, className, ...props }: AdsDashboardGridProps) {
+	return (
+		<div {...props} className={classNames('ads-dashboard-grid', className)}>
+			<div className="ads-dashboard-grid-items">{children}</div>
+		</div>
+	);
 }
 
 export type AdsDashboardPanelSpan = 1 | 2 | 3 | 4;
@@ -165,7 +161,8 @@ export interface AdsDashboardPanelProps extends Omit<HTMLAttributes<HTMLElement>
 	/** Mensagem de erro. O consumidor decide quando exibi-la e pode oferecer `errorActions`. */
 	error?: ReactNode;
 	errorActions?: ReactNode;
-	empty?: AdsDashboardEmpty;
+	/** Conteúdo do estado vazio, em geral um `AdsEmptyState`. Como `error`, é um nó. */
+	empty?: ReactNode;
 }
 
 /** Painel de dashboard com título, ações e estados de carregamento, erro e vazio. */
@@ -203,7 +200,7 @@ export function AdsDashboardPanel({
 			</div>
 		);
 	} else if (empty) {
-		body = <AdsEmptyState {...empty} />;
+		body = empty;
 	} else {
 		body = children;
 	}

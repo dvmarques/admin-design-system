@@ -261,10 +261,18 @@
 		height: 2.5rem;
 	}
 
-	/* Sem `order` nem `grid-auto-flow: dense`: a ordem do DOM é a ordem visual e de foco. */
+	/*
+	 * O grid é um container: as colunas seguem a largura disponível dele (por exemplo, ao lado
+	 * da sidebar), não a viewport. Sem `order` nem `grid-auto-flow: dense`: a ordem do DOM é a
+	 * ordem visual e de foco.
+	 */
 	.ads-dashboard-grid {
 		--ads-dashboard-grid-gap: 1rem;
 		--ads-dashboard-grid-columns: 1;
+		container: ads-dashboard-grid / inline-size;
+	}
+
+	.ads-dashboard-grid-items {
 		display: grid;
 		grid-template-columns: repeat(var(--ads-dashboard-grid-columns), minmax(0, 1fr));
 		gap: var(--ads-dashboard-grid-gap);
@@ -326,8 +334,8 @@
 		margin: 0;
 	}
 
-	@media (min-width: 40rem) {
-		.ads-dashboard-grid {
+	@container ads-dashboard-grid (min-width: 40rem) {
+		.ads-dashboard-grid-items {
 			--ads-dashboard-grid-columns: 2;
 		}
 
@@ -338,8 +346,8 @@
 		}
 	}
 
-	@media (min-width: 64rem) {
-		.ads-dashboard-grid {
+	@container ads-dashboard-grid (min-width: 64rem) {
+		.ads-dashboard-grid-items {
 			--ads-dashboard-grid-columns: 4;
 		}
 

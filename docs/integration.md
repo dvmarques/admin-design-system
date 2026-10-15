@@ -144,10 +144,15 @@ decide quando exibir cada estado.
 
 - `trend` (`up`, `down`, `neutral`) define o ícone e o texto acessível; `sentiment`
   (`positive`, `negative`, `neutral`) define a cor, pois uma alta pode ser ruim.
-- O grid usa 1, 2 e 4 colunas conforme a largura e nunca reordena painéis; `span`
-  (1 a 4) só se aplica quando há colunas suficientes.
+- O grid usa 1, 2 e 4 colunas (a partir de 40rem e 64rem) conforme a largura
+  disponível do próprio grid, via container query, e não a viewport: ao lado da
+  sidebar ele usa menos colunas. Nunca reordena painéis; `span` (1 a 4) só se
+  aplica quando há colunas suficientes.
 - `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos não
   fazem parte desta entrega.
+- `empty` é um nó nos dois componentes, como `error`: no painel, passe um
+  `AdsEmptyState` (`empty={<AdsEmptyState title="Sem pedidos" />}`); no card, um
+  texto curto.
 
 ## Aplicação de referência (`admin-demo`)
 

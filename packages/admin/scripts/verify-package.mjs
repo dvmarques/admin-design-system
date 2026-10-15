@@ -31,6 +31,7 @@ for (const selector of [
 	'.ads-admin-shell-main',
 	'.ads-metric-card',
 	'.ads-dashboard-grid',
+	'.ads-dashboard-grid-items',
 	'.ads-dashboard-panel',
 ]) {
 	if (!css.includes(selector)) throw new Error(`Missing selector: ${selector}`);

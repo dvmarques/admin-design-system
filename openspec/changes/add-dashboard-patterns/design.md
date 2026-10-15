@@ -23,8 +23,9 @@ Novos componentes em `packages/admin/src/dashboard.tsx`; estilos em `styles.css`
 ### 2. API
 
 - `AdsMetricCard`: `title`, `value`, `change?`, `trend?` (`'up' | 'down' | 'neutral'`), `trendLabel?` (texto para tecnologias assistivas; padrão em pt-BR), `sentiment?` (`'positive' | 'negative' | 'neutral'`, derivado de `trend` por padrão), `description?`, `progress?` (props de `AdsProgress`), `loading?`, `error?`, `empty?`. `trend` define o ícone/direção e `sentiment` define a cor, pois uma alta pode ser negativa (ex.: cancelamentos).
-- `AdsDashboardGrid`: contêiner de layout (`div`) sem papel ARIA próprio; os painéis são `section` nomeadas.
-- `AdsDashboardPanel`: `title`, `headingLevel?` (2–6, padrão 2), `description?`, `actions?`, `span?` (1–4 colunas), `loading?`, `loadingLabel?`, `empty?` (`{ title, description?, actions? }`), `error?` (nó) e `children`.
+- `AdsDashboardGrid`: contêiner de layout (`div`, com um `div` interno que é o grid) sem papel ARIA próprio; os painéis são `section` nomeadas.
+- `AdsDashboardPanel`: `title`, `headingLevel?` (2–6, padrão 2), `description?`, `actions?`, `span?` (1–4 colunas), `loading?`, `loadingLabel?`, `empty?` (nó), `error?` (nó), `errorActions?` e `children`.
+- `empty` é um nó nos dois componentes, como `error`, `description` e `actions` em toda a lib. No painel, o recomendado é passar um `AdsEmptyState`, que mantém todas as suas props (inclusive `visual`) sem um tipo paralelo; no card, um texto curto.
 
 ### 3. Tendência acessível
 
@@ -32,11 +33,11 @@ O ícone SVG é decorativo (`aria-hidden`). O texto `trendLabel` ("Em alta", "Em
 
 ### 4. Grid responsivo sem reordenação
 
-CSS Grid com 1 coluna (< 40rem), 2 colunas (≥ 40rem) e 4 colunas (≥ 64rem). `span` vira `data-span` e `grid-column: span N`, limitado pelo número de colunas ativas. Não se usa `order` nem `grid-auto-flow: dense`, de modo que a ordem do DOM é a ordem visual e de foco.
+O elemento externo do `AdsDashboardGrid` é um container (`container: ads-dashboard-grid / inline-size`) e o interno é o CSS Grid, com 1 coluna (< 40rem), 2 colunas (≥ 40rem) e 4 colunas (≥ 64rem) medidas pela largura disponível do grid via `@container`, não pela viewport. Assim, ao lado de uma sidebar, o grid usa menos colunas. `span` vira `data-span` e `grid-column: span N`, limitado pelo número de colunas ativas. Não se usa `order` nem `grid-auto-flow: dense`, de modo que a ordem do DOM é a ordem visual e de foco.
 
 ### 5. Estados por painel
 
-Prioridade: `loading` > `error` > `empty` > `children`. Carregamento usa `AdsSkeleton` com `role="status"` e rótulo, e `aria-busy` no painel. Erro usa `role="alert"`. Vazio usa `AdsEmptyState`. O painel nunca busca dados: o consumidor decide o estado.
+Prioridade: `loading` > `error` > `empty` > `children`. Carregamento usa `AdsSkeleton` com `role="status"` e rótulo, e `aria-busy` no painel. Erro usa `role="alert"`. Vazio renderiza o nó informado, em geral um `AdsEmptyState`. O painel nunca busca dados: o consumidor decide o estado.
 
 ### 6. Dependências
 

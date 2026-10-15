@@ -29,3 +29,17 @@ test('dashboard styles keep panels in DOM order and use public prefixes', async 
 	}
 	assert.ok(css.includes('--ads-dashboard-grid-columns'));
 });
+
+test('dashboard grid columns follow the grid width, not the viewport', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.match(
+		css,
+		/\.ads-dashboard-grid\s*\{[^}]*container:\s*ads-dashboard-grid\s*\/\s*inline-size/,
+	);
+	assert.match(css, /@container ads-dashboard-grid \(min-width: 40rem\)/);
+	assert.match(css, /@container ads-dashboard-grid \(min-width: 64rem\)/);
+	for (const block of css.match(/@media[^{]*\{(?:[^{}]*\{[^}]*\})*[^}]*\}/g) ?? []) {
+		assert.doesNotMatch(block, /ads-dashboard|ads-metric-card/);
+	}
+});

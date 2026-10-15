@@ -596,3 +596,132 @@
 		}
 	}
 }
+
+@layer components {
+	/*
+	 * Tabela inteligente. Compõe AdsTable (classes de @admin-ds/components); aqui ficam apenas a
+	 * barra de ferramentas, a região rolável, o botão de ordenação e a linha selecionada.
+	 */
+	.ads-smart-table {
+		display: grid;
+		gap: 0.75rem;
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+	}
+
+	.ads-smart-table-toolbar {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: 0.75rem;
+	}
+
+	.ads-smart-table-selection-summary {
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+
+	.ads-smart-table-columns {
+		position: relative;
+		margin-inline-start: auto;
+	}
+
+	.ads-smart-table-columns-panel {
+		position: absolute;
+		inset-inline-end: 0;
+		z-index: 10;
+		min-width: 14rem;
+		margin-top: 0.25rem;
+		border: 1px solid var(--ads-color-border);
+		border-radius: 0.5rem;
+		background-color: var(--ads-color-surface);
+		padding: 0.75rem;
+		box-shadow: var(--ads-elevation-md);
+	}
+
+	.ads-smart-table-columns-panel[hidden] {
+		display: none;
+	}
+
+	.ads-smart-table-scroll {
+		border: 1px solid var(--ads-color-border);
+		border-radius: 0.5rem;
+		background-color: var(--ads-color-surface);
+	}
+
+	.ads-smart-table-scroll:focus-visible,
+	.ads-smart-table-sort:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
+	.ads-smart-table-sort {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		border: 0;
+		background: transparent;
+		padding: 0;
+		color: inherit;
+		font: inherit;
+		font-weight: inherit;
+		cursor: pointer;
+	}
+
+	.ads-smart-table-sort-icon {
+		flex-shrink: 0;
+		color: var(--ads-color-text-muted);
+	}
+
+	.ads-smart-table-sort-icon path {
+		opacity: 0.45;
+	}
+
+	.ads-smart-table-sort-icon[data-direction='asc'] path[data-part='up'],
+	.ads-smart-table-sort-icon[data-direction='desc'] path[data-part='down'] {
+		opacity: 1;
+		color: var(--ads-color-primary);
+	}
+
+	.ads-smart-table-select-cell {
+		width: 1%;
+		white-space: nowrap;
+	}
+
+	.ads-smart-table .ads-table-row[data-selected] {
+		background-color: var(--ads-color-surface-muted);
+		box-shadow: inset 3px 0 0 var(--ads-color-primary);
+	}
+
+	.ads-smart-table-state {
+		padding: 1rem;
+	}
+
+	.ads-smart-table-skeleton {
+		width: 100%;
+		height: 1rem;
+	}
+
+	.ads-smart-table[data-loading] {
+		cursor: progress;
+	}
+
+	.ads-smart-table-pagination {
+		display: flex;
+		justify-content: flex-end;
+	}
+
+	.ads-smart-table-visually-hidden,
+	.ads-smart-table-status {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+		margin: -1px;
+		padding: 0;
+		border: 0;
+	}
+}

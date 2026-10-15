@@ -478,3 +478,100 @@ export function UsuariosFiltros({ params }: { params: Params }) {
 	return <AdsFilterBar filters={filters} loading={pending} onChange={onChange} value={value} />;
 }
 ```
+
+## Tabela inteligente
+
+O `AdsSmartTable`, de `@admin-ds/admin`, compõe `AdsTable`, `AdsPagination`,
+`AdsSkeleton` e `AdsEmptyState` com ordenação, seleção de linhas e visibilidade
+de colunas. É um Client Component e todo o estado é do consumidor: a tabela não
+busca, ordena nem pagina dados, e as `rows` já chegam processadas. Como `cell` e
+`getRowId` são funções, use-a dentro de um Client Component.
+
+- Ordenação: `sort` (`{ columnId, direction } | null`) e `onSortChange`. O clique
+  cicla ascendente, descendente e nenhuma; colunas com `sortable` ganham um botão
+  e `aria-sort` no cabeçalho.
+- Seleção: `onSelectionChange` habilita a coluna de seleção; `selectedIds` é o
+  estado. `selectionMode="single"` usa botões de opção. "Selecionar todas" age só
+  na página e fica indeterminado quando parcial; ids de outras páginas são
+  preservados. `getRowLabel` nomeia o controle de cada linha.
+- Colunas: `onHiddenColumnsChange` habilita o seletor "Colunas";
+  `hiddenColumnIds` é o estado. `hideable: false` fixa uma coluna e a última
+  visível não pode ser ocultada.
+- Estados: `loading`, `error` (com `onRetry`) e `emptyState`; a precedência é
+  erro, carregamento e vazio.
+- Opcionais: `filters` (slot acima, por exemplo `AdsFilterBar`) e `pagination`
+  (props de `AdsPagination`, inclusive `renderPageLink`).
+- A tabela rola na horizontal dentro de uma região nomeada e focável por teclado,
+  sem ocultar colunas. `labels` ajusta os textos (pt-BR por padrão).
+
+```tsx
+// app/usuarios/usuarios-tabela.tsx
+'use client';
+
+import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
+import Link from 'next/link';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+
+interface Usuario {
+	id: string;
+	nome: string;
+	perfil: string;
+}
+
+export function UsuariosTabela({
+	rows,
+	page,
+	pageCount,
+	sort,
+}: {
+	rows: Usuario[];
+	page: number;
+	pageCount: number;
+	sort: AdsSmartTableSort | null;
+}) {
+	const router = useRouter();
+	const pathname = usePathname();
+	const [selected, setSelected] = useState<string[]>([]);
+	const [hidden, setHidden] = useState<string[]>([]);
+
+	function onSortChange(next: AdsSmartTableSort | null) {
+		const params = new URLSearchParams();
+		if (next) params.set('ordem', `${next.columnId}:${next.direction}`);
+		router.replace(`${pathname}?${params}`, { scroll: false });
+	}
+
+	return (
+		<AdsSmartTable<Usuario>
+			caption="Usuários"
+			columns={[
+				{ id: 'nome', label: 'Nome', sortable: true, hideable: false, cell: (u) => u.nome },
+				{ id: 'perfil', label: 'Perfil', sortable: true, cell: (u) => u.perfil },
+			]}
+			getRowId={(u) => u.id}
+			getRowLabel={(u) => u.nome}
+			hiddenColumnIds={hidden}
+			onHiddenColumnsChange={setHidden}
+			onSelectionChange={setSelected}
+			onSortChange={onSortChange}
+			pagination={{
+				page,
+				pageCount,
+				renderPageLink: (target, { children, ...props }) => (
+					<Link href={`${pathname}?pagina=${target}`} {...props}>
+						{children}
+					</Link>
+				),
+			}}
+			rows={rows}
+			selectedIds={selected}
+			sort={sort}
+		/>
+	);
+}
+```
+
+A página (Server Component) lê `searchParams`, consulta e ordena os dados e
+repassa `rows`, `page`, `pageCount` e `sort`. Para combinar com o `AdsFilterBar`,
+passe-o em `filters`; os dois seguem independentes, e o consumidor decide, por
+exemplo, limpar a seleção quando o filtro ou a página mudam.

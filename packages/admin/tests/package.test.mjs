@@ -57,3 +57,14 @@ test('dashboard grid columns follow the grid width, not the viewport', async () 
 		assert.doesNotMatch(block, /ads-dashboard|ads-metric-card/);
 	}
 });
+
+test('smart table styles use public tokens, a focusable scroll region and the selected row state', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.match(css, /\.ads-smart-table-scroll:focus-visible/);
+	assert.match(
+		css,
+		/\.ads-smart-table \.ads-table-row\[data-selected\]\s*\{[^}]*--ads-color-primary/,
+	);
+	assert.match(css, /\.ads-smart-table-columns-panel\[hidden\]\s*\{[^}]*display:\s*none/);
+});

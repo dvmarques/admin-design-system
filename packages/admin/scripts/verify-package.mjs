@@ -37,6 +37,9 @@ for (const selector of [
 	'.ads-filter-bar-header',
 	'@container ads-filter-bar (max-width: 40rem)',
 	".ads-filter-bar-body[data-expanded='false']",
+	'.ads-smart-table',
+	'.ads-smart-table-sort',
+	'.ads-smart-table .ads-table-row[data-selected]',
 ]) {
 	if (!css.includes(selector)) throw new Error(`Missing selector: ${selector}`);
 }

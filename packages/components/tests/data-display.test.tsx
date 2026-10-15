@@ -42,6 +42,24 @@ describe('AdsTable', () => {
 		expect(screen.getByRole('cell', { name: 'Maria' })).toBeVisible();
 	});
 
+	it('applies containerProps to the scroll container only when provided', () => {
+		const { container, rerender } = render(<AdsTable aria-label="A" />);
+		expect(container.firstElementChild).toHaveAttribute(
+			'class',
+			'ads-table-container w-full overflow-x-auto',
+		);
+		expect(container.firstElementChild).not.toHaveAttribute('role');
+		rerender(
+			<AdsTable
+				aria-label="A"
+				containerProps={{ 'aria-label': 'Rolável', role: 'region', tabIndex: 0 }}
+			/>,
+		);
+		const region = screen.getByRole('region', { name: 'Rolável' });
+		expect(region).toHaveAttribute('tabindex', '0');
+		expect(region).toHaveClass('ads-table-container');
+	});
+
 	it('keeps interactive cell content keyboard focusable', () => {
 		render(
 			<AdsTable aria-label="Ações de clientes">

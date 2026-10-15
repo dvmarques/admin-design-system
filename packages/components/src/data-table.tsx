@@ -8,11 +8,21 @@ import { classNames } from './class-names.js';
 
 export interface AdsTableProps extends TableHTMLAttributes<HTMLTableElement> {
 	containerClassName?: string;
+	/** HTML attributes for the scroll container, for example to make it a labelled, focusable region. */
+	containerProps?: Omit<HTMLAttributes<HTMLDivElement>, 'className'>;
 }
 
-export function AdsTable({ className, containerClassName, ...props }: AdsTableProps) {
+export function AdsTable({
+	className,
+	containerClassName,
+	containerProps,
+	...props
+}: AdsTableProps) {
 	return (
-		<div className={classNames('ads-table-container w-full overflow-x-auto', containerClassName)}>
+		<div
+			{...containerProps}
+			className={classNames('ads-table-container w-full overflow-x-auto', containerClassName)}
+		>
 			<table
 				{...props}
 				className={classNames(

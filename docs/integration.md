@@ -510,7 +510,12 @@ de página e a ordenação partem dos parâmetros atuais e trocam só a própria
 chave, então filtros de um `AdsFilterBar` na mesma URL são preservados. Ordenar
 volta à primeira página (apaga `pagina`), e a URL não fica com `?` vazio. A
 seleção guarda ids de todas as páginas; o contador mostra quantas estão na
-página exibida, e o exemplo oferece um botão para limpá-la.
+página exibida, e o exemplo oferece um botão para limpá-la. Os helpers
+`withParams`, `formatReadableSearchQuery`, `applyPendingClearSelectionFocus` e
+`restoreFocusAfterClearSelection` abaixo espelham a lógica testada em
+`apps/admin-demo/lib/url-search-params.ts`, `clear-selection-pending-focus.ts` e
+`selection-clear-focus.ts` (referência para copiar na aplicação, não rota do
+demo).
 
 ```tsx
 // app/usuarios/usuarios-tabela.tsx
@@ -530,6 +535,11 @@ interface Usuario {
 	perfil: string;
 }
 
+function formatReadableSearchQuery(serialized: string) {
+	if (!serialized) return '';
+	return serialized.replace(/%3A/gi, ':');
+}
+
 // Parte dos parâmetros atuais e troca só as chaves informadas (null apaga a chave).
 function withParams(params: Params, changes: Record<string, string | null>) {
 	const query = new URLSearchParams();
@@ -540,8 +550,43 @@ function withParams(params: Params, changes: Record<string, string | null>) {
 		if (value === null) query.delete(key);
 		else query.set(key, value);
 	}
-	const serialized = query.toString();
-	return serialized ? serialized.replace(/%3A/gi, ':') : '';
+	return formatReadableSearchQuery(query.toString());
+}
+
+function restoreFocusAfterClearSelection(
+	trigger: HTMLElement | null,
+	targets: {
+		selectAll?: HTMLInputElement | null;
+		scrollRegion?: HTMLElement | null;
+	},
+) {
+	if (!trigger || trigger.isConnected) return;
+	const active = document.activeElement;
+	const focusLost = !active || active === document.body;
+	if (!focusLost) return;
+	if (targets.selectAll && !targets.selectAll.disabled) {
+		targets.selectAll.focus();
+		return;
+	}
+	targets.scrollRegion?.focus();
+}
+
+function applyPendingClearSelectionFocus(
+	pending: HTMLElement | null,
+	root: HTMLElement | null,
+): 'idle' | 'waiting' | 'dropped' | 'applied' {
+	if (pending === null) return 'idle';
+	const active = document.activeElement;
+	const focusLost = !active || active === document.body;
+	if (!focusLost && root && !root.contains(active)) return 'dropped';
+	if (pending.isConnected) return 'waiting';
+	if (!focusLost) return 'dropped';
+	const selectAll = root?.querySelector<HTMLInputElement>(
+		'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
+	);
+	const scrollRegion = root?.querySelector<HTMLElement>('.ads-smart-table-scroll');
+	restoreFocusAfterClearSelection(pending, { selectAll, scrollRegion });
+	return 'applied';
 }
 
 export function UsuariosTabela({
@@ -580,26 +625,8 @@ export function UsuariosTabela({
 	}
 
 	useLayoutEffect(() => {
-		const pending = pendingClearRef.current;
-		if (pending === null) return;
-		const active = document.activeElement;
-		const focusLost = !active || active === document.body;
-		if (!focusLost && !rootRef.current?.contains(active)) {
-			pendingClearRef.current = null;
-			return;
-		}
-		if (pending.isConnected) return;
-		pendingClearRef.current = null;
-		if (!focusLost) return;
-		const root = rootRef.current;
-		const selectAll = root?.querySelector<HTMLInputElement>(
-			'input[type="checkbox"][aria-label="Selecionar todas as linhas da página"]',
-		);
-		if (selectAll && !selectAll.disabled) {
-			selectAll.focus();
-			return;
-		}
-		root?.querySelector<HTMLElement>('.ads-smart-table-scroll')?.focus();
+		const result = applyPendingClearSelectionFocus(pendingClearRef.current, rootRef.current);
+		if (result === 'dropped' || result === 'applied') pendingClearRef.current = null;
 	}, [selected]);
 
 	return (

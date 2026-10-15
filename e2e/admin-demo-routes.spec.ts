@@ -348,16 +348,28 @@ test.describe('novo cliente', () => {
 		expect(focusOutline.style).not.toBe('none');
 		expect(focusOutline.width).not.toBe('0px');
 
+		// As cores de borda e do indicador têm transição; uma leitura única logo após o erro
+		// ou a troca de tema pode pegar o início dela, então as comparações usam retry.
 		const borderOf = (locator: ReturnType<Page['getByLabel']>) =>
 			locator.evaluate((element) => getComputedStyle(element).borderTopColor);
-		expect(await borderOf(nameField)).not.toBe(await borderOf(page.getByLabel('Status')));
+		await expect
+			.poll(
+				async () => (await borderOf(nameField)) !== (await borderOf(page.getByLabel('Status'))),
+				{ message: 'a borda do campo com erro deve diferir da do campo sem erro' },
+			)
+			.toBe(true);
 
 		const indicatorBackground = (name: string) =>
 			page
 				.getByRole('radio', { name })
 				.locator('xpath=following-sibling::span[1]')
 				.evaluate((element) => getComputedStyle(element).backgroundColor);
-		expect(await indicatorBackground('Mensal')).not.toBe(await indicatorBackground('Anual'));
+		await expect
+			.poll(
+				async () => (await indicatorBackground('Mensal')) !== (await indicatorBackground('Anual')),
+				{ message: 'o indicador da opção selecionada deve diferir do da não selecionada' },
+			)
+			.toBe(true);
 	}
 
 	for (const theme of themes) {

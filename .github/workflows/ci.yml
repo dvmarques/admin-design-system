@@ -80,6 +80,7 @@ jobs:
       - run: npm run build --workspace @admin-ds/tokens
       - run: npm run build --workspace @admin-ds/components
       - run: npm run build --workspace @admin-ds/admin
+      - run: npm run build --workspace @admin-ds/admin-demo
       - run: npx playwright test
 
   develop-policy:

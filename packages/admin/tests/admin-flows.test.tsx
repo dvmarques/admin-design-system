@@ -114,6 +114,13 @@ describe('AdsConfirmDialog', () => {
 		expect(screen.getByRole('button', { name: /Confirmar/ })).toBeDisabled();
 	});
 
+	it('does not cancel with Escape while pending', () => {
+		render(<Harness pending />);
+		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
+		fireEvent.keyDown(document, { key: 'Escape' });
+		expect(screen.getByRole('dialog')).toBeTruthy();
+	});
+
 	it('has no axe violations', async () => {
 		render(<Harness />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));

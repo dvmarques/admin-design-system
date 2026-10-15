@@ -636,7 +636,7 @@ export function Users({ rows, filters, onFiltersChange, pagination }) {
 
 `AdsConfirmDialog` usa `AdsDialog`: o foco inicial vai a "Cancelar", `Escape` e o
 clique fora cancelam (`onOpenChange(false)`), `onConfirm` não fecha o diálogo e
-`pending` desabilita as ações. `destructive` (padrão) usa a variante de perigo.
+`pending` desabilita as ações e suspende `Escape` e o clique fora. `destructive` (padrão) usa a variante de perigo.
 O `AdsDialog` não expõe `role="alertdialog"`; o diálogo usa `role="dialog"` com
 título e descrição associados.
 

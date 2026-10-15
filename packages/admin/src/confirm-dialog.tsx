@@ -23,7 +23,8 @@ export interface AdsConfirmDialogProps extends Omit<
 
 /**
  * Confirmação de ação destrutiva sobre `AdsDialog`. O foco inicial vai a "Cancelar", `Escape`
- * e o clique fora cancelam. O consumidor decide quando fechar.
+ * e o clique fora cancelam (exceto com `pending`). O consumidor decide quando fechar. Se `children`
+ * tiver controles focáveis, o foco inicial vai ao primeiro deles, antes de "Cancelar".
  */
 export function AdsConfirmDialog({
 	cancelLabel = 'Cancelar',
@@ -36,7 +37,14 @@ export function AdsConfirmDialog({
 	...props
 }: AdsConfirmDialogProps) {
 	return (
-		<AdsDialog {...props} onOpenChange={onOpenChange} showCloseButton={false}>
+		<AdsDialog
+			// Durante o processamento, `Escape` e o clique fora não cancelam.
+			closeOnBackdrop={!pending}
+			closeOnEscape={!pending}
+			{...props}
+			onOpenChange={onOpenChange}
+			showCloseButton={false}
+		>
 			{children}
 			<div className="ads-confirm-dialog-actions">
 				<AdsButton disabled={pending} onClick={() => onOpenChange(false)} variant="secondary">

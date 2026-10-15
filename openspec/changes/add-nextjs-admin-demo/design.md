@@ -212,8 +212,9 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
 
 ### 6. Testes
 
-- Layouts e páginas são Server Components assíncronos (`cookies()`,
-  `searchParams`) e ficam finos; o conteúdo vai para componentes de apresentação
+- Layouts e páginas que leem `cookies()` ou `searchParams` são Server Components
+  assíncronos e ficam finos (`/data-display` continua Client Component, movida
+  sem conversão); o conteúdo vai para componentes de apresentação
   que recebem props (por exemplo, dados, página e estado). O Vitest renderiza
   esses componentes com `renderToString`; a rota real, incluindo o layout, é
   validada no Playwright. Hoje só o primeiro teste de `admin-demo.spec.ts`, em
@@ -245,5 +246,9 @@ heading "Tokens públicos") e `overlay.spec.ts` passam a usar `/componentes`.
   `docs/limitations.md` e tratadas fora desta change.
 - **[Aumento do bundle do demo]** → Sem novas dependências; o demo não entra no
   baseline de `docs/bundle-baseline.json`, mas o build do app é validado.
+- **[Auditoria `axe-core` em páginas existentes]** → `/componentes` e
+  `/data-display` nunca foram auditadas no e2e; violações pré-existentes que a
+  tarefa 6.2 revelar são corrigidas no demo se forem do demo, ou registradas em
+  `docs/limitations.md` e tratadas em change própria se forem da biblioteca.
 - **[Parâmetros de URL para estados]** → São recurso de demonstração, não API do
   design system; documentados como tal.

@@ -49,20 +49,35 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - id: scope
+        run: node ./scripts/ci-changed-paths.mjs
       - uses: actions/setup-node@v6
+        if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm ci --ignore-scripts
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run generate --workspace @admin-ds/tokens
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run check:generated --workspace @admin-ds/tokens
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/tokens
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/components
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/admin
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/docs
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/admin-demo
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run inspect:packages
+        if: steps.scope.outputs.docs_only != 'true'
 
   e2e:
     name: Fluxos no navegador
@@ -70,29 +85,44 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
+        with:
+          fetch-depth: 2
+      - id: scope
+        run: node ./scripts/ci-changed-paths.mjs
       - uses: actions/setup-node@v6
+        if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm ci --ignore-scripts
+        if: steps.scope.outputs.docs_only != 'true'
       - id: playwright
+        if: steps.scope.outputs.docs_only != 'true'
         run: echo "version=$(npx playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
       - id: playwright-cache
+        if: steps.scope.outputs.docs_only != 'true'
         uses: actions/cache@v6
         with:
           path: ~/.cache/ms-playwright
           key: playwright-${{ runner.os }}-${{ steps.playwright.outputs.version }}
       - run: sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.sources
-      - if: steps.playwright-cache.outputs.cache-hit != 'true'
+        if: steps.scope.outputs.docs_only != 'true'
+      - if: steps.scope.outputs.docs_only != 'true' && steps.playwright-cache.outputs.cache-hit != 'true'
         run: npx playwright install --with-deps chromium
-      - if: steps.playwright-cache.outputs.cache-hit == 'true'
+      - if: steps.scope.outputs.docs_only != 'true' && steps.playwright-cache.outputs.cache-hit == 'true'
         run: npx playwright install-deps chromium
       - run: npm run build --workspace @admin-ds/tokens
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/components
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/admin
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/admin-demo
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npx playwright test
+        if: steps.scope.outputs.docs_only != 'true'
 
   develop-policy:
     name: Política de develop

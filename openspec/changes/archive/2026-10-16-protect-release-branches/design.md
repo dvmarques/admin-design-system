@@ -51,9 +51,7 @@ tokens, Tailwind ou acessibilidade de interface envolvidos.
 
 ## Risks / Trade-offs
 
-- **Não verificado:** que o auto-delete respeita "Restrict deletions" de ruleset
-  como respeita a proteção clássica. Mitigação: validar na próxima release e, se
-  a branch for apagada, reverter para o auto-delete desabilitado (estado atual).
+- **Verificado em teste controlado (2026-10-16):** com o auto-delete habilitado, uma PR descartável cuja head era `release/teste` (#77) não teve a branch apagada, e uma PR de controle com head comum na mesma base (#78) teve. O teste usou uma base temporária, não o fluxo real de `master`/`develop`. Mitigação residual: se a branch de release for apagada em uma release, reverter para o auto-delete desabilitado.
 - A branch de release passa a exigir limpeza manual e privilegiada.
 - O ruleset fica fora do repositório e pode ser alterado sem rastro em Git;
   o documento passa a ser a referência da configuração esperada.

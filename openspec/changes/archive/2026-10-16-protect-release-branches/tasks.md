@@ -18,4 +18,4 @@
 ## 4. Fora do repositório (manual, de quem administra o GitHub)
 
 - [x] 4.1 Criar o ruleset de branch para `release/*` com "Restrict deletions" em Settings > Rules > Rulesets, e manter "Automatically delete head branches" habilitado. Criado em 2026-10-16: ruleset `Proteção de branches de release` (id 25274806), ativo, alvo `refs/heads/release/*`, sem bypass, só `deletion`.
-- [ ] 4.2 Na próxima release, conferir que `release/X.Y.Z` sobrevive ao merge da PR para `master` e ao back-merge. Se for apagada, reverter para o auto-delete desabilitado e registrar na change.
+- [x] 4.2 Na próxima release, conferir que `release/X.Y.Z` sobrevive ao merge da PR para `master` e ao back-merge. Se for apagada, reverter para o auto-delete desabilitado e registrar na change. Verificado em 2026-10-16 por teste controlado com o auto-delete habilitado: a head `release/teste` sobreviveu ao merge da #77 e a head comum `test/controle` foi apagada no merge da #78, ambas na mesma base temporária (não o fluxo real de `master`/`develop`).

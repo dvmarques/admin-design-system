@@ -108,7 +108,7 @@ A exclusão automática de head branches é uma opção do repositório e não f
 
 Branch protegida contra remoção não é apagada pela exclusão automática após o merge, como já acontece com `master` e `develop`.
 
-Na primeira release após criar o ruleset, confirme que `release/X.Y.Z` continua existindo depois do merge da PR para `master` e depois do back-merge. Se a exclusão automática a remover, desfaça a mudança: desabilite a exclusão automática de head branches no repositório e registre o resultado na change `protect-release-branches`.
+O comportamento foi verificado em 2026-10-16 com a exclusão automática de head branches habilitada: duas PRs descartáveis foram integradas na mesma base temporária; a branch `release/teste` (alvo do ruleset) sobreviveu ao merge (#77) e a branch comum `test/controle` foi apagada (#78). O teste usou uma base temporária, não o fluxo real de `master` e `develop`. Se em alguma release a exclusão automática remover `release/X.Y.Z` mesmo assim, desfaça a mudança: desabilite a exclusão automática de head branches no repositório e registre o resultado na change `protect-release-branches`.
 
 ## Publicar
 

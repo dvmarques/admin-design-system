@@ -15,4 +15,4 @@
 - [x] 3.2 Rodar `npx prettier --write` nos arquivos alterados e `npm run format`. Concluída quando `npm run format` passar.
 - [x] 3.3 Rodar `npm run lint` e `npm run typecheck`. Concluída quando ambos passarem.
 - [x] 3.4 Rodar `npm run build` e `npm run test:e2e` no ambiente local/cloud, sem atualizar snapshots. Concluída quando nenhum E2E falhar; comparações visuais só com baseline win32 ficam para a CI. Validado no ambiente cloud com o Chromium da imagem e `ignoreSnapshots` (108 passaram).
-- [ ] 3.5 Na PR, comparar a duração da CI antes e depois (execuções recentes em `develop` como referência) e registrar o resultado na descrição. Concluída quando houver números reais.
+- [ ] 3.5 Na PR, comparar a duração da CI antes e depois (execuções recentes em `develop` como referência) e registrar o resultado na descrição. Concluída quando houver números reais. Parcial, arquivada por decisão: a PR #80 registrou ~1 min 46 s de relógio num único run (cache miss do Chromium); o "antes" de ~3–4 min vem da sessão anterior, não de medição. O cache hit foi confirmado depois, na PR #82 (E2E ~1 min 25 s).

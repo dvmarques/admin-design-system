@@ -1,5 +1,6 @@
 import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
+import { waitForHydration } from './hydration';
 import { routes, themes, type Theme } from './routes';
 
 function mainNavigation(page: Page) {
@@ -222,6 +223,7 @@ test.describe('clientes', () => {
 
 	test('filtra pela busca, guarda o filtro na URL e volta para a página 1', async ({ page }) => {
 		await page.goto('/clientes?pagina=3');
+		await waitForHydration(page.getByRole('textbox', { name: 'Busca' }));
 
 		await page.getByRole('textbox', { name: 'Busca' }).fill('mariana');
 
@@ -236,6 +238,7 @@ test.describe('clientes', () => {
 
 	test('filtra por status e limpa os filtros', async ({ page }) => {
 		await page.goto('/clientes');
+		await waitForHydration(page.getByRole('combobox', { name: 'Status' }));
 
 		await page.getByRole('combobox', { name: 'Status' }).selectOption('Inativo');
 

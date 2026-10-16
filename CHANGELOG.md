@@ -8,6 +8,16 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
+#### Changed
+
+- `protect-release-branches` - O processo de release deixa de exigir a exclusão
+  automática de head branches desabilitada: as branches `release/*` passam a ser
+  protegidas por um ruleset que restringe a remoção, e a exclusão automática
+  pode continuar habilitada para as demais branches. A spec `release-process`
+  ganha o requisito de retenção da branch de release até o back-merge e a
+  publicação. Somente documentação e processo, sem mudança de API pública, pacotes,
+  scripts ou workflows.
+
 ### [0.1.0] - 15-out-2026
 
 #### Added

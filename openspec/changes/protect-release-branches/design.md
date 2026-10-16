@@ -30,7 +30,7 @@ tokens, Tailwind ou acessibilidade de interface envolvidos.
 
 ## Decisions
 
-1. **Ruleset de branch com alvo `release/**` e a regra "Restrict deletions".**
+1. **Ruleset de branch com alvo `release/*` e a regra "Restrict deletions".**
    Branch protegida contra deleção não é apagada pelo auto-delete. Alternativas:
    (a) manter o auto-delete desabilitado, que é o estado atual e perde a limpeza
    das demais branches; (b) um workflow que recria a branch depois do merge,

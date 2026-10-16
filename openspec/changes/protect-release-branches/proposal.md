@@ -9,7 +9,7 @@ removida por ele, o que permite proteger só as branches de release.
 
 ## What Changes
 
-- Passar a proteger as branches `release/**` com um ruleset de branch que
+- Passar a proteger as branches `release/*` com um ruleset de branch que
   restringe a deleção, em vez de exigir o auto-delete desabilitado no
   repositório.
 - Permitir que o auto-delete de head branches permaneça habilitado para as

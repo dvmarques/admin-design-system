@@ -20,7 +20,7 @@ branches de trabalho livre de restrição.
 
 #### Scenario: Branch de trabalho comum
 
-- **WHEN** uma PR de uma branch que não segue `release/**` é integrada
+- **WHEN** uma PR de uma branch que não segue `release/*` é integrada
 - **THEN** a exclusão automática de head branches pode remover essa branch
 
 #### Scenario: Remoção após a conclusão

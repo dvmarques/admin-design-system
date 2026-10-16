@@ -100,9 +100,9 @@ A proteção deve estar ativa antes de `develop` ser tratada como fonte confiáv
 
 ## Ruleset de release
 
-A exclusão automática de head branches é uma opção do repositório e não filtra por nome. Para preservar `release/X.Y.Z` até o back-merge e a publicação sem desabilitá-la para as demais branches, proteja `release/**` com um ruleset de branch:
+A exclusão automática de head branches é uma opção do repositório e não filtra por nome. Para preservar `release/X.Y.Z` até o back-merge e a publicação sem desabilitá-la para as demais branches, proteja `release/*` com um ruleset de branch:
 
-- alvo: `release/**`;
+- alvo: `release/*`;
 - regra: somente **Restrict deletions**; criação e push continuam livres, então `release:prepare` e as PRs não são afetados;
 - bypass administrativo no menor escopo possível.
 

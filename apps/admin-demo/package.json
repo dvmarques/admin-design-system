@@ -1,12 +1,12 @@
 {
 	"name": "@admin-ds/admin-demo",
-	"version": "0.0.1",
+	"version": "0.1.0",
 	"private": true,
 	"type": "module",
 	"dependencies": {
-		"@admin-ds/admin": "0.0.1",
-		"@admin-ds/components": "0.0.1",
-		"@admin-ds/tokens": "0.0.1",
+		"@admin-ds/admin": "0.1.0",
+		"@admin-ds/components": "0.1.0",
+		"@admin-ds/tokens": "0.1.0",
 		"next": "^16.2.12",
 		"react": "^19.2.8",
 		"react-dom": "^19.2.8"

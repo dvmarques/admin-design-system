@@ -20,6 +20,8 @@ Ao marcar o PR como **Ready for review**, o evento `ready_for_review` dispara um
 
 Os jobs `quality`, `build` e `e2e` rodam em paralelo, sem `needs` entre eles; uma falha em um não interrompe os outros. Um novo commit em uma PR cancela a execução anterior dessa PR; execuções de `push` em `develop` e `master` não são canceladas. Os nomes dos checks exigidos pelos rulesets não mudam.
 
+Em PRs cujos arquivos alterados são todos documentação (`openspec/**`, `CHANGELOG.md`, `AGENTS.md`, `CLAUDE.md`, `README.md` e `docs/*.md`), os jobs `build` e `e2e` concluem com sucesso sem instalar dependências, construir nem testar; `quality` roda sempre. A classificação é feita por `scripts/ci-changed-paths.mjs` e é conservadora: `docs/integration.md`, `docs/bundle-baseline.*`, `packages/tokens/README.md` e `.github/**` forçam o fluxo completo, assim como qualquer arquivo fora da lista, um diff vazio ou indeterminado, execuções de `push` e PRs para `master`.
+
 ## Metadados e estratégia de merge
 
 - Toda PR `release/X.Y.Z -> master` e o respectivo back-merge `release/X.Y.Z -> develop` devem usar o label `release` e ter como assignee a pessoa que estiver conduzindo a operação.

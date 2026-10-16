@@ -105,3 +105,73 @@ Todo arquivo de teste de um pacote MUST ser executado pelo script `test` do paco
 
 - **WHEN** um arquivo `*.test.*` em `packages/components/tests` não casa com o padrão de inclusão do executor
 - **THEN** um teste automatizado falha apontando o arquivo
+
+### Requirement: Verificações de CI independentes e canceláveis
+
+A CI de Pull Request MUST executar as verificações de qualidade, de artefatos
+de distribuição e de fluxos no navegador sem dependência de ordem entre elas, de modo que
+cada uma seja iniciada sem esperar as demais. A CI MUST cancelar a execução
+obsoleta de uma Pull Request quando um novo commit for enviado a ela, e MUST NOT
+cancelar execuções de `push` em `develop` ou `master`. Os nomes dos checks
+exigidos pelos rulesets MUST permanecer inalterados.
+
+#### Scenario: Início das verificações
+
+- **WHEN** uma PR Ready for review recebe um commit
+- **THEN** as verificações de qualidade, de artefatos e de fluxos no navegador são iniciadas em paralelo
+
+#### Scenario: Falha em uma verificação
+
+- **WHEN** uma das verificações falha enquanto as outras ainda executam
+- **THEN** as demais concluem e reportam seu resultado, e a PR permanece bloqueada pelo check com falha
+
+#### Scenario: Novo commit na mesma PR
+
+- **WHEN** um novo commit é enviado a uma PR com CI em execução
+- **THEN** a execução anterior dessa PR é cancelada e uma nova começa sobre o commit corrente
+
+#### Scenario: Push em branch integrada
+
+- **WHEN** commits são enviados em sequência a `develop` ou `master`
+- **THEN** cada execução de `push` conclui sem ser cancelada pela seguinte
+
+#### Scenario: Required checks
+
+- **WHEN** os rulesets de `develop` e `master` avaliam uma PR
+- **THEN** os checks "Qualidade rápida", "Artefatos de distribuição" e "Fluxos no navegador" continuam sendo reportados com esses nomes
+
+### Requirement: Execução reduzida da CI em PRs somente de documentação
+
+A CI de Pull Request MUST dispensar a construção dos artefatos e a execução dos
+fluxos no navegador quando todos os arquivos alterados forem documentação sem
+consumidores em teste, e MUST executar o fluxo completo quando qualquer arquivo
+alterado estiver fora dessa classe, quando a classificação não puder ser
+determinada, em execuções de `push` e em PRs para `master`. A verificação de
+qualidade MUST executar sempre. Os checks exigidos pelos rulesets MUST ser
+reportados como concluídos, sem ficar pendentes, também quando o trabalho for
+dispensado.
+
+#### Scenario: PR altera só documentação
+
+- **WHEN** uma PR altera apenas arquivos de documentação ou specs sem consumidores em teste
+- **THEN** a verificação de qualidade executa, os checks de artefatos e de fluxos no navegador concluem com sucesso sem construir nem testar, e a PR pode ser integrada
+
+#### Scenario: PR altera documentação lida por testes
+
+- **WHEN** uma PR altera um arquivo de documentação que um teste ou script lê
+- **THEN** o fluxo completo executa
+
+#### Scenario: PR mistura documentação e código
+
+- **WHEN** uma PR altera documentação e qualquer arquivo fora da classe de documentação
+- **THEN** o fluxo completo executa
+
+#### Scenario: Classificação indeterminada
+
+- **WHEN** a lista de arquivos alterados não pode ser calculada ou está vazia
+- **THEN** o fluxo completo executa
+
+#### Scenario: Push e PR de release
+
+- **WHEN** ocorre um `push` em `develop` ou `master`, ou uma PR tem `master` como base
+- **THEN** o fluxo completo executa, qualquer que seja o conteúdo alterado

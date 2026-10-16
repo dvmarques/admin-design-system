@@ -1,10 +1,10 @@
 ## 1. PR 1 — Baselines Linux e snapshots na CI
 
-- [ ] 1.1 Criar o workflow `workflow_dispatch` de atualização de baselines (`ubuntu-latest`, `contents: write`, versão do Playwright fixada) e verificar que uma execução commita `*-chromium-linux.png` na branch informada
-- [ ] 1.2 Remover os 16 `*-chromium-win32.png` e verificar que `git ls-files e2e | grep win32` não retorna nada
-- [ ] 1.3 Remover `test.skip(Boolean(process.env.CI), …)` de `admin-demo.spec.ts`, `admin-demo-routes.spec.ts` e `data-display.spec.ts` e verificar com `grep` que nenhum skip por `CI` resta
+- [x] 1.1 Criar o workflow `workflow_dispatch` de atualização de baselines (`ubuntu-latest`, `contents: write`, versão do Playwright fixada) e verificar que uma execução commita `*-chromium-linux.png` na branch informada
+- [x] 1.2 Remover os 16 `*-chromium-win32.png` e verificar que `git ls-files e2e | grep win32` não retorna nada
+- [x] 1.3 Remover `test.skip(Boolean(process.env.CI), …)` de `admin-demo.spec.ts`, `admin-demo-routes.spec.ts` e `data-display.spec.ts` e verificar com `grep` que nenhum skip por `CI` resta
 - [ ] 1.4 Gerar os baselines Linux pelo workflow, revisar o diff das imagens nos dois temas e verificar que `npm run test:e2e` (CI) passa sem snapshots pulados
-- [ ] 1.5 Atualizar `docs/quality.md` e `docs/limitations.md` (Linux único, fluxo de atualização, sem execução local, remoção das menções a `win32` e ao skip) e verificar que `grep -rn win32 docs openspec/specs` não restam referências inválidas
+- [x] 1.5 Atualizar `docs/quality.md` e `docs/limitations.md` (Linux único, fluxo de atualização, sem execução local, remoção das menções a `win32` e ao skip) e verificar que `grep -rn win32 docs openspec/specs` não restam referências inválidas
 - [ ] 1.6 Medir o tempo do job de E2E antes e depois e registrar em `docs/quality.md`
 - [ ] 1.7 Executar `npx prettier --write` nos arquivos alterados, `npm run format`, `npm run lint`, `npm run typecheck` e confirmar a CI verde da PR 1
 

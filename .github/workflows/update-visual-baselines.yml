@@ -1,10 +1,6 @@
 name: Atualizar baselines visuais
 
 on:
-  # TEMPORÁRIO: bootstrap na branch da PR; remover antes do merge.
-  push:
-    branches:
-      - ci/86-baselines-linux-snapshots
   workflow_dispatch:
 
 permissions:

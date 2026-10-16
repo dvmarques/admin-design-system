@@ -20,4 +20,4 @@
 - [x] 4.2 Rodar `npx prettier --write` nos arquivos alterados e `npm run format`. Concluída quando `npm run format` passar.
 - [x] 4.3 Rodar `npm run lint`, `npm run build`, `npm run typecheck` e `npm run test:quiet`. Concluída quando todos passarem.
 - [x] 4.4 Rodar `npm run test:e2e` sem atualizar snapshots. Concluída quando nenhum E2E falhar; comparações visuais só com baseline win32 ficam para a CI. Validado no ambiente cloud com o Chromium da imagem e `ignoreSnapshots` (108 passaram).
-- [ ] 4.5 Na PR, validar os dois caminhos reais: esta PR altera código (deve rodar completo) e uma PR só de documentação (deve pular). Concluída quando ambos os resultados forem registrados na descrição.
+- [ ] 4.5 Na PR, validar os dois caminhos reais: esta PR altera código (deve rodar completo) e uma PR só de documentação (deve pular). Concluída quando ambos os resultados forem registrados na descrição. Parcial, arquivada por decisão: a PR #82 validou o caminho de fluxo completo (`docs_only=false`, cache do Chromium com hit). O caminho `docs_only=true` será observado na primeira PR somente de documentação após o merge (a que arquiva estas changes).

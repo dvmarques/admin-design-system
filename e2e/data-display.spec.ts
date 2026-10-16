@@ -61,8 +61,6 @@ test('alterna visualmente o tema e permite voltar à visão geral pela sidebar',
 });
 
 test('mantém a apresentação de dados nos temas claro e escuro', async ({ page }) => {
-	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
-
 	await page.context().addCookies([
 		{
 			name: 'ads-theme',

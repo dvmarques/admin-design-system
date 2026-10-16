@@ -733,8 +733,6 @@ test.describe('snapshots visuais', () => {
 
 	for (const route of snapshotRoutes) {
 		test(`mantém a apresentação de ${route.path} nos temas claro e escuro`, async ({ page }) => {
-			test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
-
 			for (const theme of ['dark', 'light'] as const) {
 				await useTheme(page, theme);
 				await page.setViewportSize({ width: 1280, height: 800 });

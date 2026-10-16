@@ -25,7 +25,7 @@ Ao marcar o PR como **Ready for review**, o evento `ready_for_review` dispara um
 - As demais PRs com base `develop` são integradas por **squash**.
 - PRs sem o label `release` e com base `develop` devem fechar a issue correspondente com uma palavra-chave de fechamento no corpo, como `Closes #123`; como `develop` é a branch padrão, a issue é fechada no merge. PRs de release (`release/X.Y.Z -> master` e o back-merge) não usam palavras-chave de fechamento.
 - Para relacionar uma PR a uma issue sem fechá-la, crie o vínculo manualmente pela seção **Development** da issue.
-- A exclusão automática de branches após merge deve permanecer desabilitada. A branch `release/X.Y.Z` só pode ser removida depois do back-merge e da publicação concluídos.
+- A exclusão automática de head branches após merge pode permanecer habilitada para as branches de trabalho comuns. A branch `release/X.Y.Z` fica protegida contra remoção por um ruleset de branch (veja [Ruleset de release](#ruleset-de-release)) e só pode ser removida depois do back-merge e da publicação concluídos.
 
 ## Preparar uma release
 
@@ -98,6 +98,18 @@ Proteja `develop` com:
 
 A proteção deve estar ativa antes de `develop` ser tratada como fonte confiável do workflow manual de publicação.
 
+## Ruleset de release
+
+A exclusão automática de head branches é uma opção do repositório e não filtra por nome. Para preservar `release/X.Y.Z` até o back-merge e a publicação sem desabilitá-la para as demais branches, proteja `release/**` com um ruleset de branch:
+
+- alvo: `release/**`;
+- regra: somente **Restrict deletions**; criação e push continuam livres, então `release:prepare` e as PRs não são afetados;
+- bypass administrativo no menor escopo possível.
+
+Branch protegida contra remoção não é apagada pela exclusão automática após o merge, como já acontece com `master` e `develop`.
+
+Na primeira release após criar o ruleset, confirme que `release/X.Y.Z` continua existindo depois do merge da PR para `master` e depois do back-merge. Se a exclusão automática a remover, desfaça a mudança: desabilite a exclusão automática de head branches no repositório e registre o resultado na change `protect-release-branches`.
+
 ## Publicar
 
 Após o back-merge estar merged e `develop` validada, abra **Actions > Publicar release** e execute o workflow a partir de `develop`, informando `X.Y.Z`.
@@ -117,7 +129,7 @@ A tag é sempre anotada `vX.Y.Z` e aponta para o `merge_commit_sha` da PR `relea
 - GitHub Release já existente: só retorna sucesso/no-op quando nome, tag, commit, `draft=false`, `prerelease=false` e body estiverem consistentes com o changelog; qualquer divergência falha.
 - O corpo da release vem exclusivamente da seção fechada da versão no changelog do commit liberado.
 
-Depois de back-merge e publicação concluídos, a branch `release/X.Y.Z` pode ser removida. A próxima release só deve começar quando esse estado estiver reconciliado e publicado.
+Depois de back-merge e publicação concluídos, a branch `release/X.Y.Z` pode ser removida. Como o [ruleset de release](#ruleset-de-release) bloqueia a remoção, quem tem bypass administrativo a remove, ou a regra é suspensa por um momento. A próxima release só deve começar quando esse estado estiver reconciliado e publicado.
 
 ## Validação local útil
 

@@ -99,11 +99,12 @@ O workflow só roda em branches diferentes de `develop` e `master`.
 
 ### Tempo de CI
 
-Medido na CI (`ubuntu-latest`), com o job "Fluxos no navegador" no `develop`
-antes da mudança: cerca de 1 min 40 s no total, dos quais ~40 s são a execução
-do Playwright com os snapshots pulados. Com os snapshots ativos, a execução do
-Playwright leva ~41 s (108 testes em Chromium), ou seja, um aumento de cerca de
-1 s no job.
+Medido na CI (`ubuntu-latest`), no job "Fluxos no navegador". Antes da mudança
+(`develop`, snapshots pulados): job de ~1 min 39 s, com ~40 s no passo do
+Playwright. Depois (PR #96, 108 testes em Chromium com os snapshots ativos): job
+de ~1 min 28 s, com ~43 s no passo do Playwright. O custo dos snapshots é de
+cerca de 3 s por execução; a diferença total do job fica dentro da variação
+entre runs.
 
 O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. A suíte
 atual valida o consumo público das primitivas no admin demo, a alternância de

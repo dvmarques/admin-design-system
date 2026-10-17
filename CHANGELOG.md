@@ -32,6 +32,13 @@ por versão e pelas changes correspondentes do OpenSpec.
   ganha o requisito de retenção da branch de release até o back-merge e a
   publicação. Somente documentação e processo, sem mudança de API pública, pacotes,
   scripts ou workflows.
+- `fluxo-de-agentes` - Compatibilidade entre Claude Code, Cursor e Codex:
+  `AGENTS.md` como fonte única, sincronização das skills próprias de
+  `.agents/skills` para `.claude/skills` (`npm run sync:agent-skills`, com
+  verificação em `test:quality`), servidores MCP em `.mcp.json` e
+  `.cursor/mcp.json`, hook `pre-commit` com Husky e lint-staged, e hooks e
+  subagents do Claude Code. Somente tooling e documentação, sem mudança de API
+  pública nem de pacotes distribuídos.
 
 ### [0.1.0] - 15-out-2026
 

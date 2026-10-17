@@ -22,7 +22,7 @@
 
 - [x] 4.1 Criar `e2e/accessibility-preferences.spec.ts` (Chromium) com `emulateMedia` para movimento reduzido, cores forçadas e `contrast: 'more'`, usando papéis ARIA e estilo computado, e verificar que passa em `npm run test:e2e`
 - [x] 4.2 Rodar `axe` nos temas claro e escuro e com `contrast: 'more'` nas rotas já cobertas e verificar zero violações
-- [ ] 4.3 Se `borderControl` alterar snapshots, executar o workflow "Atualizar baselines visuais", revisar o diff das imagens e fazer push adicional (ou alternar Draft/Ready) para disparar a CI
+- [x] 4.3 Se `borderControl` alterar snapshots, executar o workflow "Atualizar baselines visuais", revisar o diff das imagens e fazer push adicional (ou alternar Draft/Ready) para disparar a CI
 
 ## 5. Documentação e validação
 

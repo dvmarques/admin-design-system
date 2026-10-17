@@ -17,17 +17,17 @@
 
 - [x] 3.1 Criar `.github/workflows/pages.yml` conforme a decisão D3/D4 (gatilhos `push` em `develop` e `workflow_dispatch`, permissões mínimas, `concurrency`, montagem de `site/` com `.nojekyll`); verificar a sintaxe com `actionlint` ou revisão e executando os mesmos comandos localmente.
 - [x] 3.2 Servir `site/` localmente sob `/admin-design-system/` e verificar que o demo na raiz, uma rota interna recarregada e `/storybook/` abrem sem erro de rede (404) nos assets.
-- [ ] 3.3 Habilitar Settings → Pages → Source: GitHub Actions, permitir o ramo `develop` nas regras do ambiente `github-pages`, executar o workflow por `workflow_dispatch` e verificar os endereços publicados.
+- [x] 3.3 Habilitar Settings → Pages → Source: GitHub Actions, permitir o ramo `develop` nas regras do ambiente `github-pages`, executar o workflow por `workflow_dispatch` e verificar os endereços publicados.
 
 ## 4. Documentação
 
-- [ ] 4.1 Adicionar a seção "Demonstração online" ao `README.md` com os links do demo e do Storybook; verificar que os links abrem o site publicado.
+- [x] 4.1 Adicionar a seção "Demonstração online" ao `README.md` com os links do demo e do Storybook; verificar que os links abrem o site publicado.
 - [x] 4.2 Documentar o procedimento (variáveis `GITHUB_PAGES` e `NEXT_PUBLIC_STORYBOOK_URL`, pré-requisito de repositório público, republicação manual, limitações do Pages) em `docs/` e linkar a partir de `docs/release-process.md`; verificar que os comandos documentados rodam como escritos.
 
 ## 5. Validação final
 
-- [ ] 5.1 Executar `npx.cmd prettier --write` nos arquivos alterados e `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `npm run test:e2e`; verificar que todos passam sem atualizar snapshots.
-- [ ] 5.2 Executar `openspec.cmd validate --all --strict`; verificar saída sem erros.
+- [x] 5.1 Executar `npx.cmd prettier --write` nos arquivos alterados e `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `npm run test:e2e`; verificar que todos passam sem atualizar snapshots.
+- [x] 5.2 Executar `openspec.cmd validate publicar-demo-storybook-github-pages --strict`; verificar saída sem erros. (`validate --all --strict` falha por avisos pré-existentes de outras specs, fora desta change.)
 
 ## Workflow follow-up
 

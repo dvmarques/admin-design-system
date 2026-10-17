@@ -1,0 +1,55 @@
+name: Publicar no GitHub Pages
+
+# Publica o demo (raiz) e o Storybook (/storybook/) como um único site estático. Enquanto não
+# existe versão final, o ramo de publicação é `develop` (ver docs/github-pages.md).
+on:
+  push:
+    branches:
+      - develop
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    name: Construir o site
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - run: npm run build --workspace @admin-ds/tokens
+      - run: npm run build --workspace @admin-ds/components
+      - run: npm run build --workspace @admin-ds/admin
+      - name: Gerar demo estático e Storybook e montar site/
+        run: npm run build:pages
+      - run: npx playwright install --with-deps chromium
+      - name: Verificar o site sob o subcaminho do repositório
+        run: npm run test:e2e:pages
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+  deploy:
+    name: Publicar
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4

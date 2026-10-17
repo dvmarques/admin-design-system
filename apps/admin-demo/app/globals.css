@@ -98,6 +98,11 @@ body {
 .demo-header-tools {
 	margin-left: auto;
 }
+.demo-header-tools:has(.demo-storybook-link) {
+	display: flex;
+	align-items: center;
+	gap: 1rem;
+}
 .demo-metrics-grid {
 	display: grid;
 	grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));

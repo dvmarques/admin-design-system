@@ -31,6 +31,8 @@
 		"check:agent-skills": "node ./scripts/sync-agent-skills.mjs --check",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
 		"build": "node ./scripts/build-all.mjs",
+		"build:pages": "node ./scripts/build-pages-site.mjs --build",
+		"test:e2e:pages": "playwright test --config playwright.pages.config.ts --reporter=dot",
 		"test:e2e": "playwright test --reporter=dot",
 		"test:e2e:verbose": "playwright test --reporter=list",
 		"release:prepare": "node ./scripts/prepare-release.mjs",

@@ -2,10 +2,10 @@ import '@admin-ds/tokens/styles.css';
 import '@admin-ds/components/styles.css';
 import '@admin-ds/admin/styles.css';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
 import './globals.css';
-import { resolveTheme, themeCookieName } from '../lib/theme';
+import { isStaticExport, readServerTheme } from '../lib/server-theme';
+import { themeInitScript } from '../lib/theme';
 
 export const metadata: Metadata = {
 	title: 'Admin Design System Demo',
@@ -13,11 +13,21 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const cookieStore = await cookies();
-	const theme = resolveTheme(cookieStore.get(themeCookieName)?.value);
+	const theme = await readServerTheme();
 
 	return (
-		<html lang="pt-BR" data-scroll-behavior="smooth" data-theme={theme}>
+		<html
+			lang="pt-BR"
+			data-scroll-behavior="smooth"
+			data-theme={theme}
+			// The static export applies the saved theme before hydration, so the attribute differs.
+			suppressHydrationWarning={isStaticExport}
+		>
+			{isStaticExport ? (
+				<head>
+					<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+				</head>
+			) : null}
 			<body>{children}</body>
 		</html>
 	);

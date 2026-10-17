@@ -12,3 +12,7 @@ debug.log
 
 # Gerado localmente pelo Next.js
 apps/admin-demo/AGENTS.md
+
+# Saídas do build do GitHub Pages
+apps/admin-demo/out/
+site/

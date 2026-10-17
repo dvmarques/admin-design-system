@@ -8,6 +8,8 @@ export default tseslint.config(
 			'**/node_modules/**',
 			'**/.next/**',
 			'**/storybook-static/**',
+			'apps/admin-demo/out/**',
+			'site/**',
 			'**/coverage/**',
 			'**/playwright-report/**',
 		],

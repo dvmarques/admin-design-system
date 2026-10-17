@@ -48,7 +48,8 @@ expect(results.violations).toHaveLength(0);
 
 ## Playwright e testes end-to-end
 
-O Playwright executa testes em um navegador real — neste projeto, Chromium.
+O Playwright executa testes em navegadores reais: Chromium roda toda a suíte e
+Firefox e WebKit rodam um smoke (ver abaixo).
 Ele cobre comportamentos que o ambiente simulado do Vitest e JSDOM não reproduz
 integralmente, como foco visível, navegação por teclado, CSS renderizado,
 responsividade, hidratação do Next.js e fluxos completos entre componentes de
@@ -97,6 +98,20 @@ Para aceitar uma mudança visual intencional:
 
 O workflow só roda em branches diferentes de `develop` e `master`.
 
+### Smoke em Firefox e WebKit
+
+`e2e/smoke.spec.ts` roda nos três navegadores (projetos `chromium`, `firefox` e
+`webkit` em `playwright.config.ts`); Firefox e WebKit executam só esse arquivo.
+Ele cobre `/`, `/clientes` e `/componentes`: carregamento sem erros de console
+nem de página (incluindo hidratação), hidratação do botão de tema e navegação
+pelo menu principal. Não há snapshots nesses navegadores.
+
+Na CI, cada navegador é um job paralelo e independente da matrix:
+"Fluxos no navegador" (Chromium), "Fluxos no navegador (Firefox)" e "Fluxos no
+navegador (WebKit)". O WebKit do Playwright no Linux detecta quebras de motor,
+mas não garante paridade com o Safari. Para rodar um navegador isolado:
+`npx playwright test --project=firefox`.
+
 ### Tempo de CI
 
 Medido na CI (`ubuntu-latest`), no job "Fluxos no navegador". Antes da mudança
@@ -117,7 +132,8 @@ e2e/
 ├── admin-demo-all-routes.spec.ts
 ├── admin-demo-routes.spec.ts
 ├── data-display.spec.ts
-└── overlay.spec.ts
+├── overlay.spec.ts
+└── smoke.spec.ts
 ```
 
 Os arquivos `e2e/axe.ts` e `e2e/routes.ts` são apoio compartilhado, não

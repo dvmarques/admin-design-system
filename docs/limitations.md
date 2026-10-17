@@ -22,7 +22,10 @@ componentes administrativos.
 - O baseline de tamanho cobre os artefatos atuais e permite crescimento de
   até 10%; mudanças maiores exigem revisão explícita do baseline.
 - A validação automatizada de `axe-core` e Playwright não substitui revisão
-  manual com teclado, leitor de tela e testes em navegadores adicionais.
+  manual com teclado, leitor de tela e testes em dispositivos reais. Firefox e
+  WebKit têm apenas smoke tests (`/`, `/clientes` e `/componentes`), sem
+  snapshots e sem a suíte completa; o WebKit do Playwright no Linux não equivale
+  ao Safari.
 - Os utilitários Tailwind só existem no CSS distribuído se aparecerem nas
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`

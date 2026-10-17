@@ -76,7 +76,9 @@ atual (`packages/tokens/tests/generation.test.mjs`) cobre só 4,5:1.
    controles precisam de 3:1 (WCAG 1.4.11). Form controls (incluindo Select e
    DatePicker) e o indicador de checkbox, radio e switch passam a usar
    `border-border-control`; Button secundário e Badge mantêm `border` porque têm
-   rótulo textual. É um token novo
+   rótulo textual. O estilo somente leitura passa de `read-only:` (que também
+   casa com `select` e apagava a borda do `AdsSelect`) para o atributo
+   `[readonly]`. É um token novo
    (compatível); `border` e `borderStrong` ficam como estão.
 6. **Teste de contraste dirigido por dados.** Um módulo de apoio em
    `packages/tokens/tests` exporta `contrastPairs` (`{ foreground, background,

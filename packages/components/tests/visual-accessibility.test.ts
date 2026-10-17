@@ -39,6 +39,12 @@ describe('distributed CSS for user preferences', () => {
 		expect(css).toContain('.border-border-control');
 	});
 
+	it('limits the readonly look to the readonly attribute, not to select elements', () => {
+		// `select` casa com `:read-only`, o que apagaria a borda de controle do AdsSelect.
+		expect(css).not.toContain(':read-only');
+		expect(css).toMatch(/\[readonly\]/);
+	});
+
 	it('styles selection indicators with system colors under forced-colors', () => {
 		const forced = css.slice(css.indexOf('@media (forced-colors:active)'));
 		expect(forced).toContain('highlight');

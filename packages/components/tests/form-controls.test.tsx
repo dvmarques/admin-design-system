@@ -53,8 +53,8 @@ describe('text form controls', () => {
 			</>,
 		);
 		expect(screen.getByRole('textbox', { name: 'Somente leitura' })).toHaveClass(
-			'read-only:bg-surface-muted',
-			'read-only:cursor-default',
+			'[&[readonly]]:bg-surface-muted',
+			'[&[readonly]]:cursor-default',
 		);
 		expect(screen.getByRole('textbox', { name: 'Desabilitado' })).toBeDisabled();
 	});

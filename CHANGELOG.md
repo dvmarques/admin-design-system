@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `polimento-visual-tokens` - Elevação por tema, densidade de tabela e tokens
+  de skeleton; props opcionais em `AdsTable`, `AdsSmartTable`, `AdsSkeleton` e
+  `AdsEmptyState`; estados vazio textual de métrica e painel com
+  `AdsEmptyState` compacto. Closes #88.
 - `acessibilidade-visual-estilos` - Movimento por token, `forced-colors` e
   `prefers-contrast` no CSS distribuído; token `border-control` (3:1) e
   somente leitura via `[readonly]` sem afetar `AdsSelect`. A revisão manual em

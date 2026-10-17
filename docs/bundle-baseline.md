@@ -82,3 +82,12 @@ e `prefers-reduced-motion: reduce`; `@admin-ds/components` de 273237 para
 token e ajustes de formulário; `@admin-ds/admin` de 165809 para 166033 bytes
 (+224) por `forced-colors` na tabela inteligente e na barra de filtros. Sem novas
 dependências de runtime.
+
+O baseline foi atualizado na change `polimento-visual-tokens`, medido em LF com
+`dist/` limpo (`rm -rf packages/*/dist`), build de tokens, components e admin e
+`inspect:packages`: `@admin-ds/tokens` de 29610 para 31756 bytes (+2146) por
+`elevationDark`, blocos de densidade e tokens de skeleton; `@admin-ds/components`
+de 274766 para 276595 bytes (+1829) por props de densidade, variantes de skeleton
+e tamanho de estado vazio; `@admin-ds/admin` de 166033 para 167071 bytes (+1038)
+por densidade em `AdsSmartTable`, skeleton por token e `AdsEmptyState` compacto.
+Sem novas dependências de runtime.

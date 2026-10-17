@@ -1,15 +1,14 @@
 import { AdsTypography } from '@admin-ds/components';
 import { AdsAdminShell } from '@admin-ds/admin';
-import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
-import { resolveTheme, themeCookieName } from '../../lib/theme';
+import { readServerTheme } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
 import { RouteChangeHandler } from '../route-change-handler';
+import { StorybookLink } from '../storybook-link';
 import { ThemeControl } from '../theme-control';
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const cookieStore = await cookies();
-	const theme = resolveTheme(cookieStore.get(themeCookieName)?.value);
+	const theme = await readServerTheme();
 
 	return (
 		<AdsAdminShell>
@@ -22,6 +21,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 					Admin Design System
 				</AdsTypography>
 				<div className="demo-header-tools">
+					<StorybookLink />
 					<ThemeControl initialTheme={theme} />
 				</div>
 			</AdsAdminShell.Header>

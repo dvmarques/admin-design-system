@@ -148,3 +148,7 @@ A validação completa do projeto continua sendo:
 ```bash
 npm run validate
 ```
+
+## Site demonstrativo
+
+O demo e o Storybook são publicados no GitHub Pages por um workflow próprio, sem relação com as releases e sem publicação no npm. Veja `docs/github-pages.md`.

@@ -6,6 +6,7 @@ Estado atual observado:
 
 - `apps/admin-demo/next.config.ts` não define `output`; o demo roda com `next start` nos E2E.
 - O tema vem do cookie `ads-theme`, lido por `cookies()` em `app/layout.tsx`, `app/(admin)/layout.tsx` e `app/(admin)/preferencias/page.tsx`, e gravado por `applyTheme` em `lib/theme.ts`. **`cookies()` é incompatível com `output: 'export'`**, então o build estático precisa de outro caminho para o tema.
+- `app/(admin)/clientes/page.tsx` lê `searchParams` no servidor (filtros, ordenação e página na URL), o que também é incompatível com `output: 'export'`.
 - Os dados do demo são locais e determinísticos (`lib/data`); não há route handlers nem server actions. A navegação usa `next/link` com `href` raiz-relativo (que respeita `basePath`); o único `href` literal está em `customers-listing.tsx`, também com `Link`.
 - `apps/docs` constrói com `storybook build` (saída estática relativa). O CI atual só roda em `develop`/`master`; `docs/release-process.md` define que mudanças funcionais entram em `develop` e `master` recebe releases.
 
@@ -35,11 +36,19 @@ Um helper de servidor único (`lib/server-theme.ts`) devolve `'light'` quando `G
 
 Alternativas: `localStorage` (descartada: dois mecanismos de persistência); tema sempre claro no Pages (descartada: perde o tema escuro, que é requisito do projeto).
 
+### D2b. `/clientes` no build estático
+
+A montagem da visão (filtros, ordenação, página) foi extraída para `customers-view.ts`. No build normal, `page.tsx` a executa no servidor com `searchParams`, como antes. No build estático, `page.tsx` não toca em `searchParams` e renderiza `CustomersStaticView` (Client Component) dentro de `Suspense`, que lê a URL com `useSearchParams` e chama a mesma função; o fallback é a listagem em estado de carregamento. Alternativa: excluir `/clientes` do Pages (descartada: o spec exige todas as rotas administrativas). Trade-off: no build estático os dados mock são enviados ao navegador, aceitável por serem dados fictícios e determinísticos.
+
 ### D3. Um workflow, um artefato
 
 `pages.yml` faz checkout, `npm ci --ignore-scripts`, builda `tokens`, `components` e `admin`, gera o demo (`GITHUB_PAGES=true`) e o Storybook, monta `site/` (demo na raiz, Storybook em `site/storybook/`, mais `.nojekyll`) e publica com `actions/upload-pages-artifact` e `actions/deploy-pages`. Permissões mínimas: `contents: read`, `pages: write`, `id-token: write`; `concurrency` do grupo `pages` sem cancelar deploy em andamento. Ações fixadas por versão major, como no `ci.yml`.
 
 Alternativa: dois workflows/ramos `gh-pages`. Descartada: um repositório tem um único site e o artefato único garante o "tudo ou nada" do requisito de publicação.
+
+Antes de publicar, o job de build monta `site/` com `scripts/build-pages-site.mjs --build` (multiplataforma, sem `cross-env`) e executa `npm run test:e2e:pages`: uma configuração Playwright própria (`playwright.pages.config.ts`) que serve `site/` sob `/admin-design-system/` com `scripts/serve-pages-site.mjs` e verifica rotas, tema, link e Storybook. O E2E principal não muda.
+
+Também foi adicionado `app/icon.svg`: sem ele o navegador pede `/favicon.ico` fora do `basePath`, gerando um 404 em todas as páginas do site publicado.
 
 ### D4. Ramo de publicação
 

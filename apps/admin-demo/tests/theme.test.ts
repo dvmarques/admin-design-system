@@ -1,5 +1,5 @@
 import { afterEach, describe, expect, it } from 'vitest';
-import { applyTheme, resolveTheme, themeCookieName } from '../lib/theme';
+import { applyTheme, resolveTheme, themeCookieName, themeInitScript } from '../lib/theme';
 
 describe('resolveTheme', () => {
 	it('uses light as the deterministic fallback', () => {
@@ -34,5 +34,26 @@ describe('applyTheme', () => {
 
 		expect(document.documentElement.dataset.theme).toBe('light');
 		expect(document.cookie).toContain(`${themeCookieName}=light`);
+	});
+});
+
+describe('themeInitScript', () => {
+	afterEach(() => {
+		delete document.documentElement.dataset.theme;
+		document.cookie = `${themeCookieName}=; max-age=0; path=/`;
+	});
+
+	it('applies the saved dark theme before hydration', () => {
+		document.cookie = `${themeCookieName}=dark; path=/`;
+
+		new Function(themeInitScript)();
+
+		expect(document.documentElement.dataset.theme).toBe('dark');
+	});
+
+	it('leaves the theme untouched without a saved preference', () => {
+		new Function(themeInitScript)();
+
+		expect(document.documentElement.dataset.theme).toBeUndefined();
 	});
 });

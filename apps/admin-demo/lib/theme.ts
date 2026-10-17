@@ -16,3 +16,9 @@ export function applyTheme(theme: Theme) {
 	document.documentElement.dataset.theme = theme;
 	document.cookie = `${themeCookieName}=${theme}; path=/; max-age=31536000; samesite=lax`;
 }
+
+/**
+ * Inline script for the static export, which has no server to read the cookie: it applies the saved
+ * theme to `<html>` before the first paint. Kept as a string so it can run before React hydrates.
+ */
+export const themeInitScript = `(function(){try{var m=document.cookie.match(/(?:^|; )${themeCookieName}=([^;]*)/);if(m&&m[1]==='dark'){document.documentElement.dataset.theme='dark'}}catch(e){}})();`;

@@ -15,6 +15,13 @@ O desenvolvimento é orientado por especificações com OpenSpec. Cada
 mudança relevante passa por proposta, requisitos, design, tarefas,
 implementação, validação e arquivamento.
 
+## Demonstração online
+
+- [Aplicação de demonstração](https://dvmarques.github.io/admin-design-system/)
+- [Storybook](https://dvmarques.github.io/admin-design-system/storybook/)
+
+O site é publicado pelo GitHub Pages a partir de `develop`; veja `docs/github-pages.md`.
+
 ## Requisitos
 
 - Node.js 24 ou superior (veja `.nvmrc`; use `nvm use` ou equivalente);

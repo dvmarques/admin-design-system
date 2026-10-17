@@ -37,6 +37,9 @@ export const tokenValues = {
   "elevation.sm": "0 1px 3px rgb(15 23 42 / 0.08)",
   "elevation.md": "0 8px 20px rgb(15 23 42 / 0.12)",
   "elevation.lg": "0 18px 40px rgb(15 23 42 / 0.16)",
+  "skeleton.heightText": "1rem",
+  "skeleton.heightValue": "2rem",
+  "skeleton.heightBlock": "2.5rem",
   "opacity.disabled": "0.5",
   "opacity.overlay": "0.64",
   "motion.fast": "140ms",
@@ -84,7 +87,9 @@ export const tokenValues = {
   "color.overlayCloseBackground": "#f1f5f9",
   "color.overlayCloseContent": "#0f172a",
   "color.overlayCloseBackgroundHover": "#e2e8f0",
-  "color.overlayBackdrop": "rgb(15 23 42 / 0.64)"
+  "color.overlayBackdrop": "rgb(15 23 42 / 0.64)",
+  "density.cellPaddingX": "1rem",
+  "density.cellPaddingY": "0.75rem"
 } as const
 export type TokenName = keyof typeof tokenValues
 export const tokenCssVariable = (name: TokenName) => `--ads-${name.replaceAll(".", "-").replaceAll(/[A-Z]/g, (letter) => `-${letter.toLowerCase()}`)}`

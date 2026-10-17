@@ -67,6 +67,30 @@ export default function DataDisplayPage() {
 					<AdsPagination page={1} pageCount={4} />
 				</section>
 
+				<section aria-labelledby="data-table-compact" className="demo-section">
+					<AdsTypography as="h2" id="data-table-compact" variant="heading2">
+						Densidade compacta
+					</AdsTypography>
+					<AdsTable aria-label="Clientes recentes (compacta)" density="compact">
+						<AdsTableHead>
+							<AdsTableRow>
+								<AdsTableHeader>Conta</AdsTableHeader>
+								<AdsTableHeader align="end">Pedidos</AdsTableHeader>
+							</AdsTableRow>
+						</AdsTableHead>
+						<AdsTableBody>
+							<AdsTableRow>
+								<AdsTableCell>Helena Prado</AdsTableCell>
+								<AdsTableCell align="end">18</AdsTableCell>
+							</AdsTableRow>
+							<AdsTableRow>
+								<AdsTableCell>Otávio Reis</AdsTableCell>
+								<AdsTableCell align="end">7</AdsTableCell>
+							</AdsTableRow>
+						</AdsTableBody>
+					</AdsTable>
+				</section>
+
 				<section aria-labelledby="collections" className="demo-section">
 					<AdsTypography as="h2" id="collections" variant="heading2">
 						Coleções

@@ -1,6 +1,13 @@
-import { AdsCard, AdsProgress, AdsSkeleton, type AdsProgressProps } from '@admin-ds/components';
+import {
+	AdsCard,
+	AdsEmptyState,
+	AdsProgress,
+	AdsSkeleton,
+	type AdsProgressProps,
+} from '@admin-ds/components';
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
+import { hasDashboardEmpty } from './dashboard-empty.js';
 
 export type AdsMetricTrend = 'up' | 'down' | 'neutral';
 export type AdsMetricSentiment = 'positive' | 'negative' | 'neutral';
@@ -60,6 +67,15 @@ export interface AdsMetricCardProps extends Omit<HTMLAttributes<HTMLDivElement>,
 	empty?: ReactNode;
 }
 
+/** Texto ou número vira um `AdsEmptyState` compacto; nós React são renderizados como informados. */
+function renderEmpty(empty: ReactNode) {
+	return typeof empty === 'string' || typeof empty === 'number' ? (
+		<AdsEmptyState size="compact" title={empty} />
+	) : (
+		empty
+	);
+}
+
 /** Card de métrica (KPI) sem regras de negócio. A tendência usa ícone e texto, nunca só cor. */
 export function AdsMetricCard({
 	change,
@@ -91,8 +107,8 @@ export function AdsMetricCard({
 				{error}
 			</div>
 		);
-	} else if (empty) {
-		body = <div className="ads-metric-card-message">{empty}</div>;
+	} else if (hasDashboardEmpty(empty)) {
+		body = <div className="ads-metric-card-message">{renderEmpty(empty)}</div>;
 	} else {
 		body = (
 			<>
@@ -199,8 +215,8 @@ export function AdsDashboardPanel({
 				{errorActions ? <div className="ads-dashboard-panel-actions">{errorActions}</div> : null}
 			</div>
 		);
-	} else if (empty) {
-		body = empty;
+	} else if (hasDashboardEmpty(empty)) {
+		body = renderEmpty(empty);
 	} else {
 		body = children;
 	}

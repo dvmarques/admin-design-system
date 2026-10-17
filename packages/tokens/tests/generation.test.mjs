@@ -67,3 +67,43 @@ test('rejects high-contrast overrides for unknown roles', () => {
 		/Unknown high-contrast override: light.missing/,
 	);
 });
+
+test('emits dark elevation only for dark theme selectors', () => {
+	const { css } = createArtifacts(tokenSource);
+	const light = css.match(/:root, \[data-theme="light"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const dark = css.match(/\[data-theme="dark"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const system = css.match(/:root:not\(\[data-theme\]\) \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	assert.ok(light.includes(`--ads-elevation-md: ${tokenSource.elevation.md}`));
+	for (const block of [dark, system])
+		assert.ok(block.includes(`--ads-elevation-md: ${tokenSource.elevationDark.md}`));
+	assert.notEqual(tokenSource.elevation.md, tokenSource.elevationDark.md);
+});
+
+test('emits density tokens after the themes, compact last', () => {
+	const { css, module } = createArtifacts(tokenSource);
+	const comfortable = css.indexOf(':root, [data-density="comfortable"] {');
+	const compact = css.indexOf('[data-density="compact"] {');
+	const system = css.lastIndexOf('@media (prefers-color-scheme: dark)');
+	assert.ok(system < comfortable && comfortable < compact);
+	assert.match(css.slice(compact), /--ads-density-cell-padding-y: 0\.375rem/);
+	assert.match(css.slice(comfortable, compact), /--ads-density-cell-padding-y: 0\.75rem/);
+	assert.match(module, /"density\.cellPaddingY": "0\.75rem"/);
+	const themeBlocks = css.slice(0, comfortable);
+	assert.doesNotMatch(themeBlocks, /--ads-density-/);
+});
+
+test('emits skeleton height tokens', () => {
+	const { css } = createArtifacts(tokenSource);
+	assert.match(css, /--ads-skeleton-height-text: 1rem/);
+	assert.match(css, /--ads-skeleton-height-value: 2rem/);
+	assert.match(css, /--ads-skeleton-height-block: 2\.5rem/);
+});
+
+test('rejects dark elevation and compact density with different keys', () => {
+	const elevation = structuredClone(tokenSource);
+	delete elevation.elevationDark.lg;
+	assert.throws(() => validateTokenSource(elevation), /elevationDark must define the same tokens/);
+	const density = structuredClone(tokenSource);
+	density.densityCompact.extra = '1px';
+	assert.throws(() => validateTokenSource(density), /densityCompact must define the same tokens/);
+});

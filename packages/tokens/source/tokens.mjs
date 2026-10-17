@@ -187,6 +187,16 @@ export const tokenSource = {
 		md: '0 8px 20px rgb(15 23 42 / 0.12)',
 		lg: '0 18px 40px rgb(15 23 42 / 0.16)',
 	},
+	/** Mesmas chaves de `elevation`; sombra mais opaca com contorno sutil sobre fundos escuros. */
+	elevationDark: {
+		sm: '0 1px 3px rgb(0 0 0 / 0.5), 0 0 0 1px rgb(255 255 255 / 0.06)',
+		md: '0 8px 20px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.06)',
+		lg: '0 18px 40px rgb(0 0 0 / 0.65), 0 0 0 1px rgb(255 255 255 / 0.08)',
+	},
+	/** Densidade confortável (padrão); `densityCompact` tem as mesmas chaves. */
+	density: { cellPaddingX: '1rem', cellPaddingY: '0.75rem' },
+	densityCompact: { cellPaddingX: '0.75rem', cellPaddingY: '0.375rem' },
+	skeleton: { heightText: '1rem', heightValue: '2rem', heightBlock: '2.5rem' },
 	layer: { base: '0', dropdown: '30', overlay: '40', toast: '50' },
 	opacity: { disabled: '0.5', overlay: '0.64' },
 	motion: { fast: '140ms', normal: '220ms', easing: 'cubic-bezier(0.16, 1, 0.3, 1)' },

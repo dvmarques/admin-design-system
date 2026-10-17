@@ -10,6 +10,7 @@ import {
 	AdsList,
 	AdsListItem,
 	AdsProgress,
+	AdsSkeleton,
 	AdsTable,
 	AdsTableBody,
 	AdsTableCell,
@@ -52,6 +53,33 @@ export const Table: Story = {
 	),
 };
 
+export const TableDensity: Story = {
+	render: () => (
+		<div className="grid gap-6">
+			{(['comfortable', 'compact'] as const).map((density) => (
+				<AdsTable aria-label={`Clientes (${density})`} density={density} key={density}>
+					<AdsTableHead>
+						<AdsTableRow>
+							<AdsTableHeader>Cliente</AdsTableHeader>
+							<AdsTableHeader align="end">Pedidos</AdsTableHeader>
+						</AdsTableRow>
+					</AdsTableHead>
+					<AdsTableBody>
+						<AdsTableRow>
+							<AdsTableCell>Mariana Costa</AdsTableCell>
+							<AdsTableCell align="end">18</AdsTableCell>
+						</AdsTableRow>
+						<AdsTableRow>
+							<AdsTableCell>Rafael Lima</AdsTableCell>
+							<AdsTableCell align="end">7</AdsTableCell>
+						</AdsTableRow>
+					</AdsTableBody>
+				</AdsTable>
+			))}
+		</div>
+	),
+};
+
 export const Collections: Story = {
 	render: () => (
 		<div className="grid gap-4 md:grid-cols-2">
@@ -89,6 +117,12 @@ export const Feedback: Story = {
 				description="Ajuste os filtros ou limpe a busca para visualizar registros."
 				actions={<AdsButton variant="secondary">Limpar filtros</AdsButton>}
 			/>
+			<AdsEmptyState size="compact" title="Sem dados no período" />
+			<div className="grid gap-2">
+				<AdsSkeleton variant="text" className="w-full" />
+				<AdsSkeleton variant="value" className="w-3/5" />
+				<AdsSkeleton variant="block" className="w-full" />
+			</div>
 		</div>
 	),
 };

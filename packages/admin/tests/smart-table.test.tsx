@@ -228,10 +228,18 @@ describe('AdsSmartTable', () => {
 		expect(button).toHaveFocus();
 	});
 
+	it('passes the density to the table and keeps the default markup without it', () => {
+		const { rerender } = render(<Controlled density="compact" />);
+		expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact');
+		rerender(<Controlled />);
+		expect(screen.getByRole('table')).not.toHaveAttribute('data-density');
+	});
+
 	it('shows loading skeletons, aria-busy and a disabled select all', () => {
 		render(<Controlled loading loadingRows={2} />);
 		expect(screen.getByRole('table')).toHaveAttribute('aria-busy', 'true');
 		expect(document.querySelectorAll('.ads-skeleton')).toHaveLength(6);
+		expect(document.querySelector('.ads-skeleton')).toHaveAttribute('data-variant', 'text');
 		expect(
 			screen.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' }),
 		).toBeDisabled();

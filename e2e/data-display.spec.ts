@@ -14,10 +14,28 @@ test('preserva semântica e acesso aos dados em viewport estreita', async ({ pag
 			name: 'Apresentação de dados administrativos',
 		}),
 	).toBeVisible();
-	await expect(page.getByRole('table', { name: 'Clientes recentes' })).toBeVisible();
+	await expect(page.getByRole('table', { name: 'Clientes recentes', exact: true })).toBeVisible();
 	await expect(page.getByRole('columnheader', { name: 'Cliente' })).toBeVisible();
 	await expect(page.getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
-	await expect(page.locator('.ads-table-container')).toHaveCSS('overflow-x', 'auto');
+	await expect(page.locator('.ads-table-container').first()).toHaveCSS('overflow-x', 'auto');
+});
+
+test('a tabela compacta usa menos espaçamento vertical que a confortável', async ({ page }) => {
+	await page.goto('/data-display');
+
+	const comfortable = page
+		.getByRole('table', { name: 'Clientes recentes', exact: true })
+		.getByRole('cell', { name: 'Mariana Costa' });
+	const compact = page
+		.getByRole('table', { name: 'Clientes recentes (compacta)' })
+		.getByRole('cell', { name: 'Helena Prado' });
+	await expect(page.getByRole('table', { name: 'Clientes recentes (compacta)' })).toHaveAttribute(
+		'data-density',
+		'compact',
+	);
+	const padding = (cell: typeof compact) =>
+		cell.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop));
+	expect(await padding(compact)).toBeLessThan(await padding(comfortable));
 });
 
 test('expõe progresso e estado vazio sem semântica de erro implícita', async ({ page }) => {

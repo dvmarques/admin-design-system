@@ -99,6 +99,19 @@ export const SingleSelection: Story = {
 	render: () => <Demo selectionMode="single" />,
 };
 
+export const Compact: Story = {
+	args,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`density="compact"` reduz o espaçamento das células pelos tokens `--ads-density-*`. O atributo `data-density` em um ancestral tem o mesmo efeito.',
+			},
+		},
+	},
+	render: () => <Demo density="compact" />,
+};
+
 export const Loading: Story = { args, render: () => <Demo loading /> };
 
 export const Empty: Story = { args, render: () => <Demo rows={[]} /> };

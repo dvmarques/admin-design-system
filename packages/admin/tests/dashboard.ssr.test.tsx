@@ -22,6 +22,7 @@ function Dashboard() {
 			</AdsDashboardPanel>
 			<AdsDashboardPanel loading title="Carregando" />
 			<AdsDashboardPanel error="Falhou" title="Erro" />
+			<AdsDashboardPanel empty="Nenhum registro." title="Painel vazio" />
 			<AdsDashboardPanel empty={<AdsEmptyState title="Nada por aqui" />} title="Sem dados" />
 		</AdsDashboardGrid>
 	);
@@ -34,6 +35,8 @@ describe('dashboard patterns SSR and hydration', () => {
 		expect(html).toContain('aria-labelledby');
 		expect(html).toContain('Em alta');
 		expect(html).toContain('Nada por aqui');
+		expect(html).toContain('Nenhum registro.');
+		expect(html).toContain('data-size="compact"');
 	});
 
 	it('hydrates without warnings, recoverable errors or markup changes', async () => {

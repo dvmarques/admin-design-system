@@ -9,6 +9,7 @@ import {
 	AdsSelectionGroup,
 	AdsSkeleton,
 	AdsTable,
+	type AdsTableDensity,
 	AdsTableBody,
 	AdsTableCaption,
 	AdsTableCell,
@@ -117,6 +118,8 @@ export interface AdsSmartTableProps<Row> extends Omit<
 	hiddenColumnIds?: readonly string[];
 	/** Habilita o seletor de colunas. Recebe a lista completa de colunas ocultas. */
 	onHiddenColumnsChange?: (ids: string[]) => void;
+	/** Densidade das células. Sem a prop, vale a herdada de um ancestral ou a confortável. */
+	density?: AdsTableDensity;
 	loading?: boolean;
 	loadingRows?: number;
 	error?: ReactNode;
@@ -163,6 +166,7 @@ export function AdsSmartTable<Row>({
 	caption,
 	className,
 	columns,
+	density,
 	emptyState,
 	error,
 	filters,
@@ -332,6 +336,7 @@ export function AdsSmartTable<Row>({
 				</div>
 			) : null}
 			<AdsTable
+				{...(density && { density })}
 				aria-busy={loading ? true : undefined}
 				containerClassName="ads-smart-table-scroll"
 				containerProps={{
@@ -411,7 +416,7 @@ export function AdsSmartTable<Row>({
 							<StaticRow key={index}>
 								{Array.from({ length: colSpan }, (_, cell) => (
 									<AdsTableCell key={cell}>
-										<AdsSkeleton className="ads-smart-table-skeleton" />
+										<AdsSkeleton className="ads-smart-table-skeleton" variant="text" />
 									</AdsTableCell>
 								))}
 							</StaticRow>

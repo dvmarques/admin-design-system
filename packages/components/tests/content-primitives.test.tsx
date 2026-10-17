@@ -47,6 +47,14 @@ describe('AdsSkeleton', () => {
 		rerender(<AdsSkeleton label="Carregando resumo" />);
 		expect(screen.getByRole('status', { name: 'Carregando resumo' })).toBeVisible();
 	});
+
+	it('exposes the variant as an attribute and omits it by default', () => {
+		const { rerender } = render(<AdsSkeleton variant="value" />);
+		expect(document.querySelector('.ads-skeleton')).toHaveAttribute('data-variant', 'value');
+
+		rerender(<AdsSkeleton />);
+		expect(document.querySelector('.ads-skeleton')).not.toHaveAttribute('data-variant');
+	});
 });
 
 describe('AdsAvatar', () => {

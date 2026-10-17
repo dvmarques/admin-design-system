@@ -19,6 +19,62 @@ import {
 } from '../src';
 import { renderWithTheme } from './test-utils';
 
+describe('AdsTable density', () => {
+	function renderTable(density?: 'comfortable' | 'compact') {
+		render(
+			<AdsTable aria-label="Clientes" {...(density && { density })}>
+				<AdsTableHead>
+					<AdsTableRow>
+						<AdsTableHeader>Nome</AdsTableHeader>
+					</AdsTableRow>
+				</AdsTableHead>
+				<AdsTableBody>
+					<AdsTableRow>
+						<AdsTableCell>Mariana</AdsTableCell>
+					</AdsTableRow>
+				</AdsTableBody>
+			</AdsTable>,
+		);
+	}
+
+	it('exposes the density as data-density and keeps the semantic structure', () => {
+		renderTable('compact');
+		expect(screen.getByRole('table', { name: 'Clientes' })).toHaveAttribute(
+			'data-density',
+			'compact',
+		);
+		expect(screen.getByRole('columnheader', { name: 'Nome' })).toBeVisible();
+	});
+
+	it('omits data-density by default and pads cells with the density tokens', () => {
+		renderTable();
+		expect(screen.getByRole('table')).not.toHaveAttribute('data-density');
+		for (const cell of [
+			screen.getByRole('columnheader', { name: 'Nome' }),
+			screen.getByRole('cell', { name: 'Mariana' }),
+		])
+			expect(cell).toHaveClass(
+				'px-[var(--ads-density-cell-padding-x)]',
+				'py-[var(--ads-density-cell-padding-y)]',
+			);
+	});
+});
+
+describe('AdsEmptyState size', () => {
+	it('keeps the default markup and reduces spacing in the compact size', () => {
+		const { rerender } = render(<AdsEmptyState title="Nada" />);
+		const empty = () => document.querySelector('.ads-empty-state') as HTMLElement;
+		expect(empty()).toHaveClass('px-6', 'py-10');
+		expect(empty()).not.toHaveAttribute('data-size');
+
+		rerender(<AdsEmptyState size="compact" title="Nada" />);
+		expect(empty()).toHaveClass('px-4', 'py-4');
+		expect(empty()).not.toHaveClass('py-10');
+		expect(empty()).toHaveAttribute('data-size', 'compact');
+		expect(screen.queryByRole('alert')).toBeNull();
+	});
+});
+
 describe('AdsTable', () => {
 	it('preserves native table semantics inside a horizontal overflow container', () => {
 		render(

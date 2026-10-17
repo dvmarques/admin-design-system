@@ -60,6 +60,16 @@ describe('AdsMetricCard', () => {
 		expect(screen.queryByText('1')).toBeNull();
 	});
 
+	it('renders text as a compact empty state and nodes as informed', () => {
+		const { container, rerender } = render(<AdsMetricCard empty="Sem dados" title="Receita" />);
+		expect(container.querySelector('.ads-empty-state')).toHaveAttribute('data-size', 'compact');
+		expect(screen.getByText('Sem dados')).toHaveClass('ads-empty-state-title');
+		expect(screen.queryByRole('alert')).toBeNull();
+
+		rerender(<AdsMetricCard empty={<a href="/importar">Importar</a>} title="Receita" />);
+		expect(container.querySelector('.ads-empty-state')).toBeNull();
+	});
+
 	it('accepts a node as the empty content, like the panel', () => {
 		render(<AdsMetricCard empty={<a href="/importar">Importar dados</a>} title="Receita" />);
 		expect(screen.getByRole('link', { name: 'Importar dados' })).toBeTruthy();
@@ -68,6 +78,12 @@ describe('AdsMetricCard', () => {
 });
 
 describe('AdsDashboardPanel', () => {
+	it('renders textual empty content as a compact empty state', () => {
+		const { container } = render(<AdsDashboardPanel empty="Nada por aqui" title="Vazio" />);
+		expect(container.querySelector('.ads-empty-state')).toHaveAttribute('data-size', 'compact');
+		expect(screen.getByText('Nada por aqui')).toBeTruthy();
+	});
+
 	it('renders a named region with the configured heading level and span', () => {
 		render(
 			<AdsDashboardPanel headingLevel={3} span={2} title="Pedidos recentes">

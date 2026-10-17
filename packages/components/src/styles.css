@@ -75,6 +75,19 @@
 }
 
 @layer components {
+	/* Altura dos placeholders pelos tokens; a largura continua vindo de `className`. */
+	.ads-skeleton[data-variant='text'] {
+		height: var(--ads-skeleton-height-text);
+	}
+
+	.ads-skeleton[data-variant='value'] {
+		height: var(--ads-skeleton-height-value);
+	}
+
+	.ads-skeleton[data-variant='block'] {
+		height: var(--ads-skeleton-height-block);
+	}
+
 	.ads-overlay-backdrop,
 	.ads-overlay-panel,
 	.ads-tooltip,

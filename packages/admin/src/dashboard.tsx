@@ -1,4 +1,10 @@
-import { AdsCard, AdsProgress, AdsSkeleton, type AdsProgressProps } from '@admin-ds/components';
+import {
+	AdsCard,
+	AdsEmptyState,
+	AdsProgress,
+	AdsSkeleton,
+	type AdsProgressProps,
+} from '@admin-ds/components';
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 
@@ -60,6 +66,15 @@ export interface AdsMetricCardProps extends Omit<HTMLAttributes<HTMLDivElement>,
 	empty?: ReactNode;
 }
 
+/** Texto ou número vira um `AdsEmptyState` compacto; nós React são renderizados como informados. */
+function renderEmpty(empty: ReactNode) {
+	return typeof empty === 'string' || typeof empty === 'number' ? (
+		<AdsEmptyState size="compact" title={empty} />
+	) : (
+		empty
+	);
+}
+
 /** Card de métrica (KPI) sem regras de negócio. A tendência usa ícone e texto, nunca só cor. */
 export function AdsMetricCard({
 	change,
@@ -92,7 +107,7 @@ export function AdsMetricCard({
 			</div>
 		);
 	} else if (empty) {
-		body = <div className="ads-metric-card-message">{empty}</div>;
+		body = <div className="ads-metric-card-message">{renderEmpty(empty)}</div>;
 	} else {
 		body = (
 			<>
@@ -200,7 +215,7 @@ export function AdsDashboardPanel({
 			</div>
 		);
 	} else if (empty) {
-		body = empty;
+		body = renderEmpty(empty);
 	} else {
 		body = children;
 	}

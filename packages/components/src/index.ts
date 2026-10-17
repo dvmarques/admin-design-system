@@ -92,6 +92,7 @@ export type {
 	AdsTableBodyProps,
 	AdsTableCaptionProps,
 	AdsTableCellProps,
+	AdsTableDensity,
 	AdsTableHeadProps,
 	AdsTableHeaderProps,
 	AdsTableProps,

@@ -33,6 +33,14 @@ toast) são renderizados em um `div` com `data-theme` próprio, fora do `<html>`
 A aplicação consumidora é responsável por persistir a preferência do
 usuário e aplicar o atributo antes da hidratação, quando necessário.
 
+## Elevação, densidade e skeleton
+
+`--ads-elevation-*` tem valores distintos nos temas claro e escuro. A densidade
+de tabela usa `--ads-density-cell-padding-x|y`, com o valor compacto aplicado por
+`data-density="compact"` no elemento ou em um ancestral, e a altura dos
+placeholders usa `--ads-skeleton-height-text|value|block`. Detalhes em
+[Elevação, densidade e estados](../../docs/visual-polish.md).
+
 ## Tipografia
 
 A pilha padrão é `Inter, Roboto, sans-serif`. Inter e Roboto são fontes de

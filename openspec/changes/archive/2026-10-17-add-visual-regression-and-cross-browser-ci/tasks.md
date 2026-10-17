@@ -19,4 +19,4 @@
 
 ## 3. Encerramento
 
-- [ ] 3.1 Validar com `npx @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` e arquivar a change após a PR 2
+- [x] 3.1 Validar com `npx @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` e arquivar a change após a PR 2

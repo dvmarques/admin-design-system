@@ -60,6 +60,17 @@ describe('AdsMetricCard', () => {
 		expect(screen.queryByText('1')).toBeNull();
 	});
 
+	it('treats zero as empty and an empty string as normal content', () => {
+		const { container, rerender } = render(<AdsMetricCard empty={0} title="Receita" value="1" />);
+		expect(container.querySelector('.ads-empty-state')).toHaveAttribute('data-size', 'compact');
+		expect(screen.getByText('0')).toHaveClass('ads-empty-state-title');
+		expect(screen.queryByText('1')).toBeNull();
+
+		rerender(<AdsMetricCard empty="" title="Receita" value="R$ 10" />);
+		expect(container.querySelector('.ads-empty-state')).toBeNull();
+		expect(screen.getByText('R$ 10')).toBeTruthy();
+	});
+
 	it('renders text as a compact empty state and nodes as informed', () => {
 		const { container, rerender } = render(<AdsMetricCard empty="Sem dados" title="Receita" />);
 		expect(container.querySelector('.ads-empty-state')).toHaveAttribute('data-size', 'compact');
@@ -78,6 +89,25 @@ describe('AdsMetricCard', () => {
 });
 
 describe('AdsDashboardPanel', () => {
+	it('treats zero as empty and an empty string as children', () => {
+		const { container, rerender } = render(
+			<AdsDashboardPanel empty={0} title="Painel">
+				<p>Conteúdo</p>
+			</AdsDashboardPanel>,
+		);
+		expect(container.querySelector('.ads-empty-state')).toHaveAttribute('data-size', 'compact');
+		expect(screen.getByText('0')).toBeTruthy();
+		expect(screen.queryByText('Conteúdo')).toBeNull();
+
+		rerender(
+			<AdsDashboardPanel empty="" title="Painel">
+				<p>Conteúdo</p>
+			</AdsDashboardPanel>,
+		);
+		expect(container.querySelector('.ads-empty-state')).toBeNull();
+		expect(screen.getByText('Conteúdo')).toBeTruthy();
+	});
+
 	it('renders textual empty content as a compact empty state', () => {
 		const { container } = render(<AdsDashboardPanel empty="Nada por aqui" title="Vazio" />);
 		expect(container.querySelector('.ads-empty-state')).toHaveAttribute('data-size', 'compact');

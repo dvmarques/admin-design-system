@@ -96,3 +96,8 @@ O baseline de `@admin-ds/components` foi ajustado na revisão R1 de
 `polimento-visual-tokens` de 276595 para 276803 bytes (+208), medido em LF com
 `dist/` limpo, por restaurar a ordem original das classes de `AdsEmptyState` no
 tamanho padrão. Sem novas dependências de runtime.
+
+O baseline de `@admin-ds/admin` foi ajustado na revisão R2 de
+`polimento-visual-tokens` de 167071 para 168617 bytes (+1546), medido em LF com
+`dist/` limpo, por `hasDashboardEmpty` em módulo interno (`dashboard-empty`) e
+build do pacote. Sem novas dependências de runtime.

@@ -7,6 +7,7 @@ import {
 } from '@admin-ds/components';
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
+import { hasDashboardEmpty } from './dashboard-empty.js';
 
 export type AdsMetricTrend = 'up' | 'down' | 'neutral';
 export type AdsMetricSentiment = 'positive' | 'negative' | 'neutral';
@@ -106,7 +107,7 @@ export function AdsMetricCard({
 				{error}
 			</div>
 		);
-	} else if (empty) {
+	} else if (hasDashboardEmpty(empty)) {
 		body = <div className="ads-metric-card-message">{renderEmpty(empty)}</div>;
 	} else {
 		body = (
@@ -214,7 +215,7 @@ export function AdsDashboardPanel({
 				{errorActions ? <div className="ads-dashboard-panel-actions">{errorActions}</div> : null}
 			</div>
 		);
-	} else if (empty) {
+	} else if (hasDashboardEmpty(empty)) {
 		body = renderEmpty(empty);
 	} else {
 		body = children;

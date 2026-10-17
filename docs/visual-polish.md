@@ -43,7 +43,7 @@ ou, sem prop, por atributo em qualquer ancestral (por exemplo `<html>`):
 ```
 
 `data-density="comfortable"` aninhado restaura o padrão. Para ajustar os valores
-sem recompilar, sobrescreva os tokens depois do `tokens.css`, por exemplo em
+sem recompilar, sobrescreva os tokens depois de importar `@admin-ds/tokens/styles.css`, por exemplo em
 `[data-density='compact']`. A densidade afeta só o padding das células;
 controles e formulários não mudam.
 

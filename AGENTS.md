@@ -134,6 +134,10 @@ npm run dev --workspace @admin-ds/admin-demo
 npm run test:e2e
 ```
 
+O hook `pre-commit` (Husky + lint-staged, instalado por `npm install` via `prepare`)
+executa `eslint --fix` e `prettier --write` nos arquivos staged. Ele não substitui
+`npm run validate`, e a CI usa `npm ci --ignore-scripts`, então não o instala.
+
 Antes da conclusão, formate os arquivos alterados e confirme:
 
 ```powershell

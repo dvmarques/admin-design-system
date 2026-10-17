@@ -59,6 +59,21 @@ Antes de concluir uma change, execute:
 openspec.cmd validate --all --strict
 ```
 
+## Compatibilidade entre agentes
+
+O repositório é usado com Claude Code, Cursor e Codex.
+
+- `AGENTS.md` é a fonte única de instruções; `CLAUDE.md` apenas o importa.
+- As skills do OpenSpec são geradas por `openspec.cmd update .` em `.agents/skills`,
+  `.claude/skills` e `.cursor/skills`. Não as edite à mão.
+- Skills próprias vivem em `.agents/skills` (lida por Codex e Cursor) e são listadas
+  em `skills-lock.json`. Após alterá-las, execute `npm run sync:agent-skills` para
+  copiá-las para `.claude/skills`; `npm run check:agent-skills` valida a sincronia.
+  Usa-se cópia, não symlink, por causa do Windows.
+- Servidores MCP do projeto ficam em `.mcp.json` (Claude Code) e `.cursor/mcp.json`
+  (Cursor); mantenha ambos iguais. No Codex, registre-os em `~/.codex/config.toml`.
+- Mantenha o texto das skills neutro: diga "invoque a skill X" em vez de `/X` ou `$X`.
+
 ## Releases
 
 O procedimento operacional de releases está em `docs/release-process.md`.

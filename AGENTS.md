@@ -72,6 +72,9 @@ O repositório é usado com Claude Code, Cursor e Codex.
   Usa-se cópia, não symlink, por causa do Windows.
 - Servidores MCP do projeto ficam em `.mcp.json` (Claude Code) e `.cursor/mcp.json`
   (Cursor); mantenha ambos iguais. No Codex, registre-os em `~/.codex/config.toml`.
+- Exclusivos do Claude Code: `.claude/settings.json` (hooks que formatam com Prettier após
+  edições e bloqueiam a edição manual de arquivos gerados, em `.claude/hooks`) e os
+  subagents de revisão em `.claude/agents`.
 - Mantenha o texto das skills neutro: diga "invoque a skill X" em vez de `/X` ou `$X`.
 
 ## Releases

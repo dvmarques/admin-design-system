@@ -106,3 +106,16 @@ test('smart table column panel is inline and the grid does not grow past its con
 	assert.match(css, /\.ads-smart-table\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
 	assert.match(css, /\.ads-smart-table-pagination > \.ads-pagination\s*\{[^}]*min-width:\s*0/);
 });
+
+test('admin styles take durations from the motion tokens and cover forced colors', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.doesNotMatch(css, /transition:[^;]*\d+m?s/);
+	assert.doesNotMatch(css, /transition:\s*none/);
+	const forced = css.slice(css.indexOf('@media (forced-colors: active)'));
+	assert.match(
+		forced,
+		/\.ads-smart-table \.ads-table-row\[data-selected\]\s*\{[^}]*outline:[^;]*Highlight/,
+	);
+	assert.match(forced, /\.ads-filter-bar\[data-loading\]::before\s*\{[^}]*Highlight/);
+});

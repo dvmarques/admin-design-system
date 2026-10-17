@@ -98,6 +98,15 @@ Para aceitar uma mudança visual intencional:
 
 O workflow só roda em branches diferentes de `develop` e `master`.
 
+### Preferências de acessibilidade
+
+`e2e/accessibility-preferences.spec.ts` roda só em Chromium e emula movimento
+reduzido, cores forçadas e maior contraste por estilo computado, sem snapshots.
+O contraste dos tokens é verificado em `packages/tokens/tests/contrast.test.mjs`
+a partir de uma lista central de pares (WCAG 2.2 AA, 4,5:1 para texto e 3:1 para
+limites de controles, foco e indicadores). Detalhes em
+[Acessibilidade visual dos estilos](visual-accessibility.md).
+
 ### Smoke em Firefox e WebKit
 
 `e2e/smoke.spec.ts` roda nos três navegadores (projetos `chromium`, `firefox` e

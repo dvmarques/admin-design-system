@@ -26,6 +26,11 @@ componentes administrativos.
   WebKit têm apenas smoke tests (`/`, `/clientes` e `/componentes`), sem
   snapshots e sem a suíte completa; o WebKit do Playwright no Linux não equivale
   ao Safari.
+- `forced-colors` e `prefers-contrast` são validados por emulação em Chromium e
+  por testes de CSS e de tokens; não há revisão automatizada no Windows em alto
+  contraste nem em Firefox e WebKit. O contraste automatizado cobre os pares de
+  tokens listados em `packages/tokens/tests/contrast-pairs.mjs`, não combinações
+  arbitrárias de sobrescritas da aplicação.
 - Os utilitários Tailwind só existem no CSS distribuído se aparecerem nas
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`

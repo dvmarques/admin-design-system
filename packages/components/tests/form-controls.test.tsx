@@ -117,7 +117,7 @@ describe('selection form controls', () => {
 				const indicator = screen.getByRole(label === 'Aceito' ? 'checkbox' : 'radio', {
 					name: label,
 				}).nextElementSibling;
-				expect(indicator).toHaveClass('bg-form-background', 'border-border');
+				expect(indicator).toHaveClass('bg-form-background', 'border-border-control');
 			}
 		},
 	);

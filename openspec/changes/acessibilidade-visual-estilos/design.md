@@ -27,22 +27,36 @@ atual (`packages/tokens/tests/generation.test.mjs`) cobre só 4,5:1.
 
 1. **Movimento por token, não por regra global.** O gerador emite
    `@media (prefers-reduced-motion: reduce)` redefinindo `--ads-motion-fast` e
-   `--ads-motion-normal` como `0ms` (e `--ads-motion-easing` inalterado), nos três
-   seletores de tema. Alternativa: `* { transition: none !important }` em
-   `.ads-*`; descartada por `!important`, por conflitar com consumidores e por
-   não ser personalizável. Trade-off: componentes que não usam o token precisam
-   ser migrados; um teste varre `packages/components/src` e exige que toda
-   classe `transition-*` use `duration-[var(--ads-motion-*)]` ou `motion-reduce:`.
+   `--ads-motion-normal` como `0ms` (e `--ads-motion-easing` inalterado), nos
+   seletores `:root`, `[data-theme="light"]`, `[data-theme="dark"]` e também
+   `:root:not([data-theme])`: este último tem maior especificidade e, sem ele, o
+   bloco do tema escuro do sistema manteria a duração. `@theme inline` em
+   `styles.css` mapeia `--default-transition-duration` para `--ads-motion-fast`,
+   de modo que `transition-*` sem `duration-*` também herde o token; durações
+   literais (`duration-150`) migram para o token. Alternativa:
+   `* { transition: none !important }` em `.ads-*`; descartada por `!important`,
+   por conflitar com consumidores e por não ser personalizável. Um teste varre
+   `packages/components/src` e falha com `duration-<número>` literal ou
+   `animate-*` sem `motion-reduce:animate-none`. Quem sobrescreve a duração deve
+   fazê-lo fora de `reduce` (por exemplo em
+   `@media (prefers-reduced-motion: no-preference)`); uma sobrescrita incondicional
+   posterior ao `tokens.css` vence o bloco de movimento reduzido.
 2. **Animações contínuas e transformações mantêm `motion-reduce:`.** Spinner e
    skeleton não dependem de duração de token; `animate-*` e `hover:-translate-y-px`
    ficam com `motion-reduce:animate-none`/`transform-none`. O LoadingIndicator já
    expõe `role="status"` e texto, preservando o estado.
 3. **`forced-colors` em CSS compilado dos pacotes, com cores de sistema.** Um bloco
    `@media (forced-colors: active)` em cada `styles.css` (`components` e `admin`)
-   usa seletores `.ads-*` existentes e `Highlight`, `CanvasText`, `ButtonText`,
-   `GrayText`, `Canvas`. Foco usa `outline` com `CanvasText`/`Highlight` e
-   `outline-offset`; seleção usa `outline`/borda `Highlight` (o fundo é descartado);
-   Badge e campos ganham `border: 1px solid` de sistema. Sem novos prefixos
+   usa seletores `.ads-*` existentes e as cores de sistema `Highlight`,
+   `HighlightText` e `CanvasText`. O foco já usa `outline`, cuja cor o navegador
+   força para uma cor de sistema (verificado por E2E), então só os estados que
+   dependem de fundo ou `box-shadow` recebem regras: indicadores marcados de
+   checkbox, radio e switch (`forced-color-adjust: none` com `Highlight`),
+   itens de navegação, abas e dias do calendário selecionados (contorno
+   `Highlight`, com foco em `CanvasText` para não se confundir com a seleção) e,
+   em `@admin-ds/admin`, a linha selecionada da `AdsSmartTable` e a faixa de
+   carregamento do filtro. Bordas de Button, Input e Badge já usam `border` e são
+   forçadas pelo navegador. Sem novos prefixos
    públicos e sem exigir Tailwind do consumidor. Alternativa: variantes Tailwind
    `forced-colors:` nas classes dos componentes; descartada por espalhar a regra
    em dezenas de arquivos e inflar o CSS.
@@ -55,10 +69,14 @@ atual (`packages/tokens/tests/generation.test.mjs`) cobre só 4,5:1.
    aplicação continuam funcionando porque ela redefine os mesmos `--ads-*` em
    seletor de maior especificidade ou posterior. Alternativa: duplicar a folha;
    descartada pelo tamanho.
-5. **Novo papel `borderControl` em vez de escurecer `border`.** `border` é
+5. **Novo papel `borderControl` em vez de escurecer `border`** (claro `slate500`,
+   escuro `slate400`, nova referência: `slate500` no escuro dá só 2,18:1 sobre
+   `surfaceHover`). `border` é
    decorativo (divisores, cartões) e escurecê-lo mudaria todo o visual; limites de
-   controles precisam de 3:1 (WCAG 1.4.11). Form controls, Select, DatePicker e
-   SelectionControl passam a usar `border-border-control`. É um token novo
+   controles precisam de 3:1 (WCAG 1.4.11). Form controls (incluindo Select e
+   DatePicker) e o indicador de checkbox, radio e switch passam a usar
+   `border-border-control`; Button secundário e Badge mantêm `border` porque têm
+   rótulo textual. É um token novo
    (compatível); `border` e `borderStrong` ficam como estão.
 6. **Teste de contraste dirigido por dados.** Um módulo de apoio em
    `packages/tokens/tests` exporta `contrastPairs` (`{ foreground, background,

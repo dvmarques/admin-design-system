@@ -8,7 +8,7 @@ const controlSizes = {
 } as const;
 
 const validationClasses = {
-	default: 'border-border focus-visible:border-form-border-focus',
+	default: 'border-border-control focus-visible:border-form-border-focus',
 	success: 'border-form-success focus-visible:border-form-success',
 	error: 'border-form-invalid focus-visible:border-form-invalid',
 } as const;

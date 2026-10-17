@@ -13,12 +13,14 @@ sensível, alto contraste do sistema ou baixa visão ficam sem garantias
   `--ads-motion-normal` passam a `0ms` sob `prefers-reduced-motion: reduce`,
   gerados em `@admin-ds/tokens`; animações contínuas (spinner, skeleton) e
   transformações de hover são desativadas nos componentes que ainda não as tratam.
-- Remover os blocos `prefers-reduced-motion` duplicados em
-  `packages/admin/src/styles.css` e `apps/admin-demo/app/globals.css` quando o
-  token os tornar redundantes.
+- Migrar as durações literais de `packages/admin/src/styles.css` (150 ms) e de
+  `apps/admin-demo/app/globals.css` (240 ms) para os tokens e remover os blocos
+  `prefers-reduced-motion` que só zeravam transições; permanecem os que tratam
+  animação contínua e rolagem suave.
 - Suporte a `forced-colors: active` no CSS compilado de `@admin-ds/components` e
   `@admin-ds/admin`: foco, bordas, seleção (tabelas, navegação, DatePicker),
-  Button, campos de formulário e Badge continuam distinguíveis com cores de sistema.
+  Button, campos de formulário e Badge continuam distinguíveis com cores de sistema
+  (o que o navegador já força, como o contorno de foco, é validado por E2E).
 - Suporte a `prefers-contrast: more` por sobrescritas de tokens de cor nos dois
   temas (bordas, texto secundário e foco mais fortes), geradas no `tokens.css`.
 - Teste automatizado de contraste com lista central de pares de tokens nos temas

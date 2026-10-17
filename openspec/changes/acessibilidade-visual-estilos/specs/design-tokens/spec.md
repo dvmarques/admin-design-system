@@ -11,8 +11,8 @@ Os tokens públicos de duração de movimento MUST resolver para duração zero 
 
 #### Scenario: Aplicação personaliza a duração
 
-- **WHEN** a aplicação sobrescreve a duração de movimento e o usuário prefere movimento reduzido
-- **THEN** a preferência do usuário continua resultando em duração zero
+- **WHEN** a aplicação sobrescreve a duração de movimento apenas quando o usuário não prefere movimento reduzido
+- **THEN** a duração personalizada vale sem movimento reduzido e continua zero com `prefers-reduced-motion: reduce`
 
 ### Requirement: Sobrescritas de contraste são distribuídas com os tokens
 

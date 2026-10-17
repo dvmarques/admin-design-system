@@ -10,12 +10,12 @@
 
 ## 2. PR 2 — Smoke cross-browser
 
-- [ ] 2.1 Adicionar os projetos `firefox` e `webkit` em `playwright.config.ts` restritos ao spec de smoke e verificar que `playwright test --list` mostra o smoke só neles
-- [ ] 2.2 Criar o spec de smoke para `/`, `/clientes` e `/componentes` (carregamento sem erro de console, hidratação por `waitForHydration`, navegação principal) usando `e2e/routes.ts`, com seletores por papel ARIA, e verificar que passa na CI em Firefox e WebKit
-- [ ] 2.3 Converter o job `Fluxos no navegador` em matrix `chromium | firefox | webkit` com `fail-fast: false`, instalando só o navegador do job, e verificar que os três checks aparecem na PR
-- [ ] 2.4 Atualizar `docs/quality.md` e `docs/limitations.md` (navegadores cobertos, WebKit Linux ≠ Safari, tempo de CI da matrix) e verificar a coerência com o spec
+- [x] 2.1 Adicionar os projetos `firefox` e `webkit` em `playwright.config.ts` restritos ao spec de smoke e verificar que `playwright test --list` mostra o smoke só neles
+- [x] 2.2 Criar o spec de smoke para `/`, `/clientes` e `/componentes` (carregamento sem erro de console, hidratação por `waitForHydration`, navegação principal) usando `e2e/routes.ts`, com seletores por papel ARIA, e verificar que passa na CI em Firefox e WebKit
+- [x] 2.3 Converter o job `Fluxos no navegador` em matrix `chromium | firefox | webkit` com `fail-fast: false`, instalando só o navegador do job, e verificar que os três checks aparecem na PR
+- [x] 2.4 Atualizar `docs/quality.md` e `docs/limitations.md` (navegadores cobertos, WebKit Linux ≠ Safari, tempo de CI da matrix) e verificar a coerência com o spec
 - [ ] 2.5 Adicionar os novos checks como required na proteção de `develop` (ação administrativa) e verificar nas configurações do repositório
-- [ ] 2.6 Executar `npx prettier --write`, `npm run format`, `npm run lint`, `npm run typecheck`, `openspec validate --all --strict` e confirmar a CI verde da PR 2
+- [x] 2.6 Executar `npx prettier --write`, `npm run format`, `npm run lint`, `npm run typecheck`, `openspec validate --all --strict` e confirmar a CI verde da PR 2
 
 ## 3. Encerramento
 

@@ -121,6 +121,13 @@ de ~1 min 28 s, com ~43 s no passo do Playwright. O custo dos snapshots é de
 cerca de 3 s por execução; a diferença total do job fica dentro da variação
 entre runs.
 
+Com a matrix (PR #97, primeira execução, com o cache dos navegadores ainda
+frio), os jobs rodaram em paralelo: "Fluxos no navegador" (Chromium) em
+~1 min 31 s, WebKit em ~1 min 27 s e Firefox em ~1 min 5 s, com o smoke levando
+~5 s por navegador (4 testes). O tempo de relógio da CI não aumentou de forma
+perceptível, porque os navegadores não rodam em série; os minutos totais de
+runner crescem em cerca de 2 min 30 s por execução.
+
 O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. A suíte
 atual valida o consumo público das primitivas no admin demo, a alternância de
 tema pelo teclado, a ausência de erros de hidratação e snapshots dos temas

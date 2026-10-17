@@ -76,18 +76,20 @@ export function AdsEmptyState({
 		<div
 			{...props}
 			className={classNames(
-				'ads-empty-state flex min-w-0 flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-surface text-center text-text',
-				size === 'compact' ? 'px-4 py-4' : 'px-6 py-10',
+				size === 'compact'
+					? 'ads-empty-state flex min-w-0 flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-surface px-4 py-4 text-center text-text'
+					: 'ads-empty-state flex min-w-0 flex-col items-center gap-3 rounded-lg border border-dashed border-border bg-surface px-6 py-10 text-center text-text',
 				className,
 			)}
 			data-size={size === 'compact' ? size : undefined}
 		>
 			{visual ? <div className="ads-empty-state-visual text-text-muted">{visual}</div> : null}
 			<div
-				className={classNames(
-					'ads-empty-state-title font-semibold text-text-primary',
-					size === 'compact' ? 'text-sm' : 'text-lg',
-				)}
+				className={
+					size === 'compact'
+						? 'ads-empty-state-title text-sm font-semibold text-text-primary'
+						: 'ads-empty-state-title text-lg font-semibold text-text-primary'
+				}
 			>
 				{title}
 			</div>

@@ -1,20 +1,54 @@
-## ADDED Requirements
+## MODIFIED Requirements
 
-### Requirement: Vazio textual usa o estado vazio padrão
+### Requirement: Painel cobre carregamento, vazio e erro
 
-`AdsMetricCard` e `AdsDashboardPanel` MUST apresentar `empty`, quando for `string` ou `number`, como `AdsEmptyState` compacto com o texto como título. Quando `empty` for um nó React, MUST renderizá-lo como informado.
+`AdsDashboardPanel` MUST suportar os estados de carregamento, vazio e erro, com prioridade carregamento, erro, vazio e conteúdo. `error` MUST aceitar nós React. `empty` MUST aceitar `string`, `number` ou nós React; quando for texto ou número, MUST renderizar `AdsEmptyState` compacto com o valor como título. O componente MUST NOT buscar dados.
 
-#### Scenario: Vazio textual no card de métrica
+#### Scenario: Carregamento
 
-- **WHEN** `empty` é um texto e não há carregamento nem erro
-- **THEN** o card mantém o título e apresenta um estado vazio compacto com o texto, sem `role="alert"`
+- **WHEN** `loading` é verdadeiro
+- **THEN** o painel apresenta placeholders `AdsSkeleton` anunciados por um status com rótulo, marca `aria-busy` e não renderiza o conteúdo
 
-#### Scenario: Vazio textual no painel
+#### Scenario: Erro
 
-- **WHEN** `empty` é um texto e o painel não está carregando nem em erro
-- **THEN** o painel apresenta um estado vazio compacto com o texto no lugar dos filhos
+- **WHEN** `error` é informado e o painel não está carregando
+- **THEN** a mensagem é apresentada com `role="alert"`, junto das ações opcionais de recuperação
 
-#### Scenario: Vazio como nó
+#### Scenario: Erro com conteúdo em bloco
 
-- **WHEN** `empty` é um nó React, como um `AdsEmptyState` próprio
-- **THEN** o nó é renderizado como informado, sem envoltório adicional de estado vazio
+- **WHEN** `error` contém elementos de bloco, como uma lista
+- **THEN** o painel e o card produzem HTML válido e a hidratação não emite avisos
+
+#### Scenario: Vazio
+
+- **WHEN** `empty` é um nó React, como um `AdsEmptyState` com título e descrição, e não há carregamento nem erro
+- **THEN** o painel apresenta o conteúdo de vazio informado no lugar dos filhos
+
+#### Scenario: Vazio textual
+
+- **WHEN** `empty` é `string` ou `number` e não há carregamento nem erro
+- **THEN** o painel apresenta `AdsEmptyState` compacto com o texto como título, no lugar dos filhos
+
+#### Scenario: Conteúdo
+
+- **WHEN** nenhum estado especial é informado
+- **THEN** o painel renderiza seus filhos
+
+### Requirement: Card de métrica cobre os mesmos estados
+
+`AdsMetricCard` MUST suportar `loading`, `error` e `empty` com a mesma prioridade e os mesmos tipos do painel (`string`, `number` ou nós React), mantendo o título visível. Quando `empty` for texto ou número, MUST renderizar `AdsEmptyState` compacto com o valor como título.
+
+#### Scenario: Métrica em carregamento
+
+- **WHEN** `loading` é verdadeiro
+- **THEN** o card mantém o título e substitui valor e variação por placeholders com status acessível
+
+#### Scenario: Métrica sem dados
+
+- **WHEN** `empty` é um nó React e não há carregamento nem erro
+- **THEN** o card mantém o título e apresenta o conteúdo de vazio no lugar de valor e variação
+
+#### Scenario: Métrica sem dados textual
+
+- **WHEN** `empty` é `string` ou `number` e não há carregamento nem erro
+- **THEN** o card mantém o título e apresenta `AdsEmptyState` compacto no lugar de valor e variação, sem `role="alert"`

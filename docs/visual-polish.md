@@ -16,7 +16,11 @@ A elevação não carrega informação: estados continuam distinguíveis por bor
 cor e texto, e `forced-colors` remove as sombras.
 
 ```css
-:root {
+[data-theme='light'] {
+	--ads-elevation-md: 0 2px 8px rgb(0 0 0 / 0.08);
+}
+
+[data-theme='dark'] {
 	--ads-elevation-md: 0 4px 12px rgb(0 0 0 / 0.2);
 }
 ```

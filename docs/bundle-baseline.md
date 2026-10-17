@@ -91,3 +91,8 @@ de 274766 para 276595 bytes (+1829) por props de densidade, variantes de skeleto
 e tamanho de estado vazio; `@admin-ds/admin` de 166033 para 167071 bytes (+1038)
 por densidade em `AdsSmartTable`, skeleton por token e `AdsEmptyState` compacto.
 Sem novas dependências de runtime.
+
+O baseline de `@admin-ds/components` foi ajustado na revisão R1 de
+`polimento-visual-tokens` de 276595 para 276803 bytes (+208), medido em LF com
+`dist/` limpo, por restaurar a ordem original das classes de `AdsEmptyState` no
+tamanho padrão. Sem novas dependências de runtime.

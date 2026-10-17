@@ -23,5 +23,10 @@ export default defineConfig({
 		baseURL: 'http://127.0.0.1:3000',
 		trace: 'on-first-retry',
 	},
-	projects: [{ name: 'chromium', use: { ...devices['Desktop Chrome'] } }],
+	projects: [
+		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } },
+		// Firefox e WebKit executam só o smoke: sem snapshots, que são baselines do Chromium/Linux.
+		{ name: 'firefox', testMatch: /smoke\.spec\.ts$/, use: { ...devices['Desktop Firefox'] } },
+		{ name: 'webkit', testMatch: /smoke\.spec\.ts$/, use: { ...devices['Desktop Safari'] } },
+	],
 });

@@ -48,7 +48,8 @@ expect(results.violations).toHaveLength(0);
 
 ## Playwright e testes end-to-end
 
-O Playwright executa testes em um navegador real — neste projeto, Chromium.
+O Playwright executa testes em navegadores reais: Chromium roda toda a suíte e
+Firefox e WebKit rodam um smoke (ver abaixo).
 Ele cobre comportamentos que o ambiente simulado do Vitest e JSDOM não reproduz
 integralmente, como foco visível, navegação por teclado, CSS renderizado,
 responsividade, hidratação do Next.js e fluxos completos entre componentes de
@@ -97,6 +98,20 @@ Para aceitar uma mudança visual intencional:
 
 O workflow só roda em branches diferentes de `develop` e `master`.
 
+### Smoke em Firefox e WebKit
+
+`e2e/smoke.spec.ts` roda nos três navegadores (projetos `chromium`, `firefox` e
+`webkit` em `playwright.config.ts`); Firefox e WebKit executam só esse arquivo.
+Ele cobre `/`, `/clientes` e `/componentes`: carregamento sem erros de console
+nem de página (incluindo hidratação), hidratação do botão de tema e navegação
+pelo menu principal. Não há snapshots nesses navegadores.
+
+Na CI, cada navegador é um job paralelo e independente da matrix:
+"Fluxos no navegador" (Chromium), "Fluxos no navegador (Firefox)" e "Fluxos no
+navegador (WebKit)". O WebKit do Playwright no Linux detecta quebras de motor,
+mas não garante paridade com o Safari. Para rodar um navegador isolado:
+`npx playwright test --project=firefox`.
+
 ### Tempo de CI
 
 Medido na CI (`ubuntu-latest`), no job "Fluxos no navegador". Antes da mudança
@@ -105,6 +120,13 @@ Playwright. Depois (PR #96, 108 testes em Chromium com os snapshots ativos): job
 de ~1 min 28 s, com ~43 s no passo do Playwright. O custo dos snapshots é de
 cerca de 3 s por execução; a diferença total do job fica dentro da variação
 entre runs.
+
+Com a matrix (PR #97, primeira execução, com o cache dos navegadores ainda
+frio), os jobs rodaram em paralelo: "Fluxos no navegador" (Chromium) em
+~1 min 31 s, WebKit em ~1 min 27 s e Firefox em ~1 min 5 s, com o smoke levando
+~5 s por navegador (4 testes). O tempo de relógio da CI não aumentou de forma
+perceptível, porque os navegadores não rodam em série; os minutos totais de
+runner crescem em cerca de 2 min 30 s por execução.
 
 O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. A suíte
 atual valida o consumo público das primitivas no admin demo, a alternância de
@@ -117,7 +139,8 @@ e2e/
 ├── admin-demo-all-routes.spec.ts
 ├── admin-demo-routes.spec.ts
 ├── data-display.spec.ts
-└── overlay.spec.ts
+├── overlay.spec.ts
+└── smoke.spec.ts
 ```
 
 Os arquivos `e2e/axe.ts` e `e2e/routes.ts` são apoio compartilhado, não

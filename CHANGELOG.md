@@ -12,7 +12,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - `acessibilidade-visual-estilos` - Movimento por token, `forced-colors` e
   `prefers-contrast` no CSS distribuído; token `border-control` (3:1) e
-  somente leitura via `[readonly]` sem afetar `AdsSelect`. Closes #87.
+  somente leitura via `[readonly]` sem afetar `AdsSelect`. A revisão manual em
+  Windows em alto contraste deixa de ser pendência na documentação. Closes #87.
 - `speed-up-ci` - CI de PR com jobs em paralelo, cache do Chromium e
   cancelamento de execuções obsoletas.
 - `skip-docs-only-ci` - PRs só de documentação ou specs pulam build e E2E,

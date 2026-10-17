@@ -44,7 +44,10 @@ atual (`packages/tokens/tests/generation.test.mjs`) cobre só 4,5:1.
 2. **Animações contínuas e transformações mantêm `motion-reduce:`.** Spinner e
    skeleton não dependem de duração de token; `animate-*` e `hover:-translate-y-px`
    ficam com `motion-reduce:animate-none`/`transform-none`. O LoadingIndicator já
-   expõe `role="status"` e texto, preservando o estado.
+   expõe `role="status"` e texto, preservando o estado. O `AdsLoadingIndicator`
+   mantém `700ms` de rotação fora de `--ads-motion-fast`/`normal` (durações de
+   transição de UI), porque o ciclo do spinner precisa ser mais longo; o
+   `motion-reduce:animate-none` continua desativando a animação.
 3. **`forced-colors` em CSS compilado dos pacotes, com cores de sistema.** Um bloco
    `@media (forced-colors: active)` em cada `styles.css` (`components` e `admin`)
    usa seletores `.ads-*` existentes e as cores de sistema `Highlight`,

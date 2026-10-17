@@ -27,5 +27,5 @@
 ## 5. Documentação e validação
 
 - [x] 5.1 Criar `docs/visual-accessibility.md` (movimento, `forced-colors`, `prefers-contrast`, tokens, teste de contraste e como adicionar pares), linkar no `README.md` e atualizar `docs/quality.md` e `docs/limitations.md`; verificar links
-- [ ] 5.2 Executar `npx --yes prettier@3.9.6 --write` nos arquivos alterados, `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `npm run test:e2e`, e confirmar que nenhum falha
-- [ ] 5.3 Validar com `npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` e confirmar CI verde da PR (`Closes #87`)
+- [x] 5.2 Executar `npx --yes prettier@3.9.6 --write` nos arquivos alterados, `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `npm run test:e2e`, e confirmar que nenhum falha
+- [x] 5.3 Validar com `npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` e confirmar CI verde da PR (`Closes #87`)

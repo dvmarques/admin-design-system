@@ -22,3 +22,24 @@ O pacote de tokens MUST distribuir sobrescritas dos papéis de cor para `prefers
 
 - **WHEN** a aplicação importa `@admin-ds/tokens/styles.css` e o usuário prefere maior contraste
 - **THEN** os papéis de borda, texto secundário e foco assumem valores de maior contraste no tema ativo
+
+### Requirement: Borda de controle e borda decorativa são papéis distintos
+
+O sistema MUST disponibilizar um token semântico público de borda de controle
+(`borderControl`) para limites de controles interativos e indicadores de seleção
+que exigem contraste mínimo de 3:1 contra os fundos aplicáveis. O papel `border`
+MUST permanecer para divisões e contornos decorativos, sem esse requisito de
+contraste não textual.
+
+#### Scenario: Papéis de borda estão disponíveis nos formatos públicos
+
+- **WHEN** uma aplicação importa os tokens de cor públicos
+- **THEN** `borderControl` e `border` são papéis distintos nos dois temas, com
+  equivalência entre variáveis CSS e metadados TypeScript
+
+#### Scenario: Contraste do limite de controle
+
+- **WHEN** o teste automatizado de contraste avalia `borderControl` sobre os
+  fundos de formulário e superfície documentados
+- **THEN** a razão de contraste é de pelo menos 3:1 em cada combinação de tema e
+  `prefers-contrast: more` coberta pela lista de pares

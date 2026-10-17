@@ -69,5 +69,4 @@ indicadores de seleção.
 `forcedColors` e `contrast` e verifica, por estilo computado e papéis ARIA,
 transições zeradas, ausência de animações contínuas, foco e indicador marcado
 com cores de sistema e os tokens de maior contraste nos dois temas, com `axe`.
-Não há snapshots dessas preferências. A emulação de cores forçadas do Chromium
-não substitui a revisão manual no Windows em alto contraste.
+Não há snapshots dessas preferências.

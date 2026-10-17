@@ -55,8 +55,8 @@ responsividade, hidratação do Next.js e fluxos completos entre componentes de
 servidor e cliente.
 
 [playwright.config.ts](../playwright.config.ts) define o endereço padrão da
-aplicação e localiza os testes no diretório `e2e/`. O Chromium necessário já
-foi instalado localmente.
+aplicação e localiza os testes no diretório `e2e/`. Na CI, o Playwright instala
+o Chromium em cada execução (com cache por versão).
 
 Por padrão o E2E serve o build de produção do admin demo (`next start`), então
 execute `npm run build` antes de rodar os testes. Para usar o servidor de
@@ -70,12 +70,41 @@ em `.next/e2e-build-stamp.json` uma impressão digital do código do demo, do
 # Executar os testes end-to-end pela entrada oficial do repositório
 npm run test:e2e
 
-# Atualizar snapshots somente após revisar uma mudança visual intencional
-npm run test:e2e -- --update-snapshots
-
 # Abrir o relatório visual da última execução
 npx.cmd playwright show-report
 ```
+
+### Snapshots visuais
+
+Os snapshots visuais executam em toda execução de CI de Pull Request, sem
+tolerância de diferença de pixels, e a única fonte da verdade são os baselines
+Linux versionados (`*-chromium-linux.png`, ao lado de cada spec). Não há
+baselines para outras plataformas e a execução local dos snapshots não é um
+fluxo suportado.
+
+Para aceitar uma mudança visual intencional:
+
+1. Faça push da branch da PR.
+2. Na aba Actions, execute o workflow "Atualizar baselines visuais"
+   (`update-visual-baselines.yml`) escolhendo a branch da PR. Ele regenera os
+   snapshots em `ubuntu-latest`, confirma que a suíte passa com os novos
+   baselines e faz commit dos PNGs na branch.
+3. Revise o diff das imagens na PR antes de aprovar; não aceite baselines apenas
+   para eliminar uma falha.
+4. O commit do workflow usa o `GITHUB_TOKEN` e, por isso, não dispara a CI da
+   PR: faça um push adicional ou marque a PR como Draft e Ready for review para
+   executar a verificação completa.
+
+O workflow só roda em branches diferentes de `develop` e `master`.
+
+### Tempo de CI
+
+Medido na CI (`ubuntu-latest`), no job "Fluxos no navegador". Antes da mudança
+(`develop`, snapshots pulados): job de ~1 min 39 s, com ~40 s no passo do
+Playwright. Depois (PR #96, 108 testes em Chromium com os snapshots ativos): job
+de ~1 min 28 s, com ~43 s no passo do Playwright. O custo dos snapshots é de
+cerca de 3 s por execução; a diferença total do job fica dentro da variação
+entre runs.
 
 O diretório `e2e/` contém testes end-to-end com extensão `.spec.ts`. A suíte
 atual valida o consumo público das primitivas no admin demo, a alternância de

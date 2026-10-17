@@ -64,6 +64,13 @@ navegador` vira matrix `chromium | firefox | webkit` com `fail-fast: false`.
   garante paridade com Safari; registrado em `limitations.md`.
 - [Tempo de CI maior] → matrix em paralelo mantém o relógio próximo ao atual;
   o custo total em minutos cresce e será medido e documentado.
+- [`workflow_dispatch` só é registrado depois que o workflow está na branch
+  padrão] → na PR 1, um gatilho `push` temporário restrito à branch gerou os
+  baselines e foi removido antes do merge; depois do merge, o disparo manual
+  funciona para qualquer branch.
+- [Commits do workflow com `GITHUB_TOKEN` não disparam a CI da PR] → documentar
+  que é preciso um push adicional ou alternar Draft/Ready for review para
+  executar a verificação completa.
 - [Workflow que faz commit exige `contents: write`] → restrito ao workflow
   manual, sem acionar em PRs de forks.
 

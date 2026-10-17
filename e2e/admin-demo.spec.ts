@@ -70,8 +70,6 @@ test('apresenta o catálogo de componentes com os tokens públicos', async ({ pa
 });
 
 test('mantém a apresentação de referência nos temas claro e escuro', async ({ page }) => {
-	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
-
 	await page.context().addCookies([
 		{
 			name: 'ads-theme',
@@ -156,8 +154,6 @@ test('encerra a navegação móvel ao entrar no desktop e não a reabre ao volta
 test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro e escuro', async ({
 	page,
 }) => {
-	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
-
 	for (const theme of ['dark', 'light'] as const) {
 		await page
 			.context()

@@ -72,3 +72,13 @@ S1/S3): `confirm-dialog` +3584, módulo interno `selection-focus` ~+2061 (não
 exportado em `index`), `step-form` +1864, `bulk-action-bar` +1418, `list-flow`
 +772, CSS +208. Não há testes, exemplos nem pacotes extras no `dist/`. Sem novas
 dependências de runtime.
+
+O baseline foi atualizado na change `acessibilidade-visual-estilos`, medido em LF
+com `dist/` limpo (`git clean -xfd packages/*/dist`), build de tokens, components
+e admin e `inspect:packages`: `@admin-ds/tokens` de 27039 para 29610 bytes
+(+2571) por `borderControl`, `semanticContrast`, blocos `prefers-contrast: more`
+e `prefers-reduced-motion: reduce`; `@admin-ds/components` de 273237 para
+274766 bytes (+1529) por `forced-colors`, `border-border-control`, movimento por
+token e ajustes de formulário; `@admin-ds/admin` de 165809 para 166033 bytes
+(+224) por `forced-colors` na tabela inteligente e na barra de filtros. Sem novas
+dependências de runtime.

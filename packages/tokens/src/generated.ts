@@ -56,6 +56,7 @@ export const tokenValues = {
   "color.textSecondary": "#475569",
   "color.border": "#e2e8f0",
   "color.borderStrong": "#64748b",
+  "color.borderControl": "#64748b",
   "color.primary": "#2563eb",
   "color.primaryHover": "#1d4ed8",
   "color.dangerHover": "#dc2626",

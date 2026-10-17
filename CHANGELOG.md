@@ -10,6 +10,15 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `acessibilidade-visual-estilos` - Movimento por token, `forced-colors` e
+  `prefers-contrast` no CSS distribuído; token `border-control` (3:1) e
+  somente leitura via `[readonly]` sem afetar `AdsSelect`. Closes #87.
+- `speed-up-ci` - CI de PR com jobs em paralelo, cache do Chromium e
+  cancelamento de execuções obsoletas.
+- `skip-docs-only-ci` - PRs só de documentação ou specs pulam build e E2E,
+  mantendo os required checks.
+- `add-visual-regression-and-cross-browser-ci` - Snapshots visuais na CI com
+  baselines só Linux (sem `win32`) e smoke em Firefox e WebKit.
 - `protect-release-branches` - O processo de release deixa de exigir a exclusão
   automática de head branches desabilitada: as branches `release/*` passam a ser
   protegidas por um ruleset que restringe a remoção, e a exclusão automática

@@ -4,6 +4,8 @@
 @source './**/*.{ts,tsx}';
 
 @theme inline {
+	/* Transições sem `duration-*` herdam o token, que vira 0ms com movimento reduzido. */
+	--default-transition-duration: var(--ads-motion-fast);
 	--font-sans: var(--ads-typography-font-family);
 	--text-xs: var(--ads-typography-font-size-xs);
 	--text-sm: var(--ads-typography-font-size-sm);
@@ -33,6 +35,7 @@
 	--color-text-secondary: var(--ads-color-text-secondary);
 	--color-border: var(--ads-color-border);
 	--color-border-strong: var(--ads-color-border-strong);
+	--color-border-control: var(--ads-color-border-control);
 	--color-primary: var(--ads-color-primary);
 	--color-primary-hover: var(--ads-color-primary-hover);
 	--color-danger-hover: var(--ads-color-danger-hover);
@@ -93,5 +96,51 @@
 	.ads-pagination,
 	.ads-pagination-item {
 		isolation: isolate;
+	}
+}
+
+/*
+ * Cores forçadas (Windows alto contraste): o navegador substitui cores e remove sombras, então
+ * estados desenhados só por fundo ou `box-shadow` precisam de contorno ou borda com cores de
+ * sistema. Fora de `@layer` para vencer as utilidades.
+ */
+@media (forced-colors: active) {
+	.ads-selection-control__input:checked + span,
+	.ads-switch input:checked + span {
+		forced-color-adjust: none;
+		background-color: Highlight;
+		border-color: Highlight;
+	}
+
+	.ads-selection-control__input[type='checkbox']:checked + span::after {
+		border-color: HighlightText;
+	}
+
+	.ads-selection-control__input[type='radio']:checked + span::after {
+		background-color: HighlightText;
+	}
+
+	.ads-switch input:checked + span > span {
+		forced-color-adjust: none;
+		background-color: HighlightText;
+	}
+
+	.ads-nav-item[aria-current],
+	.ads-tabs-trigger[aria-selected='true'],
+	[aria-selected='true'] > .ads-date-picker__day {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+
+	.ads-nav-item[aria-current],
+	.ads-tabs-trigger[aria-selected='true'] {
+		text-decoration: underline;
+	}
+
+	.ads-nav-item[aria-current]:focus-visible,
+	.ads-tabs-trigger[aria-selected='true']:focus-visible,
+	[aria-selected='true'] > .ads-date-picker__day:focus-visible {
+		outline-color: CanvasText;
+		outline-offset: 2px;
 	}
 }

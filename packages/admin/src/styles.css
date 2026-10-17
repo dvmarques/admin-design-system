@@ -39,7 +39,7 @@
 		width: var(--ads-admin-shell-sidebar-width);
 		flex-shrink: 0;
 		border-right: 1px solid var(--ads-color-border);
-		transition: width 150ms;
+		transition: width var(--ads-motion-fast);
 	}
 
 	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] {
@@ -107,7 +107,7 @@
 		border-radius: var(--ads-radius-md);
 		background-color: var(--ads-color-surface);
 		color: var(--ads-color-text);
-		transition: background-color 150ms;
+		transition: background-color var(--ads-motion-fast);
 	}
 
 	.ads-admin-shell-navigation-trigger:hover {
@@ -130,7 +130,7 @@
 		border-radius: var(--ads-radius-md);
 		background-color: var(--ads-color-surface);
 		color: var(--ads-color-text);
-		transition: background-color 150ms;
+		transition: background-color var(--ads-motion-fast);
 	}
 
 	.ads-admin-shell-sidebar-toggle:hover {
@@ -387,14 +387,6 @@
 		}
 	}
 
-	@media (prefers-reduced-motion: reduce) {
-		.ads-admin-shell-sidebar-desktop,
-		.ads-admin-shell-navigation-trigger,
-		.ads-admin-shell-sidebar-toggle {
-			transition: none;
-		}
-	}
-
 	/*
 	 * Barra de filtros. A própria barra é o container: o recolhimento segue a largura disponível
 	 * (por exemplo, ao lado da sidebar), não a viewport. Os controles internos usam as classes de
@@ -585,11 +577,6 @@
 	}
 
 	@media (prefers-reduced-motion: reduce) {
-		.ads-filter-bar-toggle,
-		.ads-filter-bar-chip-remove {
-			transition: none;
-		}
-
 		.ads-filter-bar[data-loading]::before {
 			background: var(--ads-color-primary);
 			animation: none;
@@ -890,5 +877,21 @@
 
 	.ads-step-form-cancel {
 		margin-inline-end: auto;
+	}
+}
+
+/*
+ * Cores forçadas: o fundo e o `box-shadow` são descartados, então a seleção e o indicador de
+ * carregamento precisam de contorno ou cor de sistema. Fora de `@layer` para prevalecer.
+ */
+@media (forced-colors: active) {
+	.ads-smart-table .ads-table-row[data-selected] {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+
+	.ads-filter-bar[data-loading]::before {
+		forced-color-adjust: none;
+		background: Highlight;
 	}
 }

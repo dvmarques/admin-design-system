@@ -20,6 +20,7 @@ export const tokenSource = {
 			slate50: '#f8fafc',
 			slate100: '#f1f5f9',
 			slate200: '#e2e8f0',
+			slate400: '#94a3b8',
 			slate500: '#64748b',
 			slate600: '#475569',
 			slate700: '#334155',
@@ -52,6 +53,7 @@ export const tokenSource = {
 				textSecondary: '{color.reference.slate600}',
 				border: '{color.reference.slate200}',
 				borderStrong: '{color.reference.slate500}',
+				borderControl: '{color.reference.slate500}',
 				primary: '{color.reference.blue500}',
 				primaryHover: '{color.reference.blue600}',
 				dangerHover: '{color.reference.red600}',
@@ -96,6 +98,7 @@ export const tokenSource = {
 				textSecondary: '{color.reference.slate200}',
 				border: '{color.reference.slate700}',
 				borderStrong: '{color.reference.slate500}',
+				borderControl: '{color.reference.slate400}',
 				primary: '{color.reference.blue400}',
 				primaryHover: '{color.reference.blue300}',
 				dangerHover: '{color.reference.red600}',
@@ -124,6 +127,32 @@ export const tokenSource = {
 				overlayCloseContent: '{color.reference.slate50}',
 				overlayCloseBackgroundHover: '{color.reference.slate600}',
 				overlayBackdrop: 'rgb(15 23 42 / 0.78)',
+			},
+		},
+		/**
+		 * Sobrescritas aplicadas sob `prefers-contrast: more`. Só os papéis listados mudam;
+		 * os demais herdam o tema ativo.
+		 */
+		semanticContrast: {
+			light: {
+				border: '{color.reference.slate600}',
+				borderStrong: '{color.reference.slate700}',
+				borderControl: '{color.reference.slate700}',
+				textMuted: '{color.reference.slate900}',
+				textSecondary: '{color.reference.slate900}',
+				focus: '{color.reference.blue600}',
+				focusRing: '{color.reference.blue600}',
+				formBorderFocus: '{color.reference.blue600}',
+			},
+			dark: {
+				border: '{color.reference.slate200}',
+				borderStrong: '{color.reference.slate200}',
+				borderControl: '{color.reference.slate200}',
+				textMuted: '{color.reference.slate50}',
+				textSecondary: '{color.reference.slate50}',
+				focus: '{color.reference.white}',
+				focusRing: '{color.reference.white}',
+				formBorderFocus: '{color.reference.white}',
 			},
 		},
 	},

@@ -53,8 +53,8 @@ describe('text form controls', () => {
 			</>,
 		);
 		expect(screen.getByRole('textbox', { name: 'Somente leitura' })).toHaveClass(
-			'read-only:bg-surface-muted',
-			'read-only:cursor-default',
+			'[&[readonly]]:bg-surface-muted',
+			'[&[readonly]]:cursor-default',
 		);
 		expect(screen.getByRole('textbox', { name: 'Desabilitado' })).toBeDisabled();
 	});
@@ -117,7 +117,7 @@ describe('selection form controls', () => {
 				const indicator = screen.getByRole(label === 'Aceito' ? 'checkbox' : 'radio', {
 					name: label,
 				}).nextElementSibling;
-				expect(indicator).toHaveClass('bg-form-background', 'border-border');
+				expect(indicator).toHaveClass('bg-form-background', 'border-border-control');
 			}
 		},
 	);

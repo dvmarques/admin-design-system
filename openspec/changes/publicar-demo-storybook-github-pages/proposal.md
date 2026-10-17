@@ -4,7 +4,7 @@ O demo (`apps/admin-demo`) e o catálogo Storybook (`apps/docs`) só rodam local
 
 ## What Changes
 
-- Publicação automática do demo e do Storybook no GitHub Pages por um workflow único: o demo na raiz do site e o Storybook em `/storybook/`.
+- Publicação automática, a cada push em `develop` (até existir uma versão final), do demo e do Storybook no GitHub Pages por um workflow único: o demo na raiz do site e o Storybook em `/storybook/`.
 - O build do demo para o Pages gera um site estático com `basePath` do repositório; os builds de desenvolvimento, de produção normal e dos testes E2E continuam como hoje.
 - No build estático, o tema deixa de depender de `cookies()` do servidor e passa a ser resolvido no navegador antes da pintura, sem alterar o comportamento do build normal.
 - O demo exibe um link para o Storybook somente quando o endereço do catálogo está configurado (build do Pages).
@@ -35,4 +35,5 @@ O demo (`apps/admin-demo`) e o catálogo Storybook (`apps/docs`) só rodam local
 - Publicação dos pacotes `@admin-ds/*` no npm (tratada depois).
 - Preview por Pull Request (o GitHub Pages não oferece).
 - Domínio próprio e link de volta do Storybook para o demo.
+- Publicar a partir de `master`/releases (será tratado quando houver versão final).
 - Hospedagem com servidor (Vercel, Cloudflare etc.).

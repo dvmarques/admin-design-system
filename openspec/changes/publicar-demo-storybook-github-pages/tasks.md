@@ -14,9 +14,9 @@
 
 ## 3. Workflow de publicação
 
-- [ ] 3.1 Criar `.github/workflows/pages.yml` conforme a decisão D3/D4 (gatilhos `push` em `master` e `workflow_dispatch`, permissões mínimas, `concurrency`, montagem de `site/` com `.nojekyll`); verificar a sintaxe com `actionlint` ou revisão e executando os mesmos comandos localmente.
+- [ ] 3.1 Criar `.github/workflows/pages.yml` conforme a decisão D3/D4 (gatilhos `push` em `develop` e `workflow_dispatch`, permissões mínimas, `concurrency`, montagem de `site/` com `.nojekyll`); verificar a sintaxe com `actionlint` ou revisão e executando os mesmos comandos localmente.
 - [ ] 3.2 Servir `site/` localmente sob `/admin-design-system/` e verificar que o demo na raiz, uma rota interna recarregada e `/storybook/` abrem sem erro de rede (404) nos assets.
-- [ ] 3.3 Habilitar Settings → Pages → Source: GitHub Actions, executar o workflow por `workflow_dispatch` e verificar os endereços publicados.
+- [ ] 3.3 Habilitar Settings → Pages → Source: GitHub Actions, permitir o ramo `develop` nas regras do ambiente `github-pages`, executar o workflow por `workflow_dispatch` e verificar os endereços publicados.
 
 ## 4. Documentação
 

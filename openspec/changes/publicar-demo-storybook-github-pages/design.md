@@ -43,7 +43,7 @@ Alternativa: dois workflows/ramos `gh-pages`. Descartada: um repositório tem um
 
 ### D4. Ramo de publicação
 
-Dispara em `push` para `master` e em `workflow_dispatch`, de modo que o site reflita versões liberadas (alinhado a `docs/release-process.md`) e possa ser republicado manualmente. Alternativa: `develop`, que atualiza a cada merge, mas expõe estado não liberado e exige liberar o ambiente `github-pages` para esse ramo.
+Dispara em `push` para `develop` e em `workflow_dispatch`, de modo que o site reflita sempre o estado mais recente enquanto o projeto não tem versão final, e possa ser republicado manualmente. O ambiente `github-pages` precisa permitir implantações a partir de `develop` (Settings → Environments → github-pages → Deployment branches). Quando houver uma versão final, o gatilho passa para `master` (releases, conforme `docs/release-process.md`) em uma nova change. Alternativa: `master` desde já; descartada porque o site só atualizaria a cada release.
 
 ### D5. Link para o Storybook por variável de build
 
@@ -60,4 +60,5 @@ Seção "Demonstração online" com os links do demo e do Storybook, no topo do 
 - [Erro de hidratação por divergência de `data-theme`] → `suppressHydrationWarning` restrito ao `<html>` e verificação via `e2e/hydration.ts`.
 - [Pages exige repositório público no plano gratuito] → pré-requisito documentado; alternativa é Cloudflare Pages.
 - [Build quebrado em um lado impede o deploy dos dois] → aceito: é o comportamento exigido ("tudo ou nada").
-- [Site só atualiza em releases] → `workflow_dispatch` permite republicar sob demanda.
+- [O site expõe código ainda não liberado] → aceito enquanto o projeto é de estudo e não há versão final; a migração para `master` fica registrada como trabalho futuro.
+- [Ambiente `github-pages` bloqueia implantação a partir de `develop`] → ajustar as regras de ramo do ambiente na habilitação do Pages (tarefa 3.3).

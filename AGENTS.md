@@ -59,6 +59,24 @@ Antes de concluir uma change, execute:
 openspec.cmd validate --all --strict
 ```
 
+## Compatibilidade entre agentes
+
+O repositório é usado com Claude Code, Cursor e Codex.
+
+- `AGENTS.md` é a fonte única de instruções; `CLAUDE.md` apenas o importa.
+- As skills do OpenSpec são geradas por `openspec.cmd update .` em `.agents/skills`,
+  `.claude/skills` e `.cursor/skills`. Não as edite à mão.
+- Skills próprias vivem em `.agents/skills` (lida por Codex e Cursor) e são listadas
+  em `skills-lock.json`. Após alterá-las, execute `npm run sync:agent-skills` para
+  copiá-las para `.claude/skills`; `npm run check:agent-skills` valida a sincronia.
+  Usa-se cópia, não symlink, por causa do Windows.
+- Servidores MCP do projeto ficam em `.mcp.json` (Claude Code) e `.cursor/mcp.json`
+  (Cursor); mantenha ambos iguais. No Codex, registre-os em `~/.codex/config.toml`.
+- Exclusivos do Claude Code: `.claude/settings.json` (hooks que formatam com Prettier após
+  edições e bloqueiam a edição manual de arquivos gerados, em `.claude/hooks`) e os
+  subagents de revisão em `.claude/agents`.
+- Mantenha o texto das skills neutro: diga "invoque a skill X" em vez de `/X` ou `$X`.
+
 ## Releases
 
 O procedimento operacional de releases está em `docs/release-process.md`.
@@ -118,6 +136,10 @@ npm run dev --workspace @admin-ds/docs
 npm run dev --workspace @admin-ds/admin-demo
 npm run test:e2e
 ```
+
+O hook `pre-commit` (Husky + lint-staged, instalado por `npm install` via `prepare`)
+executa `eslint --fix` e `prettier --write` nos arquivos staged. Ele não substitui
+`npm run validate`, e a CI usa `npm ci --ignore-scripts`, então não o instala.
 
 Antes da conclusão, formate os arquivos alterados e confirme:
 

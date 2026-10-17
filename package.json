@@ -12,6 +12,7 @@
 		"packages/*"
 	],
 	"scripts": {
+		"prepare": "husky",
 		"format": "prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
@@ -25,7 +26,9 @@
 		"test:unit:quiet": "npm run build:css --workspace @admin-ds/components && vitest run --silent=passed-only",
 		"test:release": "node --test ./scripts/*release*.test.mjs",
 		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs",
-		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run test:release && npm run test:ci && npm run check:generated --workspace @admin-ds/tokens",
+		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run test:release && npm run test:ci && npm run check:agent-skills && npm run check:generated --workspace @admin-ds/tokens",
+		"sync:agent-skills": "node ./scripts/sync-agent-skills.mjs",
+		"check:agent-skills": "node ./scripts/sync-agent-skills.mjs --check",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
 		"build": "node ./scripts/build-all.mjs",
 		"test:e2e": "playwright test --reporter=dot",
@@ -34,6 +37,13 @@
 		"release:validate": "node ./scripts/validate-release.mjs",
 		"release:notes": "node ./scripts/extract-release-notes.mjs",
 		"validate": "npm run format && npm run lint && npm run build && npm run typecheck && npm run test:quality && npm run test:e2e"
+	},
+	"lint-staged": {
+		"*.{js,mjs,cjs,ts,tsx}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{json,md,css,yml,yaml}": "prettier --write"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
@@ -47,7 +57,9 @@
 		"@types/react-dom": "^19.2.3",
 		"axe-core": "^4.12.1",
 		"eslint": "^10.8.0",
+		"husky": "^9.1.7",
 		"jsdom": "^29.1.1",
+		"lint-staged": "^16.4.0",
 		"next": "^16.2.12",
 		"prettier": "^3.9.6",
 		"storybook": "^10.5.5",

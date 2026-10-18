@@ -18,3 +18,12 @@ describe('text control box sizing in the distributed CSS', () => {
 		expect(css).toContain('.box-border{box-sizing:border-box}');
 	});
 });
+
+describe('date picker trigger height in the distributed CSS', () => {
+	it('contains the utilities that let the trigger follow the field height', () => {
+		expect(css).toContain(
+			'.\\[\\&\\>\\.ads-popover-anchor\\]\\:self-stretch>.ads-popover-anchor{align-self:stretch}',
+		);
+		expect(css).toContain('.min-h-0\\!{min-height:0!important}');
+	});
+});

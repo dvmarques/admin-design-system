@@ -65,3 +65,57 @@ for (const viewport of [
 			.toBeLessThanOrEqual(0);
 	});
 }
+
+async function renderDatePickerMarkup(size: 'sm' | 'md' | 'lg') {
+	const { AdsDatePicker, AdsInput } = await import('@admin-ds/components');
+	return renderToStaticMarkup(
+		createElement(
+			'div',
+			{ style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', padding: '16px' } },
+			createElement(
+				'div',
+				{ id: 'cell-neighbour' },
+				createElement(AdsInput, { 'aria-label': 'Busca', size }),
+			),
+			createElement('div', { id: 'cell-single' }, createElement(AdsDatePicker, { size })),
+			createElement(
+				'div',
+				{ id: 'cell-range', style: { gridColumn: '1 / -1' } },
+				createElement(AdsDatePicker, { mode: 'range', size }),
+			),
+		),
+	);
+}
+
+for (const size of ['sm', 'md', 'lg'] as const) {
+	for (const viewport of [
+		{ name: 'desktop', width: 1280, height: 800 },
+		{ name: 'mobile', width: 390, height: 844 },
+	]) {
+		test(`gatilho do calendário tem a altura do campo em ${size} no ${viewport.name}`, async ({
+			page,
+		}) => {
+			const markup = await renderDatePickerMarkup(size);
+			await page.setViewportSize({ width: viewport.width, height: viewport.height });
+			await page.setContent(
+				`<!doctype html><html data-theme="light"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+
+			const box = async (selector: string) => {
+				const rect = await page.locator(selector).first().boundingBox();
+				if (!rect) throw new Error(`Elemento ausente: ${selector}`);
+				return { top: rect.y, height: rect.height };
+			};
+			const neighbour = await box('#cell-neighbour input');
+			const field = await box('#cell-single input');
+			const trigger = await box('#cell-single button');
+			const rangeField = await box('#cell-range input');
+			const rangeTrigger = await box('#cell-range button');
+
+			expect(trigger.height).toBeCloseTo(field.height, 0);
+			expect(field.top).toBeCloseTo(neighbour.top, 0);
+			expect(rangeTrigger.height).toBeCloseTo(rangeField.height, 0);
+			expect(rangeTrigger.top).toBeCloseTo(rangeField.top, 0);
+		});
+	}
+}

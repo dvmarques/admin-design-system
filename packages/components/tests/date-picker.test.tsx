@@ -441,3 +441,23 @@ describe('AdsDatePicker day styles', () => {
 		expect(day(20)).toHaveClass('bg-transparent', 'text-text', 'border-transparent');
 	});
 });
+
+describe('AdsDatePicker trigger height', () => {
+	it.each(['sm', 'md', 'lg'] as const)(
+		'lets the calendar trigger follow the field height at size %s',
+		(size) => {
+			const { container, unmount } = render(<AdsDatePicker size={size} />);
+			expect(screen.getByRole('button', { name: 'Abrir calendário' })).toHaveClass('min-h-0!');
+			expect(container.querySelector('.ads-date-picker')).toHaveClass(
+				'[&>.ads-popover-anchor]:self-stretch',
+			);
+			unmount();
+
+			const range = render(<AdsDatePicker mode="range" size={size} />);
+			expect(screen.getByRole('button', { name: 'Abrir calendário' })).toHaveClass('min-h-0!');
+			expect(range.container.querySelector('.ads-date-picker')).toHaveClass(
+				'[&>.ads-popover-anchor]:self-stretch',
+			);
+		},
+	);
+});

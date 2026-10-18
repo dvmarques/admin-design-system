@@ -47,9 +47,15 @@ export const Tabs: Story = {
 	),
 };
 /** Breadcrumb links and tabs keep AA contrast on an elevated surface in both themes. */
+/**
+ * A coluna `auto` de um grid não encolhe abaixo do conteúdo (as abas rolam, mas a lista pede 244px);
+ * `minmax(0, 1fr)` deixa o conteúdo rolar dentro do próprio contêiner em vez de alargar a página.
+ */
+const fitColumn = { gridTemplateColumns: 'minmax(0, 1fr)' } as const;
+
 export const OnRaisedSurface: Story = {
 	render: () => (
-		<div className="grid gap-6">
+		<div className="grid gap-6" style={fitColumn}>
 			{(['light', 'dark'] as const).map((theme) => (
 				<div
 					data-theme={theme}
@@ -57,7 +63,7 @@ export const OnRaisedSurface: Story = {
 					style={{ background: 'var(--ads-color-canvas)', padding: '1rem' }}
 				>
 					<AdsSurface variant="raised">
-						<div className="grid gap-4">
+						<div className="grid gap-4" style={fitColumn}>
 							<AdsBreadcrumb
 								aria-label={`Breadcrumb ${theme}`}
 								items={[

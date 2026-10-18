@@ -48,6 +48,27 @@ export const TextControls: Story = {
 	),
 };
 
+/** `AdsInput` e `AdsSelect` de mesmo tamanho têm a mesma altura, lado a lado. */
+export const Sizes: Story = {
+	render: () => (
+		<div className="flex max-w-xl flex-col gap-4">
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<div key={size} style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
+					<AdsField label={`Busca (${size})`}>
+						<AdsInput placeholder="Nome ou e-mail" size={size} />
+					</AdsField>
+					<AdsField label={`Status (${size})`}>
+						<AdsSelect defaultValue="active" size={size}>
+							<option value="active">Ativo</option>
+							<option value="inactive">Inativo</option>
+						</AdsSelect>
+					</AdsField>
+				</div>
+			))}
+		</div>
+	),
+};
+
 export const SelectionControls: Story = {
 	render: () => (
 		<div className="flex flex-col gap-3">

@@ -364,6 +364,47 @@ porque os overlays (dialog, drawer e toast) são renderizados em um `div` com
 não os alcança. O demo não traz essa sobrescrita de forma permanente: ela é
 injetada apenas no teste `e2e/admin-demo-all-routes.spec.ts`, com `--ads-color-text`.
 
+## Botões ao lado de campos
+
+`AdsButton` e os campos de texto (`AdsInput`, `AdsSelect`) de mesmo `size` não têm
+a mesma altura: o botão usa `--ads-dimension-control-*` e o campo usa
+`--ads-dimension-field-*`. A diferença vem desses tokens distintos (os botões
+compartilham a altura de controle com outros componentes) e aparece quando os dois
+ficam na mesma linha.
+
+| `size` | `AdsButton` | `AdsInput` e `AdsSelect` |
+| ------ | ----------- | ------------------------ |
+| `sm`   | 32px        | 30px                     |
+| `md`   | 36px        | 32px                     |
+| `lg`   | 40px        | 36px                     |
+
+Em uma linha com `align-items: center`, o campo desce 1px em `sm` e 2px em `md` e
+`lg` em relação ao botão. Para alinhar, escolha um dos dois caminhos:
+
+- **Mesma altura.** Use `align-items: stretch`, que é o padrão de `display: flex`:
+  o campo cresce até a altura do botão (32, 36 ou 40px).
+- **Mesmo topo.** Use `align-items: flex-start` e aceite a diferença de 2 a 4px.
+
+O `AdsDatePicker` faz o inverso: o gatilho do calendário anula a própria altura
+mínima e acompanha a altura do campo.
+
+```css
+.minha-busca {
+	display: flex;
+	gap: 0.5rem;
+	align-items: stretch;
+}
+```
+
+O CSS distribuído contém apenas as utilidades que a própria biblioteca usa, então
+escreva o layout da linha no CSS da aplicação em vez de depender de classes
+utilitárias da biblioteca.
+
+Evite colocar um `AdsButton` em `startContent` ou `endContent` de `AdsInputGroup`.
+O adendo tem padding horizontal e borda de 1px, o que faz o campo crescer para 34,
+38 ou 42px (contra 30, 32 ou 36px) e deixa o botão dentro da moldura do adendo.
+Prefira uma linha própria com o botão ao lado do grupo.
+
 ## Seletor de data
 
 O `AdsDatePicker` seleciona uma data ou um intervalo (`mode="range"`) por

@@ -10,6 +10,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-form-control-and-shell-header-layout` - `AdsInput`, `AdsTextarea` e
+  `AdsSelect` passam a usar `box-border`: campos de texto deixam de ficar 26px
+  mais largos que a coluna (e de invadir o campo vizinho, como no
+  `AdsFilterBar`) em aplicações sem reset de `box-sizing`. `ThemeToggle` usa a
+  fonte do design system e mantém o rótulo em uma linha. Sem mudança de API.
 - `fix-popover-font-inheritance` - `AdsPopover` e o calendário de
   `AdsDatePicker` passam a usar a fonte do design system (`font-sans`) como os
   demais overlays; antes caíam para a fonte padrão do navegador em aplicações

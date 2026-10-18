@@ -12,3 +12,9 @@ describe('selection group reset in the distributed CSS', () => {
 		expect(css).toContain(`.${name}`);
 	});
 });
+
+describe('text control box sizing in the distributed CSS', () => {
+	it('contains the box-border utility used by AdsInput, AdsTextarea and AdsSelect', () => {
+		expect(css).toContain('.box-border{box-sizing:border-box}');
+	});
+});

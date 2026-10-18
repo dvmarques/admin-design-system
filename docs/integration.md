@@ -74,6 +74,16 @@ dependency, pois reutiliza `AdsDrawer` na navegação móvel. A largura da sideb
 pode ser ajustada por `--ads-admin-shell-sidebar-width` e
 `--ads-admin-shell-sidebar-width-collapsed`.
 
+### Conteúdo do header em telas estreitas
+
+O header é um contêiner flex de uma única linha: o shell não quebra linha nem
+esconde o conteúdo que a aplicação compõe nele. Em telas estreitas, como 390px,
+componha o header com itens que possam encolher ou quebrar linha, por exemplo
+agrupando as ações em um contêiner com `flex-wrap`, para que nenhum controle fique
+cortado nem a página ganhe rolagem horizontal. `ThemeToggle` usa a fonte do design
+system e mantém o rótulo em uma única linha, então ele depende desse contêiner para
+quebrar de linha quando não couber.
+
 ### Server Components e estado
 
 Header, Body e Main permanecem compatíveis com Server Components. O estado do shell,

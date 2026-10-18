@@ -10,26 +10,25 @@
 ## 2. Cabeçalho do Admin Shell sem rolagem horizontal
 
 - [x] 2.1 Em `packages/components/src/theme-toggle.tsx`, adicionar `font-sans` e `whitespace-nowrap` às classes de `ThemeToggle`; verificar em `packages/components/tests/theme-toggle.test.tsx` que o botão tem essas classes e que `aria-pressed`, o rótulo e o `onThemeChange` continuam como antes.
-- [ ] 2.2 Em `packages/admin/src/styles.css`, fazer `.ads-admin-shell-header` quebrar linha (`flex-wrap`, `row-gap`, `padding-block`) e permitir que os filhos diretos encolham (`min-width: 0`); verificar que, em 1280px, a altura e a disposição do cabeçalho não mudam em relação ao estado anterior.
-- [ ] 2.3 Estender os testes de estilos de `packages/admin` (ou criar `packages/admin/tests/admin-shell-styles.test.ts`) para verificar que o CSS distribuído de `@admin-ds/admin` contém `flex-wrap` e `min-width` na regra de `.ads-admin-shell-header`; verificar com `npm run test --workspace @admin-ds/admin`.
-- [x] 2.4 Atualizar `HeaderContent` em `apps/docs/src/admin-shell.stories.tsx` para uma composição responsiva (por exemplo, selo de ambiente oculto em larguras estreitas); verificar no Storybook, em `layout-admin-shell--default` e nas outras 5 stories do shell, em 390px, que a página não rola na horizontal, "Conta" aparece inteiro e nenhum rótulo quebra no meio de uma palavra.
-- [x] 2.5 Adicionar em `e2e/admin-demo.spec.ts` (ou arquivo novo) uma verificação, em 390px, de que o cabeçalho do admin demo não provoca rolagem horizontal e de que seus botões ficam dentro da viewport, usando papéis e nomes acessíveis; verificar que passa na CI.
+- [x] 2.2 Em `docs/integration.md`, na seção Admin Shell, registrar que o conteúdo composto no cabeçalho deve poder quebrar linha ou encolher em telas estreitas (por exemplo, grupo de ações com `flex-wrap`) e que `ThemeToggle` mantém o rótulo em uma linha; verificar que o texto não promete que o shell quebra linha sozinho.
+- [x] 2.3 Atualizar `HeaderContent` em `apps/docs/src/admin-shell.stories.tsx` para que o grupo de ações do cabeçalho quebre linha em larguras estreitas; verificar no Storybook, nas 6 stories de `layout-admin-shell`, em 390px e em 1280px, que a página não rola na horizontal, os controles ficam dentro do cabeçalho, nenhum rótulo quebra no meio de uma palavra e a altura em 1280px continua 65px.
+- [x] 2.4 Adicionar em `e2e/admin-demo.spec.ts` uma verificação, em 390px, de que o cabeçalho do admin demo não provoca rolagem horizontal e de que seus botões ficam dentro da viewport, usando papéis e nomes acessíveis; verificar que passa na CI.
 
 ## 3. Integração e documentação
 
 - [x] 3.1 Adicionar a entrada `fix-form-control-and-shell-header-layout` ao `CHANGELOG.md`, em `[0.1.1] - Em andamento`, seção Changed (mudança visual intencional de campos de texto e do cabeçalho do shell); verificar que o texto descreve o que mudou.
-- [ ] 3.2 Rodar a varredura de geometria (sobreposição, transbordo e rolagem horizontal) em todas as stories, nos dois temas e em 1280px e 390px, e relatar o resultado; verificar que os achados de `child-overflows-parent` em controles, de `overlap` no FilterBar e de `page-overflow-x` nas stories de `layout-admin-shell` foram eliminados, e listar o que permanece (itens fora do escopo).
-- [ ] 3.3 Verificar no admin demo (`npm run dev --workspace @admin-ds/admin-demo`, `/componentes` e `/clientes`), em claro e escuro, em 1280px e 390px, que a aparência dos campos e do cabeçalho não regride e que não há erros no console.
+- [x] 3.2 Rodar a varredura de geometria (sobreposição, transbordo e rolagem horizontal) em todas as stories, nos dois temas e em 1280px e 390px, e relatar o resultado; verificar que os achados de `child-overflows-parent` em controles, de `overlap` no FilterBar e de `page-overflow-x` nas stories de `layout-admin-shell` foram eliminados, e listar o que permanece (itens fora do escopo).
+- [x] 3.3 Verificar no admin demo (`npm run dev --workspace @admin-ds/admin-demo`, `/componentes` e `/clientes`), em claro e escuro, em 1280px e 390px, que a aparência dos campos e do cabeçalho não regride e que não há erros no console.
 
 ## 4. Validação final
 
-- [ ] 4.1 Executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows), antes da validação final; verificar que o comando conclui sem erros.
-- [ ] 4.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` (usar `npm run test:verbose` para diagnóstico) e `npm run build`; verificar que todos passam.
+- [x] 4.1 Executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows), antes da validação final; verificar que o comando conclui sem erros.
+- [x] 4.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` (usar `npm run test:verbose` para diagnóstico) e `npm run build`; verificar que todos passam.
 - [ ] 4.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; atualizar snapshots do Admin Shell móvel e do admin demo apenas se a mudança visual for intencional e o diff tiver sido revisado.
-- [ ] 4.4 Executar `openspec.cmd validate --all --strict` (`npx @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` fora do Windows, a versão fixada na CI); verificar que passa.
-- [ ] 4.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
+- [x] 4.4 Executar `openspec.cmd validate --all --strict` (`npx @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` fora do Windows, a versão fixada na CI); verificar que passa.
+- [x] 4.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
 
 ## Workflow follow-up
 
-- Revisar e regenerar no Windows os snapshots visuais afetados (admin demo e Storybook) antes de aceitar.
+- `ThemeToggle` passa a usar a fonte do design system (antes caía na fonte padrão do navegador), o que muda de forma intencional todos os snapshots do admin demo que incluem o cabeçalho. Executar o workflow manual "Atualizar baselines visuais" nesta branch, revisar o diff dos baselines gerados e só então aceitar; localmente, o E2E mostra 7 falhas de snapshot que também ocorrem sem esta change (Chromium local mais antigo que o da CI).
 - Arquivar esta change com sincronização das specs `form-controls` e `admin-shell-layout`.

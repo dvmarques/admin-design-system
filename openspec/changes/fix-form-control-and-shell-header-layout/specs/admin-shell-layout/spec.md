@@ -2,26 +2,30 @@
 
 ## ADDED Requirements
 
-### Requirement: Cabeçalho do shell não provoca rolagem horizontal
+### Requirement: Controle de tema do cabeçalho usa a tipografia do design system
 
-O cabeçalho de `AdsAdminShell` MUST permanecer dentro da largura da viewport em larguras estreitas, de modo que o conteúdo composto pela aplicação, como marca, ações e controle de tema, não corte controles nem provoque rolagem horizontal da página.
+`ThemeToggle`, quando composto no cabeçalho de `AdsAdminShell`, MUST usar a família tipográfica pública do design system, mesmo em uma aplicação cujo `body` não define `font-family`, e MUST manter o rótulo em uma única linha.
 
-#### Scenario: Ações do cabeçalho não cabem em uma linha
-
-- **WHEN** a viewport tem 390px de largura e o conteúdo do cabeçalho excede a largura disponível em uma única linha
-- **THEN** o conteúdo excedente passa para uma nova linha dentro do cabeçalho, nenhum controle fica cortado e a página não rola na horizontal
-
-#### Scenario: Rótulos de controles do cabeçalho
-
-- **WHEN** o cabeçalho é apresentado em 390px de largura com marca, ação de conta e controle de tema
-- **THEN** os rótulos dos botões não são quebrados no meio de uma palavra
-
-#### Scenario: Controle de tema no cabeçalho
+#### Scenario: Aplicação sem fonte definida no body
 
 - **WHEN** `ThemeToggle` é composto no cabeçalho em uma aplicação cujo `body` não define `font-family`
 - **THEN** o botão usa a família tipográfica do design system e mantém o rótulo em uma única linha
 
+#### Scenario: Largura reduzida
+
+- **WHEN** a viewport tem 390px de largura
+- **THEN** o rótulo do `ThemeToggle` não é quebrado em várias linhas
+
+### Requirement: Cabeçalho composto com conteúdo responsivo cabe em larguras estreitas
+
+Um cabeçalho de `AdsAdminShell` composto com conteúdo capaz de quebrar linha MUST permanecer dentro da largura da viewport em 390px, sem cortar controles nem provocar rolagem horizontal da página, e MUST manter em telas largas a disposição em uma única linha.
+
+#### Scenario: Ações do cabeçalho em tela estreita
+
+- **WHEN** a viewport tem 390px de largura e o cabeçalho contém marca, controle de tema e ações em um grupo que pode quebrar linha
+- **THEN** nenhum controle fica cortado, nenhum rótulo é quebrado no meio de uma palavra e a página não rola na horizontal
+
 #### Scenario: Larguras amplas
 
 - **WHEN** a viewport tem 1280px de largura
-- **THEN** o cabeçalho mantém a disposição em uma única linha, sem mudança visual
+- **THEN** o cabeçalho mantém a disposição em uma única linha e a mesma altura de antes

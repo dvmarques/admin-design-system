@@ -18,28 +18,32 @@ defeito.
 
 **Cabeçalho do shell.** `.ads-admin-shell-header` (`packages/admin/src/styles.css`)
 é `display: flex; align-items: center; gap: 1rem; min-height: 4rem` com
-`padding-inline`. Sem `flex-wrap` e sem `min-width: 0` nos filhos diretos, o
-conteúdo composto pela aplicação (gatilhos de navegação, título, selo de
-ambiente, `ThemeToggle` e botão de conta) não pode ficar abaixo da largura
-natural. Em 390px isso soma 412px e a página rola 22px. `ThemeToggle`
-(`packages/components/src/theme-toggle.tsx`) é um `<button>` com
+`padding-inline`. O conteúdo é composto pela aplicação (gatilhos de navegação,
+título, selo de ambiente, `ThemeToggle` e botão de conta). Na story, em 390px,
+o grupo de ações não pode quebrar linha e soma 412px, e a página rola 22px.
+`ThemeToggle` (`packages/components/src/theme-toggle.tsx`) é um `<button>` com
 `rounded-md border px-3 py-2 text-text`, sem `font-sans` nem
 `whitespace-nowrap`: sem preflight, `<button>` não herda `font-family`, e o
 rótulo "Usar tema escuro" quebra em 3 linhas em 66px.
+
+O admin demo, com o mesmo CSS do cabeçalho, já cabe em 390px: 64px de altura em
+uma linha, com o título encolhendo e quebrando em 2 linhas.
 
 ## Goals / Non-Goals
 
 **Goals:**
 
 - Controles de texto contidos na largura do campo, sem exigir reset do consumidor.
-- Cabeçalho do shell sem rolagem horizontal em 390px e sem controles cortados.
 - `ThemeToggle` com a fonte do design system e rótulo em uma linha.
+- Cabeçalho do shell composto na story e no demo sem rolagem horizontal em 390px e
+  sem controles cortados, com a orientação de composição documentada.
 - Nenhuma mudança de API pública, de classe `ads-*` ou de variável `--ads-*`.
 
 **Non-Goals:**
 
 - Distribuir um reset global de `box-sizing` ou o preflight do Tailwind.
 - Prescrever o conteúdo do cabeçalho: o shell continua sem regras de domínio.
+- Alterar o CSS de `.ads-admin-shell-header`.
 - Rolagem das stories de documentação `foundation-components--surfaces` e
   `--tokens`, o SVG de `AdsLoadingIndicator` e o alinhamento de 2px de "Criado em".
 
@@ -59,25 +63,31 @@ Alternativas descartadas:
 - _Compensar com `calc(100% - 26px)`_: frágil para os três tamanhos e para
   diferentes larguras de borda.
 
-**Cabeçalho do shell com `flex-wrap: wrap` e filhos que podem encolher.**
-`.ads-admin-shell-header` ganha `flex-wrap: wrap`, `row-gap` e `padding-block`
-pequenos, e os filhos diretos ganham `min-width: 0`. Em larguras onde tudo
-cabe, a disposição não muda; em 390px o conteúdo excedente passa para uma
-segunda linha dentro do cabeçalho.
+**Não alterar o CSS do cabeçalho do shell.** O plano inicial previa
+`flex-wrap: wrap` e `min-width: 0` nos filhos diretos. As alternativas foram
+medidas no Storybook e no admin demo (390px):
 
-Premissa registrada: a quebra em segunda linha é preferida a truncar ou ocultar
-controles, porque o shell não conhece o conteúdo (pode haver ações críticas) e
-ocultar ações sem acesso alternativo prejudicaria a acessibilidade. Se o
-mantenedor preferir ocultar itens em telas estreitas, essa decisão cabe à
-aplicação, que compõe o cabeçalho, e a story já exemplifica isso.
+- _`flex-wrap: wrap`_: elimina o estouro, mas muda o que já funcionava. No demo o
+  cabeçalho passa de 64px (uma linha, título encolhendo) para 99px (duas linhas),
+  porque, com quebra de linha, os itens preferem a largura natural a encolher. Isso
+  altera o snapshot visual do Admin Shell móvel, cujo baseline é do Chromium/Linux
+  da CI e não pode ser regenerado de forma confiável fora dela.
+- _Só `min-width: 0`_: sem ganho útil. O gatilho de navegação já encolhe até 34px
+  sem ele e vai a 29px com ele; o título quebra em duas linhas e as ações empilham.
+- _`overflow-x: auto` ou `overflow: hidden`_: escondem ou cortam ações, ruim para
+  teclado e toque.
 
-Alternativas descartadas:
+A causa do estouro está no conteúdo composto, e a correção fica ali:
+`ThemeToggle` passa a ter `font-sans` e `whitespace-nowrap`, e a story compõe o
+grupo de ações com `flex-wrap`. Medido nas 6 stories do shell, sem tocar no CSS do
+cabeçalho: nenhuma rolagem horizontal em 390px nem em 1280px, e altura de 65px em
+telas largas, igual à original.
 
-- _`overflow-x: auto` no cabeçalho_: esconde ações atrás de rolagem horizontal
-  dentro de uma barra sticky, ruim para teclado e toque.
-- _Só corrigir a story_: o defeito está no contêiner e no `ThemeToggle`; qualquer
-  consumidor com conteúdo largo estouraria a página do mesmo jeito.
-- _`overflow: hidden`_: corta controles sem aviso.
+Consequência aceita: a biblioteca não protege um consumidor que ponha no cabeçalho
+conteúdo que não encolhe nem quebra linha. A orientação fica em
+`docs/integration.md`. Se no futuro o mantenedor preferir que o contêiner quebre
+linha, `flex-wrap` pode ser adotado em uma change própria, com revisão dos
+snapshots na CI.
 
 **`ThemeToggle` com `font-sans` e `whitespace-nowrap`.** Mesmo mecanismo dos
 demais controles da biblioteca; mantém o rótulo em uma linha e usa o token
@@ -91,8 +101,8 @@ com Server Components.
 quebra do cabeçalho preserva a ordem de leitura e de tabulação do DOM. A
 verificação cobre tamanho de alvo e ausência de controles cortados em 390px.
 
-**Tailwind, tokens e CSS distribuído.** Só classes estáticas e o CSS do pacote
-admin; nenhum token novo. `box-border`, `font-sans` e `whitespace-nowrap` já são
+**Tailwind, tokens e CSS distribuído.** Só classes estáticas; nenhum token
+novo. `box-border`, `font-sans` e `whitespace-nowrap` já são
 gerados pelo build do pacote de componentes; o impacto no tamanho do bundle é
 desprezível.
 
@@ -105,13 +115,14 @@ CSS da aplicação.
 - Aplicações que, sem saber, compensavam a largura de 26px dos campos verão os
   campos mais estreitos (passam a caber no contêiner). Mudança intencional,
   registrada no `CHANGELOG.md`.
-- O cabeçalho passa a crescer em altura em telas estreitas quando o conteúdo
-  quebra para uma segunda linha; `min-height: 4rem` e o cabeçalho `sticky` se
-  mantêm. `.ads-admin-shell-body` usa `min-height: calc(100vh - 4rem)`, então a
-  altura extra pode gerar rolagem vertical mínima em páginas curtas.
-- Snapshots visuais do admin demo em 390px e do Admin Shell móvel podem mudar;
-  só devem ser atualizados após revisão do diff, conforme `AGENTS.md`. O
-  baseline é do Chromium/Linux, e a validação visual deve ser feita no ambiente
-  da CI.
+- Um consumidor que componha no cabeçalho conteúdo que não encolhe nem quebra linha
+  continua podendo estourar a largura em telas estreitas; é uma responsabilidade
+  de composição, documentada em `docs/integration.md`.
+- `ThemeToggle` ganha `whitespace-nowrap`: em uma largura muito estreita o botão
+  não encolhe abaixo do rótulo e depende do contêiner para quebrar linha.
+- Snapshots visuais do admin demo podem mudar onde `ThemeToggle` aparece e onde o
+  `box-border` altera campos; só devem ser atualizados após revisão do diff,
+  conforme `AGENTS.md`. O baseline é do Chromium/Linux, e a validação visual deve
+  ser feita no ambiente da CI.
 - Os testes de geometria dependem de CSS compilado e de navegador real, não de
   jsdom; ficam no Playwright.

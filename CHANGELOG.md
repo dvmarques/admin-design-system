@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-smart-table-caption-padding` - A legenda visível de `AdsSmartTable` passa a ter o
+  espaçamento horizontal das células e o espaçamento vertical da densidade, em vez de
+  encostar na borda e no topo do contêiner da tabela. `hideCaption` e `AdsTable` isolada
+  não mudam. Sem mudança de API pública, classes ou tokens.
 - `fix-select-sm-height-and-document-field-button-pairing` - O token
   `--ads-dimension-field-sm` passa de `1.75rem` para `1.875rem` (30px), a altura real
   do campo pequeno: o `AdsSelect` `sm` sobe de 28 para 30px e passa a ter a mesma

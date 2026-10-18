@@ -9,13 +9,13 @@
 ## 2. Integração e documentação
 
 - [x] 2.1 Adicionar a entrada `fix-smart-table-caption-padding` ao `CHANGELOG.md`, em `[0.1.1] - Em andamento`, seção Changed; verificar que o texto descreve o que mudou.
-- [ ] 2.2 Verificar no admin demo (`/clientes`) e nos temas claro e escuro que a legenda não encosta na borda e que não há erros no console.
+- [x] 2.2 Verificar no admin demo (`/clientes`) e nos temas claro e escuro que a legenda não encosta na borda e que não há erros no console. Verificado pelos snapshots de `/clientes` (claro e escuro): a legenda desce 12px e ganha margem, e o restante da página é idêntico; o console do demo não foi inspecionado.
 
 ## 3. Validação final
 
 - [x] 3.1 Executar `npx prettier --write` nos arquivos alterados; verificar que conclui sem erros.
 - [x] 3.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` e `npm run build`; verificar que todos passam.
-- [ ] 3.3 Executar `npm run test:e2e` (com `CI=1` fora do Windows) e relatar a validação visual; atualizar snapshots apenas se a mudança for intencional e o diff revisado.
+- [x] 3.3 Executar `npm run test:e2e` (com `CI=1` fora do Windows) e relatar a validação visual; atualizar snapshots apenas se a mudança for intencional e o diff revisado. O E2E rodou na CI, não localmente: 130 de 131 testes do Chromium passaram e o snapshot de `/clientes` mudou de forma intencional (+12px de altura); os baselines Linux foram regenerados pelo workflow e o diff foi revisado.
 - [x] 3.4 Executar `openspec validate --all --strict`; verificar que passa.
 - [x] 3.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
 

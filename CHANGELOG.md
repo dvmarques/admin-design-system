@@ -10,6 +10,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-select-sm-height-and-document-field-button-pairing` - O token
+  `--ads-dimension-field-sm` passa de `1.75rem` para `1.875rem` (30px), a altura real
+  do campo pequeno: o `AdsSelect` `sm` sobe de 28 para 30px e passa a ter a mesma
+  altura do `AdsInput`; `AdsInput` e `AdsTextarea` não mudam. Nova seção em
+  `docs/integration.md` sobre botões ao lado de campos e nova story de tamanhos de
+  `AdsInput` e `AdsSelect`. Sem mudança de nomes de tokens nem de API.
 - `fix-date-picker-trigger-height` - O gatilho do calendário de `AdsDatePicker`
   passa a ter a altura do campo em `sm`, `md` e `lg` (antes era 2 a 4px mais alto,
   porque o botão usa a altura de controle), e o campo volta a alinhar com os campos

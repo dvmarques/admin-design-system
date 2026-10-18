@@ -26,7 +26,7 @@ export const tokenValues = {
   "dimension.controlSm": "2rem",
   "dimension.controlMd": "2.25rem",
   "dimension.controlLg": "2.5rem",
-  "dimension.fieldSm": "1.75rem",
+  "dimension.fieldSm": "1.875rem",
   "dimension.fieldMd": "2rem",
   "dimension.fieldLg": "2.25rem",
   "border.width": "1px",

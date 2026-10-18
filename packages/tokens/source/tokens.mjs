@@ -176,7 +176,7 @@ export const tokenSource = {
 		controlSm: '2rem',
 		controlMd: '2.25rem',
 		controlLg: '2.5rem',
-		fieldSm: '1.75rem',
+		fieldSm: '1.875rem',
 		fieldMd: '2rem',
 		fieldLg: '2.25rem',
 	},

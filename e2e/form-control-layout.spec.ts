@@ -119,3 +119,53 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 		});
 	}
 }
+
+async function renderSizesMarkup(size: 'sm' | 'md' | 'lg') {
+	const { AdsInput, AdsSelect } = await import('@admin-ds/components');
+	return renderToStaticMarkup(
+		createElement(
+			'div',
+			{ style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', padding: '16px' } },
+			createElement(
+				'div',
+				{ id: 'cell-input' },
+				createElement(AdsInput, { 'aria-label': 'Busca', size }),
+			),
+			createElement(
+				'div',
+				{ id: 'cell-select' },
+				createElement(
+					AdsSelect,
+					{ 'aria-label': 'Status', size },
+					createElement('option', { value: 'all' }, 'Todos'),
+				),
+			),
+		),
+	);
+}
+
+for (const size of ['sm', 'md', 'lg'] as const) {
+	for (const viewport of [
+		{ name: 'desktop', width: 1280, height: 800 },
+		{ name: 'mobile', width: 390, height: 844 },
+	]) {
+		test(`input e select têm a mesma altura em ${size} no ${viewport.name}`, async ({ page }) => {
+			const markup = await renderSizesMarkup(size);
+			await page.setViewportSize({ width: viewport.width, height: viewport.height });
+			await page.setContent(
+				`<!doctype html><html data-theme="light"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+
+			const box = async (selector: string) => {
+				const rect = await page.locator(selector).boundingBox();
+				if (!rect) throw new Error(`Elemento ausente: ${selector}`);
+				return { top: rect.y, height: rect.height };
+			};
+			const input = await box('#cell-input input');
+			const select = await box('#cell-select select');
+
+			expect(select.height).toBeCloseTo(input.height, 0);
+			expect(select.top).toBeCloseTo(input.top, 0);
+		});
+	}
+}

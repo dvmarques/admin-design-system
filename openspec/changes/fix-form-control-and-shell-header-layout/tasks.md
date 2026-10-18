@@ -24,11 +24,11 @@
 
 - [x] 4.1 Executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows), antes da validação final; verificar que o comando conclui sem erros.
 - [x] 4.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` (usar `npm run test:verbose` para diagnóstico) e `npm run build`; verificar que todos passam.
-- [ ] 4.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; atualizar snapshots do Admin Shell móvel e do admin demo apenas se a mudança visual for intencional e o diff tiver sido revisado.
+- [x] 4.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; atualizar snapshots do Admin Shell móvel e do admin demo apenas se a mudança visual for intencional e o diff tiver sido revisado.
 - [x] 4.4 Executar `openspec.cmd validate --all --strict` (`npx @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` fora do Windows, a versão fixada na CI); verificar que passa.
 - [x] 4.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
 
 ## Workflow follow-up
 
-- `ThemeToggle` passa a usar a fonte do design system (antes caía na fonte padrão do navegador), o que muda de forma intencional todos os snapshots do admin demo que incluem o cabeçalho. Executar o workflow manual "Atualizar baselines visuais" nesta branch, revisar o diff dos baselines gerados e só então aceitar; localmente, o E2E mostra 7 falhas de snapshot que também ocorrem sem esta change (Chromium local mais antigo que o da CI).
+- O workflow manual "Atualizar baselines visuais" foi executado nesta branch e não alterou nenhum baseline: o E2E completo do Chromium (incluindo os testes novos) passou na CI sem atualização de snapshots. A mudança de fonte do `ThemeToggle` só seria visível onde `Aptos` ou `Segoe UI` existem; no runner Linux a lista de fontes cai em `sans-serif`, o mesmo rosto de antes. Localmente, o E2E mostra 7 falhas de snapshot que também ocorrem sem esta change (Chromium local mais antigo que o da CI).
 - Arquivar esta change com sincronização das specs `form-controls` e `admin-shell-layout`.

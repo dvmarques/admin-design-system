@@ -19,8 +19,8 @@ campo ao lado quebra a aparência de um único controle.
 **Biblioteca reutilizável (`packages/components`)**
 
 - `AdsDatePicker`: o gatilho do calendário passa a ter a altura do campo do mesmo
-  `size` (28, 32 e 36px), por um mapeamento explícito e estático por tamanho. O
-  campo volta a alinhar com os campos vizinhos.
+  `size`, esticando-se até a altura da linha (que é a do campo), em vez de usar a
+  altura mínima do botão. O campo volta a alinhar com os campos vizinhos.
 - Testes de classes por tamanho, de CSS distribuído e de geometria no navegador
   (altura do gatilho igual à do campo e topo alinhado ao vizinho).
 

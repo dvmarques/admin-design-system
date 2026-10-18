@@ -10,7 +10,9 @@ do campo.
 Os tamanhos divergem por token:
 
 - `AdsInput` (`formControlClasses`): `min-h-[var(--ads-dimension-field-*)]`, que vale
-  28, 32 e 36px em `sm`, `md` e `lg`.
+  28, 32 e 36px em `sm`, `md` e `lg`. É só altura mínima: a altura real também cresce
+  com o padding e a linha (`py-1` + 20px + borda = 30px), então o campo mede 30, 32 e
+  36px, e em `sm` o token (28px) não é a altura real.
 - `AdsButton` (`buttonSizes`): `min-h-[var(--ads-dimension-control-*)]`, que vale
   32, 36 e 40px.
 
@@ -36,43 +38,51 @@ altura 36px.
 
 ## Decisions
 
-**Sobrescrever a altura mínima do gatilho com o token de campo, com `!`.** O
-gatilho recebe, por mapeamento explícito de `size`, a utilidade
-`min-h-[var(--ads-dimension-field-{size})]!`. O mapeamento é estático, como pede o
-projeto, e não monta classe por concatenação.
+**Esticar o gatilho até a altura da linha e anular o `min-h` do botão.** O gatilho
+recebe `min-h-0!`, e a linha do seletor recebe `[&>.ads-popover-anchor]:self-stretch`.
+O `AdsPopover` envolve o botão em um `<span class="ads-popover-anchor inline-flex">`,
+que é o item da linha flex; esticar o `span` faz o botão (que estica dentro dele) ter
+a altura da linha, que é a do campo, em qualquer tamanho. O seletor de filho tem
+precedente em `field.tsx` (`[&>.ads-form-control]:rounded-l-none`), e as duas classes
+são estáticas.
 
-O modificador `!` é necessário: duas utilidades `min-h-[...]` conflitantes saem em
-ordem alfabética no CSS compilado (`control-*` antes de `field-*`). Sem `!`, o
-resultado dependeria dessa coincidência de nomes; o experimento com o Tailwind
-`4.3` do projeto confirmou a ordem e que `!` gera `!important`. O mesmo tipo de
-conflito já quebrou o estado ativo das abas em uma change anterior
-(`fix-navigation-theme-contrast`).
+O modificador `!` é necessário em `min-h-0`: ele e o `min-h-[var(--ads-dimension-control-*)]`
+do botão empatariam, e o vencedor dependeria da ordem das utilidades no CSS compilado
+(o mesmo tipo de conflito que quebrou o estado ativo das abas em
+`fix-navigation-theme-contrast`).
+
+Primeira tentativa descartada: copiar o token de campo para o gatilho
+(`min-h-[var(--ads-dimension-field-{size})]!`). O teste de geometria mostrou que não
+iguala as alturas em `sm`, porque o campo mede 30px e o token vale 28px. Com a altura da
+linha como referência, a igualdade vale por construção.
 
 Alternativas descartadas:
 
-- _`items-start` na linha_: alinha o topo do campo, mas o gatilho continua 4px mais
-  alto que o campo e a linha cresce 4px abaixo; não corrige a aparência.
-- _`items-stretch`_: o campo esticaria até 36px e deixaria de ter a altura dos
-  vizinhos.
+- _Mapear o token de campo por `size`_: falha em `sm`, como descrito acima.
+- _`self-stretch` apenas no botão_: o botão não é item da linha, e sim do `span` de
+  âncora, então não tem efeito.
+- _`items-start` na linha_: alinha o topo do campo, mas o gatilho continua mais alto
+  que o campo e a linha cresce abaixo; não corrige a aparência.
+- _`items-stretch` na linha_: exigiria recentralizar o separador do intervalo e muda a
+  linha inteira para resolver um item.
 - _Novo tamanho ou prop em `AdsButton`_: mudaria a API pública para resolver um caso
   interno do seletor.
 - _Alterar os tokens de controle ou de campo_: afetaria todos os botões e campos.
-- _Sobrescrever sem `!`_: depende da ordem alfabética das utilidades.
 
 **Limites de Client e Server Components.** Sem mudança: `AdsDatePicker` continua
 Client Component.
 
 **Acessibilidade.** Sem mudança de papéis, nome acessível (`labels.openCalendar`),
-foco ou teclado. O alvo do gatilho passa de 36px para 32px em `md`
-(28px em `sm`, 36px em `lg`); `md` e `lg` continuam acima do mínimo de 24px de
-alvo da WCAG 2.2 (critério 2.5.8). `sm` fica em 28px, também acima de 24px.
+foco ou teclado. O alvo do gatilho passa de 36px para 32px em `md` (30px em `sm` e
+36px em `lg`, que antes eram 32 e 40px), todos acima do mínimo de 24px de alvo da
+WCAG 2.2 (critério 2.5.8).
 
-**Tailwind, tokens e CSS distribuído.** Só classes estáticas, consumindo o token
-público `--ads-dimension-field-*`; nenhum token novo. As três utilidades com `!`
-entram no CSS distribuído, com impacto desprezível no tamanho do bundle.
+**Tailwind, tokens e CSS distribuído.** Só classes estáticas; nenhum token novo. A
+utilidade `min-h-0!` e a variante `[&>.ads-popover-anchor]:self-stretch` entram no CSS
+distribuído, com impacto desprezível no tamanho do bundle.
 
-**Conflitos de CSS com aplicações.** A regra usa a classe utilitária no gatilho
-(`ads-date-picker__trigger`), sem seletor global.
+**Conflitos de CSS com aplicações.** As regras ficam no gatilho e na linha do
+seletor (`.ads-date-picker`), sem seletor global.
 
 ## Risks / Trade-offs
 
@@ -82,6 +92,8 @@ entram no CSS distribuído, com impacto desprezível no tamanho do bundle.
   `AdsFilterBar` e datas) podem mudar; só devem ser atualizados após revisão do diff,
   conforme `AGENTS.md`. O workflow "Atualizar baselines visuais" regenera os
   baselines Linux na CI, a validação visual deve ser feita lá.
-- `!important` em um utilitário de altura impede que o consumidor sobrescreva a
-  altura do gatilho por `className` sem o mesmo modificador. É aceitável: o gatilho
-  existe para acompanhar a altura do campo.
+- `!important` em `min-h-0` impede que o consumidor sobrescreva a altura mínima do
+  gatilho por `className` sem o mesmo modificador. É aceitável: o gatilho existe para
+  acompanhar a altura do campo.
+- A altura da linha passa a ser a do campo; se um consumidor aplicar `className` que
+  aumente a altura do campo, o gatilho acompanha.

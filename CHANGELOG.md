@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-date-picker-trigger-height` - O gatilho do calendário de `AdsDatePicker`
+  passa a ter a altura do campo em `sm`, `md` e `lg` (antes era 2 a 4px mais alto,
+  porque o botão usa a altura de controle), e o campo volta a alinhar com os campos
+  vizinhos, como no `AdsFilterBar`. Mudança visual intencional; sem mudança de API.
 - `fix-form-control-and-shell-header-layout` - `AdsInput`, `AdsTextarea` e
   `AdsSelect` passam a usar `box-border`: campos de texto deixam de ficar 26px
   mais largos que a coluna (e de invadir o campo vizinho, como no

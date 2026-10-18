@@ -20,10 +20,11 @@
 
 - [x] 4.1 Executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows), antes da validação final; verificar que o comando conclui sem erros.
 - [x] 4.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` (usar `npm run test:verbose` para diagnóstico) e `npm run build`; verificar que todos passam.
-- [ ] 4.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; se algum snapshot mudar, executar o workflow "Atualizar baselines visuais" na branch, revisar o diff e só então aceitar.
+- [x] 4.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; se algum snapshot mudar, executar o workflow "Atualizar baselines visuais" na branch, revisar o diff e só então aceitar.
 - [x] 4.4 Executar `openspec.cmd validate --all --strict` (`npx @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive` fora do Windows, a versão fixada na CI); verificar que passa.
 - [x] 4.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
 
 ## Workflow follow-up
 
+- A CI do PR (Chromium, Firefox e WebKit) passou sem nenhuma falha de snapshot, como esperado: nenhuma story, página do demo ou componente do `admin` renderiza `AdsSelect` com `size`, então o workflow "Atualizar baselines visuais" não foi necessário.
 - Arquivar esta change com sincronização das specs `form-controls` e `component-documentation`.

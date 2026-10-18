@@ -16,8 +16,8 @@
 
 - [x] 3.1 Executar `npx.cmd prettier --write` nos arquivos alterados (`npx prettier --write` fora do Windows), antes da validação final; verificar que o comando conclui sem erros.
 - [x] 3.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` (usar `npm run test:verbose` para diagnóstico) e `npm run build`; verificar que todos passam.
-- [ ] 3.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; atualizar snapshots apenas se a mudança visual for intencional e o diff tiver sido revisado.
-- [ ] 3.4 Executar `openspec.cmd validate --all --strict` (`openspec validate --all --strict` fora do Windows); verificar que passa.
+- [x] 3.3 Executar `npm run test:e2e` e confirmar que nenhum teste falha antes do commit (usar `npm run test:e2e:verbose` para diagnóstico). Fora do Windows, executar com `CI=1` para pular os snapshots visuais sem baseline e relatar que a validação visual não foi feita; atualizar snapshots apenas se a mudança visual for intencional e o diff tiver sido revisado.
+- [x] 3.4 Executar `openspec.cmd validate --all --strict` (`openspec validate --all --strict` fora do Windows); verificar que passa.
 - [x] 3.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
 
 ## Workflow follow-up

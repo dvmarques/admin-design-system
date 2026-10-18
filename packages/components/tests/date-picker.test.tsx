@@ -149,6 +149,12 @@ describe('AdsDatePicker single date', () => {
 		expect(grid.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
 	});
 
+	it('renders the calendar panel with the design system font', async () => {
+		render(<AdsDatePicker defaultValue="2026-03-10" />);
+		const grid = await openCalendar();
+		expect(grid.closest('[role="dialog"]')).toHaveClass('font-sans');
+	});
+
 	it('closes with Escape', async () => {
 		render(<AdsDatePicker defaultValue="2026-03-10" />);
 		await openCalendar();

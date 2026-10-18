@@ -8,3 +8,8 @@ it('build distributes static Tailwind utilities without preflight', async () => 
 	expect(css).toMatch(/\.border-primary/);
 	expect(css).not.toMatch(/\*,:after,:before/);
 });
+
+it('distributes the font-sans utility mapped to the public font family token', async () => {
+	const css = await readFile(resolve(import.meta.dirname, '../dist/styles.css'), 'utf8');
+	expect(css).toContain('.font-sans{font-family:var(--ads-typography-font-family)}');
+});

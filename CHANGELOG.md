@@ -10,6 +10,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-popover-font-inheritance` - `AdsPopover` e o calendário de
+  `AdsDatePicker` passam a usar a fonte do design system (`font-sans`) como os
+  demais overlays; antes caíam para a fonte padrão do navegador em aplicações
+  cujo `body` não define `font-family`. Sem mudança de API.
 - `polimento-visual-tokens` - Elevação por tema, densidade de tabela e tokens
   de skeleton; props opcionais em `AdsTable`, `AdsSmartTable`, `AdsSkeleton` e
   `AdsEmptyState`; `AdsMetricCard` e `AdsDashboardPanel` renderizam

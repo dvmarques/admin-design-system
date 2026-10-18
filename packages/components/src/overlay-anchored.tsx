@@ -141,7 +141,7 @@ export function AdsPopover({
 					<div
 						{...props}
 						className={classNames(
-							'ads-popover fixed z-[var(--ads-layer-overlay)] max-w-[min(24rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised p-4 text-text shadow-lg max-md:p-3',
+							'ads-popover fixed z-[var(--ads-layer-overlay)] max-w-[min(24rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised p-4 font-sans text-text shadow-lg max-md:p-3',
 							className,
 						)}
 						id={popoverId}

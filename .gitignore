@@ -16,3 +16,6 @@ apps/admin-demo/AGENTS.md
 # Saídas do build do GitHub Pages
 apps/admin-demo/out/
 site/
+
+# Saídas locais do MCP do Playwright
+.playwright-mcp/

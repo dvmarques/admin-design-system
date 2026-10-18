@@ -60,6 +60,7 @@ describe('anchored overlays', () => {
 		const popover = await screen.findByRole('dialog', { name: 'Ações rápidas' });
 		expect(popover).toBeVisible();
 		expect(popover).toHaveClass('z-[var(--ads-layer-overlay)]');
+		expect(popover).toHaveClass('font-sans');
 		expect(trigger).toHaveAttribute('aria-expanded', 'true');
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());

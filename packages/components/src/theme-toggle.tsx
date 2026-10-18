@@ -28,7 +28,7 @@ export function ThemeToggle({
 			type="button"
 			aria-pressed={theme === 'dark'}
 			className={classNames(
-				'rounded-md border border-border bg-surface px-3 py-2 text-text',
+				'whitespace-nowrap rounded-md border border-border bg-surface px-3 py-2 font-sans text-text',
 				className,
 			)}
 			onClick={(event) => {

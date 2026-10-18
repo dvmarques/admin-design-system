@@ -175,3 +175,23 @@ test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro
 		await expect(page).toHaveScreenshot(`admin-shell-mobile-open-${theme}.png`);
 	}
 });
+
+test('mantém o cabeçalho do Admin Shell dentro da largura em 390px', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+	const header = page.getByRole('banner');
+	await expect(header).toBeVisible();
+
+	const overflow = await page.evaluate(
+		() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+	);
+	expect(overflow).toBeLessThanOrEqual(0);
+
+	for (const control of await header.getByRole('button').all()) {
+		if (!(await control.isVisible())) continue;
+		const box = await control.boundingBox();
+		expect(box).not.toBeNull();
+		expect(box!.x).toBeGreaterThanOrEqual(0);
+		expect(box!.x + box!.width).toBeLessThanOrEqual(390);
+	}
+});

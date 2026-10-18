@@ -28,6 +28,32 @@ describe('text form controls', () => {
 		);
 	});
 
+	it('counts padding and border inside the width of every text control', () => {
+		const { container } = render(
+			<form>
+				{(['sm', 'md', 'lg'] as const).map((size) => (
+					<AdsInput aria-label={`Texto ${size}`} key={size} size={size} />
+				))}
+				{(['default', 'success', 'error'] as const).map((validationState) => (
+					<AdsInput
+						aria-label={`Estado ${validationState}`}
+						key={validationState}
+						validationState={validationState}
+					/>
+				))}
+				<AdsInput aria-label="Desabilitado" disabled />
+				<AdsTextarea aria-label="Descrição" />
+				<AdsSelect aria-label="Status">
+					<option value="active">Ativo</option>
+				</AdsSelect>
+			</form>,
+		);
+
+		const controls = [...container.querySelectorAll('.ads-form-control')];
+		expect(controls).toHaveLength(9);
+		for (const control of controls) expect(control).toHaveClass('box-border', 'w-full');
+	});
+
 	it('renders textarea and select with native interaction', () => {
 		render(
 			<form>

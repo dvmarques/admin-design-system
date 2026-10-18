@@ -100,7 +100,7 @@ function HeaderContent() {
 			<AdsTypography as="strong" variant="heading4">
 				Admin Abril
 			</AdsTypography>
-			<div className="ml-auto flex items-center gap-3">
+			<div className="ml-auto flex flex-wrap items-center gap-2">
 				<AdsBadge>Produção</AdsBadge>
 				<ThemeToggle />
 				<AdsButton size="sm" variant="secondary">

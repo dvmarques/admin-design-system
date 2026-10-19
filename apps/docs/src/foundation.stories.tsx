@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { StyleFixture, ThemeToggle } from '@admin-ds/components';
 import { tokenValues } from '@admin-ds/tokens';
+import { Fragment } from 'react';
 
 const meta = {
 	title: 'Foundation/Components',
@@ -74,6 +75,19 @@ export const SemanticStates: Story = {
 	),
 };
 
+/** Oferece quebra de linha depois de cada ponto do nome, sem alterar o texto. */
+function breakAfterDots(name: string) {
+	return name.split('.').map((part, index, parts) =>
+		index < parts.length - 1 ? (
+			<Fragment key={index}>
+				{part}.<wbr />
+			</Fragment>
+		) : (
+			part
+		),
+	);
+}
+
 export const Tokens: Story = {
 	render: () => (
 		<dl>
@@ -81,8 +95,16 @@ export const Tokens: Story = {
 				.slice(0, 12)
 				.map(([name, value]) => (
 					<div key={name} style={{ display: 'flex', flexWrap: 'wrap', columnGap: '1rem' }}>
-						<dt style={{ flex: '0 0 12rem', maxWidth: '100%', minWidth: 0, width: '12rem' }}>
-							{name}
+						{/* 16rem cabe `typography.fontWeight.semibold`, o nome mais largo. `shrink` evita impor 16rem de largura mínima; em telas estreitas o nome quebra depois dos pontos. */}
+						<dt
+							style={{
+								flex: '0 1 16rem',
+								maxWidth: '100%',
+								minWidth: 0,
+								overflowWrap: 'break-word',
+							}}
+						>
+							{breakAfterDots(name)}
 						</dt>
 						<dd style={{ flex: '1 1 12rem', minWidth: 0, overflowWrap: 'anywhere' }}>{value}</dd>
 					</div>

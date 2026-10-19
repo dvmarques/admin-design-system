@@ -397,12 +397,13 @@ body {
 		justify-items: start;
 		padding-top: 0;
 	}
+	/* `minmax(0, 1fr)`: `1fr` não encolhe abaixo do conteúdo e alargava a página em 320px. */
 	.demo-foundations-grid,
 	.demo-utility-grid,
 	.demo-preferences,
 	.demo-evaluation-grid,
 	.demo-state-grid {
-		grid-template-columns: 1fr;
+		grid-template-columns: minmax(0, 1fr);
 	}
 	.demo-panel__heading {
 		flex-direction: column;

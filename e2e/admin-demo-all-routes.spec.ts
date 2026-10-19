@@ -2,7 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { routes, themes, type Theme } from './routes';
 
-const widths = [375, 768, 1280] as const;
+const widths = [320, 375, 768, 1280] as const;
 const overrideColor = 'rgb(12, 34, 56)';
 
 async function useTheme(page: Page, theme: Theme) {

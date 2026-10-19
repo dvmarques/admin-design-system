@@ -7,7 +7,7 @@ import { AdsBreadcrumb, AdsDropdown, AdsNav, AdsPagination, AdsTabs } from '@adm
 export function NavigationShowcase() {
 	const [page, setPage] = useState(2);
 	return (
-		<div style={{ display: 'grid', gap: '1.5rem' }}>
+		<div style={{ display: 'grid', gap: '1.5rem', gridTemplateColumns: 'minmax(0, 1fr)' }}>
 			<AdsBreadcrumb
 				items={[
 					{

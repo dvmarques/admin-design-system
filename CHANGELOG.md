@@ -10,6 +10,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na
+  horizontal em 320px: os grids da demonstração em telas estreitas passam de `1fr` para
+  `minmax(0, 1fr)` e a paginação rola dentro do próprio painel. O E2E de todas as rotas
+  passa a verificar também 320px, e a spec fixa 320px como largura mínima. Sem mudança
+  de API pública, classes ou tokens.
 - `add-input-group-multiple-button-addons` - `AdsInputGroup` aceita vários `AdsButton` no
   mesmo `startContent` ou `endContent`: os botões ficam contíguos, com as quinas internas
   retas, só a quina externa do conjunto arredondada e junção de 1px sobreposta, todos com a

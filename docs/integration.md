@@ -400,10 +400,21 @@ O CSS distribuído contém apenas as utilidades que a própria biblioteca usa, e
 escreva o layout da linha no CSS da aplicação em vez de depender de classes
 utilitárias da biblioteca.
 
-Evite colocar um `AdsButton` em `startContent` ou `endContent` de `AdsInputGroup`.
-O adendo tem padding horizontal e borda de 1px, o que faz o campo crescer para 34,
-38 ou 42px (contra 30, 32 ou 36px) e deixa o botão dentro da moldura do adendo.
-Prefira uma linha própria com o botão ao lado do grupo.
+Um `AdsButton` pode ser o conteúdo de `startContent` ou `endContent` de
+`AdsInputGroup`. O adendo perde a moldura (borda, fundo e padding), o botão fica rente
+ao campo, com a quina externa arredondada, e o grupo mantém a altura do campo (30, 32 ou
+36px). O `size` do botão só define o padding horizontal e a fonte: a altura é sempre a
+do campo, então não é preciso combinar `size` do botão e do campo.
+
+```tsx
+<AdsInputGroup endContent={<AdsButton type="submit">Buscar</AdsButton>}>
+	<AdsInput aria-label="Busca" placeholder="Nome ou e-mail" />
+</AdsInputGroup>
+```
+
+O botão deve ser o único conteúdo do adendo; texto e botão no mesmo adendo também perdem
+a moldura. Um botão dentro de outro elemento no adendo mantém a moldura e a altura do
+botão, e o campo cresce para 34, 38 ou 42px.
 
 ## Seletor de data
 

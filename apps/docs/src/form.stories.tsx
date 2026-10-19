@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
+	AdsButton,
 	AdsCheckbox,
 	AdsField,
 	AdsInput,
@@ -44,6 +45,42 @@ export const TextControls: Story = {
 			<AdsInputGroup startContent="R$" endContent="BRL">
 				<AdsInput aria-label="Valor" inputMode="decimal" />
 			</AdsInputGroup>
+		</div>
+	),
+};
+
+/**
+ * Um `AdsButton` em `startContent` ou `endContent` fica rente ao campo, sem a moldura do adendo, e
+ * acompanha a altura do campo em qualquer tamanho; adendos de texto não mudam.
+ */
+export const InputGroupWithButton: Story = {
+	render: () => (
+		<div className="flex max-w-xl flex-col gap-4">
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<div key={size} style={{ display: 'grid', gap: '0.75rem' }}>
+					<AdsInputGroup
+						endContent={
+							<AdsButton size={size} type="button">
+								Buscar
+							</AdsButton>
+						}
+					>
+						<AdsInput aria-label={`Busca (${size})`} placeholder="Nome ou e-mail" size={size} />
+					</AdsInputGroup>
+					<AdsInputGroup
+						startContent={
+							<AdsButton size={size} type="button" variant="secondary">
+								Filtros
+							</AdsButton>
+						}
+					>
+						<AdsInput aria-label={`Filtro (${size})`} placeholder="Nome ou e-mail" size={size} />
+					</AdsInputGroup>
+					<AdsInputGroup endContent="BRL" startContent="R$">
+						<AdsInput aria-label={`Valor (${size})`} inputMode="decimal" size={size} />
+					</AdsInputGroup>
+				</div>
+			))}
 		</div>
 	),
 };

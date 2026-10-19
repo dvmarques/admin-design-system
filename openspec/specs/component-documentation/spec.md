@@ -71,7 +71,7 @@ As histórias de dialog, drawer e toast MUST permitir verificar a superfície da
 
 ### Requirement: Orientação para botões e campos na mesma linha
 
-A documentação de integração MUST informar que botões e campos de mesmo `size` têm alturas diferentes, indicar essas alturas por tamanho e orientar como alinhá-los quando posicionados na mesma linha, inclusive o efeito de colocar um botão no adendo de um grupo de entrada.
+A documentação de integração MUST informar que botões e campos de mesmo `size` têm alturas diferentes, indicar essas alturas por tamanho e orientar como alinhá-los quando posicionados na mesma linha, inclusive como usar um botão no adendo de um grupo de entrada.
 
 #### Scenario: Consumidor posiciona um botão ao lado de um campo
 
@@ -81,4 +81,4 @@ A documentação de integração MUST informar que botões e campos de mesmo `si
 #### Scenario: Consumidor considera um botão no adendo do grupo de entrada
 
 - **WHEN** um desenvolvedor considera usar um botão como conteúdo inicial ou final de um grupo de entrada
-- **THEN** a documentação alerta que o campo cresce e indica a alternativa recomendada
+- **THEN** a documentação informa que o botão acompanha a altura do campo e fica rente a ele, que deve ser o único conteúdo do adendo e que o `size` do botão não altera a altura do grupo

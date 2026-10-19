@@ -10,6 +10,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-input-group-button-addon` - Um `AdsButton` em `startContent` ou `endContent` de
+  `AdsInputGroup` deixa de ficar dentro da moldura do adendo e de aumentar o campo
+  (34, 38 e 42px em vez de 30, 32 e 36px): o botão fica rente ao campo e acompanha a
+  altura dele em qualquer `size`. Adendos de texto não mudam. A orientação em
+  `docs/integration.md` deixa de desaconselhar o uso e há uma nova story
+  `InputGroupWithButton`. Sem mudança de API pública, classes ou tokens.
 - `fix-smart-table-caption-padding` - A legenda visível de `AdsSmartTable` passa a ter o
   espaçamento horizontal das células e o espaçamento vertical da densidade, em vez de
   encostar na borda e no topo do contêiner da tabela. `hideCaption` e `AdsTable` isolada

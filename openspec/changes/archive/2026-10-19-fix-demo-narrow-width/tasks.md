@@ -15,11 +15,10 @@
 
 - [x] 3.1 Executar `npx prettier --write` nos arquivos alterados; verificar que conclui sem erros.
 - [x] 3.2 Executar `npm run lint`, `npm run typecheck`, `npm run test:quiet` e `npm run build`; verificar que todos passam.
-- [ ] 3.3 Executar `npm run test:e2e` (com `CI=1` fora do Windows) e relatar a validação visual; atualizar snapshots apenas se a mudança for intencional e o diff revisado.
+- [x] 3.3 Executar `npm run test:e2e` (com `CI=1` fora do Windows) e relatar a validação visual; atualizar snapshots apenas se a mudança for intencional e o diff revisado. O E2E completo rodou na CI (Chromium, Firefox e WebKit) e passou, inclusive os snapshots visuais do demo, sem mudança; localmente rodei o E2E de todas as rotas (13 de 13 com 320px).
 - [x] 3.4 Executar `openspec validate --all --strict`; verificar que passa.
 - [x] 3.5 Tarefa final: executar `npm run format`; verificar saída sem falhas.
 
 ## Workflow follow-up
 
-- Revisar os snapshots visuais do demo em largura de celular antes de aceitar, se algum mudar.
 - Arquivar esta change com sincronização da spec `admin-demo-application`.

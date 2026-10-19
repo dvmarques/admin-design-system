@@ -263,6 +263,45 @@ describe('field composition', () => {
 		expect(screen.getByRole('button', { name: 'Filtros' })).toBeInTheDocument();
 	});
 
+	it('keeps several buttons in one addon contiguous with only the outer corner rounded', () => {
+		const { container } = render(
+			<AdsInputGroup
+				endContent={
+					<>
+						<AdsButton type="button" variant="secondary">
+							Limpar
+						</AdsButton>
+						<AdsButton type="button">Buscar</AdsButton>
+					</>
+				}
+				startContent={
+					<>
+						<AdsButton type="button" variant="secondary">
+							Filtros
+						</AdsButton>
+						<AdsButton type="button" variant="secondary">
+							Ordem
+						</AdsButton>
+					</>
+				}
+			>
+				<AdsInput aria-label="Busca" />
+			</AdsInputGroup>,
+		);
+
+		expect(container.querySelector('.ads-input-group__start')).toHaveClass(
+			'[&>.ads-button+.ads-button]:-ml-px',
+			'[&>.ads-button]:rounded-r-none',
+			'[&>.ads-button:not(:first-child)]:rounded-l-none',
+		);
+		expect(container.querySelector('.ads-input-group__end')).toHaveClass(
+			'[&>.ads-button+.ads-button]:-ml-px',
+			'[&>.ads-button]:rounded-l-none',
+			'[&>.ads-button:not(:last-child)]:rounded-r-none',
+		);
+		expect(screen.getAllByRole('button')).toHaveLength(4);
+	});
+
 	it('preserves consumer ids and composes input and selection groups', async () => {
 		const { container } = render(
 			<>

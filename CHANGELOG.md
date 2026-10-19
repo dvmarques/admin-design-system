@@ -10,6 +10,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `add-input-group-multiple-button-addons` - `AdsInputGroup` aceita vários `AdsButton` no
+  mesmo `startContent` ou `endContent`: os botões ficam contíguos, com as quinas internas
+  retas, só a quina externa do conjunto arredondada e junção de 1px sobreposta, todos com a
+  altura do campo. Texto e botão no mesmo adendo continuam sem suporte, agora documentado.
+  Sem mudança de API pública, classes ou tokens.
 - `fix-input-group-button-addon` - Um `AdsButton` em `startContent` ou `endContent` de
   `AdsInputGroup` deixa de ficar dentro da moldura do adendo e de aumentar o campo
   (34, 38 e 42px em vez de 30, 32 e 36px): o botão fica rente ao campo e acompanha a

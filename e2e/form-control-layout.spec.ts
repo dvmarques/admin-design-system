@@ -1,5 +1,5 @@
 import { readFileSync } from 'node:fs';
-import { createElement } from 'react';
+import { createElement, Fragment } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test } from '@playwright/test';
 
@@ -192,6 +192,11 @@ async function renderInputGroupMarkup(size: 'sm' | 'md' | 'lg') {
 			group('text', { endContent: 'BRL', startContent: 'R$' }),
 			group('end', { endContent: button('Buscar', 'primary') }),
 			group('start', { startContent: button('Filtros', 'secondary') }),
+			group('multi', {
+				endContent: [button('Limpar', 'secondary'), button('Buscar', 'primary')].map((node, key) =>
+					createElement(Fragment, { key }, node),
+				),
+			}),
 		),
 	);
 }
@@ -225,6 +230,21 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 				expect(button.height).toBeCloseTo(reference.height, 0);
 				expect(button.top).toBeCloseTo(input.top, 0);
 			}
+
+			// Vários botões no mesmo adendo: mesma altura e topo, contíguos (junção de 1px sobreposta).
+			const first = await box('#multi button:nth-of-type(1)');
+			const second = await box('#multi button:nth-of-type(2)');
+			expect(first.height).toBeCloseTo(reference.height, 0);
+			expect(second.height).toBeCloseTo(reference.height, 0);
+			expect(first.top).toBeCloseTo(second.top, 0);
+			const edge = async (selector: string) => {
+				const rect = await page.locator(selector).boundingBox();
+				if (!rect) throw new Error(`Elemento ausente: ${selector}`);
+				return { left: rect.x, right: rect.x + rect.width };
+			};
+			const firstEdge = await edge('#multi button:nth-of-type(1)');
+			const secondEdge = await edge('#multi button:nth-of-type(2)');
+			expect(secondEdge.left).toBeCloseTo(firstEdge.right - 1, 0);
 
 			// O hover não desloca o botão, que abriria uma fresta de 1px junto ao campo.
 			const before = await box('#end button');

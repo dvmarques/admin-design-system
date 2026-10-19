@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it } from 'vitest';
 import {
+	AdsButton,
 	AdsCheckbox,
 	AdsField,
 	AdsInput,
@@ -219,6 +220,47 @@ describe('field composition', () => {
 		expect(input.getAttribute('aria-describedby')).toMatch(/description/);
 		expect(input.getAttribute('aria-describedby')).toMatch(/error/);
 		expect(screen.getByRole('alert')).toHaveTextContent('Informe um e-mail válido');
+	});
+
+	it('drops the addon frame and follows the field height when the addon is a button', () => {
+		const { container } = render(
+			<>
+				<AdsInputGroup
+					endContent={<AdsButton type="button">Buscar</AdsButton>}
+					startContent={
+						<AdsButton type="button" variant="secondary">
+							Filtros
+						</AdsButton>
+					}
+				>
+					<AdsInput aria-label="Busca" />
+				</AdsInputGroup>
+				<AdsInputGroup endContent="BRL">
+					<AdsInput aria-label="Valor" />
+				</AdsInputGroup>
+			</>,
+		);
+
+		const [start, end] = [
+			container.querySelector('.ads-input-group__start'),
+			container.querySelector('.ads-input-group__end'),
+		];
+		for (const addon of [start, end]) {
+			expect(addon).toHaveClass(
+				'has-[>.ads-button]:p-0',
+				'has-[>.ads-button]:border-0',
+				'has-[>.ads-button]:bg-transparent',
+				'has-[>.ads-button]:items-stretch',
+				'[&>.ads-button]:min-h-0!',
+				'[&>.ads-button]:translate-y-0!',
+			);
+		}
+		expect(start).toHaveClass('[&>.ads-button]:rounded-r-none', 'has-[>.ads-button]:-mr-px');
+		expect(end).toHaveClass('[&>.ads-button]:rounded-l-none', 'has-[>.ads-button]:-ml-px');
+		// O adendo de texto mantém a moldura; o que muda é só o que a variante `has` ativa.
+		expect(screen.getByText('BRL')).toHaveClass('border', 'bg-surface-muted', 'px-3');
+		expect(screen.getByRole('button', { name: 'Buscar' })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Filtros' })).toBeInTheDocument();
 	});
 
 	it('preserves consumer ids and composes input and selection groups', async () => {

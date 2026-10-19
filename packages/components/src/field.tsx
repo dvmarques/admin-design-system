@@ -121,6 +121,15 @@ export function AdsFieldMessage({ className, ...props }: AdsFieldMessageProps) {
 	);
 }
 
+// Um `AdsButton` no adendo vira parte do campo: sem a moldura (borda, fundo e padding) do adendo de
+// texto, esticado até a altura do campo em vez de impor a sua (`min-h-0!`, pois os dois `min-h-*`
+// empatariam), colado ao campo com a quina externa arredondada e sem o deslize de hover, que
+// abriria uma fresta de 1px.
+const buttonAddonClassName =
+	'has-[>.ads-button]:items-stretch has-[>.ads-button]:border-0 has-[>.ads-button]:bg-transparent has-[>.ads-button]:p-0 [&>.ads-button]:min-h-0! [&>.ads-button]:translate-y-0!';
+const buttonStartClassName = 'has-[>.ads-button]:-mr-px [&>.ads-button]:rounded-r-none';
+const buttonEndClassName = 'has-[>.ads-button]:-ml-px [&>.ads-button]:rounded-l-none';
+
 export interface AdsInputGroupProps extends HTMLAttributes<HTMLDivElement> {
 	children: ReactNode;
 	startContent?: ReactNode;
@@ -145,13 +154,25 @@ export function AdsInputGroup({
 			)}
 		>
 			{startContent ? (
-				<span className="ads-input-group__start inline-flex items-center rounded-l-md border border-r-0 border-border bg-surface-muted px-3 text-sm text-text-muted">
+				<span
+					className={classNames(
+						'ads-input-group__start inline-flex items-center rounded-l-md border border-r-0 border-border bg-surface-muted px-3 text-sm text-text-muted',
+						buttonAddonClassName,
+						buttonStartClassName,
+					)}
+				>
 					{startContent}
 				</span>
 			) : null}
 			{children}
 			{endContent ? (
-				<span className="ads-input-group__end inline-flex items-center rounded-r-md border border-l-0 border-border bg-surface-muted px-3 text-sm text-text-muted">
+				<span
+					className={classNames(
+						'ads-input-group__end inline-flex items-center rounded-r-md border border-l-0 border-border bg-surface-muted px-3 text-sm text-text-muted',
+						buttonAddonClassName,
+						buttonEndClassName,
+					)}
+				>
 					{endContent}
 				</span>
 			) : null}

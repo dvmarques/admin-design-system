@@ -169,3 +169,67 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 		});
 	}
 }
+
+async function renderInputGroupMarkup(size: 'sm' | 'md' | 'lg') {
+	const { AdsButton, AdsInput, AdsInputGroup } = await import('@admin-ds/components');
+	const group = (id: string, props: Record<string, unknown>) =>
+		createElement(
+			'div',
+			{ id },
+			createElement(
+				AdsInputGroup,
+				props,
+				createElement(AdsInput, { 'aria-label': `Campo ${id}`, size }),
+			),
+		);
+	// O botão é de um tamanho diferente do campo de propósito: a altura do grupo é a do campo.
+	const button = (label: string, variant: 'primary' | 'secondary') =>
+		createElement(AdsButton, { size: 'lg', type: 'button', variant }, label);
+	return renderToStaticMarkup(
+		createElement(
+			'div',
+			{ style: { display: 'grid', gap: '16px', padding: '16px' } },
+			group('text', { endContent: 'BRL', startContent: 'R$' }),
+			group('end', { endContent: button('Buscar', 'primary') }),
+			group('start', { startContent: button('Filtros', 'secondary') }),
+		),
+	);
+}
+
+for (const size of ['sm', 'md', 'lg'] as const) {
+	for (const viewport of [
+		{ name: 'desktop', width: 1280, height: 800 },
+		{ name: 'mobile', width: 390, height: 844 },
+	]) {
+		test(`botão no adendo do grupo tem a altura do campo em ${size} no ${viewport.name}`, async ({
+			page,
+		}) => {
+			const markup = await renderInputGroupMarkup(size);
+			await page.setViewportSize({ width: viewport.width, height: viewport.height });
+			await page.setContent(
+				`<!doctype html><html data-theme="light"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+
+			const box = async (selector: string) => {
+				const rect = await page.locator(selector).boundingBox();
+				if (!rect) throw new Error(`Elemento ausente: ${selector}`);
+				return { top: rect.y, height: rect.height };
+			};
+			const reference = await box('#text .ads-input-group');
+			for (const id of ['end', 'start']) {
+				const group = await box(`#${id} .ads-input-group`);
+				const input = await box(`#${id} input`);
+				const button = await box(`#${id} button`);
+				expect(group.height).toBeCloseTo(reference.height, 0);
+				expect(input.height).toBeCloseTo(reference.height, 0);
+				expect(button.height).toBeCloseTo(reference.height, 0);
+				expect(button.top).toBeCloseTo(input.top, 0);
+			}
+
+			// O hover não desloca o botão, que abriria uma fresta de 1px junto ao campo.
+			const before = await box('#end button');
+			await page.locator('#end button').hover();
+			await expect.poll(async () => (await box('#end button')).top).toBeCloseTo(before.top, 0);
+		});
+	}
+}

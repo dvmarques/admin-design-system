@@ -22,8 +22,8 @@ O sistema MUST fornecer `AdsSmartTable` em `@admin-ds/admin`, que renderize `col
 
 #### Scenario: Compatibilidade de AdsTable
 
-- **WHEN** `AdsTable` é usada diretamente, sem `AdsSmartTable`
-- **THEN** seu comportamento e sua marcação não mudam
+- **WHEN** `AdsTable` é usada diretamente, sem `AdsSmartTable` e sem `density`
+- **THEN** seu comportamento permanece o mesmo: não há `data-density`, o espaçamento confortável equivale ao anterior e células e cabeçalhos usam as variáveis públicas de densidade em vez dos utilitários fixos de padding
 
 ### Requirement: Ordenação por coluna
 
@@ -215,3 +215,17 @@ Dentro do contêiner da `AdsSmartTable`, a legenda visível MUST ter espaçament
 
 - **WHEN** `AdsTable` é usada diretamente, com `AdsTableCaption`
 - **THEN** a marcação e o espaçamento da legenda não mudam
+
+### Requirement: Densidade e skeleton padronizados na tabela inteligente
+
+`AdsSmartTable` MUST aceitar a prop opcional `density` e repassá-la à tabela subjacente, mantendo o comportamento atual sem a prop. Em carregamento, as linhas de placeholder MUST usar `AdsSkeleton` com a altura definida pelos tokens de skeleton, e o estado vazio MUST usar `AdsEmptyState`.
+
+#### Scenario: Tabela inteligente compacta
+
+- **WHEN** `density="compact"` é informado
+- **THEN** a tabela exibe `data-density="compact"` e o espaçamento compacto, sem alterar ordenação, seleção ou paginação
+
+#### Scenario: Carregamento
+
+- **WHEN** `loading` é verdadeiro
+- **THEN** os placeholders ocupam a altura do token de skeleton de texto e o estado é anunciado por status acessível, sem animação com movimento reduzido

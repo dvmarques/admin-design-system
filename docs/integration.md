@@ -412,9 +412,29 @@ do campo, então não é preciso combinar `size` do botão e do campo.
 </AdsInputGroup>
 ```
 
-O botão deve ser o único conteúdo do adendo; texto e botão no mesmo adendo também perdem
-a moldura. Um botão dentro de outro elemento no adendo mantém a moldura e a altura do
-botão, e o campo cresce para 34, 38 ou 42px.
+Vários botões no mesmo adendo ficam contíguos: só a quina externa do conjunto é
+arredondada e cada junção sobrepõe 1px, para as bordas não somarem 2px.
+
+```tsx
+<AdsInputGroup
+	endContent={
+		<>
+			<AdsButton type="button" variant="secondary">
+				Limpar
+			</AdsButton>
+			<AdsButton type="submit">Buscar</AdsButton>
+		</>
+	}
+>
+	<AdsInput aria-label="Busca" />
+</AdsInputGroup>
+```
+
+O adendo deve conter só botões como filhos diretos. Texto e botão no mesmo adendo não são
+suportados: o adendo perde a moldura e o texto fica sem fundo nem padding; para texto e
+botão lado a lado, use um adendo de texto em `startContent` e o botão em `endContent`. Um
+botão dentro de outro elemento no adendo mantém a moldura e a altura do botão, e o campo
+cresce para 34, 38 ou 42px.
 
 ## Seletor de data
 

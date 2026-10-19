@@ -51,7 +51,8 @@ export const TextControls: Story = {
 
 /**
  * Um `AdsButton` em `startContent` ou `endContent` fica rente ao campo, sem a moldura do adendo, e
- * acompanha a altura do campo em qualquer tamanho; adendos de texto não mudam.
+ * acompanha a altura do campo em qualquer tamanho; vários botões no mesmo adendo ficam contíguos.
+ * Adendos de texto não mudam.
  */
 export const InputGroupWithButton: Story = {
 	render: () => (
@@ -75,6 +76,24 @@ export const InputGroupWithButton: Story = {
 						}
 					>
 						<AdsInput aria-label={`Filtro (${size})`} placeholder="Nome ou e-mail" size={size} />
+					</AdsInputGroup>
+					<AdsInputGroup
+						endContent={
+							<>
+								<AdsButton size={size} type="button" variant="secondary">
+									Limpar
+								</AdsButton>
+								<AdsButton size={size} type="button">
+									Buscar
+								</AdsButton>
+							</>
+						}
+					>
+						<AdsInput
+							aria-label={`Busca com dois botões (${size})`}
+							placeholder="Nome ou e-mail"
+							size={size}
+						/>
 					</AdsInputGroup>
 					<AdsInputGroup endContent="BRL" startContent="R$">
 						<AdsInput aria-label={`Valor (${size})`} inputMode="decimal" size={size} />

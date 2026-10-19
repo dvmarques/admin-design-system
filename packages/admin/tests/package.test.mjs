@@ -88,6 +88,19 @@ test('smart table styles use public tokens, a focusable scroll region and the se
 	assert.match(css, /\.ads-smart-table-columns-panel\[hidden\]\s*\{[^}]*display:\s*none/);
 });
 
+test('smart table caption is padded with density tokens before the visually hidden rule', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	const caption = css.match(/\.ads-smart-table-scroll :where\(\.ads-table-caption\)\s*\{([^}]*)\}/);
+	assert.ok(caption, 'missing smart table caption padding');
+	assert.match(
+		caption[1],
+		/padding:[^;]*--ads-density-cell-padding-y[^;]*--ads-density-cell-padding-x/,
+	);
+	// A legenda oculta zera o padding; para vencer com a mesma especificidade, vem depois.
+	assert.ok(css.indexOf('.ads-smart-table-visually-hidden') > caption.index);
+});
+
 test('smart table selection cell has no percentage width, so the table is not stretched', async () => {
 	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
 	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');

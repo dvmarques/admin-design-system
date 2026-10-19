@@ -634,6 +634,10 @@
 		background-color: var(--ads-color-surface);
 	}
 
+	.ads-smart-table-scroll :where(.ads-table-caption) {
+		padding: var(--ads-density-cell-padding-y) var(--ads-density-cell-padding-x) 0;
+	}
+
 	.ads-smart-table-scroll:focus-visible,
 	.ads-smart-table-sort:focus-visible {
 		outline: 2px solid var(--ads-color-focus-ring);

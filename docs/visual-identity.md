@@ -32,8 +32,9 @@ emitida como variável CSS.
 A pilha do corpo e dos títulos é `Inter, "Segoe UI Variable", "Segoe UI",
 system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif`; a
 monoespaçada é `ui-monospace, "SF Mono", "Cascadia Code", Consolas,
-"Liberation Mono", Menlo, monospace`. Por enquanto os títulos usam a mesma pilha
-do corpo; mudar `fontFamilyHeading` não exige alterar componentes. Use a
+"Liberation Mono", Menlo, monospace`. Por enquanto os títulos acompanham o corpo
+(`var(--ads-typography-font-family)`), então personalizar só a fonte do corpo
+continua valendo para os títulos; mudar `fontFamilyHeading` não exige alterar componentes. Use a
 monoespaçada em estilos próprios, por exemplo com `font-family:
 var(--ads-typography-font-family-mono)`.
 

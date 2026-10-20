@@ -185,8 +185,8 @@ export const tokenSource = {
 	},
 	typography: {
 		fontFamily: bodyFontStack,
-		/** Mesma pilha do corpo até haver uma fonte própria para títulos. */
-		fontFamilyHeading: bodyFontStack,
+		/** Acompanha o corpo (inclusive quando a aplicação o personaliza) até haver fonte própria para títulos. */
+		fontFamilyHeading: 'var(--ads-typography-font-family)',
 		fontFamilyMono:
 			'ui-monospace, "SF Mono", "Cascadia Code", Consolas, "Liberation Mono", Menlo, monospace',
 		fontSize: {

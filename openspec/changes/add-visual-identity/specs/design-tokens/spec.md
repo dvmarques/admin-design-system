@@ -73,4 +73,9 @@ O sistema MUST disponibilizar `--ads-typography-font-family` (corpo, mantido por
 #### Scenario: Título sem fonte própria
 
 - **WHEN** nenhuma fonte distinta é definida para títulos
-- **THEN** a família de títulos usa a mesma pilha do corpo
+- **THEN** a família de títulos acompanha a do corpo
+
+#### Scenario: Aplicação personaliza só a fonte do corpo
+
+- **WHEN** a aplicação sobrescreve `--ads-typography-font-family` e não define a família de títulos
+- **THEN** os títulos de `AdsTypography` usam a fonte personalizada

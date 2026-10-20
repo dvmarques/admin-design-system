@@ -1,7 +1,7 @@
 /** Generated from source/tokens.mjs. Do not edit manually. */
 export const tokenValues = {
   "typography.fontFamily": "Inter, \"Segoe UI Variable\", \"Segoe UI\", system-ui, -apple-system, Roboto, \"Helvetica Neue\", Arial, sans-serif",
-  "typography.fontFamilyHeading": "Inter, \"Segoe UI Variable\", \"Segoe UI\", system-ui, -apple-system, Roboto, \"Helvetica Neue\", Arial, sans-serif",
+  "typography.fontFamilyHeading": "var(--ads-typography-font-family)",
   "typography.fontFamilyMono": "ui-monospace, \"SF Mono\", \"Cascadia Code\", Consolas, \"Liberation Mono\", Menlo, monospace",
   "typography.fontSize.xs": "0.75rem",
   "typography.fontSize.sm": "0.875rem",

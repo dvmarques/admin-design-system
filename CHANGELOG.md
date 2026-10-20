@@ -8,6 +8,18 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
+#### Added
+
+- `add-visual-identity` - Etapa inicial da identidade visual (issue #118). No tema escuro,
+  `--ads-color-surface-muted` (`#162033`) e `--ads-color-surface-hover` (`#3d4b60`) deixam de
+  valer o mesmo que `--ads-color-surface-raised`, e um item em hover sobre uma superfície
+  elevada passa a ser distinguível dela. A escala de espaçamento ganha `--ads-spacing-5`, `-10`,
+  `-12` e `-16`. Novos tokens de cor para gráficos, `--ads-color-chart-1` a `-8`, nos dois
+  temas, com contraste mínimo de 3:1 contra a superfície e distinção verificada sob simulação
+  de daltonismo. Novo `docs/visual-identity.md`, correção dos valores de elevação em
+  `docs/visual-polish.md` e a story Foundation/Visual identity. Sem remoção ou renomeação de
+  tokens. A escala de marca e a tipografia continuam pendentes de decisão de produto/design.
+
 #### Changed
 
 - `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na

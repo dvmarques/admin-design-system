@@ -17,11 +17,11 @@ cor e texto, e `forced-colors` remove as sombras.
 
 ```css
 [data-theme='light'] {
-	--ads-elevation-md: 0 2px 8px rgb(0 0 0 / 0.08);
+	--ads-elevation-md: 0 8px 20px rgb(15 23 42 / 0.12);
 }
 
 [data-theme='dark'] {
-	--ads-elevation-md: 0 4px 12px rgb(0 0 0 / 0.2);
+	--ads-elevation-md: 0 8px 20px rgb(0 0 0 / 0.55), 0 0 0 1px rgb(255 255 255 / 0.06);
 }
 ```
 

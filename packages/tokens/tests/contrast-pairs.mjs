@@ -9,6 +9,8 @@ export const minimumRatio = { text: 4.5, ui: 3 };
 const surfaces = ['canvas', 'surface', 'surfaceRaised', 'surfaceMuted', 'surfaceHover'];
 const controlBackgrounds = ['surface', 'formBackground', 'surfaceMuted', 'surfaceHover'];
 
+const chartSurfaces = ['surface', 'surfaceRaised'];
+
 const against = (kind, foreground, backgrounds) =>
 	backgrounds.map((background) => ({ kind, foreground, background }));
 
@@ -34,4 +36,13 @@ export const contrastPairs = [
 	...against('ui', 'primary', ['surface', 'formBackground']),
 	...against('ui', 'formInvalid', ['formBackground']),
 	...against('ui', 'formSuccess', ['formBackground']),
+	// Cores categóricas de gráfico: marcas gráficas exigem 3:1 contra a superfície (1.4.11).
+	...against('ui', 'chart1', chartSurfaces),
+	...against('ui', 'chart2', chartSurfaces),
+	...against('ui', 'chart3', chartSurfaces),
+	...against('ui', 'chart4', chartSurfaces),
+	...against('ui', 'chart5', chartSurfaces),
+	...against('ui', 'chart6', chartSurfaces),
+	...against('ui', 'chart7', chartSurfaces),
+	...against('ui', 'chart8', chartSurfaces),
 ];

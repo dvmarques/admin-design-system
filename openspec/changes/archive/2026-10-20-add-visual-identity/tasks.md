@@ -14,11 +14,11 @@
 ## 3. Validação
 
 - [x] 3.1 Executar `npx prettier --write` nos arquivos alterados, `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `openspec validate --all --strict`
-- [ ] 3.2 Executar `npm run test:e2e` e confirmar que nenhum teste falha; atualizar baselines visuais somente se a mudança for intencional e o diff revisado (rodado só no Chromium do ambiente de desenvolvimento: 130 passam e os 7 snapshots visuais falham também sem esta change, por diferença do ambiente; confirmar na CI e, se o diff for intencional e revisado, usar o workflow "Atualizar baselines visuais")
+- [x] 3.2 Executar `npm run test:e2e` e confirmar que nenhum teste falha; atualizar baselines visuais somente se a mudança for intencional e o diff revisado (baselines regenerados pelo workflow "Atualizar baselines visuais" com diff revisado; a CI do PR passou nos três navegadores)
 
 ## 4. Escala de marca e tipografia
 
 - [x] 4.1 Escala de marca: `brand50`…`brand900` (família azul atual, sem hex de marca), papéis semânticos repontados sem mudar o CSS gerado das cores, pares de contraste verdes e referências `blue*` removidas após conferir os usos
 - [x] 4.2 Tipografia: pilha com Inter e fallbacks, `fontFamilyHeading` e `fontFamilyMono`, `AdsTypography` com `font-heading` nos títulos, justificativa de dependência e de carregamento no `design.md` e fonte padrão registrada no `CHANGELOG.md`
 - [x] 4.3 Atualizar `docs/visual-identity.md`, `packages/tokens/README.md` e a story de fundamentos com a escala de marca e a tipografia
-- [ ] 4.4 Revisão, validação visual nos dois temas e arquivamento da change depois da aprovação (não arquivar antes)
+- [x] 4.4 Revisão, validação visual nos dois temas e arquivamento da change depois da aprovação (aprovado pelo responsável com os screenshots do demo e do Storybook)

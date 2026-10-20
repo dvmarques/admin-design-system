@@ -88,13 +88,13 @@ ao menos 3:1, com e sem `prefers-contrast: more` (pares em
 
 ## Cores de gráfico
 
-`--ads-color-chart-1` a `--ads-color-chart-8` são cores categóricas, com valores
+`--ads-color-chart1` a `--ads-color-chart8` são cores categóricas, com valores
 próprios em cada tema. Use-as na ordem, uma por série. A ordem é só uma
 sequência de uso: a mesma posição não tem o mesmo matiz nos dois temas.
 
 ```css
 .meu-grafico-serie-1 {
-	stroke: var(--ads-color-chart-1);
+	stroke: var(--ads-color-chart1);
 }
 ```
 

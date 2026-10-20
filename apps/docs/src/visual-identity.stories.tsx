@@ -267,7 +267,7 @@ export const ChartColors: Story = {
 							<span
 								aria-hidden="true"
 								style={{
-									color: cssVar(`color-chart-${index}`),
+									color: cssVar(`color-chart${index}`),
 									fontSize: '1.25rem',
 									lineHeight: 1,
 								}}
@@ -281,7 +281,7 @@ export const ChartColors: Story = {
 									fontSize: cssVar('typography-font-size-sm'),
 								}}
 							>
-								--ads-color-chart-{index}
+								--ads-color-chart{index}
 							</code>
 						</li>
 					))}

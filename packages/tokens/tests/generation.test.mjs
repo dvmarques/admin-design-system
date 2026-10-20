@@ -125,3 +125,12 @@ test('emits the brand scale and keeps semantic roles pointing at it', () => {
 	assert.equal(tokenSource.color.semantic.light.primary, '{color.reference.brand600}');
 	assert.equal(tokenSource.color.semantic.dark.primary, '{color.reference.brand400}');
 });
+
+test('emits the chart colors as --ads-color-chart1 to --ads-color-chart8 in both themes', () => {
+	const { css } = createArtifacts(tokenSource);
+	const light = css.match(/:root, \[data-theme="light"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const dark = css.match(/\[data-theme="dark"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	for (let index = 1; index <= 8; index++)
+		for (const block of [light, dark])
+			assert.match(block, new RegExp(`--ads-color-chart${index}: #[\\da-f]{6};`, 'i'));
+});

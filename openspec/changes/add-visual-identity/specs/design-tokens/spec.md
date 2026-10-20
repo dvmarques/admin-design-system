@@ -25,11 +25,11 @@ O sistema MUST disponibilizar os tokens `--ads-spacing-5`, `--ads-spacing-10`, `
 
 ### Requirement: Cores categóricas para gráficos
 
-O sistema MUST disponibilizar oito papéis de cor categórica (`--ads-color-chart-1` a `--ads-color-chart-8`) nos temas claro e escuro, também como metadados tipados. Cada cor MUST ter contraste de no mínimo 3:1 contra a superfície do respectivo tema, e as oito cores MUST permanecer distinguíveis entre si sob simulação de deuteranopia, protanopia e tritanopia. A documentação MUST informar que gráficos não podem depender apenas de cor.
+O sistema MUST disponibilizar oito papéis de cor categórica (`--ads-color-chart1` a `--ads-color-chart8`) nos temas claro e escuro, também como metadados tipados. Cada cor MUST ter contraste de no mínimo 3:1 contra a superfície do respectivo tema, e as oito cores MUST permanecer distinguíveis entre si sob simulação de deuteranopia, protanopia e tritanopia. A documentação MUST informar que gráficos não podem depender apenas de cor.
 
 #### Scenario: Aplicação desenha uma série de gráfico
 
-- **WHEN** uma aplicação usa `--ads-color-chart-1` a `--ads-color-chart-8` sobre `--ads-color-surface`
+- **WHEN** uma aplicação usa `--ads-color-chart1` a `--ads-color-chart8` sobre `--ads-color-surface`
 - **THEN** cada cor tem ao menos 3:1 de contraste contra a superfície, no tema claro e no escuro
 
 #### Scenario: Usuário com deficiência de visão de cor

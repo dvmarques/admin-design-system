@@ -14,7 +14,7 @@ por versão e pelas changes correspondentes do OpenSpec.
   `--ads-color-surface-muted` (`#162033`) e `--ads-color-surface-hover` (`#3d4b60`) deixam de
   valer o mesmo que `--ads-color-surface-raised`, e um item em hover sobre uma superfície
   elevada passa a ser distinguível dela. A escala de espaçamento ganha `--ads-spacing-5`, `-10`,
-  `-12` e `-16`. Novos tokens de cor para gráficos, `--ads-color-chart-1` a `-8`, nos dois
+  `-12` e `-16`. Novos tokens de cor para gráficos, `--ads-color-chart1` a `--ads-color-chart8`, nos dois
   temas, com contraste mínimo de 3:1 contra a superfície e distinção verificada sob simulação
   de daltonismo. Novo `docs/visual-identity.md`, correção dos valores de elevação em
   `docs/visual-polish.md` e a story Foundation/Visual identity. Sem remoção ou renomeação de

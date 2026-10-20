@@ -25,7 +25,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   carregá-la (por exemplo com `next/font`, veja `docs/visual-identity.md`) ou sobrescrever o
   token, e sem isso o texto usa a fonte de sistema da pilha (impacto visual para consumidores).
   Novos `--ads-typography-font-family-heading` (usado pelos títulos de `AdsTypography`) e
-  `--ads-typography-font-family-mono`.
+  `--ads-typography-font-family-mono`. O admin demo e o Storybook passam a carregar a Inter
+  com `@fontsource/inter` (dependência só dessas aplicações).
 
 #### Changed
 

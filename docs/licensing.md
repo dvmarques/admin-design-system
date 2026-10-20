@@ -27,9 +27,13 @@ origem, licença e atribuição nesta página antes de serem incorporados.
 
 ## Fontes da fundação visual
 
-A pilha tipográfica pública usa `Inter, Roboto, sans-serif`. Inter é
-distribuída sob a SIL Open Font License 1.1 e Roboto sob Apache License 2.0;
-ambas permitem uso comercial. A biblioteca não empacota arquivos de fontes
-proprietárias nem depende de Segoe UI, Helvetica Neue ou Arial. Caso arquivos
-de Inter ou Roboto sejam adicionados futuramente ao pacote, seus textos de
-licença deverão acompanhar os artefatos distribuídos.
+A pilha tipográfica pública começa em `Inter` e termina em fontes de sistema
+(`system-ui`, Roboto, Helvetica Neue e Arial, entre outras). Inter é distribuída
+sob a SIL Open Font License 1.1, que permite uso comercial. Os pacotes
+`@admin-ds/*` não empacotam arquivos de fonte nem dependem de fontes
+proprietárias: as fontes de sistema da pilha são usadas só se já existirem no
+dispositivo. As aplicações `admin-demo` e `docs` (privadas, não publicadas)
+carregam a Inter pela dependência `@fontsource/inter` (OFL-1.1, arquivos woff2
+hospedados no próprio build, sem CDN externa); o texto da licença acompanha o
+pacote em `node_modules/@fontsource/inter/LICENSE`. Quem hospedar a Inter em
+outra aplicação deve preservar o aviso de licença.

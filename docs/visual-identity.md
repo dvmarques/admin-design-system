@@ -59,7 +59,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 }
 ```
 
-Como a pilha começa por `Inter`, `next/font` com `variable` e um
+A demonstração (`apps/admin-demo`) e o Storybook (`apps/docs`) carregam a Inter com `@fontsource/inter` (pesos 400, 500, 600 e 700, subconjunto latino, woff2 hospedado no próprio build); a biblioteca em si não depende dele. Como a pilha começa por `Inter`, `next/font` com `variable` e um
 `@font-face` próprio também funcionam: defina uma família chamada `Inter`. A
 Inter tem licença SIL Open Font License 1.1; preserve o aviso ao hospedá-la.
 

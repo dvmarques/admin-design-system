@@ -111,8 +111,9 @@ test('rejects dark elevation and compact density with different keys', () => {
 test('emits body, heading and monospace font families', () => {
 	const { css, module } = createArtifacts(tokenSource);
 	assert.ok(css.includes(`--ads-typography-font-family: ${tokenSource.typography.fontFamily};`));
+	// Os títulos acompanham o corpo, inclusive quando a aplicação sobrescreve só o token do corpo.
 	assert.ok(
-		css.includes(`--ads-typography-font-family-heading: ${tokenSource.typography.fontFamily};`),
+		css.includes('--ads-typography-font-family-heading: var(--ads-typography-font-family);'),
 	);
 	assert.match(css, /--ads-typography-font-family-mono: ui-monospace/);
 	assert.match(module, /"typography\.fontFamilyMono"/);

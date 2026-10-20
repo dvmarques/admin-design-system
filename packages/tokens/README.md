@@ -43,13 +43,12 @@ placeholders usa `--ads-skeleton-height-text|value|block`. Detalhes em
 
 ## Tipografia
 
-O token `--ads-typography-font-family` usa a pilha
-`Aptos, "Segoe UI Variable", "Segoe UI", sans-serif`. O pacote não distribui
-arquivos de fonte: Aptos e Segoe UI só existem em sistemas Microsoft, e nos
-demais o texto cai em `sans-serif`. A escolha de uma fonte única e sua
-distribuição estão pendentes na issue de identidade visual (#118); consumidores
-podem sobrescrever o token com a fonte da aplicação. Se uma fonte for
-empacotada, preserve os avisos de licença dela.
+`--ads-typography-font-family` (corpo), `-font-family-heading` e
+`-font-family-mono` usam pilhas que começam por `Inter` (as duas primeiras) e
+terminam em fontes do sistema. O pacote não distribui arquivos de fonte: carregue
+a Inter na aplicação (por exemplo com `next/font`, veja
+[Identidade visual](../../docs/visual-identity.md)) ou sobrescreva o token. Se
+empacotar a fonte, preserve o aviso de licença (SIL OFL 1.1).
 
 ## Identidade visual
 

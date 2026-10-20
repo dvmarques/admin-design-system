@@ -107,3 +107,20 @@ test('rejects dark elevation and compact density with different keys', () => {
 	density.densityCompact.extra = '1px';
 	assert.throws(() => validateTokenSource(density), /densityCompact must define the same tokens/);
 });
+
+test('emits body, heading and monospace font families', () => {
+	const { css, module } = createArtifacts(tokenSource);
+	assert.ok(css.includes(`--ads-typography-font-family: ${tokenSource.typography.fontFamily};`));
+	assert.ok(
+		css.includes(`--ads-typography-font-family-heading: ${tokenSource.typography.fontFamily};`),
+	);
+	assert.match(css, /--ads-typography-font-family-mono: ui-monospace/);
+	assert.match(module, /"typography\.fontFamilyMono"/);
+});
+
+test('emits the brand scale and keeps semantic roles pointing at it', () => {
+	const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+	for (const step of steps) assert.ok(tokenSource.color.reference[`brand${step}`]);
+	assert.equal(tokenSource.color.semantic.light.primary, '{color.reference.brand600}');
+	assert.equal(tokenSource.color.semantic.dark.primary, '{color.reference.brand400}');
+});

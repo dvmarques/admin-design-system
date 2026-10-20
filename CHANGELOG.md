@@ -18,7 +18,14 @@ por versão e pelas changes correspondentes do OpenSpec.
   temas, com contraste mínimo de 3:1 contra a superfície e distinção verificada sob simulação
   de daltonismo. Novo `docs/visual-identity.md`, correção dos valores de elevação em
   `docs/visual-polish.md` e a story Foundation/Visual identity. Sem remoção ou renomeação de
-  tokens. A escala de marca e a tipografia continuam pendentes de decisão de produto/design.
+  tokens. A escala de marca `brand50`…`brand900` passa a ser a referência de `primary`, foco e
+  seleção, sem mudar a aparência. **A fonte padrão mudou**: `--ads-typography-font-family` passa
+  de `Aptos, "Segoe UI Variable", "Segoe UI", sans-serif` para uma pilha que começa em `Inter`
+  e termina em fontes de sistema; a biblioteca não distribui a fonte, então a aplicação deve
+  carregá-la (por exemplo com `next/font`, veja `docs/visual-identity.md`) ou sobrescrever o
+  token, e sem isso o texto usa a fonte de sistema da pilha (impacto visual para consumidores).
+  Novos `--ads-typography-font-family-heading` (usado pelos títulos de `AdsTypography`) e
+  `--ads-typography-font-family-mono`.
 
 #### Changed
 

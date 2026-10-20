@@ -5,20 +5,63 @@ Superfícies, espaçamento e cores de gráfico dos tokens. Tudo vem de
 Os valores estão em `packages/tokens/source/tokens.mjs` e a story
 **Foundation/Visual identity** (`apps/docs`) mostra tudo nos dois temas.
 
-## Estado da identidade visual
+## Escala de marca
 
-A change `add-visual-identity` entrega as superfícies escuras, o espaçamento e
-os tokens de gráfico. Ainda dependem de decisão de produto/design e não estão
-implementados:
+`color.reference.brand50` a `brand900` (`#eff6ff` a `#1e3a8a`) formam a escala de
+marca. Sem uma cor de marca definida, ela segue a família azul que já era usada,
+então a aparência **não mudou**: `primary`, `primary-hover`, `focus`,
+`focus-ring`, `form-border-focus`, `surface-selected` e as sobrescritas de
+`prefers-contrast: more` apontam para a escala (por exemplo `primary` é
+`brand600` no claro e `brand400` no escuro). As referências `blue*` foram
+removidas porque nada mais as usava; elas não eram variáveis CSS públicas.
 
-- **Escala de marca** (`brand50`…`brand900`): a paleta continua sendo `blue*` e
-  `slate*`. Depende do hex da marca.
-- **Tipografia:** `--ads-typography-font-family` é
-  `Aptos, "Segoe UI Variable", "Segoe UI", sans-serif`, que só existe em
-  sistemas Microsoft (nos demais cai em `sans-serif`). Não há tokens de fonte
-  para títulos nem monoespaçada. Para uma aparência igual em todas as
-  plataformas, a aplicação pode sobrescrever o token depois de importar
-  `@admin-ds/tokens/styles.css`, por exemplo com `next/font`.
+Para usar outra cor de marca, troque os valores `brand*` em
+`packages/tokens/source/tokens.mjs` e confirme os pares de contraste
+(`npm run test:node --workspace @admin-ds/tokens`), ou sobrescreva as variáveis
+semânticas (`--ads-color-primary` etc.) na aplicação. A escala de referência não é
+emitida como variável CSS.
+
+## Tipografia
+
+| Token                                  | Uso                                               |
+| -------------------------------------- | ------------------------------------------------- |
+| `--ads-typography-font-family`         | corpo (compatível com o anterior)                 |
+| `--ads-typography-font-family-heading` | títulos (`AdsTypography` `heading1` a `heading4`) |
+| `--ads-typography-font-family-mono`    | código e valores técnicos                         |
+
+A pilha do corpo e dos títulos é `Inter, "Segoe UI Variable", "Segoe UI",
+system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif`; a
+monoespaçada é `ui-monospace, "SF Mono", "Cascadia Code", Consolas,
+"Liberation Mono", Menlo, monospace`. Por enquanto os títulos usam a mesma pilha
+do corpo; mudar `fontFamilyHeading` não exige alterar componentes. Use a
+monoespaçada em estilos próprios, por exemplo com `font-family:
+var(--ads-typography-font-family-mono)`.
+
+**A biblioteca não distribui arquivos de fonte.** Para que a Inter renderize igual
+em Windows, Mac, Linux e Android, a aplicação deve carregá-la. Sem isso, cai no
+primeiro item disponível da pilha (por exemplo Segoe UI no Windows ou a fonte do
+sistema no Mac), sem quebrar o layout. Em Next.js, `next/font` baixa e
+hospeda a Inter no próprio build, sem requisição a CDN externa em tempo de
+execução:
+
+```tsx
+// app/layout.tsx
+import { Inter } from 'next/font/google';
+
+const inter = Inter({ subsets: ['latin'], display: 'swap' });
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+	return (
+		<html lang="pt-BR" className={inter.className}>
+			<body>{children}</body>
+		</html>
+	);
+}
+```
+
+Como a pilha começa por `Inter`, `next/font` com `variable` e um
+`@font-face` próprio também funcionam: defina uma família chamada `Inter`. A
+Inter tem licença SIL Open Font License 1.1; preserve o aviso ao hospedá-la.
 
 ## Superfícies do tema escuro
 

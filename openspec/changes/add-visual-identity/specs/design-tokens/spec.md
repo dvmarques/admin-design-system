@@ -41,3 +41,36 @@ O sistema MUST disponibilizar oito papéis de cor categórica (`--ads-color-char
 
 - **WHEN** a aplicação sobrescreve um token de cor de gráfico no escopo de um tema
 - **THEN** o novo valor é usado sem recompilar a biblioteca
+
+### Requirement: Escala de marca
+
+O sistema MUST disponibilizar uma escala de marca de dez degraus (`brand50` a `brand900`) como referência dos papéis de cor de ação, foco e seleção (`primary`, `primary-hover`, `focus`, `focus-ring`, `form-border-focus`, `surface-selected` e `on-surface-selected`), nos dois temas e em `prefers-contrast: more`. Os pares de contraste desses papéis MUST continuar atendendo 4,5:1 para texto e 3:1 para foco, bordas de controle e indicadores.
+
+#### Scenario: Aparência preservada
+
+- **WHEN** a aplicação importa `@admin-ds/tokens/styles.css` após a introdução da escala de marca
+- **THEN** os valores renderizados desses papéis são os mesmos de antes, nos dois temas e com `prefers-contrast: more`
+
+#### Scenario: Troca da cor de marca
+
+- **WHEN** os valores da escala de marca mudam na fonte dos tokens
+- **THEN** os papéis semânticos refletem a nova escala e os testes de contraste continuam verificando os pares
+
+### Requirement: Famílias tipográficas
+
+O sistema MUST disponibilizar `--ads-typography-font-family` (corpo, mantido por compatibilidade), `--ads-typography-font-family-heading` e `--ads-typography-font-family-mono`, também como metadados tipados, cada um com pilha de fallback para fontes do sistema. As variantes de título de `AdsTypography` MUST usar a família de títulos. A biblioteca MUST NOT exigir configuração de Tailwind nem requisição a CDN externa para usar os tokens.
+
+#### Scenario: Aplicação carrega a fonte padrão
+
+- **WHEN** a aplicação carrega a fonte `Inter` por seus próprios meios
+- **THEN** corpo e títulos usam essa fonte sem alterar os componentes
+
+#### Scenario: Fonte não carregada
+
+- **WHEN** a fonte `Inter` não está disponível
+- **THEN** o texto usa a primeira fonte disponível da pilha de fallback sem quebrar o layout
+
+#### Scenario: Título sem fonte própria
+
+- **WHEN** nenhuma fonte distinta é definida para títulos
+- **THEN** a família de títulos usa a mesma pilha do corpo

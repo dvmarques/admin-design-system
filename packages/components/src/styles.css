@@ -7,6 +7,8 @@
 	/* Transições sem `duration-*` herdam o token, que vira 0ms com movimento reduzido. */
 	--default-transition-duration: var(--ads-motion-fast);
 	--font-sans: var(--ads-typography-font-family);
+	--font-heading: var(--ads-typography-font-family-heading);
+	--font-mono: var(--ads-typography-font-family-mono);
 	--text-xs: var(--ads-typography-font-size-xs);
 	--text-sm: var(--ads-typography-font-size-sm);
 	--text-base: var(--ads-typography-font-size-md);

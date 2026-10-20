@@ -182,6 +182,19 @@ export const Typography: Story = {
 							{size} · Painel administrativo
 						</p>
 					))}
+					<p
+						style={{
+							fontFamily: cssVar('typography-font-family-heading'),
+							fontWeight: 600,
+							margin: 0,
+							marginTop: '0.5rem',
+						}}
+					>
+						Títulos usam --ads-typography-font-family-heading
+					</p>
+					<p style={{ fontFamily: cssVar('typography-font-family-mono'), margin: 0 }}>
+						Valores técnicos usam --ads-typography-font-family-mono
+					</p>
 					<p style={{ margin: 0, marginTop: '0.5rem' }}>
 						{['regular', 'medium', 'semibold', 'bold'].map((weight) => (
 							<span

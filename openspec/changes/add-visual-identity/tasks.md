@@ -16,8 +16,9 @@
 - [x] 3.1 Executar `npx prettier --write` nos arquivos alterados, `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `openspec validate --all --strict`
 - [ ] 3.2 Executar `npm run test:e2e` e confirmar que nenhum teste falha; atualizar baselines visuais somente se a mudança for intencional e o diff revisado (rodado só no Chromium do ambiente de desenvolvimento: 130 passam e os 7 snapshots visuais falham também sem esta change, por diferença do ambiente; confirmar na CI e, se o diff for intencional e revisado, usar o workflow "Atualizar baselines visuais")
 
-## 4. Pendente de decisão de produto/design (PR seguinte)
+## 4. Escala de marca e tipografia
 
-- [ ] 4.1 Escala de marca: com o hex da marca (ou mantendo a família azul), adicionar `brand50`…`brand900`, repontar `primary`, `primaryHover`, `focus`, `focusRing`, `formBorderFocus`, `surfaceSelected`, `onSurfaceSelected` e `semanticContrast`, manter os pares de contraste verdes e só remover `blue*` se nada mais as usar
-- [ ] 4.2 Tipografia: escolher a fonte e a estratégia de carregamento, adicionar `fontFamilyHeading` e `fontFamilyMono`, aplicá-los em `AdsTypography` e onde houver código, registrar a justificativa de dependência ou asset e o impacto no peso do CSS neste `design.md` e avisar a mudança de fonte padrão no `CHANGELOG.md`
-- [ ] 4.3 Atualizar `docs/visual-identity.md` e a story de fundamentos com a escala de marca e a fonte, e arquivar a change
+- [x] 4.1 Escala de marca: `brand50`…`brand900` (família azul atual, sem hex de marca), papéis semânticos repontados sem mudar o CSS gerado das cores, pares de contraste verdes e referências `blue*` removidas após conferir os usos
+- [x] 4.2 Tipografia: pilha com Inter e fallbacks, `fontFamilyHeading` e `fontFamilyMono`, `AdsTypography` com `font-heading` nos títulos, justificativa de dependência e de carregamento no `design.md` e fonte padrão registrada no `CHANGELOG.md`
+- [x] 4.3 Atualizar `docs/visual-identity.md`, `packages/tokens/README.md` e a story de fundamentos com a escala de marca e a tipografia
+- [ ] 4.4 Revisão, validação visual nos dois temas e arquivamento da change depois da aprovação (não arquivar antes)

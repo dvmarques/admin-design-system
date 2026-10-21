@@ -123,3 +123,15 @@ o CSS `ads-sparkline*`; `@admin-ds/admin` de 168757 para 170121 bytes (+1364) pe
 `sparkline` do `AdsMetricCard` e pelo skeleton do sparkline. Os valores do JSON antes
 desta change (276803 e 168617) já divergiam dos 280657 e 168757 citados acima; as
 diferenças acima usam esses últimos. Sem novas dependências de runtime.
+
+O baseline de `@admin-ds/components` foi atualizado na change
+`tabs-breadcrumb-accordion` de 289874 para 324003 bytes (+34129), medido em LF após o
+build de components e `inspect:packages`. O incremento vem dos módulos novos `accordion`,
+`breadcrumb-collapse` e `component-ids` e da separação do `AdsTabs` em `tabs` (cada um com
+JavaScript, source maps e declarações; `accordion` e `tabs` somam cerca de 32 KB de `dist/`),
+das props novas de `AdsTabs` e `AdsBreadcrumb` e das utilidades de CSS do accordion e do
+Tabs vertical em `styles.css`. A divisão em módulos separados permite que
+`navigation.js` continue sem `'use client'`. O crescimento passa de 10% do valor anterior
+e foi aceito porque a change entrega um componente novo. `@admin-ds/admin` e
+`@admin-ds/tokens` ficaram dentro da tolerância e não foram alterados. Sem novas
+dependências de runtime.

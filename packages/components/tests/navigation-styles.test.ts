@@ -15,6 +15,18 @@ const classes = [
 	'border-b-primary',
 	'border-b-border',
 	'no-underline',
+	'border-r-2',
+	'border-r-primary',
+	'border-r-border',
+	'flex-col',
+	'sm:flex-row',
+	'rotate-180',
+	'min-h-11',
+	'break-words',
+	'last:border-b-0',
+	'focus-visible:-outline-offset-2',
+	'motion-reduce:transition-none',
+	'disabled:hover:bg-transparent',
 ] as const;
 
 describe('button font in the distributed CSS', () => {
@@ -24,7 +36,7 @@ describe('button font in the distributed CSS', () => {
 });
 
 describe('navigation styles in the distributed CSS', () => {
-	it.each(classes)('contains the %s utility used by tabs and breadcrumb', (name) => {
-		expect(css).toContain(`.${name.replace(':', '\\:')}`);
+	it.each(classes)('contains the %s utility used by tabs, breadcrumb and accordion', (name) => {
+		expect(css).toContain(`.${name.replaceAll(':', '\\:')}`);
 	});
 });

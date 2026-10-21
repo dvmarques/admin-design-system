@@ -340,6 +340,93 @@ A biblioteca não acessa o roteador. `renderPage` (que recebe um botão pronto)
 continua funcionando, mas está obsoleto: envolver o botão em um link gera
 conteúdo interativo aninhado.
 
+### Tabs, Breadcrumb e Accordion
+
+`AdsTabs` e `AdsAccordion` usam estado e declaram `"use client"`: podem ser
+importados por uma página Server Component, mas qualquer função passada a eles
+(`onValueChange`, por exemplo) precisa vir de um Client Component.
+`AdsBreadcrumb` e `AdsNav` continuam sem `"use client"`, então uma página Server
+Component pode passar `renderLink` com `next/link` diretamente. Só o botão de
+expandir do breadcrumb é uma ilha cliente.
+
+**`AdsTabs`**
+
+| Prop             | Valores                     | Padrão       | Efeito                                                                                          |
+| ---------------- | --------------------------- | ------------ | ----------------------------------------------------------------------------------------------- |
+| `activationMode` | `manual`, `automatic`       | `manual`     | `manual` ativa com Enter ou Space; `automatic` ativa ao mover o foco                            |
+| `orientation`    | `horizontal`, `vertical`    | `horizontal` | `vertical` usa ↑ e ↓ (Home e End valem nas duas) e um indicador lateral; empilha abaixo de `sm` |
+| `keepMounted`    | `boolean` (raiz ou `Panel`) | `false`      | mantém painéis inativos no documento, com `hidden`, preservando o estado interno do conteúdo    |
+
+Por padrão o painel inativo é desmontado. Os ids derivados de `value` são
+válidos para qualquer texto e nunca colidem, e a lista sempre tem uma tab
+tabulável, inclusive quando a ativa está desabilitada.
+
+**`AdsBreadcrumb`**
+
+```tsx
+<AdsBreadcrumb
+	items={items}
+	maxItems={4}
+	itemsBeforeCollapse={1}
+	itemsAfterCollapse={2}
+	separator="›"
+	aria-label="Trilha de navegação"
+	expandLabel="Mostrar caminho completo"
+/>
+```
+
+Com mais itens que `maxItems`, os do meio ficam atrás de um botão que expande a
+trilha no lugar e leva o foco ao primeiro item revelado. O item atual nunca é
+escondido. Sem `maxItems`, a trilha aparece por inteiro. `separator` aceita
+qualquer nó e é ignorado por leitores de tela.
+
+**`AdsAccordion`**
+
+```tsx
+<AdsAccordion type="single" collapsible defaultValue="account">
+	<AdsAccordion.Item value="account">
+		<AdsAccordion.Header level={3}>
+			<AdsAccordion.Trigger>Conta</AdsAccordion.Trigger>
+		</AdsAccordion.Header>
+		<AdsAccordion.Panel>Conteúdo</AdsAccordion.Panel>
+	</AdsAccordion.Item>
+</AdsAccordion>
+```
+
+- `type="single"` abre um item por vez (`value` e `defaultValue` são texto;
+  `collapsible` permite fechar o aberto e `onValueChange` recebe `''`);
+  `type="multiple"` abre vários (`value` e `defaultValue` são listas).
+- `AdsAccordion.Header` é um heading real: ajuste `level` (2 a 6, padrão 3) à
+  hierarquia da página.
+- `Item` aceita `disabled`: o item não alterna e é pulado pelas setas. Todos os
+  gatilhos habilitados continuam na ordem de tabulação; ↑, ↓, Home e End movem o
+  foco entre eles (com volta ao início e ao fim, como nas tabs).
+- Por padrão o painel fechado fica no documento com `hidden`, e o estado dos
+  campos é preservado. `unmountOnCollapse` remove o conteúdo; defina na raiz e
+  sobrescreva por item. Não aplique classes de `display` ao `Panel`, que
+  anulariam o `hidden`.
+- O painel é uma região nomeada pelo gatilho. Com muitos itens (mais de seis), o
+  WAI-ARIA recomenda evitar o papel para não poluir os pontos de referência:
+  sobrescreva com `role` no `Panel`.
+
+**Textos e idiomas**
+
+Os textos embutidos têm padrão em inglês (`Breadcrumb` e `Show full path` no
+breadcrumb) e sempre podem ser sobrescritos por prop. A biblioteca não traduz
+nem depende de uma biblioteca de i18n: passe os textos da sua aplicação.
+
+```tsx
+<AdsBreadcrumb
+	aria-label={t('breadcrumb')}
+	expandLabel={t('showFullPath')}
+	items={items}
+	maxItems={4}
+/>
+```
+
+A ordem de resolução é a prop explícita e depois o padrão em inglês. Um provider
+de idioma e o suporte a RTL são evoluções futuras.
+
 ### Filtros e tabela inteligente (`/clientes`)
 
 `/clientes` combina `AdsFilterBar` e `AdsSmartTable` (`apps/admin-demo`), usando

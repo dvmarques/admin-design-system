@@ -106,6 +106,9 @@ admin demo. A change `add-navigation-components` concluiu `AdsBreadcrumb`,
 `AdsNav`, `AdsTabs`, `AdsDropdown` e `AdsPagination`, com interações por
 teclado, temas, CSS distribuído, documentação, testes, snapshots visuais e
 consumo pela aplicação Next.js de demonstração. A change
+`tabs-breadcrumb-accordion` acrescentou `AdsAccordion`, tabs verticais e de
+ativação automática, o colapso e o separador do `AdsBreadcrumb` e a separação
+entre módulos cliente e de servidor. A change
 `add-data-display-components` concluiu `AdsTable`, `AdsList`, `AdsCard`,
 `AdsProgress` e `AdsEmptyState`, com semântica acessível, composição sem
 acoplamento a dados ou fetching, temas, CSS distribuído, documentação, testes

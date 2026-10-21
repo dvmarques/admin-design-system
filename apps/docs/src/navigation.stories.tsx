@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
+	AdsAccordion,
 	AdsBreadcrumb,
 	AdsDropdown,
 	AdsNav,
@@ -145,6 +146,173 @@ export const ConsumerLinks: Story = {
 				pageCount={5}
 				renderPageLink={(page, props) => <ConsumerLink href={`/?pagina=${page}`} {...props} />}
 			/>
+		</div>
+	),
+};
+
+const longTrail = [
+	{ href: '#home', label: 'Início' },
+	{ href: '#reports', label: 'Relatórios' },
+	{ href: '#sales', label: 'Vendas' },
+	{ href: '#region', label: 'Região' },
+	{ href: '#state', label: 'Estado' },
+	{ label: 'Mensal' },
+];
+
+/** Beyond `maxItems`, the middle items collapse behind a button that expands them in place. */
+export const BreadcrumbCollapsed: Story = {
+	render: () => (
+		<div className="grid gap-6">
+			<AdsBreadcrumb items={longTrail} maxItems={4} />
+			<AdsBreadcrumb
+				itemsAfterCollapse={1}
+				itemsBeforeCollapse={2}
+				items={longTrail}
+				maxItems={4}
+			/>
+		</div>
+	),
+};
+
+/** The separator is any node, hidden from assistive technology. */
+export const BreadcrumbSeparator: Story = {
+	render: () => <AdsBreadcrumb items={longTrail.slice(0, 4)} separator="›" />,
+};
+
+/** Default texts are in English; pass translated ones from the app's own i18n. */
+export const BreadcrumbTranslatedLabels: Story = {
+	render: () => (
+		<AdsBreadcrumb
+			aria-label="Trilha de navegação"
+			expandLabel="Mostrar caminho completo"
+			items={longTrail}
+			maxItems={4}
+		/>
+	),
+};
+
+/** `automatic` activates the tab as the focus moves; `vertical` swaps the arrows for Up and Down. */
+export const TabsVerticalAutomatic: Story = {
+	render: () => (
+		<AdsTabs activationMode="automatic" defaultValue="profile" orientation="vertical">
+			<AdsTabs.List aria-label="Configurações da conta">
+				<AdsTabs.Trigger value="profile">Perfil</AdsTabs.Trigger>
+				<AdsTabs.Trigger value="security">Segurança</AdsTabs.Trigger>
+				<AdsTabs.Trigger disabled value="billing">
+					Cobrança
+				</AdsTabs.Trigger>
+			</AdsTabs.List>
+			<AdsTabs.Panel value="profile">Dados do perfil.</AdsTabs.Panel>
+			<AdsTabs.Panel value="security">Opções de segurança.</AdsTabs.Panel>
+			<AdsTabs.Panel value="billing">Dados de cobrança.</AdsTabs.Panel>
+		</AdsTabs>
+	),
+};
+
+/** `keepMounted` keeps inactive panels, hidden, so what was typed in them is preserved. */
+export const TabsKeepMounted: Story = {
+	render: () => (
+		<AdsTabs defaultValue="form" keepMounted>
+			<AdsTabs.List>
+				<AdsTabs.Trigger value="form">Formulário</AdsTabs.Trigger>
+				<AdsTabs.Trigger value="notes">Notas</AdsTabs.Trigger>
+			</AdsTabs.List>
+			<AdsTabs.Panel value="form">
+				<label>
+					Nome <input />
+				</label>
+			</AdsTabs.Panel>
+			<AdsTabs.Panel value="notes">Notas do registro.</AdsTabs.Panel>
+		</AdsTabs>
+	),
+};
+
+function AccordionItem({
+	disabled = false,
+	level = 3,
+	title,
+	value,
+}: {
+	disabled?: boolean;
+	level?: 2 | 3 | 4 | 5 | 6;
+	title: string;
+	value: string;
+}) {
+	return (
+		<AdsAccordion.Item disabled={disabled} value={value}>
+			<AdsAccordion.Header level={level}>
+				<AdsAccordion.Trigger>{title}</AdsAccordion.Trigger>
+			</AdsAccordion.Header>
+			<AdsAccordion.Panel>Conteúdo de {title.toLowerCase()}.</AdsAccordion.Panel>
+		</AdsAccordion.Item>
+	);
+}
+
+/** One item open at a time; `collapsible` lets the open one close. */
+export const AccordionSingle: Story = {
+	render: () => (
+		<AdsAccordion collapsible defaultValue="account" type="single">
+			<AccordionItem title="Conta" value="account" />
+			<AccordionItem title="Cobrança" value="billing" />
+			<AccordionItem title="Notificações" value="notifications" />
+		</AdsAccordion>
+	),
+};
+
+/** Any number of items open; the heading level fits the outline of the page. */
+export const AccordionMultiple: Story = {
+	render: () => (
+		<AdsAccordion defaultValue={['account', 'billing']} type="multiple">
+			<AccordionItem level={4} title="Conta" value="account" />
+			<AccordionItem level={4} title="Cobrança" value="billing" />
+			<AccordionItem level={4} title="Notificações" value="notifications" />
+		</AdsAccordion>
+	),
+};
+
+/** A disabled item can neither be toggled nor focused by the arrows. */
+export const AccordionDisabledItem: Story = {
+	render: () => (
+		<AdsAccordion type="single">
+			<AccordionItem title="Conta" value="account" />
+			<AccordionItem disabled title="Integrações (em breve)" value="integrations" />
+			<AccordionItem title="Notificações" value="notifications" />
+		</AdsAccordion>
+	),
+};
+
+/** Closed panels stay hidden in the document by default; `unmountOnCollapse` removes their content. */
+export const AccordionUnmountOnCollapse: Story = {
+	render: () => (
+		<AdsAccordion defaultValue="account" type="single" unmountOnCollapse>
+			<AccordionItem title="Conta" value="account" />
+			<AccordionItem title="Cobrança" value="billing" />
+		</AdsAccordion>
+	),
+};
+
+/** The accordion on a raised surface, in both themes. */
+export const AccordionOnRaisedSurface: Story = {
+	render: () => (
+		<div className="grid gap-6" style={fitColumn}>
+			{(['light', 'dark'] as const).map((theme) => (
+				<div
+					data-theme={theme}
+					key={theme}
+					style={{ background: 'var(--ads-color-canvas)', padding: '1rem' }}
+				>
+					<AdsSurface variant="raised">
+						<AdsAccordion defaultValue={['account']} type="multiple">
+							<AccordionItem title="Conta" value="account" />
+							<AccordionItem disabled title="Integrações (em breve)" value="integrations" />
+							<AccordionItem
+								title="Notificações com um título bastante longo que precisa quebrar linha"
+								value="notifications"
+							/>
+						</AdsAccordion>
+					</AdsSurface>
+				</div>
+			))}
 		</div>
 	),
 };

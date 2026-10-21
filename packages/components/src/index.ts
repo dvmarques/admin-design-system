@@ -55,18 +55,33 @@ export { AdsPopover, AdsTooltip } from './overlay-anchored.js';
 export type { AdsOverlayPlacement, AdsPopoverProps, AdsTooltipProps } from './overlay-anchored.js';
 export { AdsToast } from './overlay-toast.js';
 export type { AdsToastProps, AdsToastVariant } from './overlay-toast.js';
-export { AdsBreadcrumb, AdsNav, AdsTabs } from './navigation.js';
+export { AdsBreadcrumb, AdsNav } from './navigation.js';
+export { AdsTabs } from './tabs.js';
+export { AdsAccordion } from './accordion.js';
 export type {
 	AdsBreadcrumbItem,
 	AdsBreadcrumbProps,
 	AdsLinkRenderProps,
 	AdsNavItem,
 	AdsNavProps,
+} from './navigation.js';
+export type {
+	AdsTabsActivationMode,
 	AdsTabsListProps,
+	AdsTabsOrientation,
 	AdsTabsPanelProps,
 	AdsTabsProps,
 	AdsTabsTriggerProps,
-} from './navigation.js';
+} from './tabs.js';
+export type {
+	AdsAccordionHeaderProps,
+	AdsAccordionItemProps,
+	AdsAccordionMultipleProps,
+	AdsAccordionPanelProps,
+	AdsAccordionProps,
+	AdsAccordionSingleProps,
+	AdsAccordionTriggerProps,
+} from './accordion.js';
 export { AdsDropdown } from './dropdown.js';
 export type {
 	AdsDropdownContentProps,

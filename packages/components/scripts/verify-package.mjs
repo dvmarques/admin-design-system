@@ -9,8 +9,19 @@ for (const path of [
 	await access(new URL(`../${path.replace('./', '')}`, import.meta.url));
 }
 
-const clientModule = await readFile(new URL('../dist/theme-toggle.js', import.meta.url), 'utf8');
-if (!clientModule.startsWith("'use client'"))
-	throw new Error('Client directive was not preserved in the distributed module');
-if (clientModule.includes('react.development'))
-	throw new Error('React must not be bundled into the package artifact');
+// Modules with state or effects must keep the directive; the server ones must stay usable from a
+// Server Component, so a stray directive would force every consumer page to become a client one.
+const clientModules = ['theme-toggle', 'tabs', 'accordion', 'breadcrumb-collapse'];
+const serverModules = ['navigation'];
+for (const name of clientModules) {
+	const source = await readFile(new URL(`../dist/${name}.js`, import.meta.url), 'utf8');
+	if (!source.startsWith("'use client'"))
+		throw new Error(`Client directive was not preserved in the distributed module ${name}`);
+	if (source.includes('react.development'))
+		throw new Error('React must not be bundled into the package artifact');
+}
+for (const name of serverModules) {
+	const source = await readFile(new URL(`../dist/${name}.js`, import.meta.url), 'utf8');
+	if (/^['"]use client['"]/.test(source))
+		throw new Error(`Server module ${name} must not declare the client directive`);
+}

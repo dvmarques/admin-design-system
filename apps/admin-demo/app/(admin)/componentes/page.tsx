@@ -1,6 +1,7 @@
 import {
 	AdsAvatar,
 	AdsBadge,
+	AdsBreadcrumb,
 	AdsButton,
 	AdsCheckbox,
 	AdsField,
@@ -15,6 +16,7 @@ import {
 	AdsSwitch,
 	AdsTextarea,
 } from '@admin-ds/components';
+import Link from 'next/link';
 import { tokenValues } from '@admin-ds/tokens';
 import { OverlayShowcase } from '../../overlay-showcase';
 import { NavigationShowcase } from '../../navigation-showcase';
@@ -148,6 +150,25 @@ export default function ComponentsPage() {
 							<AdsTypography as="h2" id="navigation" variant="heading3">
 								Navegação pública
 							</AdsTypography>
+							{/* Server Component: renderLink e o colapso do breadcrumb sem "use client" na página. */}
+							<AdsBreadcrumb
+								aria-label="Trilha renderizada no servidor"
+								expandLabel="Mostrar trilha do servidor"
+								items={[
+									{ label: 'Início', renderLink: (props) => <Link href="#home" {...props} /> },
+									{ label: 'Catálogo', renderLink: (props) => <Link href="#catalog" {...props} /> },
+									{
+										label: 'Navegação',
+										renderLink: (props) => <Link href="#navigation" {...props} />,
+									},
+									{
+										label: 'Estrutura',
+										renderLink: (props) => <Link href="#structure" {...props} />,
+									},
+									{ label: 'Trilha' },
+								]}
+								maxItems={3}
+							/>
 							<NavigationShowcase />
 						</AdsSurface>
 					</section>

@@ -125,7 +125,7 @@ desta change (276803 e 168617) já divergiam dos 280657 e 168757 citados acima; 
 diferenças acima usam esses últimos. Sem novas dependências de runtime.
 
 O baseline de `@admin-ds/components` foi atualizado na change
-`tabs-breadcrumb-accordion` de 289874 para 329527 bytes (+39653), medido em LF após o
+`tabs-breadcrumb-accordion` de 289874 para 330033 bytes (+40159), já com o AdsDropdown da develop, medido em LF após o
 build de components e `inspect:packages`. O incremento vem dos módulos novos `accordion`,
 `breadcrumb-collapse` e `component-ids` e da separação do `AdsTabs` em `tabs` (cada um com
 JavaScript, source maps e declarações; `accordion` e `tabs` somam cerca de 32 KB de `dist/`),

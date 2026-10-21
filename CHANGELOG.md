@@ -18,7 +18,12 @@ por versão e pelas changes correspondentes do OpenSpec.
   sempre tabulável e `type="button"` nos gatilhos. `AdsBreadcrumb` ganha `maxItems`,
   `itemsBeforeCollapse`, `itemsAfterCollapse`, `expandLabel` e `separator`. `AdsTabs` e `AdsAccordion`
   declaram `"use client"`; `AdsBreadcrumb` e `AdsNav` seguem compatíveis com Server Components, inclusive
-  com `renderLink`. Textos padrão em inglês, sobrescritos por prop. Sem mudança incompatível de API;
+  com `renderLink`. As partes também são exportadas por nome (`AdsTabsList`, `AdsTabsTrigger`,
+  `AdsTabsPanel`, `AdsAccordionItem`, `AdsAccordionHeader`, `AdsAccordionTrigger`,
+  `AdsAccordionPanel`) para uso em Server Components, onde `AdsTabs.List` não existe. O item aberto de
+  um accordion `single` sem `collapsible` expõe `aria-disabled`, e `aria-controls` só referencia painéis
+  que existem. `verify-package` passa a falhar se `navigation.js` usar APIs só de cliente. Textos padrão
+  em inglês, sobrescritos por prop. Sem mudança incompatível de API;
   três correções de comportamento em `AdsTabs`: o gatilho deixa de submeter formulários
   (`type="button"`), o `onClick` do consumidor passa a ser chamado e os ids de tab e painel mudam de
   formato (derivam do `value` codificado), então seletores que dependiam do formato antigo devem usar

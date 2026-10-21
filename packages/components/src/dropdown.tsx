@@ -4,7 +4,7 @@ import {
 	createContext,
 	createElement,
 	useContext,
-	useEffect,
+	useCallback,
 	useRef,
 	useState,
 	type ButtonHTMLAttributes,
@@ -25,6 +25,7 @@ interface DropdownContextValue {
 	setOpen: (open: boolean) => void;
 	triggerRef: React.MutableRefObject<HTMLElement | null>;
 	menuId: string;
+	initialFocusRef: React.MutableRefObject<boolean>;
 }
 const DropdownContext = createContext<DropdownContextValue | null>(null);
 function useDropdown() {
@@ -54,8 +55,9 @@ function AdsDropdownRoot({
 	};
 	const triggerRef = useRef<HTMLElement | null>(null);
 	const menuId = useStableId('ads-dropdown-menu');
+	const initialFocusRef = useRef(false);
 	return (
-		<DropdownContext.Provider value={{ open, setOpen, triggerRef, menuId }}>
+		<DropdownContext.Provider value={{ open, setOpen, triggerRef, menuId, initialFocusRef }}>
 			<div {...props} className={classNames('ads-dropdown relative inline-flex', className)}>
 				{children}
 			</div>
@@ -65,19 +67,23 @@ function AdsDropdownRoot({
 
 export type AdsDropdownTriggerProps = ButtonHTMLAttributes<HTMLButtonElement>;
 function AdsDropdownTrigger({ children, className, onKeyDown, ...props }: AdsDropdownTriggerProps) {
-	const { open, setOpen, triggerRef, menuId } = useDropdown();
+	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
 	return (
 		<AdsButton
 			{...props}
 			aria-controls={open ? menuId : undefined}
 			aria-expanded={open}
 			className={classNames('ads-dropdown-trigger', className)}
-			onClick={() => setOpen(!open)}
+			onClick={() => {
+				initialFocusRef.current = false;
+				setOpen(!open);
+			}}
 			onKeyDown={(event) => {
 				onKeyDown?.(event);
 				if (event.defaultPrevented) return;
 				if ((event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') && !open) {
 					event.preventDefault();
+					initialFocusRef.current = true;
 					setOpen(true);
 				}
 			}}
@@ -101,17 +107,19 @@ function AdsDropdownContent({
 	placement = 'bottom',
 	...props
 }: AdsDropdownContentProps) {
-	const { open, setOpen, triggerRef, menuId } = useDropdown();
+	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
 	const contentRef = useRef<HTMLDivElement>(null);
 	const position = useAnchoredPosition(open, triggerRef, contentRef, placement, 'start');
-	const openedByKeyboard = useRef(false);
-	useEffect(() => {
-		if (open) {
-			const active = document.activeElement;
-			openedByKeyboard.current =
-				active === triggerRef.current && (active?.matches(':focus-visible') ?? false);
-		}
-	}, [open, triggerRef]);
+	const setContentRef = useCallback(
+		(node: HTMLDivElement | null) => {
+			contentRef.current = node;
+			if (!node || !initialFocusRef.current) return;
+			// The portal mounts its children after the open render. Focus at attachment.
+			initialFocusRef.current = false;
+			node.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')?.focus();
+		},
+		[initialFocusRef],
+	);
 	useEscapeKey(open, () => {
 		setOpen(false);
 		triggerRef.current?.focus();
@@ -120,13 +128,6 @@ function AdsDropdownContent({
 		if (!(event.target instanceof Node) || !triggerRef.current?.contains(event.target))
 			setOpen(false);
 	});
-	useEffect(() => {
-		if (!open || !openedByKeyboard.current) return;
-		const first = contentRef.current?.querySelector<HTMLElement>(
-			'[role="menuitem"]:not([aria-disabled="true"])',
-		);
-		first?.focus();
-	}, [open]);
 	return open ? (
 		<OverlayPortal>
 			<div
@@ -153,7 +154,7 @@ function AdsDropdownContent({
 						items[next]?.focus();
 					}
 				}}
-				ref={contentRef}
+				ref={setContentRef}
 				role="menu"
 				style={position}
 			>

@@ -177,6 +177,11 @@ por versão e pelas changes correspondentes do OpenSpec.
   com método de benchmark. Medição inicial de contexto em `benchmark.md` da change. Somente documentação
   e processo, sem mudança de API pública nem de pacotes distribuídos.
 
+#### Fixed
+
+- `fix-lint-nested-worktrees` - O lint da raiz ignora `.claude/worktrees/**` e resolve
+  `tsconfigRootDir` pela configuração, preservando os arquivos dos worktrees (#128).
+
 ### [0.1.0] - 15-out-2026
 
 #### Added

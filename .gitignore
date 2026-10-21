@@ -19,3 +19,4 @@ site/
 
 # Saídas locais do MCP do Playwright
 .playwright-mcp/
+/lint-regression-*/

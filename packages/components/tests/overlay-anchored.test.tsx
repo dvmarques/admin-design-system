@@ -3,6 +3,7 @@ import axe from 'axe-core';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsButton } from '../src/button';
+import { AdsDialog } from '../src/overlay-dialog';
 import { AdsPopover, AdsTooltip } from '../src/overlay-anchored';
 
 function PopoverFixture() {
@@ -136,6 +137,102 @@ describe('anchored overlays', () => {
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 	});
 
+	it('dismisses a focus-opened tooltip with Escape without moving focus', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(document.activeElement).toBe(trigger);
+		expect(trigger).not.toHaveAttribute('aria-describedby');
+	});
+
+	it('dismisses a hover-opened tooltip with Escape and reopens only on a new pointer entry', async () => {
+		render(
+			<AdsTooltip content="Ajuda por hover">
+				<AdsButton>Detalhes</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Detalhes' });
+		fireEvent.pointerEnter(trigger);
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(document.activeElement).not.toBe(trigger);
+		fireEvent.pointerLeave(trigger);
+		fireEvent.pointerEnter(trigger);
+		const reopened = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', reopened.id);
+	});
+
+	it('keeps a dismissed tooltip closed while focus stays and reopens on a new focus', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		trigger.focus();
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		fireEvent.keyDown(trigger, { key: 'a' });
+		expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+		trigger.blur();
+		trigger.focus();
+		expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+	});
+
+	it('closes only the tooltip on the first Escape inside a dialog', async () => {
+		const onOpenChange = vi.fn();
+		render(
+			<AdsDialog onOpenChange={onOpenChange} open title="Diálogo">
+				<AdsTooltip content="Ajuda">
+					<AdsButton>Dica</AdsButton>
+				</AdsTooltip>
+			</AdsDialog>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Dica' });
+		// O diálogo move o foco inicial para o primeiro controle; só depois o gatilho recebe foco.
+		await waitFor(() =>
+			expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Fechar' })),
+		);
+		trigger.focus();
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(onOpenChange).not.toHaveBeenCalled();
+		expect(document.activeElement).toBe(trigger);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		expect(onOpenChange).toHaveBeenCalledWith(false);
+	});
+
+	it('closes only the topmost layer when a tooltip and a popover are open', async () => {
+		render(
+			<>
+				<PopoverFixture />
+				<AdsTooltip content="Ajuda">
+					<AdsButton>Dica</AdsButton>
+				</AdsTooltip>
+			</>,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
+		await screen.findByRole('dialog', { name: 'Ações rápidas' });
+		screen.getByRole('button', { name: 'Dica' }).focus();
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(screen.getByRole('dialog', { name: 'Ações rápidas' })).toBeInTheDocument();
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+	});
+
 	it('opens a popover from its trigger and closes on Escape with focus restoration', async () => {
 		render(<PopoverFixture />);
 		const trigger = screen.getByRole('button', { name: 'Mais ações' });
@@ -173,6 +270,20 @@ describe('anchored overlays', () => {
 			</AdsTooltip>,
 		);
 		const results = await axe.run(container);
+		expect(results.violations).toEqual([]);
+	});
+
+	it('has no detectable accessibility violations with the tooltip open', async () => {
+		render(
+			<AdsTooltip content="Informação">
+				<AdsButton>Info</AdsButton>
+			</AdsTooltip>,
+		);
+		screen.getByRole('button', { name: 'Info' }).focus();
+		await screen.findByRole('tooltip');
+		const results = await axe.run(document.body, {
+			rules: { 'color-contrast': { enabled: false }, region: { enabled: false } },
+		});
 		expect(results.violations).toEqual([]);
 	});
 });

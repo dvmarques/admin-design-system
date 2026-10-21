@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { AdsDialog, AdsDrawer } from '@admin-ds/components';
 import {
 	AdsSmartTable,
 	type AdsSmartTableColumn,
@@ -227,6 +228,31 @@ describe('AdsSmartTable', () => {
 		expect(button).toHaveAttribute('aria-expanded', 'false');
 		expect(button).toHaveFocus();
 	});
+
+	it.each([
+		['AdsDialog', AdsDialog],
+		['AdsDrawer', AdsDrawer],
+	] as const)(
+		'closes only the column panel on the first Escape inside an %s and the overlay on the second',
+		(_name, Overlay) => {
+			const onOpenChange = vi.fn();
+			render(
+				<Overlay onOpenChange={onOpenChange} open title="Usuários">
+					<Controlled />
+				</Overlay>,
+			);
+			const button = screen.getByRole('button', { name: 'Colunas' });
+			fireEvent.click(button);
+			const checkbox = screen.getByRole('checkbox', { name: 'Nome' });
+			checkbox.focus();
+			fireEvent.keyDown(checkbox, { key: 'Escape' });
+			expect(button).toHaveAttribute('aria-expanded', 'false');
+			expect(button).toHaveFocus();
+			expect(onOpenChange).not.toHaveBeenCalled();
+			fireEvent.keyDown(button, { key: 'Escape' });
+			expect(onOpenChange).toHaveBeenCalledWith(false);
+		},
+	);
 
 	it('passes the density to the table and keeps the default markup without it', () => {
 		const { rerender } = render(<Controlled density="compact" />);

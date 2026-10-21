@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AdsButton } from '../src/button';
 import { AdsDialog, AdsDrawer } from '../src/overlay-dialog';
 
@@ -70,6 +70,63 @@ describe('overlay dialogs', () => {
 		fireEvent.keyDown(document, { key: 'Escape' });
 		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 		await waitFor(() => expect(document.activeElement).toBe(trigger));
+	});
+
+	it.each(['left', 'right'] as const)(
+		'keeps the modal contract for a %s drawer: semantics, focus trap, Escape and focus return',
+		async (placement) => {
+			const onOpenChange = vi.fn();
+			function DrawerFixture() {
+				const [open, setOpen] = useState(false);
+				return (
+					<>
+						<AdsButton onClick={() => setOpen(true)}>Abrir</AdsButton>
+						<AdsDrawer
+							onOpenChange={(next) => {
+								onOpenChange(next);
+								setOpen(next);
+							}}
+							open={open}
+							placement={placement}
+							title="Filtros"
+						>
+							<AdsButton>Aplicar</AdsButton>
+						</AdsDrawer>
+					</>
+				);
+			}
+			render(<DrawerFixture />);
+			const trigger = screen.getByRole('button', { name: 'Abrir' });
+			trigger.focus();
+			fireEvent.click(trigger);
+			const drawer = await screen.findByRole('dialog', { name: 'Filtros' });
+			expect(drawer).toHaveAttribute('aria-modal', 'true');
+			expect(drawer).toHaveClass(placement === 'left' ? 'mr-auto' : 'ml-auto');
+			const close = screen.getByRole('button', { name: 'Fechar' });
+			const apply = screen.getByRole('button', { name: 'Aplicar' });
+			await waitFor(() => expect(drawer.contains(document.activeElement)).toBe(true));
+			apply.focus();
+			fireEvent.keyDown(document, { key: 'Tab' });
+			expect(document.activeElement).toBe(close);
+			fireEvent.keyDown(document, { key: 'Tab', shiftKey: true });
+			expect(document.activeElement).toBe(apply);
+			fireEvent.keyDown(document, { key: 'Escape' });
+			expect(onOpenChange).toHaveBeenCalledWith(false);
+			expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+			await waitFor(() => expect(document.activeElement).toBe(trigger));
+		},
+	);
+
+	it('does not close a drawer with Escape when disabled', () => {
+		const onOpenChange = vi.fn();
+		render(
+			<AdsDrawer closeOnEscape={false} onOpenChange={onOpenChange} open title="Fixo">
+				Conteúdo
+			</AdsDrawer>,
+		);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		expect(onOpenChange).not.toHaveBeenCalled();
+		expect(screen.getByRole('dialog', { name: 'Fixo' })).toBeVisible();
 	});
 
 	it('does not close from the backdrop when disabled', () => {

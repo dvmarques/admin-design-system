@@ -10,7 +10,7 @@ Fechar o tooltip com Escape reaproveitando a pilha existente, sem mudar a API p�
 
 O tooltip chama `useEscapeKey(open, close)` e registra a camada só enquanto aberto, seja por foco ou por apontamento. Assim o Escape fecha apenas o tooltip e um segundo Escape chega ao diálogo. Segue o padrão WAI-ARIA de tooltip e a WCAG 1.4.13, que pede dispensa sem mover ponteiro ou foco.
 
-Estado `dismissed` no tooltip: o Escape fecha e marca o tooltip como dispensado. `onFocus` e `onPointerEnter` reabrem e limpam a marca; o foco ou o ponteiro que permanecem no gatilho não disparam novos eventos e portanto não reabrem. `onBlur` e `onPointerLeave` também limpam a marca. Um foco que chega por clique no gatilho durante o apontamento conta como novo foco. Se `dismissed` for resetado em `onPointerLeave` com o foco ainda no gatilho, o tooltip permanece fechado até um novo `pointerenter`, o que é aceitável.
+Sem estado extra para a reabertura: o Escape apenas fecha o tooltip. Como `onFocus` e `onPointerEnter` só disparam em uma nova entrada, o foco ou o ponteiro que permanecem no gatilho não reabrem o tooltip, e um novo foco ou apontamento o reabre. Um `onBlur` ou `onPointerLeave` posterior segue fechando, como hoje.
 
 O Escape não move o foco: o tooltip não captura foco e não há restauração, porque o foco nunca saiu do gatilho.
 

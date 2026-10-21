@@ -52,6 +52,8 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 	const contentRef = useRef<HTMLDivElement>(null);
 	const tooltipId = useStableId('ads-tooltip');
 	const position = useAnchoredPosition(open, anchorRef, contentRef, placement);
+	// Dispensa o tooltip sem mover o foco: o gatilho só o reabre com um novo foco ou apontamento.
+	useEscapeKey(open, () => setOpen(false));
 	const trigger = cloneElement(children, (open ? { 'aria-describedby': tooltipId } : {}) as never);
 
 	return (

@@ -92,11 +92,43 @@ export const Drawer: Story = {
 };
 
 export const Tooltip: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'O tooltip abre por foco ou apontamento e se associa ao gatilho por `aria-describedby`. Escape o dispensa sem mover o foco, inclusive quando aberto só por apontamento; ele só reabre com um novo foco ou apontamento no gatilho.',
+			},
+		},
+	},
 	render: () => (
 		<AdsTooltip content="Mais informações">
 			<AdsButton variant="ghost">Passe o mouse</AdsButton>
 		</AdsTooltip>
 	),
+};
+
+export const TooltipInDialog: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Um tooltip aberto é a camada superior para o Escape: o primeiro Escape fecha só o tooltip, com o foco no gatilho, e o segundo fecha o diálogo.',
+			},
+		},
+	},
+	render: () => {
+		const [open, setOpen] = useState(false);
+		return (
+			<>
+				<AdsButton onClick={() => setOpen(true)}>Abrir diálogo com tooltip</AdsButton>
+				<AdsDialog onOpenChange={setOpen} open={open} title="Diálogo com tooltip">
+					<AdsTooltip content="Dispensável com Escape">
+						<AdsButton variant="secondary">Mais informações</AdsButton>
+					</AdsTooltip>
+				</AdsDialog>
+			</>
+		);
+	},
 };
 
 export const Popover: Story = {

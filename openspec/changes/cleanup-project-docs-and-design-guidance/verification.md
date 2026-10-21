@@ -1,6 +1,6 @@
 # Validação e revisão
 
-## CI da implementação
+## CI da implementação antes da atualização de base
 
 A [execução completa da PR #124](https://github.com/dvmarques/admin-design-system/actions/runs/39632628432)
 validou o commit `56e1cee0f98913dd4fd7881efc6caf5c70a4a957` com sucesso:
@@ -16,7 +16,7 @@ validou o commit `56e1cee0f98913dd4fd7881efc6caf5c70a4a957` com sucesso:
 O job de release não se aplica a uma PR para `develop` e ficou skipped.
 Nenhum teste dos jobs aplicáveis foi dispensado pela classificação de documentação.
 
-## Validação local
+## Validação local antes da atualização de base
 
 Executados com Node.js 24 e dependências reinstaladas com npm `11.19.1` pelo lockfile:
 
@@ -47,5 +47,15 @@ testes nos três navegadores, incluindo os snapshots.
 - Seção `Em andamento`, versões e entradas anteriores do changelog preservadas.
 - Change mantida ativa; arquivamento e merge aguardam a revisão do responsável.
 
-A atualização de conclusão das tarefas altera somente os artefatos desta change.
-A CI do commit final da PR também deve estar aprovada antes da entrega para revisão.
+## Atualização de base
+
+A branch incorporou `develop` em `be6d9260d3c644948c6feb9ee465c9bbab895633`,
+que adicionou `AdsSparkline` e sua integração no `AdsMetricCard`. A resolução
+preservou a funcionalidade, os testes, as specs e os baselines dessa entrega,
+e atualizou os textos de recursos, arquitetura e limites de gráficos.
+O diff desta PR em relação à nova base continua restrito à documentação e
+às orientações de agentes.
+
+Os números acima identificam a execução anterior à atualização de base. A CI
+completa do commit final, já integrado à base atualizada, é conferida e vinculada
+na descrição da PR antes da entrega para revisão.

@@ -94,8 +94,8 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 
 - `@admin-ds/tokens`: design tokens semânticos, temas claro e escuro e CSS público.
 - `@admin-ds/components`: primitivas, formulários, calendário, overlays,
-  navegação e apresentação de dados.
-- `@admin-ds/admin`: shell administrativo, painéis de dashboard, filtros,
+  navegação, apresentação de dados e o gráfico compacto `AdsSparkline`.
+- `@admin-ds/admin`: shell administrativo, painéis de dashboard com sparkline opcional, filtros,
   tabela inteligente e fluxos de listagem, formulário em etapas e confirmação.
 - `apps/admin-demo`: integração dos pacotes em uma aplicação Next.js.
 - `apps/docs`: APIs, variantes e estados documentados no Storybook.

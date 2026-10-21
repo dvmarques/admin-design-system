@@ -10,7 +10,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Padrões de dashboard sem regras de negócio: `AdsMetricCard` (valor, variação e tendência por ícone e texto), `AdsDashboardGrid` (colunas pela largura disponível do grid, via container query, preservando a ordem do DOM) e `AdsDashboardPanel` (largura variável e estados de carregamento, erro e vazio). Gráficos ficam fora do escopo; o consumidor decide quando cada estado é exibido.',
+					'Padrões de dashboard sem regras de negócio: `AdsMetricCard` (valor, variação e tendência por ícone e texto), `AdsDashboardGrid` (colunas pela largura disponível do grid, via container query, preservando a ordem do DOM) e `AdsDashboardPanel` (largura variável e estados de carregamento, erro e vazio). `AdsMetricCard` aceita `sparkline` (veja `AdsSparkline`), colorido pelo `sentiment`; gráficos completos ficam fora do escopo. O consumidor decide quando cada estado é exibido.',
 			},
 		},
 	},
@@ -59,6 +59,53 @@ export const Default: Story = {
 			<AdsDashboardPanel span={1} title="Atividade">
 				<p>Painel de uma coluna.</p>
 			</AdsDashboardPanel>
+		</AdsDashboardGrid>
+	),
+};
+
+export const WithSparkline: Story = {
+	name: 'Com sparkline e sentimento invertido',
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`trend` define o ícone e o texto da direção; `sentiment` define a cor. Em Cancelamentos a queda é positiva. O sparkline segue o `sentiment` e tem texto alternativo.',
+			},
+		},
+	},
+	render: () => (
+		<AdsDashboardGrid>
+			<AdsMetricCard
+				change="+12,4%"
+				description="vs. mês anterior"
+				sparkline={{
+					label: 'Receita, últimos 8 meses',
+					values: [31, 34, 33, 38, 41, 40, 45, 48],
+				}}
+				title="Receita"
+				trend="up"
+				value="R$ 48.200"
+			/>
+			<AdsMetricCard
+				change="-8%"
+				sentiment="positive"
+				sparkline={{
+					label: 'Cancelamentos, últimos 8 meses',
+					values: [52, 49, 51, 47, 46, 44, 41, 38],
+				}}
+				title="Cancelamentos"
+				trend="down"
+				value="38"
+			/>
+			<AdsMetricCard
+				change="+2,0%"
+				sentiment="negative"
+				sparkline={{ label: 'Chamados abertos', values: [9, 11, 10, 14, 15] }}
+				title="Chamados abertos"
+				trend="up"
+				value="15"
+			/>
+			<AdsMetricCard loading sparkline={{ values: [1, 2] }} title="Carregando com sparkline" />
 		</AdsDashboardGrid>
 	),
 };

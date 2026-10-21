@@ -36,6 +36,9 @@ export const contrastPairs = [
 	...against('ui', 'primary', ['surface', 'formBackground']),
 	...against('ui', 'formInvalid', ['formBackground']),
 	...against('ui', 'formSuccess', ['formBackground']),
+	// Tons do traço de `AdsSparkline` (success e danger; o padrão é chart1): marcas gráficas, 3:1.
+	...against('ui', 'success', chartSurfaces),
+	...against('ui', 'danger', chartSurfaces),
 	// Cores categóricas de gráfico: marcas gráficas exigem 3:1 contra a superfície (1.4.11).
 	...against('ui', 'chart1', chartSurfaces),
 	...against('ui', 'chart2', chartSurfaces),

@@ -101,6 +101,10 @@ direto ou legenda com texto e, quando houver mais de uma série, com padrão,
 forma do marcador ou estilo de linha diferente. Isso atende o WCAG 1.4.1 e
 vale mesmo com as cores distinguíveis abaixo.
 
+O `AdsSparkline` usa `chart1` por padrão e `success` e `danger` nos tons `positive` e
+`negative`; os três têm ao menos 3:1 contra `surface` e `surfaceRaised` (pares em
+`contrast-pairs.mjs`) e o gráfico sempre tem texto alternativo.
+
 ### Verificação
 
 - **Contraste (WCAG 1.4.11):** cada cor tem ao menos 3:1 contra `surface` e
@@ -115,8 +119,9 @@ vale mesmo com as cores distinguíveis abaixo.
   e 16,1. A simulação é uma aproximação, não substitui a regra de não depender
   só de cor.
 
-A biblioteca oferece tokens categóricos de cor, sem paletas sequencial e
-divergente nem componente de gráfico.
+A biblioteca oferece tokens categóricos de cor e o gráfico compacto `AdsSparkline`.
+Não inclui paletas sequencial e divergente nem gráficos completos com eixos,
+legendas, tooltips ou interatividade.
 
 ## Personalização
 

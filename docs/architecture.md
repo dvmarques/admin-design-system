@@ -43,7 +43,7 @@ packages/
 - `tokens/` define cores, tipografia, espaçamentos, raios, sombras e
   movimentos. Ele gera variáveis CSS, metadados TypeScript e tipos públicos.
 - `components/` contém componentes React genéricos, como `AdsButton`,
-  `AdsInput`, `AdsCard`, `AdsDialog` e `AdsTable`. Os componentes usam os tokens e
+  `AdsInput`, `AdsCard`, `AdsDialog`, `AdsTable` e `AdsSparkline`. Os componentes usam os tokens e
   distribuem CSS compilado.
 - `admin/` contém o layout administrativo `AdsAdminShell` e os padrões de dashboard (`AdsMetricCard`,
   `AdsDashboardGrid` e `AdsDashboardPanel`), a barra de filtros

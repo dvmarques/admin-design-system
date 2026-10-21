@@ -115,3 +115,11 @@ exigidos pela change não permitem reduzir sem remover tokens públicos, então 
 aceito. `@admin-ds/components` (280657) e `@admin-ds/admin` (168757) ficaram dentro da
 tolerância e não foram alterados. Sem novas dependências de runtime nos pacotes (o
 `@fontsource/inter` é dependência só de `admin-demo` e `docs`).
+
+O baseline foi atualizado na change `add-metric-sparkline`, medido em LF após o build de
+tokens, components e admin e `inspect:packages`: `@admin-ds/components` de 280657 para
+289874 bytes (+9217) por `AdsSparkline` (módulo JavaScript, source maps e declarações) e
+o CSS `ads-sparkline*`; `@admin-ds/admin` de 168757 para 170121 bytes (+1364) pela prop
+`sparkline` do `AdsMetricCard` e pelo skeleton do sparkline. Os valores do JSON antes
+desta change (276803 e 168617) já divergiam dos 280657 e 168757 citados acima; as
+diferenças acima usam esses últimos. Sem novas dependências de runtime.

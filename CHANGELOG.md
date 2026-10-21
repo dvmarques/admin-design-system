@@ -8,6 +8,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
+#### Fixed
+
+- `fix-lint-nested-worktrees` - O lint da raiz ignora `.claude/worktrees/**` e resolve
+  `tsconfigRootDir` pela configuração, preservando os arquivos dos worktrees (#128).
+
 #### Added
 
 - `tabs-breadcrumb-accordion` - Tabs, Breadcrumb e Accordion (issue #90). Novo `AdsAccordion` composto

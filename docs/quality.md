@@ -223,3 +223,15 @@ campos nativos, estados de validação, associação de rótulos e descrições,
 grupos de seleção e consumo do CSS compilado sem Tailwind na aplicação
 consumidora. Os exemplos ficam em `apps/docs/src/form.stories.tsx` e no
 admin demo.
+
+## Lint e worktrees locais
+
+`npm run lint` analisa apenas o checkout corrente: checkouts aninhados em
+`.claude/worktrees/**` são ignorados globalmente e não são modificados. Execute
+o lint de cada worktree na própria raiz para verificá-lo. A raiz TypeScript é
+resolvida pela localização de `eslint.config.mjs`, sem depender do diretório de
+execução ou de configurações encontradas em outros checkouts.
+
+A regressão `scripts/eslint-config.test.mjs` roda em `npm run test:ci`, incluído
+em `npm run test:quality`. Ela verifica o lint com e sem checkout aninhado,
+a detecção de erros nos arquivos próprios e a preservação dos arquivos ignorados.

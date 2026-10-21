@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { AdsTypography } from '@admin-ds/components';
 import { AdsAdminShell } from '@admin-ds/admin';
 import type { ReactNode } from 'react';
@@ -17,9 +18,10 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 			<AdsAdminShell.Header>
 				<AdsAdminShell.NavigationTrigger />
 				<AdsAdminShell.SidebarToggle />
-				<AdsTypography as="strong" variant="heading4">
-					Admin Design System
-				</AdsTypography>
+				<div className="demo-brand-heading">
+					<Image src="/icon.svg" alt="" width={30} height={30} priority />
+					<AdsTypography as="strong" variant="heading4">Admin Design System</AdsTypography>
+				</div>
 				<div className="demo-header-tools">
 					<StorybookLink />
 					<ThemeControl initialTheme={theme} />

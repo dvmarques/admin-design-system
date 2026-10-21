@@ -52,7 +52,15 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 	const contentRef = useRef<HTMLDivElement>(null);
 	const tooltipId = useStableId('ads-tooltip');
 	const position = useAnchoredPosition(open, anchorRef, contentRef, placement);
-	const trigger = cloneElement(children, (open ? { 'aria-describedby': tooltipId } : {}) as never);
+	const consumerDescribedBy = (children.props as { 'aria-describedby'?: string })[
+		'aria-describedby'
+	];
+	const trigger = cloneElement(
+		children,
+		(open
+			? { 'aria-describedby': [consumerDescribedBy, tooltipId].filter(Boolean).join(' ') }
+			: {}) as never,
+	);
 
 	return (
 		<span

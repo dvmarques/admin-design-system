@@ -39,6 +39,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-tooltip-preserve-aria-describedby` - Enquanto aberto, `AdsTooltip` deixa de substituir o
+  `aria-describedby` do gatilho: o atributo passa a referenciar o id do consumidor e o do
+  tooltip, nessa ordem, e volta ao valor original ao fechar (issue #148). Nova story
+  `TooltipWithDescribedTrigger`. Sem mudança de API pública, classes ou tokens.
 - `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na
   horizontal em 320px: os grids da demonstração em telas estreitas passam de `1fr` para
   `minmax(0, 1fr)` e a paginação rola dentro do próprio painel. O E2E de todas as rotas

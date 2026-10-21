@@ -63,10 +63,37 @@ describe('anchored overlays', () => {
 		trigger.focus();
 		const tooltip = await screen.findByRole('tooltip');
 		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
-		fireEvent.keyDown(document, { key: 'Escape' });
 		fireEvent.blur(trigger);
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
+	it('keeps the composed aria-describedby after Escape and restores it on blur', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton aria-describedby="ajuda">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		fireEvent.keyDown(trigger, { key: 'Escape' });
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.blur(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
+	it('ignores empty or blank consumer aria-describedby values', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton aria-describedby="  ">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
 	});
 
 	it('keeps the trigger aria-describedby when the tooltip opens on hover', async () => {

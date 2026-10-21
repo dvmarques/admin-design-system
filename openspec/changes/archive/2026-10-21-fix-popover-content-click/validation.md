@@ -22,3 +22,9 @@ Os sete cenários de screenshots exigem baselines Linux e foram excluídos da ex
 O lint no checkout principal reproduziu a #128 (múltiplos tsconfigRootDir por worktrees aninhados). O lint global passou no worktree isolado, sem alterar configuração nem remover worktrees. Escape em overlays aninhados (#127) permanece fora do escopo.
 
 O demo usa APIs públicas e CSS distribuído, sem contornos locais: Popover interativo em `/componentes` e seleção única/intervalo em `/componentes/datas`. A story existente de DatePicker permanece disponível; a story de Popover agora documenta e demonstra a interação interna. Sem alteração de API pública, tokens ou estilos da biblioteca.
+
+## Revisão e integração
+
+- Claude Code CLI 2.1.304, sessão `4aa480cb-620a-493a-9938-201ebe8bee6d`, revisão do commit `a607e2ab4bb12af12fd59e6d446a43deebc031b4`: **APROVADO**, sem problemas bloqueantes. Nenhuma alteração de implementação solicitada. Observações de baixa prioridade sobre propagação no DatePicker (já descrita no changelog), inclusão futura da página de datas na matriz global de rotas e execução da regressão nova em outros motores. O revisor declarou 38 testes de componente aprovados; as demais evidências foram lidas do relatório.
+- CI completa aprovada em [Actions, execução 39653032382](https://github.com/dvmarques/admin-design-system/actions/runs/39653032382): qualidade, distribuição, política de develop e fluxos Chromium/Firefox/WebKit. Os snapshots Linux passaram, encerrando a pendência da validação local Windows. O check de release foi skipped por não ser PR de release.
+- Após aprovação, o requisito modificado foi sincronizado com a spec principal `anchored-overlays`, preservando Purpose e os demais requisitos. Change arquivada em `2026-10-21-fix-popover-content-click`, com 6/6 tarefas concluídas. O commit de arquivamento deve passar pela CI antes do merge por squash da PR #132, conforme autorização do usuário.

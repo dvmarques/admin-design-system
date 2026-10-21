@@ -3,7 +3,7 @@ import axe from 'axe-core';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsButton } from '../src/button';
-import { AdsDialog } from '../src/overlay-dialog';
+import { AdsDialog, AdsDrawer } from '../src/overlay-dialog';
 import { AdsPopover, AdsTooltip } from '../src/overlay-anchored';
 
 function PopoverFixture() {
@@ -189,29 +189,50 @@ describe('anchored overlays', () => {
 		expect(await screen.findByRole('tooltip')).toBeInTheDocument();
 	});
 
-	it('closes only the tooltip on the first Escape inside a dialog', async () => {
-		const onOpenChange = vi.fn();
+	it('reopens a focus-dismissed tooltip when the pointer enters the trigger again', async () => {
 		render(
-			<AdsDialog onOpenChange={onOpenChange} open title="Diálogo">
-				<AdsTooltip content="Ajuda">
-					<AdsButton>Dica</AdsButton>
-				</AdsTooltip>
-			</AdsDialog>,
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
 		);
-		const trigger = screen.getByRole('button', { name: 'Dica' });
-		// O diálogo move o foco inicial para o primeiro controle; só depois o gatilho recebe foco.
-		await waitFor(() =>
-			expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Fechar' })),
-		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
 		trigger.focus();
 		await screen.findByRole('tooltip');
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
-		expect(onOpenChange).not.toHaveBeenCalled();
-		expect(document.activeElement).toBe(trigger);
-		fireEvent.keyDown(document, { key: 'Escape' });
-		expect(onOpenChange).toHaveBeenCalledWith(false);
+		fireEvent.pointerEnter(trigger);
+		expect(await screen.findByRole('tooltip')).toBeInTheDocument();
 	});
+
+	it.each([
+		['AdsDialog', AdsDialog],
+		['AdsDrawer', AdsDrawer],
+	] as const)(
+		'closes only the tooltip on the first Escape inside an %s',
+		async (_name, Overlay) => {
+			const onOpenChange = vi.fn();
+			render(
+				<Overlay onOpenChange={onOpenChange} open title="Diálogo">
+					<AdsTooltip content="Ajuda">
+						<AdsButton>Dica</AdsButton>
+					</AdsTooltip>
+				</Overlay>,
+			);
+			const trigger = screen.getByRole('button', { name: 'Dica' });
+			// O diálogo move o foco inicial para o primeiro controle; só depois o gatilho recebe foco.
+			await waitFor(() =>
+				expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Fechar' })),
+			);
+			trigger.focus();
+			await screen.findByRole('tooltip');
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+			expect(onOpenChange).not.toHaveBeenCalled();
+			expect(document.activeElement).toBe(trigger);
+			fireEvent.keyDown(document, { key: 'Escape' });
+			expect(onOpenChange).toHaveBeenCalledWith(false);
+		},
+	);
 
 	it('closes only the topmost layer when a tooltip and a popover are open', async () => {
 		render(

@@ -112,7 +112,7 @@ export const TooltipInDialog: Story = {
 		docs: {
 			description: {
 				story:
-					'Um tooltip aberto é a camada superior para o Escape: o primeiro Escape fecha só o tooltip, com o foco no gatilho, e o segundo fecha o diálogo.',
+					'Um tooltip aberto é a camada superior para o Escape: o primeiro Escape fecha só o tooltip, com o foco no gatilho, e o segundo fecha o diálogo. Isso vale também quando o foco inicial ou o foco devolvido cai num gatilho de tooltip.',
 			},
 		},
 	},

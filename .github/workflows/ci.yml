@@ -1,4 +1,3 @@
-# Execução completa do E2E forçada temporariamente (PR #165); reverter em seguida.
 name: CI
 
 on:

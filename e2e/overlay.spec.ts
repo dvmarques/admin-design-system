@@ -69,6 +69,19 @@ test.describe('public overlays', () => {
 		});
 	});
 
+	test('dismisses the tooltip with Escape without moving focus', async ({ page }) => {
+		await page.goto('/componentes');
+		const trigger = page.getByRole('button', { name: 'Tooltip', exact: true });
+		await trigger.focus();
+		const tooltip = page.getByRole('tooltip');
+		await expect(tooltip).toBeVisible();
+		await expect(trigger).toHaveAttribute('aria-describedby', (await tooltip.getAttribute('id'))!);
+		await page.keyboard.press('Escape');
+		await expect(tooltip).toBeHidden();
+		await expect(trigger).toBeFocused();
+		await expect(trigger).not.toHaveAttribute('aria-describedby');
+	});
+
 	test('keeps dialog focus and closes with Escape', async ({ page }) => {
 		await page.goto('/componentes');
 		const trigger = page.getByRole('button', { name: 'Abrir diálogo' }).first();

@@ -57,6 +57,13 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-tooltip-escape-overlays` - `AdsTooltip` aberto, por foco ou por apontamento, fecha com Escape
+  sem capturar nem deslocar o foco, e só reabre com um novo foco ou apontamento no gatilho. O tooltip
+  passa a ser camada na pilha de Escape: um tooltip aberto absorve o primeiro Escape e o evento fica
+  marcado com `defaultPrevented`, então um diálogo ao redor exige um segundo Escape. Regressões novas
+  cobrem `AdsDrawer` (esquerda e direita) e o painel de colunas do `AdsSmartTable` dentro de
+  `AdsDialog`/`AdsDrawer`. Sem mudança de API pública, tokens ou estilos (issue #91).
+
 - `fix-popover-content-click` - Cliques em campos e botões no conteúdo de `AdsPopover`
   mantêm o painel aberto, preservando handlers e propagação de eventos do consumidor.
   Gatilho, Escape, clique externo e fechamento controlado mantêm seus comportamentos.

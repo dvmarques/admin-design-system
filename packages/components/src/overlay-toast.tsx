@@ -37,7 +37,7 @@ export function AdsToast({
 	if (!open) return null;
 	const isError = variant === 'error';
 	return (
-		<OverlayPortal>
+		<OverlayPortal layer="toast">
 			<div
 				{...props}
 				aria-atomic="true"

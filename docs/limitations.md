@@ -21,7 +21,7 @@ das validações automatizadas.
   até 10%; mudanças maiores exigem revisão explícita do baseline.
 - A validação automatizada de `axe-core` e Playwright não substitui revisão
   manual com teclado, leitor de tela e testes em dispositivos reais. Firefox e
-  WebKit têm apenas smoke tests (`/`, `/clientes` e `/componentes`), sem
+  WebKit têm smoke tests (`/`, `/clientes` e `/componentes`) e a regressão de foco do dropdown, sem
   snapshots e sem a suíte completa; o WebKit do Playwright no Linux não equivale
   ao Safari.
 - `forced-colors` e `prefers-contrast` são validados por emulação em Chromium e

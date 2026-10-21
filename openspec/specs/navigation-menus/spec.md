@@ -8,12 +8,37 @@ Fornece menus suspensos contextuais que preservam a acessibilidade, o foco e a v
 
 ### Requirement: Dropdown composto e controlável
 
-O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, com estado aberto controlado ou não controlado. O gatilho MUST expor estado expandido e a relação com o menu; itens MUST aceitar ações ou links fornecidos pelo consumidor e preservar seus atributos nativos. A API MUST ser independente de roteamento e aceitar personalização segura por `className` e tokens públicos.
+O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, com estado aberto controlado ou não controlado. O gatilho MUST expor estado expandido e a relação com o menu; itens MUST aceitar ações ou links fornecidos pelo consumidor e preservar seus atributos nativos. A API MUST ser independente de roteamento e aceitar personalização segura por `className` e tokens públicos. A abertura pelo teclado MUST focar o primeiro item habilitado assim que o conteúdo estiver disponível, inclusive após montagem tardia e em reaberturas. A abertura por mouse MUST preservar o comportamento nativo de foco do navegador sem movê-lo para um item do menu.
 
 #### Scenario: Abertura por gatilho
 
-- **WHEN** o usuário ativa o gatilho por mouse, Enter, Space ou seta para baixo
-- **THEN** o menu é aberto, a relação ARIA é atualizada e o foco é movido ao primeiro item elegível quando a abertura é pelo teclado
+- **WHEN** o usuário foca o gatilho e pressiona ArrowDown, Enter ou Espaço com estado controlado ou não controlado
+- **THEN** o menu abre, sua relação ARIA é atualizada e o primeiro item habilitado recebe foco quando o conteúdo fica disponível, mesmo se a montagem acontecer depois da atualização de abertura
+
+#### Scenario: Reabertura por teclado
+
+- **WHEN** o usuário fecha com Escape e abre novamente pelo teclado
+- **THEN** o primeiro item habilitado recebe foco novamente e setas, Home e End permitem navegar ignorando desabilitados
+
+#### Scenario: Abertura por mouse
+
+- **WHEN** o usuário clica no gatilho, inclusive após fechar uma abertura por teclado
+- **THEN** o menu abre sem deslocar foco para um item
+
+#### Scenario: Menu sem itens habilitados
+
+- **WHEN** o usuário abre pelo teclado um menu vazio ou com todos os itens desabilitados
+- **THEN** nenhum item recebe foco, nenhuma ação é executada e Escape permite fechar
+
+#### Scenario: Solicitação abandonada de abertura
+
+- **WHEN** o consumidor recusa ou adia a abertura por teclado e o usuário sai do gatilho antes de uma abertura posterior
+- **THEN** a abertura posterior não captura o foco, mesmo que o usuário retorne ao gatilho antes dela
+
+#### Scenario: Abertura sem deslocar a página
+
+- **WHEN** o gatilho está visível numa página rolada e o usuário abre o menu pelo teclado
+- **THEN** o primeiro item habilitado recebe foco sem deslocar a rolagem da página durante a abertura
 
 ### Requirement: Menu operável por teclado e foco gerenciado
 

@@ -13,7 +13,7 @@
 ## 3. Verificação
 
 - [x] 3.1 Documentar benchmark reproduzível e critérios de regressão.
-- [ ] 3.5 Executar o benchmark base/head com tokenizer e tarefas fixas; contexto inicial em bytes já registrado em `benchmark.md`.
+- [ ] 3.5 Executar o benchmark base/head com tokenizer e tarefas fixas (acompanhado na issue #166); contexto inicial em bytes já registrado em `benchmark.md`.
 - [x] 3.2 Revisar instruções cruzadas e ajustar inconsistências.
 - [x] 3.3 Executar `openspec validate --all --strict`, `npm run check:agent-skills` e `npm run format` em checkout com dependências instaladas; registrar resultados.
   - `openspec validate --all --strict` (CLI 1.14.3): 44 aprovados, 0 falhas.

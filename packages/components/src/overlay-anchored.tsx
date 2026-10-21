@@ -80,18 +80,23 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 							'ads-tooltip fixed z-[var(--ads-layer-overlay)] max-w-[min(20rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
 							className,
 						)}
-						data-placement={placement}
+						data-placement={position.placement}
 						id={tooltipId}
 						ref={contentRef}
 						role="tooltip"
-						style={position}
+						style={position.style}
 					>
 						<span
 							aria-hidden="true"
 							className={classNames(
 								'absolute h-2 w-2 rotate-45 bg-surface-raised',
-								tooltipArrowPlacements[placement],
+								tooltipArrowPlacements[position.placement],
 							)}
+							style={
+								position.placement === 'top' || position.placement === 'bottom'
+									? { left: position.arrowOffset }
+									: { top: position.arrowOffset }
+							}
 						/>
 						<AdsTypography as="div" variant="bodySmall">
 							{content}
@@ -161,7 +166,7 @@ export function AdsPopover({
 						id={popoverId}
 						ref={contentRef}
 						role="dialog"
-						style={position}
+						style={position.style}
 					>
 						{content}
 					</div>

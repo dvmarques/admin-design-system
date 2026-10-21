@@ -4,6 +4,8 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
 	{
 		ignores: [
+			'lint-regression-*/**',
+			'.claude/worktrees/**',
 			'**/dist/**',
 			'**/node_modules/**',
 			'**/.next/**',
@@ -18,6 +20,7 @@ export default tseslint.config(
 	...tseslint.configs.recommended,
 	{
 		languageOptions: {
+			parserOptions: { tsconfigRootDir: import.meta.dirname },
 			globals: {
 				console: 'readonly',
 				URL: 'readonly',

@@ -25,7 +25,7 @@
 		"test:unit": "npm run build:css --workspace @admin-ds/components && vitest run",
 		"test:unit:quiet": "npm run build:css --workspace @admin-ds/components && vitest run --silent=passed-only",
 		"test:release": "node --test ./scripts/*release*.test.mjs",
-		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs",
+		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs ./scripts/eslint-config.test.mjs",
 		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run test:release && npm run test:ci && npm run check:agent-skills && npm run check:generated --workspace @admin-ds/tokens",
 		"sync:agent-skills": "node ./scripts/sync-agent-skills.mjs",
 		"check:agent-skills": "node ./scripts/sync-agent-skills.mjs --check",

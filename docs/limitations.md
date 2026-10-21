@@ -35,9 +35,9 @@ das validações automatizadas.
   literal usar outra coisa.
 - O fundo de `AdsDialog` e `AdsDrawer` abertos fica inerte por `inert`, sem fallback: em navegadores
   sem suporte (anteriores a Chromium 102, Firefox 112 e Safari 15.5) ele continua alcançável por
-  clique. Nós adicionados ao `<body>` depois da abertura do modal, como portais de terceiros e o
-  anunciante de rotas do Next.js, não são marcados, e os já existentes (inclusive de terceiros) ficam
-  inertes. A rolagem do fundo não é bloqueada. A validação em navegador real cobre o Chromium.
+  clique. Overlays de terceiros em `<body>` e o anunciante de rotas do Next.js também ficam inertes
+  enquanto há modal aberto; uma navegação nesse intervalo não é anunciada. A rolagem do fundo não é
+  bloqueada. A validação em navegador real cobre o Chromium.
 - O `AdsDatePicker` não tem seletor de hora, fusos horários nem calendários não
   gregorianos. Um intervalo pode conter datas desabilitadas, e as regras de
   negócio sobre isso ficam com a aplicação. Os nomes e o formato dependem do

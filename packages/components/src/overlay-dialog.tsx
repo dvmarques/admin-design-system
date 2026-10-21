@@ -3,7 +3,13 @@
 import { useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { AdsIcon } from './icon.js';
-import { OverlayPortal, useEscapeKey, useOverlayFocus, useStableId } from './overlay-utils.js';
+import {
+	OverlayPortal,
+	useEscapeKey,
+	useOverlayFocus,
+	useOverlayOrigin,
+	useStableId,
+} from './overlay-utils.js';
 import { AdsTypography } from './typography.js';
 
 interface AdsOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>, 'role' | 'title'> {
@@ -42,14 +48,14 @@ function OverlayPanel({
 	const titleId = useStableId('ads-overlay-title');
 	const descriptionId = useStableId('ads-overlay-description');
 	const previousOpen = useRef(false);
+	const { attachPanel, captureOrigin, fallbackFocusRef } = useOverlayOrigin(restoreFocusRef);
 
 	useEffect(() => {
-		if (open && !previousOpen.current)
-			restoreFocusRef.current = document.activeElement as HTMLElement;
+		if (open && !previousOpen.current) captureOrigin(document.activeElement as HTMLElement);
 		previousOpen.current = open;
-	}, [open]);
+	}, [captureOrigin, open]);
 
-	useOverlayFocus(open, panelRef, restoreFocusRef);
+	useOverlayFocus(open, panelRef, restoreFocusRef, fallbackFocusRef);
 	useEscapeKey(open, () => onOpenChange(false), closeOnEscape);
 
 	if (!open) return null;
@@ -78,7 +84,10 @@ function OverlayPanel({
 							: 'm-auto w-[min(32rem,calc(100vw-2rem))] rounded-lg',
 						className,
 					)}
-					ref={panelRef}
+					ref={(element) => {
+						panelRef.current = element;
+						attachPanel(element);
+					}}
 					role={role}
 					tabIndex={-1}
 				>

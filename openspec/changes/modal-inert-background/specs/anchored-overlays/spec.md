@@ -13,3 +13,8 @@ Um popover, tooltip, menu do `AdsDropdown` ou calendário do `AdsDatePicker` abe
 
 - **WHEN** um popover está aberto e um modal é aberto a partir dele
 - **THEN** o popover deixa de receber foco e cliques até o modal fechar
+
+#### Scenario: Popup originado na página enquanto o modal está aberto
+
+- **WHEN** código da página fora do modal abre um popover ou tooltip enquanto o modal está aberto
+- **THEN** o popup fica inerte até o modal fechar

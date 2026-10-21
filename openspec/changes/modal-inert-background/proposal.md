@@ -5,12 +5,15 @@ A issue #149 reproduz uma lacuna de acessibilidade: `AdsDialog` e `AdsDrawer` ex
 ## What Changes
 
 - Enquanto houver um `AdsDialog` ou `AdsDrawer` aberto, o conteúdo da página fora do overlay passa a ficar inerte (atributo `inert`): sem foco, sem cliques e fora da árvore de acessibilidade. Ao fechar ou desmontar, o estado anterior é restaurado, inclusive um `inert` que o consumidor já tivesse aplicado.
+- Nós criados ou substituídos em `document.body` enquanto o modal está aberto (navegação, portais de terceiros) também ficam inertes. Popups nascidos dentro do modal e toasts continuam disponíveis; um popup aberto por código do fundo fica inerte.
+- Uma escrita do consumidor em `inert` num nó coberto é respeitada: um `inert` acrescentado por ele permanece ao fechar, e um `inert` removido por ele é aplicado de novo enquanto o modal está aberto.
 - Overlays modais aninhados são contados: só o modal mais recente fica interativo, e a página só volta a ser interativa quando o último modal fecha ou desmonta, em qualquer ordem de fechamento.
 - Popover, tooltip, menu do `AdsDropdown` e calendário do `AdsDatePicker` abertos depois do modal continuam interativos. `AdsToast` nunca fica inerte.
 - Sem suporte a `inert` no navegador, o comportamento atual é mantido (foco preso por Tab e `aria-modal`), sem erro e sem fallback por `aria-hidden`.
 - O registro acontece só em efeitos, no cliente: renderização no servidor, hidratação e Server Components não mudam.
 - Testes de componente, `axe` e E2E com foco real no Chromium; story e documentação; registro no CHANGELOG.
-- Fora do escopo: bloqueio de rolagem do fundo (scroll lock), `aria-hidden` como alternativa, observação de nós adicionados ao `body` depois da abertura do modal, API pública para registrar camadas modais, #133 e #135, estilos, tokens e dependências.
+- Ao fechar, o foco volta ao elemento que abriu o modal; se ele saiu da página (por exemplo, o modal de origem fechou antes de um modal aninhado), volta ao elemento que abriu o modal ao redor.
+- Fora do escopo: bloqueio de rolagem do fundo (scroll lock), `aria-hidden` como alternativa, API pública para registrar camadas modais, #133 e #135, estilos, tokens e dependências.
 
 ## Capabilities
 

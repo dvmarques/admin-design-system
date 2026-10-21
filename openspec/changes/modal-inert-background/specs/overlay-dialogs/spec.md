@@ -28,6 +28,11 @@ Ao fechar ou desmontar o modal, o conteúdo da página MUST voltar ao estado ant
 - **WHEN** o modal aberto é fechado ou desmontado
 - **THEN** o fundo volta a receber foco e cliques e o foco retorna ao elemento que abriu o modal
 
+#### Scenario: Aplicação altera o inert durante o modal
+
+- **WHEN** a aplicação acrescenta `inert` a uma região coberta enquanto o modal está aberto
+- **THEN** a região continua inerte depois do fechamento, e um `inert` que ela remova é aplicado de novo enquanto o modal está aberto
+
 #### Scenario: Aplicação já tornou uma região inerte
 
 - **WHEN** uma região já marcada como inerte pela aplicação existe quando o modal abre e depois fecha
@@ -60,3 +65,26 @@ Em navegadores sem suporte ao atributo `inert`, o modal MUST manter o comportame
 
 - **WHEN** uma página com um modal inicialmente fechado é renderizada no servidor e hidratada
 - **THEN** o HTML do servidor não contém `inert` e a hidratação ocorre sem divergência
+
+### Requirement: Conteúdo criado durante o modal também fica inerte
+
+Enquanto um modal está aberto, um nó adicionado ou substituído como filho de `document.body` MUST ficar inerte, exceto toasts e popups nascidos dentro de um overlay interativo.
+
+#### Scenario: Conteúdo da página é substituído com o modal aberto
+
+- **WHEN** a aplicação ou um portal de terceiros insere ou substitui um nó de página enquanto o modal está aberto
+- **THEN** o novo nó fica inerte e volta ao estado anterior quando o último modal fecha
+
+#### Scenario: Popup aberto pelo fundo durante o modal
+
+- **WHEN** um popover da página, e não do modal, é aberto enquanto o modal está aberto
+- **THEN** o popover fica inerte até o modal fechar
+
+### Requirement: Foco volta a um alvo utilizável com modais aninhados
+
+Ao fechar um modal, o foco MUST voltar ao elemento que o abriu e, se esse elemento não estiver mais na página, ao elemento que abriu o modal ao redor.
+
+#### Scenario: Modal de origem fecha antes do modal aninhado
+
+- **WHEN** o modal A abre o modal B, A fecha enquanto B está aberto e depois B fecha
+- **THEN** o foco volta ao elemento da página que abriu A

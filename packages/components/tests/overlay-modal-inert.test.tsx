@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, cleanup, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
 import { StrictMode, useState } from 'react';
 import { renderToString } from 'react-dom/server';
@@ -150,18 +150,17 @@ describe('modal inert background', () => {
 	});
 
 	it('makes only the newest modal interactive and restores in any closing order', async () => {
+		const controls = { closeFirst: () => undefined };
 		function Fixture() {
 			const [first, setFirst] = useState(true);
 			const [second, setSecond] = useState(false);
+			controls.closeFirst = () => setFirst(false);
 			return (
 				<Page>
 					<AdsDialog onOpenChange={setFirst} open={first} title="Primeiro">
 						<AdsButton onClick={() => setSecond(true)}>Abrir segundo</AdsButton>
-						<AdsButton onClick={() => setFirst(false)}>Fechar primeiro</AdsButton>
 					</AdsDialog>
-					<AdsDialog onOpenChange={setSecond} open={second} title="Segundo">
-						<AdsButton onClick={() => setSecond(false)}>Fechar segundo</AdsButton>
-					</AdsDialog>
+					<AdsDialog onOpenChange={setSecond} open={second} title="Segundo" />
 				</Page>
 			);
 		}
@@ -176,12 +175,48 @@ describe('modal inert background', () => {
 		await waitFor(() => expect(firstRoot).toHaveAttribute('inert'));
 		expect(secondDialog.closest('[data-ads-overlay-root]')).not.toHaveAttribute('inert');
 
-		// O primeiro fecha primeiro: o fundo continua inerte porque o segundo segue aberto.
-		fireEvent.click(screen.getByRole('button', { name: 'Fechar primeiro' }));
+		// O primeiro fecha por estado controlado (não há clique no conteúdo inerte): o fundo continua
+		// inerte porque o segundo segue aberto.
+		act(() => controls.closeFirst());
 		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Primeiro' })).toBeNull());
 		expect(pageRoot()).toHaveAttribute('inert');
-		fireEvent.click(screen.getByRole('button', { name: 'Fechar segundo' }));
+		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(pageRoot()).not.toHaveAttribute('inert'));
+	});
+
+	it('returns focus to the page trigger when the opening modal closes first', async () => {
+		const controls = { closeFirst: () => undefined };
+		function Fixture() {
+			const [first, setFirst] = useState(false);
+			const [second, setSecond] = useState(false);
+			controls.closeFirst = () => setFirst(false);
+			return (
+				<Page>
+					<AdsButton onClick={() => setFirst(true)}>Abrir</AdsButton>
+					<AdsDialog onOpenChange={setFirst} open={first} title="Primeiro">
+						<AdsButton onClick={() => setSecond(true)}>Abrir segundo</AdsButton>
+					</AdsDialog>
+					<AdsDialog onOpenChange={setSecond} open={second} title="Segundo" />
+				</Page>
+			);
+		}
+		render(<Fixture />);
+		const trigger = screen.getByRole('button', { name: 'Abrir' });
+		trigger.focus();
+		fireEvent.click(trigger);
+		await screen.findByRole('dialog', { name: 'Primeiro' });
+		const opener = await screen.findByRole('button', { name: 'Abrir segundo' });
+		opener.focus();
+		fireEvent.click(opener);
+		await screen.findByRole('dialog', { name: 'Segundo' });
+
+		act(() => controls.closeFirst());
+		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Primeiro' })).toBeNull());
+		// Num navegador o foco do primeiro modal não volta ao gatilho (a página ainda está inerte).
+		(document.activeElement as HTMLElement | null)?.blur();
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+		expect(trigger).toHaveFocus();
 	});
 
 	it('restores the first modal when only the second closes', async () => {
@@ -205,6 +240,134 @@ describe('modal inert background', () => {
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(firstRoot).not.toHaveAttribute('inert'));
 		expect(pageRoot()).toHaveAttribute('inert');
+	});
+
+	it('makes nodes added or replaced in body during the modal inert and restores them', async () => {
+		render(<DialogFixture />);
+		await openModal();
+		const added = document.body.appendChild(document.createElement('div'));
+		await waitFor(() => expect(added).toHaveAttribute('inert'));
+		const replacement = document.createElement('div');
+		added.replaceWith(replacement);
+		await waitFor(() => expect(replacement).toHaveAttribute('inert'));
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(pageRoot()).not.toHaveAttribute('inert'));
+		expect(replacement).not.toHaveAttribute('inert');
+		replacement.remove();
+	});
+
+	it('makes a page popup opened during the modal inert and keeps a toast opened later', async () => {
+		function Fixture() {
+			const [popover, setPopover] = useState(false);
+			const [toast, setToast] = useState(false);
+			return (
+				<Page>
+					<AdsButton onClick={() => setPopover(true)}>Abrir popover do fundo</AdsButton>
+					<AdsPopover content="Do fundo" onOpenChange={setPopover} open={popover}>
+						<AdsButton>Gatilho</AdsButton>
+					</AdsPopover>
+					<AdsButton onClick={() => setToast(true)}>Mostrar toast</AdsButton>
+					{toast ? <AdsToast>Tardio</AdsToast> : null}
+					<AdsDialog onOpenChange={() => undefined} open title="Modal" />
+				</Page>
+			);
+		}
+		render(<Fixture />);
+		await waitFor(() => expect(pageRoot()).toHaveAttribute('inert'));
+		// Abertos por código que roda no fundo (a página inerte não recebe cliques de verdade).
+		fireEvent.click(screen.getByRole('button', { name: 'Abrir popover do fundo' }));
+		fireEvent.click(screen.getByRole('button', { name: 'Mostrar toast' }));
+		const popoverRoot = (await screen.findByText('Do fundo')).closest('[data-ads-overlay-root]')!;
+		await waitFor(() => expect(popoverRoot).toHaveAttribute('inert'));
+		const toastRoot = (await screen.findByText('Tardio')).closest('[data-ads-overlay-root]')!;
+		expect(toastRoot).not.toHaveAttribute('inert');
+	});
+
+	it('keeps a popup that originated inside the modal interactive after other nodes appear', async () => {
+		function Fixture() {
+			const [popover, setPopover] = useState(true);
+			return (
+				<Page>
+					<AdsDialog onOpenChange={() => undefined} open title="Modal">
+						<AdsPopover content="Do modal" onOpenChange={setPopover} open={popover}>
+							<AdsButton>Detalhes</AdsButton>
+						</AdsPopover>
+					</AdsDialog>
+				</Page>
+			);
+		}
+		render(<Fixture />);
+		const popoverRoot = (await screen.findByText('Do modal')).closest('[data-ads-overlay-root]')!;
+		const added = document.body.appendChild(document.createElement('div'));
+		await waitFor(() => expect(added).toHaveAttribute('inert'));
+		expect(popoverRoot).not.toHaveAttribute('inert');
+		added.remove();
+	});
+
+	describe('consumer writes to inert while a modal is open', () => {
+		it('keeps an inert the consumer adds, with one and with two modals', async () => {
+			const controls = { openSecond: () => undefined, closeSecond: () => undefined };
+			function Fixture() {
+				const [second, setSecond] = useState(false);
+				controls.openSecond = () => setSecond(true);
+				controls.closeSecond = () => setSecond(false);
+				return (
+					<Page>
+						<AdsDialog onOpenChange={() => undefined} open title="Primeiro" />
+						<AdsDialog onOpenChange={setSecond} open={second} title="Segundo" />
+					</Page>
+				);
+			}
+			const region = document.body.appendChild(document.createElement('div'));
+			render(<Fixture />);
+			await waitFor(() => expect(region).toHaveAttribute('inert'));
+			// O consumidor reafirma o inert com outro valor; a biblioteca não o remove depois.
+			region.setAttribute('inert', 'consumer');
+			act(() => controls.openSecond());
+			await screen.findByRole('dialog', { name: 'Segundo' });
+			act(() => controls.closeSecond());
+			await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Segundo' })).toBeNull());
+			expect(region).toHaveAttribute('inert', 'consumer');
+			cleanup();
+			expect(region).toHaveAttribute('inert', 'consumer');
+			region.remove();
+		});
+
+		it('keeps the consumer inert when it is the same value the library set', async () => {
+			const { unmount } = render(<DialogFixture />);
+			await openModal();
+			const region = document.body.appendChild(document.createElement('div'));
+			await waitFor(() => expect(region).toHaveAttribute('inert'));
+			region.setAttribute('inert', '');
+			await Promise.resolve();
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() => expect(pageRoot()).not.toHaveAttribute('inert'));
+			expect(region).toHaveAttribute('inert');
+			unmount();
+			region.remove();
+		});
+
+		it('marks a node again when the consumer removes inert, and removes it at the end', async () => {
+			render(<DialogFixture />);
+			await openModal();
+			pageRoot().removeAttribute('inert');
+			await waitFor(() => expect(pageRoot()).toHaveAttribute('inert'));
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() => expect(pageRoot()).not.toHaveAttribute('inert'));
+		});
+
+		it('does not change the value of an inert the consumer set before the modal', async () => {
+			const region = document.body.appendChild(document.createElement('div'));
+			region.setAttribute('inert', 'antes');
+			render(<DialogFixture />);
+			await openModal();
+			expect(region).toHaveAttribute('inert', 'antes');
+			region.setAttribute('inert', 'depois');
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() => expect(pageRoot()).not.toHaveAttribute('inert'));
+			expect(region).toHaveAttribute('inert', 'depois');
+			region.remove();
+		});
 	});
 
 	it('behaves the same in StrictMode, including repeated open and close', async () => {

@@ -567,18 +567,24 @@ cresce para 34, 38 ou 42px.
 ## Overlays modais e o conteúdo de fundo
 
 Com um `AdsDialog` ou `AdsDrawer` aberto (inclusive o diálogo de `AdsConfirmDialog` e o drawer de
-navegação do `AdsAdminShell`), os filhos de `<body>` que já existiam recebem o atributo `inert`: o
-fundo deixa de receber foco, cliques e leitura por tecnologia assistiva. Ao fechar, o estado anterior
-é restaurado, e um `inert` que a aplicação já tivesse aplicado é preservado. Com modais aninhados só o
-mais recente é interativo.
+navegação do `AdsAdminShell`), os filhos de `<body>` fora do modal recebem o atributo `inert`: o
+fundo deixa de receber foco, cliques e leitura por tecnologia assistiva. Isso vale também para nós
+criados ou substituídos em `<body>` enquanto o modal está aberto (navegação, portais de terceiros).
+Ao fechar, o estado anterior é restaurado. Com modais aninhados só o mais recente é interativo.
 
-- Popovers, tooltips e menus abertos depois do modal continuam interativos; um popover aberto antes
-  dele fica inerte junto com a página. `AdsToast` nunca fica inerte.
-- Nós adicionados ao `<body>` depois da abertura do modal (portais de terceiros) não são marcados.
+- Popovers, tooltips e menus abertos a partir do modal continuam interativos, e `AdsToast` nunca fica
+  inerte. Um popup aberto por código da página, antes ou durante o modal, fica inerte.
+- Um `inert` que a aplicação já tinha é preservado. Se a aplicação acrescentar `inert` a uma região
+  durante o modal, ele permanece depois do fechamento; se a aplicação o remover, a região é marcada
+  de novo enquanto o modal estiver aberto.
+- Ao fechar, o foco volta ao elemento que abriu o modal. Se ele saiu da página (por exemplo, o modal
+  de origem fechou antes de um modal aninhado), volta ao elemento que abriu o modal ao redor.
 - O atributo exige suporte do navegador (Chromium 102+, Firefox 112+, Safari 15.5+); sem ele o foco
   continua preso por teclado e `aria-modal` segue exposto, mas o fundo ainda é alcançável por clique.
 - A rolagem do fundo não é bloqueada.
-- Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da aplicação.
+- Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O
+  atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da
+  aplicação.
 
 ## Seletor de data
 

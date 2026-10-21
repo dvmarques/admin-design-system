@@ -38,46 +38,118 @@ export function useMounted() {
 
 type OverlayLayer = 'modal' | 'popup' | 'toast';
 
-interface InertEntry {
-	count: number;
-	previous: string | null;
+interface OpenModal {
+	root: HTMLElement;
 }
 
-// Nós do `body` tornados inertes por modais abertos, com a contagem de modais que os cobrem e o
-// valor anterior de `inert`. Só é tocado em efeitos, no cliente.
-const inertNodes = new Map<Element, InertEntry>();
+const openModals: OpenModal[] = [];
+// Nós de `body` que a biblioteca marcou como inertes e que ela mesma desfaz ao liberar.
+const inertOwned = new Set<Element>();
+// Origem lógica (na árvore React) do root de cada portal: decide se um popup nasceu dentro de um modal.
+const overlaySources = new WeakMap<Element, Element>();
+// Elemento que abriu cada modal, por root, para o fallback do retorno de foco.
+const overlayOrigins = new WeakMap<Element, RefObject<HTMLElement | null>>();
+let bodyObserver: MutationObserver | null = null;
 const nonRenderedTags = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'NOSCRIPT', 'TEMPLATE']);
+const overlayRootSelector = '[data-ads-overlay-root]';
+
+// Um root de overlay continua interativo se for o modal mais recente, um toast, ou um popup cuja
+// origem está dentro de um overlay interativo. Um modal ainda não registrado é tratado como novo.
+function isInteractiveRoot(root: Element): boolean {
+	const layer = root.getAttribute('data-ads-overlay-layer');
+	if (layer === 'toast') return true;
+	if (layer === 'modal') {
+		return (
+			root === openModals[openModals.length - 1]?.root ||
+			!openModals.some((modal) => modal.root === root)
+		);
+	}
+	const host = overlaySources.get(root)?.closest(overlayRootSelector);
+	return host ? isInteractiveRoot(host) : false;
+}
+
+function shouldBeInert(child: Element) {
+	if (nonRenderedTags.has(child.tagName)) return false;
+	return !(child.hasAttribute('data-ads-overlay-root') && isInteractiveRoot(child));
+}
+
+// Uma escrita externa em `inert` num nó que a biblioteca marcou transfere a posse ao consumidor:
+// se ele acrescentou o atributo, ele permanece depois do modal; se o removeu, o nó é marcado de novo
+// enquanto houver modal aberto e o atributo volta a faltar ao liberar.
+function adoptExternalWrites(records: MutationRecord[]) {
+	for (const record of records) {
+		if (record.type === 'attributes') inertOwned.delete(record.target as Element);
+	}
+}
 
 /**
- * Torna inertes os filhos de `body` que já existem, exceto o root do modal, toasts e nós não
- * renderizados. Overlays abertos depois do registro não são marcados e seguem interativos. Cada nó
- * conta os modais que o cobrem: só volta ao estado anterior quando o último é liberado.
+ * Reconcilia o `inert` de `body` com os modais abertos: tudo fora do modal mais recente, de toasts
+ * e de popups nascidos dentro dele fica inerte, inclusive nós criados depois da abertura. Nós que já
+ * tinham `inert` não são tocados.
  */
-function registerModal(root: HTMLElement) {
-	const covered: Element[] = [];
-	for (const child of Array.from(document.body.children)) {
-		if (child === root || nonRenderedTags.has(child.tagName)) continue;
-		if (child.getAttribute('data-ads-overlay-layer') === 'toast') continue;
-		covered.push(child);
-		const entry = inertNodes.get(child);
-		if (entry) {
-			entry.count += 1;
-			continue;
+function syncInert(records: MutationRecord[] = bodyObserver?.takeRecords() ?? []) {
+	if (!bodyObserver) return;
+	adoptExternalWrites(records);
+	const children = Array.from(document.body.children);
+	for (const owned of inertOwned) if (!children.includes(owned)) inertOwned.delete(owned);
+	for (const child of children) {
+		bodyObserver.observe(child, { attributes: true, attributeFilter: ['inert'] });
+		if (shouldBeInert(child)) {
+			if (!inertOwned.has(child) && !child.hasAttribute('inert')) {
+				child.setAttribute('inert', '');
+				inertOwned.add(child);
+			}
+		} else if (inertOwned.has(child)) {
+			child.removeAttribute('inert');
+			inertOwned.delete(child);
 		}
-		inertNodes.set(child, { count: 1, previous: child.getAttribute('inert') });
-		// Sem suporte a `inert` o navegador ignora o atributo e o comportamento anterior se mantém.
-		if (child.getAttribute('inert') === null) child.setAttribute('inert', '');
 	}
+	// Descarta os registros das próprias escritas.
+	bodyObserver.takeRecords();
+}
+
+function registerModal(root: HTMLElement) {
+	const modal = { root };
+	openModals.push(modal);
+	if (!bodyObserver) {
+		bodyObserver = new MutationObserver((records) => syncInert(records));
+		bodyObserver.observe(document.body, { childList: true });
+	}
+	syncInert();
 	return () => {
-		for (const node of covered) {
-			const entry = inertNodes.get(node);
-			if (!entry) continue;
-			entry.count -= 1;
-			if (entry.count > 0) continue;
-			inertNodes.delete(node);
-			if (entry.previous === null) node.removeAttribute('inert');
+		const index = openModals.indexOf(modal);
+		if (index !== -1) openModals.splice(index, 1);
+		if (openModals.length > 0) {
+			syncInert();
+			return;
 		}
+		adoptExternalWrites(bodyObserver?.takeRecords() ?? []);
+		bodyObserver?.disconnect();
+		bodyObserver = null;
+		for (const node of inertOwned) node.removeAttribute('inert');
+		inertOwned.clear();
 	};
+}
+
+/**
+ * Candidatos para devolver o foco quando o elemento que abriu o modal saiu da página: os elementos
+ * que abriram os modais ao redor, do mais próximo ao mais externo.
+ */
+function collectFocusFallbacks(origin: HTMLElement | null) {
+	const chain: HTMLElement[] = [];
+	const seen = new Set<Element>();
+	let node: Element | null = origin;
+	while (node) {
+		const root: Element | null = node.closest(overlayRootSelector);
+		if (!root) break;
+		const modalOrigin = overlayOrigins.get(root)?.current;
+		const next: Element | undefined = modalOrigin ?? overlaySources.get(root);
+		if (!next || seen.has(next)) break;
+		seen.add(next);
+		if (modalOrigin) chain.push(modalOrigin);
+		node = next;
+	}
+	return chain;
 }
 
 export function OverlayPortal({
@@ -102,6 +174,12 @@ export function OverlayPortal({
 		observer.observe(themeRoot, { attributes: true, attributeFilter: ['data-theme'] });
 		return () => observer.disconnect();
 	}, []);
+
+	useLayoutEffect(() => {
+		const root = rootRef.current;
+		const source = sourceRef.current;
+		if (mounted && root && source) overlaySources.set(root, source);
+	}, [mounted]);
 
 	// O cleanup roda na desmontagem do portal, antes de `useOverlayFocus` devolver o foco: um
 	// elemento inerte não recebe foco.
@@ -136,6 +214,7 @@ export function useOverlayFocus(
 	open: boolean,
 	containerRef: RefObject<HTMLElement | null>,
 	restoreFocusRef: RefObject<HTMLElement | null>,
+	fallbackFocusRef?: RefObject<HTMLElement[]>,
 ) {
 	const previousOpen = useRef(false);
 
@@ -156,9 +235,13 @@ export function useOverlayFocus(
 		if (open && !previousOpen.current) previousOpen.current = true;
 		if (!open && previousOpen.current) {
 			previousOpen.current = false;
-			restoreFocusRef.current?.focus();
+			// Se o elemento de origem saiu da página, usa o que abriu o modal ao redor.
+			const target = [restoreFocusRef.current, ...(fallbackFocusRef?.current ?? [])].find(
+				(element) => element?.isConnected,
+			);
+			target?.focus();
 		}
-	}, [open, restoreFocusRef]);
+	}, [fallbackFocusRef, open, restoreFocusRef]);
 
 	useEffect(() => {
 		if (!open) return;
@@ -295,4 +378,23 @@ export function useAnchoredPosition(
 	}, [open, update]);
 
 	return position;
+}
+
+export function useOverlayOrigin(restoreFocusRef: RefObject<HTMLElement | null>) {
+	const fallbackFocusRef = useRef<HTMLElement[]>([]);
+	const attachPanel = useCallback(
+		(panel: HTMLElement | null) => {
+			const root = panel?.closest(overlayRootSelector);
+			if (root) overlayOrigins.set(root, restoreFocusRef);
+		},
+		[restoreFocusRef],
+	);
+	const captureOrigin = useCallback(
+		(origin: HTMLElement | null) => {
+			restoreFocusRef.current = origin;
+			fallbackFocusRef.current = collectFocusFallbacks(origin);
+		},
+		[restoreFocusRef],
+	);
+	return { attachPanel, captureOrigin, fallbackFocusRef };
 }

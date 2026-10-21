@@ -19,7 +19,7 @@
 
 - [x] 4.1 Story do `AdsSparkline` e stories do `AdsMetricCard` com sparkline, sentimento invertido e estados, nos dois temas
 - [x] 4.2 Atualizar `docs/integration.md`, `docs/limitations.md`, `docs/visual-identity.md`, `README.md` e a descrição da story do dashboard; registrar no `CHANGELOG.md`
-- [x] 4.3 Dados de exemplo com séries e `sentiment` na visão geral da demo, com teste do conteúdo
+- [x] 4.3 Dados de exemplo com séries e `sentiment` na visão geral da demo, com teste do conteúdo, e seção "Sparkline" em `/data-display` com teste E2E
 - [x] 4.4 Atualizar `docs/bundle-baseline.md` e `docs/bundle-baseline.json` se o crescimento exigir
 
 ## 5. Validação

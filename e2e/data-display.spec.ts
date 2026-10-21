@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { expectNoAxeViolations } from './axe';
 
 async function hideDevelopmentPortal(page: Page) {
 	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
@@ -76,6 +77,20 @@ test('alterna visualmente o tema e permite voltar à visão geral pela sidebar',
 		.getByRole('link', { name: 'Visão geral' })
 		.click();
 	await expect(page).toHaveURL('/');
+});
+
+test('exibe os sparklines com alternativa textual', async ({ page }) => {
+	await page.goto('/data-display');
+
+	await expect(page.getByRole('heading', { level: 2, name: 'Sparkline' })).toBeVisible();
+	await expect(
+		page.getByRole('img', { name: /^Visitas por dia: 7 pontos, de 12 a 25/ }),
+	).toBeVisible();
+	await expect(
+		page.getByRole('img', { name: /^Receita semanal: 4 pontos, de 8 \(S1\) a 15 \(S6\)/ }),
+	).toBeVisible();
+	await expect(page.getByRole('img', { name: 'Novo indicador: 1 ponto, valor 7.' })).toBeVisible();
+	await expectNoAxeViolations(page);
 });
 
 test('mantém a apresentação de dados nos temas claro e escuro', async ({ page }) => {

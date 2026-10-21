@@ -13,3 +13,12 @@ A visão geral da demo MUST exibir, nos indicadores, a variação com `sentiment
 
 - **WHEN** a visão geral é exibida nos temas claro e escuro
 - **THEN** os traços são visíveis e a informação não depende só de cor
+
+### Requirement: Página de exibição de dados mostra o sparkline avulso
+
+A página `/data-display` da demo MUST exibir uma seção "Sparkline" com `AdsSparkline` importado do export público de `@admin-ds/components`, cobrindo os tons, uma série com lacunas e rótulos e um ponto único, cada um com nome acessível.
+
+#### Scenario: Seção de sparkline
+
+- **WHEN** a pessoa abre `/data-display`
+- **THEN** a seção "Sparkline" exibe cada gráfico como imagem com nome acessível que resume a série, sem violações de acessibilidade nos temas claro e escuro

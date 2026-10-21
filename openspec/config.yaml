@@ -5,8 +5,13 @@ context: |
 
   Objetivo:
   Construir um design system React reutilizável para aplicações
-  administrativas, inspirado nos padrões de usabilidade e layout do
-  CoreUI Admin.
+  administrativas, com identidade visual e implementação próprias.
+
+  Identidade visual:
+  - Preservar a Inter, os temas e os tokens existentes do projeto
+  - Usar docs/visual-identity.md, docs/visual-polish.md e o Storybook como referências
+  - Skills de design devem respeitar a identidade atual, sem impor outra estética
+  - Alterar a identidade visual somente quando o escopo solicitado exigir
 
   Aplicações consumidoras:
   Aplicações Next.js que utilizam o App Router.
@@ -76,10 +81,8 @@ context: |
   - A change não deve ser arquivada enquanto `npm run format` falhar
 
   Licenciamento:
-  - O CoreUI deve ser utilizado como referência visual e funcional
-  - Código-fonte e recursos proprietários do CoreUI PRO não devem ser copiados
-  - Funcionalidades semelhantes às versões PRO devem possuir implementação
-    própria e independente
+  - Manter implementação própria e independente
+  - Não copiar código ou recursos de terceiros sem autorização da licença
   - Licenças e atribuições de materiais open source incorporados ao projeto
     devem ser registradas
 

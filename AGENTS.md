@@ -33,6 +33,18 @@ ou imports de caminhos internos dos pacotes em componentes reutilizáveis.
 - O CSS compilado deve continuar utilizável por aplicações consumidoras.
 - Mudanças em APIs públicas devem considerar compatibilidade retroativa.
 
+## Identidade visual
+
+A identidade atual é definida pelos tokens, por `docs/visual-identity.md`,
+`docs/visual-polish.md` e pelo catálogo Storybook. Preserve a Inter, a escala
+de marca, os temas, a densidade e os componentes existentes. Use as APIs
+públicas `Ads*` e os tokens semânticos ao compor interfaces.
+
+As skills de design são orientações auxiliares para este projeto. Elas não
+autorizam trocar fontes, importar outro design system, adicionar dependências
+ou redesenhar interfaces por preferência estética. Mudanças na identidade
+precisam fazer parte do escopo solicitado e seguir o processo OpenSpec.
+
 ## Antes de alterar arquivos
 
 1. Leia `README.md`, `openspec/config.yaml` e a documentação relevante em `docs/`.
@@ -70,6 +82,10 @@ O repositório é usado com Claude Code, Cursor e Codex.
   em `skills-lock.json`. Após alterá-las, execute `npm run sync:agent-skills` para
   copiá-las para `.claude/skills`; `npm run check:agent-skills` valida a sincronia.
   Usa-se cópia, não symlink, por causa do Windows.
+- As três skills próprias de design são adaptações locais para a identidade
+  do projeto. `skills-lock.json` preserva sua origem e os hashes de importação,
+  não os hashes dos textos adaptados. Não sobrescreva as adaptações ao atualizar
+  o conteúdo de origem; revise as diferenças e sincronize as cópias.
 - Servidores MCP do projeto ficam em `.mcp.json` (Claude Code) e `.cursor/mcp.json`
   (Cursor); mantenha ambos iguais. No Codex, registre-os em `~/.codex/config.toml`.
 - Exclusivos do Claude Code: `.claude/settings.json` (hooks que formatam com Prettier após

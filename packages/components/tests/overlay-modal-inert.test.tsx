@@ -256,6 +256,35 @@ describe('modal inert background', () => {
 		replacement.remove();
 	});
 
+	it('clears the inert of a removed node so reinserting it is not left inert', async () => {
+		render(<DialogFixture />);
+		await openModal();
+		const node = document.body.appendChild(document.createElement('div'));
+		await waitFor(() => expect(node).toHaveAttribute('inert'));
+		node.remove();
+		await waitFor(() => expect(node).not.toHaveAttribute('inert'));
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(pageRoot()).not.toHaveAttribute('inert'));
+		document.body.appendChild(node);
+		await Promise.resolve();
+		expect(node).not.toHaveAttribute('inert');
+		node.remove();
+	});
+
+	it('marks a node reinserted during the modal again and clears it at the end', async () => {
+		render(<DialogFixture />);
+		await openModal();
+		const node = document.body.appendChild(document.createElement('div'));
+		await waitFor(() => expect(node).toHaveAttribute('inert'));
+		node.remove();
+		await waitFor(() => expect(node).not.toHaveAttribute('inert'));
+		document.body.appendChild(node);
+		await waitFor(() => expect(node).toHaveAttribute('inert'));
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(node).not.toHaveAttribute('inert'));
+		node.remove();
+	});
+
 	it('makes a page popup opened during the modal inert and keeps a toast opened later', async () => {
 		function Fixture() {
 			const [popover, setPopover] = useState(false);

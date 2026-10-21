@@ -91,7 +91,12 @@ function syncInert(records: MutationRecord[] = bodyObserver?.takeRecords() ?? []
 	if (!bodyObserver) return;
 	adoptExternalWrites(records);
 	const children = Array.from(document.body.children);
-	for (const owned of inertOwned) if (!children.includes(owned)) inertOwned.delete(owned);
+	// Um nó marcado que saiu de `body` devolve o estado: se for reinserido, não volta inerte sozinho.
+	for (const owned of inertOwned) {
+		if (children.includes(owned)) continue;
+		owned.removeAttribute('inert');
+		inertOwned.delete(owned);
+	}
 	for (const child of children) {
 		bodyObserver.observe(child, { attributes: true, attributeFilter: ['inert'] });
 		if (shouldBeInert(child)) {

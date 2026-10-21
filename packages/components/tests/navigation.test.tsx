@@ -1,5 +1,6 @@
 import type { HTMLAttributes } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
 import { describe, expect, it, vi } from 'vitest';
 import {
 	AdsBreadcrumb,
@@ -35,7 +36,7 @@ describe('navigation components', () => {
 		);
 	});
 
-	it('supports manual tabs keyboard navigation', () => {
+	it('supports manual tabs keyboard navigation', async () => {
 		render(
 			<AdsTabs defaultValue="one">
 				<AdsTabs.List>
@@ -53,7 +54,7 @@ describe('navigation components', () => {
 		first.focus();
 		fireEvent.keyDown(first, { key: 'ArrowRight' });
 		expect(second).toHaveFocus();
-		fireEvent.keyDown(second, { key: 'Enter' });
+		await userEvent.setup().keyboard('{Enter}');
 		expect(screen.getByText('Painel dois')).toBeInTheDocument();
 		expect(second).toHaveAttribute('data-state', 'active');
 		expect(second).toHaveClass(

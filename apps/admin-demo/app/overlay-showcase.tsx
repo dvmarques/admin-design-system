@@ -5,6 +5,8 @@ import {
 	AdsButton,
 	AdsDialog,
 	AdsDrawer,
+	AdsField,
+	AdsInput,
 	AdsPopover,
 	AdsToast,
 	AdsTooltip,
@@ -15,6 +17,7 @@ export function OverlayShowcase() {
 	const [drawerOpen, setDrawerOpen] = useState(false);
 	const [popoverOpen, setPopoverOpen] = useState(false);
 	const [toastOpen, setToastOpen] = useState(false);
+	const [name, setName] = useState('');
 
 	return (
 		<div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem' }}>
@@ -27,7 +30,15 @@ export function OverlayShowcase() {
 			</AdsTooltip>
 			<AdsPopover
 				aria-label="Ações rápidas"
-				content={<AdsButton onClick={() => setPopoverOpen(false)}>Editar</AdsButton>}
+				content={
+					<div style={{ display: 'grid', gap: '0.75rem' }}>
+						<AdsField label="Nome do registro">
+							<AdsInput onChange={(event) => setName(event.target.value)} value={name} />
+						</AdsField>
+						<AdsButton onClick={() => setName('')}>Limpar nome</AdsButton>
+						<AdsButton onClick={() => setPopoverOpen(false)}>Editar</AdsButton>
+					</div>
+				}
 				onOpenChange={setPopoverOpen}
 				open={popoverOpen}
 			>

@@ -1,7 +1,7 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AdsButton } from '../src/button';
 import { AdsPopover, AdsTooltip } from '../src/overlay-anchored';
 
@@ -20,6 +20,90 @@ function PopoverFixture() {
 }
 
 describe('anchored overlays', () => {
+	it('keeps panel interactions open and preserves consumer handlers and bubbling', async () => {
+		const onOpenChange = vi.fn();
+		const onTriggerClick = vi.fn();
+		const onPanelClick = vi.fn();
+		const onAncestorClick = vi.fn();
+		const onAction = vi.fn();
+		function InteractivePopover() {
+			const [open, setOpen] = useState(false);
+			return (
+				<div onClick={onAncestorClick}>
+					<AdsPopover
+						aria-label="Edição rápida"
+						content={
+							<>
+								<input aria-label="Nome" />
+								<AdsButton onClick={onAction}>Aplicar</AdsButton>
+								<AdsButton onClick={() => setOpen(false)}>Concluir</AdsButton>
+							</>
+						}
+						onClick={onPanelClick}
+						onOpenChange={(next) => {
+							onOpenChange(next);
+							setOpen(next);
+						}}
+						open={open}
+					>
+						<AdsButton onClick={onTriggerClick}>
+							<span>Editar nome</span>
+						</AdsButton>
+					</AdsPopover>
+				</div>
+			);
+		}
+		render(<InteractivePopover />);
+		const trigger = screen.getByRole('button', { name: 'Editar nome' });
+		trigger.focus();
+		fireEvent.click(screen.getByText('Editar nome'));
+		const panel = await screen.findByRole('dialog', { name: 'Edição rápida' });
+		expect(trigger).toHaveAttribute('aria-controls', panel.id);
+		expect(onTriggerClick).toHaveBeenCalledTimes(1);
+		expect(onOpenChange.mock.calls).toEqual([[true]]);
+		onAncestorClick.mockClear();
+		const input = screen.getByRole('textbox', { name: 'Nome' });
+		fireEvent.mouseDown(input);
+		fireEvent.click(input);
+		fireEvent.change(input, { target: { value: 'Ana' } });
+		expect(input).toHaveValue('Ana');
+		fireEvent.click(screen.getByRole('button', { name: 'Aplicar' }));
+		expect(onAction).toHaveBeenCalledTimes(1);
+		expect(onPanelClick).toHaveBeenCalledTimes(2);
+		expect(onAncestorClick).toHaveBeenCalledTimes(2);
+		expect(panel).toBeVisible();
+		expect(onOpenChange.mock.calls).toEqual([[true]]);
+		expect((await axe.run(panel)).violations).toEqual([]);
+		fireEvent.click(screen.getByText('Editar nome'));
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+		expect(onTriggerClick).toHaveBeenCalledTimes(2);
+		expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
+		fireEvent.click(trigger);
+		fireEvent.click(screen.getByRole('button', { name: 'Concluir' }));
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+		expect(onOpenChange.mock.calls).toEqual([[true], [false], [true]]);
+	});
+
+	it('preserves a trigger handler that stops propagation', () => {
+		const onOpenChange = vi.fn();
+		const onClick = vi.fn();
+		render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={false}>
+				<AdsButton
+					onClick={(event) => {
+						onClick();
+						event.stopPropagation();
+					}}
+				>
+					Gatilho
+				</AdsButton>
+			</AdsPopover>,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(onClick).toHaveBeenCalledTimes(1);
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
 	it('shows a tooltip on focus without capturing focus', async () => {
 		render(
 			<AdsTooltip content="Ajuda contextual">

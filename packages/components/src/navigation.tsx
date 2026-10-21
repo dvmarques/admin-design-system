@@ -50,8 +50,15 @@ export function AdsBreadcrumb({
 }: AdsBreadcrumbProps) {
 	const before = Math.max(1, itemsBeforeCollapse);
 	const after = Math.max(1, itemsAfterCollapse);
-	const collapsed =
-		maxItems !== undefined && items.length > maxItems && before + after < items.length;
+	// An item explicitly marked as current is never hidden: the tail starts at it when it falls in the middle.
+	const explicitCurrent = items.findIndex(
+		(item, index) => index >= before && item.current === true,
+	);
+	const tailStart = Math.min(
+		items.length - after,
+		explicitCurrent === -1 ? items.length : explicitCurrent,
+	);
+	const collapsed = maxItems !== undefined && items.length > maxItems && tailStart > before;
 
 	const renderItem = (item: AdsBreadcrumbItem, index: number, hidden = false) => {
 		const current = item.current ?? index === items.length - 1;
@@ -96,12 +103,10 @@ export function AdsBreadcrumb({
 						{items.slice(0, before).map((item, index) => renderItem(item, index))}
 						<AdsBreadcrumbCollapse expandLabel={expandLabel} separator={separator}>
 							{items
-								.slice(before, items.length - after)
+								.slice(before, tailStart)
 								.map((item, index) => renderItem(item, before + index, true))}
 						</AdsBreadcrumbCollapse>
-						{items
-							.slice(items.length - after)
-							.map((item, index) => renderItem(item, items.length - after + index))}
+						{items.slice(tailStart).map((item, index) => renderItem(item, tailStart + index))}
 					</>
 				) : (
 					items.map((item, index) => renderItem(item, index))

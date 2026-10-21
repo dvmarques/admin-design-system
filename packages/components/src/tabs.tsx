@@ -2,6 +2,7 @@
 
 import {
 	createContext,
+	useCallback,
 	useContext,
 	useEffect,
 	useId,
@@ -25,6 +26,9 @@ interface TabsContextValue {
 	/** Id of the tab that takes the tab stop when the active tab is not an enabled one. */
 	fallbackId: string | null;
 	setFallbackId: (id: string | null) => void;
+	/** Values whose panel is currently in the document, so a tab never references a missing one. */
+	mountedPanels: ReadonlySet<string>;
+	registerPanel: (value: string, mounted: boolean) => void;
 }
 const TabsContext = createContext<TabsContextValue | null>(null);
 function useTabs() {
@@ -61,6 +65,16 @@ function AdsTabsRoot({
 	const baseId = sanitizeId(useId());
 	const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
 	const [fallbackId, setFallbackId] = useState<string | null>(null);
+	const [mountedPanels, setMountedPanels] = useState<ReadonlySet<string>>(new Set());
+	const registerPanel = useCallback((panelValue: string, mounted: boolean) => {
+		setMountedPanels((current) => {
+			if (current.has(panelValue) === mounted) return current;
+			const next = new Set(current);
+			if (mounted) next.add(panelValue);
+			else next.delete(panelValue);
+			return next;
+		});
+	}, []);
 	const value = controlledValue ?? uncontrolledValue;
 	const setValue = (next: string) => {
 		if (controlledValue === undefined) setUncontrolledValue(next);
@@ -77,6 +91,8 @@ function AdsTabsRoot({
 				keepMounted,
 				fallbackId,
 				setFallbackId,
+				mountedPanels,
+				registerPanel,
 			}}
 		>
 			<div
@@ -98,13 +114,27 @@ function AdsTabsList({ children, className, ...props }: AdsTabsListProps) {
 	const { orientation, setFallbackId, value } = useTabs();
 	const ref = useRef<HTMLDivElement>(null);
 	// The triggers are free-form children, so the enabled ones are only known from the DOM. When the
-	// active tab is disabled or missing, the first enabled tab keeps the list reachable with Tab.
+	// active tab is disabled or missing, the first enabled tab keeps the list reachable with Tab. The
+	// observer also covers triggers that change their own `disabled` without re-rendering the list.
 	useEffect(() => {
-		const tabs = Array.from(
-			ref.current?.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])') ?? [],
-		);
-		const hasActive = tabs.some((tab) => tab.getAttribute('aria-selected') === 'true');
-		setFallbackId(hasActive ? null : (tabs[0]?.id ?? null));
+		const list = ref.current;
+		if (!list) return;
+		const sync = () => {
+			const tabs = Array.from(
+				list.querySelectorAll<HTMLButtonElement>('[role="tab"]:not([disabled])'),
+			);
+			const hasActive = tabs.some((tab) => tab.getAttribute('aria-selected') === 'true');
+			setFallbackId(hasActive ? null : (tabs[0]?.id ?? null));
+		};
+		sync();
+		const observer = new MutationObserver(sync);
+		observer.observe(list, {
+			attributes: true,
+			attributeFilter: ['disabled', 'aria-selected'],
+			childList: true,
+			subtree: true,
+		});
+		return () => observer.disconnect();
 	}, [setFallbackId, value, children]);
 	return (
 		<div
@@ -138,7 +168,7 @@ function AdsTabsTrigger({
 	onKeyDown,
 	...props
 }: AdsTabsTriggerProps) {
-	const { value, setValue, baseId, activationMode, orientation, fallbackId, keepMounted } =
+	const { value, setValue, baseId, activationMode, orientation, fallbackId, mountedPanels } =
 		useTabs();
 	const id = tabId(baseId, tabValue);
 	const active = value === tabValue;
@@ -149,7 +179,7 @@ function AdsTabsTrigger({
 		<button
 			{...props}
 			// An unmounted panel cannot be referenced.
-			aria-controls={active || keepMounted ? panelId(baseId, tabValue) : undefined}
+			aria-controls={active || mountedPanels.has(tabValue) ? panelId(baseId, tabValue) : undefined}
 			aria-selected={active}
 			className={classNames(
 				'ads-tabs-trigger min-h-10 shrink-0 border border-transparent px-4 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',
@@ -190,10 +220,7 @@ function AdsTabsTrigger({
 					tabs[next]?.focus();
 					if (activationMode === 'automatic') tabs[next]?.click();
 				}
-				if (event.key === 'Enter' || event.key === ' ') {
-					event.preventDefault();
-					setValue(tabValue);
-				}
+				// Enter and Space activate through the native button click, so `onClick` can still cancel it.
 			}}
 			role="tab"
 			tabIndex={(active && !disabled) || id === fallbackId ? 0 : -1}
@@ -216,9 +243,15 @@ function AdsTabsPanel({
 	keepMounted,
 	...props
 }: AdsTabsPanelProps) {
-	const { value, baseId, keepMounted: rootKeepMounted, orientation } = useTabs();
+	const { value, baseId, keepMounted: rootKeepMounted, orientation, registerPanel } = useTabs();
 	const active = value === panelValue;
-	if (!active && !(keepMounted ?? rootKeepMounted)) return null;
+	const rendered = active || (keepMounted ?? rootKeepMounted);
+	useEffect(() => {
+		if (!rendered) return;
+		registerPanel(panelValue, true);
+		return () => registerPanel(panelValue, false);
+	}, [panelValue, registerPanel, rendered]);
+	if (!rendered) return null;
 	return (
 		<div
 			{...props}
@@ -237,6 +270,12 @@ function AdsTabsPanel({
 		</div>
 	);
 }
+
+/**
+ * The parts are also exported by name: a Server Component cannot read `AdsTabs.List` from a client
+ * module, so it composes `AdsTabs`, `AdsTabsList`, `AdsTabsTrigger` and `AdsTabsPanel` instead.
+ */
+export { AdsTabsList, AdsTabsPanel, AdsTabsTrigger };
 
 export const AdsTabs = Object.assign(AdsTabsRoot, {
 	Root: AdsTabsRoot,

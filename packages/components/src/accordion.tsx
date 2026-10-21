@@ -279,6 +279,12 @@ function AdsAccordionPanel({ children, className, ...props }: AdsAccordionPanelP
 	);
 }
 
+/**
+ * The parts are also exported by name: a Server Component cannot read `AdsAccordion.Item` from a
+ * client module, so it composes `AdsAccordion`, `AdsAccordionItem` and the other parts instead.
+ */
+export { AdsAccordionHeader, AdsAccordionItem, AdsAccordionPanel, AdsAccordionTrigger };
+
 export const AdsAccordion = Object.assign(AdsAccordionRoot, {
 	Root: AdsAccordionRoot,
 	Item: AdsAccordionItem,

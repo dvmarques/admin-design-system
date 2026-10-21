@@ -102,7 +102,7 @@ Todo texto embutido em `AdsTabs`, `AdsBreadcrumb` e `AdsAccordion` MUST ter padr
 
 ### Requirement: Breadcrumb e nav compatíveis com Server Components
 
-`AdsBreadcrumb` e `AdsNav` MUST poder ser renderizados em um Server Component, inclusive com itens que fornecem `renderLink`, sem exigir que a página declare `"use client"`. `AdsTabs` MUST funcionar quando importado por uma página Server Component, e todos MUST hidratar sem divergência.
+`AdsBreadcrumb` e `AdsNav` MUST poder ser renderizados em um Server Component, inclusive com itens que fornecem `renderLink`, sem exigir que a página declare `"use client"`. `AdsTabs` MUST funcionar quando importado por uma página Server Component, que compõe suas partes por exportações nomeadas (a notação `AdsTabs.List` só existe em Client Components), e todos MUST hidratar sem divergência.
 
 #### Scenario: Breadcrumb com renderLink em Server Component
 
@@ -111,5 +111,5 @@ Todo texto embutido em `AdsTabs`, `AdsBreadcrumb` e `AdsAccordion` MUST ter padr
 
 #### Scenario: Tabs importado por Server Component
 
-- **WHEN** uma página Server Component importa `AdsTabs` pelo caminho público
+- **WHEN** uma página Server Component compõe `AdsTabs` com as partes de lista, tab e painel importadas pelo caminho público
 - **THEN** o componente renderiza no servidor e hidrata sem aviso de divergência

@@ -102,7 +102,7 @@ O gatilho MUST exibir um indicador de estado que não dependa só de cor e MUST 
 
 ### Requirement: Accordion em aplicações Next.js
 
-`AdsAccordion` MUST ser importável pelo caminho público do pacote em uma página Server Component, e MUST renderizar no servidor e hidratar sem divergência, inclusive com estado inicial aberto.
+`AdsAccordion` MUST ser importável pelo caminho público do pacote em uma página Server Component, que compõe suas partes por exportações nomeadas (a notação `AdsAccordion.Item` só existe em Client Components), e MUST renderizar no servidor e hidratar sem divergência, inclusive com estado inicial aberto.
 
 #### Scenario: Uso em página do App Router
 

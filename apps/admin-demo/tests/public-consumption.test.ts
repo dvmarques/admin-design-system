@@ -15,6 +15,10 @@ import {
 import { AdsAdminShell } from '@admin-ds/admin';
 import {
 	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
 	AdsAvatar,
 	AdsBadge,
 	AdsBreadcrumb,
@@ -64,6 +68,10 @@ describe('public component consumption', () => {
 	it('resolves all component exports without internal package paths', () => {
 		expect([
 			AdsAccordion,
+			AdsAccordionHeader,
+			AdsAccordionItem,
+			AdsAccordionPanel,
+			AdsAccordionTrigger,
 			AdsAvatar,
 			AdsBadge,
 			AdsBreadcrumb,
@@ -106,7 +114,7 @@ describe('public component consumption', () => {
 			AdsTooltip,
 			AdsTypography,
 			AdsAdminShell,
-		]).toHaveLength(43);
+		]).toHaveLength(47);
 	});
 
 	it('includes component styles in the distributed CSS', async () => {

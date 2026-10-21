@@ -28,7 +28,7 @@ Motivação e escopo: ver `proposal.md`.
 
 ### D1. Arquivos e fronteira cliente/servidor
 
-`navigation.tsx` mantém `AdsBreadcrumb`, `AdsNav` e `AdsLinkRenderProps` (Server). Novos: `tabs.tsx` e `accordion.tsx` com `"use client"`, e `breadcrumb-collapse.tsx` com `"use client"` (ilha do colapso). `index.ts` continua sendo o único ponto público e reexporta os mesmos nomes.
+`navigation.tsx` mantém `AdsBreadcrumb`, `AdsNav` e `AdsLinkRenderProps` (Server). Novos: `tabs.tsx` e `accordion.tsx` com `"use client"`, e `breadcrumb-collapse.tsx` com `"use client"` (ilha do colapso). `index.ts` continua sendo o único ponto público e reexporta os mesmos nomes. As partes de `AdsTabs` e `AdsAccordion` também são exportadas por nome (`AdsTabsList`, `AdsAccordionItem` etc.), porque um Server Component não consegue acessar `AdsTabs.List` em um módulo cliente; a notação composta continua valendo dentro de Client Components.
 
 Alternativa descartada: tornar `AdsBreadcrumb` inteiro cliente para simplificar o colapso. Quebraria quem passa `renderLink` a partir de um Server Component, porque funções não atravessam a fronteira cliente. A decisão é manter o Breadcrumb como Server Component e isolar só o estado.
 

@@ -1,4 +1,9 @@
 import {
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
 	AdsAvatar,
 	AdsBadge,
 	AdsBreadcrumb,
@@ -14,6 +19,10 @@ import {
 	AdsSurface,
 	AdsTypography,
 	AdsSwitch,
+	AdsTabs,
+	AdsTabsList,
+	AdsTabsPanel,
+	AdsTabsTrigger,
 	AdsTextarea,
 } from '@admin-ds/components';
 import Link from 'next/link';
@@ -169,6 +178,23 @@ export default function ComponentsPage() {
 								]}
 								maxItems={3}
 							/>
+							{/* Também no servidor: as partes são importadas por nome, pois AdsTabs.List não existe fora do cliente. */}
+							<AdsTabs defaultValue="server-one">
+								<AdsTabsList aria-label="Tabs renderizadas no servidor">
+									<AdsTabsTrigger value="server-one">Primeira</AdsTabsTrigger>
+									<AdsTabsTrigger value="server-two">Segunda</AdsTabsTrigger>
+								</AdsTabsList>
+								<AdsTabsPanel value="server-one">Conteúdo da primeira.</AdsTabsPanel>
+								<AdsTabsPanel value="server-two">Conteúdo da segunda.</AdsTabsPanel>
+							</AdsTabs>
+							<AdsAccordion defaultValue="server-item" type="single">
+								<AdsAccordionItem value="server-item">
+									<AdsAccordionHeader>
+										<AdsAccordionTrigger>Accordion renderizado no servidor</AdsAccordionTrigger>
+									</AdsAccordionHeader>
+									<AdsAccordionPanel>Montado por uma página Server Component.</AdsAccordionPanel>
+								</AdsAccordionItem>
+							</AdsAccordion>
 							<NavigationShowcase />
 						</AdsSurface>
 					</section>

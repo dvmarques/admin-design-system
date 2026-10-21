@@ -160,6 +160,34 @@ describe('AdsBreadcrumb collapse', () => {
 	});
 });
 
+describe('AdsBreadcrumb with an explicit current item', () => {
+	it('never hides an explicitly current item in the middle of the trail', () => {
+		render(
+			<AdsBreadcrumb
+				items={trail.map((item, index) => ({
+					...item,
+					current: index === 2,
+				}))}
+				maxItems={4}
+			/>,
+		);
+		expect(screen.getByText('Vendas')).toHaveAttribute('aria-current', 'page');
+		expect(screen.getByRole('button', { name: 'Show full path' })).toBeInTheDocument();
+		expect(screen.queryByText('Relatórios')).toBeNull();
+	});
+
+	it('does not collapse when the explicitly current item leaves nothing to hide', () => {
+		render(
+			<AdsBreadcrumb
+				items={trail.map((item, index) => ({ ...item, current: index === 1 }))}
+				maxItems={4}
+			/>,
+		);
+		expect(screen.queryByRole('button')).toBeNull();
+		expect(screen.getByText('Relatórios')).toHaveAttribute('aria-current', 'page');
+	});
+});
+
 describe('AdsBreadcrumb on the server', () => {
 	it('renders from a function component without a client boundary, with renderLink', () => {
 		// A plain function component stands for a Server Component: no hooks, no "use client".

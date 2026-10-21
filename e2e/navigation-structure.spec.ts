@@ -80,6 +80,45 @@ test.describe('navegação estrutural', () => {
 		await expect(profile).toBeFocused();
 	});
 
+	test('as partes importadas por nome funcionam em uma página Server Component', async ({
+		page,
+	}) => {
+		await page.goto('/componentes');
+		const list = page.getByRole('tablist', { name: 'Tabs renderizadas no servidor' });
+		await expect(list.getByRole('tab', { name: 'Primeira' })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		);
+		await list.getByRole('tab', { name: 'Segunda' }).click();
+		await expect(page.getByRole('tabpanel', { name: 'Segunda' })).toBeVisible();
+
+		const trigger = page.getByRole('button', { name: 'Accordion renderizado no servidor' });
+		await expect(trigger).toHaveAttribute('aria-expanded', 'true');
+		await expect(page.getByText('Montado por uma página Server Component.')).toBeVisible();
+	});
+
+	test('Enter e Space ativam a tab focalizada no modo manual', async ({ page }) => {
+		await page.goto('/componentes');
+		const list = page.getByRole('tablist', { name: 'Tabs renderizadas no servidor' });
+		await list.getByRole('tab', { name: 'Primeira' }).focus();
+		await page.keyboard.press('ArrowRight');
+		await expect(list.getByRole('tab', { name: 'Primeira' })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		);
+		await page.keyboard.press('Enter');
+		await expect(list.getByRole('tab', { name: 'Segunda' })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		);
+		await page.keyboard.press('ArrowLeft');
+		await page.keyboard.press('Space');
+		await expect(list.getByRole('tab', { name: 'Primeira' })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		);
+	});
+
 	for (const [navigation, expand] of [
 		['Trilha de navegação', 'Mostrar caminho completo'],
 		['Trilha renderizada no servidor', 'Mostrar trilha do servidor'],

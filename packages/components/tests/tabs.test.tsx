@@ -1,6 +1,8 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
+import userEvent from '@testing-library/user-event';
+import { useState } from 'react';
 import { describe, expect, it } from 'vitest';
-import { AdsTabs } from '../src/index.js';
+import { AdsTabs, AdsTabsList, AdsTabsPanel, AdsTabsTrigger } from '../src/index.js';
 
 function renderTabs(props: Parameters<typeof AdsTabs>[0] = {}) {
 	return render(
@@ -283,5 +285,113 @@ describe('AdsTabs references and handlers', () => {
 		const panel = screen.getByText('Painel dois');
 		expect(panel).toHaveAttribute('hidden');
 		expect(panel.className).not.toMatch(/(^|\s)(block|flex|grid|inline|contents)(\s|$)/);
+	});
+});
+
+describe('AdsTabs activation by Enter and Space', () => {
+	it('activates the focused tab with Enter and Space', async () => {
+		const user = userEvent.setup();
+		renderTabs();
+		screen.getByRole('tab', { name: 'Um' }).focus();
+		await user.keyboard('{ArrowRight}{Enter}');
+		expect(screen.getByRole('tab', { name: 'Dois' })).toHaveAttribute('aria-selected', 'true');
+		await user.keyboard('{ArrowRight} ');
+		expect(screen.getByRole('tab', { name: 'Três' })).toHaveAttribute('aria-selected', 'true');
+	});
+
+	it('lets onClick cancel the activation by the keyboard as well', async () => {
+		const user = userEvent.setup();
+		render(
+			<AdsTabs defaultValue="one">
+				<AdsTabs.List>
+					<AdsTabs.Trigger value="one">Um</AdsTabs.Trigger>
+					<AdsTabs.Trigger onClick={(event) => event.preventDefault()} value="two">
+						Dois
+					</AdsTabs.Trigger>
+				</AdsTabs.List>
+			</AdsTabs>,
+		);
+		screen.getByRole('tab', { name: 'Um' }).focus();
+		await user.keyboard('{ArrowRight}{Enter}');
+		expect(screen.getByRole('tab', { name: 'Dois' })).toHaveAttribute('aria-selected', 'false');
+	});
+});
+
+describe('AdsTabs panel references with per-panel keepMounted', () => {
+	it('does not reference an unmounted panel when the root keeps panels mounted', () => {
+		render(
+			<AdsTabs defaultValue="one" keepMounted>
+				<AdsTabs.List>
+					<AdsTabs.Trigger value="one">Um</AdsTabs.Trigger>
+					<AdsTabs.Trigger value="two">Dois</AdsTabs.Trigger>
+				</AdsTabs.List>
+				<AdsTabs.Panel value="one">P1</AdsTabs.Panel>
+				<AdsTabs.Panel keepMounted={false} value="two">
+					P2
+				</AdsTabs.Panel>
+			</AdsTabs>,
+		);
+		expect(screen.getByRole('tab', { name: 'Dois' })).not.toHaveAttribute('aria-controls');
+	});
+
+	it('references a panel kept mounted by its own override', () => {
+		render(
+			<AdsTabs defaultValue="one">
+				<AdsTabs.List>
+					<AdsTabs.Trigger value="one">Um</AdsTabs.Trigger>
+					<AdsTabs.Trigger value="two">Dois</AdsTabs.Trigger>
+				</AdsTabs.List>
+				<AdsTabs.Panel value="one">P1</AdsTabs.Panel>
+				<AdsTabs.Panel keepMounted value="two">
+					P2
+				</AdsTabs.Panel>
+			</AdsTabs>,
+		);
+		const controls = screen.getByRole('tab', { name: 'Dois' }).getAttribute('aria-controls');
+		expect(document.getElementById(controls ?? '')).toHaveTextContent('P2');
+	});
+});
+
+describe('AdsTabs tab stop when a trigger changes its own disabled state', () => {
+	it('moves the tab stop without the list re-rendering', async () => {
+		let setDisabled: (value: boolean) => void = () => undefined;
+		function SelfDisabling() {
+			const [disabled, set] = useState(false);
+			setDisabled = set;
+			return (
+				<AdsTabs.Trigger disabled={disabled} value="one">
+					Um
+				</AdsTabs.Trigger>
+			);
+		}
+		render(
+			<AdsTabs defaultValue="one">
+				<AdsTabs.List>
+					<SelfDisabling />
+					<AdsTabs.Trigger value="two">Dois</AdsTabs.Trigger>
+				</AdsTabs.List>
+			</AdsTabs>,
+		);
+		expect(screen.getByRole('tab', { name: 'Um' })).toHaveAttribute('tabindex', '0');
+		await act(async () => setDisabled(true));
+		await act(async () => undefined);
+		expect(screen.getByRole('tab', { name: 'Dois' })).toHaveAttribute('tabindex', '0');
+	});
+});
+
+describe('AdsTabs named parts', () => {
+	it('composes from the named exports, for Server Components', () => {
+		render(
+			<AdsTabs defaultValue="one">
+				<AdsTabsList>
+					<AdsTabsTrigger value="one">Um</AdsTabsTrigger>
+					<AdsTabsTrigger value="two">Dois</AdsTabsTrigger>
+				</AdsTabsList>
+				<AdsTabsPanel value="one">Painel um</AdsTabsPanel>
+			</AdsTabs>,
+		);
+		expect(screen.getByRole('tab', { name: 'Um' })).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByRole('tabpanel')).toHaveTextContent('Painel um');
+		expect(AdsTabsList).toBe(AdsTabs.List);
 	});
 });

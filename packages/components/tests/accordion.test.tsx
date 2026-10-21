@@ -1,7 +1,14 @@
 import { renderToString } from 'react-dom/server';
 import { fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { AdsAccordion, type AdsAccordionProps } from '../src/index.js';
+import {
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
+	type AdsAccordionProps,
+} from '../src/index.js';
 
 function Item({
 	value,
@@ -269,7 +276,7 @@ describe('AdsAccordion disabled items', () => {
 describe('AdsAccordion panel mounting', () => {
 	it('keeps a closed panel in the document, hidden, and preserves its state', () => {
 		render(
-			<AdsAccordion type="single">
+			<AdsAccordion collapsible type="single">
 				<AdsAccordion.Item value="form">
 					<AdsAccordion.Header>
 						<AdsAccordion.Trigger>Formulário</AdsAccordion.Trigger>
@@ -287,6 +294,8 @@ describe('AdsAccordion panel mounting', () => {
 		expect(screen.getByRole('region', { name: 'Formulário' })).toBeInTheDocument();
 		fireEvent.change(input, { target: { value: 'Ana' } });
 		fireEvent.click(trigger('Formulário'));
+		expect(input.closest('[role="region"]')).toHaveAttribute('hidden');
+		expect(screen.queryByRole('region')).toBeNull();
 		fireEvent.click(trigger('Formulário'));
 		expect(screen.getByLabelText('Nome')).toBe(input);
 		expect(input).toHaveValue('Ana');
@@ -378,5 +387,23 @@ describe('AdsAccordion locked item', () => {
 		const panel = document.getElementById(trigger('Um').getAttribute('aria-controls') ?? '');
 		expect(panel).toHaveAttribute('hidden');
 		expect(panel?.className).not.toMatch(/(^|\s)(block|flex|grid|inline|contents)(\s|$)/);
+	});
+});
+
+describe('AdsAccordion named parts', () => {
+	it('composes from the named exports, for Server Components', () => {
+		render(
+			<AdsAccordion defaultValue="a" type="single">
+				<AdsAccordionItem value="a">
+					<AdsAccordionHeader>
+						<AdsAccordionTrigger>Nomeado</AdsAccordionTrigger>
+					</AdsAccordionHeader>
+					<AdsAccordionPanel>Conteúdo nomeado</AdsAccordionPanel>
+				</AdsAccordionItem>
+			</AdsAccordion>,
+		);
+		expect(trigger('Nomeado')).toHaveAttribute('aria-expanded', 'true');
+		expect(screen.getByRole('region', { name: 'Nomeado' })).toBeInTheDocument();
+		expect(AdsAccordionItem).toBe(AdsAccordion.Item);
 	});
 });

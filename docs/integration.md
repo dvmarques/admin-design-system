@@ -344,7 +344,11 @@ conteúdo interativo aninhado.
 
 `AdsTabs` e `AdsAccordion` usam estado e declaram `"use client"`: podem ser
 importados por uma página Server Component, mas qualquer função passada a eles
-(`onValueChange`, por exemplo) precisa vir de um Client Component.
+(`onValueChange`, por exemplo) precisa vir de um Client Component. Em uma página
+Server Component, componha as partes pelas exportações nomeadas (`AdsTabsList`,
+`AdsTabsTrigger`, `AdsTabsPanel`, `AdsAccordionItem`, `AdsAccordionHeader`,
+`AdsAccordionTrigger` e `AdsAccordionPanel`): a notação `AdsTabs.List` e
+`AdsAccordion.Item` só funciona dentro de Client Components.
 `AdsBreadcrumb` e `AdsNav` continuam sem `"use client"`, então uma página Server
 Component pode passar `renderLink` com `next/link` diretamente. Só o botão de
 expandir do breadcrumb é uma ilha cliente.

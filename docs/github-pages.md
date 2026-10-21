@@ -6,17 +6,15 @@ site estático:
 - demo: `https://dvmarques.github.io/admin-design-system/`
 - Storybook: `https://dvmarques.github.io/admin-design-system/storybook/`
 
-Os pacotes `@admin-ds/*` **não** são publicados no npm; isso fica para uma etapa futura.
+Os pacotes `@admin-ds/*` **não** são publicados no npm. A publicação do site distribui somente
+a demonstração e o catálogo Storybook.
 
 ## Como funciona
 
-O workflow `.github/workflows/pages.yml` roda a cada push em `develop` (enquanto não há versão
-final) e por `workflow_dispatch`. Ele constrói os pacotes, gera o demo e o Storybook a partir do
+O workflow `.github/workflows/pages.yml` roda a cada push em `develop` e por
+`workflow_dispatch`. Ele constrói os pacotes, gera o demo e o Storybook a partir do
 mesmo commit, monta `site/`, verifica o site com `npm run test:e2e:pages` e só então publica. Se
 qualquer etapa falhar, nada é publicado e o site anterior continua no ar.
-
-Quando houver uma versão final, o gatilho deve passar para `master` (releases, conforme
-`docs/release-process.md`), em uma nova change do OpenSpec.
 
 ## Configuração única no GitHub
 

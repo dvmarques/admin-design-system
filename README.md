@@ -1,13 +1,12 @@
 # Admin Design System
 
 Design system React reutilizável para a construção de aplicações
-administrativas com Next.js App Router. O projeto é inspirado nos padrões
-de usabilidade e layout de painéis administrativos como o CoreUI, mas
-possui arquitetura, identidade visual e implementação próprias.
+administrativas com Next.js App Router, com arquitetura, identidade visual
+e implementação próprias.
 
-A biblioteca utilizará TypeScript, Tailwind CSS e variáveis CSS
+A biblioteca utiliza TypeScript, Tailwind CSS e variáveis CSS
 semânticas para oferecer componentes acessíveis, responsivos e
-personalizáveis, com suporte a temas claro e escuro. Os pacotes serão
+personalizáveis, com suporte a temas claro e escuro. Os pacotes são
 documentados no Storybook e validados por uma aplicação Next.js de
 referência.
 
@@ -91,47 +90,22 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 - [Comandos úteis do OpenSpec](docs/openspec-commands.md)
 - [Modelos recomendados por fase](docs/models.md)
 
-## Estado atual
+## Recursos
 
-A change `establish-design-system-foundation` concluiu a fundação do
-monorepo, design tokens, temas, distribuição dos pacotes, integração com
-Next.js, documentação e controles de qualidade. A change
-`add-core-primitives` concluiu os componentes públicos fundamentais:
-`AdsButton`, `AdsBadge`, `AdsAvatar`, `AdsSurface`, `AdsTypography`,
-`AdsIcon` e `AdsLoadingIndicator`. A change `add-form-components` concluiu
-os controles e composições de formulário, e `add-overlay-components` concluiu
-`AdsDialog`, `AdsDrawer`, `AdsTooltip`, `AdsPopover` e `AdsToast`, incluindo
-foco, teclado, temas, CSS distribuído, documentação, testes e integração no
-admin demo. A change `add-navigation-components` concluiu `AdsBreadcrumb`,
-`AdsNav`, `AdsTabs`, `AdsDropdown` e `AdsPagination`, com interações por
-teclado, temas, CSS distribuído, documentação, testes, snapshots visuais e
-consumo pela aplicação Next.js de demonstração. A change
-`tabs-breadcrumb-accordion` acrescentou `AdsAccordion`, tabs verticais e de
-ativação automática, o colapso e o separador do `AdsBreadcrumb` e a separação
-entre módulos cliente e de servidor. A change
-`add-data-display-components` concluiu `AdsTable`, `AdsList`, `AdsCard`,
-`AdsProgress` e `AdsEmptyState`, com semântica acessível, composição sem
-acoplamento a dados ou fetching, temas, CSS distribuído, documentação, testes
-e integração no admin demo. A change `add-admin-shell` concluiu o
-`AdsAdminShell` em `@admin-ds/admin`, com header, sidebar recolhível, área de
-conteúdo e navegação móvel em drawer, estados controlados e não controlados,
-transição segura entre breakpoints, compatibilidade com SSR, CSS próprio
-distribuído e integração no admin demo. A change `add-dashboard-patterns` adicionou
-`AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel` em `@admin-ds/admin`,
-com tendência por ícone e texto, grid responsivo e estados de carregamento,
-vazio e erro por painel. A change `add-metric-sparkline` adicionou o
-`AdsSparkline` em `@admin-ds/components` e a prop `sparkline` do `AdsMetricCard`,
-com alternativa textual e cor pelo `sentiment`.
+- `@admin-ds/tokens`: design tokens semânticos, temas claro e escuro e CSS público.
+- `@admin-ds/components`: primitivas, formulários, calendário, overlays,
+  navegação (tabs, breadcrumb e accordion), apresentação de dados e o gráfico compacto `AdsSparkline`.
+- `@admin-ds/admin`: shell administrativo, painéis de dashboard com sparkline opcional, filtros,
+  tabela inteligente e fluxos de listagem, formulário em etapas e confirmação.
+- `apps/admin-demo`: integração dos pacotes em uma aplicação Next.js.
+- `apps/docs`: APIs, variantes e estados documentados no Storybook.
 
-O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
-ativas e arquivadas com:
+Os pacotes não são publicados no npm. Consulte a [integração](docs/integration.md)
+e as [limitações conhecidas](docs/limitations.md) para os requisitos de consumo e
+os limites de suporte. O histórico está no [changelog](CHANGELOG.md) e em
+`openspec/changes/archive/`; o trabalho é acompanhado pelas issues no GitHub.
 
-```powershell
-openspec.cmd list
-Get-ChildItem openspec/changes/archive
-```
-
-## Tecnologias planejadas
+## Tecnologias
 
 - React e TypeScript com modo estrito
 - Next.js com App Router

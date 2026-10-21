@@ -8,12 +8,10 @@ Os valores estão em `packages/tokens/source/tokens.mjs` e a story
 ## Escala de marca
 
 `color.reference.brand50` a `brand900` (`#eff6ff` a `#1e3a8a`) formam a escala de
-marca. Sem uma cor de marca definida, ela segue a família azul que já era usada,
-então a aparência **não mudou**: `primary`, `primary-hover`, `focus`,
+marca. A escala usa a família azul do projeto: `primary`, `primary-hover`, `focus`,
 `focus-ring`, `form-border-focus`, `surface-selected` e as sobrescritas de
 `prefers-contrast: more` apontam para a escala (por exemplo `primary` é
-`brand600` no claro e `brand400` no escuro). As referências `blue*` foram
-removidas porque nada mais as usava; elas não eram variáveis CSS públicas.
+`brand600` no claro e `brand400` no escuro). A escala de referência é interna; os consumidores personalizam as variáveis semânticas públicas.
 
 Para usar outra cor de marca, troque os valores `brand*` em
 `packages/tokens/source/tokens.mjs` e confirme os pares de contraste
@@ -32,7 +30,7 @@ emitida como variável CSS.
 A pilha do corpo e dos títulos é `Inter, "Segoe UI Variable", "Segoe UI",
 system-ui, -apple-system, Roboto, "Helvetica Neue", Arial, sans-serif`; a
 monoespaçada é `ui-monospace, "SF Mono", "Cascadia Code", Consolas,
-"Liberation Mono", Menlo, monospace`. Por enquanto os títulos acompanham o corpo
+"Liberation Mono", Menlo, monospace`. Os títulos acompanham o corpo
 (`var(--ads-typography-font-family)`), então personalizar só a fonte do corpo
 continua valendo para os títulos; mudar `fontFamilyHeading` não exige alterar componentes. Use a
 monoespaçada em estilos próprios, por exemplo com `font-family:
@@ -78,13 +76,13 @@ Cada papel tem um valor próprio, do mais escuro ao mais claro:
 
 `text` e `text-muted` têm ao menos 4,5:1 sobre todas elas e `border-control`
 ao menos 3:1, com e sem `prefers-contrast: more` (pares em
-`packages/tokens/tests/contrast-pairs.mjs`). No tema claro nada mudou.
+`packages/tokens/tests/contrast-pairs.mjs`). Os valores de cada tema são definidos em `packages/tokens/source/tokens.mjs`.
 
 ## Espaçamento
 
 `--ads-spacing-1`, `2`, `3`, `4`, `5`, `6`, `8`, `10`, `12` e `16`
 (`0.25rem`, `0.5rem`, `0.75rem`, `1rem`, `1.25rem`, `1.5rem`, `2rem`,
-`2.5rem`, `3rem` e `4rem`). Os valores anteriores não mudaram.
+`2.5rem`, `3rem` e `4rem`).
 
 ## Cores de gráfico
 
@@ -121,8 +119,9 @@ O `AdsSparkline` usa `chart1` por padrão e `success` e `danger` nos tons `posit
   e 16,1. A simulação é uma aproximação, não substitui a regra de não depender
   só de cor.
 
-Paletas sequencial e divergente e um componente de gráfico estão fora do
-escopo desta etapa.
+A biblioteca oferece tokens categóricos de cor e o gráfico compacto `AdsSparkline`.
+Não inclui paletas sequencial e divergente nem gráficos completos com eixos,
+legendas, tooltips ou interatividade.
 
 ## Personalização
 

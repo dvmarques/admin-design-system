@@ -52,6 +52,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `cleanup-project-docs-and-design-guidance` - Documentação atualizada para os recursos
+  entregues, com remoção de referências externas como orientação de design e de textos
+  obsoletos de roadmap e andamento. As skills de design passam a respeitar a Inter e os
+  tokens existentes. Licenças, limitações técnicas, histórico e fluxo de releases são
+  preservados; sem mudança de código, API ou aparência.
+
 - `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na
   horizontal em 320px: os grids da demonstração em telas estreitas passam de `1fr` para
   `minmax(0, 1fr)` e a paginação rola dentro do próprio painel. O E2E de todas as rotas

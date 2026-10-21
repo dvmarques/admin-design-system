@@ -1,7 +1,7 @@
 # Documentação visual
 
 `apps/docs` executa o Storybook e consome somente as APIs públicas de
-`@admin-ds/tokens` e `@admin-ds/components`.
+`@admin-ds/tokens`, `@admin-ds/components` e `@admin-ds/admin`.
 
 ```powershell
 npm.cmd run dev --workspace @admin-ds/docs

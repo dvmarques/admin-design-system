@@ -395,3 +395,50 @@ describe('AdsTabs named parts', () => {
 		expect(AdsTabsList).toBe(AdsTabs.List);
 	});
 });
+
+describe('AdsTabs references after a panel is removed', () => {
+	it('stops referencing the active panel when the consumer removes it', async () => {
+		function Example({ withPanel }: { withPanel: boolean }) {
+			return (
+				<AdsTabs defaultValue="one">
+					<AdsTabs.List>
+						<AdsTabs.Trigger value="one">Um</AdsTabs.Trigger>
+					</AdsTabs.List>
+					{withPanel ? <AdsTabs.Panel value="one">Painel</AdsTabs.Panel> : null}
+				</AdsTabs>
+			);
+		}
+		const { rerender } = render(<Example withPanel />);
+		const controls = screen.getByRole('tab', { name: 'Um' }).getAttribute('aria-controls');
+		expect(document.getElementById(controls ?? '')).toHaveTextContent('Painel');
+		rerender(<Example withPanel={false} />);
+		await act(async () => undefined);
+		expect(screen.getByRole('tab', { name: 'Um' })).not.toHaveAttribute('aria-controls');
+	});
+});
+
+describe('AdsTabs tab stop when a trigger changes its own value', () => {
+	it('keeps exactly one tab stop when the id of the fallback tab changes', async () => {
+		let setValue: (value: string) => void = () => undefined;
+		function ChangingValue() {
+			const [value, set] = useState('one');
+			setValue = set;
+			return <AdsTabs.Trigger value={value}>Um</AdsTabs.Trigger>;
+		}
+		render(
+			<AdsTabs defaultValue="missing">
+				<AdsTabs.List>
+					<ChangingValue />
+					<AdsTabs.Trigger value="two">Dois</AdsTabs.Trigger>
+				</AdsTabs.List>
+			</AdsTabs>,
+		);
+		await act(async () => undefined);
+		expect(screen.getByRole('tab', { name: 'Um' })).toHaveAttribute('tabindex', '0');
+		await act(async () => setValue('renamed'));
+		await act(async () => undefined);
+		const stops = screen.getAllByRole('tab').filter((tab) => tab.getAttribute('tabindex') === '0');
+		expect(stops).toHaveLength(1);
+		expect(stops[0]).toHaveTextContent('Um');
+	});
+});

@@ -130,7 +130,7 @@ function AdsTabsList({ children, className, ...props }: AdsTabsListProps) {
 		const observer = new MutationObserver(sync);
 		observer.observe(list, {
 			attributes: true,
-			attributeFilter: ['disabled', 'aria-selected'],
+			attributeFilter: ['disabled', 'aria-selected', 'id'],
 			childList: true,
 			subtree: true,
 		});
@@ -179,7 +179,7 @@ function AdsTabsTrigger({
 		<button
 			{...props}
 			// An unmounted panel cannot be referenced.
-			aria-controls={active || mountedPanels.has(tabValue) ? panelId(baseId, tabValue) : undefined}
+			aria-controls={mountedPanels.has(tabValue) ? panelId(baseId, tabValue) : undefined}
 			aria-selected={active}
 			className={classNames(
 				'ads-tabs-trigger min-h-10 shrink-0 border border-transparent px-4 py-2 text-sm font-medium focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:cursor-not-allowed disabled:text-text-muted disabled:opacity-100',

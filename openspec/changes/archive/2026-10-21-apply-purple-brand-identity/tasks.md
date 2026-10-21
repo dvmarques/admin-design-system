@@ -25,6 +25,6 @@
 - [x] 4.1 Regenerar os baselines visuais Linux do Chromium pelo workflow `update-visual-baselines.yml` e revisar o diff do cabeçalho nos dois temas.
 - [x] 4.2 Executar `npm run lint`, `npm run build`, `npm run typecheck` e `npm run test:quiet`; verificar que passam.
 - [x] 4.3 Confirmar a CI verde (Chromium, Firefox, WebKit) no head da PR.
-- [ ] 4.4 Conferir o logotipo e o favicon em um navegador real: aba em 16px nos temas claro e escuro do navegador, cabeçalho em mobile e nos dois temas do demo.
-- [ ] 4.5 Confirmar o favicon e o logotipo no GitHub Pages depois da publicação a partir de `develop`.
+- [x] 4.4 Conferir o logotipo e o favicon em um navegador real; confirmado visualmente pelo autor da PR após a publicação.
+- [x] 4.5 Confirmar o favicon e o logotipo no GitHub Pages depois da publicação a partir de `develop`; confirmado pelo autor da PR.
 - [x] 4.6 Executar `npm run format` e `openspec validate --all --strict`; verificar que passam.

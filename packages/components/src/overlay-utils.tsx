@@ -337,50 +337,154 @@ export function useClickOutside(
 	}, [containerRef, onOutside, open]);
 }
 
+type AnchoredPlacement = 'top' | 'right' | 'bottom' | 'left';
+type AnchoredAlign = 'center' | 'start';
+
+const oppositePlacement: Record<AnchoredPlacement, AnchoredPlacement> = {
+	top: 'bottom',
+	bottom: 'top',
+	left: 'right',
+	right: 'left',
+};
+
+export interface AnchoredPosition {
+	style: React.CSSProperties;
+	placement: AnchoredPlacement;
+	arrowOffset: number;
+}
+
+/** Calcula a geometria sem acessar o DOM, para permitir testes determinísticos. */
+export function calculateAnchoredPosition(
+	anchor: Pick<DOMRect, 'top' | 'right' | 'bottom' | 'left' | 'width' | 'height'>,
+	width: number,
+	height: number,
+	viewport: { left: number; top: number; width: number; height: number },
+	preferred: AnchoredPlacement,
+	align: AnchoredAlign = 'center',
+): AnchoredPosition {
+	const gap = 8;
+	const margin = 8;
+	const bounds = {
+		left: viewport.left + margin,
+		top: viewport.top + margin,
+		right: viewport.left + viewport.width - margin,
+		bottom: viewport.top + viewport.height - margin,
+	};
+	const space: Record<AnchoredPlacement, number> = {
+		top: anchor.top - bounds.top - gap,
+		bottom: bounds.bottom - anchor.bottom - gap,
+		left: anchor.left - bounds.left - gap,
+		right: bounds.right - anchor.right - gap,
+	};
+	const size = preferred === 'top' || preferred === 'bottom' ? height : width;
+	const opposite = oppositePlacement[preferred];
+	const placement =
+		space[preferred] >= size || space[preferred] >= space[opposite]
+			? preferred
+			: opposite;
+	const clamp = (value: number, min: number, max: number) =>
+		Math.min(Math.max(value, min), Math.max(min, max));
+	const horizontal = placement === 'top' || placement === 'bottom';
+	const anchorCenterX = anchor.left + anchor.width / 2;
+	const anchorCenterY = anchor.top + anchor.height / 2;
+	const left = horizontal
+		? align === 'start'
+			? anchor.left
+			: anchorCenterX - width / 2
+		: placement === 'left'
+			? anchor.left - width - gap
+			: anchor.right + gap;
+	const top = horizontal
+		? placement === 'top'
+			? anchor.top - height - gap
+			: anchor.bottom + gap
+		: anchorCenterY - height / 2;
+	const x = clamp(left, bounds.left, bounds.right - width);
+	const y = clamp(top, bounds.top, bounds.bottom - height);
+	const arrowOffset = horizontal
+		? clamp(anchorCenterX - x, 8, width - 8)
+		: clamp(anchorCenterY - y, 8, height - 8);
+	return { style: { left: x, top: y }, placement, arrowOffset };
+}
+
 export function useAnchoredPosition(
 	open: boolean,
 	anchorRef: RefObject<HTMLElement | null>,
 	contentRef: RefObject<HTMLElement | null>,
-	placement: 'top' | 'right' | 'bottom' | 'left' = 'bottom',
-	align: 'center' | 'start' = 'center',
-) {
-	const [position, setPosition] = useState<React.CSSProperties>({});
+	placement: AnchoredPlacement = 'bottom',
+	align: AnchoredAlign = 'center',
+): AnchoredPosition {
+	const [position, setPosition] = useState<AnchoredPosition>({
+		style: {},
+		placement,
+		arrowOffset: 0,
+	});
 	const update = useCallback(() => {
 		const anchor = anchorRef.current;
 		const content = contentRef.current;
 		if (!anchor || !content) return;
-		const rect = anchor.getBoundingClientRect();
-		const width = content.offsetWidth;
-		const height = content.offsetHeight;
-		const gap = 8;
-		let left = align === 'start' ? rect.left : rect.left + rect.width / 2 - width / 2;
-		let top = rect.bottom + gap;
-		if (placement === 'top') top = rect.top - height - gap;
-		if (placement === 'left') {
-			left = rect.left - width - gap;
-			top = rect.top + rect.height / 2 - height / 2;
-		}
-		if (placement === 'right') {
-			left = rect.right + gap;
-			top = rect.top + rect.height / 2 - height / 2;
-		}
-		left = Math.min(Math.max(8, left), Math.max(8, window.innerWidth - width - 8));
-		top = Math.min(Math.max(8, top), Math.max(8, window.innerHeight - height - 8));
-		setPosition({ left, top });
+		const visual = window.visualViewport;
+		const viewport = {
+			left: visual?.offsetLeft ?? 0,
+			top: visual?.offsetTop ?? 0,
+			width: visual?.width ?? window.innerWidth,
+			height: visual?.height ?? window.innerHeight,
+		};
+		const next = calculateAnchoredPosition(
+			anchor.getBoundingClientRect(),
+			content.getBoundingClientRect().width || content.offsetWidth,
+			content.getBoundingClientRect().height || content.offsetHeight,
+			viewport,
+			placement,
+			align,
+		);
+		setPosition((previous) =>
+			previous.placement === next.placement &&
+			previous.arrowOffset === next.arrowOffset &&
+			previous.style.left === next.style.left &&
+			previous.style.top === next.style.top
+				? previous
+				: next,
+		);
 	}, [align, anchorRef, contentRef, placement]);
 
 	useLayoutEffect(() => {
 		if (!open) return;
+		let frame = 0;
+		const schedule = () => {
+			if (frame) return;
+			frame = window.requestAnimationFrame(() => {
+				frame = 0;
+				update();
+			});
+		};
 		update();
-		const timer = window.setTimeout(update, 0);
-		window.addEventListener('resize', update);
-		window.addEventListener('scroll', update, true);
+		// Portals can attach their content after this layout effect.
+		const timer = window.setTimeout(schedule, 0);
+		window.addEventListener('resize', schedule);
+		window.addEventListener('scroll', schedule, true);
+		window.visualViewport?.addEventListener('resize', schedule);
+		window.visualViewport?.addEventListener('scroll', schedule);
+		const observer =
+			typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+		if (anchorRef.current) observer?.observe(anchorRef.current);
+		if (contentRef.current) observer?.observe(contentRef.current);
+		// The portal can be mounted asynchronously: observe its panel on the next tick.
+		const observeTimer = window.setTimeout(() => {
+			if (contentRef.current) observer?.observe(contentRef.current);
+			schedule();
+		}, 0);
 		return () => {
 			window.clearTimeout(timer);
-			window.removeEventListener('resize', update);
-			window.removeEventListener('scroll', update, true);
+			window.clearTimeout(observeTimer);
+			if (frame) window.cancelAnimationFrame(frame);
+			observer?.disconnect();
+			window.removeEventListener('resize', schedule);
+			window.removeEventListener('scroll', schedule, true);
+			window.visualViewport?.removeEventListener('resize', schedule);
+			window.visualViewport?.removeEventListener('scroll', schedule);
 		};
-	}, [open, update]);
+	}, [anchorRef, contentRef, open, update]);
 
 	return position;
 }

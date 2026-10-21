@@ -1,49 +1,33 @@
-# Modelos recomendados por fase
+# Seleção de modelos por tarefa
 
-Use o **GPT-5.6 Terra com reasoning `medium`** como padrão. Ele oferece o
-melhor equilíbrio entre qualidade, velocidade e consumo. Reserve o
-**GPT-5.6 Sol** para decisões complexas, problemas difíceis e validações
-críticas.
+O modelo padrão **não é fixo por nome ou versão**. Escolha, entre os modelos disponíveis na assinatura/ferramenta, a menor capacidade que conclui a tarefa com qualidade e validação suficiente. Compare **custo efetivo por tarefa concluída** (tokens de entrada e saída, preço ou franquia, latência e retrabalho), não apenas preço por token.
 
-| Fase                                                  | Modelo | Reasoning         |
-| ----------------------------------------------------- | ------ | ----------------- |
-| Explorar e criar proposta                             | Terra  | `medium`          |
-| Atualizar proposta ou executar tarefas mecânicas      | Terra  | `low` ou `medium` |
-| Implementar e testar                                  | Terra  | `medium`          |
-| Arquitetura complexa ou investigação de bugs difíceis | Sol    | `high`            |
-| Revisão final de mudanças críticas                    | Sol    | `high`            |
-| Sincronizar specs e arquivar                          | Terra  | `low`             |
+| Classe | Exemplos | Escolha inicial | Escalonamento |
+| --- | --- | --- | --- |
+| Mecânica | Formatação, docs, tasks e ajustes pontuais | Modelo rápido/econômico; reasoning baixo | Falha repetida ou ambiguidade |
+| Padrão | Componentes, testes, bugs reproduzíveis | Modelo equilibrado; reasoning médio | Integração complexa, falhas persistentes |
+| Crítica | APIs públicas, acessibilidade complexa, arquitetura e segurança | Modelo de maior capacidade; reasoning alto | Revisão independente e evidências adicionais |
 
-## Proposal, spec e tasks
+## Por fase OpenSpec
 
-| Artefato ou etapa       | Modelo        | Reasoning | Uso recomendado                                         |
-| ----------------------- | ------------- | --------- | ------------------------------------------------------- |
-| Proposal                | GPT-5.6 Terra | `medium`  | Definir objetivo, escopo e impactos                     |
-| Spec                    | GPT-5.6 Sol   | `high`    | Garantir precisão, consistência e cobertura de cenários |
-| Criação das tasks       | GPT-5.6 Terra | `medium`  | Dividir a spec em etapas claras e executáveis           |
-| Implementação das tasks | GPT-5.6 Terra | `medium`  | Implementar tarefas que já estão bem detalhadas         |
+- **Proposal e tasks:** opção econômica quando escopo e critérios são claros.
+- **Specs e design:** opção equilibrada; escalar em mudanças transversais ou contratos críticos.
+- **Implementação:** usar o menor modelo que passa os testes focais; elevar após duas tentativas sem progresso ou identificação de risco.
+- **Revisão crítica:** usar um modelo mais capaz ou revisão independente, com o diff e critérios de aceite, sem reler todo o repositório.
+- **Sincronização e arquivamento:** opção econômica e validação automatizada.
 
-Para economizar, uma spec simples também pode começar com Terra
-`medium`. Use Sol `high` quando houver decisões arquiteturais, requisitos
-ambíguos, riscos relevantes ou muitos cenários de borda.
+## Política de contexto
 
-## Regra prática
+1. Ler AGENTS.md e docs/agent-context-map.md; identificar pacotes e arquivos afetados.
+2. Abrir documentação e specs **somente** dos contratos tocados; preferir diffs e trechos relevantes a arquivos inteiros.
+3. Reutilizar resultados de testes e logs curtos; ampliar logs apenas para diagnóstico.
+4. Após duas tentativas sem progresso, parar, registrar hipótese e ampliar contexto/modelo; não repetir o mesmo prompt.
+5. Não reduzir testes ou requisitos obrigatórios para economizar tokens.
 
-Realize 80–90% do trabalho com Terra. Comece em `medium`, reduza para
-`low` em tarefas simples e use Sol com `high` apenas quando o ganho de
-qualidade justificar mais tempo e tokens. Evite `xhigh` e `max` no fluxo
-normal.
+## Cursor Teams, Codex e Claude Code
 
-## Quando aumentar o reasoning
+Considere franquias e limites da assinatura, não só o custo nominal da API. Direcione tarefas mecânicas à opção de menor consumo de franquia, implementação padrão à ferramenta com melhor taxa de sucesso e revisão crítica à ferramenta/modelo de maior capacidade. Não assuma que nomes, preços, limites ou modelos disponíveis permanecem constantes; revise a matriz periodicamente.
 
-Considere aumentar o nível quando a tarefa envolver:
+## Benchmark
 
-- decisões arquiteturais com impacto em vários pacotes;
-- investigação de falhas difíceis de reproduzir;
-- compatibilidade entre Server e Client Components;
-- acessibilidade de componentes interativos complexos;
-- revisão de segurança ou mudanças incompatíveis de API;
-- diagnóstico de divergências de hidratação ou empacotamento.
-
-Para alterações documentais, atualizações de checklists e tarefas
-mecânicas, `low` ou `medium` normalmente é suficiente.
+Para cada ferramenta, executar o mesmo conjunto de tarefas pequenas, médias e críticas em condições equivalentes. Registrar: versão do modelo, reasoning, contexto inicial (tokens), tokens totais de entrada/saída quando disponíveis, duração, número de tentativas, testes aprovados, retrabalho e custo/fração de franquia. Comparar mediana e taxa de sucesso antes/depois. Se o provedor não expuser tokens, registrar **não disponível**, sem estimar como medição real.

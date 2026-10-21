@@ -45,7 +45,7 @@ testes nos três navegadores, incluindo os snapshots.
 - Licenças e origem das skills preservadas; versões de dependências continuam nos manifests e lockfile.
 - Referências externas restantes pertencem ao histórico, à proveniência ou à documentação técnica.
 - Seção `Em andamento`, versões e entradas anteriores do changelog preservadas.
-- Change mantida ativa; arquivamento e merge aguardam a revisão do responsável.
+- Change mantida ativa durante a revisão; arquivamento e squash merge autorizados pelo responsável após a aprovação.
 
 ## Atualização de base
 
@@ -83,3 +83,15 @@ Antes da limpeza, `docs/licensing.md` no commit
 Este registro preserva a declaração existente antes da limpeza; não representa
 uma nova auditoria de proveniência. A documentação atual orienta o desenvolvimento
 pela identidade própria do projeto.
+
+## Arquivamento
+
+Após a revisão e a autorização do responsável, a change foi arquivada em
+`2026-10-21-cleanup-project-docs-and-design-guidance`, com 22 de 22 tarefas concluídas.
+O CLI confirmou `skip_specs: true` e ausência de delta specs; não havia requisitos
+a sincronizar, e as specs principais permaneceram inalteradas.
+
+A [CI anterior ao arquivamento](https://github.com/dvmarques/admin-design-system/actions/runs/39635884903)
+aprovou os seis checks aplicáveis no commit `81f841ff9abcab12210f72ff7bc08e3d52fe4420`.
+A movimentação para o arquivo e este registro são publicados na mesma PR #124;
+a CI do novo head é conferida antes do squash merge para `develop`.

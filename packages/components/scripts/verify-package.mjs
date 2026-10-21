@@ -24,4 +24,9 @@ for (const name of serverModules) {
 	const source = await readFile(new URL(`../dist/${name}.js`, import.meta.url), 'utf8');
 	if (/^['"]use client['"]/.test(source))
 		throw new Error(`Server module ${name} must not declare the client directive`);
+	// Client-only React APIs would fail when a Server Component imports the module (react-server condition).
+	const clientApi = source.match(
+		/\b(createContext|useContext|useState|useReducer|useEffect|useLayoutEffect|useRef|useId|useMemo|useCallback)\b/,
+	);
+	if (clientApi) throw new Error(`Server module ${name} uses the client-only API ${clientApi[1]}`);
 }

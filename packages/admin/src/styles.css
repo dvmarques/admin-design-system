@@ -255,6 +255,12 @@
 		height: var(--ads-skeleton-height-text);
 	}
 
+	.ads-metric-card-skeleton-sparkline {
+		display: block;
+		width: 100%;
+		height: 2rem;
+	}
+
 	.ads-dashboard-panel-skeleton {
 		display: block;
 		width: 100%;

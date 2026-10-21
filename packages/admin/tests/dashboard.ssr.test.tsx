@@ -15,7 +15,15 @@ function Dashboard() {
 				trend="up"
 				value="R$ 48.200"
 			/>
-			<AdsMetricCard loading title="Clientes" />
+			<AdsMetricCard
+				change="-8%"
+				sentiment="positive"
+				sparkline={{ label: 'Cancelamentos', values: [9, null, 7] }}
+				title="Cancelamentos"
+				trend="down"
+				value="38"
+			/>
+			<AdsMetricCard loading sparkline={{ values: [1, 2] }} title="Clientes" />
 			<AdsMetricCard empty="Sem dados no período." title="Pedidos" />
 			<AdsDashboardPanel description="Últimos 7 dias" span={2} title="Vendas">
 				<p>Conteúdo</p>
@@ -34,6 +42,9 @@ describe('dashboard patterns SSR and hydration', () => {
 		expect(html).toContain('ads-dashboard-grid-items');
 		expect(html).toContain('aria-labelledby');
 		expect(html).toContain('Em alta');
+		expect(html).toContain('Em queda');
+		expect(html).toContain('data-tone="positive"');
+		expect(html).toContain('Cancelamentos: 2 pontos');
 		expect(html).toContain('Nada por aqui');
 		expect(html).toContain('Nenhum registro.');
 		expect(html).toContain('data-size="compact"');

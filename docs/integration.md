@@ -170,11 +170,41 @@ decide quando exibir cada estado.
   como item de flex em linha sem `flex: 1` (ou `width`), em `inline-block`, em
   `float` ou em elemento `absolute` sem largura. Em bloco comum ou como item de
   grid, ocupa a largura disponível.
-- `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos não
-  fazem parte desta entrega.
+- `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos
+  completos não fazem parte do pacote; só o `AdsSparkline` (abaixo).
 - `error` e `empty` são nós nos dois componentes e aceitam elementos de bloco,
   como uma lista. No painel, passe um `AdsEmptyState` em `empty`
   (`empty={<AdsEmptyState title="Sem pedidos" />}`); no card, um texto curto.
+
+### Sparkline
+
+`AdsSparkline` (`@admin-ds/components`) desenha a evolução de uma série em SVG, sem
+eixos, sem animação e sem dependência de runtime. Funciona em Server Components.
+
+```tsx
+<AdsSparkline label="Receita diária" values={[10, 8, 12, 15, null, 18]} />
+
+<AdsMetricCard
+	title="Cancelamentos"
+	value="38"
+	change="-8%"
+	trend="down"
+	sentiment="positive"
+	sparkline={{ label: 'Cancelamentos, últimos 12 meses', values: serie }}
+/>
+```
+
+- `values` aceita `null`, `undefined` e `NaN`: são ignorados e a linha liga os pontos
+  válidos, mantendo o espaçamento pelo índice. Sem pontos válidos, nada é renderizado
+  (no card, o sparkline é omitido). Um ponto vira um marcador; série constante, uma
+  linha reta. `min` e `max` fixam a escala.
+- O nome acessível (`role="img"`) é gerado: quantidade de pontos, primeiro e último
+  valor, mínimo e máximo, formatados em pt-BR. Ajuste com `label`, `labels` (rótulo
+  por ponto), `formatValue` ou substitua tudo com `summary`.
+- `tone` (`default`, `positive`, `negative`) usa `--ads-color-chart1`, `-success` e
+  `-danger`; no card, o tom vem do `sentiment`. A cor nunca é a única informação, e em
+  `forced-colors` o traço usa `CanvasText`.
+- A largura é a do contêiner e a altura padrão é `2rem` (`className` sobrescreve).
 
 ## Aplicação de referência (`admin-demo`)
 

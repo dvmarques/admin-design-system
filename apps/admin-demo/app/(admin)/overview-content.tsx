@@ -39,6 +39,11 @@ export function OverviewContent({ indicators, progress, activity }: OverviewCont
 								description={indicator.note}
 								key={indicator.id}
 								role="group"
+								{...(indicator.sentiment ? { sentiment: indicator.sentiment } : {})}
+								sparkline={{
+									label: `Evolução de ${indicator.label}, últimos 12 meses`,
+									values: indicator.series,
+								}}
 								title={indicator.label}
 								trend={indicator.trend}
 								value={indicator.value}

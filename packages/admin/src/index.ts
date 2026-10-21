@@ -18,6 +18,7 @@ export type {
 	AdsDashboardPanelSpan,
 	AdsMetricCardProps,
 	AdsMetricSentiment,
+	AdsMetricSparklineProps,
 	AdsMetricTrend,
 } from './dashboard.js';
 export { AdsFilterBar } from './filter-bar.js';

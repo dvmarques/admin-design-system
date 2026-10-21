@@ -141,8 +141,19 @@ test.describe('visão geral', () => {
 		for (const name of ['Indicadores', 'Progresso', 'Atividade recente']) {
 			await expect(page.getByRole('heading', { level: 2, name })).toBeVisible();
 		}
-		for (const name of ['Clientes ativos', 'Pedidos no mês', 'Receita recorrente']) {
-			await expect(page.getByRole('group', { name })).toBeVisible();
+		for (const name of [
+			'Clientes ativos',
+			'Pedidos no mês',
+			'Receita recorrente',
+			'Cancelamentos',
+		]) {
+			const card = page.getByRole('group', { name });
+			await expect(card).toBeVisible();
+			await expect(
+				card.getByRole('img', {
+					name: new RegExp(`Evolução de ${name}, últimos 12 meses: 12 pontos`),
+				}),
+			).toBeVisible();
 		}
 		await expect(page.getByRole('progressbar', { name: 'Importação de clientes' })).toHaveAttribute(
 			'aria-valuenow',

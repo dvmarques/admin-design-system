@@ -1,11 +1,8 @@
 # Limitações conhecidas
 
-Esta change entrega a fundação do design system, não um catálogo completo de
-componentes administrativos.
+Os limites abaixo descrevem o suporte atual dos pacotes, da demonstração e
+das validações automatizadas.
 
-- `packages/components` contém atualmente fixtures de estilo e o controle de
-  tema; componentes como Button, Table, Modal e Sidebar ainda serão changes
-  independentes.
 - `packages/admin` contém o `AdsAdminShell` e seus estilos próprios, e os padrões de
   dashboard (`AdsMetricCard`, `AdsDashboardGrid`, `AdsDashboardPanel`), mas não
   contém gráficos nem regras de negócio.

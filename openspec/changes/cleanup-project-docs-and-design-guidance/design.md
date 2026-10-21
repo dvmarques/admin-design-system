@@ -114,11 +114,12 @@ Não criar specs artificiais para texto editorial ou instruções operacionais.
 - Não criar testes que apenas espelhem frases de documentação. Não atualizar
   snapshots para acomodar esta limpeza.
 
-## Planning Environment
+## Revisão e integração
 
-Os artefatos foram preparados pela API do GitHub porque o ambiente de execução
-estava indisponível. A árvore do repositório confirmou a raiz OpenSpec,
-`schema: spec-driven` e ausência de changes ativas no commit consultado.
-O CLI OpenSpec, o Prettier e os testes não puderam ser executados nesta etapa.
-Essa limitação não representa validação concluída; os checks ficam pendentes
-antes de marcar a proposta pronta para integração.
+A implementação fica em branch própria, com PR para `develop` e validação da CI.
+A change permanece ativa até a revisão do responsável. Arquivamento e merge
+são etapas posteriores a essa revisão.
+
+As referências externas preservadas pertencem ao histórico das changes, à origem
+das skills em `skills-lock.json`, às licenças e à documentação técnica necessária
+para usar as dependências. Nenhuma delas orienta a adoção de outra identidade.

@@ -6,11 +6,10 @@ Este documento descreve o fluxo operacional de release do Admin Design System. A
 
 - `develop` é a branch de integração e default branch.
 - `master` é a linha estável de releases.
-- Releases usam somente SemVer estável `X.Y.Z` neste primeiro fluxo.
+- Releases usam somente SemVer estável `X.Y.Z`.
 - Branches de release usam `release/X.Y.Z` e tags usam `vX.Y.Z`.
 - A versão do produto é coordenada entre raiz, `packages/*`, `apps/*`, dependências internas e lockfile.
 - O projeto fixa npm `11.19.1` em `packageManager`; use essa versão na preparação.
-- A primeira release prevista no estado atual é `0.0.1`.
 
 ## CI de Pull Requests draft
 

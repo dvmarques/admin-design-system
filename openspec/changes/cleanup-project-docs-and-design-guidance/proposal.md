@@ -41,7 +41,7 @@ das specs principais.
 
 - Documentação: `README.md`, `docs/architecture.md`, `docs/limitations.md`,
   `docs/licensing.md` e passagens de planejamento desatualizadas em outros
-  documentos atuais, especialmente `docs/visual-identity.md`.
+  documentos atuais, especialmente `docs/visual-identity.md` e `apps/docs/README.md`.
 - Orientações: `openspec/config.yaml`, `AGENTS.md` e as skills próprias
   `design-taste-frontend`, `high-end-visual-design` e
   `redesign-existing-projects` em `.agents/skills`, com cópias sincronizadas

@@ -84,6 +84,35 @@ describe('anchored overlays', () => {
 		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
 	});
 
+	it('collapses extra spaces and duplicate ids in the consumer aria-describedby', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton aria-describedby="  ajuda   erro ajuda ">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda erro ${tooltip.id}`);
+	});
+
+	it('composes aria-describedby on a native button trigger', async () => {
+		render(
+			<AdsTooltip content="Ajuda nativa">
+				<button aria-describedby="ajuda" type="button">
+					Nativo
+				</button>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Nativo' });
+		fireEvent.pointerEnter(trigger);
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.pointerLeave(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
 	it('ignores empty or blank consumer aria-describedby values', async () => {
 		render(
 			<AdsTooltip content="Ajuda">

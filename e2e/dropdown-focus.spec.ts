@@ -18,14 +18,20 @@ for (const theme of ['light', 'dark'] as const) {
 			const first = page.getByRole('menuitem', { name: 'Exportar', exact: true });
 			const last = page.getByRole('menuitem', { name: 'Duplicar', exact: true });
 			const disabled = page.getByRole('menuitem', { name: 'Arquivar', exact: true });
+			await trigger.evaluate((element) =>
+				element.scrollIntoView({ behavior: 'instant', block: 'center' }),
+			);
 			await trigger.focus();
 			// Use native Tab to establish keyboard modality before opening.
 			await page.keyboard.press('Tab');
 			await page.keyboard.press('Shift+Tab');
 			await expect(trigger).toBeFocused();
 			for (const key of ['ArrowDown', 'Enter', 'Space']) {
+				const scrollBefore = await page.evaluate(() => ({ x: scrollX, y: scrollY }));
+				expect(scrollBefore.y).toBeGreaterThan(0);
 				await page.keyboard.press(key);
 				await expect(first).toBeFocused();
+				expect(await page.evaluate(() => ({ x: scrollX, y: scrollY }))).toEqual(scrollBefore);
 				await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 				await expect(menu).toHaveAttribute('id', (await trigger.getAttribute('aria-controls'))!);
 				await expect(disabled).toHaveAttribute('aria-disabled', 'true');
@@ -58,7 +64,9 @@ for (const theme of ['light', 'dark'] as const) {
 			}
 			await trigger.click();
 			await expect(menu).toBeVisible();
-			await expect(trigger).toBeFocused();
+			expect(await menu.evaluate((element) => element.contains(document.activeElement))).toBe(
+				false,
+			);
 			await page.keyboard.press('Escape');
 			await page.keyboard.press('ArrowDown');
 			await page.keyboard.press('ArrowDown');

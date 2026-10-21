@@ -66,7 +66,13 @@ function AdsDropdownRoot({
 }
 
 export type AdsDropdownTriggerProps = ButtonHTMLAttributes<HTMLButtonElement>;
-function AdsDropdownTrigger({ children, className, onKeyDown, ...props }: AdsDropdownTriggerProps) {
+function AdsDropdownTrigger({
+	children,
+	className,
+	onKeyDown,
+	onBlur,
+	...props
+}: AdsDropdownTriggerProps) {
 	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
 	return (
 		<AdsButton
@@ -74,6 +80,10 @@ function AdsDropdownTrigger({ children, className, onKeyDown, ...props }: AdsDro
 			aria-controls={open ? menuId : undefined}
 			aria-expanded={open}
 			className={classNames('ads-dropdown-trigger', className)}
+			onBlur={(event) => {
+				initialFocusRef.current = false;
+				onBlur?.(event);
+			}}
 			onClick={() => {
 				initialFocusRef.current = false;
 				setOpen(!open);
@@ -116,9 +126,12 @@ function AdsDropdownContent({
 			if (!node || !initialFocusRef.current) return;
 			// The portal mounts its children after the open render. Focus at attachment.
 			initialFocusRef.current = false;
-			node.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')?.focus();
+			if (node.ownerDocument.activeElement !== triggerRef.current) return;
+			node
+				.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')
+				?.focus({ preventScroll: true });
 		},
-		[initialFocusRef],
+		[initialFocusRef, triggerRef],
 	);
 	useEscapeKey(open, () => {
 		setOpen(false);

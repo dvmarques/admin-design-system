@@ -2,7 +2,7 @@
 
 ### Requirement: Dropdown composto e controlável
 
-O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, com estado aberto controlado ou não controlado. O gatilho MUST expor estado expandido e a relação com o menu; itens MUST aceitar ações ou links fornecidos pelo consumidor e preservar seus atributos nativos. A API MUST ser independente de roteamento e aceitar personalização segura por `className` e tokens públicos. A abertura pelo teclado MUST focar o primeiro item habilitado assim que o conteúdo estiver disponível, inclusive após montagem tardia e em reaberturas. A abertura por mouse MUST preservar o foco no gatilho.
+O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, com estado aberto controlado ou não controlado. O gatilho MUST expor estado expandido e a relação com o menu; itens MUST aceitar ações ou links fornecidos pelo consumidor e preservar seus atributos nativos. A API MUST ser independente de roteamento e aceitar personalização segura por `className` e tokens públicos. A abertura pelo teclado MUST focar o primeiro item habilitado assim que o conteúdo estiver disponível, inclusive após montagem tardia e em reaberturas. A abertura por mouse MUST preservar o comportamento nativo de foco do navegador sem movê-lo para um item do menu.
 
 #### Scenario: Abertura por gatilho
 
@@ -23,3 +23,13 @@ O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, c
 
 - **WHEN** o usuário abre pelo teclado um menu vazio ou com todos os itens desabilitados
 - **THEN** nenhum item recebe foco, nenhuma ação é executada e Escape permite fechar
+
+#### Scenario: Solicitação abandonada de abertura
+
+- **WHEN** o consumidor recusa ou adia a abertura por teclado e o usuário sai do gatilho antes de uma abertura posterior
+- **THEN** a abertura posterior não captura o foco, mesmo que o usuário retorne ao gatilho antes dela
+
+#### Scenario: Abertura sem deslocar a página
+
+- **WHEN** o gatilho está visível numa página rolada e o usuário abre o menu pelo teclado
+- **THEN** o primeiro item habilitado recebe foco sem deslocar a rolagem da página durante a abertura

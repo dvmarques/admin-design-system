@@ -58,6 +58,7 @@ describe('dropdown keyboard focus', () => {
 	it('navigates enabled items with arrows and Home/End and selects an action', async () => {
 		const select = vi.fn();
 		render(<Fixture onSelect={select} />);
+		screen.getByRole('button', { name: 'Mais' }).focus();
 		fireEvent.keyDown(screen.getByRole('button', { name: 'Mais' }), { key: 'ArrowDown' });
 		const first = await screen.findByRole('menuitem', { name: 'Editar 0' });
 		const last = screen.getByRole('menuitem', { name: 'Duplicar' });
@@ -144,6 +145,46 @@ describe('dropdown keyboard focus', () => {
 		},
 	);
 
+	it.each([false, true])(
+		'does not reuse an abandoned controlled focus request (returnToTrigger=%s)',
+		async (returnToTrigger) => {
+			const blur = vi.fn();
+			const content = (
+				<>
+					<AdsDropdown.Trigger onBlur={blur}>Mais</AdsDropdown.Trigger>
+					<AdsDropdown.Content>
+						<AdsDropdown.Item>Editar</AdsDropdown.Item>
+					</AdsDropdown.Content>
+				</>
+			);
+			const { rerender } = render(
+				<>
+					<AdsDropdown open={false} onOpenChange={() => {}}>
+						{content}
+					</AdsDropdown>
+					<button>Outro controle</button>
+				</>,
+			);
+			const trigger = screen.getByRole('button', { name: 'Mais' });
+			const outside = screen.getByRole('button', { name: 'Outro controle' });
+			trigger.focus();
+			fireEvent.keyDown(trigger, { key: 'Enter' });
+			expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+			outside.focus();
+			expect(blur).toHaveBeenCalledOnce();
+			if (returnToTrigger) trigger.focus();
+			rerender(
+				<>
+					<AdsDropdown open onOpenChange={() => {}}>
+						{content}
+					</AdsDropdown>
+					<button>Outro controle</button>
+				</>,
+			);
+			await screen.findByRole('menu');
+			expect(returnToTrigger ? trigger : outside).toHaveFocus();
+		},
+	);
 	it('respects a prevented trigger key', () => {
 		render(
 			<AdsDropdown>

@@ -29,3 +29,10 @@ O tooltip depende do ciclo de efeitos para registrar a camada; como ele monta no
 ## Validation
 
 Vitest: tooltip aberto por foco e por apontamento fechando com Escape, foco preservado, `aria-describedby` removido e restaurado na reabertura, reabertura apenas por novo gatilho, tooltip dentro de `AdsDialog` com dois Escapes, tooltip com `AdsPopover` aberto, drawer nos dois posicionamentos e painel de colunas dentro de diálogo e drawer. Axe com o tooltip aberto. Playwright com foco real no admin-demo público. Stories de Escape e de tooltip dentro de diálogo. Verificar temas claro e escuro e `prefers-reduced-motion` (sem transição no tooltip). Executar build, typecheck, lint, testes concisos, E2E, format e `openspec validate --all --strict`.
+
+## Limitações conhecidas e trabalhos futuros
+
+- `AdsTooltip` substitui um `aria-describedby` que o gatilho já tenha enquanto está aberto (comportamento anterior a esta change). A composição dos ids fica para uma melhoria futura.
+- O painel de colunas do `AdsSmartTable` mantém o mecanismo local de Escape, fora da pilha de camadas; a decisão sobre uma API pública mínima e a unificação ficam na #133.
+- O restante da página não fica inerte sob diálogos e drawers; o foco é preso por listener de Tab.
+- Os snapshots visuais do E2E não rodam de forma confiável fora da plataforma da CI; as baselines não foram alteradas.

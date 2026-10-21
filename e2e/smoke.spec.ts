@@ -47,3 +47,18 @@ test('o logo do cabeçalho carrega', async ({ page }) => {
 		.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
 		.toBeGreaterThan(0);
 });
+
+test('em tela estreita o título do cabeçalho segue acessível e o cabeçalho não cresce', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	await expect(page.locator('.demo-brand-heading img')).toBeVisible();
+	await expect(page.locator('.demo-brand-heading strong')).toHaveText('Admin Design System');
+	const height = await page
+		.locator('header')
+		.first()
+		.evaluate((header) => header.getBoundingClientRect().height);
+	expect(height).toBeLessThanOrEqual(64);
+});

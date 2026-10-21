@@ -15,3 +15,8 @@ O admin-demo MUST exibir o logotipo do projeto no cabeçalho do shell, ao lado d
 
 - **WHEN** a pessoa alterna entre os temas claro e escuro
 - **THEN** o logotipo permanece visível e legível no cabeçalho
+
+#### Scenario: Pessoa abre o demo em tela estreita
+
+- **WHEN** uma pessoa abre o demo em uma tela de até 480 pixels de largura
+- **THEN** o logotipo substitui o título visível, o cabeçalho não ganha altura e o nome "Admin Design System" continua disponível para tecnologias assistivas

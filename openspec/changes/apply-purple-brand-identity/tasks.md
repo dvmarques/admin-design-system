@@ -9,6 +9,7 @@
 ## 2. Aplicação da marca
 
 - [x] 2.1 Exibir o logotipo no cabeçalho do admin demo (decorativo, `alt=""`) e usar o favicon da marca em `apps/admin-demo/app/icon.svg`.
+- [x] 2.1b Em telas de até 30rem, ocultar visualmente o título do cabeçalho do demo, mantendo-o acessível; verificar que o cabeçalho não passa de 64px em 390px (`e2e/smoke.spec.ts`).
 - [x] 2.2 Usar o favicon da marca no manager e no iframe do Storybook, com `href` relativo ao documento.
 - [x] 2.3 Exibir o lockup no README, com variante para o tema escuro.
 - [x] 2.4 Documentar os arquivos do logotipo em `docs/visual-identity.md`.

@@ -45,6 +45,12 @@ do `images.path`, que não altera `src` com `unoptimized`.
 resolve sob `/storybook/` no Pages e na raiz no Storybook local, tanto no manager
 quanto em `iframe.html`.
 
+**Título oculto visualmente em tela estreita.** Em 390px o logotipo fazia o título
+quebrar em três linhas e o cabeçalho crescer de 64 para 76px. Até 30rem o logotipo
+substitui o título visível, que permanece no DOM, visualmente oculto, para
+tecnologias assistivas. Alternativas descartadas: reduzir o logotipo (ganha pouco
+espaço) e aceitar a quebra em três linhas.
+
 ## Limites entre pacotes e Server/Client Components
 
 Nenhum pacote publicado muda. O cabeçalho do demo continua sendo Server Component;

@@ -1,5 +1,9 @@
 # Admin Design System
 
+![Admin Design System — marca roxa](assets/brand/admin-ds-logo.svg)
+
+> Identidade visual oficial: símbolo A minimalista com recorte lilás sobre roxo profundo. O arquivo SVG é a fonte da marca utilizada no demo e na documentação.
+
 Design system React reutilizável para a construção de aplicações
 administrativas com Next.js App Router, com arquitetura, identidade visual
 e implementação próprias.

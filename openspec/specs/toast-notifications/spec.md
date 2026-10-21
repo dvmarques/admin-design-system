@@ -50,3 +50,12 @@ AdsToast MUST usar superfície e camada semânticas e MUST adaptar espaçamento 
 
 - **WHEN** uma notificação possui mensagem e ação de descarte em largura reduzida
 - **THEN** a mensagem quebra sem sobrepor o descarte e ambos permanecem visualmente distinguíveis
+
+### Requirement: Toast permanece disponível com um modal aberto
+
+Um toast MUST NOT ficar inerte nem sair da árvore de acessibilidade por causa de um modal aberto, para que o anúncio e o controle de fechar continuem disponíveis.
+
+#### Scenario: Toast exibido com um diálogo aberto
+
+- **WHEN** um toast está visível enquanto um diálogo está aberto
+- **THEN** o toast continua anunciado a tecnologias assistivas e o seu controle de fechar continua operável

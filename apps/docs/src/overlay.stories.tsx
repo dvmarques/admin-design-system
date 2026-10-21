@@ -107,6 +107,19 @@ export const Tooltip: Story = {
 	),
 };
 
+export const TooltipWithDescribedTrigger: Story = {
+	render: () => (
+		<>
+			<p id="tooltip-ajuda-campo">Use o e-mail corporativo.</p>
+			<AdsTooltip content="Mais informações">
+				<AdsButton aria-describedby="tooltip-ajuda-campo" variant="ghost">
+					Foque ou passe o mouse
+				</AdsButton>
+			</AdsTooltip>
+		</>
+	),
+};
+
 export const TooltipInDialog: Story = {
 	parameters: {
 		docs: {

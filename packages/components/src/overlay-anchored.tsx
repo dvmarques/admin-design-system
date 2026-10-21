@@ -54,7 +54,14 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 	const position = useAnchoredPosition(open, anchorRef, contentRef, placement);
 	// Dispensa o tooltip sem mover o foco: o gatilho só o reabre com um novo foco ou apontamento.
 	useEscapeKey(open, () => setOpen(false));
-	const trigger = cloneElement(children, (open ? { 'aria-describedby': tooltipId } : {}) as never);
+	const consumerIds = (children.props as { 'aria-describedby'?: string })['aria-describedby']
+		?.split(/\s+/)
+		.filter(Boolean);
+	const describedBy = [...new Set([...(consumerIds ?? []), tooltipId])].join(' ');
+	const trigger = cloneElement(
+		children,
+		(open ? { 'aria-describedby': describedBy } : {}) as never,
+	);
 
 	return (
 		<span

@@ -137,6 +137,109 @@ describe('anchored overlays', () => {
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 	});
 
+	it('keeps the trigger aria-describedby when the tooltip opens on focus', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton aria-describedby="ajuda">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.blur(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
+	it('restores the consumer aria-describedby when Escape dismisses the tooltip', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton aria-describedby="ajuda">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+		expect(document.activeElement).toBe(trigger);
+	});
+
+	it('collapses extra spaces and duplicate ids in the consumer aria-describedby', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton aria-describedby="  ajuda   erro ajuda ">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda erro ${tooltip.id}`);
+	});
+
+	it('composes aria-describedby on a native button trigger', async () => {
+		render(
+			<AdsTooltip content="Ajuda nativa">
+				<button aria-describedby="ajuda" type="button">
+					Nativo
+				</button>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Nativo' });
+		fireEvent.pointerEnter(trigger);
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.pointerLeave(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
+	it('ignores empty or blank consumer aria-describedby values', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton aria-describedby="  ">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+	});
+
+	it('keeps the trigger aria-describedby when the tooltip opens on hover', async () => {
+		render(
+			<AdsTooltip content="Ajuda por hover">
+				<AdsButton aria-describedby="ajuda erro">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		fireEvent.pointerEnter(trigger);
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda erro ${tooltip.id}`);
+		fireEvent.pointerLeave(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda erro');
+	});
+
+	it('removes aria-describedby on close when the trigger had none', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton>Sem ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Sem ajuda' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+		fireEvent.blur(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).not.toHaveAttribute('aria-describedby');
+	});
+
 	it('dismisses a focus-opened tooltip with Escape without moving focus', async () => {
 		render(
 			<AdsTooltip content="Ajuda contextual">

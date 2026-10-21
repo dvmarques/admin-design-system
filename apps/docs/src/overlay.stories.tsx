@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
 	AdsButton,
@@ -108,16 +108,19 @@ export const Tooltip: Story = {
 };
 
 export const TooltipWithDescribedTrigger: Story = {
-	render: () => (
-		<>
-			<p id="tooltip-ajuda-campo">Use o e-mail corporativo.</p>
-			<AdsTooltip content="Mais informações">
-				<AdsButton aria-describedby="tooltip-ajuda-campo" variant="ghost">
-					Foque ou passe o mouse
-				</AdsButton>
-			</AdsTooltip>
-		</>
-	),
+	render: () => {
+		const helpId = useId();
+		return (
+			<>
+				<p id={helpId}>Use o e-mail corporativo.</p>
+				<AdsTooltip content="Mais informações">
+					<AdsButton aria-describedby={helpId} variant="ghost">
+						Foque ou passe o mouse
+					</AdsButton>
+				</AdsTooltip>
+			</>
+		);
+	},
 };
 
 export const TooltipInDialog: Story = {

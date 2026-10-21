@@ -50,7 +50,7 @@ function OverlayPanel({
 	}, [open]);
 
 	useOverlayFocus(open, panelRef, restoreFocusRef);
-	useEscapeKey(open && closeOnEscape, () => onOpenChange(false));
+	useEscapeKey(open, () => onOpenChange(false), closeOnEscape);
 
 	if (!open) return null;
 	const isDrawer = Boolean(placement);

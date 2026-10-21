@@ -10,6 +10,15 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-metric-sparkline` - Indicador de variação e sparkline do dashboard (issue #89). Novo
+  `AdsSparkline` em `@admin-ds/components`: gráfico de linha em SVG, sem dependência de
+  runtime, com `values` (valores não finitos são ignorados), `min`, `max`, `labels`, `tone`,
+  `label`, `summary` e `formatValue`, nome acessível gerado (`role="img"`), cores por token e
+  `forced-colors`, e compatível com Server Components. `AdsMetricCard` ganha a prop opcional
+  `sparkline`, colorida pelo `sentiment`, com placeholder no carregamento. O indicador de
+  variação não muda de API; ganha testes e story do `sentiment` invertido (queda de
+  cancelamentos é positiva). `success` e `danger` entram nos pares de contraste (3:1). A visão
+  geral da demo exibe séries e o indicador Cancelamentos. Sem mudança incompatível.
 - `add-visual-identity` - Etapa inicial da identidade visual (issue #118). No tema escuro,
   `--ads-color-surface-muted` (`#162033`) e `--ads-color-surface-hover` (`#3d4b60`) deixam de
   valer o mesmo que `--ads-color-surface-raised`, e um item em hover sobre uma superfície

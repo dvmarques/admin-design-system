@@ -48,6 +48,92 @@ describe('AdsMetricCard', () => {
 		expect(screen.getByRole('progressbar', { name: 'Meta mensal' })).toBeTruthy();
 	});
 
+	it('shows a down trend with positive sentiment: icon and text keep the real direction', () => {
+		const { container } = render(
+			<AdsMetricCard
+				change="-8%"
+				sentiment="positive"
+				title="Cancelamentos"
+				trend="down"
+				value="38"
+			/>,
+		);
+		const change = container.querySelector('.ads-metric-card-change') as HTMLElement;
+		expect(change.dataset.sentiment).toBe('positive');
+		expect(change.dataset.trend).toBe('down');
+		expect(change.textContent).toContain('Em queda');
+		expect(change.querySelector('svg path')?.getAttribute('d')).toBe('m5 9 7 7 7-7');
+	});
+
+	it('shows the sparkline below the change, colored by the sentiment', () => {
+		const { container, rerender } = render(
+			<AdsMetricCard
+				change="+12%"
+				sparkline={{ label: 'Receita diária', values: [1, 3, 2] }}
+				title="Receita"
+				trend="up"
+				value="R$ 1"
+			/>,
+		);
+		const image = screen.getByRole('img', { name: /Receita diária: 3 pontos/ });
+		expect(image.classList.contains('ads-metric-card-sparkline')).toBe(true);
+		expect(image.getAttribute('data-tone')).toBe('positive');
+		expect(container.querySelector('.ads-metric-card-change')?.nextElementSibling).toBe(image);
+
+		rerender(
+			<AdsMetricCard
+				change="+2%"
+				sentiment="negative"
+				sparkline={{ values: [1, 3, 2] }}
+				title="Receita"
+				trend="up"
+				value="R$ 1"
+			/>,
+		);
+		expect(screen.getByRole('img').getAttribute('data-tone')).toBe('negative');
+
+		rerender(<AdsMetricCard sparkline={{ values: [1, 3, 2] }} title="Receita" value="R$ 1" />);
+		expect(screen.getByRole('img').getAttribute('data-tone')).toBe('default');
+		rerender(
+			<AdsMetricCard
+				change="0%"
+				sparkline={{ values: [1, 3] }}
+				title="R"
+				trend="neutral"
+				value="1"
+			/>,
+		);
+		expect(screen.getByRole('img').getAttribute('data-tone')).toBe('default');
+	});
+
+	it('omits the sparkline without valid points and outside the normal state', () => {
+		const { container, rerender } = render(
+			<AdsMetricCard sparkline={{ values: [] }} title="Receita" value="R$ 1" />,
+		);
+		expect(screen.queryByRole('img')).toBeNull();
+		expect(screen.getByText('R$ 1')).toBeTruthy();
+
+		rerender(
+			<AdsMetricCard error="Falha" sparkline={{ values: [1, 2] }} title="Receita" value="R$ 1" />,
+		);
+		expect(screen.queryByRole('img')).toBeNull();
+		rerender(<AdsMetricCard empty="Sem dados" sparkline={{ values: [1, 2] }} title="Receita" />);
+		expect(screen.queryByRole('img')).toBeNull();
+
+		rerender(<AdsMetricCard loading sparkline={{ values: [1, 2] }} title="Receita" />);
+		expect(container.querySelector('.ads-metric-card-skeleton-sparkline')).toBeTruthy();
+		rerender(<AdsMetricCard loading title="Receita" />);
+		expect(container.querySelector('.ads-metric-card-skeleton-sparkline')).toBeNull();
+	});
+
+	it('keeps the markup unchanged without sparkline', () => {
+		const { container } = render(
+			<AdsMetricCard change="+1%" title="Receita" trend="up" value="R$ 1" />,
+		);
+		expect(container.querySelector('svg.ads-sparkline')).toBeNull();
+		expect(container.querySelectorAll('svg')).toHaveLength(1);
+	});
+
 	it('covers loading, error and empty states keeping the title', () => {
 		const { rerender } = render(<AdsMetricCard loading title="Receita" value="1" />);
 		expect(screen.getByRole('status', { name: 'Carregando métrica' })).toBeTruthy();
@@ -186,7 +272,15 @@ describe('AdsDashboardPanel', () => {
 		const { container } = render(
 			<AdsDashboardGrid>
 				<AdsMetricCard change="+12%" title="Receita" trend="up" value="R$ 1" />
-				<AdsMetricCard loading title="Clientes" />
+				<AdsMetricCard
+					change="-8%"
+					sentiment="positive"
+					sparkline={{ label: 'Cancelamentos por dia', values: [9, 8, 7] }}
+					title="Cancelamentos"
+					trend="down"
+					value="38"
+				/>
+				<AdsMetricCard loading sparkline={{ values: [1, 2] }} title="Clientes" />
 				<AdsDashboardPanel description="Últimos 7 dias" span={2} title="Vendas">
 					<p>Conteúdo</p>
 				</AdsDashboardPanel>

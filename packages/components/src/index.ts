@@ -10,6 +10,8 @@ export { AdsLoadingIndicator } from './loading-indicator.js';
 export type { AdsLoadingIndicatorProps, AdsLoadingIndicatorSize } from './loading-indicator.js';
 export { AdsSkeleton } from './skeleton.js';
 export type { AdsSkeletonProps } from './skeleton.js';
+export { AdsSparkline } from './sparkline.js';
+export type { AdsSparklineProps, AdsSparklineTone } from './sparkline.js';
 export { AdsTypography } from './typography.js';
 export type {
 	AdsTypographyElement,

@@ -116,7 +116,9 @@ transição segura entre breakpoints, compatibilidade com SSR, CSS próprio
 distribuído e integração no admin demo. A change `add-dashboard-patterns` adicionou
 `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel` em `@admin-ds/admin`,
 com tendência por ícone e texto, grid responsivo e estados de carregamento,
-vazio e erro por painel, sem gráficos.
+vazio e erro por painel. A change `add-metric-sparkline` adicionou o
+`AdsSparkline` em `@admin-ds/components` e a prop `sparkline` do `AdsMetricCard`,
+com alternativa textual e cor pelo `sentiment`.
 
 O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
 ativas e arquivadas com:

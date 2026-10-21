@@ -8,7 +8,8 @@ componentes administrativos.
   independentes.
 - `packages/admin` contém o `AdsAdminShell` e seus estilos próprios, e os padrões de
   dashboard (`AdsMetricCard`, `AdsDashboardGrid`, `AdsDashboardPanel`), mas não
-  contém gráficos nem regras de negócio.
+  contém gráficos completos (eixos, legendas, tooltips) nem regras de negócio. O
+  único gráfico é o `AdsSparkline`, de `@admin-ds/components`, sem interatividade.
 - A aplicação consumidora decide como persistir a preferência de tema e deve
   aplicá-la no servidor quando quiser evitar uma troca visual na hidratação.
 - Os snapshots visuais usam Chromium e devem ser atualizados conscientemente

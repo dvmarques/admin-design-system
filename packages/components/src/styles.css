@@ -90,6 +90,40 @@
 		height: var(--ads-skeleton-height-block);
 	}
 
+	/* Sparkline: a largura segue o contêiner; o traço não deforma com a escala do `viewBox`. */
+	.ads-sparkline {
+		display: block;
+		width: 100%;
+		height: 2rem;
+		overflow: visible;
+		color: var(--ads-color-chart1);
+	}
+
+	.ads-sparkline[data-tone='positive'] {
+		color: var(--ads-color-success);
+	}
+
+	.ads-sparkline[data-tone='negative'] {
+		color: var(--ads-color-danger);
+	}
+
+	.ads-sparkline-line,
+	.ads-sparkline-dot {
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.ads-sparkline-line {
+		stroke-width: 2;
+	}
+
+	.ads-sparkline-dot {
+		stroke-width: 6;
+	}
+
 	.ads-overlay-backdrop,
 	.ads-overlay-panel,
 	.ads-tooltip,
@@ -120,6 +154,11 @@
  * sistema. Fora de `@layer` para vencer as utilidades.
  */
 @media (forced-colors: active) {
+	.ads-sparkline,
+	.ads-sparkline[data-tone] {
+		color: CanvasText;
+	}
+
 	.ads-selection-control__input:checked + span,
 	.ads-switch input:checked + span {
 		forced-color-adjust: none;

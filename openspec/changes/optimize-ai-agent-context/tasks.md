@@ -14,10 +14,14 @@
 
 - [x] 3.1 Documentar benchmark reproduzível e critérios de regressão.
 - [x] 3.2 Revisar instruções cruzadas e ajustar inconsistências.
-- [ ] 3.3 Executar `openspec.cmd validate --all --strict`, `npm run check:agent-skills` e `npm run format` em checkout com dependências instaladas; registrar resultados.
-- [ ] 3.4 Executar `npm run test:e2e` antes do merge, conforme a política vigente do OpenSpec; registrar resultados.
+- [x] 3.3 Executar `openspec validate --all --strict`, `npm run check:agent-skills` e `npm run format` em checkout com dependências instaladas; registrar resultados.
+  - `openspec validate --all --strict` (CLI 1.14.3): 44 aprovados, 0 falhas.
+  - `npm run check:agent-skills`: sem divergências. `npm run format`: sem problemas. `npm run build`: concluído.
+- [x] 3.4 Executar `npm run test:e2e` antes do merge, conforme a política vigente do OpenSpec; registrar resultados.
+  - Chromium: 160 aprovados, 7 falhas, todas em snapshots visuais (`admin-demo-routes`, `admin-demo`, `data-display`). A change é apenas documental e não altera código nem estilos; a divergência de pixels vem do Chromium do ambiente de validação, distinto do usado nas baselines. Snapshots não foram atualizados. A CI (Linux, baselines oficiais) é a validação autoritativa.
+  - Firefox e WebKit não puderam ser executados neste ambiente (navegadores ausentes).
 
 ## Revisão
 
 - Contratos de API, acessibilidade, release e regras de artefatos foram mantidos; o bloco descritivo duplicado de contexto foi condensado.
-- Validações automáticas pendentes: a edição via GitHub não executa comandos no checkout remoto. Manter 3.3 e 3.4 abertas até evidência de execução em CI ou ambiente local.
+- Benchmark antes/depois com medições reais não foi executado; nenhuma redução percentual é declarada.

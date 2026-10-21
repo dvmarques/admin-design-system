@@ -132,7 +132,12 @@ export function AdsPopover({
 	return (
 		<span
 			className="ads-popover-anchor inline-flex"
-			onClick={() => onOpenChange(!open)}
+			onClick={(event) => {
+				// React events from the portalled panel also bubble through this anchor.
+				if (event.target instanceof Node && event.currentTarget.contains(event.target)) {
+					onOpenChange(!open);
+				}
+			}}
 			ref={anchorRef}
 		>
 			{trigger}

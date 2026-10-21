@@ -4,6 +4,8 @@ import {
 	AdsButton,
 	AdsDialog,
 	AdsDrawer,
+	AdsField,
+	AdsInput,
 	AdsPopover,
 	AdsToast,
 	AdsTooltip,
@@ -98,12 +100,29 @@ export const Tooltip: Story = {
 };
 
 export const Popover: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'O gatilho alterna a abertura. Interagir com campos e botões no conteúdo mantém o painel aberto; o consumidor pode fechá-lo explicitamente. Escape e clique externo solicitam fechamento. Não é necessário interromper a propagação dos cliques.',
+			},
+		},
+	},
 	render: () => {
 		const [open, setOpen] = useState(false);
+		const [name, setName] = useState('');
 		return (
 			<AdsPopover
 				aria-label="Ações do registro"
-				content={<AdsButton onClick={() => setOpen(false)}>Editar registro</AdsButton>}
+				content={
+					<div style={{ display: 'grid', gap: '0.75rem' }}>
+						<AdsField label="Nome do registro">
+							<AdsInput onChange={(event) => setName(event.target.value)} value={name} />
+						</AdsField>
+						<AdsButton onClick={() => setName('')}>Limpar nome</AdsButton>
+						<AdsButton onClick={() => setOpen(false)}>Editar registro</AdsButton>
+					</div>
+				}
 				onOpenChange={setOpen}
 				open={open}
 			>

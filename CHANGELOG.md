@@ -57,6 +57,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-popover-content-click` - Cliques em campos e botões no conteúdo de `AdsPopover`
+  mantêm o painel aberto, preservando handlers e propagação de eventos do consumidor.
+  Gatilho, Escape, clique externo e fechamento controlado mantêm seus comportamentos.
+  `AdsDatePicker` deixa de precisar interromper a propagação dos cliques do calendário.
+  Sem mudança de API pública, tokens ou estilos (issue #126).
 - `cleanup-project-docs-and-design-guidance` - Documentação atualizada para os recursos
   entregues, com remoção de referências externas como orientação de design e de textos
   obsoletos de roadmap e andamento. As skills de design passam a respeitar a Inter e os

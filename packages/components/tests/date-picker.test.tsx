@@ -12,6 +12,24 @@ async function openCalendar() {
 }
 
 describe('AdsDatePicker single date', () => {
+	it('keeps month navigation open and lets calendar clicks reach consumers', async () => {
+		const onClick = vi.fn();
+		render(
+			<div onClick={onClick}>
+				<AdsDatePicker defaultValue="2026-03-10" />
+			</div>,
+		);
+		await openCalendar();
+		onClick.mockClear();
+		fireEvent.click(screen.getByRole('button', { name: 'Próximo mês' }));
+		expect(screen.getByText('abril de 2026')).toBeVisible();
+		expect(screen.getByRole('grid')).toBeVisible();
+		expect(onClick).toHaveBeenCalledTimes(1);
+		fireEvent.click(screen.getByRole('button', { name: 'Mês anterior' }));
+		expect(screen.getByText('março de 2026')).toBeVisible();
+		expect(onClick).toHaveBeenCalledTimes(2);
+	});
+
 	it('renders a deterministic pt-BR placeholder and a labelled field', () => {
 		render(
 			<AdsField description="Dica" error="Obrigatório" label="Vencimento" validationState="error">

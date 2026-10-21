@@ -248,11 +248,7 @@ function DatePickerCalendar({
 	const rangeEnd = value.end;
 
 	return (
-		// The popover content is a React child of the toggling anchor, so clicks must not bubble to it.
-		<div
-			className="ads-date-picker__calendar flex flex-col gap-2"
-			onClick={(event) => event.stopPropagation()}
-		>
+		<div className="ads-date-picker__calendar flex flex-col gap-2">
 			<div className="ads-date-picker__header flex items-center justify-between gap-2">
 				<AdsButton
 					aria-disabled={canGoBack ? undefined : true}

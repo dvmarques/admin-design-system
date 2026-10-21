@@ -1,5 +1,10 @@
 # Admin Design System
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/admin-ds-logo-lockup-dark.svg">
+  <img alt="Admin Design System" src="assets/brand/admin-ds-logo-lockup.svg" height="64">
+</picture>
+
 Design system React reutilizável para a construção de aplicações
 administrativas com Next.js App Router, com arquitetura, identidade visual
 e implementação próprias.

@@ -1,4 +1,5 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
+import { expectNoAxeViolations } from './axe';
 
 test.describe('public overlays', () => {
 	test('applies themed close controls to dialog, drawer, and toast', async ({ page }) => {
@@ -138,5 +139,94 @@ test.describe('public overlays', () => {
 
 		await page.getByRole('button', { name: 'Mostrar toast' }).click();
 		await expect(page.getByRole('status').filter({ hasText: 'Operação concluída.' })).toBeVisible();
+	});
+
+	test.describe('inert page background', () => {
+		// Nomes dos botões expostos na árvore de acessibilidade do Chromium; nós inertes ficam ignorados.
+		async function exposedButtons(page: Page) {
+			const client = await page.context().newCDPSession(page);
+			const { nodes } = (await client.send('Accessibility.getFullAXTree')) as {
+				nodes: { ignored?: boolean; role?: { value: string }; name?: { value: string } }[];
+			};
+			await client.detach();
+			return nodes
+				.filter((node) => !node.ignored && node.role?.value === 'button')
+				.map((node) => node.name?.value);
+		}
+
+		test('keeps focus and the accessibility tree inside the dialog and restores them on close', async ({
+			page,
+		}) => {
+			await page.goto('/componentes');
+			const origin = page.getByRole('button', { name: 'Abrir diálogo' }).first();
+			const drawerTrigger = page.getByRole('button', { name: 'Abrir drawer' });
+			expect(await exposedButtons(page)).toContain('Abrir drawer');
+
+			await origin.focus();
+			await origin.click();
+			const dialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
+			await expect(dialog).toBeVisible();
+			await expect(page.locator('body > [inert]')).not.toHaveCount(0);
+
+			const focusIsInside = () =>
+				page.evaluate(() => Boolean(document.activeElement?.closest('[role="dialog"]')));
+			for (let step = 0; step < 6; step += 1) {
+				await page.keyboard.press('Tab');
+				expect(await focusIsInside()).toBe(true);
+			}
+			await page.keyboard.press('Shift+Tab');
+			expect(await focusIsInside()).toBe(true);
+
+			// Um foco programático sobre o fundo inerte não tem efeito.
+			await drawerTrigger.focus();
+			expect(await focusIsInside()).toBe(true);
+
+			const buttons = await exposedButtons(page);
+			expect(buttons).not.toContain('Abrir drawer');
+			expect(buttons).not.toContain('Mostrar toast');
+			expect(buttons).toContain('Fechar');
+			await expectNoAxeViolations(page);
+
+			await page.keyboard.press('Escape');
+			await expect(dialog).toBeHidden();
+			await expect(page.locator('body > [inert]')).toHaveCount(0);
+			await expect(origin).toBeFocused();
+			expect(await exposedButtons(page)).toContain('Abrir drawer');
+			await drawerTrigger.focus();
+			await expect(drawerTrigger).toBeFocused();
+		});
+
+		test('makes the page inert under the drawer too', async ({ page }) => {
+			await page.goto('/componentes');
+			await page.getByRole('button', { name: 'Abrir drawer' }).click();
+			await expect(page.getByRole('dialog', { name: 'Exemplo de drawer' })).toBeVisible();
+			await expect(page.locator('body > [inert]')).not.toHaveCount(0);
+			expect(await exposedButtons(page)).not.toContain('Abrir diálogo');
+			await page.keyboard.press('Escape');
+			await expect(page.locator('body > [inert]')).toHaveCount(0);
+		});
+
+		test('keeps the popover inside the dialog interactive and the toast exposed', async ({
+			page,
+		}) => {
+			await page.goto('/componentes');
+			await page.getByRole('button', { name: 'Mostrar toast' }).click();
+			const toast = page.getByRole('status').filter({ hasText: 'Operação concluída.' });
+			await expect(toast).toBeVisible();
+
+			await page.getByRole('button', { name: 'Abrir diálogo' }).first().click();
+			const dialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
+			await expect(dialog).toBeVisible();
+			await dialog.getByRole('button', { name: 'Detalhes' }).click();
+			const popover = page.getByRole('dialog', { name: 'Detalhes internos' });
+			await expect(popover).toBeVisible();
+			await popover.getByRole('button', { name: 'Entendi' }).click();
+			await expect(popover).toBeHidden();
+			await expect(dialog).toBeVisible();
+
+			// O toast nunca fica inerte: segue exposto na árvore de acessibilidade com o modal aberto.
+			await expect(page.locator('[data-ads-overlay-layer="toast"]')).not.toHaveAttribute('inert');
+			expect(await exposedButtons(page)).toContain('Fechar notificação');
+		});
 	});
 });

@@ -15,6 +15,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,
+  em `assets/brand` (SVG como fonte, PNG 512×512 derivado, variante sem fundo, favicon chapado e
+  lockups claro e escuro). Exibido no cabeçalho do admin demo, no favicon do demo e do Storybook e no
+  README. No GitHub Pages, o logotipo e os favicons resolvem sob o subcaminho do repositório. A paleta
+  do logotipo é independente da escala `brand*` dos tokens. Sem mudança em pacotes publicados nem em
+  APIs públicas.
 - `tabs-breadcrumb-accordion` - Tabs, Breadcrumb e Accordion (issue #90). Novo `AdsAccordion` composto
   (`Root`, `Item`, `Header`, `Trigger`, `Panel`) com `type` `single` (com `collapsible`) ou `multiple`,
   estado controlado ou não, heading com `level`, itens desabilitados, teclado (↑, ↓, Home, End) e painel
@@ -76,6 +82,19 @@ por versão e pelas changes correspondentes do OpenSpec.
   cobrem `AdsDrawer` (esquerda e direita) e o painel de colunas do `AdsSmartTable` dentro de
   `AdsDialog`/`AdsDrawer`. Sem mudança de API pública, tokens ou estilos (issue #91).
 
+- `modal-inert-background` - Com `AdsDialog` ou `AdsDrawer` aberto, o conteúdo da página fora do
+  overlay passa a ficar inerte (`inert`): sem foco, sem cliques e fora da árvore de acessibilidade,
+  em vez de depender só do laço de Tab e de `aria-modal`. Ao fechar ou desmontar, o estado anterior
+  é restaurado, inclusive um `inert` que a aplicação já tivesse; nós criados ou substituídos em
+  `<body>` durante o modal também ficam inertes, e um `inert` acrescentado pela aplicação durante o
+  modal permanece depois dele. Com modais aninhados só o mais recente é interativo e a página só
+  volta ao normal quando o último fecha, em qualquer ordem. Popover, tooltip, menu do `AdsDropdown`
+  e calendário abertos a partir do modal seguem interativos, um popup aberto pela página fica
+  inerte, e `AdsToast` nunca fica inerte. O foco volta ao gatilho da página mesmo quando o modal de
+  origem fecha antes de um modal aninhado. **Mudança de comportamento**: não é mais possível
+  interagir com a página por trás de um modal aberto. Sem `inert` no navegador o comportamento
+  anterior continua; a rolagem do fundo não é bloqueada. Sem mudança de API pública, tokens, estilos
+  ou dependências (issue #149).
 - `fix-popover-content-click` - Cliques em campos e botões no conteúdo de `AdsPopover`
   mantêm o painel aberto, preservando handlers e propagação de eventos do consumidor.
   Gatilho, Escape, clique externo e fechamento controlado mantêm seus comportamentos.

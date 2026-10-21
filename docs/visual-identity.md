@@ -19,6 +19,25 @@ Para usar outra cor de marca, troque os valores `brand*` em
 semânticas (`--ads-color-primary` etc.) na aplicação. A escala de referência não é
 emitida como variável CSS.
 
+## Logotipo
+
+A identidade oficial é o símbolo "A" minimalista, com recorte lilás sobre roxo
+profundo. Os SVGs em `assets/brand` são a fonte da marca e não fazem parte dos
+tokens nem da API pública dos pacotes. A paleta do logotipo (roxo e lilás) é
+independente da escala `brand*` dos tokens.
+
+| Arquivo                           | Uso                                                       |
+| --------------------------------- | --------------------------------------------------------- |
+| `admin-ds-logo.svg`               | símbolo completo, fonte da marca                          |
+| `admin-ds-logo.png`               | 512×512 com fundo transparente, gerado a partir do SVG    |
+| `admin-ds-mark.svg`               | só o "A", sem fundo, para superfícies escuras             |
+| `admin-ds-favicon.svg`            | variante chapada para tamanhos pequenos; favicon do demo  |
+| `admin-ds-logo-lockup(-dark).svg` | símbolo com o nome, para fundos claros e escuros (README) |
+
+Ao alterar o SVG, gere o PNG de novo e mantenha as cópias do Storybook
+(`apps/docs/public/admin-ds-favicon.svg`) e do demo (`apps/admin-demo/app/icon.svg`)
+iguais ao favicon de `assets/brand`.
+
 ## Tipografia
 
 | Token                                  | Uso                                               |

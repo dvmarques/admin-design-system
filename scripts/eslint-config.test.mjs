@@ -21,7 +21,7 @@ test('lint isolates nested worktrees while retaining checkout diagnostics', asyn
 		const nested = path.join(fixture, '.claude', 'worktrees', 'example');
 		await mkdir(nested, { recursive: true });
 		const files = {
-			'eslint.config.mjs': 'export default [{}];\n',
+			'eslint.config.mjs': await readFile(path.join(root, 'eslint.config.mjs'), 'utf8'),
 			'tsconfig.json': '{"compilerOptions":{"strict":true}}\n',
 			'invalid.ts': 'const unused: any = 1;\n',
 		};
@@ -29,7 +29,6 @@ test('lint isolates nested worktrees while retaining checkout diagnostics', asyn
 			await writeFile(path.join(nested, name), content);
 		}
 		const eslint = new ESLint({ cwd: fixture });
-		assert.equal(await eslint.isPathIgnored(path.join(nested, 'invalid.ts')), true);
 		const clean = await eslint.lintFiles(['.']);
 		assert.ok(clean.some((result) => result.filePath === ownFile));
 		assert.ok(clean.every((result) => !result.filePath.startsWith(nested + path.sep)));
@@ -45,6 +44,16 @@ test('lint isolates nested worktrees while retaining checkout diagnostics', asyn
 			invalid
 				.flatMap((result) => result.messages)
 				.some((message) => message.ruleId === '@typescript-eslint/no-explicit-any'),
+		);
+		const nestedResults = await new ESLint({ cwd: nested }).lintFiles(['.']);
+		assert.ok(
+			nestedResults.some(
+				(result) =>
+					result.filePath === path.join(nested, 'invalid.ts') &&
+					result.messages.some(
+						(message) => message.ruleId === '@typescript-eslint/no-explicit-any',
+					),
+			),
 		);
 		for (const [name, content] of Object.entries(files)) {
 			assert.equal(await readFile(path.join(nested, name), 'utf8'), content);

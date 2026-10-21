@@ -17,7 +17,8 @@ ou corrigir código de outros checkouts.
 - Criar fixture temporária dentro do repositório, com configuração copiada e imports
   resolvidos pelas dependências instaladas. Verificar lint antes/depois de inserir um
   checkout aninhado com configuração própria e código inválido. Confirmar que erros
-  no checkout principal continuam falhando e que os arquivos aninhados não mudam.
+  no checkout principal continuam falhando, que o worktree pode executar seu próprio
+  lint e que os arquivos aninhados não mudam.
 - Incluir a regressão em `test:ci`, já executado por `test:quality` na CI.
 
 ## Alternatives

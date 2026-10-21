@@ -19,8 +19,9 @@
 ## Evidências de validação
 
 - Regressão reproduzida na configuração anterior e corrigida; arquivos aninhados preservados.
-- Formatação, lint, build, tipos e testes de qualidade aprovados (666 testes Vitest).
-- E2E Chromium: 162 testes aprovados, incluindo snapshots sem atualização.
-- Firefox/WebKit: execução local bloqueada por bibliotecas do sistema ausentes; confirmar na CI.
-- OpenSpec: 43 itens aprovados em modo estrito.
+- Formatação, lint, build, tipos e testes de qualidade aprovados (690 testes Vitest após sincronização com develop).
+- E2E Chromium aprovado na CI, incluindo snapshots sem atualização.
+- Firefox/WebKit: aprovados na CI; execução local bloqueada por bibliotecas do sistema ausentes.
+- OpenSpec aprovado em modo estrito pela CI.
+- Revisão geral adicional: fixture usa a configuração real no worktree; lint próprio do worktree e preservação de seus arquivos verificados.
 - Revisão final: nenhuma alteração de API, componente, estilo ou snapshot; issue #91 preservada.

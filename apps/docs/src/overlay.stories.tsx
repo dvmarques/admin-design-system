@@ -75,6 +75,44 @@ export const NestedLayers: Story = {
 	},
 };
 
+export const InertBackground: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Com um diálogo ou drawer aberto, o conteúdo da página fora dele fica inerte: não recebe foco nem cliques e sai da árvore de acessibilidade (nos navegadores com suporte a `inert`). Com modais aninhados, só o mais recente é interativo, e a página só volta ao normal quando o último fecha. Popovers e menus abertos dentro do modal continuam interativos.',
+			},
+		},
+	},
+	render: () => {
+		const [open, setOpen] = useState(false);
+		const [confirmOpen, setConfirmOpen] = useState(false);
+		const [popoverOpen, setPopoverOpen] = useState(false);
+		return (
+			<>
+				<AdsButton onClick={() => setOpen(true)}>Abrir diálogo</AdsButton>
+				<AdsButton variant="secondary">Controle da página</AdsButton>
+				<AdsDialog onOpenChange={setOpen} open={open} title="Fundo inerte">
+					<div className="flex gap-2">
+						<AdsPopover
+							aria-label="Detalhes do modal"
+							content={<AdsButton onClick={() => setPopoverOpen(false)}>Entendi</AdsButton>}
+							onOpenChange={setPopoverOpen}
+							open={popoverOpen}
+						>
+							<AdsButton variant="secondary">Detalhes</AdsButton>
+						</AdsPopover>
+						<AdsButton onClick={() => setConfirmOpen(true)}>Abrir confirmação</AdsButton>
+					</div>
+				</AdsDialog>
+				<AdsDialog onOpenChange={setConfirmOpen} open={confirmOpen} title="Confirmação aninhada">
+					<AdsButton onClick={() => setConfirmOpen(false)}>Concluir</AdsButton>
+				</AdsDialog>
+			</>
+		);
+	},
+};
+
 export const Drawer: Story = {
 	render: () => {
 		const [open, setOpen] = useState(false);

@@ -3,6 +3,7 @@
 import {
 	createContext,
 	useContext,
+	useEffect,
 	useId,
 	useState,
 	type ButtonHTMLAttributes,
@@ -33,6 +34,9 @@ interface ItemContextValue {
 	triggerId: string;
 	panelId: string;
 	unmountOnCollapse: boolean;
+	/** Whether the panel is in the document, so the trigger never references a missing one. */
+	panelMounted: boolean;
+	setPanelMounted: (mounted: boolean) => void;
 }
 const ItemContext = createContext<ItemContextValue | null>(null);
 function useItem() {
@@ -91,7 +95,9 @@ function AdsAccordionRoot(props: AdsAccordionProps) {
 	const baseId = sanitizeId(useId());
 	const [uncontrolled, setUncontrolled] = useState<string[]>(toList(defaultValue) ?? []);
 	const controlled = toList(controlledValue);
-	const open = controlled ?? uncontrolled;
+	const stored = controlled ?? uncontrolled;
+	// A single accordion shows at most one item, even if the mode changes while several are open.
+	const open = type === 'single' ? stored.slice(0, 1) : stored;
 	const toggle = (itemValue: string) => {
 		const isOpen = open.includes(itemValue);
 		let next: string[];
@@ -147,6 +153,7 @@ function AdsAccordionItem({
 	const accordion = useAccordion();
 	const open = accordion.open.includes(value);
 	const key = encodeIdKey(value);
+	const [panelMounted, setPanelMounted] = useState(false);
 	return (
 		<ItemContext.Provider
 			value={{
@@ -156,6 +163,8 @@ function AdsAccordionItem({
 				triggerId: `${accordion.baseId}-trigger-${key}`,
 				panelId: `${accordion.baseId}-panel-${key}`,
 				unmountOnCollapse: unmountOnCollapse ?? accordion.unmountOnCollapse,
+				panelMounted,
+				setPanelMounted,
 			}}
 		>
 			<div
@@ -200,7 +209,7 @@ function AdsAccordionTrigger({
 		<button
 			{...props}
 			aria-disabled={lockOpen && item.open ? true : undefined}
-			aria-controls={item.open || !item.unmountOnCollapse ? item.panelId : undefined}
+			aria-controls={item.panelMounted ? item.panelId : undefined}
 			aria-expanded={item.open}
 			className={classNames(
 				'ads-accordion-trigger flex min-h-11 w-full cursor-pointer items-center justify-between gap-3 border-0 bg-transparent px-4 py-3 text-left text-sm font-medium text-text [font-family:inherit] hover:bg-surface-hover focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:text-text-muted disabled:hover:bg-transparent',
@@ -263,7 +272,14 @@ function AdsAccordionTrigger({
 export type AdsAccordionPanelProps = HTMLAttributes<HTMLDivElement>;
 function AdsAccordionPanel({ children, className, ...props }: AdsAccordionPanelProps) {
 	const item = useItem();
-	if (!item.open && item.unmountOnCollapse) return null;
+	const rendered = item.open || !item.unmountOnCollapse;
+	const { setPanelMounted } = item;
+	useEffect(() => {
+		if (!rendered) return;
+		setPanelMounted(true);
+		return () => setPanelMounted(false);
+	}, [rendered, setPanelMounted]);
+	if (!rendered) return null;
 	return (
 		<div
 			role="region"

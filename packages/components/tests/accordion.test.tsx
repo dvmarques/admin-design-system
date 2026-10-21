@@ -1,5 +1,5 @@
 import { renderToString } from 'react-dom/server';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { act, fireEvent, render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
 import {
 	AdsAccordion,
@@ -405,5 +405,54 @@ describe('AdsAccordion named parts', () => {
 		expect(trigger('Nomeado')).toHaveAttribute('aria-expanded', 'true');
 		expect(screen.getByRole('region', { name: 'Nomeado' })).toBeInTheDocument();
 		expect(AdsAccordionItem).toBe(AdsAccordion.Item);
+	});
+});
+
+describe('AdsAccordion references and mode changes', () => {
+	it('stops referencing a panel that the consumer removes', async () => {
+		function Example({ withPanel }: { withPanel: boolean }) {
+			return (
+				<AdsAccordion defaultValue="a" type="single">
+					<AdsAccordion.Item value="a">
+						<AdsAccordion.Header>
+							<AdsAccordion.Trigger>Item</AdsAccordion.Trigger>
+						</AdsAccordion.Header>
+						{withPanel ? <AdsAccordion.Panel>Conteúdo</AdsAccordion.Panel> : null}
+					</AdsAccordion.Item>
+				</AdsAccordion>
+			);
+		}
+		const { rerender } = render(<Example withPanel />);
+		const controls = trigger('Item').getAttribute('aria-controls');
+		expect(document.getElementById(controls ?? '')).toHaveTextContent('Conteúdo');
+		rerender(<Example withPanel={false} />);
+		await act(async () => undefined);
+		expect(trigger('Item')).not.toHaveAttribute('aria-controls');
+	});
+
+	it('keeps at most one item open when a multiple accordion becomes single', () => {
+		const items = (
+			<>
+				<Item title="Um" value="one" />
+				<Item title="Dois" value="two" />
+			</>
+		);
+		const { rerender } = render(
+			<AdsAccordion defaultValue={['one', 'two']} type="multiple">
+				{items}
+			</AdsAccordion>,
+		);
+		expect(screen.getAllByRole('region')).toHaveLength(2);
+		rerender(
+			<AdsAccordion collapsible type="single">
+				{items}
+			</AdsAccordion>,
+		);
+		expect(screen.getAllByRole('region')).toHaveLength(1);
+		expect(trigger('Um')).toHaveAttribute('aria-expanded', 'true');
+		expect(trigger('Dois')).toHaveAttribute('aria-expanded', 'false');
+		fireEvent.click(trigger('Dois'));
+		expect(trigger('Dois')).toHaveAttribute('aria-expanded', 'true');
+		expect(trigger('Um')).toHaveAttribute('aria-expanded', 'false');
 	});
 });

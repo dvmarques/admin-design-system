@@ -1,8 +1,11 @@
 # Admin Design System
 
-![Admin Design System — marca roxa](assets/brand/admin-ds-logo.svg)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/admin-ds-logo-lockup-dark.svg">
+  <img alt="Admin Design System" src="assets/brand/admin-ds-logo-lockup.svg" height="64">
+</picture>
 
-> Identidade visual oficial: símbolo A minimalista com recorte lilás sobre roxo profundo. O arquivo SVG é a fonte da marca utilizada no demo e na documentação.
+> Identidade visual oficial: símbolo A minimalista com recorte lilás sobre roxo profundo. Os SVGs em `assets/brand` são a fonte da marca: `admin-ds-logo.svg` (símbolo), `admin-ds-mark.svg` (sem fundo, para superfícies escuras), `admin-ds-favicon.svg` (variante chapada para tamanhos pequenos) e os lockups com o nome. `admin-ds-logo.png` (512×512) é gerado a partir do SVG.
 
 Design system React reutilizável para a construção de aplicações
 administrativas com Next.js App Router, com arquitetura, identidade visual

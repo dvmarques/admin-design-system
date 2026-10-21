@@ -81,6 +81,29 @@ test.describe('public overlays', () => {
 		await expect(trigger).toBeFocused();
 	});
 
+	test('closes only the inner popover on the first Escape and then the dialog', async ({
+		page,
+	}) => {
+		await page.goto('/componentes');
+		const origin = page.getByRole('button', { name: 'Abrir diálogo' }).first();
+		await origin.focus();
+		await origin.click();
+		const dialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
+		await expect(dialog).toBeVisible();
+		const trigger = dialog.getByRole('button', { name: 'Detalhes' });
+		await trigger.focus();
+		await trigger.click();
+		const popover = page.getByRole('dialog', { name: 'Detalhes internos' });
+		await expect(popover).toBeVisible();
+		await page.keyboard.press('Escape');
+		await expect(popover).toBeHidden();
+		await expect(dialog).toBeVisible();
+		await expect(trigger).toBeFocused();
+		await page.keyboard.press('Escape');
+		await expect(dialog).toBeHidden();
+		await expect(origin).toBeFocused();
+	});
+
 	test('supports drawer, anchored context, and toast flows', async ({ page }) => {
 		await page.goto('/componentes');
 		await page.getByRole('button', { name: 'Abrir drawer' }).click();

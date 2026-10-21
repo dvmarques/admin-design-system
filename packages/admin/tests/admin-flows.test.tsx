@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useRef, useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { AdsButton } from '@admin-ds/components';
+import { AdsButton, AdsPopover } from '@admin-ds/components';
 import {
 	AdsBulkActionBar,
 	AdsConfirmDialog,
@@ -161,6 +161,40 @@ describe('AdsConfirmDialog', () => {
 		fireEvent.keyDown(document, { key: 'Escape' });
 		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
 		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	it('closes only an inner popover with Escape while pending and never cancels the dialog', async () => {
+		const onOpenChange = vi.fn();
+		function WithPopover() {
+			const [popoverOpen, setPopoverOpen] = useState(false);
+			return (
+				<AdsConfirmDialog
+					onConfirm={() => {}}
+					onOpenChange={onOpenChange}
+					open
+					pending
+					title="Excluir?"
+				>
+					<AdsPopover
+						aria-label="Detalhes"
+						content={<AdsButton>Ver</AdsButton>}
+						onOpenChange={setPopoverOpen}
+						open={popoverOpen}
+					>
+						<AdsButton variant="secondary">Detalhes</AdsButton>
+					</AdsPopover>
+				</AdsConfirmDialog>
+			);
+		}
+		render(<WithPopover />);
+		fireEvent.click(screen.getByRole('button', { name: 'Detalhes' }));
+		await screen.findByRole('dialog', { name: 'Detalhes' });
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Detalhes' })).toBeNull());
+		expect(screen.getByRole('dialog', { name: 'Excluir?' })).toBeTruthy();
+		fireEvent.keyDown(document, { key: 'Escape' });
+		expect(onOpenChange).not.toHaveBeenCalled();
+		expect(screen.getByRole('dialog', { name: 'Excluir?' })).toBeTruthy();
 	});
 
 	it('honors closeOnEscape={false} when not pending', () => {

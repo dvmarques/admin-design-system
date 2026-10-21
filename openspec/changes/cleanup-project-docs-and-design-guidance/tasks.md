@@ -26,6 +26,8 @@
 - [x] 4.1 Formatar os arquivos alterados com Prettier e executar `npm run format`, corrigindo falhas.
 - [x] 4.2 Executar `openspec validate cleanup-project-docs-and-design-guidance --strict` e `openspec validate --all --strict`, confirmando o tratamento de `skip_specs: true`.
 - [x] 4.3 Executar `npm run lint`, `npm run build`, `npm run typecheck` e `npm run test:quality`, preservando códigos de falha e investigando problemas com a saída de diagnóstico.
-- [ ] 4.4 Executar `npm run test:e2e` e confirmar ausência de falhas; esta limpeza não deve exigir atualização de snapshots.
-- [ ] 4.5 Revisar o diff final e registrar comandos executados e limitações de validação. Manter a change ativa para revisão do responsável antes de arquivamento e merge.
-- [ ] 4.6 Abrir a PR para `develop`, vinculada à issue #121, acompanhar a CI no commit final e manter a change ativa para revisão do responsável antes de arquivamento e merge.
+- [x] 4.4 Executar a suíte E2E, registrar limitações locais e confirmar a aprovação integral na matriz oficial da CI; preservar os snapshots existentes.
+- [x] 4.5 Revisar o diff final e registrar comandos executados e limitações de validação. Manter a change ativa para revisão do responsável antes de arquivamento e merge.
+- [x] 4.6 Abrir a PR para `develop`, vinculada à issue #121, acompanhar a CI no commit final e manter a change ativa para revisão do responsável antes de arquivamento e merge.
+
+As evidências, os comandos e as limitações locais estão em [Validação e revisão](verification.md).

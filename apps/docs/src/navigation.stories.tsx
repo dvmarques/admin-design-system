@@ -92,6 +92,14 @@ export const OnRaisedSurface: Story = {
 	),
 };
 export const Dropdown: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'ArrowDown, Enter ou Espaço abrem o menu e focam o primeiro item habilitado após a montagem. Setas, Home e End navegam ignorando itens desabilitados. Escape fecha e devolve foco ao gatilho. O clique abre sem mover o foco para um item.',
+			},
+		},
+	},
 	render: () => (
 		<AdsDropdown>
 			<AdsDropdown.Trigger>Ações</AdsDropdown.Trigger>

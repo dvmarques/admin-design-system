@@ -25,8 +25,16 @@ export default defineConfig({
 	},
 	projects: [
 		{ name: 'chromium', use: { ...devices['Desktop Chrome'] } },
-		// Firefox e WebKit executam só o smoke: sem snapshots, que são baselines do Chromium/Linux.
-		{ name: 'firefox', testMatch: /smoke\.spec\.ts$/, use: { ...devices['Desktop Firefox'] } },
-		{ name: 'webkit', testMatch: /smoke\.spec\.ts$/, use: { ...devices['Desktop Safari'] } },
+		// Firefox e WebKit executam smoke e foco do dropdown: sem snapshots, que são baselines do Chromium/Linux.
+		{
+			name: 'firefox',
+			testMatch: /(smoke|dropdown-focus)\.spec\.ts$/,
+			use: { ...devices['Desktop Firefox'] },
+		},
+		{
+			name: 'webkit',
+			testMatch: /(smoke|dropdown-focus)\.spec\.ts$/,
+			use: { ...devices['Desktop Safari'] },
+		},
 	],
 });

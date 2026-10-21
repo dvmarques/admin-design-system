@@ -49,7 +49,7 @@ expect(results.violations).toHaveLength(0);
 ## Playwright e testes end-to-end
 
 O Playwright executa testes em navegadores reais: Chromium roda toda a suíte e
-Firefox e WebKit rodam um smoke (ver abaixo).
+Firefox e WebKit rodam um smoke e a regressão de foco do dropdown (ver abaixo).
 Ele cobre comportamentos que o ambiente simulado do Vitest e JSDOM não reproduz
 integralmente, como foco visível, navegação por teclado, CSS renderizado,
 responsividade, hidratação do Next.js e fluxos completos entre componentes de
@@ -110,7 +110,7 @@ limites de controles, foco e indicadores). Detalhes em
 ### Smoke em Firefox e WebKit
 
 `e2e/smoke.spec.ts` roda nos três navegadores (projetos `chromium`, `firefox` e
-`webkit` em `playwright.config.ts`); Firefox e WebKit executam só esse arquivo.
+`webkit` em `playwright.config.ts`); Firefox e WebKit também executam a regressão de foco do dropdown.
 Ele cobre `/`, `/clientes` e `/componentes`: carregamento sem erros de console
 nem de página (incluindo hidratação), hidratação do botão de tema e navegação
 pelo menu principal. Não há snapshots nesses navegadores.
@@ -120,6 +120,8 @@ Na CI, cada navegador é um job paralelo e independente da matrix:
 navegador (WebKit)". O WebKit do Playwright no Linux detecta quebras de motor,
 mas não garante paridade com o Safari. Para rodar um navegador isolado:
 `npx playwright test --project=firefox`.
+
+A regressão `e2e/dropdown-focus.spec.ts` também roda nos projetos Firefox e WebKit, além do Chromium. Ela verifica a abertura por ArrowDown, Enter e Espaço, foco real sem deslocar a página, navegação, ativação e retorno de foco nos temas claro/escuro e em viewport estreita/larga, sem snapshots.
 
 ### Tempo de CI
 

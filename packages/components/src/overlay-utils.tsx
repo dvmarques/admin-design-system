@@ -131,7 +131,7 @@ interface EscapeLayer {
 const escapeLayers: EscapeLayer[] = [];
 
 function handleEscapeKeyDown(event: KeyboardEvent) {
-	if (event.key !== 'Escape' || event.defaultPrevented) return;
+	if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
 	const top = escapeLayers[escapeLayers.length - 1];
 	if (!top) return;
 	// Marca o evento como tratado sem interromper a propagação para outros observadores.

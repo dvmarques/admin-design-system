@@ -20,6 +20,10 @@ Alternativas: Context por árvore React exigiria um provedor e não cobre overla
 
 ## Risks / Trade-offs
 
+Compatibilidade: o Escape tratado passa a chegar aos demais listeners de `document` com `defaultPrevented`, e um diálogo com `closeOnEscape={false}` ou `pending` passa a absorver o Escape de camadas inferiores, o que antes não registrava listener algum. Listeners do consumidor que ignoram eventos com `defaultPrevented` deixam de agir sobre esse Escape. Um Escape que cancela uma composição de IME (`isComposing`) é ignorado pela pilha.
+
+Ordem no mesmo commit: o registro ocorre em efeito, e o conteúdo de um overlay só monta depois de `OverlayPortal`, que é montado a cada abertura. Por isso um overlay interno sempre registra depois do pai, mesmo com `open` inicial verdadeiro; os testes cobrem a abertura simultânea, inclusive em StrictMode.
+
 Duas cópias do pacote na mesma página teriam pilhas separadas; não é um cenário suportado. O `AdsDropdown` hoje devolve o foco no próprio tratador de Escape e continua assim. Um overlay que feche por Escape fora da infraestrutura compartilhada (o painel de colunas do `AdsSmartTable`) não participa da pilha e fica registrado como trabalho futuro.
 
 ## Validation

@@ -1,6 +1,6 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
-import { useState, type ReactNode } from 'react';
+import { StrictMode, useState, type ReactNode } from 'react';
 import { describe, expect, it } from 'vitest';
 import { AdsButton } from '../src/button';
 import { AdsDatePicker } from '../src/date-picker';
@@ -204,6 +204,68 @@ describe('Escape in nested overlays', () => {
 			);
 			expect(screen.getByRole('dialog', { name: 'Diálogo pai' })).toBeInTheDocument();
 		}
+	});
+
+	it.each([false, true])(
+		'closes only the popover when dialog and popover open in the same commit (strict=%s)',
+		async (strict) => {
+			function Together() {
+				const [open, setOpen] = useState(false);
+				const [popoverOpen, setPopoverOpen] = useState(false);
+				return (
+					<>
+						<AdsButton
+							onClick={() => {
+								setOpen(true);
+								setPopoverOpen(true);
+							}}
+						>
+							Abrir tudo
+						</AdsButton>
+						<AdsDialog onOpenChange={setOpen} open={open} title="Diálogo pai">
+							<AdsPopover
+								aria-label="Ações internas"
+								content={<AdsButton>Editar</AdsButton>}
+								onOpenChange={setPopoverOpen}
+								open={popoverOpen}
+							>
+								<AdsButton variant="secondary">Mais ações</AdsButton>
+							</AdsPopover>
+						</AdsDialog>
+					</>
+				);
+			}
+			render(
+				strict ? (
+					<StrictMode>
+						<Together />
+					</StrictMode>
+				) : (
+					<Together />
+				),
+			);
+			fireEvent.click(screen.getByRole('button', { name: 'Abrir tudo' }));
+			await screen.findByRole('dialog', { name: 'Ações internas' });
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() =>
+				expect(screen.queryByRole('dialog', { name: 'Ações internas' })).not.toBeInTheDocument(),
+			);
+			expect(screen.getByRole('dialog', { name: 'Diálogo pai' })).toBeInTheDocument();
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() =>
+				expect(screen.queryByRole('dialog', { name: 'Diálogo pai' })).not.toBeInTheDocument(),
+			);
+		},
+	);
+
+	it('ignores an Escape that cancels an IME composition', async () => {
+		render(<PopoverInside />);
+		await openParent();
+		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
+		await screen.findByRole('dialog', { name: 'Ações internas' });
+		fireEvent.keyDown(document, { key: 'Escape', isComposing: true });
+		expect(screen.getByRole('dialog', { name: 'Ações internas' })).toBeInTheDocument();
+		expect(screen.getByRole('dialog', { name: 'Diálogo pai' })).toBeInTheDocument();
 	});
 
 	it('has no detectable accessibility violations with a popover open in a dialog', async () => {

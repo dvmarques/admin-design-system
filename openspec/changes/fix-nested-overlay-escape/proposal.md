@@ -28,4 +28,5 @@ Nenhuma.
 - Pacotes afetados: `@admin-ds/components` (`overlay-utils`, `overlay-dialog`, `overlay-anchored`, `dropdown`). `@admin-ds/admin` só ganha testes, porque o `AdsConfirmDialog` já repassa `closeOnEscape` ao `AdsDialog`.
 - APIs públicas: nenhuma assinatura, export, classe CSS ou variável CSS muda. O hook `useEscapeKey` é interno e não consta nos `exports` do pacote.
 - Biblioteca reutilizável: a correção fica em `packages/components`. A demonstração (`apps/admin-demo`) ganha apenas um exemplo de consumo público para o teste E2E, e o Storybook documenta a interação.
+- Mudança de comportamento observável, sem alterar tipos: o Escape tratado fica marcado com `defaultPrevented`, e um diálogo que não fecha por Escape (`closeOnEscape={false}` ou `pending`) passa a impedir que um ancestral feche (ver `design.md`).
 - Sem impacto em tokens, roteamento, dependências ou bundle significativo (uma lista em módulo e um listener).

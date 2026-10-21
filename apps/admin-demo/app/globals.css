@@ -437,3 +437,12 @@ body {
 		scroll-behavior: auto;
 	}
 }
+
+/* Project identity in the demo header. */
+.demo-brand-heading {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.625rem;
+  min-width: 0;
+}
+.demo-brand-heading img { flex-shrink: 0; border-radius: 0.4rem; }

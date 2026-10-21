@@ -16,7 +16,11 @@ jobs:
     if: github.ref_name != 'develop' && github.ref_name != 'master'
     runs-on: ubuntu-latest
     steps:
+      # Com o segredo, o push dos baselines vem de um usuário (PAT) e dispara a CI da PR.
+      # Sem ele, vale o `GITHUB_TOKEN`, cujo push não dispara workflows (veja docs/quality.md).
       - uses: actions/checkout@v6
+        with:
+          token: ${{ secrets.VISUAL_BASELINES_TOKEN || github.token }}
       - uses: actions/setup-node@v6
         with:
           node-version: 24

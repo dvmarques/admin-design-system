@@ -92,9 +92,17 @@ Para aceitar uma mudança visual intencional:
    baselines e faz commit dos PNGs na branch.
 3. Revise o diff das imagens na PR antes de aprovar; não aceite baselines apenas
    para eliminar uma falha.
-4. O commit do workflow usa o `GITHUB_TOKEN` e, por isso, não dispara a CI da
-   PR: faça um push adicional ou marque a PR como Draft e Ready for review para
-   executar a verificação completa.
+4. Com o segredo `VISUAL_BASELINES_TOKEN` configurado, o push do workflow
+   dispara a CI da PR sem passo adicional. Sem o segredo, o workflow usa o
+   `GITHUB_TOKEN`, cujo push não dispara a CI (ou a deixa em `action_required`
+   numa PR já aberta): faça um push adicional ou marque a PR como Draft e Ready
+   for review para executar a verificação completa.
+
+Para configurar o segredo, crie um fine-grained personal access token com permissão de **Contents: Read and write** apenas neste
+repositório e salve-o em Settings > Secrets and variables > Actions com o nome
+`VISUAL_BASELINES_TOKEN`. O token não precisa de permissão de workflows, pois o
+workflow só altera arquivos em `e2e/`. Como o commit passa a vir do dono do
+token, ele conta como um push comum para as regras de branch.
 
 O workflow só roda em branches diferentes de `develop` e `master`.
 

@@ -30,6 +30,11 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- CI - O workflow "Atualizar baselines visuais" passa a usar o
+  segredo opcional `VISUAL_BASELINES_TOKEN` no `checkout`, de modo que o commit dos baselines
+  dispare a CI da PR sem push adicional nem aprovação manual (issue #122). Sem o segredo, o
+  comportamento continua o mesmo, com `GITHUB_TOKEN`. Sem mudança em pacotes, APIs públicas,
+  tokens ou estilos; configuração descrita em `docs/quality.md`.
 - `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na
   horizontal em 320px: os grids da demonstração em telas estreitas passam de `1fr` para
   `minmax(0, 1fr)` e a paginação rola dentro do próprio painel. O E2E de todas as rotas

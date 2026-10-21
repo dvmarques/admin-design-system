@@ -30,4 +30,9 @@
 - [x] 4.5 Revisar o diff final e registrar comandos executados e limitações de validação. Manter a change ativa para revisão do responsável antes de arquivamento e merge.
 - [x] 4.6 Abrir a PR para `develop`, vinculada à issue #121, acompanhar a CI no commit final e manter a change ativa para revisão do responsável antes de arquivamento e merge.
 
+## 5. Observações da revisão
+
+- [x] 5.1 Preservar em `verification.md` a declaração histórica de proveniência sobre o CoreUI, identificando sua origem sem reintroduzir uma diretriz de design.
+- [x] 5.2 Conferir a licença da origem das skills e registrar atribuição, revisão consultada e cópia integral do aviso MIT em `docs/licensing.md` e `docs/licenses/taste-skill-LICENSE.txt`, sem modificar os hashes de importação.
+
 As evidências, os comandos e as limitações locais estão em [Validação e revisão](verification.md).

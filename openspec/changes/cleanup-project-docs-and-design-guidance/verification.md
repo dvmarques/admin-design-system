@@ -59,3 +59,27 @@ O diff desta PR em relação à nova base continua restrito à documentação e
 Os números acima identificam a execução anterior à atualização de base. A CI
 completa do commit final, já integrado à base atualizada, é conferida e vinculada
 na descrição da PR antes da entrega para revisão.
+
+## Observações da revisão
+
+As duas observações de proveniência da [revisão da PR](https://github.com/dvmarques/admin-design-system/pull/124#issuecomment-6321064762)
+foram atendidas:
+
+- A declaração histórica sobre o CoreUI foi preservada abaixo, sem restabelecer
+  uma orientação de design para novos trabalhos.
+- A origem das três skills foi registrada em `docs/licensing.md`, com a licença
+  MIT conferida na origem e uma cópia integral do aviso em
+  `docs/licenses/taste-skill-LICENSE.txt`. Os hashes de importação não foram alterados.
+
+### Registro histórico de proveniência
+
+Antes da limpeza, `docs/licensing.md` no commit
+`a4b06a20aaf960b5760579fed2ad4aa05020ad9e` registrava:
+
+> O CoreUI foi usado somente como referência visual e funcional; nenhum código,
+> asset, ícone, fonte ou recurso proprietário do CoreUI PRO foi incorporado ao
+> repositório.
+
+Este registro preserva a declaração existente antes da limpeza; não representa
+uma nova auditoria de proveniência. A documentação atual orienta o desenvolvimento
+pela identidade própria do projeto.

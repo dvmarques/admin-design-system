@@ -37,3 +37,18 @@ carregam a Inter pela dependência `@fontsource/inter` (OFL-1.1, arquivos woff2
 hospedados no próprio build, sem CDN externa); o texto da licença acompanha o
 pacote em `node_modules/@fontsource/inter/LICENSE`. Quem hospedar a Inter em
 outra aplicação deve preservar o aviso de licença.
+
+## Skills de design
+
+As skills `design-taste-frontend`, `high-end-visual-design` e
+`redesign-existing-projects` foram adaptadas da origem
+[Leonxlnx/taste-skill](https://github.com/Leonxlnx/taste-skill), sob licença MIT,
+com copyright de 2026 de Leonxlnx. São orientações de desenvolvimento em
+`.agents/skills`, espelhadas em `.claude/skills`, e não integram os pacotes de runtime.
+
+O [aviso de licença e copyright](licenses/taste-skill-LICENSE.txt) é preservado
+integralmente. A [licença consultada na origem](https://github.com/Leonxlnx/taste-skill/blob/6010f91a9935f1c167dfc500fb1a475681892e6b/LICENSE)
+identifica a revisão usada nessa conferência; ela não identifica a revisão de
+importação das skills. Os caminhos originais e os hashes de importação permanecem
+em `skills-lock.json`; os textos atuais são adaptações locais para a identidade
+do Admin Design System.

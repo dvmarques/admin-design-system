@@ -45,9 +45,13 @@ autorizam trocar fontes, importar outro design system, adicionar dependências
 ou redesenhar interfaces por preferência estética. Mudanças na identidade
 precisam fazer parte do escopo solicitado e seguir o processo OpenSpec.
 
+## Leitura de contexto por demanda
+
+Comece pelo índice `docs/agent-context-map.md` para localizar o pacote e os contratos afetados. Leia apenas os documentos específicos indicados pelo escopo; não carregue todas as referências de design, release e integração em toda tarefa. As regras obrigatórias deste arquivo continuam aplicáveis, independentemente de quais documentos foram consultados. Para mudanças transversais, amplie a leitura aos pacotes dependentes.
+
 ## Antes de alterar arquivos
 
-1. Leia `README.md`, `openspec/config.yaml` e a documentação relevante em `docs/`.
+1. Leia `README.md`, `openspec/config.yaml` e, pelo índice `docs/agent-context-map.md`, apenas a documentação relevante ao escopo.
 2. Verifique as changes ativas com `openspec.cmd list`.
 3. Para mudanças relevantes de comportamento, API, tokens, estilos ou arquitetura,
    crie ou atualize uma change em `openspec/changes/<change-id>` antes da implementação.

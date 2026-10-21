@@ -21,9 +21,10 @@ emitida como variável CSS.
 
 ## Logotipo
 
-Os arquivos do logotipo ficam em `assets/brand` e não fazem parte dos tokens nem
-da API pública dos pacotes. A paleta do logotipo (roxo e lilás) é independente da
-escala `brand*` dos tokens.
+A identidade oficial é o símbolo "A" minimalista, com recorte lilás sobre roxo
+profundo. Os SVGs em `assets/brand` são a fonte da marca e não fazem parte dos
+tokens nem da API pública dos pacotes. A paleta do logotipo (roxo e lilás) é
+independente da escala `brand*` dos tokens.
 
 | Arquivo                           | Uso                                                       |
 | --------------------------------- | --------------------------------------------------------- |

@@ -55,7 +55,7 @@ function OverlayPanel({
 	if (!open) return null;
 	const isDrawer = Boolean(placement);
 	return (
-		<OverlayPortal>
+		<OverlayPortal layer="modal">
 			<div
 				className="ads-overlay-backdrop fixed inset-0 z-[var(--ads-layer-overlay)] flex bg-black/60"
 				data-overlay="backdrop"

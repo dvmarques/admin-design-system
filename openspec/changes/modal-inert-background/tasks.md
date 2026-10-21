@@ -1,17 +1,17 @@
 ## 1. Correção reutilizável
 
-- [ ] 1.1 Acrescentar regressões que falham hoje: fundo inerte com `AdsDialog` e `AdsDrawer`, restauração ao fechar, `inert` anterior do consumidor, aninhamento, StrictMode e roots de popup e toast sem `inert`.
-- [ ] 1.2 Adicionar `layer` ao `OverlayPortal` (marca `data-ads-overlay-layer`) e usá-lo em `AdsDialog`, `AdsDrawer` e `AdsToast`, sem mudar APIs públicas.
-- [ ] 1.3 Implementar o registro de modais em `overlay-utils` (contagem por nó, estado anterior, só em efeitos) e registrá-lo pelo portal modal, com o cleanup antes da devolução de foco.
-- [ ] 1.4 Confirmar `AdsConfirmDialog` e o drawer do `AdsAdminShell` sem mudança de código e sem regressão de foco.
+- [x] 1.1 Acrescentar regressões que falham hoje: fundo inerte com `AdsDialog` e `AdsDrawer`, restauração ao fechar, `inert` anterior do consumidor, aninhamento, StrictMode e roots de popup e toast sem `inert`.
+- [x] 1.2 Adicionar `layer` ao `OverlayPortal` (marca `data-ads-overlay-layer`) e usá-lo em `AdsDialog`, `AdsDrawer` e `AdsToast`, sem mudar APIs públicas.
+- [x] 1.3 Implementar o registro de modais em `overlay-utils` (contagem por nó, estado anterior, só em efeitos) e registrá-lo pelo portal modal, com o cleanup antes da devolução de foco.
+- [x] 1.4 Confirmar `AdsConfirmDialog` e o drawer do `AdsAdminShell` sem mudança de código e sem regressão de foco.
 
 ## 2. Consumo e documentação
 
-- [ ] 2.1 Acrescentar a story do fundo inerte (modal aninhado, popover aberto dentro do modal), registrar a mudança de comportamento no CHANGELOG, descrever o comportamento em `docs/integration.md` e as limitações em `docs/limitations.md`.
-- [ ] 2.2 Acrescentar E2E com foco real no Chromium sobre o admin-demo público: Tab, clique, árvore de acessibilidade, `axe` e restauração.
+- [x] 2.1 Acrescentar a story do fundo inerte (modal aninhado, popover aberto dentro do modal), registrar a mudança de comportamento no CHANGELOG, descrever o comportamento em `docs/integration.md` e as limitações em `docs/limitations.md`.
+- [x] 2.2 Acrescentar E2E com foco real no Chromium sobre o admin-demo público: Tab, clique, árvore de acessibilidade, `axe` e restauração.
 
 ## 3. Validação
 
-- [ ] 3.1 Executar build, typecheck, lint e testes concisos; iniciar Storybook e demo; verificar temas claro e escuro, responsividade e `prefers-reduced-motion`.
-- [ ] 3.2 Executar `npm run test:e2e` e registrar limitações de plataforma, sem atualizar baselines de snapshot.
-- [ ] 3.3 Formatar arquivos alterados, executar `npm run format` e `openspec validate --all --strict` e registrar os resultados.
+- [x] 3.1 Executar build, typecheck, lint e testes concisos; iniciar Storybook e demo; verificar temas claro e escuro, responsividade e `prefers-reduced-motion`.
+- [x] 3.2 Executar `npm run test:e2e` e registrar limitações de plataforma, sem atualizar baselines de snapshot.
+- [x] 3.3 Formatar arquivos alterados, executar `npm run format` e `openspec validate --all --strict` e registrar os resultados.

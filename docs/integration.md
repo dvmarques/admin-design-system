@@ -564,6 +564,22 @@ botão lado a lado, use um adendo de texto em `startContent` e o botão em `endC
 botão dentro de outro elemento no adendo mantém a moldura e a altura do botão, e o campo
 cresce para 34, 38 ou 42px.
 
+## Overlays modais e o conteúdo de fundo
+
+Com um `AdsDialog` ou `AdsDrawer` aberto (inclusive o diálogo de `AdsConfirmDialog` e o drawer de
+navegação do `AdsAdminShell`), os filhos de `<body>` que já existiam recebem o atributo `inert`: o
+fundo deixa de receber foco, cliques e leitura por tecnologia assistiva. Ao fechar, o estado anterior
+é restaurado, e um `inert` que a aplicação já tivesse aplicado é preservado. Com modais aninhados só o
+mais recente é interativo.
+
+- Popovers, tooltips e menus abertos depois do modal continuam interativos; um popover aberto antes
+  dele fica inerte junto com a página. `AdsToast` nunca fica inerte.
+- Nós adicionados ao `<body>` depois da abertura do modal (portais de terceiros) não são marcados.
+- O atributo exige suporte do navegador (Chromium 102+, Firefox 112+, Safari 15.5+); sem ele o foco
+  continua preso por teclado e `aria-modal` segue exposto, mas o fundo ainda é alcançável por clique.
+- A rolagem do fundo não é bloqueada.
+- Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação.
+
 ## Seletor de data
 
 O `AdsDatePicker` seleciona uma data ou um intervalo (`mode="range"`) por

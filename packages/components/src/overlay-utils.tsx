@@ -36,8 +36,59 @@ export function useMounted() {
 	return mounted;
 }
 
-export function OverlayPortal({ children }: { children: ReactNode }) {
+type OverlayLayer = 'modal' | 'popup' | 'toast';
+
+interface InertEntry {
+	count: number;
+	previous: string | null;
+}
+
+// Nós do `body` tornados inertes por modais abertos, com a contagem de modais que os cobrem e o
+// valor anterior de `inert`. Só é tocado em efeitos, no cliente.
+const inertNodes = new Map<Element, InertEntry>();
+const nonRenderedTags = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'NOSCRIPT', 'TEMPLATE']);
+
+/**
+ * Torna inertes os filhos de `body` que já existem, exceto o root do modal, toasts e nós não
+ * renderizados. Overlays abertos depois do registro não são marcados e seguem interativos. Cada nó
+ * conta os modais que o cobrem: só volta ao estado anterior quando o último é liberado.
+ */
+function registerModal(root: HTMLElement) {
+	const covered: Element[] = [];
+	for (const child of Array.from(document.body.children)) {
+		if (child === root || nonRenderedTags.has(child.tagName)) continue;
+		if (child.getAttribute('data-ads-overlay-layer') === 'toast') continue;
+		covered.push(child);
+		const entry = inertNodes.get(child);
+		if (entry) {
+			entry.count += 1;
+			continue;
+		}
+		inertNodes.set(child, { count: 1, previous: child.getAttribute('inert') });
+		// Sem suporte a `inert` o navegador ignora o atributo e o comportamento anterior se mantém.
+		if (child.getAttribute('inert') === null) child.setAttribute('inert', '');
+	}
+	return () => {
+		for (const node of covered) {
+			const entry = inertNodes.get(node);
+			if (!entry) continue;
+			entry.count -= 1;
+			if (entry.count > 0) continue;
+			inertNodes.delete(node);
+			if (entry.previous === null) node.removeAttribute('inert');
+		}
+	};
+}
+
+export function OverlayPortal({
+	children,
+	layer = 'popup',
+}: {
+	children: ReactNode;
+	layer?: OverlayLayer;
+}) {
 	const mounted = useMounted();
+	const rootRef = useRef<HTMLDivElement>(null);
 	const sourceRef = useRef<HTMLSpanElement>(null);
 	const [theme, setTheme] = useState<string | null>(null);
 
@@ -52,12 +103,26 @@ export function OverlayPortal({ children }: { children: ReactNode }) {
 		return () => observer.disconnect();
 	}, []);
 
+	// O cleanup roda na desmontagem do portal, antes de `useOverlayFocus` devolver o foco: um
+	// elemento inerte não recebe foco.
+	useEffect(() => {
+		const root = rootRef.current;
+		if (!mounted || layer !== 'modal' || !root) return;
+		return registerModal(root);
+	}, [layer, mounted]);
+
 	return (
 		<>
 			<span aria-hidden="true" hidden ref={sourceRef} />
 			{mounted
 				? createPortal(
-						<div className="contents" data-ads-overlay-root="" data-theme={theme ?? undefined}>
+						<div
+							className="contents"
+							data-ads-overlay-layer={layer}
+							data-ads-overlay-root=""
+							data-theme={theme ?? undefined}
+							ref={rootRef}
+						>
 							{children}
 						</div>,
 						document.body,

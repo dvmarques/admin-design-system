@@ -25,5 +25,5 @@
 ## 5. Validação
 
 - [x] 5.1 `npx prettier --write` nos arquivos alterados, `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` e `openspec validate --all --strict`
-- [ ] 5.2 `npm run test:e2e`; regenerar as baselines visuais afetadas pelo workflow "Atualizar baselines visuais" e revisar o diff
+- [x] 5.2 `npm run test:e2e`; regenerar as baselines visuais afetadas pelo workflow "Atualizar baselines visuais" e revisar o diff
 - [ ] 5.3 Verificar nos temas claro e escuro e com `forced-colors`; abrir a PR e acompanhar a CI até ficar verde

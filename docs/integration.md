@@ -578,7 +578,7 @@ mais recente é interativo.
 - O atributo exige suporte do navegador (Chromium 102+, Firefox 112+, Safari 15.5+); sem ele o foco
   continua preso por teclado e `aria-modal` segue exposto, mas o fundo ainda é alcançável por clique.
 - A rolagem do fundo não é bloqueada.
-- Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação.
+- Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da aplicação.
 
 ## Seletor de data
 

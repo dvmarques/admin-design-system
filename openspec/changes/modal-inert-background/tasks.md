@@ -8,7 +8,7 @@
 ## 2. Consumo e documentação
 
 - [x] 2.1 Acrescentar a story do fundo inerte (modal aninhado, popover aberto dentro do modal), registrar a mudança de comportamento no CHANGELOG, descrever o comportamento em `docs/integration.md` e as limitações em `docs/limitations.md`.
-- [x] 2.2 Acrescentar E2E com foco real no Chromium sobre o admin-demo público: Tab, clique, árvore de acessibilidade, `axe` e restauração.
+- [x] 2.2 Acrescentar E2E com foco real no Chromium sobre o admin-demo público: Tab, foco programático, árvore de acessibilidade, `axe` e restauração.
 
 ## 3. Validação
 

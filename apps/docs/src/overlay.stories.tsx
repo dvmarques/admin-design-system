@@ -43,6 +43,36 @@ export const Dialog: Story = {
 	},
 };
 
+export const NestedLayers: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Overlays aninhados respondem ao Escape na ordem inversa de abertura: o primeiro Escape fecha só o popover e devolve o foco ao seu gatilho; o segundo fecha o diálogo. Uma camada com `closeOnEscape={false}` absorve o Escape sem fechar a camada inferior.',
+			},
+		},
+	},
+	render: () => {
+		const [open, setOpen] = useState(false);
+		const [popoverOpen, setPopoverOpen] = useState(false);
+		return (
+			<>
+				<AdsButton onClick={() => setOpen(true)}>Abrir diálogo com popover</AdsButton>
+				<AdsDialog onOpenChange={setOpen} open={open} title="Diálogo com camada interna">
+					<AdsPopover
+						aria-label="Detalhes internos"
+						content={<AdsButton onClick={() => setPopoverOpen(false)}>Entendi</AdsButton>}
+						onOpenChange={setPopoverOpen}
+						open={popoverOpen}
+					>
+						<AdsButton variant="secondary">Detalhes</AdsButton>
+					</AdsPopover>
+				</AdsDialog>
+			</>
+		);
+	},
+};
+
 export const Drawer: Story = {
 	render: () => {
 		const [open, setOpen] = useState(false);

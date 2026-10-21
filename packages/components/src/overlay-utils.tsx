@@ -122,15 +122,50 @@ export function useOverlayFocus(
 	}, [containerRef, open]);
 }
 
-export function useEscapeKey(open: boolean, onEscape?: () => void) {
+interface EscapeLayer {
+	canClose: boolean;
+	onEscape: () => void;
+}
+
+// Camadas abertas na ordem de abertura: a última é a superior. Só é tocada em efeitos, no cliente.
+const escapeLayers: EscapeLayer[] = [];
+
+function handleEscapeKeyDown(event: KeyboardEvent) {
+	if (event.key !== 'Escape' || event.defaultPrevented) return;
+	const top = escapeLayers[escapeLayers.length - 1];
+	if (!top) return;
+	// Marca o evento como tratado sem interromper a propagação para outros observadores.
+	event.preventDefault();
+	if (top.canClose) top.onEscape();
+}
+
+function registerEscapeLayer(layer: EscapeLayer) {
+	if (escapeLayers.length === 0) document.addEventListener('keydown', handleEscapeKeyDown);
+	escapeLayers.push(layer);
+	return () => {
+		const index = escapeLayers.indexOf(layer);
+		if (index !== -1) escapeLayers.splice(index, 1);
+		if (escapeLayers.length === 0) document.removeEventListener('keydown', handleEscapeKeyDown);
+	};
+}
+
+/**
+ * Registra uma camada para o Escape. Só a camada superior trata o evento. Com `canClose` falso, ela
+ * continua absorvendo o Escape sem fechar, para que uma camada inferior não feche em seu lugar.
+ */
+export function useEscapeKey(open: boolean, onEscape?: () => void, canClose = true) {
+	const layerRef = useRef<EscapeLayer>({ canClose, onEscape: () => undefined });
+
 	useEffect(() => {
-		if (!open || !onEscape) return;
-		const listener = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') onEscape();
-		};
-		document.addEventListener('keydown', listener);
-		return () => document.removeEventListener('keydown', listener);
-	}, [onEscape, open]);
+		layerRef.current.canClose = canClose;
+		layerRef.current.onEscape = onEscape ?? (() => undefined);
+	});
+
+	const active = open && Boolean(onEscape);
+	useEffect(() => {
+		if (!active) return;
+		return registerEscapeLayer(layerRef.current);
+	}, [active]);
 }
 
 export function useClickOutside(

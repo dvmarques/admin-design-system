@@ -10,6 +10,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,
+  em `assets/brand` (SVG como fonte, PNG 512×512 derivado, variante sem fundo, favicon chapado e
+  lockups claro e escuro). Exibido no cabeçalho do admin demo, no favicon do demo e do Storybook e no
+  README. No GitHub Pages, o logotipo e os favicons resolvem sob o subcaminho do repositório. A paleta
+  do logotipo é independente da escala `brand*` dos tokens. Sem mudança em pacotes publicados nem em
+  APIs públicas.
 - `tabs-breadcrumb-accordion` - Tabs, Breadcrumb e Accordion (issue #90). Novo `AdsAccordion` composto
   (`Root`, `Item`, `Header`, `Trigger`, `Panel`) com `type` `single` (com `collapsible`) ou `multiple`,
   estado controlado ou não, heading com `level`, itens desabilitados, teclado (↑, ↓, Home, End) e painel

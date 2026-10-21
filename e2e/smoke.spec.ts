@@ -37,3 +37,28 @@ test('navega pelo menu principal entre as rotas cobertas', async ({ page }) => {
 		await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
 	}
 });
+
+test('o logo do cabeçalho carrega', async ({ page }) => {
+	await page.goto('/');
+
+	const logo = page.locator('.demo-brand-heading img');
+	await expect(logo).toBeVisible();
+	await expect
+		.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+		.toBeGreaterThan(0);
+});
+
+test('em tela estreita o título do cabeçalho segue acessível e o cabeçalho não cresce', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+
+	await expect(page.locator('.demo-brand-heading img')).toBeVisible();
+	await expect(page.locator('.demo-brand-heading strong')).toHaveText('Admin Design System');
+	const height = await page
+		.locator('header')
+		.first()
+		.evaluate((header) => header.getBoundingClientRect().height);
+	expect(height).toBeLessThanOrEqual(64);
+});

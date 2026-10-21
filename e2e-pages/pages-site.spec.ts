@@ -106,3 +106,35 @@ test('storybook publicado: carrega o catálogo em /storybook/', async ({ page, r
 	await expect(page).toHaveTitle(/Storybook/);
 	expect(errors).toEqual([]);
 });
+
+test('demo publicado: o logo do cabeçalho carrega sob o subcaminho', async ({ page }) => {
+	const errors = collectBrowserErrors(page);
+
+	await page.goto(`${base}/`);
+
+	const logo = page.locator('.demo-brand-heading img');
+	await expect(logo).toHaveAttribute('src', `${base}/icon.svg`);
+	await expect
+		.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+		.toBeGreaterThan(0);
+	expect(errors).toEqual([]);
+});
+
+for (const [name, path] of [
+	['manager', `${base}/storybook/`],
+	['iframe de preview', `${base}/storybook/iframe.html`],
+] as const) {
+	test(`storybook publicado: o favicon do ${name} resolve sob /storybook/`, async ({
+		page,
+		request,
+	}) => {
+		await page.goto(path);
+
+		const favicon = page.locator('link[rel="icon"][href$="admin-ds-favicon.svg"]');
+		await expect(favicon).toHaveCount(1);
+		const href = await favicon.evaluate((link: HTMLLinkElement) => link.href);
+
+		expect(href).toBe(`http://127.0.0.1:4173${base}/storybook/admin-ds-favicon.svg`);
+		expect((await request.get(href)).ok()).toBe(true);
+	});
+}

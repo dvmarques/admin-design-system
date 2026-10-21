@@ -437,3 +437,29 @@ body {
 		scroll-behavior: auto;
 	}
 }
+
+/* Project identity in the demo header. */
+.demo-brand-heading {
+	display: inline-flex;
+	align-items: center;
+	gap: 0.625rem;
+	min-width: 0;
+}
+.demo-brand-heading img {
+	flex-shrink: 0;
+	border-radius: 0.4rem;
+}
+
+/* Narrow screens: the logo stands in for the title, which stays available to assistive technology. */
+@media (max-width: 30rem) {
+	.demo-brand-heading strong {
+		position: absolute;
+		width: 1px;
+		height: 1px;
+		margin: -1px;
+		padding: 0;
+		overflow: hidden;
+		clip-path: inset(50%);
+		white-space: nowrap;
+	}
+}

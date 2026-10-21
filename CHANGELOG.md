@@ -57,6 +57,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `split-long-spec-requirements` - Dez requisitos de nove specs foram reescritos com até 500
+  caracteres, movendo detalhes e casos de borda para cenários, e `openspec validate --all
+--strict` passa sem avisos. Sem mudança de código, API, classes ou tokens.
 - `fix-tooltip-preserve-aria-describedby` - Enquanto aberto, `AdsTooltip` deixa de substituir o
   `aria-describedby` do gatilho: o atributo passa a referenciar o id do consumidor e o do
   tooltip, nessa ordem, e volta ao valor original ao fechar (issue #148). Nova story

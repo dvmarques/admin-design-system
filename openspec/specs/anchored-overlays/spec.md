@@ -8,7 +8,7 @@ Oferecer tooltips e popovers acessíveis para revelar contexto breve ou conteúd
 
 ### Requirement: Tooltips revelam descrição contextual
 
-O sistema MUST exportar um tooltip público prefixado por `Ads` que associe uma descrição breve ao seu gatilho e seja revelado por foco ou apontamento. O tooltip MUST desaparecer quando o gatilho perde foco ou apontamento, exceto enquanto o apontamento estiver sobre o próprio tooltip quando esse comportamento for oferecido. Enquanto aberto, o tooltip MUST preservar o `aria-describedby` que o gatilho já possui, referenciando o id do consumidor e o do tooltip, nessa ordem, separados por espaço; ao fechar, o gatilho MUST voltar ao `aria-describedby` original, ou ficar sem o atributo se não havia.
+O sistema MUST exportar um tooltip público prefixado por `Ads` que associe uma descrição breve ao seu gatilho e seja revelado por foco ou apontamento. O tooltip MUST desaparecer quando o gatilho perde foco ou apontamento, exceto sobre o próprio tooltip quando esse comportamento for oferecido. Enquanto aberto, MUST preservar o `aria-describedby` do gatilho, acrescentando o id do tooltip, e ao fechar o gatilho MUST voltar ao valor original.
 
 #### Scenario: Usuário focaliza um gatilho com tooltip
 
@@ -27,7 +27,7 @@ O sistema MUST exportar um tooltip público prefixado por `Ads` que associe uma 
 
 ### Requirement: Popovers oferecem conteúdo interativo sob demanda
 
-O sistema MUST exportar um popover público prefixado por `Ads` que possa ser aberto de forma controlada por um gatilho e apresentar conteúdo complementar, inclusive elementos interativos. O popover MUST expor relação acessível entre gatilho e conteúdo. Ativar o gatilho MUST alternar a abertura, preservando seus handlers de consumidor. Interações dentro do conteúdo MUST manter o painel aberto, exceto quando o consumidor solicitar explicitamente seu fechamento, e MUST preservar os handlers e a propagação dos eventos do consumidor.
+O sistema MUST exportar um popover público prefixado por `Ads`, aberto de forma controlada por um gatilho, que apresente conteúdo complementar, inclusive interativo, e exponha relação acessível entre gatilho e conteúdo. Ativar o gatilho MUST alternar a abertura preservando seus handlers de consumidor. Interações dentro do conteúdo MUST manter o painel aberto, salvo fechamento explícito do consumidor, e preservar handlers e propagação dos eventos.
 
 #### Scenario: Usuário abre um popover pelo teclado
 

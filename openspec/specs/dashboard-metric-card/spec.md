@@ -41,7 +41,7 @@ O card MUST comunicar a tendência (`up`, `down` ou `neutral`) por ícone e por 
 
 ### Requirement: Card de métrica exibe um sparkline opcional
 
-O `AdsMetricCard` MUST aceitar a prop opcional `sparkline` (valores, `min`, `max`, `labels`, `label`, `summary` e `formatValue` do `AdsSparkline`, sem `tone`) e exibir o `AdsSparkline` abaixo da variação. A cor do traço MUST seguir o `sentiment` efetivo do card (`positive` e `negative`; caso contrário a cor padrão). O sparkline MUST ser omitido quando não houver pontos válidos e nos estados `error` e `empty`. No estado `loading`, o card MUST reservar a altura do sparkline com um placeholder quando `sparkline` for informado. Sem a prop, o card MUST permanecer como antes.
+O `AdsMetricCard` MUST aceitar a prop opcional `sparkline` (`values`, `min`, `max`, `labels`, `label`, `summary` e `formatValue` do `AdsSparkline`, sem `tone`) e exibir o `AdsSparkline` abaixo da variação, com o traço seguindo o `sentiment` efetivo. O sparkline MUST ser omitido sem pontos válidos e nos estados `error` e `empty`; em `loading`, o card MUST reservar sua altura com um placeholder. Sem a prop, o card MUST permanecer como antes.
 
 #### Scenario: Card com série
 
@@ -67,6 +67,16 @@ O `AdsMetricCard` MUST aceitar a prop opcional `sparkline` (valores, `min`, `max
 
 - **WHEN** o consumidor não informa `sparkline`
 - **THEN** a marcação do card é a mesma de antes
+
+#### Scenario: Sentimento negativo ou neutro
+
+- **WHEN** o `sentiment` efetivo é `negative` ou não há sentimento
+- **THEN** o sparkline usa o tom negativo ou, sem sentimento, a cor padrão
+
+#### Scenario: Estados de erro e vazio
+
+- **WHEN** o card está em `error` ou `empty`
+- **THEN** o sparkline não é renderizado
 
 ### Requirement: Variação com sentimento invertido
 

@@ -8,7 +8,7 @@ Define os estados de carregamento, vazio e erro dos painéis e cards de métrica
 
 ### Requirement: Painel cobre carregamento, vazio e erro
 
-`AdsDashboardPanel` MUST suportar os estados de carregamento, vazio e erro, com prioridade carregamento, erro, vazio e conteúdo. `error` MUST aceitar nós React. `empty` MUST aceitar `string`, `number` ou nós React; quando for texto ou número, MUST renderizar `AdsEmptyState` compacto com o valor como título. `empty` MUST NOT ser tratado como ausente quando for `number` (incluindo `0`); `null`, `undefined`, `false` e string vazia MUST contar como ausência e MUST renderizar os filhos. O componente MUST NOT buscar dados.
+`AdsDashboardPanel` MUST suportar os estados de carregamento, vazio e erro, com prioridade carregamento, erro, vazio e conteúdo, e MUST NOT buscar dados. `error` MUST aceitar nós React. `empty` MUST aceitar `string`, `number` ou nós React, e texto ou número MUST renderizar `AdsEmptyState` compacto com o valor como título. `null`, `undefined`, `false` e string vazia, mas não `0`, MUST contar como ausência de `empty` e renderizar os filhos.
 
 #### Scenario: Carregamento
 

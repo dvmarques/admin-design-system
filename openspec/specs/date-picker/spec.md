@@ -32,7 +32,7 @@ O sistema MUST fornecer `AdsDatePicker` que permita selecionar uma data única, 
 
 ### Requirement: Seleção de intervalo
 
-`AdsDatePicker` com `mode="range"` MUST permitir selecionar uma data inicial e uma final, representadas por `{ start, end }`. O sistema MUST ordenar as extremidades quando a segunda data escolhida for anterior à primeira. No calendário, a primeira data ativada MUST ficar apenas pendente, sem alterar o valor, até a segunda; fechar o calendário antes MUST manter o valor anterior. A data pendente MUST ser anunciada por uma região `aria-live="polite"` visualmente oculta, com texto configurável em `labels.pendingStart`, e digitar uma data MUST descartá-la.
+`AdsDatePicker` com `mode="range"` MUST permitir selecionar uma data inicial e uma final, representadas por `{ start, end }`, e ordenar as extremidades quando a segunda data for anterior à primeira. No calendário, a primeira data ativada MUST ficar pendente, sem alterar o valor, até a segunda. A data pendente MUST ser anunciada por uma região `aria-live="polite"` visualmente oculta, com texto em `labels.pendingStart`.
 
 #### Scenario: Escolher um intervalo no calendário
 

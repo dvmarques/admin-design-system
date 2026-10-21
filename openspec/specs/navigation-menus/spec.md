@@ -8,7 +8,7 @@ Fornece menus suspensos contextuais que preservam a acessibilidade, o foco e a v
 
 ### Requirement: Dropdown composto e controlável
 
-O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, com estado aberto controlado ou não controlado. O gatilho MUST expor estado expandido e a relação com o menu; itens MUST aceitar ações ou links fornecidos pelo consumidor e preservar seus atributos nativos. A API MUST ser independente de roteamento e aceitar personalização segura por `className` e tokens públicos. A abertura pelo teclado MUST focar o primeiro item habilitado assim que o conteúdo estiver disponível, inclusive após montagem tardia e em reaberturas. A abertura por mouse MUST preservar o comportamento nativo de foco do navegador sem movê-lo para um item do menu.
+O sistema MUST fornecer `AdsDropdown` composto por gatilho, conteúdo e itens, com estado aberto controlado ou não controlado, independente de roteamento e personalizável por `className` e tokens públicos. O gatilho MUST expor estado expandido e a relação com o menu; itens MUST aceitar ações ou links do consumidor preservando seus atributos nativos. A abertura pelo teclado MUST focar o primeiro item habilitado, e a abertura por mouse MUST NOT mover o foco para um item.
 
 #### Scenario: Abertura por gatilho
 

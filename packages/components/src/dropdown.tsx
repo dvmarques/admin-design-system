@@ -169,7 +169,7 @@ function AdsDropdownContent({
 				}}
 				ref={setContentRef}
 				role="menu"
-				style={position}
+				style={position.style}
 			>
 				{children}
 			</div>

@@ -1,11 +1,8 @@
 # Limitações conhecidas
 
-Esta change entrega a fundação do design system, não um catálogo completo de
-componentes administrativos.
+Os limites abaixo descrevem o suporte atual dos pacotes, da demonstração e
+das validações automatizadas.
 
-- `packages/components` contém atualmente fixtures de estilo e o controle de
-  tema; componentes como Button, Table, Modal e Sidebar ainda serão changes
-  independentes.
 - `packages/admin` contém o `AdsAdminShell` e seus estilos próprios, e os padrões de
   dashboard (`AdsMetricCard`, `AdsDashboardGrid`, `AdsDashboardPanel`), mas não
   contém gráficos completos (eixos, legendas, tooltips) nem regras de negócio. O
@@ -24,7 +21,7 @@ componentes administrativos.
   até 10%; mudanças maiores exigem revisão explícita do baseline.
 - A validação automatizada de `axe-core` e Playwright não substitui revisão
   manual com teclado, leitor de tela e testes em dispositivos reais. Firefox e
-  WebKit têm apenas smoke tests (`/`, `/clientes` e `/componentes`), sem
+  WebKit têm smoke tests (`/`, `/clientes` e `/componentes`) e a regressão de foco do dropdown, sem
   snapshots e sem a suíte completa; o WebKit do Playwright no Linux não equivale
   ao Safari.
 - `forced-colors` e `prefers-contrast` são validados por emulação em Chromium e

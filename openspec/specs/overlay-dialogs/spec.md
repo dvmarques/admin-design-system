@@ -65,3 +65,36 @@ AdsDialog e AdsDrawer MUST usar a escala semântica de elevação e camada para 
 
 - **WHEN** um diálogo com ações é exibido em largura inferior a 768 px
 - **THEN** conteúdo, ações e controle de fechar permanecem acessíveis sem colisão ou corte do conteúdo
+
+### Requirement: Escape em overlays aninhados fecha apenas a camada superior
+
+Quando mais de um overlay estiver aberto, o Escape MUST ser tratado apenas pela camada superior, definida pela ordem de abertura, e MUST NOT fechar uma camada inferior no mesmo pressionamento.
+
+#### Scenario: Popover aberto dentro de um diálogo
+
+- **WHEN** um popover aberto a partir de um diálogo recebe um Escape
+- **THEN** apenas o popover solicita fechamento, o diálogo permanece aberto e o foco volta ao gatilho do popover dentro do diálogo
+
+#### Scenario: Segundo Escape fecha o diálogo
+
+- **WHEN** o popover já foi fechado e o usuário pressiona Escape novamente
+- **THEN** o diálogo solicita fechamento e o foco volta ao elemento que o abriu
+
+#### Scenario: Camada superior não fecha por Escape
+
+- **WHEN** a camada superior tem o fechamento por Escape desabilitado e o usuário pressiona Escape
+- **THEN** nenhuma camada solicita fechamento e a camada inferior permanece aberta
+
+### Requirement: Drawer mantém o contrato modal nos dois posicionamentos
+
+`AdsDrawer` MUST oferecer, à esquerda e à direita, a mesma semântica modal do diálogo: papel de diálogo com `aria-modal`, nome acessível, foco preso, fechamento por Escape quando habilitado e retorno do foco ao elemento que o abriu.
+
+#### Scenario: Drawer à esquerda e à direita
+
+- **WHEN** um drawer é aberto com posicionamento à esquerda ou à direita
+- **THEN** ele expõe `role="dialog"` com `aria-modal="true"` e nome acessível, e o foco entra no seu conteúdo
+
+#### Scenario: Escape e retorno de foco no drawer
+
+- **WHEN** um drawer aberto recebe um Escape e permite esse fechamento
+- **THEN** a aplicação recebe a solicitação de fechamento e, ao fechar, o foco volta ao elemento que o abriu

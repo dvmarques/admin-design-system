@@ -18,5 +18,5 @@ O sistema MUST exportar um tooltip público prefixado por `Ads` que associe uma 
 
 #### Scenario: Tooltip fecha em gatilho com aria-describedby
 
-- **WHEN** o tooltip fecha, por perda de foco ou fim do apontamento, mesmo que Escape tenha sido pressionado enquanto estava aberto
+- **WHEN** o tooltip fecha, por perda de foco, fim do apontamento ou Escape
 - **THEN** o `aria-describedby` do gatilho volta a ser apenas `ajuda`, e um gatilho sem o atributo original fica sem ele

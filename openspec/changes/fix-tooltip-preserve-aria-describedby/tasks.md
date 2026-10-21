@@ -3,7 +3,7 @@
 ## 1. Correção em AdsTooltip
 
 - [x] 1.1 Em `packages/components/src/overlay-anchored.tsx`, compor o `aria-describedby` do gatilho com o id do consumidor e o do tooltip; verificar que o gatilho sem o atributo continua recebendo só o id do tooltip.
-- [x] 1.2 Em `packages/components/tests/overlay-anchored.test.tsx`, cobrir gatilho com `aria-describedby` aberto por foco e por hover, e o retorno ao original ao fechar, mesmo após Escape; verificar que os testes falham sem a correção.
+- [x] 1.2 Em `packages/components/tests/overlay-anchored.test.tsx`, cobrir gatilho com `aria-describedby` aberto por foco e por hover, e o retorno ao original ao fechar, inclusive após Escape; verificar que os testes falham sem a correção.
 
 ## 2. Documentação e integração
 

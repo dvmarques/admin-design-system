@@ -1,6 +1,12 @@
 import {
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
 	AdsAvatar,
 	AdsBadge,
+	AdsBreadcrumb,
 	AdsButton,
 	AdsCheckbox,
 	AdsField,
@@ -13,8 +19,13 @@ import {
 	AdsSurface,
 	AdsTypography,
 	AdsSwitch,
+	AdsTabs,
+	AdsTabsList,
+	AdsTabsPanel,
+	AdsTabsTrigger,
 	AdsTextarea,
 } from '@admin-ds/components';
+import Link from 'next/link';
 import { tokenValues } from '@admin-ds/tokens';
 import { OverlayShowcase } from '../../overlay-showcase';
 import { NavigationShowcase } from '../../navigation-showcase';
@@ -148,6 +159,42 @@ export default function ComponentsPage() {
 							<AdsTypography as="h2" id="navigation" variant="heading3">
 								Navegação pública
 							</AdsTypography>
+							{/* Server Component: renderLink e o colapso do breadcrumb sem "use client" na página. */}
+							<AdsBreadcrumb
+								aria-label="Trilha renderizada no servidor"
+								expandLabel="Mostrar trilha do servidor"
+								items={[
+									{ label: 'Início', renderLink: (props) => <Link href="#home" {...props} /> },
+									{ label: 'Catálogo', renderLink: (props) => <Link href="#catalog" {...props} /> },
+									{
+										label: 'Navegação',
+										renderLink: (props) => <Link href="#navigation" {...props} />,
+									},
+									{
+										label: 'Estrutura',
+										renderLink: (props) => <Link href="#structure" {...props} />,
+									},
+									{ label: 'Trilha' },
+								]}
+								maxItems={3}
+							/>
+							{/* Também no servidor: as partes são importadas por nome, pois AdsTabs.List não existe fora do cliente. */}
+							<AdsTabs defaultValue="server-one">
+								<AdsTabsList aria-label="Tabs renderizadas no servidor">
+									<AdsTabsTrigger value="server-one">Primeira</AdsTabsTrigger>
+									<AdsTabsTrigger value="server-two">Segunda</AdsTabsTrigger>
+								</AdsTabsList>
+								<AdsTabsPanel value="server-one">Conteúdo da primeira.</AdsTabsPanel>
+								<AdsTabsPanel value="server-two">Conteúdo da segunda.</AdsTabsPanel>
+							</AdsTabs>
+							<AdsAccordion defaultValue="server-item" type="single">
+								<AdsAccordionItem value="server-item">
+									<AdsAccordionHeader>
+										<AdsAccordionTrigger>Accordion renderizado no servidor</AdsAccordionTrigger>
+									</AdsAccordionHeader>
+									<AdsAccordionPanel>Montado por uma página Server Component.</AdsAccordionPanel>
+								</AdsAccordionItem>
+							</AdsAccordion>
 							<NavigationShowcase />
 						</AdsSurface>
 					</section>

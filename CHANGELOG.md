@@ -10,6 +10,24 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `tabs-breadcrumb-accordion` - Tabs, Breadcrumb e Accordion (issue #90). Novo `AdsAccordion` composto
+  (`Root`, `Item`, `Header`, `Trigger`, `Panel`) com `type` `single` (com `collapsible`) ou `multiple`,
+  estado controlado ou não, heading com `level`, itens desabilitados, teclado (↑, ↓, Home, End) e painel
+  oculto por padrão, com `unmountOnCollapse` na raiz e por item. `AdsTabs` ganha `activationMode`
+  (`automatic`), `orientation` (`vertical`) e `keepMounted`, ids válidos para qualquer `value`, uma tab
+  sempre tabulável e `type="button"` nos gatilhos. `AdsBreadcrumb` ganha `maxItems`,
+  `itemsBeforeCollapse`, `itemsAfterCollapse`, `expandLabel` e `separator`. `AdsTabs` e `AdsAccordion`
+  declaram `"use client"`; `AdsBreadcrumb` e `AdsNav` seguem compatíveis com Server Components, inclusive
+  com `renderLink`. As partes também são exportadas por nome (`AdsTabsList`, `AdsTabsTrigger`,
+  `AdsTabsPanel`, `AdsAccordionItem`, `AdsAccordionHeader`, `AdsAccordionTrigger`,
+  `AdsAccordionPanel`) para uso em Server Components, onde `AdsTabs.List` não existe. O item aberto de
+  um accordion `single` sem `collapsible` expõe `aria-disabled`, e `aria-controls` só referencia painéis
+  que existem. `verify-package` passa a falhar se `navigation.js` usar APIs só de cliente. Textos padrão
+  em inglês, sobrescritos por prop. Sem mudança incompatível de API;
+  três correções de comportamento em `AdsTabs`: o gatilho deixa de submeter formulários
+  (`type="button"`), o `onClick` do consumidor passa a ser chamado e os ids de tab e painel mudam de
+  formato (derivam do `value` codificado), então seletores que dependiam do formato antigo devem usar
+  os papéis ARIA.
 - `add-metric-sparkline` - Indicador de variação e sparkline do dashboard (issue #89). Novo
   `AdsSparkline` em `@admin-ds/components`: gráfico de linha em SVG, sem dependência de
   runtime, com `values` (valores não finitos são ignorados), `min`, `max`, `labels`, `tone`,
@@ -43,6 +61,24 @@ por versão e pelas changes correspondentes do OpenSpec.
   `aria-describedby` do gatilho: o atributo passa a referenciar o id do consumidor e o do
   tooltip, nessa ordem, e volta ao valor original ao fechar (issue #148). Nova story
   `TooltipWithDescribedTrigger`. Sem mudança de API pública, classes ou tokens.
+- `fix-tooltip-escape-overlays` - `AdsTooltip` aberto, por foco ou por apontamento, fecha com Escape
+  sem capturar nem deslocar o foco, e só reabre com um novo foco ou apontamento no gatilho. O tooltip
+  passa a ser camada na pilha de Escape: um tooltip aberto absorve o primeiro Escape e o evento fica
+  marcado com `defaultPrevented`, então um diálogo ao redor exige um segundo Escape. Regressões novas
+  cobrem `AdsDrawer` (esquerda e direita) e o painel de colunas do `AdsSmartTable` dentro de
+  `AdsDialog`/`AdsDrawer`. Sem mudança de API pública, tokens ou estilos (issue #91).
+
+- `fix-popover-content-click` - Cliques em campos e botões no conteúdo de `AdsPopover`
+  mantêm o painel aberto, preservando handlers e propagação de eventos do consumidor.
+  Gatilho, Escape, clique externo e fechamento controlado mantêm seus comportamentos.
+  `AdsDatePicker` deixa de precisar interromper a propagação dos cliques do calendário.
+  Sem mudança de API pública, tokens ou estilos (issue #126).
+- `cleanup-project-docs-and-design-guidance` - Documentação atualizada para os recursos
+  entregues, com remoção de referências externas como orientação de design e de textos
+  obsoletos de roadmap e andamento. As skills de design passam a respeitar a Inter e os
+  tokens existentes. Licenças, limitações técnicas, histórico e fluxo de releases são
+  preservados; sem mudança de código, API ou aparência.
+
 - `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na
   horizontal em 320px: os grids da demonstração em telas estreitas passam de `1fr` para
   `minmax(0, 1fr)` e a paginação rola dentro do próprio painel. O E2E de todas as rotas

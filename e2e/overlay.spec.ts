@@ -69,6 +69,19 @@ test.describe('public overlays', () => {
 		});
 	});
 
+	test('dismisses the tooltip with Escape without moving focus', async ({ page }) => {
+		await page.goto('/componentes');
+		const trigger = page.getByRole('button', { name: 'Tooltip', exact: true });
+		await trigger.focus();
+		const tooltip = page.getByRole('tooltip');
+		await expect(tooltip).toBeVisible();
+		await expect(trigger).toHaveAttribute('aria-describedby', (await tooltip.getAttribute('id'))!);
+		await page.keyboard.press('Escape');
+		await expect(tooltip).toBeHidden();
+		await expect(trigger).toBeFocused();
+		await expect(trigger).not.toHaveAttribute('aria-describedby');
+	});
+
 	test('keeps dialog focus and closes with Escape', async ({ page }) => {
 		await page.goto('/componentes');
 		const trigger = page.getByRole('button', { name: 'Abrir diálogo' }).first();
@@ -79,6 +92,29 @@ test.describe('public overlays', () => {
 		await page.keyboard.press('Escape');
 		await expect(dialog).toBeHidden();
 		await expect(trigger).toBeFocused();
+	});
+
+	test('closes only the inner popover on the first Escape and then the dialog', async ({
+		page,
+	}) => {
+		await page.goto('/componentes');
+		const origin = page.getByRole('button', { name: 'Abrir diálogo' }).first();
+		await origin.focus();
+		await origin.click();
+		const dialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
+		await expect(dialog).toBeVisible();
+		const trigger = dialog.getByRole('button', { name: 'Detalhes' });
+		await trigger.focus();
+		await trigger.click();
+		const popover = page.getByRole('dialog', { name: 'Detalhes internos' });
+		await expect(popover).toBeVisible();
+		await page.keyboard.press('Escape');
+		await expect(popover).toBeHidden();
+		await expect(dialog).toBeVisible();
+		await expect(trigger).toBeFocused();
+		await page.keyboard.press('Escape');
+		await expect(dialog).toBeHidden();
+		await expect(origin).toBeFocused();
 	});
 
 	test('supports drawer, anchored context, and toast flows', async ({ page }) => {

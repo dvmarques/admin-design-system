@@ -14,6 +14,11 @@ import {
 } from './support/demo-contract';
 import { AdsAdminShell } from '@admin-ds/admin';
 import {
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
 	AdsAvatar,
 	AdsBadge,
 	AdsBreadcrumb,
@@ -62,6 +67,11 @@ const repoRoot = resolve(import.meta.dirname, '../../..');
 describe('public component consumption', () => {
 	it('resolves all component exports without internal package paths', () => {
 		expect([
+			AdsAccordion,
+			AdsAccordionHeader,
+			AdsAccordionItem,
+			AdsAccordionPanel,
+			AdsAccordionTrigger,
 			AdsAvatar,
 			AdsBadge,
 			AdsBreadcrumb,
@@ -104,7 +114,7 @@ describe('public component consumption', () => {
 			AdsTooltip,
 			AdsTypography,
 			AdsAdminShell,
-		]).toHaveLength(42);
+		]).toHaveLength(47);
 	});
 
 	it('includes component styles in the distributed CSS', async () => {

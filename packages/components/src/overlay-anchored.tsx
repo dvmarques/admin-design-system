@@ -52,6 +52,8 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 	const contentRef = useRef<HTMLDivElement>(null);
 	const tooltipId = useStableId('ads-tooltip');
 	const position = useAnchoredPosition(open, anchorRef, contentRef, placement);
+	// Dispensa o tooltip sem mover o foco: o gatilho só o reabre com um novo foco ou apontamento.
+	useEscapeKey(open, () => setOpen(false));
 	const consumerIds = (children.props as { 'aria-describedby'?: string })['aria-describedby']
 		?.split(/\s+/)
 		.filter(Boolean);
@@ -139,7 +141,12 @@ export function AdsPopover({
 	return (
 		<span
 			className="ads-popover-anchor inline-flex"
-			onClick={() => onOpenChange(!open)}
+			onClick={(event) => {
+				// React events from the portalled panel also bubble through this anchor.
+				if (event.target instanceof Node && event.currentTarget.contains(event.target)) {
+					onOpenChange(!open);
+				}
+			}}
 			ref={anchorRef}
 		>
 			{trigger}

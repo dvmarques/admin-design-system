@@ -235,3 +235,8 @@ execução ou de configurações encontradas em outros checkouts.
 A regressão `scripts/eslint-config.test.mjs` roda em `npm run test:ci`, incluído
 em `npm run test:quality`. Ela verifica o lint com e sem checkout aninhado,
 a detecção de erros nos arquivos próprios e a preservação dos arquivos ignorados.
+
+Pastas temporárias com prefixo `lint-regression-*` na raiz são reservadas para
+a regressão e ignoradas por Git, ESLint e Prettier. Se uma execução for
+interrompida antes da limpeza automática, remova somente a pasta temporária
+correspondente antes de repetir o teste.

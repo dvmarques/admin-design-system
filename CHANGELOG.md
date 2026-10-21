@@ -8,11 +8,6 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
-#### Fixed
-
-- `fix-lint-nested-worktrees` - O lint da raiz ignora `.claude/worktrees/**` e resolve
-  `tsconfigRootDir` pela configuração, preservando os arquivos dos worktrees (#128).
-
 #### Added
 
 - `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,
@@ -174,6 +169,11 @@ por versão e pelas changes correspondentes do OpenSpec.
   `.cursor/mcp.json`, hook `pre-commit` com Husky e lint-staged, e hooks e
   subagents do Claude Code. Somente tooling e documentação, sem mudança de API
   pública nem de pacotes distribuídos.
+
+#### Fixed
+
+- `fix-lint-nested-worktrees` - O lint da raiz ignora `.claude/worktrees/**` e resolve
+  `tsconfigRootDir` pela configuração, preservando os arquivos dos worktrees (#128).
 
 ### [0.1.0] - 15-out-2026
 

@@ -61,6 +61,7 @@ test('lint isolates nested worktrees while retaining checkout diagnostics', asyn
 
 		const fromAnotherDirectory = new ESLint({
 			cwd: root,
+			ignore: false,
 			overrideConfigFile: path.join(fixture, 'eslint.config.mjs'),
 		});
 		const config = await fromAnotherDirectory.calculateConfigForFile(ownFile);

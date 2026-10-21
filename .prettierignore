@@ -13,3 +13,4 @@ apps/admin-demo/next-env.d.ts
 packages/tokens/src/generated.ts
 apps/admin-demo/out/
 site/
+/lint-regression-*/

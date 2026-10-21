@@ -4,6 +4,7 @@ import tseslint from 'typescript-eslint';
 export default tseslint.config(
 	{
 		ignores: [
+			'lint-regression-*/**',
 			'.claude/worktrees/**',
 			'**/dist/**',
 			'**/node_modules/**',

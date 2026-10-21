@@ -31,8 +31,18 @@ viola a preservação dos dados locais. Apenas fixar a raiz ainda analisa duplic
 Sem mudanças em Client/Server Components, acessibilidade, responsividade, temas,
 Tailwind, tokens ou distribuição de CSS. Stories e exemplos novos não se aplicam.
 Sem dependências novas ou impacto em bundle. Fixtures são removidas em finally.
+O prefixo reservado `lint-regression-*` na raiz é ignorado por Git, ESLint e
+Prettier: uma interrupção antes do finally não contamina a validação nem o staging.
 
 ## Validation
 
 Teste de regressão, lint do checkout, formatação, OpenSpec estrito, build, tipos,
 testes de qualidade e E2E. Não atualizar snapshots nesta correção de ferramentas.
+
+## Limitação da regressão
+
+O preset de produção não usa lint com análise de tipos. A regressão verifica
+o isolamento observado em `eslint .` e a raiz explícita da configuração, mas
+não exercita a inferência de projetos do typescript-eslint em modo type-aware.
+A asserção de raiz protege o contrato de configuração independente do cwd; não
+deve ser apresentada como cobertura de resolução de projetos TypeScript.

@@ -1,6 +1,8 @@
 /** Generated from source/tokens.mjs. Do not edit manually. */
 export const tokenValues = {
-  "typography.fontFamily": "Aptos, \"Segoe UI Variable\", \"Segoe UI\", sans-serif",
+  "typography.fontFamily": "Inter, \"Segoe UI Variable\", \"Segoe UI\", system-ui, -apple-system, Roboto, \"Helvetica Neue\", Arial, sans-serif",
+  "typography.fontFamilyHeading": "var(--ads-typography-font-family)",
+  "typography.fontFamilyMono": "ui-monospace, \"SF Mono\", \"Cascadia Code\", Consolas, \"Liberation Mono\", Menlo, monospace",
   "typography.fontSize.xs": "0.75rem",
   "typography.fontSize.sm": "0.875rem",
   "typography.fontSize.md": "1rem",
@@ -21,8 +23,12 @@ export const tokenValues = {
   "spacing.2": "0.5rem",
   "spacing.3": "0.75rem",
   "spacing.4": "1rem",
+  "spacing.5": "1.25rem",
   "spacing.6": "1.5rem",
   "spacing.8": "2rem",
+  "spacing.10": "2.5rem",
+  "spacing.12": "3rem",
+  "spacing.16": "4rem",
   "dimension.controlSm": "2rem",
   "dimension.controlMd": "2.25rem",
   "dimension.controlLg": "2.5rem",
@@ -88,6 +94,14 @@ export const tokenValues = {
   "color.overlayCloseContent": "#0f172a",
   "color.overlayCloseBackgroundHover": "#e2e8f0",
   "color.overlayBackdrop": "rgb(15 23 42 / 0.64)",
+  "color.chart1": "#0369a1",
+  "color.chart2": "#c2410c",
+  "color.chart3": "#15803d",
+  "color.chart4": "#7c3aed",
+  "color.chart5": "#e11d48",
+  "color.chart6": "#c026d3",
+  "color.chart7": "#64748b",
+  "color.chart8": "#334155",
   "density.cellPaddingX": "1rem",
   "density.cellPaddingY": "0.75rem"
 } as const

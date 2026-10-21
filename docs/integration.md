@@ -26,6 +26,13 @@ Os valores aceitos são `light` e `dark`. Sem o atributo, os tokens usam a
 preferência `prefers-color-scheme` do sistema. A aplicação é responsável por
 persistir a preferência e aplicá-la antes da hidratação quando necessário.
 
+## Fonte
+
+A pilha tipográfica começa por `Inter`, mas a biblioteca não distribui a fonte. Carregue-a na
+aplicação (em Next.js, com `next/font`) para que o texto renderize igual em todas as plataformas;
+sem isso, o texto usa a fonte de sistema da pilha. Detalhes e exemplo em
+[Identidade visual](visual-identity.md).
+
 ## Next.js App Router
 
 Importe os estilos globais em `app/layout.tsx` e mantenha componentes

@@ -1,4 +1,8 @@
 import type { Preview } from '@storybook/react-vite';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
 import '@admin-ds/tokens/styles.css';
 import '@admin-ds/components/styles.css';
 import '@admin-ds/admin/styles.css';

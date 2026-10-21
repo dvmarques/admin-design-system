@@ -43,11 +43,17 @@ placeholders usa `--ads-skeleton-height-text|value|block`. Detalhes em
 
 ## Tipografia
 
-A pilha padrão é `Inter, Roboto, sans-serif`. Inter e Roboto são fontes de
-licença livre para uso comercial (SIL Open Font License 1.1 e Apache License
-2.0, respectivamente). O pacote não distribui arquivos de fonte; consumidores
-que fizerem o download ou empacotamento dessas fontes devem preservar seus
-avisos de licença.
+`--ads-typography-font-family` (corpo), `-font-family-heading` e
+`-font-family-mono` usam pilhas que começam por `Inter` (as duas primeiras) e
+terminam em fontes do sistema. O pacote não distribui arquivos de fonte: carregue
+a Inter na aplicação (por exemplo com `next/font`, veja
+[Identidade visual](../../docs/visual-identity.md)) ou sobrescreva o token. Se
+empacotar a fonte, preserve o aviso de licença (SIL OFL 1.1).
+
+## Identidade visual
+
+Superfícies do tema escuro, escala de espaçamento e cores de gráfico estão em
+[Identidade visual](../../docs/visual-identity.md).
 
 ## Compatibilidade
 

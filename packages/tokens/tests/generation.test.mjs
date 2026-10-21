@@ -107,3 +107,30 @@ test('rejects dark elevation and compact density with different keys', () => {
 	density.densityCompact.extra = '1px';
 	assert.throws(() => validateTokenSource(density), /densityCompact must define the same tokens/);
 });
+
+test('emits body, heading and monospace font families', () => {
+	const { css, module } = createArtifacts(tokenSource);
+	assert.ok(css.includes(`--ads-typography-font-family: ${tokenSource.typography.fontFamily};`));
+	// Os títulos acompanham o corpo, inclusive quando a aplicação sobrescreve só o token do corpo.
+	assert.ok(
+		css.includes('--ads-typography-font-family-heading: var(--ads-typography-font-family);'),
+	);
+	assert.match(css, /--ads-typography-font-family-mono: ui-monospace/);
+	assert.match(module, /"typography\.fontFamilyMono"/);
+});
+
+test('emits the brand scale and keeps semantic roles pointing at it', () => {
+	const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+	for (const step of steps) assert.ok(tokenSource.color.reference[`brand${step}`]);
+	assert.equal(tokenSource.color.semantic.light.primary, '{color.reference.brand600}');
+	assert.equal(tokenSource.color.semantic.dark.primary, '{color.reference.brand400}');
+});
+
+test('emits the chart colors as --ads-color-chart1 to --ads-color-chart8 in both themes', () => {
+	const { css } = createArtifacts(tokenSource);
+	const light = css.match(/:root, \[data-theme="light"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const dark = css.match(/\[data-theme="dark"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	for (let index = 1; index <= 8; index++)
+		for (const block of [light, dark])
+			assert.match(block, new RegExp(`--ads-color-chart${index}: #[\\da-f]{6};`, 'i'));
+});

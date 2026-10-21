@@ -8,6 +8,26 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
+#### Added
+
+- `add-visual-identity` - Etapa inicial da identidade visual (issue #118). No tema escuro,
+  `--ads-color-surface-muted` (`#162033`) e `--ads-color-surface-hover` (`#3d4b60`) deixam de
+  valer o mesmo que `--ads-color-surface-raised`, e um item em hover sobre uma superfície
+  elevada passa a ser distinguível dela. A escala de espaçamento ganha `--ads-spacing-5`, `-10`,
+  `-12` e `-16`. Novos tokens de cor para gráficos, `--ads-color-chart1` a `--ads-color-chart8`, nos dois
+  temas, com contraste mínimo de 3:1 contra a superfície e distinção verificada sob simulação
+  de daltonismo. Novo `docs/visual-identity.md`, correção dos valores de elevação em
+  `docs/visual-polish.md` e a story Foundation/Visual identity. Sem remoção ou renomeação de
+  tokens. A escala de marca `brand50`…`brand900` passa a ser a referência de `primary`, foco e
+  seleção, sem mudar a aparência. **A fonte padrão mudou**: `--ads-typography-font-family` passa
+  de `Aptos, "Segoe UI Variable", "Segoe UI", sans-serif` para uma pilha que começa em `Inter`
+  e termina em fontes de sistema; a biblioteca não distribui a fonte, então a aplicação deve
+  carregá-la (por exemplo com `next/font`, veja `docs/visual-identity.md`) ou sobrescrever o
+  token, e sem isso o texto usa a fonte de sistema da pilha (impacto visual para consumidores).
+  Novos `--ads-typography-font-family-heading` (usado pelos títulos de `AdsTypography`) e
+  `--ads-typography-font-family-mono`. O admin demo e o Storybook passam a carregar a Inter
+  com `@fontsource/inter` (dependência só dessas aplicações).
+
 #### Changed
 
 - `fix-demo-narrow-width` - A rota `/componentes` do admin demo deixa de rolar 6px na

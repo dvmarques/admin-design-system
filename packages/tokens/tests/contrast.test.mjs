@@ -56,7 +56,7 @@ for (const themeName of ['light', 'dark']) {
 test('default content and action colors meet the AA contrast baseline', () => {
 	const source = tokenSource.color.reference;
 	assert.ok(contrast(source.slate900, source.slate50) >= 4.5);
-	assert.ok(contrast(source.white, source.blue500) >= 4.5);
+	assert.ok(contrast(source.white, source.brand600) >= 4.5);
 });
 
 test('high-contrast mode never lowers a pair below its default ratio', () => {

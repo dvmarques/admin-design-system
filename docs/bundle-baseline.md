@@ -101,3 +101,17 @@ O baseline de `@admin-ds/admin` foi ajustado na revisão R2 de
 `polimento-visual-tokens` de 167071 para 168617 bytes (+1546), medido em LF com
 `dist/` limpo, por `hasDashboardEmpty` em módulo interno (`dashboard-empty`) e
 build do pacote. Sem novas dependências de runtime.
+
+O baseline de `@admin-ds/tokens` foi atualizado na change `add-visual-identity` de
+31756 para 36342 bytes (+4586, +14,4%, acima da tolerância de 10%), medido em LF com
+`dist/` limpo (`rm -rf packages/*/dist`), `generate`/`check:generated` e build de
+tokens, components e admin (`inspect:packages`). O incremento vem só de tokens e metadados
+novos, emitidos nos três blocos de tema do CSS: `tokens.css` +1848 (`chart1`…`chart8` nos dois
+temas, `spacing` 5/10/12/16, `surfaceMuted` e `surfaceHover` e as famílias
+`font-family-heading` e `-mono`), `tokens.meta.json` +1050 (escala `brand50`…`brand900`, novas
+referências `slate650` e `slate850` e os mesmos papéis) e +1688 em `generated.*` (valores
+tipados, declarações e source maps; o módulo gerado cresceu 592 bytes de fonte). Os contratos
+exigidos pela change não permitem reduzir sem remover tokens públicos, então o crescimento foi
+aceito. `@admin-ds/components` (280657) e `@admin-ds/admin` (168757) ficaram dentro da
+tolerância e não foram alterados. Sem novas dependências de runtime nos pacotes (o
+`@fontsource/inter` é dependência só de `admin-demo` e `docs`).

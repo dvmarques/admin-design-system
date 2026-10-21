@@ -8,7 +8,7 @@ body {
 	min-height: 100%;
 	background: var(--ads-color-canvas);
 	color: var(--ads-color-text);
-	font-family: Aptos, 'Segoe UI Variable', 'Segoe UI', sans-serif;
+	font-family: var(--ads-typography-font-family);
 }
 
 * {

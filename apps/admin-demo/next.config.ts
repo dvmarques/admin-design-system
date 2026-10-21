@@ -14,7 +14,10 @@ const nextConfig: NextConfig = {
 				basePath: pagesBasePath,
 				trailingSlash: true,
 				images: { unoptimized: true },
-				env: { NEXT_PUBLIC_STORYBOOK_URL: `${pagesBasePath}/storybook/` },
+				env: {
+					NEXT_PUBLIC_BASE_PATH: pagesBasePath,
+					NEXT_PUBLIC_STORYBOOK_URL: `${pagesBasePath}/storybook/`,
+				},
 			}
 		: {}),
 };

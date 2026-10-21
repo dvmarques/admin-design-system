@@ -37,3 +37,13 @@ test('navega pelo menu principal entre as rotas cobertas', async ({ page }) => {
 		await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
 	}
 });
+
+test('o logo do cabeçalho carrega', async ({ page }) => {
+	await page.goto('/');
+
+	const logo = page.locator('.demo-brand-heading img');
+	await expect(logo).toBeVisible();
+	await expect
+		.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+		.toBeGreaterThan(0);
+});

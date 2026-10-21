@@ -8,6 +8,9 @@ import { RouteChangeHandler } from '../route-change-handler';
 import { StorybookLink } from '../storybook-link';
 import { ThemeControl } from '../theme-control';
 
+/** `next/image` não aplica o `basePath` a um `src` raiz-relativo; só o export do Pages define um. */
+const logoSrc = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/icon.svg`;
+
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
 	const theme = await readServerTheme();
 
@@ -19,7 +22,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 				<AdsAdminShell.NavigationTrigger />
 				<AdsAdminShell.SidebarToggle />
 				<div className="demo-brand-heading">
-					<Image src="/icon.svg" alt="" width={30} height={30} priority />
+					<Image src={logoSrc} alt="" width={30} height={30} priority />
 					<AdsTypography as="strong" variant="heading4">
 						Admin Design System
 					</AdsTypography>

@@ -9,6 +9,8 @@ context: |
   compatibilidade Server/Client Components e CSS compilado distribuível.
   Consulte docs/architecture.md, docs/visual-identity.md e docs/integration.md
   somente quando o escopo afetar arquitetura, visual ou consumo, respectivamente.
+  Implementação própria e independente; registre licenças e atribuições conforme
+  docs/licensing.md ao incorporar material de terceiros.
   As regras de artefatos e operações abaixo permanecem obrigatórias.
 
 rules:

@@ -2,11 +2,11 @@
 
 O modelo padrão **não é fixo por nome ou versão**. Escolha, entre os modelos disponíveis na assinatura/ferramenta, a menor capacidade que conclui a tarefa com qualidade e validação suficiente. Compare **custo efetivo por tarefa concluída** (tokens de entrada e saída, preço ou franquia, latência e retrabalho), não apenas preço por token.
 
-| Classe | Exemplos | Escolha inicial | Escalonamento |
-| --- | --- | --- | --- |
-| Mecânica | Formatação, docs, tasks e ajustes pontuais | Modelo rápido/econômico; reasoning baixo | Falha repetida ou ambiguidade |
-| Padrão | Componentes, testes, bugs reproduzíveis | Modelo equilibrado; reasoning médio | Integração complexa, falhas persistentes |
-| Crítica | APIs públicas, acessibilidade complexa, arquitetura e segurança | Modelo de maior capacidade; reasoning alto | Revisão independente e evidências adicionais |
+| Classe   | Exemplos                                                        | Escolha inicial                            | Escalonamento                                |
+| -------- | --------------------------------------------------------------- | ------------------------------------------ | -------------------------------------------- |
+| Mecânica | Formatação, docs, tasks e ajustes pontuais                      | Modelo rápido/econômico; reasoning baixo   | Falha repetida ou ambiguidade                |
+| Padrão   | Componentes, testes, bugs reproduzíveis                         | Modelo equilibrado; reasoning médio        | Integração complexa, falhas persistentes     |
+| Crítica  | APIs públicas, acessibilidade complexa, arquitetura e segurança | Modelo de maior capacidade; reasoning alto | Revisão independente e evidências adicionais |
 
 ## Por fase OpenSpec
 

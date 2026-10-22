@@ -58,7 +58,8 @@ Para orquestrar uma issue até a revisão da PR, invoque a skill própria `adapt
 3. Para mudanças relevantes de comportamento, API, tokens, estilos ou arquitetura,
    crie ou atualize uma change em `openspec/changes/<change-id>` antes da implementação.
 4. Preserve mudanças locais não relacionadas.
-5. Use uma branch de trabalho e submeta alterações por Pull Request conforme as
+5. Para toda mudança relevante ao produto, fluxo de desenvolvimento ou documentação, registre uma entrada em `CHANGELOG.md`, na versão `[0.1.1] - Em andamento`, sob `Added`, `Changed` ou `Fixed` conforme o caso. Identifique a change OpenSpec ou issue e descreva objetivamente o efeito. Não omita o registro por otimização de contexto; se não houver mudança registrável, justifique explicitamente na PR.
+6. Use uma branch de trabalho e submeta alterações por Pull Request conforme as
    políticas do repositório.
 
 ## Processo OpenSpec

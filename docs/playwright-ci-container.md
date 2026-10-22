@@ -49,37 +49,23 @@ Next.js é iniciada por `playwright.config.ts` no próprio container, via
 
 ## Benchmark antes/depois
 
-O container é inicializado **antes** do checkout e da detecção `docs_only`:
-portanto, uma PR apenas documental ainda pode pagar o custo de pull da imagem,
-mesmo quando os passos E2E são pulados. Esse custo precisa entrar na medição.
+Os valores abaixo são calculados a partir do primeiro e último timestamp de cada log de job no GitHub Actions. Incluem a preparação do runner/container, checkout, dependências, builds e testes, mas não o tempo de espera em fila. O cache de imagem e npm não pode ser classificado com segurança como frio ou quente pelos dados disponíveis.
 
-O tempo de pull/start do container **não aparece como um step**. Usar os
-horários de início/fim do job no GitHub Actions e medir também etapas internas.
-Comparar pelo menos duas execuções por cenário em runners equivalentes,
-separando condições de cache frio/quente quando observáveis.
+### Jobs anteriores à migração (host `ubuntu-latest`)
 
-| Execução              | Ambiente           | Pull/start + checkout | Instalação npm | Dependências apt         | Builds     | Testes   | Total job  | Resultado |
-| --------------------- | ------------------ | --------------------- | -------------- | ------------------------ | ---------- | -------- | ---------- | --------- |
-| 39768760228 / Firefox | Host ubuntu-latest | não medido            | não medido     | ~10min47s (entre marcos) | não medido | 12,5s    | não medido | Passou    |
-| 39768760228 / WebKit  | Host ubuntu-latest | não medido            | não medido     | ~19min32s (entre marcos) | não medido | 11,9s    | não medido | Passou    |
-| 39771583007 / WebKit  | Host ubuntu-latest | não medido            | não medido     | download apt 31min18s    | não medido | 17,9s    | não medido | Passou    |
-| PR #172 / Chromium    | Container Noble    | pendente              | pendente       | não aplicável            | pendente   | pendente | pendente   | pendente  |
-| PR #172 / Firefox     | Container Noble    | pendente              | pendente       | não aplicável            | pendente   | pendente | pendente   | pendente  |
-| PR #172 / WebKit      | Container Noble    | pendente              | pendente       | não aplicável            | pendente   | pendente | pendente   | pendente  |
+- [Run 39768760228](https://github.com/dvmarques/admin-design-system/actions/runs/39768760228): Chromium 4min23s (181 testes), Firefox 11min49s (10 testes), WebKit 20min24s (10 testes).
+- [Run 39771583007](https://github.com/dvmarques/admin-design-system/actions/runs/39771583007): Chromium 1min57s (181 testes), Firefox 1min26s (10 testes), WebKit 32min58s (10 testes).
 
-### Primeira execução aprovada após migração
+### Jobs após migração (container oficial Playwright)
 
-CI [39790016962](https://github.com/dvmarques/admin-design-system/actions/runs/39790016962), commit `932a792`. Tempos aproximados entre o primeiro e o último timestamp dos logs dos jobs; incluem inicialização do container, checkout, npm, builds e testes, mas não representam uma mediana de múltiplos runs.
+- [Run 39787750701](https://github.com/dvmarques/admin-design-system/actions/runs/39787750701): Chromium 2min35s (167 testes, passou), WebKit 1min42s (10 testes, passou), Firefox 1min31s (falhou por `HOME`).
+- [Run 39789421161](https://github.com/dvmarques/admin-design-system/actions/runs/39789421161): Chromium 2min12s (167 testes, passou), WebKit 1min18s (10 testes, passou), Firefox 1min16s (falhou por `HOME`).
+- [Run 39790016962](https://github.com/dvmarques/admin-design-system/actions/runs/39790016962): Chromium 2min14s (167 testes, passou), Firefox 1min18s (10 testes, passou), WebKit 1min20s (10 testes, passou).
 
-| Browser | Duração aproximada do job | Testes |
-| --- | --- | --- |
-| Chromium | 2min14s | 167 passaram (1,1min) |
-| Firefox | 1min18s | 10 passaram (12,4s) |
-| WebKit | 1min20s | 10 passaram (14,9s) |
+### Medianas observadas e limites
 
-A primeira tentativa de container [39787750701](https://github.com/dvmarques/admin-design-system/actions/runs/39787750701) teve Chromium e WebKit aprovados, mas Firefox falhou por `HOME` incompatível e a qualidade falhou por formatação; não deve ser contabilizada como execução aprovada. O benchmark anterior em host não tem duração total medida e, portanto, ainda não permite calcular ganho percentual total confiável. Para concluir a comparação exigida pela task 3.3, coletar mais runs equivalentes, separar cenários de cache e registrar tempos de etapas.
+- **Chromium:** mediana host ~3min10s (2 jobs) e container ~2min14s (3 jobs). A quantidade de testes mudou de 181 para 167, então a diferença não pode ser atribuída exclusivamente ao container.
+- **WebKit:** mediana host ~26min41s (2 jobs) e container ~1min20s (3 jobs). A amostra é pequena, e a instalação via apt apresentou grande variação no host.
+- **Firefox:** mediana host ~6min38s (2 jobs). Container: 1min18s na única execução aprovada. Não há duas amostras aprovadas após a correção do `HOME` para uma mediana comparável.
 
-As amostras anteriores são parciais, de commits diferentes e não permitem
-inferir economia total. Registrar medianas, número de runs, timestamps e links
-dos jobs após a CI; comparar execução com cache equivalente e separar mudanças
-de duração causadas por concorrência e variabilidade do runner.
+O pull da imagem não aparece como etapa independente: a medição usa a duração total do job. Sem instrumentação adicional não é possível separar com precisão download da imagem, inicialização e cache. As execuções são de commits diferentes e não controlam carga do runner. Para concluir a task 3.3 com mediana de Firefox e condições de cache documentadas, obter pelo menos mais uma execução aprovada equivalente e classificar cache quando possível. Não extrapolar percentuais de economia como prova causal.

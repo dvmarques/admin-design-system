@@ -1,8 +1,7 @@
 ## 1. Análise
 
 - [x] 1.1 Revisar CI, Playwright config, lockfile e documentação.
-- [x] 1.2 Definir imagem exata e riscos de snapshots, Node/npm, rede e
-  - permissões.
+- [x] 1.2 Definir imagem exata e riscos de snapshots, Node/npm, rede e permissões.
 
 ## 2. Implementação
 
@@ -13,9 +12,7 @@
 
 ## 3. Validação
 
-- [ ] 3.1 Validar OpenSpec strict, format, lint, build, typecheck e quality.
-- [ ] 3.2 Confirmar execução real dos três browsers na CI, inclusive snapshots
-  - Chromium sem atualização automática.
-- [ ] 3.3 Medir antes/depois em runs comparáveis, incluindo pull/start do
-  - container e cache frio/quente; registrar mediana e limitações.
-- [ ] 3.4 Revisar PR, corrigir achados e encaminhar para code review.
+- [x] 3.1 Validar OpenSpec strict, format, lint, build, typecheck e quality.
+- [x] 3.2 Confirmar execução real dos três browsers na CI, inclusive snapshots Chromium sem atualização automática.
+- [ ] 3.3 Medir antes/depois em runs comparáveis, incluindo pull/start do container e cache frio/quente; registrar mediana e limitações.
+- [x] 3.4 Revisar PR, corrigir achados e encaminhar para code review.

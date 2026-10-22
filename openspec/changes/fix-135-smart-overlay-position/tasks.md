@@ -25,15 +25,17 @@
 ## 4. Revisão e entrega
 
 - [x] 4.1 Revisar diff completo, contratos públicos, compatibilidade e tamanho do bundle.
-- [ ] 4.2 Executar Prettier, npm run format, lint, build, typecheck, test:quiet, test:e2e e openspec.cmd validate --all --strict.
-- [ ] 4.3 Corrigir falhas reais sem desativar testes nem elevar tolerâncias.
+- [x] 4.2 Executar Prettier, npm run format, lint, build, typecheck, test:quiet, test:e2e e openspec.cmd validate --all --strict.
+- [x] 4.3 Corrigir falhas reais sem desativar testes nem elevar tolerâncias.
 - [x] 4.4 Publicar uma única PR para develop com bug, dvmarques e Closes #135; acompanhar CI até concluir.
-- [ ] 4.5 Entregar para code review sem merge nem arquivamento da change.
+- [x] 4.5 Entregar para code review sem merge nem arquivamento da change.
 
-## Evidências e bloqueios
+## Evidências de conclusão
 
-Consulte [validation.md](validation.md) para resultados atuais e comparação
-com develop. OpenSpec estrito e os 14 E2E focados passaram. O gate completo
-4.2, a resolução dos bloqueios 4.3 e a entrega 4.5 continuam pendentes:
-a suíte completa tem diferenças de snapshots reproduzidas na base e falhas de
-setup de Firefox/WebKit neste ambiente. Skipped em Draft não aprova a CI.
+Consulte [validation.md](validation.md). O run
+[39768760228](https://github.com/dvmarques/admin-design-system/actions/runs/39768760228)
+aprovou os gates do commit `f5bb8a7`: qualidade, distribuição, política/OpenSpec
+e os 201 E2E (181 Chromium, 10 Firefox e 10 WebKit). As falhas locais descritas
+no histórico não se reproduziram na CI; nenhum snapshot ou tolerância mudou.
+As 20 tarefas estão concluídas. PR Ready for review por autorização do
+responsável, aguardando revisão humana; sem merge ou arquivamento.

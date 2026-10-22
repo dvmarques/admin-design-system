@@ -100,7 +100,7 @@ Medição anterior preservada: components 345608 → 355657 bytes (+10049; 2,91%
 pois o módulo não mudou nesta retomada. O valor final permanece dentro da
 margem existente sobre o baseline 330033; nenhum baseline foi elevado.
 
-## Entrega e pendências
+## Entrega e pendências locais (histórico anterior à CI)
 
 - PR #167 continua Draft, com `bug`, assignee `dvmarques` e `Closes #135`,
   conforme a configuração solicitada. Sem merge, fechamento manual ou archive.
@@ -113,3 +113,35 @@ margem existente sobre o baseline 330033; nenhum baseline foi elevado.
 Os resultados antigos de EPERM na porta, CLI ausente e build com preload são
 históricos e foram substituídos pelas execuções acima; não são os bloqueios
 atuais.
+
+## CI após autorização para Ready for review
+
+Em 22/10/2026, o responsável autorizou retirar a PR de Draft. O run
+[39768760228](https://github.com/dvmarques/admin-design-system/actions/runs/39768760228)
+executa o commit `f5bb8a7c2de0dd1d3a019cdc278fb428b8037d46`.
+
+- Qualidade rápida: passou (format, lint, tipos, testes e verificações de qualidade).
+- Artefatos de distribuição: passou (pacotes, Storybook, Next.js e inspeção).
+- Política de develop: passou, incluindo OpenSpec estrito.
+- Chromium: **181 testes passaram**, incluindo os snapshots sem mudanças de baseline.
+- Firefox: **10 testes passaram**.
+- WebKit: **10 testes passaram**.
+- Resultado geral do run: **success**, com os **201 E2E aprovados** por execução real.
+- Validação de release: skipped por a base ser develop; não é um gate aplicável a esta PR.
+
+A execução no runner confirma que as duas divergências locais de snapshots
+não exigiram correções nem mudanças de tolerância. A otimização do ambiente
+E2E foi registrada separadamente na issue #171; não foi incorporada à #135.
+
+Os gates pendentes foram concluídos com a evidência da CI; as 20 tarefas estão
+marcadas. A instalação de dependências do WebKit levou aproximadamente 19min32s
+entre o início da etapa e o build seguinte; seus testes passaram em 11,9s.
+Esse custo será tratado na #171, sem mudar o escopo da #135.
+
+A atualização final após este run altera somente `tasks.md` e este registro de
+validação. Não altera código, testes, estilos, configuração nem lockfile.
+O run acima é a evidência de execução E2E; gates pulados por `docs_only` em uma
+execução documental posterior não devem ser apresentados como novos E2E.
+
+PR #167 entregue para revisão humana. Sem merge, fechamento manual da issue
+ou arquivamento da change.

@@ -63,6 +63,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `adaptive-ai-workflow` - Guia e skill compartilhada para classificar mudanças Fast, Standard e Critical e orquestrar Issue → OpenSpec → implementação → PR → CI → revisão humana (issue #163). Preserva gates, schema, políticas de release e APIs existentes.
+
+
 - `split-long-spec-requirements` - Dez requisitos de nove specs foram reescritos com até 500
   caracteres, movendo detalhes e casos de borda para cenários, e `openspec validate --all
 --strict` passa sem avisos. Sem mudança de código, API, classes ou tokens.

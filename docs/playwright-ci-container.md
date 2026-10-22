@@ -36,16 +36,16 @@ Next.js é iniciada por `playwright.config.ts` no próprio container, via
 ## Diagnóstico e rollback
 
 - Se faltar browser, conferir versão do lockfile, tag da imagem e logs do job;
-  - não instalar via apt para mascarar divergência.
+  não instalar via apt para mascarar divergência.
 - Se o Chromium falhar por memória, verificar `--ipc=host` e recursos do runner.
-  - Se houver erro de permissão, inspecionar UID do container e diretórios do
-  - checkout/cache antes de alterar permissões.
+  Se houver erro de permissão, inspecionar UID do container e diretórios do
+  checkout/cache antes de alterar permissões.
 - Se snapshots Chromium divergirem, comparar rasterização e fontes entre
-  - `ubuntu-latest` e Ubuntu Noble. O workflow de atualização de baselines ainda
-  - usa o host `ubuntu-latest`; não atualizar PNGs automaticamente, nem elevar
-  - tolerâncias. Qualquer baseline novo requer justificativa e revisão visual.
+  `ubuntu-latest` e Ubuntu Noble. O workflow de atualização de baselines ainda
+  usa o host `ubuntu-latest`; não atualizar PNGs automaticamente, nem elevar
+  tolerâncias. Qualquer baseline novo requer justificativa e revisão visual.
 - Se o pull da imagem for mais lento que o apt, comparar medianas e considerar
-  - retorno ao runner nativo ou otimização de mirror, sem reduzir testes.
+  retorno ao runner nativo ou otimização de mirror, sem reduzir testes.
 
 ## Benchmark antes/depois
 
@@ -66,7 +66,7 @@ Os valores abaixo são calculados a partir do primeiro e último timestamp de ca
 
 ### Medianas observadas e limites
 
-- **Chromium:** mediana host ~3min10s (2 jobs) e container ~2min13s (4 jobs). A quantidade de testes mudou de 181 para 167, então a diferença não pode ser atribuída exclusivamente ao container.
+- **Chromium:** mediana host ~3min10s (2 jobs) e container ~2min13s (4 jobs). A contagem difere (181 antes, 167 depois) porque os runs anteriores incluíam os 14 E2E de posicionamento da #167, ainda ausentes na base `develop` dos runs migrados; por isso a diferença não pode ser atribuída exclusivamente ao container.
 - **WebKit:** mediana host ~26min41s (2 jobs) e container ~1min19s (4 jobs). A amostra é pequena, e a instalação via apt apresentou grande variação no host.
 - **Firefox:** mediana host ~6min38s (2 jobs). Container: mediana ~1min21s (2 jobs aprovados, após correção do `HOME`).
 

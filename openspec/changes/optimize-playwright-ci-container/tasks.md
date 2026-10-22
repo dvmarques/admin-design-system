@@ -14,5 +14,5 @@
 
 - [x] 3.1 Validar OpenSpec strict, format, lint, build, typecheck e quality.
 - [x] 3.2 Confirmar execução real dos três browsers na CI, inclusive snapshots Chromium sem atualização automática.
-- [x] 3.3 Medir antes/depois em runs comparáveis, incluindo pull/start do container e cache frio/quente; registrar mediana e limitações.
+- [x] 3.3 Medir antes/depois pela duração total dos jobs (inclui preparação do container); registrar medianas e limitações. Pull/start isolados e cache frio/quente não são separáveis pelos logs e ficam documentados como limitação.
 - [x] 3.4 Revisar PR, corrigir achados e encaminhar para code review.

@@ -93,7 +93,7 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 - [Licenças e atribuições](docs/licensing.md)
 - [Limitações conhecidas](docs/limitations.md)
 - [Comandos úteis do OpenSpec](docs/openspec-commands.md)
-- [Modelos recomendados por fase](docs/models.md)
+- [Seleção de modelos por tarefa](docs/models.md)
 
 ## Recursos
 

@@ -122,7 +122,7 @@ function AdsDropdownContent({
 	const position = useAnchoredPosition(open, triggerRef, contentRef, placement, 'start');
 	const setContentRef = useCallback(
 		(node: HTMLDivElement | null) => {
-			contentRef.current = node;
+			position.attachContent(node);
 			if (!node || !initialFocusRef.current) return;
 			// The portal mounts its children after the open render. Focus at attachment.
 			initialFocusRef.current = false;
@@ -131,7 +131,7 @@ function AdsDropdownContent({
 				.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')
 				?.focus({ preventScroll: true });
 		},
-		[initialFocusRef, triggerRef],
+		[initialFocusRef, triggerRef, position.attachContent],
 	);
 	useEscapeKey(open, () => {
 		setOpen(false);
@@ -149,6 +149,7 @@ function AdsDropdownContent({
 					'ads-dropdown-content fixed z-[var(--ads-layer-dropdown)] min-w-48 rounded-lg border border-border bg-surface-raised p-1.5 font-sans text-text shadow-md',
 					className,
 				)}
+				data-placement={position.placement}
 				id={menuId}
 				onKeyDown={(event) => {
 					const items = Array.from(

@@ -379,9 +379,7 @@ export function calculateAnchoredPosition(
 	const size = preferred === 'top' || preferred === 'bottom' ? height : width;
 	const opposite = oppositePlacement[preferred];
 	const placement =
-		space[preferred] >= size || space[preferred] >= space[opposite]
-			? preferred
-			: opposite;
+		space[preferred] >= size || space[preferred] >= space[opposite] ? preferred : opposite;
 	const clamp = (value: number, min: number, max: number) =>
 		Math.min(Math.max(value, min), Math.max(min, max));
 	const horizontal = placement === 'top' || placement === 'bottom';
@@ -402,8 +400,8 @@ export function calculateAnchoredPosition(
 	const x = clamp(left, bounds.left, bounds.right - width);
 	const y = clamp(top, bounds.top, bounds.bottom - height);
 	const arrowOffset = horizontal
-		? clamp(anchorCenterX - x, 8, width - 8)
-		: clamp(anchorCenterY - y, 8, height - 8);
+		? clamp(anchorCenterX - x, Math.min(8, width / 2), Math.max(width / 2, width - 8))
+		: clamp(anchorCenterY - y, Math.min(8, height / 2), Math.max(height / 2, height - 8));
 	return { style: { left: x, top: y }, placement, arrowOffset };
 }
 
@@ -413,80 +411,99 @@ export function useAnchoredPosition(
 	contentRef: RefObject<HTMLElement | null>,
 	placement: AnchoredPlacement = 'bottom',
 	align: AnchoredAlign = 'center',
-): AnchoredPosition {
+) {
+	const [panel, setPanel] = useState<HTMLElement | null>(null);
+	// A ref de callback acompanha a montagem real do portal, inclusive anexos tardios.
+	const attachContent = useCallback(
+		(node: HTMLElement | null) => {
+			contentRef.current = node;
+			setPanel(node);
+		},
+		[contentRef],
+	);
 	const [position, setPosition] = useState<AnchoredPosition>({
-		style: {},
+		style: { opacity: 0 },
 		placement,
 		arrowOffset: 0,
 	});
-	const update = useCallback(() => {
-		const anchor = anchorRef.current;
-		const content = contentRef.current;
-		if (!anchor || !content) return;
-		const visual = window.visualViewport;
-		const viewport = {
-			left: visual?.offsetLeft ?? 0,
-			top: visual?.offsetTop ?? 0,
-			width: visual?.width ?? window.innerWidth,
-			height: visual?.height ?? window.innerHeight,
-		};
-		const next = calculateAnchoredPosition(
-			anchor.getBoundingClientRect(),
-			content.getBoundingClientRect().width || content.offsetWidth,
-			content.getBoundingClientRect().height || content.offsetHeight,
-			viewport,
-			placement,
-			align,
-		);
-		setPosition((previous) =>
-			previous.placement === next.placement &&
-			previous.arrowOffset === next.arrowOffset &&
-			previous.style.left === next.style.left &&
-			previous.style.top === next.style.top
-				? previous
-				: next,
-		);
-	}, [align, anchorRef, contentRef, placement]);
-
 	useLayoutEffect(() => {
-		if (!open) return;
-		let frame = 0;
+		const anchor = anchorRef.current;
+		if (!open || !anchor || !panel) return;
+		const view = panel.ownerDocument.defaultView;
+		if (!view) return;
+		const visual = view.visualViewport;
+		let frame: number | null = null;
+		let disposed = false;
+		const update = () => {
+			if (disposed) return;
+			const rect = panel.getBoundingClientRect();
+			const anchorRect = anchor.getBoundingClientRect();
+			// No WebKit, rects durante pinch zoom são relativos à viewport visual;
+			// as coordenadas fixed e os limites abaixo usam a viewport de layout.
+			const visualRects = view.CSS?.supports?.('-webkit-backdrop-filter', 'none') ?? false;
+			const dx = visualRects ? (visual?.offsetLeft ?? 0) : 0;
+			const dy = visualRects ? (visual?.offsetTop ?? 0) : 0;
+			const next = calculateAnchoredPosition(
+				{
+					left: anchorRect.left + dx,
+					right: anchorRect.right + dx,
+					top: anchorRect.top + dy,
+					bottom: anchorRect.bottom + dy,
+					width: anchorRect.width,
+					height: anchorRect.height,
+				},
+				rect.width,
+				rect.height,
+				{
+					left: visual?.offsetLeft ?? 0,
+					top: visual?.offsetTop ?? 0,
+					width: visual?.width ?? (view.document.documentElement.clientWidth || view.innerWidth),
+					height:
+						visual?.height ?? (view.document.documentElement.clientHeight || view.innerHeight),
+				},
+				placement,
+				align,
+			);
+			setPosition((previous) =>
+				previous.placement === next.placement &&
+				previous.arrowOffset === next.arrowOffset &&
+				previous.style.left === next.style.left &&
+				previous.style.top === next.style.top &&
+				previous.style.opacity === undefined
+					? previous
+					: next,
+			);
+		};
 		const schedule = () => {
-			if (frame) return;
-			frame = window.requestAnimationFrame(() => {
-				frame = 0;
+			if (disposed || frame !== null) return;
+			frame = view.requestAnimationFrame(() => {
+				frame = null;
 				update();
 			});
 		};
 		update();
-		// Portals can attach their content after this layout effect.
-		const timer = window.setTimeout(schedule, 0);
-		window.addEventListener('resize', schedule);
-		window.addEventListener('scroll', schedule, true);
-		window.visualViewport?.addEventListener('resize', schedule);
-		window.visualViewport?.addEventListener('scroll', schedule);
-		const observer =
-			typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
-		if (anchorRef.current) observer?.observe(anchorRef.current);
-		if (contentRef.current) observer?.observe(contentRef.current);
-		// The portal can be mounted asynchronously: observe its panel on the next tick.
-		const observeTimer = window.setTimeout(() => {
-			if (contentRef.current) observer?.observe(contentRef.current);
-			schedule();
-		}, 0);
+		view.addEventListener('resize', schedule);
+		view.addEventListener('scroll', schedule, true);
+		visual?.addEventListener('resize', schedule);
+		visual?.addEventListener('scroll', schedule);
+		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+		observer?.observe(anchor);
+		observer?.observe(panel);
 		return () => {
-			window.clearTimeout(timer);
-			window.clearTimeout(observeTimer);
-			if (frame) window.cancelAnimationFrame(frame);
+			disposed = true;
+			if (frame !== null) view.cancelAnimationFrame(frame);
 			observer?.disconnect();
-			window.removeEventListener('resize', schedule);
-			window.removeEventListener('scroll', schedule, true);
-			window.visualViewport?.removeEventListener('resize', schedule);
-			window.visualViewport?.removeEventListener('scroll', schedule);
+			view.removeEventListener('resize', schedule);
+			view.removeEventListener('scroll', schedule, true);
+			visual?.removeEventListener('resize', schedule);
+			visual?.removeEventListener('scroll', schedule);
 		};
-	}, [anchorRef, contentRef, open, update]);
-
-	return position;
+	}, [align, anchorRef, open, panel, placement]);
+	return {
+		...position,
+		attachContent,
+		style: open && panel ? position.style : { opacity: 0 },
+	};
 }
 
 export function useOverlayOrigin(restoreFocusRef: RefObject<HTMLElement | null>) {

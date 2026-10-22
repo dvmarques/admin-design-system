@@ -8,10 +8,6 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
-#### Fixed
-
-- `fix-135-smart-overlay-position` - Posicionamento de Tooltip, Popover e Dropdown com flip/shift, placement efetivo, seta alinhada à âncora e recálculo após mudanças de geometria, scroll e viewport, sem alterar as APIs públicas.
-
 #### Added
 
 - `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,
@@ -173,8 +169,17 @@ por versão e pelas changes correspondentes do OpenSpec.
   `.cursor/mcp.json`, hook `pre-commit` com Husky e lint-staged, e hooks e
   subagents do Claude Code. Somente tooling e documentação, sem mudança de API
   pública nem de pacotes distribuídos.
+- `optimize-ai-agent-context` - Contexto dos agentes e roteamento de modelos (issue #162). Novo
+  `docs/agent-context-map.md` com leitura de contexto por escopo; `AGENTS.md` passa a consultar o mapa
+  em vez de exigir a leitura de toda a documentação; o bloco descritivo de `openspec/config.yaml` foi
+  condensado, mantendo as regras de artefatos e operações e referenciando `docs/licensing.md`;
+  `docs/models.md` troca a recomendação fixa por seleção por complexidade, escalonamento e custo efetivo,
+  com método de benchmark. Medição inicial de contexto em `benchmark.md` da change. Somente documentação
+  e processo, sem mudança de API pública nem de pacotes distribuídos.
 
 #### Fixed
+
+- `fix-135-smart-overlay-position` - Posicionamento de Tooltip, Popover e Dropdown com flip/shift, placement efetivo, seta alinhada à âncora e recálculo após mudanças de geometria, scroll e viewport, sem alterar as APIs públicas.
 
 - `fix-lint-nested-worktrees` - O lint da raiz ignora `.claude/worktrees/**` e resolve
   `tsconfigRootDir` pela configuração, preservando os arquivos dos worktrees (#128).

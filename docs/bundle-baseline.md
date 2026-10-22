@@ -1,5 +1,17 @@
 # Baseline inicial de distribuição
 
+Na change `fix-135-smart-overlay-position`, o pacote `@admin-ds/components`
+passou de 345608 para 355657 bytes (+10049, 2,91%), com 145 arquivos nos dois
+casos. A comparação usa o mesmo compilador e Tailwind, em LF, com o código
+anterior à issue em uma cópia isolada e `dist/` sem os testes antigos gerados.
+O módulo `overlay-utils` minificado com esbuild e React/React DOM externos
+passou de 5268 para 6759 bytes; em gzip, de 2257 para 2876 (+619 bytes).
+Não foi adicionada dependência. O valor final permanece dentro da tolerância
+de 10% do baseline versionado de 330033 bytes, que não foi elevado.
+Os testes de posicionamento foram movidos de `src/` para `tests/` para não
+entrarem no pacote distribuído. Resultados e limites da validação estão em
+`openspec/changes/fix-135-smart-overlay-position/validation.md`.
+
 O baseline versionado está em `docs/bundle-baseline.json`. O comando
 `npm run inspect:packages` verifica os exports, arquivos publicados,
 peer dependencies e o tamanho total de `dist/`, permitindo crescimento de

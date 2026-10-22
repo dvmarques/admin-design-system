@@ -62,10 +62,12 @@ Os valores abaixo são calculados a partir do primeiro e último timestamp de ca
 - [Run 39789421161](https://github.com/dvmarques/admin-design-system/actions/runs/39789421161): Chromium 2min12s (167 testes, passou), WebKit 1min18s (10 testes, passou), Firefox 1min16s (falhou por `HOME`).
 - [Run 39790016962](https://github.com/dvmarques/admin-design-system/actions/runs/39790016962): Chromium 2min14s (167 testes, passou), Firefox 1min18s (10 testes, passou), WebKit 1min20s (10 testes, passou).
 
+- [Run 39791463329](https://github.com/dvmarques/admin-design-system/actions/runs/39791463329): Chromium 2min02s (167 testes, passou), Firefox 1min23s (10 testes, passou), WebKit 1min18s (10 testes, passou).
+
 ### Medianas observadas e limites
 
-- **Chromium:** mediana host ~3min10s (2 jobs) e container ~2min14s (3 jobs). A quantidade de testes mudou de 181 para 167, então a diferença não pode ser atribuída exclusivamente ao container.
-- **WebKit:** mediana host ~26min41s (2 jobs) e container ~1min20s (3 jobs). A amostra é pequena, e a instalação via apt apresentou grande variação no host.
-- **Firefox:** mediana host ~6min38s (2 jobs). Container: 1min18s na única execução aprovada. Não há duas amostras aprovadas após a correção do `HOME` para uma mediana comparável.
+- **Chromium:** mediana host ~3min10s (2 jobs) e container ~2min13s (4 jobs). A quantidade de testes mudou de 181 para 167, então a diferença não pode ser atribuída exclusivamente ao container.
+- **WebKit:** mediana host ~26min41s (2 jobs) e container ~1min19s (4 jobs). A amostra é pequena, e a instalação via apt apresentou grande variação no host.
+- **Firefox:** mediana host ~6min38s (2 jobs). Container: mediana ~1min21s (2 jobs aprovados, após correção do `HOME`).
 
-O pull da imagem não aparece como etapa independente: a medição usa a duração total do job. Sem instrumentação adicional não é possível separar com precisão download da imagem, inicialização e cache. As execuções são de commits diferentes e não controlam carga do runner. Para concluir a task 3.3 com mediana de Firefox e condições de cache documentadas, obter pelo menos mais uma execução aprovada equivalente e classificar cache quando possível. Não extrapolar percentuais de economia como prova causal.
+O pull da imagem não aparece como etapa independente: a medição usa a duração total do job. Sem instrumentação adicional não é possível separar com precisão download da imagem, inicialização e cache. As execuções são de commits diferentes e não controlam carga do runner. A amostragem mínima de duas execuções aprovadas por browser foi atingida. As condições de cache permanecem não classificáveis com precisão pelos logs disponíveis; esta é uma limitação explícita do benchmark, não uma medição de cache frio/quente. Não extrapolar percentuais de economia como prova causal.

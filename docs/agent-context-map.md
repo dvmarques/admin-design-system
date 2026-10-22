@@ -10,7 +10,7 @@ Use este índice **após** ler as regras obrigatórias de `AGENTS.md`. Consulte 
 | Aplicação de demonstração   | `apps/admin-demo`                        | `docs/integration.md`                                           | build Next.js e E2E pertinente                 |
 | Storybook                   | `apps/docs`                              | `docs/quality.md`, docs visuais se aplicável                    | build Storybook e stories afetadas             |
 | Navegador                   | `e2e`                                    | `docs/quality.md`                                               | Playwright e snapshots intencionais            |
-| OpenSpec                    | `openspec`                               | `docs/openspec-commands.md`                                     | `openspec validate --all --strict`             |
+| OpenSpec                    | `openspec`                               | `docs/openspec-commands.md`, `CHANGELOG.md`                     | `openspec validate --all --strict`             |
 | Release                     | `scripts/*release*`, `.github/workflows` | `docs/release-process.md`                                       | políticas de release e testes próprios         |
 | Modelos e skills            | `.agents/skills`, `.claude`, `.cursor`   | `docs/models.md`, `skills-lock.json`                            | `npm run check:agent-skills`                   |
 

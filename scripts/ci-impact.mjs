@@ -204,13 +204,30 @@ export function decideScope({ event, baseRef, impact }) {
 	};
 }
 
+/**
+ * Argumentos do git. Nos jobs em container o checkout pertence a outro usuário e o `HOME`
+ * do job não tem o `safe.directory` que o `actions/checkout` grava em um `HOME` temporário;
+ * sem isso, todo comando falha com "dubious ownership". Na CI, confia apenas no diretório
+ * do próprio checkout, só para estes comandos de leitura.
+ */
+export function gitArguments(args, cwd, env = process.env) {
+	return env.GITHUB_ACTIONS === 'true' ? ['-c', `safe.directory=${cwd}`, ...args] : args;
+}
+
 function git(args, cwd) {
-	return execFileSync('git', args, {
-		cwd,
-		encoding: 'utf8',
-		maxBuffer: 256 * 1024 * 1024,
-		stdio: ['ignore', 'pipe', 'pipe'],
-	});
+	try {
+		return execFileSync('git', gitArguments(args, cwd), {
+			cwd,
+			encoding: 'utf8',
+			maxBuffer: 256 * 1024 * 1024,
+			stdio: ['ignore', 'pipe', 'pipe'],
+		});
+	} catch (error) {
+		const detail = String(error.stderr ?? '')
+			.trim()
+			.split('\n')[0];
+		throw new Error(`git ${args[0]} falhou${detail ? `: ${detail}` : ''}`, { cause: error });
+	}
 }
 
 const splitNul = (output) => output.split('\0').filter(Boolean);

@@ -9,6 +9,7 @@ import {
 	decideScope,
 	detectLocalImpact,
 	findUndeclaredReferences,
+	gitArguments,
 	implicitDependencies,
 	listChangedFiles,
 	listPullRequestFiles,
@@ -466,3 +467,53 @@ test('local detection classifies the working tree against the merge base with de
 		assert.equal(detectLocalImpact({ cwd: root }).impact, null);
 	});
 });
+
+test('git trusts only the checkout directory, and only on GitHub Actions', () => {
+	assert.deepEqual(gitArguments(['diff'], '/work', { GITHUB_ACTIONS: 'true' }), [
+		'-c',
+		'safe.directory=/work',
+		'diff',
+	]);
+	assert.deepEqual(gitArguments(['diff'], '/work', {}), ['diff']);
+	assert.deepEqual(gitArguments(['diff'], '/work', { GITHUB_ACTIONS: 'false' }), ['diff']);
+});
+
+test('detection errors carry git stderr for diagnosis', () => {
+	withRepository(({ root }) => {
+		assert.throws(
+			() => listChangedFiles({ cwd: root, base: 'inexistente' }),
+			/git rev-parse falhou/,
+		);
+		assert.throws(() => listPullRequestFiles({ cwd: join(root, 'nao-existe') }));
+	});
+});
+
+// Reproduz o container da CI: checkout de outro usuário lido como root.
+test(
+	'a checkout owned by another user is readable on GitHub Actions only with the trusted directory',
+	{ skip: process.getuid?.() !== 0 },
+	() => {
+		withRepository(({ root, write, commit }) => {
+			write('docs/a.md');
+			commit('base');
+			git(root, 'switch', '-q', '-c', 'feature');
+			write('apps/docs/b.ts');
+			commit('feature');
+			git(root, 'switch', '-q', 'develop');
+			write('docs/other.md');
+			commit('develop avança');
+			git(root, 'merge', '-q', '--no-ff', '-m', 'merge da PR', 'feature');
+			execFileSync('chown', ['-R', '1001:1001', root]);
+			const previous = process.env.GITHUB_ACTIONS;
+			try {
+				delete process.env.GITHUB_ACTIONS;
+				assert.throws(() => listPullRequestFiles({ cwd: root }), /dubious ownership/);
+				process.env.GITHUB_ACTIONS = 'true';
+				assert.deepEqual(listPullRequestFiles({ cwd: root }), ['apps/docs/b.ts']);
+			} finally {
+				if (previous === undefined) delete process.env.GITHUB_ACTIONS;
+				else process.env.GITHUB_ACTIONS = previous;
+			}
+		});
+	},
+);

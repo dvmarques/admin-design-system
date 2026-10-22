@@ -83,6 +83,9 @@ jobs:
     name: ${{ matrix.check }}
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.0-noble
+      options: --ipc=host
     strategy:
       fail-fast: false
       matrix:
@@ -108,21 +111,17 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm ci --ignore-scripts
         if: steps.scope.outputs.docs_only != 'true'
-      - id: playwright
+      - name: Verificar versão Playwright da imagem e do lockfile
         if: steps.scope.outputs.docs_only != 'true'
-        run: echo "version=$(npx playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
-      - id: playwright-cache
-        if: steps.scope.outputs.docs_only != 'true'
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ steps.playwright.outputs.version }}
-      - run: sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.sources
-        if: steps.scope.outputs.docs_only != 'true'
-      - if: steps.scope.outputs.docs_only != 'true' && steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps ${{ matrix.browser }}
-      - if: steps.scope.outputs.docs_only != 'true' && steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps ${{ matrix.browser }}
+        shell: bash
+        run: |
+          EXPECTED=1.62.0
+          LOCKED="$(node -p "require('./package-lock.json').packages['node_modules/playwright-core'].version")"
+          INSTALLED="$(node -p "require('playwright-core/package.json').version")"
+          if [[ "$LOCKED" != "$EXPECTED" || "$INSTALLED" != "$EXPECTED" ]]; then
+            echo "Playwright da imagem ($EXPECTED), lockfile ($LOCKED) e instalação ($INSTALLED) divergentes" >&2
+            exit 1
+          fi
       - run: npm run build --workspace @admin-ds/tokens
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/components

@@ -35,6 +35,8 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts
+      - name: Diagnóstico de impacto (sem reduzir gates)
+        run: node scripts/ci-impact.mjs
       - run: npm run format
       - run: npm run lint
       - run: npm run build --workspace @admin-ds/tokens

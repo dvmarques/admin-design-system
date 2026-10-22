@@ -131,7 +131,13 @@ jobs:
               throw new Error(name + ': imagem=' + expected + ', lockfile=' + locked + ', instalado=' + installed);
             }
           }
-          if (!fs.existsSync('/ms-playwright')) throw new Error('Browsers ausentes da imagem oficial');
+          const { chromium, firefox, webkit } = require('playwright');
+          for (const [name, browser] of Object.entries({ chromium, firefox, webkit })) {
+            const executable = browser.executablePath();
+            if (!fs.existsSync(executable)) {
+              throw new Error(name + ': executável ausente na imagem: ' + executable);
+            }
+          }
           NODE
       - run: npm run build --workspace @admin-ds/tokens
         if: steps.scope.outputs.docs_only != 'true'

@@ -53,10 +53,52 @@ planejadas, sem implementação, de modo que **acerto, tentativas e retrabalho c
 head T1 abriu a `proposal.md` desta change, o que adiciona ruído. O tokenizer é aproximado. O aceite de
 acerto em tarefas representativas da #162 permanece **pendente**.
 
+## Implementação: acerto e retrabalho (base contra head)
+
+Segunda rodada, com tarefas de **implementação** de componente público, três tarefas fixas e duas
+repetições por tarefa e por lado (12 execuções, subagentes `sonnet` em checkouts isolados, sem
+`node_modules`, sem poder rodar testes nem comandos). Cada resultado foi verificado depois, aplicando o
+diff em um checkout com dependências. Tarefas: **A** novo `AdsStatusDot`; **B** prop `fullWidth` em
+`AdsButton`; **C** `AdsBadge` com `dismissible`, `onDismiss` e `dismissLabel`. O contrato observável de
+cada tarefa estava no prompt; o teste de aceite (oculto aos agentes) cobre esse contrato.
+
+| Critério (6 execuções por lado)                        | Base | Head |
+| ------------------------------------------------------ | ---: | ---: |
+| Teste de aceite oculto aprovado                        |  6/6 |  6/6 |
+| Testes existentes sem regressão                        |  5/6 |  6/6 |
+| Typecheck do pacote                                    |  6/6 |  6/6 |
+| ESLint (`packages/components`, `apps/docs/src`)        |  6/6 |  6/6 |
+| Story do Storybook criada ou alterada                  |  6/6 |  6/6 |
+| Teste próprio adicionado                               |  6/6 |  6/6 |
+| Sem dependências novas                                 |  6/6 |  6/6 |
+| Prettier nos arquivos alterados                        |  6/6 |  5/6 |
+| `openspec validate --all --strict` com a change criada |  6/6 |  6/6 |
+| Entrada em `CHANGELOG.md`                              |  5/6 |  3/6 |
+
+Tokens totais dos subagentes (reportados pela ferramenta): base 452.630, head 437.123 (−3,4%).
+Tentativas: uma por execução (os agentes não podiam executar nada), então retrabalho por iteração não
+se aplica.
+
+**Leitura:**
+
+- **Acerto:** nenhuma perda no contrato observável (12/12 no teste de aceite) nem nas verificações
+  automáticas. A única regressão foi na base (`base-C-1`, um teste próprio do agente que falha); o único
+  Prettier reprovado foi no head (`head-A-1`). Com 6 execuções por lado, essas diferenças não são
+  estatisticamente distinguíveis.
+- **CHANGELOG:** o head registrou a entrada em 3 de 6 execuções, contra 5 de 6 na base. A obrigação de
+  registrar no CHANGELOG não está escrita em `AGENTS.md`, nem no mapa, nem em `openspec/config.yaml`; os
+  agentes a inferem do histórico do repositório. Trata-se de uma lacuna de descoberta que já existia, mas
+  vale registrar a regra explicitamente em um acompanhamento.
+- **Custo:** a redução de tokens na implementação (−3,4%) é bem menor que no planejamento (−13,9%),
+  porque a leitura do código-alvo domina o custo.
+
+**Limitações:** amostra pequena (6 por lado), um modelo, tarefas de escopo reduzido e agentes sem
+execução de comandos. Resultados indicam ausência de perda de acerto, não equivalência comprovada.
+
 ## Não medido
 
-Acerto em tarefas representativas, tentativas e retrabalho exigem execuções de implementação com critério
-de aceite por tarefa, e não foram realizados. Repetições por tarefa (para mediana) também não.
+Mediana de tempo e de tokens com mais repetições, o tokenizer real do modelo (a contagem usa uma
+aproximação) e tarefas transversais maiores (vários pacotes) não foram medidos.
 
 ## Preservação das instruções essenciais
 

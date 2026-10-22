@@ -20,7 +20,7 @@
 - [x] 3.4 Executar `npm run test:e2e` antes do merge, conforme a política vigente do OpenSpec; registrar resultados.
   - CI com execução completa forçada (commit temporário `c40c28b`, depois revertido, pois o classificador `docs_only` pula o E2E em PRs só de documentação): Chromium 167 aprovados; Firefox, WebKit, Qualidade rápida, Artefatos de distribuição e Política de develop com sucesso (run 39694690322).
   - Localmente (Chromium do ambiente) havia 7 falhas de snapshot por diferença de navegador; não se repetiram na CI. Snapshots não foram atualizados.
-- [ ] 3.5 Executar o benchmark base/head com tokenizer e tarefas fixas (acompanhado na issue #166); leitura por tarefa registrada em `benchmark.md` (−13,9% em tokens, uma execução por tarefa); faltam acerto, tentativas e retrabalho, e repetições para mediana.
+- [x] 3.5 Executar o benchmark base/head com tokenizer e tarefas fixas (acompanhado na issue #166): leitura por tarefa (−13,9% em tokens) e implementação com teste de aceite (12/12 aprovados, sem perda de acerto detectada); limitações e a lacuna do CHANGELOG em `benchmark.md`.
 
 ## Revisão
 

@@ -12,7 +12,9 @@ const rootDocs = /^(AGENTS|CLAUDE|CHANGELOG|README)\.md$/;
 export function classifyImpact(files, manifests) {
   if (!Array.isArray(files) || !files.length || !Array.isArray(manifests) || manifests.length !== workspaces.length)
     return { mode: 'full', reason: 'missing input', affected: workspaces };
-  const owners = new Map(manifests.map((manifest, index) => [manifest?.name, workspaces[index]]));
+  if (manifests.some((manifest) => !manifest || typeof manifest !== 'object' || typeof manifest.name !== 'string'))
+    return { mode: 'full', reason: 'invalid manifests', affected: workspaces };
+  const owners = new Map(manifests.map((manifest, index) => [manifest.name, workspaces[index]]));
   if (owners.size !== workspaces.length || [...owners.keys()].some((name) => !name))
     return { mode: 'full', reason: 'invalid manifests', affected: workspaces };
   const changed = new Set();
@@ -28,6 +30,8 @@ export function classifyImpact(files, manifests) {
     }
   }
   if (!changed.size) return { mode: 'docs', reason: 'documentation only', affected: [] };
+  // Tokens and CSS are consumed implicitly by the components package.
+  if (changed.has('packages/tokens')) changed.add('packages/components');
   let updated = true;
   while (updated) {
     updated = false;
@@ -43,7 +47,7 @@ export function classifyImpact(files, manifests) {
   return { mode: 'scoped', reason: 'workspace dependency closure', affected: workspaces.filter((name) => changed.has(name)) };
 }
 
-if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
   let result;
   try {
     const base = process.env.GITHUB_BASE_SHA || 'HEAD^1';

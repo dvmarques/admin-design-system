@@ -236,6 +236,10 @@ openspec.cmd archive nome-da-change --skip-specs
 Não use `--skip-specs` em `establish-design-system-foundation`, pois essa
 change possui delta specs que devem ser incorporadas.
 
+### Perfis adaptativos para agentes
+
+Consulte `docs/ai-development-workflow.md` e invoque a skill `adaptive-ai-workflow` para conduzir Issue → OpenSpec → implementação → PR → CI → code review. Fast, Standard e Critical são perfis de risco, **não schemas** alternativos: mantenha `spec-driven`, os artefatos exigidos e todas as validações obrigatórias.
+
 ### Fluxo resumido por funcionalidade
 
 ```powershell

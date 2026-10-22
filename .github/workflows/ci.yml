@@ -116,12 +116,23 @@ jobs:
         shell: bash
         run: |
           EXPECTED=1.62.0
-          LOCKED="$(node -p "require('./package-lock.json').packages['node_modules/playwright-core'].version")"
-          INSTALLED="$(node -p "require('playwright-core/package.json').version")"
-          if [[ "$LOCKED" != "$EXPECTED" || "$INSTALLED" != "$EXPECTED" ]]; then
-            echo "Playwright da imagem ($EXPECTED), lockfile ($LOCKED) e instalação ($INSTALLED) divergentes" >&2
-            exit 1
-          fi
+          node --version
+          npm --version
+          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
+          test "$(npm --version)" = 11.19.1
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const lock = require('./package-lock.json');
+          const expected = '1.62.0';
+          for (const name of ['@playwright/test', 'playwright', 'playwright-core']) {
+            const locked = lock.packages['node_modules/' + name]?.version;
+            const installed = require(name + '/package.json').version;
+            if (locked !== expected || installed !== expected) {
+              throw new Error(name + ': imagem=' + expected + ', lockfile=' + locked + ', instalado=' + installed);
+            }
+          }
+          if (!fs.existsSync('/ms-playwright')) throw new Error('Browsers ausentes da imagem oficial');
+          NODE
       - run: npm run build --workspace @admin-ds/tokens
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/components

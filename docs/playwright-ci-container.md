@@ -58,14 +58,14 @@ horários de início/fim do job no GitHub Actions e medir também etapas interna
 Comparar pelo menos duas execuções por cenário em runners equivalentes,
 separando condições de cache frio/quente quando observáveis.
 
-| Execução | Ambiente | Pull/start + checkout | npm install/ci | Builds | Testes | Total job | Resultado |
-| --- | --- | --- | --- | --- | --- | --- | --- |
-| 39768760228 / Firefox | Host ubuntu-latest | não medido | inclui apt ~10min47s (entre marcos) | não medido | 12,5s | não medido | Passou |
-| 39768760228 / WebKit | Host ubuntu-latest | não medido | apt ~19min32s (entre marcos) | não medido | 11,9s | não medido | Passou |
-| 39771583007 / WebKit | Host ubuntu-latest | não medido | download apt 31min18s | não medido | 17,9s | não medido | Passou |
-| PR #172 / Chromium | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
-| PR #172 / Firefox | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
-| PR #172 / WebKit | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
+| Execução | Ambiente | Pull/start + checkout | Instalação npm | Dependências apt | Builds | Testes | Total job | Resultado |
+| --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| 39768760228 / Firefox | Host ubuntu-latest | não medido | não medido | ~10min47s (entre marcos) | não medido | 12,5s | não medido | Passou |
+| 39768760228 / WebKit | Host ubuntu-latest | não medido | não medido | ~19min32s (entre marcos) | não medido | 11,9s | não medido | Passou |
+| 39771583007 / WebKit | Host ubuntu-latest | não medido | não medido | download apt 31min18s | não medido | 17,9s | não medido | Passou |
+| PR #172 / Chromium | Container Noble | pendente | pendente | não aplicável | pendente | pendente | pendente | pendente |
+| PR #172 / Firefox | Container Noble | pendente | pendente | não aplicável | pendente | pendente | pendente | pendente |
+| PR #172 / WebKit | Container Noble | pendente | pendente | não aplicável | pendente | pendente | pendente | pendente |
 
 As amostras anteriores são parciais, de commits diferentes e não permitem
 inferir economia total. Registrar medianas, número de runs, timestamps e links

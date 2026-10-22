@@ -23,3 +23,9 @@ Colete IDs dos runs GitHub Actions, commit, tipo de alteração, duração dos j
 ## Limitações
 
 A classificação considera dependências declaradas nos manifests e não substitui análise de imports, scripts compartilhados, contratos visuais ou testes de integração. Alterações em configurações globais, manifests e arquivos desconhecidos retornam `full`. O modo `scoped` é apenas informativo nesta fase.
+
+## Baseline inicial auditável
+
+Run de referência: [39806673826](https://github.com/dvmarques/admin-design-system/actions/runs/39806673826), anterior à implementação #164. Os jobs `Qualidade rápida`, `Política de develop`, `Artefatos de distribuição`, `Fluxos no navegador` (Chromium, Firefox e WebKit) concluíram com `success`; `Validação de release` foi `skipped` por regra de branch. Este registro **não** é comparação quantitativa: durações por job, custo, tokens e retrabalho não foram coletados. Não é correto declarar economia ou equivalência de cobertura a partir desse run.
+
+Para fechar o benchmark, registrar no mínimo três runs comparáveis por condição, seus tempos por job e reruns; separar o efeito de cache, variação do runner e mudanças no escopo. A CI atual apenas informa o impacto, sem dispensar testes.\n

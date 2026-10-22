@@ -38,11 +38,15 @@ aprovou os gates do commit `f5bb8a7`: qualidade, distribuição, política/OpenS
 e os 201 E2E (181 Chromium, 10 Firefox e 10 WebKit). As falhas locais descritas
 no histórico não se reproduziram na CI; nenhum snapshot ou tolerância mudou.
 As 20 tarefas iniciais foram concluídas. O retorno da revisão é acompanhado
-na seção 5. PR Ready for review por autorização do responsável; sem merge ou arquivamento.
+na seção 5. Revisão técnica aprovada; arquivamento e squash autorizados pelo responsável após CI verde.
 
 ## 5. Retorno da revisão
 
 - [x] 5.1 Reproduzir o risco de alias CSS com pinch zoom e pan real e adicionar regressões de coordenadas/cleanup.
 - [x] 5.2 Substituir identificação por CSS pela medição de uma origem fixed conhecida, preservando normalização e SSR.
 - [x] 5.3 Renomear o teste puro de geometria e verificar texto longo junto à borda direita no Storybook.
-- [ ] 5.4 Executar validações, revisar bundle e publicar na mesma PR; acompanhar CI e atualizar evidências.
+- [x] 5.4 Executar validações, revisar bundle e publicar na mesma PR; acompanhar CI e atualizar evidências.
+
+## Conclusão após revisão
+
+As 24 tarefas foram concluídas. A CI [39797387711](https://github.com/dvmarques/admin-design-system/actions/runs/39797387711) aprovou o commit `e109734`: qualidade, distribuição, política/OpenSpec e **205 E2E** (185 Chromium, 10 Firefox e 10 WebKit), sem falhas. O responsável aprovou o arquivamento e o squash da PR #167.

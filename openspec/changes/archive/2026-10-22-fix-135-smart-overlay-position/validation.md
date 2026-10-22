@@ -194,3 +194,35 @@ nenhum lado comporta o painel. Não houve atualização de snapshots.
 
 Acompanhamento da nova CI e resposta ao ponto da revisão serão registrados
 na descrição da PR #167. Sem merge, archive ou alterações na issue #91.
+
+## Aprovação final e arquivamento — 22/10/2026
+
+A CI de `fc16c2e` foi cancelada pelo responsável durante a instalação de
+dependências do WebKit. Os outros cinco gates passaram, mas esse run não
+constitui aprovação completa. A branch incorporou `develop` (`b89fc9e`,
+melhoria #171) sem conflitos, no commit `e109734`.
+
+O run [39797387711](https://github.com/dvmarques/admin-design-system/actions/runs/39797387711)
+aprovou todos os gates aplicáveis ao commit `e109734`:
+
+- Qualidade rápida: format, lint, typecheck, Node/Vitest e verificações de qualidade.
+- Artefatos de distribuição: builds dos cinco workspaces e inspeção dos pacotes.
+- Política de develop e OpenSpec estrito.
+- Chromium: **185 E2E passaram** (1,1min).
+- Firefox: **10 E2E passaram** (13,2s).
+- WebKit: **10 E2E passaram** (14,5s).
+
+Total: **205 E2E, sem falhas**. A validação de release foi skipped por não ser
+uma PR de release; nenhum gate obrigatório de qualidade/build/E2E foi pulado.
+Os snapshots locais divergentes não falharam nessa CI, e nenhum snapshot,
+baseline ou tolerância foi alterado. O código de overlays permaneceu igual
+ao commit aprovado tecnicamente na segunda revisão (`fc16c2e`).
+
+As 24 tarefas estão concluídas. O responsável autorizou explicitamente o
+arquivamento da change e o squash da PR #167 após a CI verde. A conclusão
+publicada modifica somente os artefatos OpenSpec: registra estas evidências,
+sincroniza os quatro requisitos de `anchored-overlays` e arquiva a change.
+As limitações de geometria impossível e de validação real de pinch/pan em
+Safari/iOS continuam descritas no histórico; não há promessa de cobertura
+real nesses dispositivos. A melhoria de infraestrutura da #171 entrou por
+develop, sem modificar o escopo da #91.

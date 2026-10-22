@@ -22,7 +22,7 @@ export function classifyImpact(files, manifests) {
     if (workspace) {
       if (file.endsWith('/package.json')) return { mode: 'full', reason: 'dependency manifest changed', affected: workspaces };
       changed.add(workspace);
-    } else if (!(rootDocs.test(file) || /^docs\/[^/]+\.md$/.test(file) || file.startsWith('openspec/'))) {
+    } else if (!(rootDocs.test(file) || /^docs\/[^/]+\.md$/.test(file) || /^openspec\\/(?!config\\.yaml$).+\\.md$/.test(file))) {
       return { mode: 'full', reason: 'unrecognized path', affected: workspaces };
     }
   }

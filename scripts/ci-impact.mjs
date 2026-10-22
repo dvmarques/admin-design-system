@@ -33,7 +33,7 @@ export function classifyImpact(files, manifests) {
     updated = false;
     for (let index = 0; index < manifests.length; index++) {
       const manifest = manifests[index];
-      const deps = { ...manifest.dependencies, ...manifest.devDependencies, ...manifest.peerDependencies };
+      const deps = { ...manifest.dependencies, ...manifest.devDependencies, ...manifest.peerDependencies, ...manifest.optionalDependencies };
       if (!changed.has(workspaces[index]) && Object.keys(deps).some((name) => changed.has(owners.get(name)))) {
         changed.add(workspaces[index]);
         updated = true;
@@ -46,7 +46,8 @@ export function classifyImpact(files, manifests) {
 if (import.meta.url === pathToFileURL(process.argv[1]).href) {
   let result;
   try {
-    const files = execFileSync('git', ['diff', '--name-only', 'HEAD^1', 'HEAD'], { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
+    const base = process.env.GITHUB_BASE_SHA || 'HEAD^1';
+    const files = execFileSync('git', ['diff', '--name-only', base, 'HEAD'], { encoding: 'utf8' }).trim().split('\n').filter(Boolean);
     const manifests = workspaces.map((workspace) => JSON.parse(fs.readFileSync(path.join(workspace, 'package.json'), 'utf8')));
     result = classifyImpact(files, manifests);
   } catch {

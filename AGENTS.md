@@ -49,6 +49,8 @@ precisam fazer parte do escopo solicitado e seguir o processo OpenSpec.
 
 Após ler as regras obrigatórias deste arquivo, use `docs/agent-context-map.md` para identificar o escopo e os documentos necessários. Evite carregar referências não relacionadas à tarefa; em mudanças transversais, inclua os consumidores afetados. Nenhuma otimização de contexto dispensa regras, verificações ou gates obrigatórios.
 
+Para orquestrar uma issue até a revisão da PR, invoque a skill própria `adaptive-ai-workflow` e consulte `docs/ai-development-workflow.md`. Os perfis Fast, Standard e Critical ajustam a profundidade de planejamento, **nunca** dispensam as validações e políticas obrigatórias.
+
 ## Antes de alterar arquivos
 
 1. Consulte `README.md` e `openspec/config.yaml` para o processo aplicável; use `docs/agent-context-map.md` para selecionar documentação adicional do escopo.

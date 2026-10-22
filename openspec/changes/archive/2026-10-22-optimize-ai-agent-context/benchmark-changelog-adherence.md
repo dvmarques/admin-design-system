@@ -2,7 +2,7 @@
 
 Este documento registra a repetição do benchmark de implementação da #166 para verificar se a regra de
 registro no `CHANGELOG.md` adicionada ao `AGENTS.md` (PR #173) melhora a aderência dos agentes. Os
-resultados históricos da #166 permanecem em `openspec/changes/archive/2026-10-22-optimize-ai-agent-context/benchmark.md` e não
+resultados históricos da #166 permanecem em `benchmark.md`, neste diretório, e não
 foram alterados.
 
 ## Resultado

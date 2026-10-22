@@ -7,6 +7,9 @@ A issue #164 introduz `scripts/ci-impact.mjs`, um classificador conservador que 
 ```bash
 node scripts/ci-impact.mjs
 node --test scripts/ci-impact.test.mjs
+npm run validate:impact:lint
+npm run validate:impact:types
+npm run validate:impact:test
 ```
 
 O comando compara `HEAD^1` com `HEAD` por padrão. É possível fornecer `GITHUB_BASE_SHA` para selecionar a revisão inicial. Execute a partir da raiz do repositório, com Git e manifests disponíveis. Na ausência de informação confiável, o resultado é `full`.

@@ -5,8 +5,9 @@
 A matrix E2E em `.github/workflows/ci.yml` usa a imagem oficial
 `mcr.microsoft.com/playwright:v1.62.0-noble` (Ubuntu 24.04). O
 `package-lock.json` fixa `@playwright/test`, `playwright` e
-`playwright-core` em **1.62.0**. A CI verifica a versão instalada e do
-lockfile antes do build. Não altere o lockfile apenas para migrar a imagem.
+`playwright-core` em **1.62.0**. A CI verifica as versões instaladas e do lockfile dos três pacotes
+Playwright, além de Node 24, npm 11.19.1 e a presença de `/ms-playwright`,
+antes do build. Não altere o lockfile apenas para migrar a imagem.
 
 Para atualizar Playwright no futuro: atualizar dependências e lockfile,
 selecionar a tag **exatamente igual** no workflow, confirmar disponibilidade
@@ -48,6 +49,10 @@ container, via `127.0.0.1:3000`.
 
 ## Benchmark antes/depois
 
+O container é inicializado **antes** do checkout e da detecção `docs_only`:
+portanto, uma PR apenas documental ainda pode pagar o custo de pull da imagem,
+mesmo quando os passos E2E são pulados. Esse custo precisa entrar na medição.
+
 O tempo de pull/start do container **não aparece como um step**. Usar os
 horários de início/fim do job no GitHub Actions e medir também etapas internas.
 Comparar pelo menos duas execuções por cenário em runners equivalentes,
@@ -58,9 +63,9 @@ separando condições de cache frio/quente quando observáveis.
 | 39768760228 / Firefox | Host ubuntu-latest | não medido | inclui apt ~10min47s (entre marcos) | não medido | 12,5s | não medido | Passou |
 | 39768760228 / WebKit | Host ubuntu-latest | não medido | apt ~19min32s (entre marcos) | não medido | 11,9s | não medido | Passou |
 | 39771583007 / WebKit | Host ubuntu-latest | não medido | download apt 31min18s | não medido | 17,9s | não medido | Passou |
-| PR #171 / Chromium | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
-| PR #171 / Firefox | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
-| PR #171 / WebKit | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
+| PR #172 / Chromium | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
+| PR #172 / Firefox | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
+| PR #172 / WebKit | Container Noble | pendente | pendente | pendente | pendente | pendente | pendente |
 
 As amostras anteriores são parciais, de commits diferentes e não permitem
 inferir economia total. Registrar medianas, número de runs, timestamps e links

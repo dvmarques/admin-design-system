@@ -42,3 +42,16 @@ test('docs with runtime impact are not skipped', () => {
     assert.equal(classifyImpact([file], manifests).mode, 'full', file);
   }
 });
+
+test('real workspace manifests preserve implicit tokens to components dependency', async () => {
+  const { readFileSync } = await import('node:fs');
+  const paths = ['packages/tokens', 'packages/components', 'packages/admin', 'apps/docs', 'apps/admin-demo'];
+  const real = paths.map((path) => JSON.parse(readFileSync(path + '/package.json', 'utf8')));
+  assert.deepEqual(classifyImpact(['packages/tokens/src/index.ts'], real).affected, paths);
+  assert.deepEqual(classifyImpact(['packages/components/src/Button.tsx'], real).affected, paths.slice(1));
+});
+
+test('malformed manifests fail closed', () => {
+  assert.equal(classifyImpact(['apps/docs/src/index.ts'], [null, ...manifests.slice(1)]).mode, 'full');
+  assert.equal(classifyImpact(['apps/docs/src/index.ts'], [{}, ...manifests.slice(1)]).mode, 'full');
+});

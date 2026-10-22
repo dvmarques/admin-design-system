@@ -132,6 +132,88 @@ for (const theme of ['light', 'dark']) {
 			expect(errors).toEqual([]);
 		});
 
+		test.describe('pinch zoom with pan', () => {
+			test.use({ viewport: { width: 800, height: 800 }, isMobile: true, hasTouch: true });
+			for (const cssAlias of [false, true]) {
+				test(`keeps alignment with a panned viewport (CSS alias ${cssAlias})`, async ({ page }) => {
+					if (cssAlias) {
+						await page.addInitScript(() => {
+							const supports = CSS.supports.bind(CSS);
+							CSS.supports = ((...args: string[]) =>
+								args[0] === '-webkit-backdrop-filter'
+									? true
+									: args.length === 1
+										? supports(args[0]!)
+										: supports(args[0]!, args[1]!)) as typeof CSS.supports;
+						});
+						await page.reload();
+					}
+					await page.getByLabel('Componente').selectOption('Popover');
+					const trigger = page.getByRole('button', { name: 'Popover na borda', exact: true });
+					await trigger.evaluate((element) => {
+						const host = element.closest('.ads-popover-anchor')!.parentElement!;
+						Object.assign(host.style, {
+							left: '220px',
+							top: '200px',
+							right: 'auto',
+							bottom: 'auto',
+						});
+					});
+					await trigger.click();
+					const panel = page.getByRole('dialog', { name: 'Popover na borda' });
+					await expect(panel).toBeVisible();
+					const client = await page.context().newCDPSession(page);
+					try {
+						await client.send('Emulation.setTouchEmulationEnabled', {
+							enabled: true,
+							maxTouchPoints: 5,
+						});
+						await client.send('Emulation.setPageScaleFactor', { pageScaleFactor: 2 });
+						await expect.poll(() => page.evaluate(() => visualViewport!.scale)).toBe(2);
+						await client.send('Input.dispatchTouchEvent', {
+							type: 'touchStart',
+							touchPoints: [{ x: 300, y: 300, id: 0 }],
+						});
+						for (let step = 1; step <= 6; step++) {
+							await client.send('Input.dispatchTouchEvent', {
+								type: 'touchMove',
+								touchPoints: [{ x: 300 - step * 15, y: 300 - step * 15, id: 0 }],
+							});
+							await page.evaluate(
+								() => new Promise<void>((resolve) => requestAnimationFrame(() => resolve())),
+							);
+						}
+						await client.send('Input.dispatchTouchEvent', { type: 'touchEnd', touchPoints: [] });
+						await expect
+							.poll(() =>
+								page.evaluate(() =>
+									Math.min(visualViewport!.offsetLeft, visualViewport!.offsetTop),
+								),
+							)
+							.toBeGreaterThan(40);
+						await expect
+							.poll(() =>
+								panel.evaluate((element) => {
+									const box = element.getBoundingClientRect();
+									const anchor = document
+										.querySelector('.ads-popover-anchor')!
+										.getBoundingClientRect();
+									return Math.max(
+										Math.abs(box.top - anchor.bottom - 8),
+										Math.abs(box.left + box.width / 2 - anchor.left - anchor.width / 2),
+									);
+								}),
+							)
+							.toBeLessThan(1);
+						await expect(panel).toHaveAttribute('data-placement', 'bottom');
+					} finally {
+						await client.send('Emulation.setPageScaleFactor', { pageScaleFactor: 1 });
+						await client.detach();
+					}
+				});
+			}
+		});
+
 		test('popover follows a scrolling and resizing anchor', async ({ page }) => {
 			await page.getByLabel('Componente').selectOption('Popover');
 			const trigger = page.getByRole('button', { name: 'Popover na borda', exact: true });

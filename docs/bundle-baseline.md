@@ -1,6 +1,6 @@
 # Baseline inicial de distribuição
 
-Na change `fix-135-smart-overlay-position`, o pacote `@admin-ds/components`
+Na primeira medição da change `fix-135-smart-overlay-position`, o pacote `@admin-ds/components`
 passou de 345608 para 355657 bytes (+10049, 2,91%), com 145 arquivos nos dois
 casos. A comparação usa o mesmo compilador e Tailwind, em LF, com o código
 anterior à issue em uma cópia isolada e `dist/` sem os testes antigos gerados.
@@ -11,6 +11,12 @@ de 10% do baseline versionado de 330033 bytes, que não foi elevado.
 Os testes de posicionamento foram movidos de `src/` para `tests/` para não
 entrarem no pacote distribuído. Resultados e limites da validação estão em
 `openspec/changes/fix-135-smart-overlay-position/validation.md`.
+
+No retorno da revisão, a origem geométrica para pinch zoom/pan levou o dist
+para **356722 bytes / 145 arquivos** (+1065 bytes sobre a primeira medição).
+No mesmo esbuild, `overlay-utils` passou de 6759 para 7077 bytes minificados e
+de 2876 para 3009 bytes gzip (+133). O limite versionado e as dependências
+permanecem inalterados; `npm run inspect:packages` passou.
 
 O baseline versionado está em `docs/bundle-baseline.json`. O comando
 `npm run inspect:packages` verifica os exports, arquivos publicados,

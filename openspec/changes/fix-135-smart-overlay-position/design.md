@@ -35,3 +35,20 @@ Floating UI fornece maturidade em colisões e engines e também primitives de in
 ## Validation
 
 Comparar tamanho do bundle antes/depois, verificar ausência de dependências novas, executar testes de geometria e integração, Storybook, admin-demo, E2E, formatação, lint, tipos, build e OpenSpec estrito. Sem aceitar snapshots automaticamente.
+
+## Retorno de revisão: origem geométrica no pinch zoom
+
+A normalização não deve identificar motores por suporte a uma propriedade CSS.
+Quando visualViewport tem offsets não nulos, medir uma referência fixa de
+dimensão zero, com left/top zero e estilos isolados, no mesmo documento do
+painel. A diferença entre sua posição CSS conhecida e seu rect observado
+converte o rect da âncora para as coordenadas fixed usadas pelo painel.
+Chromium com rects de layout produz origem zero; o comportamento WebKit com
+rects visuais produz origem negativa correspondente ao pan. Não somar o offset
+visual automaticamente e não usar user agent. A referência é criada somente
+quando necessária, fica invisível e sem interação e é removida no cleanup.
+
+Cobrir também um navegador que aceite o alias CSS sem mudar sua geometria.
+E2E deve realizar pinch zoom e pan com offsets efetivamente maiores que zero,
+e verificar o alinhamento com a âncora, além da visibilidade. Conservar a
+limitação já documentada para html/body transformados.

@@ -434,15 +434,28 @@ export function useAnchoredPosition(
 		const visual = view.visualViewport;
 		let frame: number | null = null;
 		let disposed = false;
+		let fixedOrigin: HTMLDivElement | null = null;
 		const update = () => {
 			if (disposed) return;
 			const rect = panel.getBoundingClientRect();
 			const anchorRect = anchor.getBoundingClientRect();
-			// No WebKit, rects durante pinch zoom são relativos à viewport visual;
-			// as coordenadas fixed e os limites abaixo usam a viewport de layout.
-			const visualRects = view.CSS?.supports?.('-webkit-backdrop-filter', 'none') ?? false;
-			const dx = visualRects ? (visual?.offsetLeft ?? 0) : 0;
-			const dy = visualRects ? (visual?.offsetTop ?? 0) : 0;
+			// Uma origem fixed conhecida converte rects visuais sem identificar motores
+			// por aliases CSS. Só precisamos medi-la quando há pan da viewport visual.
+			let dx = 0;
+			let dy = 0;
+			if (visual && (visual.offsetLeft !== 0 || visual.offsetTop !== 0)) {
+				if (!fixedOrigin) {
+					fixedOrigin = panel.ownerDocument.createElement('div');
+					fixedOrigin.setAttribute('data-ads-fixed-origin', '');
+					fixedOrigin.setAttribute('aria-hidden', 'true');
+					fixedOrigin.style.cssText =
+						'all:initial;position:fixed;left:0;top:0;width:0;height:0;margin:0;padding:0;border:0;visibility:hidden;pointer-events:none';
+					panel.ownerDocument.body.append(fixedOrigin);
+				}
+				const originRect = fixedOrigin.getBoundingClientRect();
+				dx = -originRect.left;
+				dy = -originRect.top;
+			}
 			const next = calculateAnchoredPosition(
 				{
 					left: anchorRect.left + dx,
@@ -491,6 +504,7 @@ export function useAnchoredPosition(
 		observer?.observe(panel);
 		return () => {
 			disposed = true;
+			fixedOrigin?.remove();
 			if (frame !== null) view.cancelAnimationFrame(frame);
 			observer?.disconnect();
 			view.removeEventListener('resize', schedule);

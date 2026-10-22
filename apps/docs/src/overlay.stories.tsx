@@ -53,7 +53,11 @@ export const ExtremePositions: Story = {
 					>
 						<AdsTooltip
 							placement={side}
-							content={`Preferência ${side}: a seta acompanha o lado efetivo e o shift.`}
+							content={
+								side === 'right'
+									? `Texto longo junto à borda direita. ${'A largura e a seta acompanham a área disponível. '.repeat(6)}`
+									: `Preferência ${side}: a seta acompanha o lado efetivo e o shift.`
+							}
 						>
 							<AdsButton>{side}</AdsButton>
 						</AdsTooltip>

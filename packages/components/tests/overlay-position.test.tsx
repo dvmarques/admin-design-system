@@ -21,6 +21,7 @@ const rect = (left: number, top: number, width: number, height: number) =>
 
 let anchorRect: DOMRect;
 let panelRect: DOMRect;
+let fixedOriginRect: DOMRect;
 let callbacks: ResizeObserverCallback[];
 let observers: { observe: ReturnType<typeof vi.fn>; disconnect: ReturnType<typeof vi.fn> }[];
 let visual: EventTarget & { offsetLeft: number; offsetTop: number; width: number; height: number };
@@ -52,6 +53,7 @@ beforeEach(() => {
 	vi.useFakeTimers();
 	anchorRect = rect(150, 210, 20, 20);
 	panelRect = rect(0, 0, 80, 40);
+	fixedOriginRect = rect(0, 0, 0, 0);
 	visual = Object.assign(new EventTarget(), {
 		offsetLeft: 0,
 		offsetTop: 0,
@@ -76,6 +78,7 @@ beforeEach(() => {
 	vi.spyOn(HTMLElement.prototype, 'getBoundingClientRect').mockImplementation(function (
 		this: HTMLElement,
 	) {
+		if (this.hasAttribute('data-ads-fixed-origin')) return fixedOriginRect;
 		return this.matches('button, .ads-tooltip-anchor, .ads-popover-anchor')
 			? anchorRect
 			: panelRect;
@@ -197,8 +200,51 @@ describe('anchored portal lifecycle', () => {
 		expect(screen.getByTestId('panel')).toHaveStyle({ top: '162px' });
 	});
 
-	it('normalizes WebKit visual rects to fixed layout coordinates during pinch zoom', () => {
+	it('does not double-count pan when a layout-rect engine accepts the CSS alias', () => {
 		vi.stubGlobal('CSS', { supports: () => true });
+		visual.offsetLeft = 80;
+		visual.offsetTop = 40;
+		visual.width = 160;
+		visual.height = 120;
+		anchorRect = rect(100, 50, 20, 20);
+		render(<Harness />);
+		expect(screen.getByTestId('panel')).toHaveStyle({ left: '88px', top: '78px' });
+	});
+
+	it('reuses the fixed origin during pan and removes it on close and unmount', () => {
+		const view = render(<Harness />);
+		expect(document.querySelector('[data-ads-fixed-origin]')).toBeNull();
+		visual.offsetLeft = 80;
+		visual.offsetTop = 40;
+		act(() => visual.dispatchEvent(new Event('scroll')));
+		flush();
+		const origin = document.querySelector('[data-ads-fixed-origin]')!;
+		expect(origin).not.toBeNull();
+		expect(origin).toHaveAttribute('aria-hidden', 'true');
+		expect(origin).toHaveStyle({
+			position: 'fixed',
+			left: '0px',
+			top: '0px',
+			width: '0px',
+			height: '0px',
+			visibility: 'hidden',
+			pointerEvents: 'none',
+		});
+		act(() => visual.dispatchEvent(new Event('scroll')));
+		flush();
+		expect(document.querySelectorAll('[data-ads-fixed-origin]')).toHaveLength(1);
+		expect(document.querySelector('[data-ads-fixed-origin]')).toBe(origin);
+		view.rerender(<Harness open={false} />);
+		expect(document.querySelector('[data-ads-fixed-origin]')).toBeNull();
+		view.rerender(<Harness />);
+		expect(document.querySelector('[data-ads-fixed-origin]')).not.toBeNull();
+		view.unmount();
+		expect(document.querySelector('[data-ads-fixed-origin]')).toBeNull();
+	});
+
+	it('normalizes WebKit visual rects to fixed layout coordinates during pinch zoom', () => {
+		vi.stubGlobal('CSS', { supports: () => false });
+		fixedOriginRect = rect(-80, -40, 0, 0);
 		visual.offsetLeft = 80;
 		visual.offsetTop = 40;
 		visual.width = 160;
@@ -206,6 +252,13 @@ describe('anchored portal lifecycle', () => {
 		anchorRect = rect(20, 10, 20, 20);
 		render(<Harness />);
 		expect(screen.getByTestId('panel')).toHaveStyle({ left: '88px', top: '78px' });
+		fixedOriginRect = rect(-100, -50, 0, 0);
+		anchorRect = rect(0, 0, 20, 20);
+		visual.offsetLeft = 100;
+		visual.offsetTop = 50;
+		act(() => visual.dispatchEvent(new Event('scroll')));
+		flush();
+		expect(screen.getByTestId('panel')).toHaveStyle({ left: '108px', top: '78px' });
 	});
 });
 

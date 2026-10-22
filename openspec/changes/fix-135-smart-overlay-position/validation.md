@@ -145,3 +145,52 @@ execução documental posterior não devem ser apresentados como novos E2E.
 
 PR #167 entregue para revisão humana. Sem merge, fechamento manual da issue
 ou arquivamento da change.
+
+## Tratamento da revisão de 22/10/2026
+
+A revisão sobre `45a7a85` apontou o risco de identificar WebKit pelo alias
+`-webkit-backdrop-filter`. O Chromium 151.0.7922.34 real retornou **false**
+para essa consulta, portanto a afirmação de que ela retorna true em todos os
+motores não se confirmou neste navegador. O E2E já cobria escala de pinch
+zoom, porém não exigia pan com offsets não nulos.
+
+Para eliminar a suposição de identificação de motor, o hook agora mede uma
+referência fixed com left/top zero no documento do painel. O negativo de seu
+rect observado corrige a origem da âncora quando necessário; rects de layout
+com origem zero não recebem o offset visual outra vez. Não há consulta a CSS
+supports nem user agent. A referência de dimensão zero só nasce durante pan,
+não recebe interação, é reutilizada e removida no cleanup.
+
+### Regressão antes/depois
+
+Quatro E2E novos realizam escala 2 e pan real com eventos de toque em Chromium,
+exigem offsets visuais acima de 40px nos dois eixos e verificam alinhamento
+com a âncora. Dois cenários mantêm o suporte CSS nativo; dois simulam a
+aceitação do alias sem alterar a geometria do navegador.
+
+Antes da correção, os cenários com alias simulado falharam em claro/escuro com
+**85px** de desalinhamento; os dois nativos passaram. Após a correção, os
+**18 E2E focados passaram**, incluindo esses quatro novos casos.
+
+Os **57 testes focados Vitest passaram**. As novas regressões cobrem a origem
+de layout com alias aceito e criação tardia/reutilização/limpeza da referência;
+o caso de rects visuais WebKit continua coberto, mesmo sem suporte ao alias.
+O teste puro foi renomeado para `overlay-position-geometry.test.ts`.
+
+A story ExtremePositions inclui texto longo no tooltip da borda direita.
+Capturas reais em claro/escuro foram revisadas em 390×700; a posição (8,8) e o
+tamanho 346×144 permaneceram estáveis em cinco frames consecutivos, com flip
+para left. O caso mantém o comportamento documentado de sobreposição quando
+nenhum lado comporta o painel. Não houve atualização de snapshots.
+
+### Validações desta revisão
+
+- Build normal, lint, typecheck e test:quiet passaram; **724 Vitest / 51 arquivos**, além de Node.
+- OpenSpec estrito passou com **46 itens**; a change foi atualizada antes da correção.
+- E2E local completo: **183 passaram / 22 falharam**. São os dois snapshots já conhecidos e os vinte casos Firefox/WebKit sem executáveis instalados neste executor. Nenhum gate completo é declarado aprovado nesta revisão antes da nova CI.
+- Inspeção de pacotes passou: components **356722 bytes / 145 arquivos** (+1065 sobre 355657). Nenhum baseline foi elevado.
+- `overlay-utils` no mesmo esbuild: 6759 → 7077 bytes minificados; gzip 2876 → 3009 (**+133 bytes** nesta revisão). Sem dependência nova.
+- A comparação de motores WebKit em pinch zoom continua usando regressões de geometria simulada; a execução real de pan descrita acima é Chromium, não Safari/iOS.
+
+Acompanhamento da nova CI e resposta ao ponto da revisão serão registrados
+na descrição da PR #167. Sem merge, archive ou alterações na issue #91.

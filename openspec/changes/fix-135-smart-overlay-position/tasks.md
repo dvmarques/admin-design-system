@@ -37,5 +37,12 @@ Consulte [validation.md](validation.md). O run
 aprovou os gates do commit `f5bb8a7`: qualidade, distribuição, política/OpenSpec
 e os 201 E2E (181 Chromium, 10 Firefox e 10 WebKit). As falhas locais descritas
 no histórico não se reproduziram na CI; nenhum snapshot ou tolerância mudou.
-As 20 tarefas estão concluídas. PR Ready for review por autorização do
-responsável, aguardando revisão humana; sem merge ou arquivamento.
+As 20 tarefas iniciais foram concluídas. O retorno da revisão é acompanhado
+na seção 5. PR Ready for review por autorização do responsável; sem merge ou arquivamento.
+
+## 5. Retorno da revisão
+
+- [x] 5.1 Reproduzir o risco de alias CSS com pinch zoom e pan real e adicionar regressões de coordenadas/cleanup.
+- [x] 5.2 Substituir identificação por CSS pela medição de uma origem fixed conhecida, preservando normalização e SSR.
+- [x] 5.3 Renomear o teste puro de geometria e verificar texto longo junto à borda direita no Storybook.
+- [ ] 5.4 Executar validações, revisar bundle e publicar na mesma PR; acompanhar CI e atualizar evidências.

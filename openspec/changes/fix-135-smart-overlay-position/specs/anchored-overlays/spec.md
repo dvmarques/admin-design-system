@@ -72,6 +72,11 @@ Overlays abertos SHALL recalcular a posição após alterações geométricas da
 - **WHEN** o viewport visual muda por zoom ou deslocamento
 - **THEN** o posicionamento usa a área visual atual e é recalculado
 
+#### Scenario: Pan após pinch zoom sem duplicação de deslocamento
+
+- **WHEN** um overlay aberto é acompanhado durante pinch zoom e pan com offsets visuais não nulos
+- **THEN** painel e âncora permanecem alinhados no mesmo sistema de coordenadas, independentemente de aliases CSS suportados pelo navegador
+
 #### Scenario: Desmontagem
 
 - **WHEN** o overlay fecha ou desmonta

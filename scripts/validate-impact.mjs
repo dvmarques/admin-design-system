@@ -30,7 +30,13 @@ if (impact.mode === 'full') {
   const args = command === 'test' ? ['run', 'test:quiet'] : ['run', command];
   process.exit(run('npm', args).status ?? 1);
 }
-const names = impact.affected.map((workspace) => JSON.parse(fs.readFileSync(workspace + '/package.json', 'utf8')).name);
+let names;
+try {
+  names = impact.affected.map((workspace) => JSON.parse(fs.readFileSync(workspace + '/package.json', 'utf8')).name);
+} catch {
+  console.error('Cannot resolve workspace manifests; run the full validation.');
+  process.exit(1);
+}
 let args;
 if (command === 'lint') {
   args = ['exec', '--', 'eslint', ...impact.affected];

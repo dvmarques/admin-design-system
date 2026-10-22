@@ -63,6 +63,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `optimize-playwright-ci-container` - Jobs E2E Chromium, Firefox e WebKit passam a usar a imagem oficial Playwright `v1.62.0-noble`, compatível com o lockfile; removidos cache de browsers e instalações apt redundantes. Preservados Node 24, npm 11.19.1, gates e snapshots. Comparação de tempos pendente de runs CI (issue #171).
+
 - `adaptive-ai-workflow` - Guia e skill compartilhada para classificar mudanças Fast, Standard e Critical e orquestrar Issue → OpenSpec → implementação → PR → CI → revisão humana (issue #163). Preserva gates, schema, políticas de release e APIs existentes.
 
 - `split-long-spec-requirements` - Dez requisitos de nove specs foram reescritos com até 500

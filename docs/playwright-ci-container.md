@@ -67,6 +67,18 @@ separando condições de cache frio/quente quando observáveis.
 | PR #172 / Firefox     | Container Noble    | pendente              | pendente       | não aplicável            | pendente   | pendente | pendente   | pendente  |
 | PR #172 / WebKit      | Container Noble    | pendente              | pendente       | não aplicável            | pendente   | pendente | pendente   | pendente  |
 
+### Primeira execução aprovada após migração
+
+CI [39790016962](https://github.com/dvmarques/admin-design-system/actions/runs/39790016962), commit `932a792`. Tempos aproximados entre o primeiro e o último timestamp dos logs dos jobs; incluem inicialização do container, checkout, npm, builds e testes, mas não representam uma mediana de múltiplos runs.
+
+| Browser | Duração aproximada do job | Testes |
+| --- | --- | --- |
+| Chromium | 2min14s | 167 passaram (1,1min) |
+| Firefox | 1min18s | 10 passaram (12,4s) |
+| WebKit | 1min20s | 10 passaram (14,9s) |
+
+A primeira tentativa de container [39787750701](https://github.com/dvmarques/admin-design-system/actions/runs/39787750701) teve Chromium e WebKit aprovados, mas Firefox falhou por `HOME` incompatível e a qualidade falhou por formatação; não deve ser contabilizada como execução aprovada. O benchmark anterior em host não tem duração total medida e, portanto, ainda não permite calcular ganho percentual total confiável. Para concluir a comparação exigida pela task 3.3, coletar mais runs equivalentes, separar cenários de cache e registrar tempos de etapas.
+
 As amostras anteriores são parciais, de commits diferentes e não permitem
 inferir economia total. Registrar medianas, número de runs, timestamps e links
 dos jobs após a CI; comparar execução com cache equivalente e separar mudanças

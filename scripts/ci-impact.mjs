@@ -211,7 +211,7 @@ export function decideScope({ event, baseRef, impact }) {
  * do próprio checkout, só para estes comandos de leitura.
  */
 export function gitArguments(args, cwd, env = process.env) {
-	return env.GITHUB_ACTIONS === 'true' ? ['-c', `safe.directory=${cwd}`, ...args] : args;
+	return env.GITHUB_ACTIONS === 'true' ? ['-c', `safe.directory=${resolve(cwd)}`, ...args] : args;
 }
 
 function git(args, cwd) {

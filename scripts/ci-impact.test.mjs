@@ -474,6 +474,11 @@ test('git trusts only the checkout directory, and only on GitHub Actions', () =>
 		'safe.directory=/work',
 		'diff',
 	]);
+	assert.deepEqual(
+		gitArguments(['diff'], '/work/', { GITHUB_ACTIONS: 'true' }),
+		['-c', 'safe.directory=/work', 'diff'],
+		'sem barra final, como o git compara',
+	);
 	assert.deepEqual(gitArguments(['diff'], '/work', {}), ['diff']);
 	assert.deepEqual(gitArguments(['diff'], '/work', { GITHUB_ACTIONS: 'false' }), ['diff']);
 });
@@ -510,6 +515,8 @@ test(
 				assert.throws(() => listPullRequestFiles({ cwd: root }), /dubious ownership/);
 				process.env.GITHUB_ACTIONS = 'true';
 				assert.deepEqual(listPullRequestFiles({ cwd: root }), ['apps/docs/b.ts']);
+				// O diretório padrão dos scripts (`import.meta.url`) termina em barra; o git exige o caminho exato.
+				assert.deepEqual(listPullRequestFiles({ cwd: `${root}/` }), ['apps/docs/b.ts']);
 			} finally {
 				if (previous === undefined) delete process.env.GITHUB_ACTIONS;
 				else process.env.GITHUB_ACTIONS = previous;

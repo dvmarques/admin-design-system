@@ -56,9 +56,9 @@ responsividade, hidratação do Next.js e fluxos completos entre componentes de
 servidor e cliente.
 
 [playwright.config.ts](../playwright.config.ts) define o endereço padrão da
-aplicação e localiza os testes no diretório `e2e/`. Na CI, os três jobs E2E usam a imagem oficial
-`mcr.microsoft.com/playwright:v1.62.0-noble`, que já contém os navegadores e
-bibliotecas do sistema. O Playwright npm continua sendo instalado pelo lockfile
+aplicação e localiza os testes no diretório `e2e/`. Na CI, os três jobs E2E
+usam a imagem oficial `mcr.microsoft.com/playwright:v1.62.0-noble`, que já
+contém os navegadores e bibliotecas do sistema. O Playwright npm continua sendo instalado pelo lockfile
 com `npm ci --ignore-scripts`; não se executa `playwright install-deps` nem
 cache de `~/.cache/ms-playwright` nos jobs migrados.
 

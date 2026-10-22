@@ -83,6 +83,11 @@ jobs:
     name: ${{ matrix.check }}
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.0-noble
+      options: --ipc=host
+      env:
+        HOME: /root
     strategy:
       fail-fast: false
       matrix:
@@ -108,21 +113,34 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm ci --ignore-scripts
         if: steps.scope.outputs.docs_only != 'true'
-      - id: playwright
+      - name: Verificar versão Playwright da imagem e do lockfile
         if: steps.scope.outputs.docs_only != 'true'
-        run: echo "version=$(npx playwright --version | awk '{print $2}')" >> "$GITHUB_OUTPUT"
-      - id: playwright-cache
-        if: steps.scope.outputs.docs_only != 'true'
-        uses: actions/cache@v6
-        with:
-          path: ~/.cache/ms-playwright
-          key: playwright-${{ runner.os }}-${{ matrix.browser }}-${{ steps.playwright.outputs.version }}
-      - run: sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.sources
-        if: steps.scope.outputs.docs_only != 'true'
-      - if: steps.scope.outputs.docs_only != 'true' && steps.playwright-cache.outputs.cache-hit != 'true'
-        run: npx playwright install --with-deps ${{ matrix.browser }}
-      - if: steps.scope.outputs.docs_only != 'true' && steps.playwright-cache.outputs.cache-hit == 'true'
-        run: npx playwright install-deps ${{ matrix.browser }}
+        shell: bash
+        run: |
+          EXPECTED=1.62.0
+          node --version
+          npm --version
+          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
+          test "$(npm --version)" = 11.19.1
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const lock = require('./package-lock.json');
+          const expected = '1.62.0';
+          for (const name of ['@playwright/test', 'playwright', 'playwright-core']) {
+            const locked = lock.packages['node_modules/' + name]?.version;
+            const installed = require(name + '/package.json').version;
+            if (locked !== expected || installed !== expected) {
+              throw new Error(name + ': imagem=' + expected + ', lockfile=' + locked + ', instalado=' + installed);
+            }
+          }
+          const { chromium, firefox, webkit } = require('playwright');
+          for (const [name, browser] of Object.entries({ chromium, firefox, webkit })) {
+            const executable = browser.executablePath();
+            if (!fs.existsSync(executable)) {
+              throw new Error(name + ': executável ausente na imagem: ' + executable);
+            }
+          }
+          NODE
       - run: npm run build --workspace @admin-ds/tokens
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/components
@@ -133,6 +151,8 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true'
       - run: npx playwright test --project=${{ matrix.browser }}
         if: steps.scope.outputs.docs_only != 'true'
+        env:
+          HOME: /root
 
   develop-policy:
     name: Política de develop

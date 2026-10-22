@@ -4,6 +4,7 @@ import {
 	AdsButton,
 	AdsDialog,
 	AdsDrawer,
+	AdsDropdown,
 	AdsField,
 	AdsInput,
 	AdsPopover,
@@ -25,6 +26,74 @@ const meta = {
 } satisfies Meta;
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+export const ExtremePositions: Story = {
+	parameters: {
+		layout: 'fullscreen',
+		docs: {
+			description: {
+				story:
+					'Tooltip, Popover e Dropdown junto às bordas da viewport. Abra em Canvas, reduza a janela e teste os quatro lados, conteúdo dinâmico, scroll e zoom. O lado efetivo aparece em data-placement; a seta acompanha o deslocamento.',
+			},
+		},
+	},
+	render: () => {
+		const [open, setOpen] = useState(false);
+		const [expanded, setExpanded] = useState(false);
+		return (
+			<div style={{ minHeight: '150vh', padding: 8 }}>
+				{(['top', 'right', 'bottom', 'left'] as const).map((side, index) => (
+					<div
+						key={side}
+						style={{
+							position: 'fixed',
+							...(index < 2 ? { top: 8 } : { bottom: 8 }),
+							...(index % 2 ? { right: 8 } : { left: 8 }),
+						}}
+					>
+						<AdsTooltip
+							placement={side}
+							content={
+								side === 'right'
+									? `Texto longo junto à borda direita. ${'A largura e a seta acompanham a área disponível. '.repeat(6)}`
+									: `Preferência ${side}: a seta acompanha o lado efetivo e o shift.`
+							}
+						>
+							<AdsButton>{side}</AdsButton>
+						</AdsTooltip>
+					</div>
+				))}
+				<div style={{ position: 'fixed', bottom: 64, left: 8 }}>
+					<AdsPopover
+						aria-label="Conteúdo dinâmico"
+						placement="left"
+						open={open}
+						onOpenChange={setOpen}
+						content={
+							<>
+								<AdsButton onClick={() => setExpanded(!expanded)}>Alternar conteúdo</AdsButton>
+								<p>
+									{expanded ? 'Conteúdo expandido junto à borda. '.repeat(20) : 'Conteúdo breve.'}
+								</p>
+							</>
+						}
+					>
+						<AdsButton>Popover na borda</AdsButton>
+					</AdsPopover>
+				</div>
+				<div style={{ position: 'fixed', top: 64, right: 8 }}>
+					<AdsDropdown>
+						<AdsDropdown.Trigger>Dropdown na borda</AdsDropdown.Trigger>
+						<AdsDropdown.Content placement="right">
+							<AdsDropdown.Item>Editar</AdsDropdown.Item>
+							<AdsDropdown.Item>Duplicar</AdsDropdown.Item>
+						</AdsDropdown.Content>
+					</AdsDropdown>
+				</div>
+			</div>
+		);
+	},
+};
 
 export const Dialog: Story = {
 	render: () => {

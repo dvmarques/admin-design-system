@@ -337,52 +337,187 @@ export function useClickOutside(
 	}, [containerRef, onOutside, open]);
 }
 
+type AnchoredPlacement = 'top' | 'right' | 'bottom' | 'left';
+type AnchoredAlign = 'center' | 'start';
+
+const oppositePlacement: Record<AnchoredPlacement, AnchoredPlacement> = {
+	top: 'bottom',
+	bottom: 'top',
+	left: 'right',
+	right: 'left',
+};
+
+export interface AnchoredPosition {
+	style: React.CSSProperties;
+	placement: AnchoredPlacement;
+	arrowOffset: number;
+}
+
+/** Calcula a geometria sem acessar o DOM, para permitir testes determinísticos. */
+export function calculateAnchoredPosition(
+	anchor: Pick<DOMRect, 'top' | 'right' | 'bottom' | 'left' | 'width' | 'height'>,
+	width: number,
+	height: number,
+	viewport: { left: number; top: number; width: number; height: number },
+	preferred: AnchoredPlacement,
+	align: AnchoredAlign = 'center',
+): AnchoredPosition {
+	const gap = 8;
+	const margin = 8;
+	const bounds = {
+		left: viewport.left + margin,
+		top: viewport.top + margin,
+		right: viewport.left + viewport.width - margin,
+		bottom: viewport.top + viewport.height - margin,
+	};
+	const space: Record<AnchoredPlacement, number> = {
+		top: anchor.top - bounds.top - gap,
+		bottom: bounds.bottom - anchor.bottom - gap,
+		left: anchor.left - bounds.left - gap,
+		right: bounds.right - anchor.right - gap,
+	};
+	const size = preferred === 'top' || preferred === 'bottom' ? height : width;
+	const opposite = oppositePlacement[preferred];
+	const placement =
+		space[preferred] >= size || space[preferred] >= space[opposite] ? preferred : opposite;
+	const clamp = (value: number, min: number, max: number) =>
+		Math.min(Math.max(value, min), Math.max(min, max));
+	const horizontal = placement === 'top' || placement === 'bottom';
+	const anchorCenterX = anchor.left + anchor.width / 2;
+	const anchorCenterY = anchor.top + anchor.height / 2;
+	const left = horizontal
+		? align === 'start'
+			? anchor.left
+			: anchorCenterX - width / 2
+		: placement === 'left'
+			? anchor.left - width - gap
+			: anchor.right + gap;
+	const top = horizontal
+		? placement === 'top'
+			? anchor.top - height - gap
+			: anchor.bottom + gap
+		: anchorCenterY - height / 2;
+	const x = clamp(left, bounds.left, bounds.right - width);
+	const y = clamp(top, bounds.top, bounds.bottom - height);
+	const arrowOffset = horizontal
+		? clamp(anchorCenterX - x, Math.min(8, width / 2), Math.max(width / 2, width - 8))
+		: clamp(anchorCenterY - y, Math.min(8, height / 2), Math.max(height / 2, height - 8));
+	return { style: { left: x, top: y }, placement, arrowOffset };
+}
+
 export function useAnchoredPosition(
 	open: boolean,
 	anchorRef: RefObject<HTMLElement | null>,
 	contentRef: RefObject<HTMLElement | null>,
-	placement: 'top' | 'right' | 'bottom' | 'left' = 'bottom',
-	align: 'center' | 'start' = 'center',
+	placement: AnchoredPlacement = 'bottom',
+	align: AnchoredAlign = 'center',
 ) {
-	const [position, setPosition] = useState<React.CSSProperties>({});
-	const update = useCallback(() => {
-		const anchor = anchorRef.current;
-		const content = contentRef.current;
-		if (!anchor || !content) return;
-		const rect = anchor.getBoundingClientRect();
-		const width = content.offsetWidth;
-		const height = content.offsetHeight;
-		const gap = 8;
-		let left = align === 'start' ? rect.left : rect.left + rect.width / 2 - width / 2;
-		let top = rect.bottom + gap;
-		if (placement === 'top') top = rect.top - height - gap;
-		if (placement === 'left') {
-			left = rect.left - width - gap;
-			top = rect.top + rect.height / 2 - height / 2;
-		}
-		if (placement === 'right') {
-			left = rect.right + gap;
-			top = rect.top + rect.height / 2 - height / 2;
-		}
-		left = Math.min(Math.max(8, left), Math.max(8, window.innerWidth - width - 8));
-		top = Math.min(Math.max(8, top), Math.max(8, window.innerHeight - height - 8));
-		setPosition({ left, top });
-	}, [align, anchorRef, contentRef, placement]);
-
+	const [panel, setPanel] = useState<HTMLElement | null>(null);
+	// A ref de callback acompanha a montagem real do portal, inclusive anexos tardios.
+	const attachContent = useCallback(
+		(node: HTMLElement | null) => {
+			contentRef.current = node;
+			setPanel(node);
+		},
+		[contentRef],
+	);
+	const [position, setPosition] = useState<AnchoredPosition>({
+		style: { opacity: 0 },
+		placement,
+		arrowOffset: 0,
+	});
 	useLayoutEffect(() => {
-		if (!open) return;
-		update();
-		const timer = window.setTimeout(update, 0);
-		window.addEventListener('resize', update);
-		window.addEventListener('scroll', update, true);
-		return () => {
-			window.clearTimeout(timer);
-			window.removeEventListener('resize', update);
-			window.removeEventListener('scroll', update, true);
+		const anchor = anchorRef.current;
+		if (!open || !anchor || !panel) return;
+		const view = panel.ownerDocument.defaultView;
+		if (!view) return;
+		const visual = view.visualViewport;
+		let frame: number | null = null;
+		let disposed = false;
+		let fixedOrigin: HTMLDivElement | null = null;
+		const update = () => {
+			if (disposed) return;
+			const rect = panel.getBoundingClientRect();
+			const anchorRect = anchor.getBoundingClientRect();
+			// Uma origem fixed conhecida converte rects visuais sem identificar motores
+			// por aliases CSS. Só precisamos medi-la quando há pan da viewport visual.
+			let dx = 0;
+			let dy = 0;
+			if (visual && (visual.offsetLeft !== 0 || visual.offsetTop !== 0)) {
+				if (!fixedOrigin) {
+					fixedOrigin = panel.ownerDocument.createElement('div');
+					fixedOrigin.setAttribute('data-ads-fixed-origin', '');
+					fixedOrigin.setAttribute('aria-hidden', 'true');
+					fixedOrigin.style.cssText =
+						'all:initial;position:fixed;left:0;top:0;width:0;height:0;margin:0;padding:0;border:0;visibility:hidden;pointer-events:none';
+					panel.ownerDocument.body.append(fixedOrigin);
+				}
+				const originRect = fixedOrigin.getBoundingClientRect();
+				dx = -originRect.left;
+				dy = -originRect.top;
+			}
+			const next = calculateAnchoredPosition(
+				{
+					left: anchorRect.left + dx,
+					right: anchorRect.right + dx,
+					top: anchorRect.top + dy,
+					bottom: anchorRect.bottom + dy,
+					width: anchorRect.width,
+					height: anchorRect.height,
+				},
+				rect.width,
+				rect.height,
+				{
+					left: visual?.offsetLeft ?? 0,
+					top: visual?.offsetTop ?? 0,
+					width: visual?.width ?? (view.document.documentElement.clientWidth || view.innerWidth),
+					height:
+						visual?.height ?? (view.document.documentElement.clientHeight || view.innerHeight),
+				},
+				placement,
+				align,
+			);
+			setPosition((previous) =>
+				previous.placement === next.placement &&
+				previous.arrowOffset === next.arrowOffset &&
+				previous.style.left === next.style.left &&
+				previous.style.top === next.style.top &&
+				previous.style.opacity === undefined
+					? previous
+					: next,
+			);
 		};
-	}, [open, update]);
-
-	return position;
+		const schedule = () => {
+			if (disposed || frame !== null) return;
+			frame = view.requestAnimationFrame(() => {
+				frame = null;
+				update();
+			});
+		};
+		update();
+		view.addEventListener('resize', schedule);
+		view.addEventListener('scroll', schedule, true);
+		visual?.addEventListener('resize', schedule);
+		visual?.addEventListener('scroll', schedule);
+		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+		observer?.observe(anchor);
+		observer?.observe(panel);
+		return () => {
+			disposed = true;
+			fixedOrigin?.remove();
+			if (frame !== null) view.cancelAnimationFrame(frame);
+			observer?.disconnect();
+			view.removeEventListener('resize', schedule);
+			view.removeEventListener('scroll', schedule, true);
+			visual?.removeEventListener('resize', schedule);
+			visual?.removeEventListener('scroll', schedule);
+		};
+	}, [align, anchorRef, open, panel, placement]);
+	return {
+		...position,
+		attachContent,
+		style: open && panel ? position.style : { opacity: 0 },
+	};
 }
 
 export function useOverlayOrigin(restoreFocusRef: RefObject<HTMLElement | null>) {

@@ -183,6 +183,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-135-smart-overlay-position` - Posicionamento de Tooltip, Popover e Dropdown com flip/shift, placement efetivo, seta alinhada à âncora e recálculo após mudanças de geometria, scroll e viewport, incluindo normalização geométrica do pan após pinch zoom, sem alterar as APIs públicas.
+
 - `fix-lint-nested-worktrees` - O lint da raiz ignora `.claude/worktrees/**` e resolve
   `tsconfigRootDir` pela configuração, preservando os arquivos dos worktrees (#128).
 

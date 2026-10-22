@@ -39,6 +39,28 @@ Importe os estilos globais em `app/layout.tsx` e mantenha componentes
 interativos, como `ThemeToggle`, em um limite de Client Component. Tokens e
 componentes puramente apresentacionais podem ser usados por Server Components.
 
+### Tooltip, Popover e Dropdown nas bordas
+
+Os painéis ancorados preferem o lado solicitado, invertem para o oposto quando
+necessário e ajustam os dois eixos com margem de 8px. `data-placement` informa o
+lado efetivo nos três componentes; a seta do Tooltip acompanha esse lado e o
+centro do gatilho, respeitando os limites do painel. Nenhuma prop mudou.
+
+Os painéis acompanham alterações de tamanho da âncora/conteúdo, scroll de
+ancestrais, resize e mudanças da viewport visual. As medidas usam CSS pixels
+e posicionamento fixo no portal, sem somar o scroll da página. O portal é
+montado após hidratação; as APIs do navegador só são usadas no cliente.
+
+Se nenhum dos lados opostos comportar o conteúdo, escolhe-se o de maior espaço
+e o painel pode sobrepor a âncora. Conteúdo maior que a viewport não pode ficar
+inteiramente visível: limite as dimensões e ofereça rolagem no conteúdo quando
+necessário. Evite transformar `html`/`body`, pois isso pode redefinir o bloco
+de referência do posicionamento fixo.
+
+O Storybook inclui `ExtremePositions`; o admin-demo oferece a rota
+`/componentes/overlays` para testar lados, cantos, conteúdo dinâmico, temas,
+resize, scroll e zoom usando apenas o CSS compilado dos pacotes.
+
 ## Admin Shell
 
 O `AdsAdminShell`, de `@admin-ds/admin`, organiza header, navegação e conteúdo sem

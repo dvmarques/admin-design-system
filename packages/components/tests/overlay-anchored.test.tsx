@@ -1,4 +1,4 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
@@ -112,7 +112,20 @@ describe('anchored overlays', () => {
 			</AdsTooltip>,
 		);
 		const trigger = screen.getByRole('button', { name: 'Ajuda' });
-		trigger.focus();
+		// JSDOM não faz layout: uma âncora em (0, 0) exige flip para bottom.
+		// Este teste verifica foco/ARIA com espaço realista acima da âncora.
+		vi.spyOn(trigger.parentElement!, 'getBoundingClientRect').mockReturnValue({
+			top: 100,
+			bottom: 120,
+			left: 100,
+			right: 140,
+			width: 40,
+			height: 20,
+			x: 100,
+			y: 100,
+			toJSON() {},
+		});
+		act(() => trigger.focus());
 		const tooltip = await screen.findByRole('tooltip');
 		expect(tooltip).toHaveTextContent('Ajuda contextual');
 		expect(tooltip).toHaveClass('z-[var(--ads-layer-overlay)]');

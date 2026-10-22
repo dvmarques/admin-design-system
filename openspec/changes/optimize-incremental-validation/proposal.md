@@ -1,15 +1,22 @@
 ## Why
-A CI recompila todos os workspaces em múltiplos jobs e a detecção atual só distingue documentação, elevando custo e latência.
+
+A CI repete trabalho que a mudança não afeta e a dispensa de trabalho só reconhece documentação. A medição de runs reais (ver `evidence/` e `docs/ci-impact-validation.md`) mostrou ainda que a dispensa de E2E para PRs só de documentação **não funciona nos jobs em container**: `git diff HEAD^1 HEAD` falha com `Could not access 'HEAD^1'` no checkout raso e o resultado cai silenciosamente em `docs_only=false`. Cada PR de documentação executa os três E2E sem necessidade (aprox. 290 s de jobs).
 
 ## What Changes
-- Classificar arquivos alterados por workspace e dependências transitivas, com fallback para validação completa.
-- Oferecer comandos de validação focal para desenvolvimento sem remover gates obrigatórios de PR, release e alterações críticas.
-- Medir duração, falhas, retrabalho e consumo de tokens quando disponível; comparar baseline e resultado sem estimativas tratadas como medição.
-- Avaliar cache e compartilhamento de artefatos entre jobs sem criar dependência insegura entre jobs.
+
+- Classificador de impacto por workspace e dependentes transitivos (`scripts/ci-impact.mjs`), com workspaces derivados da raiz, grafo declarado mais dependências implícitas verificadas por teste, ordem topológica e fallback completo para qualquer dúvida (caminho desconhecido, global, inseguro, manifesto inválido, ciclo, falha de detecção).
+- Detecção do diff sem `HEAD^1` em checkout raso: a CI faz checkout completo e usa o commit de merge da PR (primeiro pai = base); renomeações contam origem e destino.
+- `scripts/ci-scope.mjs` substitui `ci-changed-paths.mjs` como CLI dos jobs: decide `docs_only`, `build_docs`, `build_demo` e `e2e` somente para PRs para `develop`; push, PRs para `master` e qualquer falha executam tudo. Qualidade rápida, política de develop e validação de release nunca dependem dessa decisão.
+- Comandos locais opcionais `validate:impact:*` com plano testável, builds na ordem correta, saída concisa e `--verbose`/`--dry-run`.
+- Medição: `scripts/ci-metrics.mjs` e workflow manual `ci-metrics.yml` comparam execuções do Actions (duração, falhas, reruns); evidências do baseline versionadas.
+- Avaliação documentada de cache e compartilhamento de artefatos entre jobs, com números e decisão.
 
 ## Capabilities
+
 ### New Capabilities
-- `impact-aware-validation`: seleção conservadora de workspaces e validações com fallback seguro.
+
+- `impact-aware-validation`: seleção conservadora de trabalho por impacto, com fallback seguro e medição auditável.
 
 ## Impact
-Scripts de CI, testes Node, workflows GitHub Actions, documentação e comandos npm. APIs públicas e identidade visual não devem mudar.
+
+Scripts de CI, workflows do GitHub Actions, testes Node, documentação e comandos npm. Nenhuma API pública, CSS ou identidade visual muda. Os nomes dos checks obrigatórios permanecem.

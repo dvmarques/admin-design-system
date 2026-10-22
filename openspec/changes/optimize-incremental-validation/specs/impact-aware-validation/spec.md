@@ -1,30 +1,67 @@
 ## ADDED Requirements
 
-### Requirement: Conservative workspace impact classification
-The system SHALL identify changed workspaces and transitive consumers, including implicit token consumers, using a trusted list of workspace manifests. It SHALL return full validation for unknown files, global configuration changes, missing revisions, invalid manifests, or ambiguous input. This classification MUST NOT bypass mandatory pull-request, release, or protected-branch checks.
+### Requirement: Classificação conservadora de impacto
 
-#### Scenario: Token changes propagate to consumers
-- **WHEN** a token source file changes
-- **THEN** tokens, components, admin, docs and admin-demo are affected
+O sistema SHALL identificar os workspaces alterados e seus dependentes transitivos a partir dos manifestos e das dependências implícitas conhecidas. O sistema SHALL retornar validação completa para caminhos desconhecidos ou inseguros, configuração global, manifestos de workspace alterados, lista de arquivos ausente, manifestos inválidos, dependências cíclicas e falhas de detecção.
 
-#### Scenario: Unknown files fail closed
-- **WHEN** a changed path cannot be classified reliably
-- **THEN** the system returns full validation
+#### Scenario: Alteração em tokens propaga para os consumidores
 
-### Requirement: Optional focused feedback
-The system SHALL provide explicit developer commands for scoped lint, type checking and tests, without replacing full release validation. The commands SHALL propagate process failures and expose the calculated scope in a concise diagnostic output.
+- **WHEN** um arquivo de `packages/tokens` é alterado
+- **THEN** tokens, components, admin, docs e admin-demo são afetados, em ordem de dependência
 
-#### Scenario: Scoped app change
-- **WHEN** only a recognized application source file changes
-- **THEN** the developer can run focused validation for the affected application
+#### Scenario: Caminho desconhecido ou global
 
-#### Scenario: Global configuration change
-- **WHEN** a global build or CI configuration changes
-- **THEN** the command executes full validation for its selected category
+- **WHEN** o arquivo alterado está fora dos workspaces e da documentação, ou é configuração global, script, workflow ou `e2e/`
+- **THEN** o resultado é validação completa
 
-### Requirement: Auditable performance comparison
-The system SHALL document a repeatable measurement procedure using identifiable GitHub Actions runs and shall distinguish measured job duration, failures, reruns, token use and cost from unavailable or estimated data. It MUST NOT report unverified savings.
+#### Scenario: Renomeação entre workspaces
 
-#### Scenario: Missing telemetry
-- **WHEN** token or cost telemetry is unavailable
-- **THEN** the report explicitly identifies the missing metric instead of inventing a value
+- **WHEN** um arquivo é movido de um workspace para outro
+- **THEN** origem e destino contam como alterados
+
+### Requirement: Escopo da CI sem reduzir gates obrigatórios
+
+A CI SHALL dispensar apenas etapas de build de aplicações e o E2E, e somente em pull requests para `develop` com impacto conhecido. A CI MUST executar por completo os jobs `Qualidade rápida` e `Política de develop`, os builds e a inspeção dos pacotes, e MUST executar tudo em pushes, em pull requests para `master` e quando a detecção falhar. A CI MUST manter os nomes dos checks obrigatórios.
+
+#### Scenario: PR apenas de documentação
+
+- **WHEN** uma pull request para `develop` altera somente documentação, inclusive em jobs com container
+- **THEN** builds de aplicações e E2E são dispensados e a qualidade completa é executada
+
+#### Scenario: PR que não afeta o demo
+
+- **WHEN** a pull request altera somente arquivos de `apps/docs`
+- **THEN** o E2E e o build do demo são dispensados e o build do Storybook é executado
+
+#### Scenario: Falha de detecção
+
+- **WHEN** o checkout não permite identificar a base da PR
+- **THEN** todas as etapas são executadas
+
+### Requirement: Validação focal opcional
+
+O sistema SHALL oferecer comandos locais de lint, typecheck e testes para os workspaces afetados, com saída concisa por padrão e diagnóstico sob demanda, propagando falhas de processo. Os comandos MUST construir os pacotes em ordem de dependência antes de typecheck e testes e MUST usar os mesmos comandos da CI no fallback completo.
+
+#### Scenario: Alteração restrita a uma aplicação
+
+- **WHEN** somente arquivos de `apps/docs` mudaram em relação ao ancestral comum de `develop`
+- **THEN** os comandos focais validam apenas esse workspace
+
+#### Scenario: Configuração global alterada
+
+- **WHEN** um arquivo de configuração global mudou
+- **THEN** os comandos focais executam a validação completa da categoria
+
+### Requirement: Comparação auditável de desempenho
+
+O sistema SHALL medir duração por job, tempo total, falhas e reruns de execuções identificadas do GitHub Actions, comparar grupos e indicar amostra insuficiente. O sistema MUST NOT apresentar estimativas ou projeções como medição e MUST declarar tokens e custo como não disponíveis sem telemetria verificável.
+
+#### Scenario: Telemetria ausente
+
+- **WHEN** não há dados de tokens ou custo
+- **THEN** o relatório declara a métrica como não disponível
+
+#### Scenario: Poucas execuções
+
+- **WHEN** algum grupo tem menos de três execuções
+- **THEN** o relatório sinaliza amostra insuficiente

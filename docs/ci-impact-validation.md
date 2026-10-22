@@ -1,6 +1,6 @@
 # Validação por impacto na CI e localmente
 
-Entregue pela issue #164. Reduz **somente** trabalho comprovadamente irrelevante em PRs para `develop`, sem alterar os checks obrigatórios. Decisões e requisitos: `openspec/changes/optimize-incremental-validation/`.
+Entregue pela issue #164. Reduz **somente** trabalho comprovadamente irrelevante em PRs para `develop`, sem alterar os checks obrigatórios. Decisões e requisitos: `openspec/changes/archive/2026-10-22-optimize-incremental-validation/`.
 
 ## Como funciona
 
@@ -66,7 +66,7 @@ Também há o workflow manual **Métricas de CI** (`ci-metrics.yml`, somente lei
 
 ### Baseline medido (runs reais)
 
-Evidências em `openspec/changes/optimize-incremental-validation/evidence/`. Medianas por job, em segundos:
+Evidências em `openspec/changes/archive/2026-10-22-optimize-incremental-validation/evidence/`. Medianas por job, em segundos:
 
 | Job                            | PRs só de docs (3 runs; E2E **não** dispensado) | PRs de código (2 runs) |
 | ------------------------------ | ----------------------------------------------: | ---------------------: |

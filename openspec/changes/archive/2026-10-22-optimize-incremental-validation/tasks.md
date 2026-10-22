@@ -16,5 +16,5 @@
 
 - [x] 3.1 Automatizar a comparação antes/depois (`scripts/ci-metrics.mjs`, workflow manual `ci-metrics.yml`) com fontes verificáveis e documentar trade-offs.
 - [x] 3.2 Executar format, lint, build, typecheck, testes e E2E completos: localmente (format, lint, build, typecheck, `test:quality`, OpenSpec estrito 47/47) e na CI da PR no commit `d9142a2` (Qualidade rápida, Artefatos, Política de develop, E2E Chromium, Firefox e WebKit verdes). O E2E local no Chromium do ambiente teve 7 falhas de snapshot por diferença de build do navegador, não reproduzidas na CI.
-- [ ] 3.3 Registrar a medição "depois" com execuções pós-merge de PRs só de documentação (comando em `docs/ci-impact-validation.md`); até lá nenhum ganho é declarado como medido.
+- [ ] 3.3 (acompanhamento após o merge; arquivada com esta pendência declarada) Registrar a medição "depois" com execuções pós-merge de PRs só de documentação (comando em `docs/ci-impact-validation.md`); até lá nenhum ganho é declarado como medido.
 - [x] 3.4 Atualizar CHANGELOG, documentação e evidências.

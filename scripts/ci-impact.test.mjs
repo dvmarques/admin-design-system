@@ -36,3 +36,9 @@ test('unknown, global, manifest and missing inputs fail closed', () => {
     assert.equal(classifyImpact(files, manifests).mode, 'full');
   }
 });
+
+test('docs with runtime impact are not skipped', () => {
+  for (const file of ['docs/integration.md', 'docs/bundle-baseline.md', 'packages/tokens/README.md', 'openspec/specs/a/schema.yaml']) {
+    assert.equal(classifyImpact([file], manifests).mode, 'full', file);
+  }
+});

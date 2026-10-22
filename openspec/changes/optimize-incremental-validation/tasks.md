@@ -1,12 +1,12 @@
 ## 1. Baseline
 - [ ] Registrar duração e falhas dos jobs representativos em develop e PRs, com IDs de execução.
-- [ ] Registrar tokens, custo e retrabalho apenas quando houver telemetria verificável; indicar indisponibilidade quando necessário.
+- [x] Registrar tokens, custo e retrabalho apenas quando houver telemetria verificável; indicar indisponibilidade quando necessário.
 
 ## 2. Implementação incremental
-- [ ] Implementar classificação por workspace e dependentes transitivos com fallback full.
-- [ ] Adicionar testes para caminhos, dependências, alterações globais e riscos.
+- [x] Implementar classificação por workspace e dependentes transitivos com fallback full.
+- [x] Adicionar testes para caminhos, dependências, alterações globais e riscos.
 - [ ] Criar comandos focais de lint, testes e typecheck com saída concisa e modo diagnóstico.
-- [ ] Integrar seleção segura à CI preservando validações completas em risco, develop/master e release.
+- [ ] Integrar seleção segura à CI preservando validações completas em risco, develop/master e release. (Diagnóstico integrado; seleção de execução ainda não habilitada.)
 - [ ] Avaliar e eliminar redundâncias de build e test:quality somente com equivalência demonstrada.
 
 ## 3. Validação e métricas

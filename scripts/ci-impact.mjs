@@ -6,6 +6,7 @@ import { pathToFileURL } from 'node:url';
 
 const workspaces = ['packages/tokens', 'packages/components', 'packages/admin', 'apps/docs', 'apps/admin-demo'];
 const globalPaths = /^(package(-lock)?\.json|tsconfig[^/]*|eslint[^/]*|vitest[^/]*|playwright[^/]*|scripts\/|\.github\/|e2e\/|openspec\/config\.yaml)/;
+const docsExceptions = [/^docs\/integration\.md$/, /^docs\/bundle-baseline\./, /^packages\/tokens\/README\.md$/];
 const rootDocs = /^(AGENTS|CLAUDE|CHANGELOG|README)\.md$/;
 
 export function classifyImpact(files, manifests) {
@@ -20,9 +21,9 @@ export function classifyImpact(files, manifests) {
       return { mode: 'full', reason: 'global or unsafe path', affected: workspaces };
     const workspace = workspaces.find((item) => file.startsWith(item + '/'));
     if (workspace) {
-      if (file.endsWith('/package.json')) return { mode: 'full', reason: 'dependency manifest changed', affected: workspaces };
+      if (docsExceptions.some((pattern) => pattern.test(file)) || file.endsWith('/package.json')) return { mode: 'full', reason: 'dependency manifest changed', affected: workspaces };
       changed.add(workspace);
-    } else if (!(rootDocs.test(file) || /^docs\/[^/]+\.md$/.test(file) || /^openspec\\/(?!config\\.yaml$).+\\.md$/.test(file))) {
+    } else if (!( !docsExceptions.some((pattern) => pattern.test(file)) && (rootDocs.test(file) || /^docs\/[^/]+\.md$/.test(file) || /^openspec\/(?!config\.yaml$).+\.md$/.test(file)))) {
       return { mode: 'full', reason: 'unrecognized path', affected: workspaces };
     }
   }

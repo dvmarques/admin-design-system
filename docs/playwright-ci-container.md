@@ -5,9 +5,9 @@
 A matrix E2E em `.github/workflows/ci.yml` usa a imagem oficial
 `mcr.microsoft.com/playwright:v1.62.0-noble` (Ubuntu 24.04). O
 `package-lock.json` fixa `@playwright/test`, `playwright` e
-`playwright-core` em **1.62.0**. A CI verifica as versões instaladas e do lockfile dos três pacotes
-Playwright, além de Node 24, npm 11.19.1 e a presença de `/ms-playwright`,
-antes do build. Não altere o lockfile apenas para migrar a imagem.
+`playwright-core` em **1.62.0**. A CI verifica as versões instaladas e do
+lockfile dos três pacotes Playwright, Node 24, npm 11.19.1 e os executáveis
+dos três navegadores antes do build. Não altere o lockfile apenas para migrar a imagem.
 
 Para atualizar Playwright no futuro: atualizar dependências e lockfile,
 selecionar a tag **exatamente igual** no workflow, confirmar disponibilidade

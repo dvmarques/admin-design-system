@@ -1,0 +1,36 @@
+name: Métricas de CI
+
+# Compara execuções do workflow CI (antes e depois de uma mudança). Somente leitura:
+# consulta a API do Actions e escreve a tabela no resumo do job.
+on:
+  workflow_dispatch:
+    inputs:
+      before_runs:
+        description: 'IDs de execuções do CI antes da mudança, separados por vírgula'
+        required: true
+        type: string
+      after_runs:
+        description: 'IDs de execuções do CI depois da mudança, separados por vírgula'
+        required: true
+        type: string
+
+permissions:
+  actions: read
+  contents: read
+
+jobs:
+  compare:
+    name: Comparar execuções
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+      - name: Gerar comparação
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          BEFORE_RUNS: ${{ inputs.before_runs }}
+          AFTER_RUNS: ${{ inputs.after_runs }}
+        run: |
+          node ./scripts/ci-metrics.mjs --before "$BEFORE_RUNS" --after "$AFTER_RUNS" | tee -a "$GITHUB_STEP_SUMMARY"

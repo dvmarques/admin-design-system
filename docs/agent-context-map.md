@@ -12,6 +12,7 @@ Use este índice **após** ler as regras obrigatórias de `AGENTS.md`. Consulte 
 | Navegador                   | `e2e`                                    | `docs/quality.md`                                               | Playwright e snapshots intencionais            |
 | OpenSpec                    | `openspec`                               | `docs/openspec-commands.md`, `CHANGELOG.md`                     | `openspec validate --all --strict`             |
 | Release                     | `scripts/*release*`, `.github/workflows` | `docs/release-process.md`                                       | políticas de release e testes próprios         |
+| CI e validação por impacto  | `scripts/ci-*`, `.github/workflows`      | `docs/ci-impact-validation.md`, `docs/release-process.md`       | `npm run test:ci`; `npm run validate:impact`   |
 | Modelos e skills            | `.agents/skills`, `.claude`, `.cursor`   | `docs/models.md`, `skills-lock.json`                            | `npm run check:agent-skills`                   |
 
 ## Dependências relevantes

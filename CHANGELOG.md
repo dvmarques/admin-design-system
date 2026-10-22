@@ -63,6 +63,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `optimize-incremental-validation` (issue #164) - Validação por impacto na CI e localmente. Classificador conservador de workspaces e dependentes transitivos (`scripts/ci-impact.mjs`, `docs/ci-impact-validation.md`) com fallback completo; a CI dispensa apenas builds de aplicações e E2E em PRs para `develop` cujo impacto é conhecido, mantendo `Qualidade rápida`, `Política de develop`, builds e inspeção dos pacotes completos e os nomes dos checks obrigatórios. Corrige a dispensa de E2E em PRs só de documentação, que não funcionava nos jobs em container (`HEAD^1` inacessível em checkout raso). Novos comandos opcionais `validate:impact:*`, `scripts/ci-metrics.mjs` e workflow manual `ci-metrics.yml` para comparar execuções (duração, falhas e reruns; tokens e custo não disponíveis). Cache e artefatos entre jobs avaliados e não adotados, com números. Nenhum ganho de tempo é declarado como medido antes de execuções pós-merge.
+
 - `#169` - Instruções obrigatórias para agentes registrarem alterações relevantes no `CHANGELOG.md`, com referência à issue/change e justificativa explícita na PR quando não houver entrada aplicável. Benchmark de aderência registrado em `openspec/changes/archive/2026-10-22-optimize-ai-agent-context/benchmark-changelog-adherence.md`: registro no changelog em 6/6 execuções na base e 6/6 no head, sem regressão.
 - `optimize-playwright-ci-container` - Jobs E2E Chromium, Firefox e WebKit passam a usar a imagem oficial Playwright `v1.62.0-noble`, compatível com o lockfile; removidos cache de browsers e instalações apt redundantes. Preservados Node 24, npm 11.19.1, gates e snapshots. Comparação de tempos pendente de runs CI (issue #171).
 

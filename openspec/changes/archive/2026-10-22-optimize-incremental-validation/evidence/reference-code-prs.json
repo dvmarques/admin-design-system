@@ -1,0 +1,110 @@
+[
+	{
+		"run": {
+			"id": 39794434133,
+			"head_sha": "60a3d97b816e52c5ba82894cca0d81a510c964c9",
+			"event": "pull_request",
+			"conclusion": "success",
+			"run_attempt": 1,
+			"pr": 172
+		},
+		"jobs": [
+			{
+				"name": "Qualidade rápida",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:17:45Z",
+				"completed_at": "2026-10-22T14:19:24Z"
+			},
+			{
+				"name": "Artefatos de distribuição",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:17:45Z",
+				"completed_at": "2026-10-22T14:18:37Z"
+			},
+			{
+				"name": "Política de develop",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:17:45Z",
+				"completed_at": "2026-10-22T14:17:59Z"
+			},
+			{
+				"name": "Fluxos no navegador",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:17:45Z",
+				"completed_at": "2026-10-22T14:20:04Z"
+			},
+			{
+				"name": "Fluxos no navegador (Firefox)",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:17:44Z",
+				"completed_at": "2026-10-22T14:19:04Z"
+			},
+			{
+				"name": "Fluxos no navegador (WebKit)",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:17:45Z",
+				"completed_at": "2026-10-22T14:19:17Z"
+			},
+			{
+				"name": "Validação de release",
+				"conclusion": "skipped",
+				"started_at": "2026-10-22T14:17:43Z",
+				"completed_at": "2026-10-22T14:17:43Z"
+			}
+		]
+	},
+	{
+		"run": {
+			"id": 39792933092,
+			"head_sha": "3b57633db6d951933248d1d6162231b39c9fd686",
+			"event": "pull_request",
+			"conclusion": "success",
+			"run_attempt": 1,
+			"pr": 172
+		},
+		"jobs": [
+			{
+				"name": "Qualidade rápida",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:07:07Z",
+				"completed_at": "2026-10-22T14:08:41Z"
+			},
+			{
+				"name": "Artefatos de distribuição",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:07:07Z",
+				"completed_at": "2026-10-22T14:07:58Z"
+			},
+			{
+				"name": "Política de develop",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:07:07Z",
+				"completed_at": "2026-10-22T14:07:23Z"
+			},
+			{
+				"name": "Fluxos no navegador",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:07:07Z",
+				"completed_at": "2026-10-22T14:09:27Z"
+			},
+			{
+				"name": "Fluxos no navegador (Firefox)",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:07:07Z",
+				"completed_at": "2026-10-22T14:08:23Z"
+			},
+			{
+				"name": "Fluxos no navegador (WebKit)",
+				"conclusion": "success",
+				"started_at": "2026-10-22T14:07:07Z",
+				"completed_at": "2026-10-22T14:08:26Z"
+			},
+			{
+				"name": "Validação de release",
+				"conclusion": "skipped",
+				"started_at": "2026-10-22T14:07:05Z",
+				"completed_at": "2026-10-22T14:07:05Z"
+			}
+		]
+	}
+]

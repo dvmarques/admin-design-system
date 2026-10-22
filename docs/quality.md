@@ -165,6 +165,15 @@ Esses testes abrem o admin de referência, alternam temas, validam controles por
 teclado, verificam a ausência de divergências de hidratação e capturam
 screenshots representativos dos temas claro e escuro.
 
+### Validação por impacto
+
+Para feedback rápido durante o desenvolvimento, `npm run validate:impact` (ou
+`validate:impact:lint`, `:types` e `:test`) valida só os workspaces afetados em
+relação ao ancestral comum de `develop`, com saída concisa. Não substitui
+`npm run validate` antes de abrir ou atualizar uma PR. Na CI, o mesmo
+classificador só dispensa builds de aplicações e E2E em PRs para `develop`;
+veja `docs/ci-impact-validation.md`.
+
 ## Checklist pré-PR
 
 Esta é a referência humana para os comandos e a checklist de validação antes

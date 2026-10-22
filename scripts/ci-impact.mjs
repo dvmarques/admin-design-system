@@ -12,7 +12,7 @@ const rootDocs = /^(AGENTS|CLAUDE|CHANGELOG|README)\.md$/;
 export function classifyImpact(files, manifests) {
   if (!Array.isArray(files) || !files.length || !Array.isArray(manifests) || manifests.length !== workspaces.length)
     return { mode: 'full', reason: 'missing input', affected: workspaces };
-  const owners = new Map(manifests.map((manifest, index) => [manifest.name, workspaces[index]]));
+  const owners = new Map(manifests.map((manifest, index) => [manifest?.name, workspaces[index]]));
   if (owners.size !== workspaces.length || [...owners.keys()].some((name) => !name))
     return { mode: 'full', reason: 'invalid manifests', affected: workspaces };
   const changed = new Set();

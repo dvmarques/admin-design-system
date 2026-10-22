@@ -1,75 +1,115 @@
 # Validação da correção #135
 
-Execução em Linux, Node 24.19.0, npm 11.9.0. O ambiente contém dependências
-pré-instaladas que divergem do lockfile (por exemplo, Next.js 16.4.1).
-O npm 11.19.1 exigido pelo projeto não está instalado. A instalação offline
-falhou com ENOTCACHED; o proxy de rede do executor está inacessível.
+## Retomada e ambiente
 
-## Revisão e implementação
+Retomada do commit publicado `0c2fca54328ac788bcb26fbb9e8ff505829abfbe`,
+na mesma branch e PR #167. Issue e discussões foram consultadas pelo plugin
+GitHub; não havia comentários nem commits novos. Outros checkouts foram
+preservados. Um worktree isolado recebeu a branch existente e incorporou
+`develop` em `2098905`, sem conflitos; essa atualização contém documentação e
+workflow, sem alterações de runtime.
 
-- Os arquivos da PR foram recuperados pelo plugin GitHub, incluindo as mudanças
-  anteriores da branch. A árvore local inicial foi conferida pelo hash Git:
-  `a964286d5862d7d8121a792947f2bf50a625f901`, idêntico à árvore do commit
-  `25541365a07ae93ac6fab833bbba49fb845f1066` da PR.
-- A atualização de develop incorpora somente as mudanças de documentação dos
-  commits posteriores à base, preservando as entradas do changelog.
-- Montagem/observação do painel passam a seguir o anexo real pela ref, sem
-  timers; o cleanup cancela frames e desconecta os observers e listeners.
-- O estado transitório usa opacity:0, permitindo o foco inicial do Dropdown;
-  visibility:hidden impediria o foco no navegador.
-- data-placement agora informa o lado efetivo nos três componentes. A seta
-  conserva a translação e recebe sua coordenada transversal calculada.
-- O teste original esperava 90px para uma seta limitada a 8px da borda de um
-  painel de 100px; a expectativa correta é 92px. Também foram cobertos painéis
-  menores que 16px e normalização de rects WebKit no pinch zoom.
-- Os testes foram movidos de src para tests: o tsconfig da biblioteca também
-  emitia os testes que estavam em src. Os artefatos antigos foram removidos do
-  dist local antes de medir a distribuição.
-- APIs públicas, handlers de foco, Escape, clique externo e infraestrutura da
-  issue #91 permanecem preservados. Nenhum snapshot foi alterado.
+Linux, Node 24.19.0, npm **11.19.1**, OpenSpec oficial **1.14.3** e Playwright
+**1.62.0**. `npm ci --ignore-scripts` concluiu usando o lockfile, sem alterações
+em manifestos ou lockfile. Next.js **16.4.1 está no lockfile** e foi instalado
+nessa versão; a suspeita anterior de divergência não se confirmou nesta retomada.
+A fonte Inter 5.3.0 foi instalada normalmente, sem recuperação manual de arquivos.
 
-## Comandos e resultados
+## Correções e revisão
 
-| Validação                                                              | Resultado                                                                                                                                                                                                                                                                                           |
-| ---------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `npm run format`                                                       | Passou.                                                                                                                                                                                                                                                                                             |
-| `npm run lint`                                                         | Passou.                                                                                                                                                                                                                                                                                             |
-| `npm run typecheck`                                                    | Passou nos cinco workspaces.                                                                                                                                                                                                                                                                        |
-| `npm run test:quiet`                                                   | Passou: testes Node e 722 testes Vitest em 51 arquivos.                                                                                                                                                                                                                                             |
-| Testes focados de posicionamento e overlays                            | Passaram: 55 testes, incluindo 32 de geometria/ciclo de vida e 23 regressões existentes.                                                                                                                                                                                                            |
-| `npm run build`                                                        | O comando sem adaptação falhou no Next pré-instalado ao capturar stdout de `tsc --showConfig`; pacotes e Storybook compilaram.                                                                                                                                                                      |
-| `NODE_OPTIONS=--require=/tmp/overlay-typescript-api.cjs npm run build` | Passou nos cinco workspaces, incluindo a nova rota Next.js e o Storybook. O preload seleciona o caminho oficial de TypeScript pela API (`defaultConfig.experimental.useTypeScriptCli=false`), mantendo a verificação completa de tipos. Não altera arquivos do projeto nem desabilita verificações. |
-| `npm run inspect:packages`                                             | Passou, sem elevar o baseline.                                                                                                                                                                                                                                                                      |
-| `npm run test:e2e`                                                     | Bloqueado: o sandbox impede o servidor de escutar a porta 3000 (`listen EPERM`). Nenhum teste de navegador foi aprovado.                                                                                                                                                                            |
-| Chromium do sistema via Playwright                                     | Também bloqueado pelo sandbox: criação de socket retorna `Operation not permitted`. Não substitui a suíte E2E.                                                                                                                                                                                      |
-| `openspec list --json` e `openspec validate --all --strict`            | Não executaram: CLI ausente (`command not found`). Tentativa de instalação pelo npm expirou sem acesso ao registry. Revisão manual não equivale à validação estrita.                                                                                                                                |
+- A primeira execução dos 12 E2E publicados passou em 11 casos e encontrou
+  violação axe `color-contrast` no link “Voltar ao catálogo” no tema escuro.
+  A rota agora reutiliza `demo-action-link`, com tokens de cor e foco existentes.
+- Dois novos casos E2E (claro/escuro) verificam movimento real da âncora no
+  scroll e recálculo após sua largura mudar. O teste anterior rolava a página
+  com gatilho fixo e não demonstrava o acompanhamento de uma âncora em movimento.
+- Todos os casos dessa spec coletam erros de página e mensagens de hidratação
+  desde antes da navegação inicial. A posição é comparada com o span que é a
+  âncora real, incluindo seu baseline, e com o placement efetivo.
+- Revisados cálculo puro, flip/shift, seta, ref de portal, ResizeObserver,
+  visualViewport, cleanup, SSR, APIs públicas e consumidores. Não foi encontrada
+  outra falha de runtime demonstrável nesta revisão; isso não elimina riscos
+  ainda não verificáveis em Firefox/WebKit.
+- Sem alterações na infraestrutura da issue #91, dependências de runtime,
+  tolerâncias ou snapshots. A change permanece ativa e a PR permanece Draft.
 
-O build inicialmente também encontrou a dependência declarada
-`@fontsource/inter` 5.3.0 ausente. Os quatro CSS e oito arquivos de fontes usados
-pelos apps, mais manifesto e licença, foram recuperados da mesma versão no
-repositório oficial fontsource/font-files pelo plugin GitHub, somente em
-node_modules. Nenhum manifesto, lockfile, fonte ou licença do projeto mudou.
+## Comandos e resultados atuais
+
+| Validação                                          | Resultado                                                                                                                                                                                                                                             |
+| -------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `npm run format`                                   | Passou.                                                                                                                                                                                                                                               |
+| `npm run lint`                                     | Passou.                                                                                                                                                                                                                                               |
+| `npm run build`                                    | Passou nos cinco workspaces, pelo comando normal, sem preload nem desativação da checagem de tipos.                                                                                                                                                   |
+| `npm run typecheck`                                | Passou nos cinco workspaces.                                                                                                                                                                                                                          |
+| `npm run test:quiet`                               | Passou: testes Node e 722 testes Vitest em 51 arquivos.                                                                                                                                                                                               |
+| `npm run test:quality`                             | Passou, incluindo release, CI, sincronia de skills e tokens gerados.                                                                                                                                                                                  |
+| Testes focados Vitest                              | 55 passaram: 32 de geometria/ciclo de vida e 23 regressões de overlays.                                                                                                                                                                               |
+| `npm run test:e2e -- e2e/overlay-position.spec.ts` | 14 passaram na rodada final, incluindo os dois casos novos, axe, quatro placements, seta, conteúdo dinâmico, scroll, resize, pinch zoom, teclado e verificação de erros de hidratação.                                                                |
+| `npm run test:e2e`                                 | Executou os 201 testes: **179 passaram e 22 falharam**. Dois snapshots Chromium divergem também em develop; dez Firefox expiraram na criação da página e dez WebKit falharam por bibliotecas do sistema ausentes. A suíte completa não está aprovada. |
+| `openspec validate --all --strict`                 | Passou: 46 itens, nenhuma falha, após incorporar develop.                                                                                                                                                                                             |
+| `npm run inspect:packages`                         | Passou, sem elevar baseline.                                                                                                                                                                                                                          |
+| `git diff --check`                                 | Passou.                                                                                                                                                                                                                                               |
+
+### Execução no navegador
+
+O comando padrão de inicialização do Next.js falha neste executor em
+`uv_interface_addresses`. O servidor de produção foi iniciado na mesma sessão
+com `next start apps/admin-demo --hostname 127.0.0.1 --port 3000`, e o comando
+oficial `npm run test:e2e` reutilizou esse servidor. Nenhuma configuração ou
+asserção do projeto foi desativada.
+
+O CDN inicial retornou HTML “Site Unavailable” em lugar do ZIP. Chrome for
+Testing e Headless Shell **151.0.7922.34**, exatamente a versão do Playwright,
+foram obtidos na distribuição oficial `storage.googleapis.com/chrome-for-testing-public`.
+O Chromium completo falha em `socket(): Operation not permitted`; o Headless
+Shell funciona e executou os testes. Firefox 153.0 e WebKit 26.5 também foram
+baixados da distribuição oficial. Firefox expirou no setup de `page`;
+WebKit acusa bibliotecas GTK/GStreamer e outras ausentes. `playwright install-deps`
+foi tentado e falhou no apt com `setgroups: Operation not permitted` e erros de
+mudança de usuário/grupo. Não foram usadas flags para ignorar esses erros.
+
+### Snapshots: comparação com a base
+
+Os snapshots de `/componentes` e `/clientes` no tema escuro falharam em Chromium.
+As diferenças ficam em textos de controles e navegação. Para investigar, um
+segundo worktree isolado de **develop `2098905`**, sem a implementação da #135,
+foi compilado e executou os mesmos dois casos: **ambos falharam também**.
+A comparação dos PNGs reais da PR e de develop com Pillow apresentou imagens
+**idênticas pixel a pixel** nas duas rotas (1280×4282 e 1280×1354).
+Isso demonstra que essas divergências já ocorrem na base neste ambiente;
+não demonstra aprovação do baseline na CI. Nenhum snapshot foi atualizado.
+
+### Verificação visual
+
+Capturas reais do admin-demo de produção e do Storybook compilado
+`Overlays/Components → ExtremePositions`, em 390×700, foram inspecionadas nos
+temas claro e escuro. Verificados painel, contraste do link, foco e seta nas
+bordas. O teste no admin-demo usa exports públicos e o CSS distribuído, sem
+Tailwind no consumidor. A inspeção visual complementa as asserções geométricas;
+não representa uma revisão manual exaustiva de todas as combinações.
 
 ## Bundle e dependências
 
-Sem dependência nova: preservada a solução própria após comparação com
-Floating UI documentada em design.md. Em build isolado com o mesmo compilador,
-o dist de components passou de 345608 para 355657 bytes (+10049, 2,91%), ambos
-com 145 arquivos. O valor final fica dentro dos 10% permitidos sobre 330033.
+A retomada não altera o runtime das bibliotecas: `components` continua com
+**355657 bytes / 145 arquivos**; tokens 36342 bytes e admin 170121 bytes.
+A inspeção passou com os limites versionados.
 
-O overlay-utils com esbuild (minificado, ESM, React/React DOM externos) passou
-de 5268 para 6759 bytes; gzip de 2257 para 2876 (+619). Essa medição compara
-o módulo, não o total de JavaScript entregue pela aplicação Next.js.
+Medição anterior preservada: components 345608 → 355657 bytes (+10049; 2,91%),
+145 arquivos; overlay-utils minificado 5268 → 6759 bytes e gzip 2257 → 2876
+(+619). Não foi refeita a comparação minificada contra o código pré-issue,
+pois o módulo não mudou nesta retomada. O valor final permanece dentro da
+margem existente sobre o baseline 330033; nenhum baseline foi elevado.
 
-## Pendências obrigatórias
+## Entrega e pendências
 
-- Reexecutar com npm 11.19.1 e dependências exatas do lockfile.
-- Executar OpenSpec estrito com o CLI oficial instalado.
-- Executar toda a suíte E2E com servidor e navegadores permitidos, incluindo os
-  12 casos novos de bordas, conteúdo dinâmico, temas, zoom e teclado.
-- Confirmar visualmente os stories e o CSS compilado no navegador. O build e
-  a inspeção de CSS passaram, mas não substituem a verificação em navegador.
-- Verificar os checks do novo commit. A CI automática de PR tem condição que
-  pula os jobs enquanto a PR permanece Draft; skipped não significa aprovado.
+- PR #167 continua Draft, com `bug`, assignee `dvmarques` e `Closes #135`,
+  conforme a configuração solicitada. Sem merge, fechamento manual ou archive.
+- CI automática de PR ignora Draft; `skipped` não equivale a aprovação.
+- Permanecem pendentes o gate completo de E2E e a verificação válida de
+  Firefox/WebKit e dos snapshots em ambiente compatível/CI.
+- A tarefa de entrega para code review permanece aberta: esta retomada não
+  autoriza marcar Ready for review nem considerar a issue concluída.
 
-A PR deve continuar Draft; não está inteiramente validada para concluir a issue.
+Os resultados antigos de EPERM na porta, CLI ausente e build com preload são
+históricos e foram substituídos pelas execuções acima; não são os bloqueios
+atuais.

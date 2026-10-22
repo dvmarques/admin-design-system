@@ -29,7 +29,9 @@ export default function OverlayEdgesPage() {
 				Experimente as quatro bordas, reduza a janela ou amplie a página. O painel acompanha a área
 				visível e o conteúdo.
 			</p>
-			<Link href="/componentes">Voltar ao catálogo</Link>
+			<Link className="demo-action-link" href="/componentes">
+				Voltar ao catálogo
+			</Link>
 			<div style={{ display: 'grid', gap: 16, maxWidth: 280, marginTop: 24 }}>
 				<label>
 					Componente{' '}

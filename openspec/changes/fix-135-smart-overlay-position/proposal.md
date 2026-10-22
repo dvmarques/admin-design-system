@@ -19,3 +19,7 @@ O posicionamento atual dos overlays usa clamp sem flip e não acompanha mudança
 
 - Gestão de foco, Escape, clique externo, modalidade e infraestrutura de overlays aninhados (issue #91).
 - Redesenho de componentes e alterações de tokens.
+
+## Perfil de execução
+
+Critical: a correção afeta CSS distribuído, geometria e compatibilidade de três componentes públicos e acessibilidade nos consumidores. Preservar APIs, tokens e a infraestrutura da issue #91; comparar alternativas e bundle, revisar consumidores e exigir validação no navegador. Rollback: reverter a correção de posicionamento e seus exemplos/testes em conjunto, preservando changes não relacionadas.

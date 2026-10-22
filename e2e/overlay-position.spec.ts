@@ -1,6 +1,8 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 
+const pageErrors = new WeakMap<Page, string[]>();
+
 async function insideViewport(panel: Locator, page: Page) {
 	await expect
 		.poll(async () => {
@@ -21,10 +23,21 @@ for (const theme of ['light', 'dark']) {
 	test.describe(`anchored overlay geometry (${theme})`, () => {
 		test.use({ viewport: { width: 320, height: 568 } });
 		test.beforeEach(async ({ page }) => {
+			const errors: string[] = [];
+			pageErrors.set(page, errors);
+			page.on('pageerror', (error) => errors.push(error.message));
+			page.on('console', (message) => {
+				if (message.type() === 'error' && /hydrat|server rendered/i.test(message.text()))
+					errors.push(message.text());
+			});
 			await page
 				.context()
 				.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 			await page.goto('/componentes/overlays');
+		});
+
+		test.afterEach(async ({ page }) => {
+			expect(pageErrors.get(page)).toEqual([]);
 		});
 
 		for (const [side, corner, effective] of [
@@ -117,6 +130,48 @@ for (const theme of ['light', 'dark']) {
 			await page.keyboard.press('Escape');
 			await expect(panel).toHaveCount(0);
 			expect(errors).toEqual([]);
+		});
+
+		test('popover follows a scrolling and resizing anchor', async ({ page }) => {
+			await page.getByLabel('Componente').selectOption('Popover');
+			const trigger = page.getByRole('button', { name: 'Popover na borda', exact: true });
+			await trigger.evaluate((element) => {
+				const host = element.closest('.ads-popover-anchor')!.parentElement!;
+				Object.assign(host.style, { position: 'absolute', top: '800px', bottom: 'auto' });
+			});
+			await trigger.click();
+			const panel = page.getByRole('dialog', { name: 'Popover na borda' });
+			await insideViewport(panel, page);
+			const anchorElement = page.locator('.ads-popover-anchor');
+			const anchorBefore = (await anchorElement.boundingBox())!;
+			await page.evaluate(() => window.scrollBy({ top: 80, behavior: 'instant' }));
+			await expect
+				.poll(async () => (await anchorElement.boundingBox())!.y)
+				.toBeLessThan(anchorBefore.y);
+			await expect
+				.poll(async () => {
+					const anchor = (await anchorElement.boundingBox())!;
+					const box = (await panel.boundingBox())!;
+					return (await panel.getAttribute('data-placement')) === 'top'
+						? Math.abs(box.y + box.height + 8 - anchor.y)
+						: Math.abs(box.y - anchor.y - anchor.height - 8);
+				})
+				.toBeLessThan(1);
+			await trigger.evaluate((element) => {
+				element.style.width = '200px';
+			});
+			await expect
+				.poll(async () => {
+					const anchor = (await anchorElement.boundingBox())!;
+					const box = (await panel.boundingBox())!;
+					const expected = Math.max(
+						8,
+						Math.min(anchor.x + anchor.width / 2 - box.width / 2, 320 - 8 - box.width),
+					);
+					return Math.abs(box.x - expected);
+				})
+				.toBeLessThan(1);
+			await insideViewport(panel, page);
 		});
 
 		test('dropdown at the lower edge preserves keyboard navigation and focus', async ({ page }) => {

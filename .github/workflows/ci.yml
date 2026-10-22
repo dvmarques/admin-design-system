@@ -151,6 +151,8 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true'
       - run: npx playwright test --project=${{ matrix.browser }}
         if: steps.scope.outputs.docs_only != 'true'
+        env:
+          HOME: /root
 
   develop-policy:
     name: Política de develop

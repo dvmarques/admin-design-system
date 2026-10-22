@@ -37,7 +37,9 @@ Garantias:
 
 ### Bug corrigido: dispensa de E2E em container
 
-Nos jobs de E2E (container Playwright, `fetch-depth: 2`), `git diff HEAD^1 HEAD` falhava com `error: Could not access 'HEAD^1'` e o script caía em `docs_only=false`, sem aviso. Desde a #172, toda PR só de documentação executava os três E2E (ex.: run 39806673826 da #173, 185 testes no Chromium). Agora os jobs fazem checkout completo e `listPullRequestFiles` usa o commit de merge (primeiro pai = base); se o `HEAD` não for um merge de PR, o resultado é `full`.
+Nos jobs de E2E (container Playwright), o `git` falhava e `docs_only` caía em `false` sem aviso (`error: Could not access 'HEAD^1'` no script antigo); desde a #172, toda PR só de documentação executava os três E2E (ex.: run 39806673826 da #173, 185 testes no Chromium). A causa **não** era o checkout raso: o container roda como root sobre um checkout de outro usuário, e o `safe.directory` que o `actions/checkout` grava fica em um `HOME` temporário, descartado antes dos passos seguintes; todo comando `git` falha com `detected dubious ownership`. Na CI, `ci-impact.mjs` passa `-c safe.directory=<checkout>` apenas aos seus comandos de leitura. O valor precisa ser o caminho exato, **sem barra final** (o diretório padrão dos scripts termina em barra; o git 2.43 não aceita), o que a primeira tentativa de correção não tratou e a CI revelou. O motivo da decisão agora inclui o stderr do git, e o teste `a checkout owned by another user...` reproduz o container (rodando como root) e falha sem a correção. Confirmado na CI: no job de Firefox, o passo `ci-scope` informa `mode: full` com o motivo `caminho fora dos workspaces e da documentação: .github/workflows/ci-metrics.yml`, em vez de `detecção indisponível`.
+
+Os jobs fazem checkout completo e `listPullRequestFiles` usa o commit de merge (primeiro pai = base); se o `HEAD` não for um merge de PR, o resultado é `full`.
 
 ## Uso local (opcional)
 

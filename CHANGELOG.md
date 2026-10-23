@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `issue-151-admin-demo-component-catalog` (issue #151) - Catálogo pesquisável com rotas para todos os exports públicos de UI, composições executáveis, snippets TSX copiáveis, temas e inspeção de largura. Navegação hierárquica reutilizável em `AdsAdminShell.Navigation`, `NavigationSection`, `NavigationGroup` e `NavigationItem`, com seções nomeadas acessíveis, categorias expansíveis com ícones ou iniciais distintos, links recuados e nomes simplificados. Preserva rotas de aplicação, expansão entre páginas, export estático no GitHub Pages e compatibilidade das APIs existentes. Inclui matriz de cobertura, documentação e testes de teclado, interações, acessibilidade e responsividade.
+
 - `fix-138-responsive-pagination` (issue #138) - AdsPagination passa a observar a largura do próprio contêiner e oferece, por props opcionais, setas, primeira/última página, salto direto validado, carregamento e rótulos personalizáveis. Mantém os controles de texto por padrão. Inclui salto por links sem formulário aninhado, correção controlada de página inválida, preservação de foco e rodapé opcional da SmartTable com tamanho controlado e resumo das linhas recebidas. A documentação esclarece a personalização conjunta de texto/nome acessível, o limite de adjacentes por `siblingCount` e a escolha dos controles nativos.
 
 - `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,
@@ -64,6 +66,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   com `@fontsource/inter` (dependência só dessas aplicações).
 
 #### Changed
+
+- `issue-151-admin-demo-component-catalog` (issue #151) - Inclui a resolução local de dependências transitivas no lockfile, sem alterar os manifests ou as versões principais da interface, e os imports de tipos gerados para o modo de desenvolvimento do Next.js.
 
 - `enhance-134-overlay-layer-manager` (issue #134) - Gerenciamento interno de camadas dos overlays: somente o modal superior trata Tab/Shift+Tab (popups descendentes seguem o próprio fluxo), o clique externo respeita a hierarquia lógica dos portais, o backdrop fecha apenas a camada superior quando há um popup aberto, e o scroll da página fica bloqueado enquanto houver modal, com restauração ao fechar o último. Sem mudança em APIs públicas ou CSS.
 
@@ -189,6 +193,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   e processo, sem mudança de API pública nem de pacotes distribuídos.
 
 #### Fixed
+
+- `issue-151-admin-demo-component-catalog` (issue #151) - Preserva os grupos expandidos/recolhidos da sidebar durante a navegação e abre o grupo do destino sem remontar os demais.
 
 - `fix-135-smart-overlay-position` - Posicionamento de Tooltip, Popover e Dropdown com flip/shift, placement efetivo, seta alinhada à âncora e recálculo após mudanças de geometria, scroll e viewport, incluindo normalização geométrica do pan após pinch zoom, sem alterar as APIs públicas.
 

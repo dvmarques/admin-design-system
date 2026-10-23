@@ -1,5 +1,11 @@
 export { AdsAdminShell } from './admin-shell.js';
 export type {
+	AdsAdminShellNavigationProps,
+	AdsAdminShellNavigationSectionProps,
+	AdsAdminShellNavigationGroupProps,
+	AdsAdminShellNavigationItemProps,
+} from './sidebar-navigation.js';
+export type {
 	AdsAdminShellBodyProps,
 	AdsAdminShellHeaderProps,
 	AdsAdminShellMainProps,

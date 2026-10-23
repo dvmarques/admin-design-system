@@ -84,6 +84,7 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 
 - [Projeto e issues no GitHub](https://github.com/users/dvmarques/projects/2)
 - [Estrutura e arquitetura do monorepo](docs/architecture.md)
+- [Catálogo do admin demo e matriz de cobertura](docs/admin-demo-catalog.md)
 - [Critérios de qualidade](docs/quality.md)
 - [Acessibilidade visual dos estilos](docs/visual-accessibility.md)
 - [Elevação, densidade e estados](docs/visual-polish.md)

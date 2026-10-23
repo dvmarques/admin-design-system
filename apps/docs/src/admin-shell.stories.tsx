@@ -1,6 +1,13 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { AdsAdminShell, useAdsAdminShell } from '@admin-ds/admin';
-import { AdsBadge, AdsButton, AdsCard, AdsTypography, ThemeToggle } from '@admin-ds/components';
+import {
+	AdsBadge,
+	AdsButton,
+	AdsCard,
+	AdsIcon,
+	AdsTypography,
+	ThemeToggle,
+} from '@admin-ds/components';
 import { useState, type CSSProperties } from 'react';
 
 const meta = {
@@ -131,6 +138,43 @@ function ShellExample(props: Omit<React.ComponentProps<typeof AdsAdminShell>, 'c
 
 export const Default: Story = {
 	render: () => <ShellExample />,
+};
+
+export const HierarchicalNavigation: Story = {
+	name: 'Navegação com seções, grupos e itens',
+	render: () => (
+		<AdsAdminShell>
+			<AdsAdminShell.Header>
+				<HeaderContent />
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar mobileTitle="Menu">
+					<AdsAdminShell.Navigation>
+						<AdsAdminShell.NavigationSection label="Componentes">
+							<AdsAdminShell.NavigationGroup label="Básicos" icon={<AdsIcon name="plus" />} open>
+								<AdsAdminShell.NavigationItem>
+									<a href="#button" aria-current="page">
+										Button
+									</a>
+								</AdsAdminShell.NavigationItem>
+								<AdsAdminShell.NavigationItem>
+									<a href="#badge">Badge</a>
+								</AdsAdminShell.NavigationItem>
+							</AdsAdminShell.NavigationGroup>
+							<AdsAdminShell.NavigationGroup label="Formulários" icon={<AdsIcon name="calendar" />}>
+								<AdsAdminShell.NavigationItem>
+									<a href="#input">Input</a>
+								</AdsAdminShell.NavigationItem>
+							</AdsAdminShell.NavigationGroup>
+						</AdsAdminShell.NavigationSection>
+					</AdsAdminShell.Navigation>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					<PageContent />
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	),
 };
 
 export const DesktopCollapsed: Story = {

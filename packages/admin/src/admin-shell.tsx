@@ -9,6 +9,12 @@ import {
 } from './admin-shell-navigation.js';
 import { AdsAdminShellStateProvider, type AdsAdminShellStateProps } from './admin-shell-state.js';
 import { classNames } from './class-names.js';
+import {
+	AdsAdminShellNavigation,
+	AdsAdminShellNavigationSection,
+	AdsAdminShellNavigationGroup,
+	AdsAdminShellNavigationItem,
+} from './sidebar-navigation.js';
 
 export interface AdsAdminShellProps
 	extends HTMLAttributes<HTMLDivElement>, Omit<AdsAdminShellStateProps, 'children'> {}
@@ -63,6 +69,10 @@ export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
 	Body: AdsAdminShellBody,
 	Sidebar: AdsAdminShellSidebar,
 	Main: AdsAdminShellMain,
+	Navigation: AdsAdminShellNavigation,
+	NavigationSection: AdsAdminShellNavigationSection,
+	NavigationGroup: AdsAdminShellNavigationGroup,
+	NavigationItem: AdsAdminShellNavigationItem,
 });
 
 export type {

@@ -14,6 +14,23 @@ import '@admin-ds/components/styles.css';
 O CSS distribuído já contém as classes necessárias. A aplicação consumidora
 não precisa instalar ou configurar Tailwind CSS para usar os componentes.
 
+## Navegação hierárquica da sidebar
+
+Dentro de `AdsAdminShell.Sidebar`, use `AdsAdminShell.Navigation` como raiz,
+`NavigationSection label="Componentes"` como seção não interativa,
+`NavigationGroup label="Básicos" icon={...}` como categoria expansível e
+`NavigationItem` envolvendo um link nativo ou do roteador. As partes e os tipos
+`AdsAdminShellNavigation*Props` são públicos no pacote admin; os estilos já são
+distribuídos em `@admin-ds/admin/styles.css`.
+
+O grupo usa `details/summary`: Tab move o foco e Enter/Espaço alternam a expansão.
+Para controlar a abertura, passe `open` e `onToggle`; omitir `open` permite o
+comportamento nativo. O consumidor aplica `aria-current="page"` no link e decide
+quando abrir o grupo de destino. No desktop recolhido, acionar o ícone expande
+a sidebar e abre o grupo. As partes usam o contexto de `AdsAdminShell` e não
+dependem do roteamento Next.js. Veja a story **Layout/Admin Shell — Navegação com
+seções, grupos e itens** e `/catalogo/admin-shell`.
+
 ## Temas
 
 Defina o tema no elemento raiz da aplicação:

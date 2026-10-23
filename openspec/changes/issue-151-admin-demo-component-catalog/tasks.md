@@ -16,3 +16,6 @@
 - [x] 13. Corrigir a perda de expansão manual da sidebar e testar navegação entre grupos/rotas, incluindo abertura do grupo ativo e identidade estável.
 - [x] 14. Integrar `develop` atualizado (75f7d31, overlays #134) sem descartar a implementação da PR.
 - [x] 15. Repetir format, lint, build, tipos, quality, E2E e OpenSpec na branch integrada; confirmar a CI completa no SHA final e registrar os links da revisão.
+
+- [x] 16. Padronizar navegação reutilizável do shell com seção, grupo e item; aplicar hierarquia no demo, atualizar stories, documentação e testes de expansão/teclado/recolhimento.
+- [x] 17. Formatar e validar OpenSpec, lint, build, tipos, testes e E2E; inspecionar claro/escuro e desktop/mobile, registrando limitações dos snapshots oficiais.

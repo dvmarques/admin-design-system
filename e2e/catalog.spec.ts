@@ -73,7 +73,7 @@ test('busca, vazio, deep link, cópia, largura e navegação móvel por teclado'
 	const summary = navigation.locator('summary').filter({ hasText: 'Básicos' });
 	await summary.focus();
 	await page.keyboard.press('Enter');
-	await navigation.getByRole('link', { name: 'AdsButton', exact: true }).click();
+	await navigation.getByRole('link', { name: 'Button', exact: true }).click();
 	await expect(page).toHaveURL(/\/catalogo\/button$/);
 	await expect(page.getByRole('dialog')).toHaveCount(0);
 });
@@ -182,27 +182,53 @@ test('sidebar preserva expansão manual entre rotas e abre o grupo ativo', async
 			.filter({ has: page.locator('summary').filter({ hasText: new RegExp(`^${label}$`) }) });
 	const basics = group('Básicos');
 	const forms = group('Formulários');
-	const applications = group('Exemplos de aplicação');
+	const data = group('Dados');
 	await basics.locator('summary').click();
-	await applications.locator('summary').click();
-	await basics.getByRole('link', { name: 'AdsButton', exact: true }).click();
+	await data.locator('summary').click();
+	await data.locator('summary').click();
+	await basics.getByRole('link', { name: 'Button', exact: true }).click();
 	await expect(basics).toHaveAttribute('open', '');
-	await expect(applications).not.toHaveAttribute('open');
+	await expect(data).not.toHaveAttribute('open');
 	// Uma rota de outra categoria abre seu grupo, preservando as escolhas anteriores.
 	await page.getByRole('link', { name: 'Voltar ao catálogo', exact: true }).click();
 	await page.getByRole('main').getByRole('link', { name: 'AdsInput', exact: true }).click();
 	await expect(forms).toHaveAttribute('open', '');
 	await expect(basics).toHaveAttribute('open', '');
-	await expect(applications).not.toHaveAttribute('open');
+	await expect(data).not.toHaveAttribute('open');
 	await forms.locator('summary').click();
 	await page.goBack();
 	await expect(forms).not.toHaveAttribute('open');
 	await expect(basics).toHaveAttribute('open', '');
 	await page.goForward();
 	await expect(forms).toHaveAttribute('open', '');
-	await expect(nav.getByRole('link', { name: 'AdsInput', exact: true })).toHaveAttribute(
+	await expect(nav.getByRole('link', { name: 'Input', exact: true })).toHaveAttribute(
 		'aria-current',
 		'page',
 	);
-	await expect(applications).not.toHaveAttribute('open');
+	await expect(data).not.toHaveAttribute('open');
+});
+
+test('sidebar distingue seções e expande categoria por teclado no desktop recolhido', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('/catalogo');
+	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
+	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });
+	const section = nav.locator('.ads-sidebar-section-title', {
+		hasText: 'Composições administrativas',
+	});
+	await expect(section).toBeVisible();
+	expect(await section.evaluate((node) => node.closest('summary,button,a') === null)).toBe(true);
+	const basics = nav.locator('summary').filter({ hasText: /^Básicos$/ });
+	await page.getByRole('button', { name: 'Recolher barra lateral', exact: true }).click();
+	await basics.focus();
+	await page.keyboard.press('Enter');
+	await expect(
+		page.getByRole('button', { name: 'Recolher barra lateral', exact: true }),
+	).toHaveAttribute('aria-expanded', 'true');
+	await expect(basics).toBeFocused();
+	await expect(nav.getByRole('link', { name: 'Button', exact: true })).toBeVisible();
+	await page.keyboard.press('Space');
+	await expect(nav.getByRole('link', { name: 'Button', exact: true })).toBeHidden();
 });

@@ -701,9 +701,17 @@ export function AdminShellDemo() {
 						label="Navegação do shell de exemplo"
 						mobileTitle="Menu do exemplo"
 					>
-						<a href="#shell-content" style={{ color: 'var(--ads-color-text)' }}>
-							Conteúdo
-						</a>
+						<AdsAdminShell.Navigation>
+							<AdsAdminShell.NavigationSection label="Exemplos">
+								<AdsAdminShell.NavigationGroup label="Páginas" icon={<AdsIcon name="info" />} open>
+									<AdsAdminShell.NavigationItem>
+										<a href="#shell-content" aria-current="page">
+											Conteúdo
+										</a>
+									</AdsAdminShell.NavigationItem>
+								</AdsAdminShell.NavigationGroup>
+							</AdsAdminShell.NavigationSection>
+						</AdsAdminShell.Navigation>
 					</AdsAdminShell.Sidebar>
 					<AdsAdminShell.Main>
 						<h1>Shell administrativo</h1>

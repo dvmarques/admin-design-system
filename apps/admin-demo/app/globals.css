@@ -465,16 +465,6 @@ body {
 }
 
 /* Catalog navigation and search retain focus visibility and narrow viewport usability. */
-.demo-nav-group + .demo-nav-group {
-	margin-top: 1.25rem;
-}
-.demo-nav-group-title {
-	margin: 0 0 0.375rem;
-	padding-inline: 0.5rem;
-	color: var(--ads-color-text-muted);
-	font-size: 0.75rem;
-	font-weight: 600;
-}
 .demo-catalog-search {
 	display: block;
 	width: min(100%, 32rem);
@@ -556,17 +546,9 @@ body {
 	color: var(--ads-color-text);
 	border: 1px solid var(--ads-color-border);
 }
-.demo-catalog-code:focus-visible,
-.demo-nav-group summary:focus-visible {
+.demo-catalog-code:focus-visible {
 	outline: 2px solid var(--ads-color-focus-ring);
 	outline-offset: 2px;
-}
-.demo-nav-group summary {
-	cursor: pointer;
-	padding-block: 0.5rem;
-}
-.demo-nav-group[open] .demo-shell-nav-list {
-	margin-bottom: 0.75rem;
 }
 
 .demo-catalog-page a {

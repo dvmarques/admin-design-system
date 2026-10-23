@@ -48,3 +48,21 @@ Referência: [revisão da PR #177](https://github.com/dvmarques/admin-design-sys
 A [CI da correção `7714ab4`](https://github.com/dvmarques/admin-design-system/actions/runs/39983444281) passou por completo: qualidade, artefatos, política de develop e passos reais de Playwright em Chromium, Firefox e WebKit. As comparações com os snapshots oficiais passaram sem alterar imagens. As tarefas 13–15 estão concluídas.
 
 A execução anterior `39979454512` comprova somente a entrega inicial. A CI acima valida a correção e a integração da base; os [checks da PR no SHA atual](https://github.com/dvmarques/admin-design-system/pull/177/checks) e a descrição da PR registram também a confirmação do commit final de evidências. Esse último commit altera somente documentação e tasks, sem mudar o código validado.
+
+## Ajuste local da hierarquia da sidebar — 23/10/2026
+
+- Alterações na branch atual, sem commit, conforme solicitado. Seções não interativas, categorias expansíveis com ícone/chevron e links recuados são fornecidos pelas partes públicas de AdsAdminShell. Rotas e nomes técnicos das páginas permanecem estáveis.
+- `npm run build`: pacotes, Next.js e Storybook passaram. `npm run lint`, `npm run typecheck`, `npm run format` e `openspec.cmd validate --all --strict` passaram (48 itens OpenSpec).
+- `npx.cmd vitest run packages/admin/tests/sidebar-navigation.test.tsx apps/admin-demo/tests/demo-navigation.test.tsx apps/admin-demo/catalog-coverage.test.ts --silent=passed-only`: 82 testes passaram. A primeira execução no sandbox falhou antes de executar testes com EPERM no cache temporário; a reexecução fora do sandbox passou.
+- `npm run test:quiet`: testes Node e 55 arquivos / 848 testes Vitest passaram.
+- `npm run test:e2e -- e2e/catalog.spec.ts e2e/smoke.spec.ts --project=chromium --workers=4`: 20 testes passaram, incluindo todos os exports em 390/1280 px e claro/escuro, axe das composições, menu móvel, histórico/expansão e acionamento por teclado do grupo no desktop recolhido.
+- Inspeção visual do drawer móvel em claro/escuro: títulos, recuo, ícones, chevrons e página ativa conferidos. Desktop validado nos cenários Playwright.
+- Snapshots Linux não foram atualizados nem executados localmente, conforme docs/quality.md. A suíte completa e a atualização oficial dos baselines continuam para o fluxo de CI após revisão; o workflow cria commit e não foi acionado neste ajuste sem commit.
+
+- Servidores dev: Storybook iniciou em 6006, com avisos do sandbox ao gravar configurações globais. `npm run dev --workspace @admin-ds/admin-demo` identificou o servidor já existente em 3000 e encerrou a tentativa duplicada; o existente foi preservado e usado na inspeção e pelos testes E2E. O build Next também passou separadamente. O conteúdo local pré-existente de next-env.d.ts foi restaurado após a geração do build; package-lock.json foi preservado.
+
+## Validação pré-commit e publicação do ajuste da sidebar
+
+- `npm run test:e2e -- --project=chromium --workers=4 --grep-invert 'mantém a apresentação'`: **210 testes funcionais Chromium passaram**, sem falhas, em 5,5 minutos. A exclusão se restringe às comparações com snapshots oficiais Linux, cuja execução local não é suportada.
+- A issue #151 e a descrição da PR #177 registram a navegação hierárquica reutilizável como parte do escopo atual, incluindo APIs públicas adicionais, compatibilidade, acessibilidade, documentação e testes.
+- Commit/push autorizados na branch atual. Apenas arquivos deste ajuste são incluídos; alterações locais preexistentes em package-lock.json e next-env.d.ts permanecem fora do commit. Snapshots oficiais continuam pendentes de atualização e inspeção no workflow do projeto antes do merge.

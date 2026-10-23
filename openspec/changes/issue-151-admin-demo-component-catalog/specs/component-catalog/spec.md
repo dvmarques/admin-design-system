@@ -51,3 +51,17 @@ As páginas de negócio existentes SHALL permanecer acessíveis por suas rotas a
 
 - **WHEN** uma pessoa abre um URL de exemplo de negócio existente
 - **THEN** a demonstração correspondente permanece acessível
+
+### Requirement: Hierarquia visual reutilizável da sidebar
+
+A navegação SHALL diferenciar títulos de seção não interativos, grupos expansíveis e links recuados, preservando identidade visual e nomes acessíveis. O pacote admin SHALL oferecer essa composição como partes públicas de AdsAdminShell, sem dependência de roteador.
+
+#### Scenario: Exploração das categorias
+
+- **WHEN** a pessoa acessa o catálogo
+- **THEN** Visão geral e Catálogo são links diretos, os títulos organizam componentes, composições administrativas e exemplos de aplicação, e os grupos exibem ícones e indicadores de expansão à direita
+
+#### Scenario: Grupo no desktop recolhido
+
+- **WHEN** a pessoa ativa por mouse ou teclado um grupo da sidebar recolhida
+- **THEN** a sidebar expande e os links do grupo ficam disponíveis, mantendo o foco no controle acionado

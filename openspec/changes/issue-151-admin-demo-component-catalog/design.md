@@ -14,7 +14,7 @@ O tema usa o mecanismo existente da aplicação para sincronizar documento, cabe
 
 ## Estilos e pacotes
 
-Usar APIs Ads* públicas e CSS já compilado dos pacotes; não há Tailwind no consumidor nem alteração de CSS distribuído. Estilos locais usam tokens semânticos `--ads-*` e classes locais do demo para evitar conflitos. Biblioteca, APIs públicas e bundle distribuído permanecem inalterados. O catálogo aumenta apenas o bundle da demonstração, sem novas dependências de runtime.
+Usar APIs Ads* públicas e CSS compilado dos pacotes; não há Tailwind no consumidor. O ajuste da sidebar acrescenta partes de composição ao shell e estilos públicos `ads-sidebar-*` no pacote admin, com tokens semânticos `--ads-*`, sem alterar contratos existentes. Os demais estilos do catálogo permanecem locais ao demo. Sem novas dependências de runtime.
 
 ## Alternativas e riscos
 
@@ -25,3 +25,9 @@ Mudança intencional da sidebar altera snapshots das páginas existentes. Difere
 ## Ajuste da revisão — expansão da sidebar
 
 Cada grupo tem identidade estável pelo rótulo e mantém seu próprio estado de expansão, atualizado pelo evento nativo `toggle`. Navegar abre o grupo da página de destino; as escolhas dos demais grupos sobrevivem à troca de rota, inclusive voltar/avançar. Não há persistência entre recarregamentos nem alteração do estado móvel do shell.
+
+## Ajuste visual autorizado — hierarquia da sidebar
+
+A navegação usa três papéis: título de seção sem interação, grupo expansível com ícone e chevron à direita, e link recuado. Visão geral e Catálogo são links diretos. Componentes, Composições administrativas e Exemplos de aplicação são seções fixas. A aplicação abre a categoria ativa e mantém as demais escolhas. Os nomes do menu omitem Ads, preservando nomes técnicos nas páginas e snippets.
+
+O pacote admin adiciona, de forma compatível, as partes AdsAdminShell.Navigation, NavigationSection, NavigationGroup e NavigationItem e seus tipos públicos. O grupo usa details/summary nativos; o item permite compor links do roteador sem dependência de Next.js. CSS ads-* distribuído usa tokens semânticos. No desktop recolhido, os grupos exibem ícones com nome acessível; ativar um grupo expande a sidebar e abre os links. O drawer móvel mantém o menu completo. Sem dependências novas ou alteração de tokens, fonte ou identidade. Storybook, demonstração do shell e testes cobrem a composição.

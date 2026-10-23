@@ -1,6 +1,17 @@
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render as renderReact, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DemoNavigation, demoNavigationItems } from '../app/demo-navigation';
+
+import { AdsAdminShell } from '@admin-ds/admin';
+import type { ReactNode } from 'react';
+
+function render(node: ReactNode) {
+	const view = renderReact(<AdsAdminShell>{node}</AdsAdminShell>);
+	return {
+		...view,
+		rerender: (next: ReactNode) => view.rerender(<AdsAdminShell>{next}</AdsAdminShell>),
+	};
+}
 
 let pathname = '/';
 vi.mock('next/navigation', () => ({ usePathname: () => pathname }));
@@ -46,24 +57,22 @@ describe('DemoNavigation', () => {
 	it('preserves group identity and manual expansion when the destination group opens', () => {
 		const { rerender } = render(<DemoNavigation />);
 		const basics = screen.getByText('Básicos', { exact: true }).closest('details')!;
-		const applications = screen
-			.getByText('Exemplos de aplicação', { exact: true })
-			.closest('details')!;
+		const data = screen.getByText('Dados', { exact: true }).closest('details')!;
 		basics.open = true;
 		fireEvent(basics, new Event('toggle'));
-		applications.open = false;
-		fireEvent(applications, new Event('toggle'));
+		data.open = false;
+		fireEvent(data, new Event('toggle'));
 		pathname = '/catalogo/input';
 		rerender(<DemoNavigation />);
 		expect(screen.getByText('Básicos', { exact: true }).closest('details')).toBe(basics);
 		expect(basics).toHaveAttribute('open');
-		expect(applications).not.toHaveAttribute('open');
+		expect(data).not.toHaveAttribute('open');
 		expect(screen.getByText('Formulários', { exact: true }).closest('details')).toHaveAttribute(
 			'open',
 		);
 		pathname = '/catalogo/textarea';
 		rerender(<DemoNavigation />);
 		expect(basics).toHaveAttribute('open');
-		expect(applications).not.toHaveAttribute('open');
+		expect(data).not.toHaveAttribute('open');
 	});
 });

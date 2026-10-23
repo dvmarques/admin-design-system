@@ -6,6 +6,8 @@ A sidebar oferece grupos expansíveis por teclado, indicação de página ativa 
 
 ## Convenção para novas demonstrações
 
+A sidebar distingue títulos de seção fixos (Componentes, Composições administrativas e Exemplos de aplicação), categorias expansíveis com ícones e links internos recuados. Visão geral e Catálogo são links diretos. Os nomes do menu omitem `Ads`, preservado nas páginas e snippets. A composição pública é fornecida por `AdsAdminShell.Navigation`, `NavigationSection`, `NavigationGroup` e `NavigationItem`; a aplicação controla rotas e expansão. No desktop recolhido, ativar uma categoria expande a sidebar e abre o grupo. O drawer móvel mantém os rótulos completos.
+
 1. Registre o export em `apps/admin-demo/app/catalogo/catalog-data.ts`, com nome, categoria, slug estável, descrição e chave da composição.
 2. Implemente a composição em `catalog-demos.tsx` e registre-a em `catalogDemos`. Use apenas imports públicos. Demonstre estados e variantes aplicáveis, controles funcionais, nomes acessíveis e casos limites. Subcomponentes podem compartilhar uma composição, preservando uma rota por export.
 3. Execute `node scripts/catalog-snippets.mjs` a partir da raiz após editar os exemplos e formate os arquivos. O código exibido é extraído por AST das mesmas funções TSX executadas, com os imports necessários. Não edite `catalog-snippets.json` à mão.

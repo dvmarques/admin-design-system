@@ -5,6 +5,7 @@ import { classNames } from './class-names.js';
 import { AdsIcon } from './icon.js';
 import {
 	OverlayPortal,
+	hasOpenDismissibleChild,
 	useEscapeKey,
 	useOverlayFocus,
 	useOverlayOrigin,
@@ -67,7 +68,13 @@ function OverlayPanel({
 				data-overlay="backdrop"
 				style={{ backgroundColor: 'var(--ads-color-overlay-backdrop)' }}
 				onMouseDown={(event) => {
-					if (closeOnBackdrop && event.target === event.currentTarget) onOpenChange(false);
+					// O mesmo clique já fecha um popup aberto sobre o modal: só a camada superior fecha.
+					if (
+						closeOnBackdrop &&
+						event.target === event.currentTarget &&
+						!hasOpenDismissibleChild(panelRef.current)
+					)
+						onOpenChange(false);
 				}}
 			>
 				<div

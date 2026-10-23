@@ -122,6 +122,22 @@ dependency, pois reutiliza `AdsDrawer` na navegação móvel. A largura da sideb
 pode ser ajustada por `--ads-admin-shell-sidebar-width` e
 `--ads-admin-shell-sidebar-width-collapsed`.
 
+### Altura e rolagem no desktop
+
+No layout desktop (a partir de `48rem`, o mesmo limite em que a sidebar substitui o
+drawer), o shell ocupa a altura da viewport (`100dvh`, com `100vh` como fallback). O
+header mantém a altura natural, mesmo que quebre linhas, e a área abaixo dele é dividida
+entre a sidebar e `AdsAdminShell.Main`, que rolam de forma independente: a sidebar só
+mostra barra de rolagem quando os itens excedem a altura disponível, e a página não rola
+no uso padrão. Por isso o contêiner de rolagem do conteúdo é `AdsAdminShell.Main`, não a
+janela: `window.scrollTo`, restauração de scroll da janela e elementos `sticky` do
+conteúdo passam a se relacionar com o main. Não renderize o shell dentro de um contêiner
+com altura própria e não use `position: fixed` para reposicionar a sidebar. No layout
+móvel nada muda: a página rola e a navegação continua no drawer.
+
+`AdsAdminShell.Main` recebe `tabIndex={0}` por padrão, para que a região rolável seja
+alcançável pelo teclado mesmo sem conteúdo focável; passe `tabIndex` para sobrescrever.
+
 ### Conteúdo do header em telas estreitas
 
 O header é um contêiner flex de uma única linha: o shell não quebra linha nem

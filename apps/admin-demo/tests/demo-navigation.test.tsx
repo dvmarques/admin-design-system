@@ -1,4 +1,4 @@
-import { render, screen, within } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DemoNavigation, demoNavigationItems } from '../app/demo-navigation';
 
@@ -14,7 +14,10 @@ describe('DemoNavigation', () => {
 		render(<DemoNavigation />);
 
 		for (const item of demoNavigationItems) {
-			expect(screen.getByRole('link', { name: item.label })).toHaveAttribute('href', item.href);
+			expect(screen.getByRole('link', { name: item.label, hidden: true })).toHaveAttribute(
+				'href',
+				item.href,
+			);
 		}
 	});
 
@@ -24,8 +27,8 @@ describe('DemoNavigation', () => {
 			pathname = href;
 			render(<DemoNavigation />);
 
-			const marked = within(screen.getByRole('list'))
-				.getAllByRole('link')
+			const marked = screen
+				.getAllByRole('link', { hidden: true })
 				.filter((link) => link.getAttribute('aria-current') === 'page');
 			expect(marked).toHaveLength(1);
 			expect(marked[0]).toHaveAccessibleName(label);

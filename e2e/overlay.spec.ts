@@ -124,6 +124,8 @@ test.describe('public overlays', () => {
 		await expect(page.getByRole('dialog', { name: 'Exemplo de drawer' })).toBeVisible();
 		await page.keyboard.press('Escape');
 		await expect(page.getByRole('dialog', { name: 'Exemplo de drawer' })).toBeHidden();
+		// O fechamento remove o painel antes do efeito que restaura foco e scroll.
+		await expect(page.getByRole('button', { name: 'Abrir drawer' })).toBeFocused();
 
 		const tooltipTrigger = page.getByRole('button', { name: 'Tooltip' });
 		await tooltipTrigger.hover();

@@ -1,14 +1,14 @@
 # Tasks
 
-- [ ] 1. Inventory runtime exports and existing demos; document UI exclusions and route mapping.
-- [ ] 2. Build typed catalog registry, searchable index, stable routes and missing/unknown-component handling.
-- [ ] 3. Group accessible sidebar navigation and preserve existing business routes and mobile behavior.
-- [ ] 4. Build reusable component-page layout, interactive examples, responsive and theme controls, and copyable valid TSX snippets.
-- [ ] 5. Cover basic UI exports and their relevant states/variants; verify Storybook coverage.
-- [ ] 6. Cover form exports and compound fields; verify Storybook coverage.
-- [ ] 7. Cover navigation and overlay exports/compound parts; verify Storybook coverage.
-- [ ] 8. Cover data display exports and compound parts; verify Storybook coverage.
-- [ ] 9. Cover admin exports, composition, selection, filters, shell, tables and multi-step forms; verify Storybook coverage.
-- [ ] 10. Add automated export-to-demo coverage checks, keyboard/accessibility, interactions and Playwright responsive/theme tests.
-- [ ] 11. Update docs with demo conventions, traceability matrix and rule for future public UI additions; validate Next.js compiled CSS consumption.
-- [ ] 12. Review and correct all changes; run typecheck, lint, build, unit tests, `npm run test:e2e` (no failures), and `npm run format`; only update reviewed intentional snapshots. Document concise commands and verbose diagnostics.
+- [x] 1. Inventariar exports runtime e demos existentes; documentar exclusões sem UI e matriz export → rota.
+- [x] 2. Implementar registro tipado, índice pesquisável, rotas estáveis e 404 para componente desconhecido.
+- [x] 3. Agrupar sidebar acessível com grupos expansíveis, preservando rotas de negócio e comportamento móvel.
+- [x] 4. Implementar layout padronizado, exemplos interativos, inspeção de largura/temas e snippets TSX copiáveis da implementação real.
+- [x] 5. Demonstrar exports básicos e estados/variantes pertinentes; conferir cobertura no Storybook.
+- [x] 6. Demonstrar formulários e auxiliares de campo; conferir cobertura no Storybook.
+- [x] 7. Demonstrar navegação, overlays e subcomponentes; conferir cobertura no Storybook.
+- [x] 8. Demonstrar apresentação de dados e subcomponentes; conferir cobertura no Storybook.
+- [x] 9. Demonstrar exports administrativos, seleção, filtros, shell, tabelas e etapas; conferir cobertura no Storybook.
+- [x] 10. Validar cobertura automatizada export → JSX executável, teclado, acessibilidade, interações e Playwright em temas/larguras.
+- [x] 11. Atualizar convenções, matriz rastreável e regra para futuras adições; validar consumo do CSS compilado no Next.js e no Storybook.
+- [ ] 12. Revisar o diff e corrigir findings; executar OpenSpec estrito, format, lint, build, tipos, quality e `npm run test:e2e` sem falhas. Atualizar apenas snapshots intencionais e revisados pelo workflow oficial; registrar evidências e comandos de diagnóstico.

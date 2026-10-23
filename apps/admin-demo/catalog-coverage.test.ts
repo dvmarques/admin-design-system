@@ -1,41 +1,71 @@
-import { existsSync, readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { readFileSync, readdirSync } from 'node:fs';
+import { resolve } from 'node:path';
+import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { catalogEntries } from './app/catalogo/catalog-data';
+import { catalogDemos } from './app/catalogo/catalog-demos';
+import snippets from './app/catalogo/catalog-snippets.json';
+import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';
 
-const root = fileURLToPath(new URL('../../', import.meta.url));
-
-function publicRuntimeExports(source: string): string[] {
-  const names: string[] = [];
-  for (const match of source.matchAll(/export\s*\{([^}]+)\}\s*from/g)) {
-    for (const entry of match[1].split(',')) {
-      const name = entry.trim().split(/\s+as\s+/).at(-1)?.trim();
-      if (name?.startsWith('Ads') || name === 'ThemeToggle' || name === 'StyleFixture') names.push(name);
-    }
-  }
-  return names;
+const root = resolve(process.cwd()) + '/';
+const exclusions = ['fixtureVariants', 'getAdsPaginationItems', 'useAdsAdminShell'];
+function runtimeExports(path: string) {
+	const source = ts.createSourceFile(
+		path,
+		readFileSync(root + path, 'utf8'),
+		ts.ScriptTarget.Latest,
+		true,
+	);
+	return source.statements
+		.filter(ts.isExportDeclaration)
+		.filter((node) => !node.isTypeOnly)
+		.flatMap((node) =>
+			node.exportClause && ts.isNamedExports(node.exportClause)
+				? node.exportClause.elements
+						.filter((element) => !element.isTypeOnly)
+						.map((element) => element.name.text)
+				: [],
+		);
 }
 
-describe('admin demo catalog inventory', () => {
-  it('indexes every public UI runtime export without duplicates', () => {
-    const components = readFileSync(root + 'packages/components/src/index.ts', 'utf8');
-    const admin = readFileSync(root + 'packages/admin/src/index.ts', 'utf8');
-    const exports = [...publicRuntimeExports(components), ...publicRuntimeExports(admin)];
-    const indexed = catalogEntries.map((entry) => entry.name);
-    expect(new Set(indexed).size).toBe(indexed.length);
-    expect(indexed.slice().sort()).toEqual(exports.slice().sort());
-  });
-
-  it('points each inventory entry to an existing demonstration category', () => {
-    for (const entry of catalogEntries) {
-      expect(entry.href.startsWith('/')).toBe(true);
-      expect(entry.group.length).toBeGreaterThan(0);
-      const segments = entry.href === '/' ? '' : entry.href.slice(1);
-      const routes = [
-        root + 'apps/admin-demo/app/(admin)/' + segments + '/page.tsx',
-        root + 'apps/admin-demo/app/' + segments + '/page.tsx',
-      ];
-      expect(routes.some((route) => existsSync(route)), `Missing route for ${entry.name}: ${entry.href}`).toBe(true);
-    }
-  });
+describe('rastreabilidade do catálogo', () => {
+	it('cobre todo export público de UI com rota própria, sem duplicatas', () => {
+		const exports = ['packages/components/src/index.ts', 'packages/admin/src/index.ts'].flatMap(
+			runtimeExports,
+		);
+		expect(catalogEntries.map((entry) => entry.name).sort()).toEqual(
+			exports.filter((name) => !exclusions.includes(name)).sort(),
+		);
+		expect(new Set(catalogEntries.map((entry) => entry.href)).size).toBe(catalogEntries.length);
+		for (const entry of catalogEntries) {
+			expect(entry.href).toBe(`/catalogo/${entry.slug}`);
+			expect(catalogDemos[entry.demo]).toBeTypeOf('function');
+			// A composição executável precisa renderizar o export; importação isolada não comprova cobertura.
+			expect(snippets[entry.demo]).toMatch(new RegExp(`<${entry.name}(?:\\s|[.><])`));
+		}
+	});
+	it('mantém snippets idênticos às funções TSX executadas e tipadas', () => {
+		expect(snippets).toEqual(catalogSnippets());
+	});
+	it('inclui cada composição em stories existentes', () => {
+		const stories = readdirSync(root + 'apps/docs/src')
+			.filter((name) => name.endsWith('.stories.tsx'))
+			.map((name) => readFileSync(root + 'apps/docs/src/' + name, 'utf8'))
+			.join('\n');
+		const compoundFamilies = [
+			'AdsTabs',
+			'AdsAccordion',
+			'AdsTable',
+			'AdsCard',
+			'AdsList',
+			'AdsField',
+		];
+		for (const entry of catalogEntries) {
+			const family = compoundFamilies.find((name) => entry.name.startsWith(name));
+			const compound = family ? `${family}\\.${entry.name.slice(family.length)}` : entry.name;
+			expect(stories, entry.name).toMatch(
+				new RegExp(`<(?:${entry.name}|${compound})(?:\\s|[.><])`),
+			);
+		}
+	});
 });

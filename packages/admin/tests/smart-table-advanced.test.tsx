@@ -150,6 +150,26 @@ describe('AdsSmartTable virtualization', () => {
 		expect(screen.queryByRole('checkbox', { name: 'Selecionar Item 2' })).not.toBeInTheDocument();
 	});
 
+	it('keeps the focused row mounted by id when the rows are reordered', () => {
+		const ids = items.slice(0, 100);
+		const { rerender } = render(
+			<Table onSelectionChange={() => {}} rows={ids} virtualization={virtualization} />,
+		);
+		const checkbox = screen.getByRole('checkbox', { name: 'Selecionar Item 1' });
+		act(() => checkbox.focus());
+		rerender(
+			<Table
+				onSelectionChange={() => {}}
+				rows={[...ids].reverse()}
+				virtualization={virtualization}
+			/>,
+		);
+		const same = screen.getByRole('checkbox', { name: 'Selecionar Item 1' });
+		expect(same).toBe(checkbox);
+		expect(checkbox.isConnected).toBe(true);
+		expect(checkbox).toHaveFocus();
+	});
+
 	it('ignores an invalid configuration', () => {
 		render(<Table rows={items.slice(0, 30)} virtualization={{ rowHeight: 0, height: 200 }} />);
 		expect(screen.getAllByRole('row')).toHaveLength(31);

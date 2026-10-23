@@ -285,7 +285,7 @@ export function AdsSmartTable<Row>({
 	const columnsButtonRef = useRef<HTMLButtonElement>(null);
 	const selectAllRef = useRef<HTMLSpanElement>(null);
 	const [scrollTop, setScrollTop] = useState(0);
-	const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
+	const [focusedRowId, setFocusedRowId] = useState<string | null>(null);
 	const virtual = isValidVirtualization(virtualization) ? virtualization : undefined;
 
 	const hidden = new Set(hiddenColumnIds);
@@ -300,6 +300,9 @@ export function AdsSmartTable<Row>({
 		id: getRowId(row),
 		enabled: isRowSelectable ? isRowSelectable(row) : true,
 	}));
+	// O foco é guardado por id: reordenar ou atualizar `rows` não pode apontar para outra linha.
+	const focusedIndex =
+		virtual && focusedRowId !== null ? pageRows.findIndex((item) => item.id === focusedRowId) : -1;
 	const selectableIds = pageRows.filter((item) => item.enabled).map((item) => item.id);
 	const selectedOnPage = selectableIds.filter((id) => selected.has(id)).length;
 	const selectedVisible = pageRows.filter((item) => selected.has(item.id)).length;
@@ -433,7 +436,7 @@ export function AdsSmartTable<Row>({
 		return (
 			<AdsTableRow
 				aria-rowindex={virtual ? index + 2 : undefined}
-				data-row-index={virtual ? index : undefined}
+				data-row-id={virtual ? id : undefined}
 				data-selected={isSelected ? '' : undefined}
 				key={id}
 				style={virtual ? { ...virtualRowStyle, height: virtual.rowHeight } : undefined}
@@ -642,17 +645,15 @@ export function AdsSmartTable<Row>({
 					onBlur={
 						virtual
 							? (event) => {
-									if (!event.currentTarget.contains(event.relatedTarget)) setFocusedIndex(null);
+									if (!event.currentTarget.contains(event.relatedTarget)) setFocusedRowId(null);
 								}
 							: undefined
 					}
 					onFocus={
 						virtual
 							? (event) => {
-									const row = (event.target as HTMLElement).closest<HTMLElement>(
-										'tr[data-row-index]',
-									);
-									setFocusedIndex(row ? Number(row.dataset.rowIndex) : null);
+									const row = (event.target as HTMLElement).closest<HTMLElement>('tr[data-row-id]');
+									setFocusedRowId(row?.dataset.rowId ?? null);
 								}
 							: undefined
 					}
@@ -676,7 +677,7 @@ export function AdsSmartTable<Row>({
 					) : virtual ? (
 						getVirtualSlices({
 							count: pageRows.length,
-							focusedIndex,
+							focusedIndex: focusedIndex >= 0 ? focusedIndex : null,
 							height: virtual.height,
 							overscan: virtual.overscan ?? defaultOverscan,
 							rowHeight: virtual.rowHeight,

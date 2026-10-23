@@ -3,6 +3,12 @@ import { createRequire } from 'node:module';
 import { join } from 'node:path';
 import type axeCore from 'axe-core';
 
+/** Soma a rolagem da janela (móvel) e do main do shell (desktop, onde a página não rola). */
+function readScroll() {
+	const main = document.querySelector('.ads-admin-shell-main');
+	return { x: scrollX + (main?.scrollLeft ?? 0), y: scrollY + (main?.scrollTop ?? 0) };
+}
+
 const requireFromRoot = createRequire(join(process.cwd(), 'noop.js'));
 
 for (const theme of ['light', 'dark'] as const) {
@@ -27,11 +33,11 @@ for (const theme of ['light', 'dark'] as const) {
 			await page.keyboard.press('Shift+Tab');
 			await expect(trigger).toBeFocused();
 			for (const key of ['ArrowDown', 'Enter', 'Space']) {
-				const scrollBefore = await page.evaluate(() => ({ x: scrollX, y: scrollY }));
+				const scrollBefore = await page.evaluate(readScroll);
 				expect(scrollBefore.y).toBeGreaterThan(0);
 				await page.keyboard.press(key);
 				await expect(first).toBeFocused();
-				expect(await page.evaluate(() => ({ x: scrollX, y: scrollY }))).toEqual(scrollBefore);
+				expect(await page.evaluate(readScroll)).toEqual(scrollBefore);
 				await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 				await expect(menu).toHaveAttribute('id', (await trigger.getAttribute('aria-controls'))!);
 				await expect(disabled).toHaveAttribute('aria-disabled', 'true');

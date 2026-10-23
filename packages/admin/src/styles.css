@@ -182,6 +182,11 @@
 		padding: 1rem;
 	}
 
+	.ads-admin-shell-main:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: -2px;
+	}
+
 	.ads-admin-shell-navigation-trigger {
 		isolation: isolate;
 		display: inline-flex;
@@ -461,12 +466,46 @@
 			padding-inline: 1.5rem;
 		}
 
+		/*
+		 * Altura limitada à viewport: header com altura natural (pode quebrar linhas), corpo flexível
+		 * com min-height: 0. Sidebar e main rolam sozinhos; a página não rola no uso padrão.
+		 */
+		.ads-admin-shell {
+			/* Contém descendentes absolutos (ex.: textos visualmente ocultos) para a página não rolar. */
+			position: relative;
+			display: flex;
+			flex-direction: column;
+			height: 100vh;
+			height: 100dvh;
+			min-height: 0;
+			overflow: hidden;
+		}
+
+		.ads-admin-shell-header {
+			flex: 0 0 auto;
+		}
+
+		.ads-admin-shell-body {
+			flex: 1 1 auto;
+			min-height: 0;
+		}
+
 		.ads-admin-shell-sidebar-desktop {
 			display: block;
+			min-height: 0;
+		}
+
+		.ads-admin-shell-sidebar-desktop .ads-admin-shell-sidebar {
+			padding-bottom: max(1rem, env(safe-area-inset-bottom));
+			overscroll-behavior: contain;
 		}
 
 		.ads-admin-shell-main {
+			min-height: 0;
+			overflow-y: auto;
+			overscroll-behavior: contain;
 			padding: 1.5rem;
+			padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
 		}
 
 		.ads-admin-shell-sidebar-toggle {

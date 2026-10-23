@@ -2,13 +2,13 @@
 
 ## Escopo
 
-Perfil Critical, sobre `develop` `5919f77`. Nenhuma dependência de runtime nova. Ambiente: Node 22.22.0 (o projeto exige 24) e npm 10.9.4, `npm ci --ignore-scripts`; Chromium 1243 do ambiente em vez da versão fixada pelo Playwright. Nenhum merge, archive ou fechamento de issue.
+Perfil Critical, sobre `develop` `3592719` (após merge). Nenhuma dependência de runtime nova. Ambiente: Node 22.22.0 (o projeto exige 24) e npm 10.9.4, `npm ci --ignore-scripts`; Chromium 1243 do ambiente em vez da versão fixada pelo Playwright. Nenhum merge, archive ou fechamento de issue.
 
 ## Evidência local (na branch)
 
 - `npm run build` (cinco workspaces, incluindo Storybook e Next.js), `npm run typecheck`, `npm run lint`, `npm run format` e `openspec validate --all --strict` (49 itens) passaram.
 - `npm run test:quality` passou: 56 arquivos e 875 testes (inclui `smart-table-advanced`, SSR/hidratação, `axe` e cobertura de `AdsListFlow`), release, CI, skills e artefatos gerados.
-- `inspect:packages` passou com o baseline atualizado de `@admin-ds/admin` (221648 bytes; ver `docs/bundle-baseline.md`).
+- `inspect:packages` passou com o baseline atualizado de `@admin-ds/admin` (224766 bytes; ver `docs/bundle-baseline.md`).
 - E2E completo no Chromium: 217 passaram e 7 falharam. As 7 falhas são `toHaveScreenshot` em `/componentes`, `/clientes`, `/clientes/novo`, `/preferencias`, na referência do admin-demo, no Admin Shell e em exibição de dados (diferença de cerca de 1% dos pixels). Os 7 testes novos de `e2e/smart-table-advanced.spec.ts` passaram, inclusive `axe` nos temas claro e escuro. Nenhum snapshot foi atualizado.
 
 ## Pendências e limitações

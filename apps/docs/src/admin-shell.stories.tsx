@@ -177,6 +177,37 @@ export const HierarchicalNavigation: Story = {
 	),
 };
 
+/** Desktop: header e sidebar ficam fixos; sidebar e conteúdo rolam de forma independente. */
+export const LongPageIndependentScroll: Story = {
+	name: 'Página longa com rolagem independente',
+	render: () => (
+		<AdsAdminShell>
+			<AdsAdminShell.Header>
+				<HeaderContent />
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar mobileTitle="Menu">
+					<AdsAdminShell.Navigation>
+						<AdsAdminShell.NavigationSection label="Páginas">
+							{Array.from({ length: 40 }, (_, index) => (
+								<AdsAdminShell.NavigationItem key={index}>
+									<a href={`#pagina-${index + 1}`}>Página {index + 1}</a>
+								</AdsAdminShell.NavigationItem>
+							))}
+						</AdsAdminShell.NavigationSection>
+					</AdsAdminShell.Navigation>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					{Array.from({ length: 12 }, (_, index) => (
+						<PageContent key={index} />
+					))}
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	),
+	parameters: { layout: 'fullscreen' },
+};
+
 export const DesktopCollapsed: Story = {
 	name: 'Desktop recolhido (não controlado)',
 	render: () => (

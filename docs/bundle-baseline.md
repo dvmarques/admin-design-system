@@ -175,12 +175,24 @@ foram alteradas. Como nos incrementos públicos anteriores registrados neste
 documento, o custo explícito deve ser considerado na revisão desta PR; não
 representa uma correção de tamanho sem custo nem um bundle menor.
 
+## Sidebar desktop fixa no `AdsAdminShell` (#136)
+
+O baseline de `@admin-ds/admin` foi atualizado na change
+`issue-136-admin-shell-fixed-sidebar` de 170121 para **187690 bytes** (+17569),
+medido em LF após o build de tokens, components e admin e
+`inspect:packages`. O valor anterior já estava defasado: a `develop` (`5919f77`,
+catálogo e navegação hierárquica do shell, #151) mede **186447 bytes / 61
+arquivos**, ainda dentro da tolerância de 10% (187133). A change soma **+1243
+bytes** (CSS do layout desktop em `styles.css`, `tabIndex` padrão em
+`AdsAdminShell.Main`, com JavaScript, declarações e source maps), o que passa o
+limite de 187133 e exige a atualização explícita. Sem novas dependências de
+runtime nem novos arquivos publicados.
+
 ## Evolução do AdsSmartTable (#93)
 
 Medido com `npm run build` e `inspect:packages` (Node 22.22.0, LF). Na `develop`
-`5919f77`, `@admin-ds/admin` mede **186447 bytes / 61 arquivos** (baseline anterior
-170121, já em 9,6%, no limite da tolerância). Após a #93: **221648 bytes** (+35201,
-+18,9% sobre a `develop`); components (388846) e tokens (36342) não mudaram.
+`3592719` (com a #136), `@admin-ds/admin` tem baseline **187690 bytes**. Após a #93:
+**224766 bytes** (+37076, +19,8%); components (388846) e tokens (36342) não mudaram.
 
 O incremento vem de três módulos novos (`smart-table-virtual`,
 `smart-table-resizer` e `smart-table-export`, cada um com JavaScript, source maps e
@@ -188,4 +200,4 @@ declarações, cerca de 19 KB), do crescimento de `smart-table` (props, renderiz
 da janela e botão de exportação) e do CSS `ads-smart-table-*` das alças e da região
 virtualizada. Os recursos são opt-in, mas vivem no mesmo pacote; não há dependência
 de runtime nova nem virtualização de terceiros. O baseline de `@admin-ds/admin` foi
-atualizado de 170121 para **221648** e deve ser considerado na revisão da PR.
+atualizado de 187690 para **224766**, aprovado explicitamente para esta PR.

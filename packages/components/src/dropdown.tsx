@@ -18,7 +18,7 @@ import {
 	useEscapeKey,
 	useStableId,
 } from './overlay-utils.js';
-import { AdsButton } from './button.js';
+import { AdsButton, type AdsButtonSize, type AdsButtonVariant } from './button.js';
 
 interface DropdownContextValue {
 	open: boolean;
@@ -65,12 +65,17 @@ function AdsDropdownRoot({
 	);
 }
 
-export type AdsDropdownTriggerProps = ButtonHTMLAttributes<HTMLButtonElement>;
+export interface AdsDropdownTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	size?: AdsButtonSize;
+	variant?: AdsButtonVariant;
+}
 function AdsDropdownTrigger({
 	children,
 	className,
 	onKeyDown,
 	onBlur,
+	size = 'md',
+	variant = 'secondary',
 	...props
 }: AdsDropdownTriggerProps) {
 	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
@@ -100,7 +105,8 @@ function AdsDropdownTrigger({
 			ref={(node: HTMLButtonElement | null) => {
 				triggerRef.current = node;
 			}}
-			variant="secondary"
+			size={size}
+			variant={variant}
 			type="button"
 		>
 			{children}
@@ -127,9 +133,11 @@ function AdsDropdownContent({
 			// The portal mounts its children after the open render. Focus at attachment.
 			initialFocusRef.current = false;
 			if (node.ownerDocument.activeElement !== triggerRef.current) return;
-			node
-				.querySelector<HTMLElement>('[role="menuitem"]:not([aria-disabled="true"])')
-				?.focus({ preventScroll: true });
+			(
+				node.querySelector<HTMLElement>(
+					'[role="menuitemradio"][aria-checked="true"]:not([aria-disabled="true"])',
+				) ?? node.querySelector<HTMLElement>('[role^="menuitem"]:not([aria-disabled="true"])')
+			)?.focus({ preventScroll: true });
 		},
 		[initialFocusRef, triggerRef, position.attachContent],
 	);
@@ -154,7 +162,7 @@ function AdsDropdownContent({
 				onKeyDown={(event) => {
 					const items = Array.from(
 						event.currentTarget.querySelectorAll<HTMLElement>(
-							'[role="menuitem"]:not([aria-disabled="true"])',
+							'[role^="menuitem"]:not([aria-disabled="true"])',
 						),
 					);
 					const index = items.indexOf(document.activeElement as HTMLElement);
@@ -178,10 +186,12 @@ function AdsDropdownContent({
 	) : null;
 }
 
-export interface AdsDropdownItemProps extends HTMLAttributes<HTMLElement> {
+export interface AdsDropdownItemProps extends Omit<HTMLAttributes<HTMLElement>, 'role'> {
 	disabled?: boolean;
 	href?: string;
 	onSelect?: () => void;
+	/** `menuitemradio` exige `aria-checked`; o padrão `menuitem` é o comportamento anterior. */
+	role?: 'menuitem' | 'menuitemradio';
 }
 function AdsDropdownItem({
 	children,
@@ -190,9 +200,10 @@ function AdsDropdownItem({
 	href,
 	onClick,
 	onSelect,
+	role = 'menuitem',
 	...props
 }: AdsDropdownItemProps) {
-	const { setOpen } = useDropdown();
+	const { setOpen, triggerRef } = useDropdown();
 	const element = href ? 'a' : 'button';
 	return (
 		<>
@@ -218,8 +229,10 @@ function AdsDropdownItem({
 						onClick?.(event);
 						onSelect?.();
 						setOpen(false);
+						// Escolher uma opção de seleção exclusiva devolve o foco ao gatilho, como Escape.
+						if (role === 'menuitemradio') triggerRef.current?.focus();
 					},
-					role: 'menuitem',
+					role,
 					tabIndex: disabled ? -1 : -1,
 				},
 				children,

@@ -2,7 +2,7 @@ import { AdsTypography } from '@admin-ds/components';
 import { AdsAdminShell } from '@admin-ds/admin';
 import type { ReactNode } from 'react';
 import Image from 'next/image';
-import { readServerTheme } from '../../lib/server-theme';
+import { readServerPreference } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
 import { RouteChangeHandler } from '../route-change-handler';
 import { StorybookLink } from '../storybook-link';
@@ -12,7 +12,7 @@ import { ThemeControl } from '../theme-control';
 const logoSrc = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/icon.svg`;
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const theme = await readServerTheme();
+	const preference = await readServerPreference();
 
 	return (
 		<AdsAdminShell>
@@ -29,7 +29,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 				</div>
 				<div className="demo-header-tools">
 					<StorybookLink />
-					<ThemeControl initialTheme={theme} />
+					<ThemeControl initialPreference={preference} />
 				</div>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>

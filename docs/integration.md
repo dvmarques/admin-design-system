@@ -5,7 +5,7 @@
 Uma aplicação consumidora importa as APIs e folhas de estilo públicas:
 
 ```ts
-import { ThemeToggle } from '@admin-ds/components';
+import { AdsThemeControl } from '@admin-ds/components';
 import { tokenValues } from '@admin-ds/tokens';
 import '@admin-ds/tokens/styles.css';
 import '@admin-ds/components/styles.css';
@@ -45,6 +45,62 @@ Os valores aceitos são `light` e `dark`. Sem o atributo, os tokens usam a
 preferência `prefers-color-scheme` do sistema. A aplicação é responsável por
 persistir a preferência e aplicá-la antes da hidratação quando necessário.
 
+### Controle de preferência: Claro, Escuro e Sistema
+
+`AdsThemeControl` oferece as três preferências (`light`, `dark` e `system`). Ele
+só apresenta e **emite** a escolha: a biblioteca não impõe provider, persistência,
+roteador nem acesso ao DOM global. A aplicação guarda a preferência, resolve
+`system` e aplica o tema efetivo (`light` ou `dark`) em `data-theme`.
+
+```tsx
+'use client';
+import { AdsThemeControl, type AdsThemePreference } from '@admin-ds/components';
+
+export function HeaderThemeControl({ preference, onChange }: Props) {
+	return <AdsThemeControl value={preference} onValueChange={onChange} />;
+}
+```
+
+- `variant="menu"` (padrão): botão compacto só com ícone que abre as opções.
+  O gatilho mostra o ícone da **preferência** (sol, lua ou monitor) e, em Sistema,
+  mantém o monitor mesmo quando o tema efetivo muda. `variant="group"` mostra as
+  três opções inline.
+- `optionDisplay="icon"` (padrão) usa só ícones, com nome acessível e tooltip;
+  `optionDisplay="icon-text"` acrescenta o texto.
+- Controlado (`value` + `onValueChange`) ou não controlado (`defaultValue`, padrão
+  `system`). Mudanças externas atualizam o controle sem remontagem nem `key`, e o
+  foco é preservado.
+- `labels` (`group`, `light`, `dark`, `system`) personaliza nomes e tooltips; `tooltips={false}`
+  desliga os tooltips; `disabled` e `className` seguem o padrão do projeto.
+- Acessibilidade: o menu usa itens `menuitemradio` com `aria-checked`, o grupo usa
+  `radiogroup` com `radio`; a opção ativa também recebe uma marca visual. Escape
+  fecha o menu e devolve o foco ao gatilho; escolher uma opção também.
+
+**Migração de `ThemeToggle`.** `ThemeToggle` (alternância binária, `initialTheme`
+e `onThemeChange`) permanece exportado e inalterado; ele não vira ternário. Para
+incluir Sistema, troque `initialTheme`/`onThemeChange` por `defaultValue`/`onValueChange`
+de `AdsThemeControl` e resolva `system` na aplicação. Uma depreciação formal de
+`ThemeToggle` só ocorrerá em uma versão futura, com aviso prévio.
+
+**Exemplo completo (admin demo).** O cabeçalho e as Preferências compartilham uma
+única fonte de verdade nos atributos de `<html>` (`data-theme-preference` guarda a
+escolha e `data-theme` o tema efetivo):
+
+- a preferência é persistida no cookie `ads-theme` (`light`, `dark` ou `system`);
+  cookies `light`/`dark` anteriores continuam válidos e a ausência de valor equivale a
+  Sistema;
+- `system` é resolvido por `prefers-color-scheme` e acompanhado enquanto estiver
+  selecionado (o listener é removido ao sair); escolhas explícitas não são
+  sobrescritas pelo sistema;
+- um script inline no `<head>` aplica a preferência antes da primeira pintura em todos
+  os builds. O servidor não conhece o esquema do sistema: com `system` ou sem cookie ele
+  renderiza `data-theme="light"` como fallback e o script o corrige antes da pintura (se o
+  script for bloqueado, por exemplo por CSP, o fallback `light` permanece). `<html>` usa
+  `suppressHydrationWarning` por isso; o ícone do gatilho depende só da preferência e
+  não diverge na hidratação;
+- se o cookie não puder ser gravado, a escolha vale na sessão e a interface continua
+  funcional.
+
 ## Fonte
 
 A pilha tipográfica começa por `Inter`, mas a biblioteca não distribui a fonte. Carregue-a na
@@ -55,7 +111,7 @@ sem isso, o texto usa a fonte de sistema da pilha. Detalhes e exemplo em
 ## Next.js App Router
 
 Importe os estilos globais em `app/layout.tsx` e mantenha componentes
-interativos, como `ThemeToggle`, em um limite de Client Component. Tokens e
+interativos, como `AdsThemeControl`, em um limite de Client Component. Tokens e
 componentes puramente apresentacionais podem ser usados por Server Components.
 
 ### Tooltip, Popover e Dropdown nas bordas
@@ -146,7 +202,8 @@ componha o header com itens que possam encolher ou quebrar linha, por exemplo
 agrupando as ações em um contêiner com `flex-wrap`, para que nenhum controle fique
 cortado nem a página ganhe rolagem horizontal. `ThemeToggle` usa a fonte do design
 system e mantém o rótulo em uma única linha, então ele depende desse contêiner para
-quebrar de linha quando não couber.
+quebrar de linha quando não couber. O gatilho compacto de `AdsThemeControl` ocupa 2,5 rem
+quadrados e não exige essa quebra.
 
 ### Server Components e estado
 

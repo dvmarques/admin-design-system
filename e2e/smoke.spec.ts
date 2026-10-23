@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { waitForHydration } from './hydration';
 import { routes } from './routes';
+import { themeTrigger } from './theme-control';
 
 /** Rotas cobertas em todos os navegadores; os snapshots visuais ficam só no Chromium. */
 const smokeRoutes = routes.filter(({ path }) => ['/', '/clientes', '/componentes'].includes(path));
@@ -20,7 +21,7 @@ for (const route of smokeRoutes) {
 
 		await page.goto(route.path);
 		await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
-		await waitForHydration(page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ }));
+		await waitForHydration(themeTrigger(page));
 
 		expect(errors).toEqual([]);
 	});
@@ -29,7 +30,7 @@ for (const route of smokeRoutes) {
 test('navega pelo menu principal entre as rotas cobertas', async ({ page }) => {
 	await page.goto('/');
 	const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
-	await waitForHydration(page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ }));
+	await waitForHydration(themeTrigger(page));
 
 	for (const route of smokeRoutes.filter(({ path }) => path !== '/')) {
 		await navigation.getByRole('link', { name: route.label, exact: true }).click();

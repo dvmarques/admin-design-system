@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { releaseShellHeight } from './full-page-shell';
+import { chooseTheme } from './theme-control';
 
 async function hideDevelopmentPortal(page: Page) {
 	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
@@ -67,7 +68,7 @@ test('alterna visualmente o tema e permite voltar à visão geral pela sidebar',
 	const lightBackground = await page.locator('body').evaluate((element) => {
 		return getComputedStyle(element).backgroundColor;
 	});
-	await page.getByRole('button', { name: 'Usar tema escuro' }).click();
+	await chooseTheme(page, 'dark');
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 	const darkBackground = await page.locator('body').evaluate((element) => {
 		return getComputedStyle(element).backgroundColor;

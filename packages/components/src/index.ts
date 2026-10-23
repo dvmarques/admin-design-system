@@ -49,6 +49,14 @@ export { StyleFixture, fixtureVariants } from './style-fixture.js';
 export type { FixtureVariant, StyleFixtureProps } from './style-fixture.js';
 export { ThemeToggle } from './theme-toggle.js';
 export type { ThemeToggleProps } from './theme-toggle.js';
+export { AdsThemeControl } from './theme-control.js';
+export type {
+	AdsThemeControlLabels,
+	AdsThemeControlOptionDisplay,
+	AdsThemeControlProps,
+	AdsThemeControlVariant,
+	AdsThemePreference,
+} from './theme-control.js';
 export { AdsDialog, AdsDrawer } from './overlay-dialog.js';
 export type { AdsDialogProps, AdsDrawerProps } from './overlay-dialog.js';
 export { AdsPopover, AdsTooltip } from './overlay-anchored.js';

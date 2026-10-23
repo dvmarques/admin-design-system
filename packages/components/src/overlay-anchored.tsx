@@ -33,6 +33,8 @@ export interface AdsTooltipProps {
 	content: ReactNode;
 	placement?: AdsOverlayPlacement;
 	className?: string;
+	/** Com `false`, só o apontamento abre o tooltip; o gatilho mantém seu nome acessível. */
+	showOnFocus?: boolean;
 }
 
 export interface AdsPopoverProps extends Omit<
@@ -46,7 +48,13 @@ export interface AdsPopoverProps extends Omit<
 	placement?: AdsOverlayPlacement;
 }
 
-export function AdsTooltip({ children, className, content, placement = 'top' }: AdsTooltipProps) {
+export function AdsTooltip({
+	children,
+	className,
+	content,
+	placement = 'top',
+	showOnFocus = true,
+}: AdsTooltipProps) {
 	const [open, setOpen] = useState(false);
 	const anchorRef = useRef<HTMLSpanElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
@@ -67,7 +75,7 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 		<span
 			className="ads-tooltip-anchor inline-flex"
 			onBlur={() => setOpen(false)}
-			onFocus={() => setOpen(true)}
+			onFocus={() => setOpen(showOnFocus)}
 			onPointerEnter={() => setOpen(true)}
 			onPointerLeave={() => setOpen(false)}
 			ref={anchorRef}

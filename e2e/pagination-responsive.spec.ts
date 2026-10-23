@@ -1,5 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { waitForHydration } from './hydration';
+import { themeTrigger } from './theme-control';
 
 async function fits(nav: Locator) {
 	await expect
@@ -206,7 +207,7 @@ test('SSR contém páginas e hidrata com CSS distribuído sem erros', async ({ p
 
 test('preserva o alinhamento original à direita no rodapé da SmartTable', async ({ page }) => {
 	await page.goto('/clientes');
-	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
+	await waitForHydration(themeTrigger(page));
 	const nav = page.locator('.ads-smart-table-pagination > .ads-pagination');
 	await expect
 		.poll(() =>

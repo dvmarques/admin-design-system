@@ -240,3 +240,17 @@ Enquanto houver um modal aberto, a página de fundo MUST estar isolada da intera
 
 - **WHEN** os componentes são renderizados no servidor ou sob React StrictMode
 - **THEN** não há acesso ao DOM durante a renderização e não restam listeners ou estilos residuais
+
+### Requirement: Papel configurável do diálogo
+
+`AdsDialog` MUST aceitar `role` com `dialog` (padrão) ou `alertdialog` e MUST aplicá-lo ao painel modal, preservando `aria-modal`, nome e descrição acessíveis, foco e fechamento. `AdsDrawer` MUST manter `role="dialog"`.
+
+#### Scenario: Papel padrão
+
+- **WHEN** `AdsDialog` abre sem `role`
+- **THEN** o painel tem `role="dialog"`
+
+#### Scenario: Alertdialog
+
+- **WHEN** `AdsDialog` abre com `role="alertdialog"`
+- **THEN** o painel tem `role="alertdialog"`, `aria-modal="true"` e o mesmo nome e descrição acessíveis

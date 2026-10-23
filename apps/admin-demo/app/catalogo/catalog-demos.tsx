@@ -915,7 +915,9 @@ export function StepFormDemo() {
 					{
 						id: 'name',
 						label: 'Identificação',
-						validate: () => {
+						// Validação assíncrona simulada (por exemplo, consulta de disponibilidade no servidor).
+						validate: async () => {
+							await new Promise((resolve) => setTimeout(resolve, 300));
 							setError(!name.trim());
 							return Boolean(name.trim());
 						},

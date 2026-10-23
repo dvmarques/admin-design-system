@@ -1066,6 +1066,29 @@
 		color: var(--ads-color-success);
 	}
 
+	.ads-step-form-step-button {
+		display: inline-flex;
+		align-items: center;
+		gap: 0.5rem;
+		margin: 0;
+		border: 0;
+		border-radius: var(--ads-radius-md);
+		background: transparent;
+		padding: 0.125rem 0.25rem;
+		color: inherit;
+		font: inherit;
+		cursor: pointer;
+	}
+
+	.ads-step-form-step-button:hover .ads-step-form-step-label {
+		text-decoration: underline;
+	}
+
+	.ads-step-form-step-button:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+
 	.ads-step-form-panel {
 		display: grid;
 		gap: 0.75rem;
@@ -1115,7 +1138,8 @@
 	}
 
 	/* Ações indisponíveis durante `pending`: continuam focáveis, mas não respondem ao clique. */
-	.ads-confirm-dialog-actions .ads-button[aria-disabled='true'] {
+	.ads-confirm-dialog-actions .ads-button[aria-disabled='true'],
+	.ads-step-form-actions .ads-button[aria-disabled='true'] {
 		cursor: not-allowed;
 		opacity: 0.6;
 	}

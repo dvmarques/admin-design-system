@@ -133,10 +133,11 @@ test('overlays e ações administrativas do catálogo', async ({ page }) => {
 	] as const) {
 		await page.goto(`/catalogo/${slug}`);
 		const trigger = page.getByRole('button', { name: `Abrir ${label}`, exact: true });
+		const role = slug === 'confirm-dialog' ? 'alertdialog' : 'dialog';
 		await trigger.click();
-		await expect(page.getByRole('dialog')).toBeVisible();
+		await expect(page.getByRole(role)).toBeVisible();
 		await page.keyboard.press('Escape');
-		await expect(page.getByRole('dialog')).toHaveCount(0);
+		await expect(page.getByRole(role)).toHaveCount(0);
 		await expect(trigger).toBeFocused();
 	}
 	await page.goto('/catalogo/dropdown');

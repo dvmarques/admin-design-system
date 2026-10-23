@@ -188,11 +188,30 @@ bytes** (CSS do layout desktop em `styles.css`, `tabIndex` padrão em
 limite de 187133 e exige a atualização explícita. Sem novas dependências de
 runtime nem novos arquivos publicados.
 
+## Fluxos administrativos: alertdialog, indicador navegável e validação assíncrona (#92)
+
+Medição do commit base `5919f77` (antes do #136), em cópia isolada com o mesmo
+TypeScript/Tailwind e LF: admin **186447 bytes / 61 arquivos**, components
+**388846 bytes**. Após a #92: admin **+12033 bytes** (+6,5%) e components
+**389188 bytes** (+342, `role` em `AdsDialogProps`); tokens permanece 36342 bytes.
+Com a `develop` já atualizada pelo #136 (baseline de admin 187690), o build
+integrado desta PR mede admin **199723 bytes / 61 arquivos**.
+
+O incremento do admin vem de `AdsStepForm` (validação assíncrona com estado de
+carregamento, descarte de resultado obsoleto, navegação pelo indicador e marcação
+de etapas validadas) e dos estilos do botão do indicador, contados com
+declarações e mapas. Sem novos arquivos publicados nem dependência de runtime.
+
+O baseline de `@admin-ds/admin` foi atualizado de 187690 para **199723**. O de
+components (382334) não foi alterado: 389188 está dentro da tolerância de 10%.
+A tolerância e as verificações de pacotes não mudaram. O custo é explícito para a
+revisão desta PR.
+
 ## Evolução do AdsSmartTable (#93)
 
 Medido com `npm run build` e `inspect:packages` (Node 22.22.0, LF). Na `develop`
-`3592719` (com a #136), `@admin-ds/admin` tem baseline **187690 bytes**. Após a #93:
-**224766 bytes** (+37076, +19,8%); components (388846) e tokens (36342) não mudaram.
+`6dc0e96` (com as #136 e #92), `@admin-ds/admin` tem baseline **199723 bytes**. Após a #93:
+**236799 bytes** (+37076, +18,6%); components (388846) e tokens (36342) não mudaram.
 
 O incremento vem de três módulos novos (`smart-table-virtual`,
 `smart-table-resizer` e `smart-table-export`, cada um com JavaScript, source maps e
@@ -200,4 +219,4 @@ declarações, cerca de 19 KB), do crescimento de `smart-table` (props, renderiz
 da janela e botão de exportação) e do CSS `ads-smart-table-*` das alças e da região
 virtualizada. Os recursos são opt-in, mas vivem no mesmo pacote; não há dependência
 de runtime nova nem virtualização de terceiros. O baseline de `@admin-ds/admin` foi
-atualizado de 187690 para **224766**, aprovado explicitamente para esta PR.
+atualizado de 199723 para **236799**, aprovado explicitamente para esta PR.

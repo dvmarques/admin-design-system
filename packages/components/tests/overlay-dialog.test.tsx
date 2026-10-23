@@ -23,6 +23,38 @@ function DialogFixture() {
 }
 
 describe('overlay dialogs', () => {
+	it('uses role dialog by default and accepts alertdialog keeping name, description and modality', () => {
+		const { rerender } = render(
+			<AdsDialog onOpenChange={() => {}} open title="Aviso">
+				<p>x</p>
+			</AdsDialog>,
+		);
+		expect(screen.getByRole('dialog', { name: 'Aviso' })).toHaveAttribute('aria-modal', 'true');
+		rerender(
+			<AdsDialog
+				description="Detalhe"
+				onOpenChange={() => {}}
+				open
+				role="alertdialog"
+				title="Aviso"
+			>
+				<p>x</p>
+			</AdsDialog>,
+		);
+		const alert = screen.getByRole('alertdialog', { name: 'Aviso' });
+		expect(alert).toHaveAttribute('aria-modal', 'true');
+		expect(alert).toHaveAccessibleDescription('Detalhe');
+	});
+
+	it('keeps drawers as role dialog', () => {
+		render(
+			<AdsDrawer onOpenChange={() => {}} open title="Painel">
+				<p>x</p>
+			</AdsDrawer>,
+		);
+		expect(screen.getByRole('dialog', { name: 'Painel' })).toBeTruthy();
+	});
+
 	it('opens a named dialog and traps keyboard focus', async () => {
 		render(<DialogFixture />);
 		const trigger = screen.getByRole('button', { name: 'Abrir' });

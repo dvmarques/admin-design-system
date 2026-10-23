@@ -35,7 +35,7 @@ Estilos novos em `packages/admin/src/styles.css`, camada `components`, classes `
 
 ## Bundle e dependências
 
-Sem dependência de runtime. `@admin-ds/admin` passa de 187690 (develop) para 224766 bytes (+37076), em três módulos novos mais CSS e declarações; o baseline foi atualizado e justificado em `docs/bundle-baseline.md`.
+Sem dependência de runtime. `@admin-ds/admin` passa de 199723 (develop) para 236799 bytes (+37076), em três módulos novos mais CSS e declarações; o baseline foi atualizado e justificado em `docs/bundle-baseline.md`.
 
 ## Riscos e alternativas
 

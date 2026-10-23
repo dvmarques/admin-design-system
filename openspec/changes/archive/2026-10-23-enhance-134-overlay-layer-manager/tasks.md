@@ -15,10 +15,10 @@
 ## 3. Testes e documentação
 
 - [x] 3.1 Regressões Vitest: Dialog+Dialog, Dialog/Drawer+Popover/Dropdown, scroll, foco, desmontagem, gatilho removido, StrictMode, SSR e axe.
-- [ ] 3.2 E2E: não executado localmente (sem navegadores/ambiente); a validar na CI.
+- [x] 3.2 E2E executado na CI (run 39970739507): Chromium, Firefox e WebKit aprovados no commit `3891e86`.
 - [x] 3.3 Atualizar documentação e CHANGELOG.
 
 ## 4. Revisão e entrega
 
-- [x] 4.1 Executados: prettier, lint, build, typecheck, test:unit (773 testes) e `openspec validate --all --strict`. E2E pendente (CI).
-- [ ] 4.2 Publicar PR para develop, sem merge nem archive.
+- [x] 4.1 Executados: prettier, lint, build, typecheck, test:unit (773 testes) e `openspec validate --all --strict`; E2E na CI.
+- [x] 4.2 PR #178 para develop com revisão técnica aprovada; merge por squash e arquivamento autorizados pelo responsável.

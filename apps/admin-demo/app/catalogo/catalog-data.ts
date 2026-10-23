@@ -113,102 +113,102 @@ export const catalogEntries = [
   {
     "name": "AdsBreadcrumb",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsNav",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsTabs",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsTabsList",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsTabsPanel",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsTabsTrigger",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsAccordion",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsAccordionHeader",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsAccordionItem",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsAccordionPanel",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsAccordionTrigger",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsDropdown",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsPagination",
     "group": "Navegação",
-    "href": "/componentes/navegacao"
+    "href": "/componentes"
   },
   {
     "name": "AdsDialog",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsDrawer",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsPopover",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsTooltip",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsToast",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsEmptyState",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsProgress",
     "group": "Feedback",
-    "href": "/componentes/overlays"
+    "href": "/componentes"
   },
   {
     "name": "AdsTable",

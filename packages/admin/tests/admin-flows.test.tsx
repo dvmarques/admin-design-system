@@ -849,6 +849,44 @@ describe('AdsStepForm indicator navigation and async validation', () => {
 		expect(onStepChange).not.toHaveBeenCalled();
 	});
 
+	it('makes the fields inert while an async validation is pending', async () => {
+		const gate = deferred();
+		render(<Wizard validateA={() => gate.promise} />);
+		const field = screen.getByLabelText('Nome');
+		expect(field.closest('section')).not.toHaveAttribute('inert');
+		next();
+		expect(field.closest('section')).toHaveAttribute('inert');
+		gate.resolve(true);
+		await waitFor(() => expect(field.closest('section')).not.toHaveAttribute('inert'));
+	});
+
+	it('discards the pending result when a field is edited meanwhile, so the step is not marked valid', async () => {
+		const first = deferred();
+		const second = deferred();
+		const validateA = vi
+			.fn<() => Promise<boolean>>()
+			.mockReturnValueOnce(first.promise)
+			.mockReturnValueOnce(second.promise);
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={validateA} />);
+		next();
+		expect(screen.getByRole('form', { name: 'Fluxo' })).toHaveAttribute('aria-busy', 'true');
+		// A edição durante a espera invalida a validação pendente (inclusive com `inert` ignorado).
+		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'novo' } });
+		expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy');
+		first.resolve(true);
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(onStepChange).not.toHaveBeenCalled();
+		expect(steps().queryAllByRole('button')).toHaveLength(0);
+		// A nova tentativa valida os dados atuais.
+		next();
+		expect(validateA).toHaveBeenCalledTimes(2);
+		second.resolve(true);
+		await waitFor(() => expect(onStepChange).toHaveBeenCalledWith('b'));
+		expect(onStepChange).toHaveBeenCalledTimes(1);
+	});
+
 	it('submits once after an async validation of the last step', async () => {
 		const gate = deferred();
 		const onSubmit = vi.fn();

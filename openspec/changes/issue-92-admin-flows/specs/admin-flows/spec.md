@@ -59,6 +59,11 @@
 - **WHEN** a validação assíncrona está pendente
 - **THEN** o formulário tem `aria-busy="true"`, uma região `role="status"` anuncia o estado, a ação acionada exibe carregamento e as ações ficam com `aria-disabled` sem perder o foco
 
+#### Scenario: Edição durante a validação
+
+- **WHEN** a validação assíncrona está pendente e um campo da etapa é editado
+- **THEN** a validação pendente é cancelada, o resultado dela é descartado, a etapa não é marcada como validada e a pessoa precisa acionar "Próxima" de novo; durante a espera os campos da etapa ficam inertes
+
 #### Scenario: Resultado obsoleto
 
 - **WHEN** a etapa ativa muda ou o componente desmonta antes de a Promise resolver

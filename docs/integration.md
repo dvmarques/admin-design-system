@@ -1124,8 +1124,10 @@ const steps = [
   formulário fica com `aria-busy`, anuncia `labels.validating`, mostra o
   carregamento no botão acionado e deixa as ações com `aria-disabled` (o foco não
   se perde) até resolver; rejeitar equivale a `false`, e um resultado que chega
-  depois de a etapa mudar ou do desmonte é descartado. Retorno síncrono continua
-  sendo tratado de forma síncrona.
+  depois de a etapa mudar ou do desmonte é descartado. Os campos ficam inertes
+  durante a espera e editar um campo cancela a validação pendente (acione
+  "Próxima" de novo); evite alterar o estado programaticamente enquanto valida.
+  Retorno síncrono continua sendo tratado de forma síncrona.
 - O indicador de etapas navega para etapas anteriores e, adiante, apenas para as
   que já foram validadas ao avançar (a atual e as intermediárias incluídas). Editar
   uma etapa remove essa marca, e "Próxima" a revalida. A marca depende de eventos

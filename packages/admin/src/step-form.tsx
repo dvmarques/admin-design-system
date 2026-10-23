@@ -166,6 +166,19 @@ export function AdsStepForm({
 		[],
 	);
 
+	// Os campos não podem ser editados enquanto a validação assíncrona decide sobre os dados que
+	// ela recebeu. `inert` por atributo (e não pela prop) para funcionar também no React 18.
+	useEffect(() => {
+		if (validating === null) return;
+		const sections = Object.values(sectionRefs.current).filter(
+			(section): section is HTMLElement => section !== null,
+		);
+		for (const section of sections) section.setAttribute('inert', '');
+		return () => {
+			for (const section of sections) section.removeAttribute('inert');
+		};
+	}, [validating]);
+
 	// Com o alerta visível, revalida depois de cada edição (já com o estado novo do consumidor) e
 	// remove o alerta quando a etapa fica válida. Não move o foco.
 	const handledEdits = useRef(0);
@@ -199,6 +212,15 @@ export function AdsStepForm({
 
 	function markEdited(id: string) {
 		if (validated.current.delete(id)) setValidatedVersion((n) => n + 1);
+	}
+
+	/** Os dados mudaram durante a validação: o resultado pendente é obsoleto e fica descartado. */
+	function cancelValidation() {
+		if (!validatingRef.current) return;
+		runToken.current += 1;
+		validatingRef.current = false;
+		setValidating(null);
+		setAnnouncement('');
 	}
 
 	function finish(ok: boolean, then: () => void) {
@@ -332,6 +354,7 @@ export function AdsStepForm({
 						onChange={
 							position === index
 								? () => {
+										cancelValidation();
 										markEdited(step.id);
 										if (invalid) setEdits((n) => n + 1);
 									}

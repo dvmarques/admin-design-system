@@ -2,7 +2,7 @@
 
 O índice `/catalogo` oferece busca por nome, categoria e descrição. Cada export público de UI tem uma rota `/catalogo/<slug>` gerada estaticamente, inclusive no GitHub Pages. Subcomponentes exibem a composição completa para que possam ser usados com o contexto e a semântica corretos. Slugs desconhecidos retornam 404.
 
-A sidebar oferece grupos expansíveis por teclado, indicação de página ativa e fechamento automático após navegação móvel. As rotas `/`, `/clientes`, `/clientes/novo`, `/preferencias`, `/componentes`, `/componentes/datas`, `/componentes/overlays`, `/componentes/paginacao`, `/data-display` e `/catalogo/lacunas` continuam disponíveis.
+A sidebar oferece grupos expansíveis por teclado, indicação de página ativa e fechamento automático após navegação móvel. As rotas `/`, `/clientes`, `/clientes/novo`, `/preferencias`, `/componentes`, `/componentes/datas`, `/componentes/overlays`, `/componentes/paginacao`, `/componentes/tabela-avancada`, `/data-display` e `/catalogo/lacunas` continuam disponíveis.
 
 ## Convenção para novas demonstrações
 

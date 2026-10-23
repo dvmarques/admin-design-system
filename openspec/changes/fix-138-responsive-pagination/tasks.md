@@ -8,8 +8,8 @@
 - [x] 6. Implementar seletor controlado de tamanho e resumo verificável na SmartTable, sem acoplar busca.
 - [x] 7. Ampliar testes unitários e de componentes para extremos, resize, foco, loading, salto, links e totais dinâmicos.
 - [x] 8. Atualizar stories, documentação e consumo Next.js/CSS compilado, com E2E, zoom e inspeção visual.
-- [ ] 9. Executar tipos, lint, build, quality e E2E completos; revisar alterações visuais intencionais, corrigir falhas e conferir CI no SHA final.
-- [ ] 10. Formatar alterações, executar npm run format e OpenSpec estrito; revisar novamente o diff e entregar a PR #176 para revisão humana.
+- [x] 9. Executar tipos, lint, build, quality e E2E completos; revisar alterações visuais intencionais, corrigir falhas e conferir CI no SHA final.
+- [x] 10. Formatar alterações, executar npm run format e OpenSpec estrito; revisar novamente o diff e entregar a PR #176 para revisão humana.
 
 ## Evidências
 

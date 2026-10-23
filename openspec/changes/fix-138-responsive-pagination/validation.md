@@ -124,5 +124,28 @@ Nenhuma mudança visual alheia ao escopo foi encontrada. Nenhum snapshot local
 foi copiado; somente o workflow oficial alterou os baselines.
 
 A atualização de evidências dispara nova CI da PR, pois o commit criado com
-GITHUB_TOKEN pelo workflow de baselines não a dispara sozinho. Tasks 9 e 10
-permanecem abertas até conferir os gates dessa revisão.
+GITHUB_TOKEN pelo workflow de baselines não a dispara sozinho. Os gates dessa revisão foram conferidos conforme o registro a seguir.
+
+## Gates completos e entrega para revisão humana
+
+A CI 39885552737 do commit 8600bc439bae7c7c3990abdf39ca267ade5b54e8
+terminou com sucesso: qualidade (format, lint, typecheck e test:quality),
+distribuição (build dos cinco workspaces e inspect:packages), política de
+develop/OpenSpec, Chromium **203**, Firefox **10** e WebKit **10**. Total:
+**223 E2E passaram**, sem falhas nem casos E2E ignorados. Vitest: **760 testes
+em 52 arquivos**, sem skips. Os testes Node tiveram 28 e 67 aprovações; um
+caso condicional de propriedade de checkout foi skipped no runner não-root,
+sem ser declarado aprovado. Validação de release ficou skipped por não se
+tratar de PR de release; não substitui nenhum gate obrigatório desta change.
+
+Format e OpenSpec estrito foram repetidos após os baselines: 48 itens aprovados.
+Revisão final do diff e git diff --check passaram; somente os seis PNGs oficiais
+e a evidência documental foram acrescentados após a revisão funcional. Develop
+91d47c9 permanece ancestral da branch; sem conflitos. Todas as dez tasks possuem
+evidência. A atualização final de tasks/evidências recebe nova verificação de
+CI no seu SHA antes da entrega; seu resultado ficará no corpo da PR #176.
+
+Limitações locais anteriores permanecem registradas, sem simular aprovação.
+Riscos de consumo e custo de bundle descritos acima continuam aplicáveis.
+PR Ready para revisão humana; sem merge, squash, archive ou fechamento manual
+da issue. A change permanece ativa.

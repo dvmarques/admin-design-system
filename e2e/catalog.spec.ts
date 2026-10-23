@@ -162,3 +162,11 @@ for (const theme of ['light', 'dark']) {
 		await expectNoAxeViolations(page);
 	});
 }
+
+test('breadcrumb usa navegação Next.js e preserva links ao expandir', async ({ page }) => {
+	await page.goto('/catalogo/breadcrumb');
+	const preview = page.getByRole('region', { name: 'Demonstração interativa' });
+	await preview.getByRole('button', { name: 'Mostrar caminho completo' }).click();
+	await preview.getByRole('link', { name: 'Catálogo', exact: true }).click();
+	await expect(page).toHaveURL(/\/catalogo$/);
+});

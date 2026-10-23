@@ -46,6 +46,7 @@ describe('rastreabilidade do catálogo', () => {
 	});
 	it('mantém snippets idênticos às funções TSX executadas e tipadas', () => {
 		expect(snippets).toEqual(catalogSnippets());
+		expect(snippets.Breadcrumb).toContain("import Link from 'next/link';");
 	});
 	it('inclui cada composição em stories existentes', () => {
 		const stories = readdirSync(root + 'apps/docs/src')

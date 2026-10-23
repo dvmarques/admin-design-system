@@ -18,13 +18,21 @@ export function catalogSnippets() {
 		file.statements.filter(ts.isFunctionDeclaration).map((node) => {
 			const body = node.getText(file);
 			const required = imports.flatMap((declaration) => {
+				const defaultName = declaration.importClause?.name?.text;
+				const defaultImport =
+					defaultName && new RegExp(`\\b${defaultName}\\b`).test(body) ? defaultName : '';
 				const bindings = declaration.importClause?.namedBindings;
-				if (!bindings || !ts.isNamedImports(bindings)) return [];
-				const names = bindings.elements
-					.filter((element) => new RegExp(`\\b${element.name.text}\\b`).test(body))
-					.map((element) => element.getText(file));
-				return names.length
-					? [`import { ${names.join(', ')} } from ${declaration.moduleSpecifier.getText(file)};`]
+				const names =
+					bindings && ts.isNamedImports(bindings)
+						? bindings.elements
+								.filter((element) => new RegExp(`\\b${element.name.text}\\b`).test(body))
+								.map((element) => element.getText(file))
+						: [];
+				const clause = [defaultImport, names.length ? `{ ${names.join(', ')} }` : '']
+					.filter(Boolean)
+					.join(', ');
+				return clause
+					? [`import ${clause} from ${declaration.moduleSpecifier.getText(file)};`]
 					: [];
 			});
 			return [

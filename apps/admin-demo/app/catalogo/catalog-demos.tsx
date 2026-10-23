@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import Link from 'next/link';
 import {
 	AdsButton,
 	AdsBadge,
@@ -392,10 +393,14 @@ export function BreadcrumbDemo() {
 	return (
 		<AdsBreadcrumb
 			maxItems={3}
+			expandLabel="Mostrar caminho completo"
 			items={[
-				{ label: 'Início', href: '/' },
-				{ label: 'Catálogo', href: '/catalogo' },
-				{ label: 'Navegação', href: '/catalogo#navegacao' },
+				{ label: 'Início', renderLink: (props) => <Link href="/" {...props} /> },
+				{ label: 'Catálogo', renderLink: (props) => <Link href="/catalogo" {...props} /> },
+				{
+					label: 'Navegação',
+					renderLink: (props) => <Link href="/catalogo#navegacao" {...props} />,
+				},
 				{ label: 'Trilha' },
 			]}
 		/>

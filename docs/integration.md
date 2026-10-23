@@ -1212,3 +1212,52 @@ Exemplos interativos: `/componentes/paginacao` no admin-demo e stories
 Navigation/Components (PaginationResponsive, PaginationLocalizedLoading) e
 Layout/SmartTable (PaginationFooter). Os apps consomem os exports públicos e
 CSS compilado; não é necessário configurar Tailwind no consumidor.
+
+### AdsSmartTable: virtualização, redimensionamento e exportação
+
+Os três recursos são opcionais e independentes; sem as props, a tabela se
+comporta como antes. A tabela continua sem buscar, ordenar nem paginar dados.
+
+```tsx
+const [widths, setWidths] = useState<Record<string, number>>({});
+
+<AdsSmartTable<Usuario>
+	caption="Usuários"
+	columns={columns} // com `minWidth`, `maxWidth`, `exportValue` e `exportable`
+	rows={usuarios}
+	getRowId={(u) => u.id}
+	virtualization={{ rowHeight: 44, height: 480 }}
+	columnWidths={widths}
+	onColumnWidthsChange={setWidths}
+	onExport={(dados) => baixar(getAdsSmartTableCsv(dados, { bom: true }))}
+/>;
+```
+
+- **Virtualização.** `virtualization={{ rowHeight, height, overscan? }}` renderiza
+  só as linhas visíveis em uma região rolável de altura máxima `height`, com
+  cabeçalho fixo. Cada linha tem exatamente `rowHeight` pixels e o conteúdo que
+  excede é cortado. A tabela expõe `aria-rowcount` (total de linhas mais o
+  cabeçalho) e `aria-rowindex` em cada linha montada. A linha que contém o foco
+  não é desmontada ao rolar. "Selecionar todas" e a contagem de selecionadas
+  consideram todas as linhas recebidas, não só as montadas. O HTML inicial é a
+  primeira janela, igual no servidor e no cliente.
+- **Redimensionamento.** `onColumnWidthsChange` exibe uma alça por coluna
+  (`role="separator"`, com `aria-valuenow`, `aria-valuemin` e `aria-valuemax`).
+  Com o ponteiro, arraste; com o teclado, foque a alça e use ←/→ (10 px; Shift,
+  50 px), Home/End (mínimo/máximo) e Enter (volta à largura automática; duplo
+  clique faz o mesmo). `columnWidths` é a fonte da verdade: sem aplicar o valor
+  recebido, nada muda. Limites por coluna em `minWidth` (80) e `maxWidth` (640);
+  `resizable: false` remove a alça.
+- **Exportação.** `onExport` exibe o botão "Exportar" na barra de ferramentas,
+  desabilitado durante carregamento, erro e sem linhas, e emite `columns`
+  (visíveis, na ordem exibida e com `exportable !== false`), `rows`, `records`
+  (valores por id de coluna), `selectedIds` e `selectedRows`. O valor de cada
+  célula vem de `exportValue` ou, na falta, do retorno de `cell` quando for texto
+  ou número; conteúdo React vira `null`. `getAdsSmartTableCsv(dados, opções)` é um
+  helper opcional que gera CSV (RFC 4180; `separator`, `onlySelected`, `bom`) e
+  prefixa com `'` textos iniciados por `=`, `+`, `-` ou `@`
+  (`neutralizeFormulas`). Gerar o arquivo e baixá-lo é do consumidor.
+
+Textos configuráveis em `labels.export` e `labels.resizeColumn`. Exemplos:
+`/componentes/tabela-avancada` no admin-demo e as stories Layout/SmartTable
+(Virtualized, ResizableColumns, ExportHook).

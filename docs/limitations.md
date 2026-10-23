@@ -50,13 +50,24 @@ das validações automatizadas.
   necessário. Sem snapshot visual para ele, o comportamento é coberto
   por testes de componente, SSR e `axe`.
 - O `AdsSmartTable` só apresenta o estado recebido: não busca, ordena, filtra nem
-  pagina dados, não persiste ordenação, seleção ou colunas e não oferece edição
-  em linha, redimensionamento, reordenação de colunas, virtualização nem
-  exportação. "Selecionar todas" vale só para a página exibida; ids de outras
-  páginas em `selectedIds` são preservados e cabe ao consumidor limpá-los. É um
-  Client Component: `cell` e `getRowId` são funções e não atravessam a fronteira
-  de um Server Component. Sem snapshot visual para ele, o
-  comportamento é coberto por testes de componente, SSR e `axe`.
+  pagina dados, não persiste ordenação, seleção, colunas nem larguras e não oferece
+  edição em linha nem reordenação de colunas. Virtualização de linhas
+  (`virtualization`), redimensionamento de colunas (`onColumnWidthsChange`) e
+  exportação (`onExport`) são opcionais. A virtualização exige altura fixa por
+  linha (`rowHeight`), corta o conteúdo que excede essa altura, não oferece linhas
+  de altura variável nem carregamento incremental (a tabela recebe todas as
+  linhas) e, como o navegador só conhece as linhas montadas, a busca nativa da
+  página (Ctrl+F) encontra só as renderizadas; a navegação por Tab percorre as
+  linhas montadas e a região rolável se move com as setas, PageUp/PageDown, Home e
+  End. A exportação emite as colunas visíveis e as linhas recebidas (por exemplo,
+  a página exibida): exportar o conjunto completo continua sendo responsabilidade
+  do consumidor, e `getAdsSmartTableCsv` é o único formato oferecido. O
+  redimensionamento mantém larguras em pixels, sem proporções, e corta o
+  conteúdo com reticências. "Selecionar todas" vale só para as linhas recebidas;
+  ids de outras páginas em `selectedIds` são preservados e cabe ao consumidor
+  limpá-los. É um Client Component: `cell`, `exportValue` e `getRowId` são funções
+  e não atravessam a fronteira de um Server Component. Sem snapshot visual para
+  ele, o comportamento é coberto por testes de componente, SSR, `axe` e E2E.
 - Os fluxos administrativos (`AdsListFlow`, `AdsBulkActionBar`, `AdsStepForm` e
   `AdsConfirmDialog`) só compõem componentes existentes: não persistem nem
   enviam dados e não usam o roteador. `AdsStepForm` não permite navegar clicando

@@ -778,6 +778,76 @@
 		box-shadow: inset 3px 0 0 var(--ads-color-primary);
 	}
 
+	/* Larguras controladas (redimensionamento): o conteúdo excedente é cortado com reticências. */
+	.ads-smart-table-fixed-width {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.ads-smart-table-resizable {
+		position: relative;
+	}
+
+	.ads-smart-table-resizer {
+		position: absolute;
+		inset-block: 0;
+		inset-inline-end: 0;
+		display: flex;
+		justify-content: flex-end;
+		width: 1.5rem;
+		cursor: col-resize;
+		touch-action: none;
+		user-select: none;
+	}
+
+	.ads-smart-table-resizer::after {
+		content: '';
+		width: 2px;
+		background-color: var(--ads-color-border);
+	}
+
+	.ads-smart-table-resizer:hover::after,
+	.ads-smart-table-resizer:focus-visible::after {
+		background-color: var(--ads-color-primary);
+	}
+
+	.ads-smart-table-resizer:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: -2px;
+	}
+
+	/*
+	 * Virtualização: linhas de altura fixa dentro de uma região rolável com cabeçalho fixo. Os
+	 * separadores são sombras internas, que não alteram a altura que o cálculo da janela supõe.
+	 */
+	.ads-smart-table[data-virtualized] .ads-smart-table-scroll {
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		scroll-padding-top: 3rem;
+	}
+
+	.ads-smart-table[data-virtualized] .ads-table-head th {
+		position: sticky;
+		top: 0;
+		z-index: 1;
+		background-color: var(--ads-color-surface-muted);
+	}
+
+	.ads-smart-table[data-virtualized] .ads-table-body td {
+		box-sizing: border-box;
+		padding-block: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+		box-shadow: inset 0 -1px 0 var(--ads-color-border);
+	}
+
+	.ads-smart-table[data-virtualized] .ads-smart-table-spacer td {
+		padding: 0;
+		box-shadow: none;
+	}
+
 	.ads-smart-table-state {
 		padding: 1rem;
 	}

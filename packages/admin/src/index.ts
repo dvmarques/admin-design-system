@@ -42,6 +42,14 @@ export type {
 	AdsTextFilter,
 } from './filter-bar.js';
 export { AdsSmartTable } from './smart-table.js';
+export { getAdsSmartTableCsv } from './smart-table-export.js';
+export type {
+	AdsSmartTableCsvOptions,
+	AdsSmartTableExport,
+	AdsSmartTableExportColumn,
+	AdsSmartTableExportValue,
+} from './smart-table-export.js';
+export type { AdsSmartTableVirtualization } from './smart-table-virtual.js';
 export type {
 	AdsSmartTableColumn,
 	AdsSmartTableLabels,

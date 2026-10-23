@@ -8,7 +8,12 @@ import snippets from './app/catalogo/catalog-snippets.json';
 import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';
 
 const root = resolve(process.cwd()) + '/';
-const exclusions = ['fixtureVariants', 'getAdsPaginationItems', 'useAdsAdminShell'];
+const exclusions = [
+	'fixtureVariants',
+	'getAdsPaginationItems',
+	'getAdsSmartTableCsv',
+	'useAdsAdminShell',
+];
 function runtimeExports(path: string) {
 	const source = ts.createSourceFile(
 		path,

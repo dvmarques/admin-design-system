@@ -174,3 +174,18 @@ já absorvido na develop. A tolerância de 10% e as verificações de pacotes n�
 foram alteradas. Como nos incrementos públicos anteriores registrados neste
 documento, o custo explícito deve ser considerado na revisão desta PR; não
 representa uma correção de tamanho sem custo nem um bundle menor.
+
+## Evolução do AdsSmartTable (#93)
+
+Medido com `npm run build` e `inspect:packages` (Node 22.22.0, LF). Na `develop`
+`5919f77`, `@admin-ds/admin` mede **186447 bytes / 61 arquivos** (baseline anterior
+170121, já em 9,6%, no limite da tolerância). Após a #93: **221648 bytes** (+35201,
++18,9% sobre a `develop`); components (388846) e tokens (36342) não mudaram.
+
+O incremento vem de três módulos novos (`smart-table-virtual`,
+`smart-table-resizer` e `smart-table-export`, cada um com JavaScript, source maps e
+declarações, cerca de 19 KB), do crescimento de `smart-table` (props, renderização
+da janela e botão de exportação) e do CSS `ads-smart-table-*` das alças e da região
+virtualizada. Os recursos são opt-in, mas vivem no mesmo pacote; não há dependência
+de runtime nova nem virtualização de terceiros. O baseline de `@admin-ds/admin` foi
+atualizado de 170121 para **221648** e deve ser considerado na revisão da PR.

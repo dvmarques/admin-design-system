@@ -74,26 +74,32 @@ export function getAdsResponsivePaginationItems(
 ): AdsPaginationPage[] {
  if (pageCount <= 0) return [];
  const current = Math.min(Math.max(1, page), pageCount);
- const mandatory = new Set([1, current, pageCount]);
- const selected = new Set(mandatory);
- const capacity = Math.max(mandatory.size, slots);
- for (let offset = 1; offset <= pageCount && selected.size < capacity; offset++) {
-  for (const candidate of [current - offset, current + offset]) {
-   if (candidate > 1 && candidate < pageCount && Math.abs(candidate - current) <= siblingCount && selected.size < capacity) selected.add(candidate);
+ const selected = new Set([1, current, pageCount]);
+ const maxSiblings = Math.max(0, siblingCount);
+ const build = (pages: Set<number>): AdsPaginationPage[] => {
+  const sorted = [...pages].sort((a,b) => a-b);
+  const result: AdsPaginationPage[] = [];
+  for (let i=0; i<sorted.length; i++) {
+   const value=sorted[i]!;
+   if (i) {
+    const gap=value-sorted[i-1]!-1;
+    if (gap===1) result.push(value-1);
+    else if (gap>1) result.push('ellipsis');
+   }
+   result.push(value);
+  }
+  return result;
+ };
+ // Reserve capacity for ellipses as well as numeric buttons.
+ for (let offset=1; offset<=maxSiblings; offset++) {
+  for (const candidate of [current-offset,current+offset]) {
+   if (candidate<=1 || candidate>=pageCount || selected.has(candidate)) continue;
+   const trial=new Set(selected);
+   trial.add(candidate);
+   if (build(trial).length<=Math.max(3,slots)) selected.add(candidate);
   }
  }
- const sorted = [...selected].sort((a,b) => a-b);
- const result: AdsPaginationPage[] = [];
- for (let i=0; i<sorted.length; i++) {
-  const value=sorted[i]!;
-  if (i && value - sorted[i-1]! > 1) {
-   const gap=value-sorted[i-1]!-1;
-   if (gap===1 && result.length+sorted.length-i+1 <= slots) result.push(value-1);
-   else result.push('ellipsis');
-  }
-  result.push(value);
- }
- return result;
+ return build(selected);
 }
 
 export function AdsPagination({
@@ -109,13 +115,13 @@ export function AdsPagination({
  const [width, setWidth] = useState<number | null>(null);
  const [jumpValue, setJumpValue] = useState(String(safePage));
  const [jumpError, setJumpError] = useState(false);
- const [measured, setMeasured] = useState(false);
+
  useEffect(() => {
   const node=containerRef.current;
   if (!node || typeof ResizeObserver === 'undefined') return;
   const observer=new ResizeObserver(entries => {
    const next=entries[0]?.contentRect.width;
-   if (next !== undefined) { setWidth(previous => previous === next ? previous : next); setMeasured(true); }
+   if (next !== undefined) { setWidth(previous => previous === next ? previous : next); }
   });
   observer.observe(node);
   return () => observer.disconnect();
@@ -147,7 +153,7 @@ export function AdsPagination({
  // A conservative minimum button width avoids resize feedback from the contents.
  const controlsWidth=(navigationMode==='arrows'?88:176)+(showFirstLast?88:0);
  const slots=width===null ? siblingCount*2+5 : Math.max(3,Math.floor((width-controlsWidth-32)/48));
- const items=!measured || width===null?getAdsPaginationItems(safePage,pageCount,siblingCount):
+ const items=width===null?getAdsPaginationItems(safePage,pageCount,siblingCount):
   getAdsResponsivePaginationItems(safePage,pageCount,siblingCount,slots);
  return <nav {...props} ref={containerRef} aria-label={ariaLabel} aria-busy={loading || undefined}
   className={classNames('ads-pagination flex max-w-full min-w-0 flex-wrap items-center gap-2',className)}>

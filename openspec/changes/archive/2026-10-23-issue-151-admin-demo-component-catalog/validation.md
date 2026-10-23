@@ -86,3 +86,7 @@ A execução anterior `39979454512` comprova somente a entrega inicial. A CI aci
 - Workflow oficial https://github.com/dvmarques/admin-design-system/actions/runs/40031384579 concluído com sucesso, regenerando os snapshots e repetindo a suíte Chromium sem atualização. Commit gerado: e28024a (16 PNGs).
 - Todas as 16 diferenças foram inspecionadas em comparativos antes/depois: desktop claro/escuro, sidebar recolhida, drawer móvel e páginas de aplicação. As dimensões das imagens permaneceram iguais. Comparação por pixels confirmou ausência de diferenças fora da sidebar nas 14 imagens desktop; nas duas móveis as diferenças ficam no painel da navegação. O conteúdo das telas de negócio permanece igual.
 - Baselines integrados localmente por fast-forward. O próximo push com a inclusão autorizada de lockfile e tipos gerados também dispara a CI da PR, pois o commit do workflow usa GITHUB_TOKEN e não dispara a CI automaticamente.
+
+## Gate final antes do arquivamento
+
+A CI do SHA 22793aa963cb12749de54669e7f0b1f93af90ab2 passou integralmente: https://github.com/dvmarques/admin-design-system/actions/runs/40032257665. Qualidade, artefatos, política de develop e execução real de Chromium (com snapshots oficiais), Firefox e WebKit concluíram com sucesso; apenas o job de release, não aplicável, foi pulado. As 19 tarefas estão concluídas. Revisão e squash para develop autorizados pelo usuário após a aprovação da revisão.

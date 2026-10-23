@@ -1,5 +1,9 @@
 # Catálogo de componentes
 
+## Purpose
+
+Definir o catálogo navegável da aplicação de demonstração, sua cobertura de componentes públicos e a navegação hierárquica reutilizável e acessível da sidebar.
+
 ## ADDED Requirements
 
 ### Requirement: Índice pesquisável

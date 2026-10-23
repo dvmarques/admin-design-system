@@ -21,4 +21,4 @@
 - [x] 17. Formatar e validar OpenSpec, lint, build, tipos, testes e E2E; inspecionar claro/escuro e desktop/mobile, registrando limitações dos snapshots oficiais.
 
 - [x] 18. Atender revisão da PR #177: associar seções acessíveis por título, distinguir ícones/iniciais no modo recolhido, consolidar changelog e validar regressões, build, tipos, lint, formatação e E2E.
-- [ ] 19. Publicar correções, atualizar baselines Linux pelo workflow oficial, inspecionar imagens e confirmar CI do SHA final.
+- [x] 19. Publicar correções, atualizar baselines Linux pelo workflow oficial, inspecionar imagens e confirmar CI do SHA final.

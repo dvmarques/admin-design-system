@@ -15,7 +15,7 @@ export default function MissingExamplesPage() {
         <div className="demo-form-surface">
           <AdsFieldLabel htmlFor="catalog-amount">Valor em reais</AdsFieldLabel>
           <AdsInputGroup startContent="R$" endContent={<AdsButton type="button" onClick={() => setAmount('0')}>Limpar</AdsButton>}>
-            <AdsInput id="catalog-amount" value={amount} onChange={(event) => setAmount(event.target.value)} aria-describedby="catalog-amount-description catalog-amount-error" aria-invalid={error} />
+            <AdsInput id="catalog-amount" value={amount} onChange={(event) => setAmount(event.target.value)} aria-describedby={error ? "catalog-amount-description catalog-amount-error" : "catalog-amount-description"} aria-invalid={error} validationState={error ? "error" : "default"} />
           </AdsInputGroup>
           <AdsFieldDescription id="catalog-amount-description">Digite um valor e use o botão para limpar.</AdsFieldDescription>
           {error ? <AdsFieldMessage id="catalog-amount-error">Informe um valor válido.</AdsFieldMessage> : null}

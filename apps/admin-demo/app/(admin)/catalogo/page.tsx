@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { useMemo, useState } from 'react';
 
-import { catalogEntries } from './catalog-data';
+import { catalogEntries } from '../../catalogo/catalog-data';
 
 export default function CatalogPage() {
   const [query, setQuery] = useState('');

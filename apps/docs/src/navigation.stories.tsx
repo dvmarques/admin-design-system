@@ -117,6 +117,21 @@ export const Pagination: Story = {
 	},
 };
 
+/** Paginação responsiva em contêiner que pode ser redimensionado no Storybook. */
+export const PaginationResponsive: Story = {
+ render: () => {
+  const [page,setPage]=useState(25);
+  return <div style={{width:'min(100%, 420px)',resize:'horizontal',overflow:'auto',padding:'1rem'}}>
+   <AdsPagination page={page} pageCount={50} onPageChange={setPage}
+    navigationMode="arrows" showFirstLast showPageJump />
+  </div>;
+ },
+};
+
+export const PaginationLoading: Story = {
+ render: () => <AdsPagination page={5} pageCount={20} loading navigationMode="arrows" />,
+};
+
 const ConsumerLink = ({
 	href,
 	...props

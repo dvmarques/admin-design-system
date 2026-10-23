@@ -129,6 +129,12 @@ export interface AdsSmartTableProps<Row> extends Omit<
 	filters?: ReactNode;
 	/** Paginação opcional, abaixo da tabela. */
 	pagination?: AdsPaginationProps;
+	/** Quantidade total de registros, quando conhecida. */
+	totalItems?: number;
+	/** Tamanho da página controlado pela aplicação. */
+	pageSize?: number;
+	pageSizeOptions?: readonly number[];
+	onPageSizeChange?: (size: number) => void;
 	labels?: Partial<AdsSmartTableLabels>;
 }
 
@@ -183,6 +189,10 @@ export function AdsSmartTable<Row>({
 	onSelectionChange,
 	onSortChange,
 	pagination,
+	pageSize,
+	pageSizeOptions = [10, 25, 50, 100],
+	onPageSizeChange,
+	totalItems,
 	rows,
 	selectedIds = emptyIds,
 	selectionMode = 'multiple',
@@ -267,6 +277,10 @@ export function AdsSmartTable<Row>({
 	const selectedCount = selectedIds.length;
 	const colSpan = Math.max(1, visibleColumns.length + (selectable ? 1 : 0));
 	const showToolbar = selectable || onHiddenColumnsChange !== undefined;
+	const hasTotal = totalItems !== undefined && Number.isFinite(totalItems) && totalItems >= 0;
+	const validPageSize = pageSize !== undefined && Number.isInteger(pageSize) && pageSize > 0;
+	const firstItem = hasTotal && validPageSize && pagination && totalItems! > 0 ? (Math.max(1, pagination.page) - 1) * pageSize! + 1 : 0;
+	const lastItem = hasTotal && validPageSize && firstItem > 0 ? Math.min(totalItems!, firstItem + pageSize! - 1) : 0;
 
 	let body: ReactNode;
 	if (hasError) {
@@ -464,6 +478,15 @@ export function AdsSmartTable<Row>({
 			</AdsTable>
 			{pagination ? (
 				<div className="ads-smart-table-pagination">
+					{hasTotal && validPageSize ? <span className="ads-smart-table-page-summary">
+						{totalItems === 0 || firstItem > totalItems! ? 'Nenhum registro' : `Exibindo ${firstItem}–${lastItem} de ${totalItems} registros`}
+					</span> : null}
+					{validPageSize && onPageSizeChange ? <label className="ads-smart-table-page-size">
+						<span>Registros por página</span>
+						<select value={pageSize} onChange={(event) => onPageSizeChange(Number(event.target.value))}>
+							{[...new Set([...pageSizeOptions, pageSize!])].filter((size) => Number.isInteger(size) && size > 0).sort((a,b) => a-b).map((size) => <option key={size} value={size}>{size}</option>)}
+						</select>
+					</label> : null}
 					<AdsPagination {...pagination} />
 				</div>
 			) : null}

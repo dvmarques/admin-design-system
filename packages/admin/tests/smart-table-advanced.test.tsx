@@ -3,6 +3,7 @@ import axe from 'axe-core';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import {
+	AdsListFlow,
 	AdsSmartTable,
 	getAdsSmartTableCsv,
 	type AdsSmartTableColumn,
@@ -52,7 +53,7 @@ async function violations(container: HTMLElement) {
 const virtualization = { rowHeight: 40, height: 200, overscan: 2 };
 
 function dataRows() {
-	return screen.getAllByRole('row').filter((row) => row.hasAttribute('aria-rowindex'));
+	return screen.getAllByRole('row').filter((row) => Number(row.getAttribute('aria-rowindex')) > 1);
 }
 
 describe('getVirtualSlices', () => {
@@ -82,6 +83,7 @@ describe('getVirtualSlices', () => {
 			scrollTop: 2000,
 		});
 		expect(slices.some((s) => s.type === 'row' && s.index === 2)).toBe(true);
+		expect(slices.some((s) => s.type === 'row' && s.index === 3)).toBe(true);
 		const total = slices.reduce((sum, s) => sum + (s.type === 'spacer' ? s.height : 40), 0);
 		expect(total).toBe(4000);
 	});
@@ -104,6 +106,7 @@ describe('AdsSmartTable virtualization', () => {
 		const rendered = dataRows();
 		expect(rendered.length).toBeLessThan(15);
 		expect(screen.getByRole('table')).toHaveAttribute('aria-rowcount', '1001');
+		expect(screen.getAllByRole('row')[0]).toHaveAttribute('aria-rowindex', '1');
 		expect(rendered[0]).toHaveAttribute('aria-rowindex', '2');
 		expect(screen.getByRole('cell', { name: 'Item 1' })).toBeInTheDocument();
 		expect(screen.queryByRole('cell', { name: 'Item 500' })).not.toBeInTheDocument();
@@ -342,5 +345,31 @@ describe('AdsSmartTable export', () => {
 		);
 		const toolbar = screen.getByRole('button', { name: 'Exportar' }).parentElement!;
 		expect(within(toolbar).getByRole('button', { name: 'Exportar' })).toBeInTheDocument();
+	});
+});
+
+describe('AdsListFlow with advanced options', () => {
+	it('forwards virtualization, widths and export to the table', () => {
+		const onExport = vi.fn<(data: AdsSmartTableExport<Item>) => void>();
+		render(
+			<AdsListFlow<Item>
+				bulkActions={<button>Excluir</button>}
+				caption="Itens"
+				columnWidths={{ name: 200 }}
+				columns={columns}
+				getRowId={(i) => i.id}
+				onColumnWidthsChange={() => {}}
+				onExport={onExport}
+				onSelectionChange={() => {}}
+				rows={items}
+				selectedIds={['i2']}
+				virtualization={virtualization}
+			/>,
+		);
+		expect(screen.getByRole('table')).toHaveAttribute('aria-rowcount', '1001');
+		expect(dataRows().length).toBeLessThan(15);
+		expect(screen.getAllByRole('separator')).toHaveLength(3);
+		fireEvent.click(screen.getByRole('button', { name: 'Exportar' }));
+		expect(onExport.mock.calls[0]![0].selectedRows.map((row) => row.id)).toEqual(['i2']);
 	});
 });

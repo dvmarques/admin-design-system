@@ -45,12 +45,14 @@ export function getVirtualSlices({
 	const extra = Math.max(0, Math.floor(overscan));
 	const start = Math.min(count - 1, Math.max(0, Math.floor(top / rowHeight) - extra));
 	const end = Math.min(count, Math.ceil((top + height) / rowHeight) + extra);
-	const indexes: number[] = [];
-	if (focusedIndex !== null && focusedIndex >= 0 && focusedIndex < start)
-		indexes.push(focusedIndex);
-	for (let index = start; index < Math.max(end, start + 1); index += 1) indexes.push(index);
-	if (focusedIndex !== null && focusedIndex >= end && focusedIndex < count)
-		indexes.push(focusedIndex);
+	const wanted = new Set<number>();
+	for (let index = start; index < Math.max(end, start + 1); index += 1) wanted.add(index);
+	// A linha focada e suas vizinhas ficam montadas: o próximo Tab alcança a vizinha, o navegador
+	// a rola para a vista e a janela acompanha.
+	if (focusedIndex !== null && focusedIndex >= 0 && focusedIndex < count)
+		for (const index of [focusedIndex - 1, focusedIndex, focusedIndex + 1])
+			if (index >= 0 && index < count) wanted.add(index);
+	const indexes = [...wanted].sort((a, b) => a - b);
 
 	const slices: VirtualSlice[] = [];
 	let next = 0;

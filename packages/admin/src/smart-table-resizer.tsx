@@ -14,6 +14,7 @@ export function clampWidth(width: number, min: number, max: number) {
 
 interface ResizerProps {
 	label: string;
+	formatValue: (width: number) => string;
 	/** Largura controlada pelo consumidor; sem ela, vale a medida do cabeçalho ou `fallback`. */
 	width: number | undefined;
 	fallback: number;
@@ -25,6 +26,7 @@ interface ResizerProps {
 
 /** Alça de redimensionamento: separador focável (padrão window splitter) com ponteiro e teclado. */
 export function SmartTableResizer({
+	formatValue,
 	fallback,
 	label,
 	max,
@@ -96,7 +98,7 @@ export function SmartTableResizer({
 			aria-valuemax={max}
 			aria-valuemin={min}
 			aria-valuenow={current}
-			aria-valuetext={`${current} px`}
+			aria-valuetext={formatValue(current)}
 			className="ads-smart-table-resizer"
 			onDoubleClick={onReset}
 			onKeyDown={onKeyDown}

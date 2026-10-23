@@ -54,10 +54,10 @@ das validações automatizadas.
   edição em linha nem reordenação de colunas. Virtualização de linhas
   (`virtualization`), redimensionamento de colunas (`onColumnWidthsChange`) e
   exportação (`onExport`) são opcionais. A virtualização exige altura fixa por
-  linha (`rowHeight`), corta o conteúdo que excede essa altura, não oferece linhas
+  linha (`rowHeight`), corta o conteúdo que excede essa altura (inclusive ao ampliar o texto ou o zoom, pois `rowHeight` é em pixels), não oferece linhas
   de altura variável nem carregamento incremental (a tabela recebe todas as
   linhas) e, como o navegador só conhece as linhas montadas, a busca nativa da
-  página (Ctrl+F) encontra só as renderizadas; a navegação por Tab percorre as
+  página (Ctrl+F) e a leitura por leitores de tela encontram só as linhas renderizadas, com `aria-rowcount` e `aria-rowindex` informando o total; a navegação por Tab percorre as
   linhas montadas e a região rolável se move com as setas, PageUp/PageDown, Home e
   End. A exportação emite as colunas visíveis e as linhas recebidas (por exemplo,
   a página exibida): exportar o conjunto completo continua sendo responsabilidade

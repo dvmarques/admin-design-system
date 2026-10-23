@@ -108,6 +108,8 @@ export interface AdsSmartTableLabels {
 	export?: string;
 	/** Nome acessível da alça de redimensionamento de uma coluna. */
 	resizeColumn?: (column: string) => string;
+	/** Texto de valor da alça de redimensionamento, lido por tecnologia assistiva. */
+	resizeValue?: (width: number) => string;
 }
 
 const defaultLabels: Required<AdsSmartTableLabels> = {
@@ -134,6 +136,7 @@ const defaultLabels: Required<AdsSmartTableLabels> = {
 	scrollRegion: 'Tabela rolável',
 	export: 'Exportar',
 	resizeColumn: (column) => `Redimensionar coluna ${column}`,
+	resizeValue: (width) => `${width} px`,
 };
 
 export interface AdsSmartTableProps<Row> extends Omit<
@@ -207,8 +210,12 @@ function getExportValue<Row>(
 }
 
 /** Cabeçalho e linhas de estado (vazio, erro e carregamento), sem realce de hover. */
-function StaticRow({ children }: { children: ReactNode }) {
-	return <AdsTableRow interactive={false}>{children}</AdsTableRow>;
+function StaticRow({ children, rowIndex }: { children: ReactNode; rowIndex?: number }) {
+	return (
+		<AdsTableRow aria-rowindex={rowIndex} interactive={false}>
+			{children}
+		</AdsTableRow>
+	);
 }
 
 function SortIndicator({ direction }: { direction: AdsSmartTableSortDirection | null }) {
@@ -553,7 +560,7 @@ export function AdsSmartTable<Row>({
 					{caption}
 				</AdsTableCaption>
 				<AdsTableHead>
-					<StaticRow>
+					<StaticRow {...(virtual && { rowIndex: 1 })}>
 						{selectable ? (
 							<AdsTableHeader className="ads-smart-table-select-cell">
 								{selectionMode === 'multiple' ? (
@@ -570,7 +577,8 @@ export function AdsSmartTable<Row>({
 								)}
 							</AdsTableHeader>
 						) : null}
-						{visibleColumns.map((column) => {
+						{visibleColumns.map((column, columnIndex) => {
+							const labelId = `${baseId}-header-${columnIndex}`;
 							const sortable = column.sortable === true && onSortChange !== undefined;
 							const direction = sort?.columnId === column.id ? sort.direction : null;
 							const width = widthFor(column);
@@ -580,6 +588,8 @@ export function AdsSmartTable<Row>({
 							return (
 								<AdsTableHeader
 									align={column.align ?? 'start'}
+									// A alça é descendente do <th>; o nome do cabeçalho vem só do rótulo.
+									aria-labelledby={canResize ? labelId : undefined}
 									style={widthStyle(width)}
 									aria-sort={
 										sortable
@@ -603,9 +613,11 @@ export function AdsSmartTable<Row>({
 											onClick={() => changeSort(column)}
 											type="button"
 										>
-											<span>{column.label}</span>
+											<span id={canResize ? labelId : undefined}>{column.label}</span>
 											<SortIndicator direction={direction} />
 										</button>
+									) : canResize ? (
+										<span id={labelId}>{column.label}</span>
 									) : (
 										column.label
 									)}
@@ -613,6 +625,7 @@ export function AdsSmartTable<Row>({
 										<SmartTableResizer
 											fallback={column.defaultWidth ?? defaultColumnWidth}
 											label={labels.resizeColumn(column.label)}
+											formatValue={labels.resizeValue}
 											max={maxWidth}
 											min={minWidth}
 											onReset={() => setWidth(column, null)}

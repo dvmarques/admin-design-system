@@ -286,7 +286,7 @@ export const catalogEntries = [
 		slug: 'dialog',
 		demo: 'Dialog',
 		description:
-			'Overlay com papel alertdialog em ações destrutivas, foco contido, Escape e retorno ao gatilho.',
+			'Overlay com foco contido, Escape, retorno ao gatilho e papel dialog ou alertdialog.',
 		href: '/catalogo/dialog',
 	},
 	{
@@ -294,8 +294,7 @@ export const catalogEntries = [
 		group: 'Feedback',
 		slug: 'drawer',
 		demo: 'Drawer',
-		description:
-			'Overlay com papel alertdialog em ações destrutivas, foco contido, Escape e retorno ao gatilho.',
+		description: 'Overlay com foco contido, Escape e retorno ao gatilho.',
 		href: '/catalogo/drawer',
 	},
 	{

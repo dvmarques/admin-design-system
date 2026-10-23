@@ -10,6 +10,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `issue-151-admin-demo-component-catalog` (issue #151) - Inicia a reorganização da navegação da aplicação de demonstração em grupos, adiciona índice pesquisável dos exports públicos de UI e exemplos interativos de composição de campos e legendas de tabelas. A cobertura individual completa e as validações permanecem pendentes; sem alterações nas APIs públicas dos pacotes.
+
+
 - `fix-138-responsive-pagination` (issue #138) - AdsPagination passa a observar a largura do próprio contêiner e oferece, por props opcionais, setas, primeira/última página, salto direto validado, carregamento e rótulos personalizáveis. Mantém os controles de texto por padrão. Inclui salto por links sem formulário aninhado, correção controlada de página inválida, preservação de foco e rodapé opcional da SmartTable com tamanho controlado e resumo das linhas recebidas. A documentação esclarece a personalização conjunta de texto/nome acessível, o limite de adjacentes por `siblingCount` e a escolha dos controles nativos.
 
 - `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,

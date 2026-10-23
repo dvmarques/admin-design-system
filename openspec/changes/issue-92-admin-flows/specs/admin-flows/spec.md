@@ -64,6 +64,11 @@
 - **WHEN** a validação assíncrona está pendente e um campo da etapa é editado
 - **THEN** a validação pendente é cancelada, o resultado dela é descartado, a etapa não é marcada como validada e a pessoa precisa acionar "Próxima" de novo; durante a espera os campos da etapa ficam inertes
 
+#### Scenario: Valor alterado por código durante a validação
+
+- **WHEN** o valor de um campo nativo da etapa é alterado por código, sem evento `change`, enquanto a validação está pendente
+- **THEN** o resultado é descartado e a etapa não avança nem é marcada como validada
+
 #### Scenario: Resultado obsoleto
 
 - **WHEN** a etapa ativa muda ou o componente desmonta antes de a Promise resolver

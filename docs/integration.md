@@ -1126,7 +1126,9 @@ const steps = [
   se perde) até resolver; rejeitar equivale a `false`, e um resultado que chega
   depois de a etapa mudar ou do desmonte é descartado. Os campos ficam inertes
   durante a espera e editar um campo cancela a validação pendente (acione
-  "Próxima" de novo); evite alterar o estado programaticamente enquanto valida.
+  "Próxima" de novo), e alterar por código o valor de um campo nativo da etapa
+  durante a espera descarta o resultado; estado sem campo nativo correspondente
+  não é detectado, então evite alterá-lo enquanto valida.
   Retorno síncrono continua sendo tratado de forma síncrona.
 - O indicador de etapas navega para etapas anteriores e, adiante, apenas para as
   que já foram validadas ao avançar (a atual e as intermediárias incluídas). Editar

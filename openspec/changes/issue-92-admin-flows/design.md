@@ -19,7 +19,7 @@ Os demais itens permanecem texto, sem interatividade. Editar um campo de uma eta
 
 ## AdsStepForm: validação assíncrona
 
-`validate?: () => boolean | Promise<boolean>`. Resultado síncrono é tratado de forma síncrona, preservando o comportamento atual. Para uma Promise: o formulário entra em `validating` (`aria-busy`, ações com `aria-disabled` sem perder o foco, indicador de carregamento no botão acionado) e uma região `role="status"` anuncia `labels.validating`; ao resolver, aplica o resultado como na validação síncrona. Rejeição equivale a `false` (etapa inválida) e exibe `invalidStep`. Resultados obsoletos (a etapa ativa mudou ou o componente desmontou) são descartados por token. Ações durante `validating` são ignoradas. Os campos das etapas ficam inertes (atributo `inert` definido por efeito, compatível com React 18) até a validação terminar, e um `change` na etapa durante a espera cancela a validação pendente (o resultado é descartado e a etapa não é marcada como válida). Alterações programáticas de estado do consumidor, sem evento `change`, não são detectáveis pelo componente: o consumidor deve evitá-las enquanto valida (limitação registrada em `docs/limitations.md`). A revalidação após edição usa o mesmo resultado, em modo silencioso (sem carregamento e sem mover o foco).
+`validate?: () => boolean | Promise<boolean>`. Resultado síncrono é tratado de forma síncrona, preservando o comportamento atual. Para uma Promise: o formulário entra em `validating` (`aria-busy`, ações com `aria-disabled` sem perder o foco, indicador de carregamento no botão acionado) e uma região `role="status"` anuncia `labels.validating`; ao resolver, aplica o resultado como na validação síncrona. Rejeição equivale a `false` (etapa inválida) e exibe `invalidStep`. Resultados obsoletos (a etapa ativa mudou ou o componente desmontou) são descartados por token. Ações durante `validating` são ignoradas. Os campos das etapas ficam inertes (atributo `inert` definido por efeito, compatível com React 18) até a validação terminar, e um `change` na etapa durante a espera cancela a validação pendente (o resultado é descartado e a etapa não é marcada como válida). Alterações feitas por código nos valores dos campos nativos da etapa (sem evento `change`) são detectadas comparando um instantâneo dos valores no início e no fim da validação; o resultado é descartado se diferirem. Estado do consumidor sem campo nativo correspondente não é detectável: o consumidor deve evitá-lo enquanto valida (limitação registrada em `docs/limitations.md`). A revalidação após edição usa o mesmo resultado, em modo silencioso (sem carregamento e sem mover o foco).
 
 ## Acessibilidade
 
@@ -37,7 +37,7 @@ Apenas classes `ads-` e variáveis `--ads-*` em `packages/admin/src/styles.css`,
 
 ## Bundle e dependências
 
-Sem dependências novas. Medido: `@admin-ds/admin` 186447 → 197269 bytes (+10822, com declarações e mapas) e `@admin-ds/components` 388846 → 389188 (+342). O baseline do admin foi atualizado de 170121 para 197269 (o commit base já estava 9,6% acima do baseline anterior); detalhes em `docs/bundle-baseline.md`.
+Sem dependências novas. Medido: `@admin-ds/admin` 186447 → 198480 bytes (+12033, com declarações e mapas) e `@admin-ds/components` 388846 → 389188 (+342). O baseline do admin foi atualizado de 170121 para 198480 (o commit base já estava 9,6% acima do baseline anterior); detalhes em `docs/bundle-baseline.md`.
 
 ## Rollback
 

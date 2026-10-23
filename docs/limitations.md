@@ -66,8 +66,11 @@ das validações automatizadas.
   invalidam. A validação assíncrona trata rejeição como etapa inválida e não
   cancela a requisição do consumidor (só descarta o resultado obsoleto). Durante
   a espera os campos ficam inertes e um evento `change` cancela a validação
-  pendente; mudanças programáticas no estado do consumidor, sem esse evento, não
-  são detectadas, e o resultado `true` ainda avança com os dados já alterados.
+  pendente. Mudanças feitas por código nos valores dos campos nativos
+  (`input`, `select`, `textarea`) da etapa também descartam o resultado, por
+  comparação dos valores no início e no fim; estado do consumidor que não aparece
+  nesses campos (widgets sem campo nativo) não é detectado, e um `true` ainda avança
+  com esses dados alterados.
   `AdsConfirmDialog` usa `role="alertdialog"` quando `destructive` (padrão) e
   `dialog` caso contrário; `AdsDrawer` não expõe `role`. Em `AdsListFlow` o
   slot `filters` da tabela é ocupado pelo fluxo. Sem snapshot visual

@@ -887,6 +887,21 @@ describe('AdsStepForm indicator navigation and async validation', () => {
 		expect(onStepChange).toHaveBeenCalledTimes(1);
 	});
 
+	it('discards the result when a field value is changed programmatically while validating', async () => {
+		const gate = deferred();
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={() => gate.promise} />);
+		next();
+		// Sem evento `change`: só o valor do campo muda.
+		(screen.getByLabelText('Nome') as HTMLInputElement).value = 'alterado por código';
+		gate.resolve(true);
+		await waitFor(() =>
+			expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy'),
+		);
+		expect(onStepChange).not.toHaveBeenCalled();
+		expect(steps().queryAllByRole('button')).toHaveLength(0);
+	});
+
 	it('submits once after an async validation of the last step', async () => {
 		const gate = deferred();
 		const onSubmit = vi.fn();

@@ -87,6 +87,17 @@ function isThenable(value: unknown): value is PromiseLike<boolean> {
 	);
 }
 
+/** Valores dos campos nativos da etapa, para detectar mudanças feitas sem evento `change`. */
+function fieldSnapshot(section: HTMLElement | null | undefined): string {
+	if (!section) return '';
+	return JSON.stringify(
+		Array.from(section.querySelectorAll<HTMLInputElement>('input, select, textarea')).map(
+			(field) =>
+				field.type === 'checkbox' || field.type === 'radio' ? field.checked : field.value,
+		),
+	);
+}
+
 function fill(template: string, values: Record<string, string | number>) {
 	return template.replace(/\{(\w+)\}/g, (match, key: string) =>
 		key in values ? String(values[key]) : match,
@@ -243,6 +254,8 @@ export function AdsStepForm({
 			return;
 		}
 		const token = ++runToken.current;
+		const stepId = active.id;
+		const before = fieldSnapshot(sectionRefs.current[stepId]);
 		validatingRef.current = true;
 		setValidating(action);
 		setAnnouncement(labels.validating);
@@ -256,6 +269,8 @@ export function AdsStepForm({
 				validatingRef.current = false;
 				setValidating(null);
 				setAnnouncement('');
+				// Valores alterados por código durante a espera: o resultado vale para dados antigos.
+				if (fieldSnapshot(sectionRefs.current[stepId]) !== before) return;
 				finish(ok, then);
 			});
 	}

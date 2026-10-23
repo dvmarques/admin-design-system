@@ -1112,3 +1112,84 @@ const steps = [
 - A última etapa mostra "Confirmar" (`labels.submit`), que valida e chama
   `onSubmit`. Inclua nela um resumo para revisão. `submitting` desabilita as
   ações e define `aria-busy`. `Enter` em um campo não envia nem avança.
+
+## Paginação adaptativa e rodapé opcional
+
+`AdsPagination` observa a largura real do contêiner e dos controles, preservando
+primeira, atual e última página. `siblingCount` limita os adjacentes; uma lacuna
+unitária usa o número da página quando cabe. Se faltam slots para reticências,
+elas cedem espaço aos números obrigatórios. Se o conjunto mínimo não cabe fisicamente,
+a região "Controles de paginação roláveis" permite rolar e receber foco, com
+folga vertical para bordas, hover e foco. Os dígitos usam largura estável pelo
+total de páginas. SSR produz HTML determinístico; a medição começa após montagem.
+
+A adaptação reduz a lista calculada por `siblingCount` (padrão 1, até sete
+itens numéricos/reticências para coleções extensas); ela não acrescenta mais
+adjacentes só porque o contêiner ficou largo. Para ampliar essa lista, configure
+`siblingCount`. Totais pequenos mantêm a exibição completa quando couber.
+
+O padrão continua texto "Anterior"/"Próxima", sem salto ou controles extras.
+`navigationMode="arrows"`, `previousContent`, `nextContent`, `showFirstLast`,
+`showPageJump` e `loading` são opcionais. `labels` personaliza nomes acessíveis,
+`previousText`/`nextText`, salto, erro e nome da região rolável. As props
+públicas e `renderPage` legado continuam disponíveis; prefira `renderPageLink`
+e espalhe as props recebidas no link, sem envolver um botão em uma âncora.
+
+Ao trocar `labels.previousText` ou `labels.nextText`, atualize também
+`labels.previous` ou `labels.next`: o nome acessível deve conter o texto
+visível, inclusive com `previousContent`/`nextContent` customizados. Exemplo:
+`labels={{ previousText: "Voltar", previous: "Voltar uma página", nextText: "Avançar", next: "Avançar uma página" }}`.
+No modo de setas sem texto, mantenha nomes acessíveis descritivos.
+
+```tsx
+<AdsPagination
+	page={page}
+	pageCount={pageCount}
+	onPageChange={setPage}
+	navigationMode="arrows"
+	showPageJump
+	loading={pending}
+/>
+```
+
+O salto aceita inteiro decimal entre 1 e `pageCount`, por Enter ou "Ir";
+vazio, fração, expoente, fora da faixa e página atual não navegam. O campo
+sincroniza mudanças externas de página e total. Não cria form, podendo ser
+usado dentro do formulário do consumidor. Com `renderPageLink`, "Ir" é o link
+do consumidor e Enter ativa esse mesmo link; o callback de paginação não é
+chamado nesse modo. Loading usa `aria-disabled` e `aria-busy`, mantém os links
+e botões focáveis e bloqueia ativações, sem fazer busca de dados. O consumidor
+sinaliza o loading enquanto sua navegação estiver pendente.
+
+Quando `pageCount` positivo torna `page` inválida, a página visual é limitada
+ao intervalo e `onPageChange` solicita a correção em efeito, uma vez por
+combinação inválida; o consumidor deve atualizar estado e dados. A solicitação
+é adiada durante loading e nunca ocorre com total zero. No modo somente de
+links, o consumidor normaliza URL e dados: não há redirecionamento automático.
+Mudanças externas não movem foco; resize/interação recuperam foco na página
+atual somente se o controle focado foi removido e o foco se perdeu.
+
+Na `AdsSmartTable`, passe essas opções em `pagination`. `pageSize` e
+`onPageSizeChange` habilitam o seletor controlado, com `pageSizeOptions`
+(padrão 10/25/50/100); o consumidor decide a nova página, total e busca.
+`totalItems` e `pageSize` habilitam o resumo, limitado às `rows` recebidas e ao
+total, inclusive última página incompleta. Sem total conhecido, página válida
+ou durante loading, não é inventado um intervalo. `labels.pageSize`,
+`labels.pageSummary(first,last,total)` e `labels.emptyPage` localizam o rodapé.
+Loading da tabela ou de sua paginação bloqueia também o seletor. Nenhum desses
+controles altera os comportamentos padrão sem as props opcionais.
+
+O salto e o seletor usam `input type="number"` e `select` nativos com estilos
+locais e tokens semânticos, em vez de `AdsInput`/`AdsSelect`. A escolha mantém
+a estrutura compacta, a largura do campo e o foco sob controle desta composição;
+não representa uma restrição dos componentes de formulário. O erro do salto é
+comunicado por `aria-invalid`, descrição e alerta textual, sem borda de erro
+específica. O campo fica `readOnly` durante loading para preservar o foco e
+`disabled` quando não há páginas. O seletor é desabilitado durante loading. Estilos dedicados
+para esses estados e a unificação visual com os campos do sistema ficam como
+melhoria futura, preservando os contratos atuais.
+
+Exemplos interativos: `/componentes/paginacao` no admin-demo e stories
+Navigation/Components (PaginationResponsive, PaginationLocalizedLoading) e
+Layout/SmartTable (PaginationFooter). Os apps consomem os exports públicos e
+CSS compilado; não é necessário configurar Tailwind no consumidor.

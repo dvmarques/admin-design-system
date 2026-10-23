@@ -170,3 +170,37 @@ export const DarkTheme: Story = {
 		</div>
 	),
 };
+
+export const PaginationFooter: Story = {
+	args,
+	render: () => {
+		const [page, setPage] = useState(1),
+			[pageSize, setPageSize] = useState(2);
+		return (
+			<div
+				style={{ width: 'min(100%, 400px)', resize: 'horizontal', overflow: 'auto', padding: 12 }}
+			>
+				<AdsSmartTable
+					caption="Paginação com resumo"
+					columns={columns}
+					rows={data.slice((page - 1) * pageSize, page * pageSize)}
+					getRowId={(row) => row.id}
+					pageSize={pageSize}
+					pageSizeOptions={[1, 2, 4]}
+					onPageSizeChange={(size) => {
+						setPageSize(size);
+						setPage(1);
+					}}
+					totalItems={data.length}
+					pagination={{
+						page,
+						pageCount: Math.ceil(data.length / pageSize),
+						onPageChange: setPage,
+						showPageJump: true,
+						navigationMode: 'arrows',
+					}}
+				/>
+			</div>
+		);
+	},
+};

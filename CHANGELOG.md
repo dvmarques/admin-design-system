@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `fix-138-responsive-pagination` (issue #138) - AdsPagination passa a observar a largura do próprio contêiner e oferece, por props opcionais, setas, primeira/última página, salto direto validado, carregamento e rótulos personalizáveis. Mantém os controles de texto por padrão. Inclui salto por links sem formulário aninhado, correção controlada de página inválida, preservação de foco e rodapé opcional da SmartTable com tamanho controlado e resumo das linhas recebidas. A documentação esclarece a personalização conjunta de texto/nome acessível, o limite de adjacentes por `siblingCount` e a escolha dos controles nativos.
+
 - `apply-purple-brand-identity` - Logotipo do projeto: símbolo "A" em roxo profundo com recorte lilás,
   em `assets/brand` (SVG como fonte, PNG 512×512 derivado, variante sem fundo, favicon chapado e
   lockups claro e escuro). Exibido no cabeçalho do admin demo, no favicon do demo e do Storybook e no

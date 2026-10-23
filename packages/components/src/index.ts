@@ -97,6 +97,7 @@ export type {
 } from './dropdown.js';
 export { AdsPagination, getAdsPaginationItems } from './pagination.js';
 export type {
+	AdsPaginationLabels,
 	AdsPaginationLinkProps,
 	AdsPaginationPage,
 	AdsPaginationProps,

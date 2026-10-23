@@ -153,3 +153,24 @@ Tabs vertical em `styles.css`. A divisão em módulos separados permite que
 e foi aceito porque a change entrega um componente novo. `@admin-ds/admin` e
 `@admin-ds/tokens` ficaram dentro da tolerância e não foram alterados. Sem novas
 dependências de runtime.
+
+## Paginação responsiva e controles opcionais (#138)
+
+Build limpo da develop `91d47c9`, com o mesmo TypeScript/Tailwind e LF, em
+cópia isolada: components **356809 bytes / 145 arquivos**. Após a #138:
+**382334 bytes / 145 arquivos** (+25525, 7,15%). Admin: **176484 bytes / 57
+arquivos**, dentro da tolerância anterior; tokens permanece 36342 bytes.
+
+A expansão funcional de AdsPagination (medição por contêiner, salto por link,
+labels, loading, correção controlada e foco) aumenta o módulo compilado de
+2944 para 13803 bytes; gzip do JavaScript emitido pelo mesmo TypeScript:
+1092 → 3956 bytes (+2864). Esta medição do módulo não é bundle minificado nem
+inclui React. O restante do dist inclui CSS, declarações e mapas. Sem novos
+arquivos publicados nem dependência de runtime; testes permanecem fora do dist.
+
+O baseline de components foi atualizado de 330033 para **382334**, refletindo
+a nova API e comportamentos opt-in exigidos pela issue, além do crescimento
+já absorvido na develop. A tolerância de 10% e as verificações de pacotes não
+foram alteradas. Como nos incrementos públicos anteriores registrados neste
+documento, o custo explícito deve ser considerado na revisão desta PR; não
+representa uma correção de tamanho sem custo nem um bundle menor.

@@ -9,7 +9,7 @@
 - [x] 7. Testes de componente, SSR/hidratação e `axe` para os três recursos e para a compatibilidade sem as props.
 - [x] 8. Stories (Virtualized, ResizableColumns, ExportHook) e página `/componentes/tabela-avancada` na demonstração, com E2E (virtualização, foco, teclado, ponteiro, exportação, `axe` claro/escuro, hidratação).
 - [x] 9. Atualizar `docs/limitations.md`, `docs/integration.md`, `docs/admin-demo-catalog.md`, `docs/bundle-baseline.*` e `CHANGELOG.md`.
-- [ ] 10. Executar format, lint, build, typecheck, quality, E2E completo e `openspec validate --all --strict`; registrar em `validation.md`.
+- [x] 10. Executar format, lint, build, typecheck, quality, E2E completo e `openspec validate --all --strict`; registrar em `validation.md`.
 
 ## Evidências
 

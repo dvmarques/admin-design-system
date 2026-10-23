@@ -7,9 +7,9 @@ const root = fileURLToPath(new URL('../../', import.meta.url));
 
 function publicRuntimeExports(source: string): string[] {
   const names: string[] = [];
-  for (const match of source.matchAll(/export\\s*\\{([^}]+)\\}\\s*from/g)) {
+  for (const match of source.matchAll(/export\s*\{([^}]+)\}\s*from/g)) {
     for (const entry of match[1].split(',')) {
-      const name = entry.trim().split(/\\s+as\\s+/).at(-1)?.trim();
+      const name = entry.trim().split(/\s+as\s+/).at(-1)?.trim();
       if (name?.startsWith('Ads') || name === 'ThemeToggle' || name === 'StyleFixture') names.push(name);
     }
   }

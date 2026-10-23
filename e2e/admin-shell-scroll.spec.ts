@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { waitForHydration } from './hydration';
 
 const route = '/componentes';
 
@@ -48,10 +49,18 @@ for (const viewport of [
 		test('a sidebar rola internamente sem mover o main', async ({ page }) => {
 			await page.goto(route);
 			const nav = sidebarNav(page);
-			const overflows = await nav.evaluate((el) => el.scrollHeight > el.clientHeight);
-			test.skip(!overflows, 'itens da sidebar cabem na altura disponível');
+			// Overflow garantido, independente do tamanho do catálogo do demo.
+			await nav.evaluate((el) => {
+				el.innerHTML = Array.from(
+					{ length: 80 },
+					(_, index) => `<a href="#item-${index}">Item ${index}</a>`,
+				).join('<br>');
+			});
+			expect(await nav.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
 
+			await main(page).evaluate((el) => el.scrollTo(0, 200));
 			const mainTop = await main(page).evaluate((el) => el.scrollTop);
+			expect(mainTop).toBeGreaterThan(0);
 			await nav.evaluate((el) => el.scrollTo(0, el.scrollHeight));
 			expect(await nav.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
 			expect(await main(page).evaluate((el) => el.scrollTop)).toBe(mainTop);
@@ -127,4 +136,30 @@ test.describe('layout móvel 390×844', () => {
 		await expect(drawer).toBeHidden();
 		await expect(trigger).toBeFocused();
 	});
+});
+
+test.describe('layout desktop real, sem override de altura', () => {
+	test.use({ viewport: { width: 1280, height: 800 } });
+
+	for (const theme of ['light', 'dark'] as const) {
+		test(`mantém header e sidebar fixos com o main rolado no tema ${theme}`, async ({ page }) => {
+			await page
+				.context()
+				.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+			await page.goto(route);
+			await waitForHydration(main(page));
+			await main(page).evaluate((el) => el.scrollTo(0, 600));
+			await sidebarNav(page).evaluate((el) => el.scrollTo(0, 120));
+
+			// Nenhum elemento sobrepõe os cantos do header, da sidebar e do main.
+			const hits = await page.evaluate(() => {
+				const at = (x: number, y: number) =>
+					document.elementFromPoint(x, y)?.closest('.ads-admin-shell-header, nav, main')?.tagName;
+				return { header: at(4, 4), sidebar: at(4, 790), main: at(1275, 790) };
+			});
+			expect(hits).toEqual({ header: 'HEADER', sidebar: 'NAV', main: 'MAIN' });
+
+			await expect(page).toHaveScreenshot(`admin-shell-desktop-scrolled-${theme}.png`);
+		});
+	}
 });

@@ -9,6 +9,7 @@ import {
 	AdsPagination,
 	AdsTabs,
 	getAdsPaginationItems,
+	getAdsResponsivePaginationItems,
 } from '../src/index.js';
 
 describe('navigation components', () => {
@@ -207,6 +208,40 @@ describe('navigation components', () => {
 			'tabular-nums',
 		);
 		expect(screen.getByRole('list')).toHaveClass('list-none');
+	});
+
+
+	it('keeps mandatory pages and counts ellipses against responsive capacity', () => {
+		expect(getAdsResponsivePaginationItems(25, 50, 1, 5)).toEqual([1, 'ellipsis', 25, 'ellipsis', 50]);
+		expect(getAdsResponsivePaginationItems(25, 50, 1, 7)).toEqual([1, 'ellipsis', 24, 25, 26, 'ellipsis', 50]);
+		expect(getAdsResponsivePaginationItems(1, 1, 1, 3)).toEqual([1]);
+		expect(getAdsResponsivePaginationItems(1, 0, 1, 3)).toEqual([]);
+		expect(getAdsResponsivePaginationItems(2, 2, 1, 3)).toEqual([1, 2]);
+	});
+
+	it('supports optional arrows and disables navigation while loading', () => {
+		const onPageChange = vi.fn();
+		render(<AdsPagination page={2} pageCount={5} navigationMode="arrows" showFirstLast loading onPageChange={onPageChange} />);
+		expect(screen.getByRole('button', { name: 'Página anterior' })).toBeDisabled();
+		expect(screen.getByRole('button', { name: 'Última página' })).toBeDisabled();
+		expect(screen.getByRole('navigation', { name: 'Paginação' })).toHaveAttribute('aria-busy', 'true');
+		fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
+		expect(onPageChange).not.toHaveBeenCalled();
+	});
+
+	it('validates optional direct page jump and updates on controlled page changes', () => {
+		const onPageChange = vi.fn();
+		const { rerender } = render(<AdsPagination page={2} pageCount={10} showPageJump onPageChange={onPageChange} />);
+		const field = screen.getByRole('spinbutton', { name: 'Ir para página' });
+		fireEvent.change(field, { target: { value: '11' } });
+		fireEvent.click(screen.getByRole('button', { name: 'Ir' }));
+		expect(onPageChange).not.toHaveBeenCalled();
+		expect(screen.getByRole('alert')).toBeInTheDocument();
+		fireEvent.change(field, { target: { value: '5' } });
+		fireEvent.click(screen.getByRole('button', { name: 'Ir' }));
+		expect(onPageChange).toHaveBeenCalledWith(5);
+		rerender(<AdsPagination page={5} pageCount={10} showPageJump onPageChange={onPageChange} />);
+		expect(field).toHaveValue(5);
 	});
 
 	describe('consumer links', () => {

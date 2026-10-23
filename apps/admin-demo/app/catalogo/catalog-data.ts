@@ -83,22 +83,22 @@ export const catalogEntries = [
   {
     "name": "AdsFieldLabel",
     "group": "Formulários",
-    "href": "/componentes"
+    "href": "/catalogo/lacunas"
   },
   {
     "name": "AdsFieldDescription",
     "group": "Formulários",
-    "href": "/componentes"
+    "href": "/catalogo/lacunas"
   },
   {
     "name": "AdsFieldMessage",
     "group": "Formulários",
-    "href": "/componentes"
+    "href": "/catalogo/lacunas"
   },
   {
     "name": "AdsInputGroup",
     "group": "Formulários",
-    "href": "/componentes"
+    "href": "/catalogo/lacunas"
   },
   {
     "name": "AdsSelectionGroup",
@@ -223,7 +223,7 @@ export const catalogEntries = [
   {
     "name": "AdsTableCaption",
     "group": "Dados",
-    "href": "/data-display"
+    "href": "/catalogo/lacunas"
   },
   {
     "name": "AdsTableCell",

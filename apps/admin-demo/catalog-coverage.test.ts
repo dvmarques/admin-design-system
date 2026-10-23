@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { describe, expect, it } from 'vitest';
 import { catalogEntries } from './app/catalogo/catalog-data';
@@ -30,6 +30,12 @@ describe('admin demo catalog inventory', () => {
     for (const entry of catalogEntries) {
       expect(entry.href.startsWith('/')).toBe(true);
       expect(entry.group.length).toBeGreaterThan(0);
+      const segments = entry.href === '/' ? '' : entry.href.slice(1);
+      const routes = [
+        root + 'apps/admin-demo/app/(admin)/' + segments + '/page.tsx',
+        root + 'apps/admin-demo/app/' + segments + '/page.tsx',
+      ];
+      expect(routes.some((route) => existsSync(route)), `Missing route for ${entry.name}: ${entry.href}`).toBe(true);
     }
   });
 });

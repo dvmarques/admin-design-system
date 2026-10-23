@@ -1123,12 +1123,23 @@ a região "Controles de paginação roláveis" permite rolar e receber foco, com
 folga vertical para bordas, hover e foco. Os dígitos usam largura estável pelo
 total de páginas. SSR produz HTML determinístico; a medição começa após montagem.
 
+A adaptação reduz a lista calculada por `siblingCount` (padrão 1, até sete
+itens numéricos/reticências para coleções extensas); ela não acrescenta mais
+adjacentes só porque o contêiner ficou largo. Para ampliar essa lista, configure
+`siblingCount`. Totais pequenos mantêm a exibição completa quando couber.
+
 O padrão continua texto "Anterior"/"Próxima", sem salto ou controles extras.
 `navigationMode="arrows"`, `previousContent`, `nextContent`, `showFirstLast`,
 `showPageJump` e `loading` são opcionais. `labels` personaliza nomes acessíveis,
 `previousText`/`nextText`, salto, erro e nome da região rolável. As props
 públicas e `renderPage` legado continuam disponíveis; prefira `renderPageLink`
 e espalhe as props recebidas no link, sem envolver um botão em uma âncora.
+
+Ao trocar `labels.previousText` ou `labels.nextText`, atualize também
+`labels.previous` ou `labels.next`: o nome acessível deve conter o texto
+visível, inclusive com `previousContent`/`nextContent` customizados. Exemplo:
+`labels={{ previousText: "Voltar", previous: "Voltar uma página", nextText: "Avançar", next: "Avançar uma página" }}`.
+No modo de setas sem texto, mantenha nomes acessíveis descritivos.
 
 ```tsx
 <AdsPagination
@@ -1167,6 +1178,16 @@ ou durante loading, não é inventado um intervalo. `labels.pageSize`,
 `labels.pageSummary(first,last,total)` e `labels.emptyPage` localizam o rodapé.
 Loading da tabela ou de sua paginação bloqueia também o seletor. Nenhum desses
 controles altera os comportamentos padrão sem as props opcionais.
+
+O salto e o seletor usam `input type="number"` e `select` nativos com estilos
+locais e tokens semânticos, em vez de `AdsInput`/`AdsSelect`. A escolha mantém
+a estrutura compacta, a largura do campo e o foco sob controle desta composição;
+não representa uma restrição dos componentes de formulário. O erro do salto é
+comunicado por `aria-invalid`, descrição e alerta textual, sem borda de erro
+específica. O campo fica `readOnly` durante loading para preservar o foco e
+`disabled` quando não há páginas. O seletor é desabilitado durante loading. Estilos dedicados
+para esses estados e a unificação visual com os campos do sistema ficam como
+melhoria futura, preservando os contratos atuais.
 
 Exemplos interativos: `/componentes/paginacao` no admin-demo e stories
 Navigation/Components (PaginationResponsive, PaginationLocalizedLoading) e

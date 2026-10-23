@@ -265,7 +265,7 @@
 	}
 }
 
-/* Utilities are imported without a cascade layer; keep this scoped size override in the same layer. */
+/* Utilities are unlayered; keep this scoped size override outside @layer components to override their minimum sizes. */
 
 .ads-pagination .ads-pagination-item {
 	min-height: 2.5rem;

@@ -149,3 +149,19 @@ Limitações locais anteriores permanecem registradas, sem simular aprovação.
 Riscos de consumo e custo de bundle descritos acima continuam aplicáveis.
 PR Ready para revisão humana; sem merge, squash, archive ou fechamento manual
 da issue. A change permanece ativa.
+
+## Ajustes documentais e arquivamento autorizados
+
+Após revisão do SHA bcb9148 e CI 39885923490 aprovada, o usuário autorizou
+expressamente ajustes de documentação, archive e squash. Foram esclarecidos
+o limite de siblingCount, a personalização conjunta de texto/nome acessível
+e a escolha de input/select nativos, incluindo estados e melhoria visual futura.
+O comentário CSS foi corrigido para indicar override fora de @layer components.
+Nenhuma regra CSS executável ou comportamento React foi alterado nesta etapa.
+
+As specs pagination e smart-table receberam respectivamente cinco e um novos
+requisitos da change, preservando integralmente os requisitos e Purpose anteriores.
+A validação estrita das specs passou (47 itens). Dez tasks concluídas e todos
+os artefatos completos foram confirmados pelo CLI oficial antes do archive.
+O archive usa a data local do usuário, 2026-10-22. Os gates da revisão documental
+e do archive serão novamente conferidos no SHA publicado antes do squash.

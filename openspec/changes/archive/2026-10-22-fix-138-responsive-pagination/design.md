@@ -23,3 +23,14 @@ Classes ads- e tokens semânticos existentes preservam identidade, temas e perso
 ## Alternativas, riscos e rollback
 
 Breakpoints e larguras mágicas falham com traduções e sidebar; medir apenas a lista renderizada sem controlar largura disponível pode oscilar. Escolhemos medição de controles reais e slots estáveis. Fallback horizontal é necessário somente para impossibilidade física. Links customizados devem espalhar as props recebidas e renderizar um único controle sem interativos aninhados; renderPage é preservado como legado. A aparência responsiva muda intencionalmente a quantidade de números e o espaçamento vertical, exigindo inspeção visual. Rollback reverte conjuntamente componente, CSS, integração e testes desta change; não altera #91.
+
+## Decisões registradas na revisão humana
+
+A adaptação reduz a lista de siblingCount; não expande adjacentes além desse
+limite em contêiner largo. A documentação exige personalizar conjuntamente
+texto visível e nome acessível. Input numérico e select nativos preservam a
+composição compacta e a gestão local de largura/foco; AdsInput/AdsSelect não
+são tecnicamente incompatíveis. O erro usa ARIA e alerta textual, sem borda
+de erro dedicada; uniformização visual de estados de campo fica como melhoria
+futura. A revisão não encontrou bloqueios; o usuário autorizou documentação,
+archive e squash, aceitando o custo de bundle registrado nesta change.

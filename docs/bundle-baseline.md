@@ -174,3 +174,16 @@ já absorvido na develop. A tolerância de 10% e as verificações de pacotes n�
 foram alteradas. Como nos incrementos públicos anteriores registrados neste
 documento, o custo explícito deve ser considerado na revisão desta PR; não
 representa uma correção de tamanho sem custo nem um bundle menor.
+
+## Sidebar desktop fixa no `AdsAdminShell` (#136)
+
+O baseline de `@admin-ds/admin` foi atualizado na change
+`issue-136-admin-shell-fixed-sidebar` de 170121 para **187690 bytes** (+17569),
+medido em LF após o build de tokens, components e admin e
+`inspect:packages`. O valor anterior já estava defasado: a `develop` (`5919f77`,
+catálogo e navegação hierárquica do shell, #151) mede **186447 bytes / 61
+arquivos**, ainda dentro da tolerância de 10% (187133). A change soma **+1243
+bytes** (CSS do layout desktop em `styles.css`, `tabIndex` padrão em
+`AdsAdminShell.Main`, com JavaScript, declarações e source maps), o que passa o
+limite de 187133 e exige a atualização explícita. Sem novas dependências de
+runtime nem novos arquivos publicados.

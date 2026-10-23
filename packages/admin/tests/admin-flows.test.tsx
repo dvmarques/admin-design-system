@@ -81,7 +81,7 @@ describe('AdsConfirmDialog', () => {
 	it('opens with name, description and focus on Cancel', () => {
 		render(<Harness />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
-		const dialog = screen.getByRole('dialog', { name: 'Excluir 2 itens?' });
+		const dialog = screen.getByRole('alertdialog', { name: 'Excluir 2 itens?' });
 		expect(dialog).toHaveAccessibleDescription('Esta ação não pode ser desfeita.');
 		return waitFor(() => expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveFocus());
 	});
@@ -93,7 +93,7 @@ describe('AdsConfirmDialog', () => {
 		trigger.focus();
 		fireEvent.click(trigger);
 		fireEvent.keyDown(document, { key: 'Escape' });
-		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.queryByRole('alertdialog')).toBeNull();
 		expect(trigger).toHaveFocus();
 		expect(onConfirm).not.toHaveBeenCalled();
 	});
@@ -104,7 +104,7 @@ describe('AdsConfirmDialog', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 		fireEvent.click(screen.getByRole('button', { name: 'Confirmar' }));
 		expect(onConfirm).toHaveBeenCalledTimes(1);
-		expect(screen.getByRole('dialog')).toBeTruthy();
+		expect(screen.getByRole('alertdialog')).toBeTruthy();
 	});
 
 	it('makes both actions unavailable while pending without disabling them', () => {
@@ -120,7 +120,7 @@ describe('AdsConfirmDialog', () => {
 		fireEvent.click(confirm);
 		fireEvent.click(cancel);
 		expect(onConfirm).not.toHaveBeenCalled();
-		expect(screen.getByRole('dialog')).toBeTruthy();
+		expect(screen.getByRole('alertdialog')).toBeTruthy();
 	});
 
 	it('keeps focus on Confirm while pending and after it ends', () => {
@@ -191,10 +191,10 @@ describe('AdsConfirmDialog', () => {
 		await screen.findByRole('dialog', { name: 'Detalhes' });
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Detalhes' })).toBeNull());
-		expect(screen.getByRole('dialog', { name: 'Excluir?' })).toBeTruthy();
+		expect(screen.getByRole('alertdialog', { name: 'Excluir?' })).toBeTruthy();
 		fireEvent.keyDown(document, { key: 'Escape' });
 		expect(onOpenChange).not.toHaveBeenCalled();
-		expect(screen.getByRole('dialog', { name: 'Excluir?' })).toBeTruthy();
+		expect(screen.getByRole('alertdialog', { name: 'Excluir?' })).toBeTruthy();
 	});
 
 	it('honors closeOnEscape={false} when not pending', () => {
@@ -249,7 +249,7 @@ describe('AdsConfirmDialog', () => {
 		const confirm = screen.getByRole('button', { name: 'Confirmar' });
 		confirm.focus();
 		fireEvent.click(confirm);
-		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.queryByRole('alertdialog')).toBeNull();
 		expect(screen.getByRole('button', { name: 'Destino' })).toHaveFocus();
 	});
 
@@ -258,7 +258,7 @@ describe('AdsConfirmDialog', () => {
 		const { unmount } = render(<Harness pending />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 		expect(fireEvent.mouseDown(backdrop() as HTMLElement)).toBe(false);
-		expect(screen.getByRole('dialog')).toBeInTheDocument();
+		expect(screen.getByRole('alertdialog')).toBeInTheDocument();
 		unmount();
 
 		render(<Harness />);
@@ -266,37 +266,68 @@ describe('AdsConfirmDialog', () => {
 		trigger.focus();
 		fireEvent.click(trigger);
 		expect(fireEvent.mouseDown(backdrop() as HTMLElement)).toBe(false);
-		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.queryByRole('alertdialog')).toBeNull();
 		expect(trigger).toHaveFocus();
 	});
 
 	it('cancels with a click on the backdrop, but not on the panel', () => {
 		render(<Harness />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
-		fireEvent.mouseDown(screen.getByRole('dialog'));
-		expect(screen.getByRole('dialog')).toBeTruthy();
+		fireEvent.mouseDown(screen.getByRole('alertdialog'));
+		expect(screen.getByRole('alertdialog')).toBeTruthy();
 		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
-		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.queryByRole('alertdialog')).toBeNull();
 	});
 
 	it('does not cancel with a click on the backdrop while pending', () => {
 		render(<Harness pending />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 		fireEvent.mouseDown(document.querySelector('[data-overlay="backdrop"]') as HTMLElement);
-		expect(screen.getByRole('dialog')).toBeTruthy();
+		expect(screen.getByRole('alertdialog')).toBeTruthy();
 	});
 
 	it('does not cancel with Escape while pending', () => {
 		render(<Harness pending />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
 		fireEvent.keyDown(document, { key: 'Escape' });
-		expect(screen.getByRole('dialog')).toBeTruthy();
+		expect(screen.getByRole('alertdialog')).toBeTruthy();
+	});
+
+	it('is an alertdialog by default and a dialog when not destructive, unless role is explicit', () => {
+		const { rerender } = render(
+			<AdsConfirmDialog onConfirm={() => {}} onOpenChange={() => {}} open title="Excluir?" />,
+		);
+		expect(screen.getByRole('alertdialog', { name: 'Excluir?' })).toHaveAttribute(
+			'aria-modal',
+			'true',
+		);
+		rerender(
+			<AdsConfirmDialog
+				destructive={false}
+				onConfirm={() => {}}
+				onOpenChange={() => {}}
+				open
+				title="Salvar?"
+			/>,
+		);
+		expect(screen.getByRole('dialog', { name: 'Salvar?' })).toBeTruthy();
+		rerender(
+			<AdsConfirmDialog
+				onConfirm={() => {}}
+				onOpenChange={() => {}}
+				open
+				role="dialog"
+				title="Excluir?"
+			/>,
+		);
+		expect(screen.getByRole('dialog', { name: 'Excluir?' })).toBeTruthy();
+		expect(screen.getByRole('button', { name: 'Confirmar' }).className).toContain('bg-danger');
 	});
 
 	it('has no axe violations', async () => {
 		render(<Harness />);
 		fireEvent.click(screen.getByRole('button', { name: 'Excluir' }));
-		await expectNoViolations(screen.getByRole('dialog').parentElement as HTMLElement);
+		await expectNoViolations(screen.getByRole('alertdialog').parentElement as HTMLElement);
 	});
 });
 
@@ -410,7 +441,7 @@ describe('AdsListFlow', () => {
 		const confirm = screen.getByRole('button', { name: 'Confirmar' });
 		confirm.focus();
 		fireEvent.click(confirm);
-		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(screen.queryByRole('alertdialog')).toBeNull();
 		expect(document.activeElement).not.toBe(document.body);
 		expect(
 			screen.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' }),
@@ -659,6 +690,254 @@ describe('AdsStepForm', () => {
 	it('has no axe violations', async () => {
 		const { container } = render(<Form cancel={() => {}} />);
 		next();
+		await expectNoViolations(container);
+	});
+});
+
+describe('AdsStepForm indicator navigation and async validation', () => {
+	function Wizard({
+		onSubmit = () => {},
+		onStepChange = () => {},
+		validateA = () => true,
+		validateC,
+		submitting = false,
+	}: {
+		onSubmit?: () => void;
+		onStepChange?: (id: string) => void;
+		validateA?: () => boolean | Promise<boolean>;
+		validateC?: () => boolean | Promise<boolean>;
+		submitting?: boolean;
+	}) {
+		const [step, setStep] = useState('a');
+		return (
+			<AdsStepForm
+				activeStepId={step}
+				aria-label="Fluxo"
+				onActiveStepChange={(id) => {
+					onStepChange(id);
+					setStep(id);
+				}}
+				onSubmit={onSubmit}
+				steps={[
+					{
+						id: 'a',
+						label: 'Dados',
+						validate: validateA,
+						content: (
+							<label>
+								Nome
+								<input defaultValue="" />
+							</label>
+						),
+					},
+					{ id: 'b', label: 'Notas', content: <p>Notas</p> },
+					{
+						id: 'c',
+						label: 'Revisão',
+						content: <p>Resumo</p>,
+						...(validateC && { validate: validateC }),
+					},
+				]}
+				submitting={submitting}
+			/>
+		);
+	}
+	const steps = () => within(screen.getByRole('list', { name: 'Etapas' }));
+	const next = () => fireEvent.click(screen.getByRole('button', { name: 'Próxima' }));
+
+	function deferred() {
+		let resolve!: (value: boolean) => void;
+		const promise = new Promise<boolean>((res) => {
+			resolve = res;
+		});
+		return { promise, resolve };
+	}
+
+	it('exposes no indicator controls before any step was validated', () => {
+		render(<Wizard />);
+		expect(steps().queryAllByRole('button')).toHaveLength(0);
+	});
+
+	it('goes back through the indicator, keeping data and focusing the heading', async () => {
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} />);
+		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'Ana' } });
+		next();
+		const back = steps().getByRole('button', { name: /Dados/ });
+		expect(back).toHaveAttribute('type', 'button');
+		fireEvent.click(back);
+		expect(onStepChange).toHaveBeenLastCalledWith('a');
+		expect(screen.getByLabelText('Nome')).toHaveValue('Ana');
+		await waitFor(() => expect(screen.getByRole('heading', { name: 'Dados' })).toHaveFocus());
+	});
+
+	it('allows returning to a validated step without validating again', () => {
+		const validateA = vi.fn(() => true);
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={validateA} />);
+		next();
+		fireEvent.click(steps().getByRole('button', { name: /Dados/ }));
+		expect(validateA).toHaveBeenCalledTimes(1);
+		// "Notas" nunca foi validada: "Revisão" continua sem controle; "Notas" é navegável.
+		expect(steps().queryByRole('button', { name: /Revisão/ })).toBeNull();
+		fireEvent.click(steps().getByRole('button', { name: /Notas/ }));
+		expect(onStepChange).toHaveBeenLastCalledWith('b');
+		expect(validateA).toHaveBeenCalledTimes(1);
+	});
+
+	it('removes forward navigation after editing a validated step', () => {
+		render(<Wizard />);
+		next();
+		fireEvent.click(steps().getByRole('button', { name: /Dados/ }));
+		expect(steps().getByRole('button', { name: /Notas/ })).toBeTruthy();
+		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'x' } });
+		expect(steps().queryByRole('button', { name: /Notas/ })).toBeNull();
+	});
+
+	it('does not navigate by the indicator while submitting', () => {
+		const { rerender } = render(<Wizard />);
+		next();
+		expect(steps().getByRole('button', { name: /Dados/ })).toBeTruthy();
+		rerender(<Wizard submitting />);
+		expect(steps().queryAllByRole('button')).toHaveLength(0);
+	});
+
+	it('keeps a synchronous validate synchronous', () => {
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} />);
+		next();
+		expect(onStepChange).toHaveBeenCalledWith('b');
+		expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy');
+	});
+
+	it('shows a busy state while an async validate is pending and advances once it resolves', async () => {
+		const gate = deferred();
+		const validateA = vi.fn(() => gate.promise);
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={validateA} />);
+		const button = screen.getByRole('button', { name: 'Próxima' });
+		button.focus();
+		next();
+		expect(screen.getByRole('form', { name: 'Fluxo' })).toHaveAttribute('aria-busy', 'true');
+		expect(button).toHaveAttribute('aria-disabled', 'true');
+		expect(button).toHaveFocus();
+		expect(screen.getByRole('status')).toHaveTextContent('Validando');
+		expect(onStepChange).not.toHaveBeenCalled();
+		next();
+		expect(validateA).toHaveBeenCalledTimes(1);
+		gate.resolve(true);
+		await waitFor(() => expect(onStepChange).toHaveBeenCalledWith('b'));
+		expect(onStepChange).toHaveBeenCalledTimes(1);
+		expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy');
+	});
+
+	it('treats an async false as an invalid step', async () => {
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={() => Promise.resolve(false)} />);
+		next();
+		expect(await screen.findByRole('alert')).toHaveTextContent('Corrija os campos');
+		expect(onStepChange).not.toHaveBeenCalled();
+		expect(screen.getByRole('heading', { name: 'Dados' })).toBeVisible();
+		expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy');
+	});
+
+	it('treats a rejected validate as an invalid step', async () => {
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={() => Promise.reject(new Error('x'))} />);
+		next();
+		expect(await screen.findByRole('alert')).toBeTruthy();
+		expect(onStepChange).not.toHaveBeenCalled();
+	});
+
+	it('makes the fields inert while an async validation is pending', async () => {
+		const gate = deferred();
+		render(<Wizard validateA={() => gate.promise} />);
+		const field = screen.getByLabelText('Nome');
+		expect(field.closest('section')).not.toHaveAttribute('inert');
+		next();
+		expect(field.closest('section')).toHaveAttribute('inert');
+		gate.resolve(true);
+		await waitFor(() => expect(field.closest('section')).not.toHaveAttribute('inert'));
+	});
+
+	it('discards the pending result when a field is edited meanwhile, so the step is not marked valid', async () => {
+		const first = deferred();
+		const second = deferred();
+		const validateA = vi
+			.fn<() => Promise<boolean>>()
+			.mockReturnValueOnce(first.promise)
+			.mockReturnValueOnce(second.promise);
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={validateA} />);
+		next();
+		expect(screen.getByRole('form', { name: 'Fluxo' })).toHaveAttribute('aria-busy', 'true');
+		// A edição durante a espera invalida a validação pendente (inclusive com `inert` ignorado).
+		fireEvent.change(screen.getByLabelText('Nome'), { target: { value: 'novo' } });
+		expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy');
+		first.resolve(true);
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(onStepChange).not.toHaveBeenCalled();
+		expect(steps().queryAllByRole('button')).toHaveLength(0);
+		// A nova tentativa valida os dados atuais.
+		next();
+		expect(validateA).toHaveBeenCalledTimes(2);
+		second.resolve(true);
+		await waitFor(() => expect(onStepChange).toHaveBeenCalledWith('b'));
+		expect(onStepChange).toHaveBeenCalledTimes(1);
+	});
+
+	it('discards the result when a field value is changed programmatically while validating', async () => {
+		const gate = deferred();
+		const onStepChange = vi.fn();
+		render(<Wizard onStepChange={onStepChange} validateA={() => gate.promise} />);
+		next();
+		// Sem evento `change`: só o valor do campo muda.
+		(screen.getByLabelText('Nome') as HTMLInputElement).value = 'alterado por código';
+		gate.resolve(true);
+		await waitFor(() =>
+			expect(screen.getByRole('form', { name: 'Fluxo' })).not.toHaveAttribute('aria-busy'),
+		);
+		expect(onStepChange).not.toHaveBeenCalled();
+		expect(steps().queryAllByRole('button')).toHaveLength(0);
+	});
+
+	it('submits once after an async validation of the last step', async () => {
+		const gate = deferred();
+		const onSubmit = vi.fn();
+		render(<Wizard onSubmit={onSubmit} validateC={() => gate.promise} />);
+		next();
+		next();
+		const submit = screen.getByRole('button', { name: 'Confirmar' });
+		fireEvent.click(submit);
+		fireEvent.click(submit);
+		expect(onSubmit).not.toHaveBeenCalled();
+		gate.resolve(true);
+		await waitFor(() => expect(onSubmit).toHaveBeenCalledTimes(1));
+	});
+
+	it('discards an async result that arrives after unmount', async () => {
+		const gate = deferred();
+		const onStepChange = vi.fn();
+		const { unmount } = render(
+			<Wizard onStepChange={onStepChange} validateA={() => gate.promise} />,
+		);
+		next();
+		unmount();
+		gate.resolve(true);
+		await Promise.resolve();
+		await Promise.resolve();
+		expect(onStepChange).not.toHaveBeenCalled();
+	});
+
+	it('has no axe violations with the navigable indicator and while validating', async () => {
+		const gate = deferred();
+		const { container } = render(<Wizard validateA={() => gate.promise} />);
+		await expectNoViolations(container);
+		next();
+		await expectNoViolations(container);
+		gate.resolve(true);
+		await waitFor(() => expect(steps().queryAllByRole('button').length).toBeGreaterThan(0));
 		await expectNoViolations(container);
 	});
 });

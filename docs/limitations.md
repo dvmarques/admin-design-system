@@ -59,10 +59,19 @@ das validações automatizadas.
   comportamento é coberto por testes de componente, SSR e `axe`.
 - Os fluxos administrativos (`AdsListFlow`, `AdsBulkActionBar`, `AdsStepForm` e
   `AdsConfirmDialog`) só compõem componentes existentes: não persistem nem
-  enviam dados e não usam o roteador. `AdsStepForm` não permite navegar clicando
-  no indicador, não tem etapas condicionais nem validação assíncrona (`validate`
-  é síncrona), e mantém todas as etapas montadas. O `AdsConfirmDialog` usa
-  `role="dialog"`: o painel interno de `@admin-ds/components` aceita
-  `alertdialog`, mas o tipo `AdsDialogProps` não expõe `role`. Em `AdsListFlow` o
+  enviam dados e não usam o roteador. `AdsStepForm` não tem etapas condicionais
+  e mantém todas as etapas montadas. O indicador só navega para etapas
+  anteriores ou já validadas ao avançar; a marca de "validada" é removida por
+  eventos `change` borbulhantes, então campos que não os disparam não a
+  invalidam. A validação assíncrona trata rejeição como etapa inválida e não
+  cancela a requisição do consumidor (só descarta o resultado obsoleto). Durante
+  a espera os campos ficam inertes e um evento `change` cancela a validação
+  pendente. Mudanças feitas por código nos valores dos campos nativos
+  (`input`, `select`, `textarea`) da etapa também descartam o resultado, por
+  comparação dos valores no início e no fim; estado do consumidor que não aparece
+  nesses campos (widgets sem campo nativo) não é detectado, e um `true` ainda avança
+  com esses dados alterados.
+  `AdsConfirmDialog` usa `role="alertdialog"` quando `destructive` (padrão) e
+  `dialog` caso contrário; `AdsDrawer` não expõe `role`. Em `AdsListFlow` o
   slot `filters` da tabela é ocupado pelo fluxo. Sem snapshot visual
   para eles, o comportamento é coberto por testes de componente, SSR e `axe`.

@@ -187,3 +187,22 @@ bytes** (CSS do layout desktop em `styles.css`, `tabIndex` padrão em
 `AdsAdminShell.Main`, com JavaScript, declarações e source maps), o que passa o
 limite de 187133 e exige a atualização explícita. Sem novas dependências de
 runtime nem novos arquivos publicados.
+
+## Fluxos administrativos: alertdialog, indicador navegável e validação assíncrona (#92)
+
+Medição do commit base `5919f77` (antes do #136), em cópia isolada com o mesmo
+TypeScript/Tailwind e LF: admin **186447 bytes / 61 arquivos**, components
+**388846 bytes**. Após a #92: admin **+12033 bytes** (+6,5%) e components
+**389188 bytes** (+342, `role` em `AdsDialogProps`); tokens permanece 36342 bytes.
+Com a `develop` já atualizada pelo #136 (baseline de admin 187690), o build
+integrado desta PR mede admin **199723 bytes / 61 arquivos**.
+
+O incremento do admin vem de `AdsStepForm` (validação assíncrona com estado de
+carregamento, descarte de resultado obsoleto, navegação pelo indicador e marcação
+de etapas validadas) e dos estilos do botão do indicador, contados com
+declarações e mapas. Sem novos arquivos publicados nem dependência de runtime.
+
+O baseline de `@admin-ds/admin` foi atualizado de 187690 para **199723**. O de
+components (382334) não foi alterado: 389188 está dentro da tolerância de 10%.
+A tolerância e as verificações de pacotes não mudaram. O custo é explícito para a
+revisão desta PR.

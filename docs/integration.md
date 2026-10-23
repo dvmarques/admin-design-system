@@ -1109,9 +1109,11 @@ clique fora cancelam (`onOpenChange(false)`) e `onConfirm` não fecha o diálogo
 perde o foco) e suspende `Escape` e o clique fora, mesmo com `closeOnEscape` ou
 `closeOnBackdrop` informados. Ao fechar, o foco volta ao elemento que abriu o
 diálogo; se ele saiu da página, vai a `returnFocusRef`, quando informado.
-`destructive` (padrão) usa a variante de perigo. O tipo `AdsDialogProps` não
-expõe `role`, então o diálogo usa `role="dialog"` com título e descrição
-associados, e não `alertdialog`.
+`destructive` (padrão) usa a variante de perigo e o papel `role="alertdialog"`;
+com `destructive={false}` o papel é `dialog`. `role` explícito prevalece (por
+exemplo `role="dialog"` para manter o papel anterior). `AdsDialogProps` também
+expõe `role` (`dialog` | `alertdialog`); `AdsDrawer` continua `dialog`. Título e
+descrição permanecem associados nos dois casos.
 
 ### Formulário em etapas (`AdsStepForm`)
 
@@ -1134,7 +1136,21 @@ const steps = [
 />;
 ```
 
-- `validate` (síncrona) roda ao avançar e ao confirmar; com `false`, a etapa não
+- `validate` pode ser síncrona ou retornar `Promise<boolean>`. Com uma Promise, o
+  formulário fica com `aria-busy`, anuncia `labels.validating`, mostra o
+  carregamento no botão acionado e deixa as ações com `aria-disabled` (o foco não
+  se perde) até resolver; rejeitar equivale a `false`, e um resultado que chega
+  depois de a etapa mudar ou do desmonte é descartado. Os campos ficam inertes
+  durante a espera e editar um campo cancela a validação pendente (acione
+  "Próxima" de novo), e alterar por código o valor de um campo nativo da etapa
+  durante a espera descarta o resultado; estado sem campo nativo correspondente
+  não é detectado, então evite alterá-lo enquanto valida.
+  Retorno síncrono continua sendo tratado de forma síncrona.
+- O indicador de etapas navega para etapas anteriores e, adiante, apenas para as
+  que já foram validadas ao avançar (a atual e as intermediárias incluídas). Editar
+  uma etapa remove essa marca, e "Próxima" a revalida. A marca depende de eventos
+  `change` borbulhantes nos campos da etapa.
+- `validate` roda ao avançar e ao confirmar; com `false`, a etapa não
   muda, um alerta é exibido e o foco vai ao primeiro campo `aria-invalid="true"`
   (ou ao título da etapa). Os erros de campo são do consumidor e devem ser
   definidos no mesmo ciclo em que `validate` retorna: com `AdsField`, informe

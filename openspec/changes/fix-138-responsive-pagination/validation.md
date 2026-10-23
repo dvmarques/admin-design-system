@@ -72,3 +72,25 @@ durante loading. O consumidor continua responsável por dados, tamanho e página
 Pendente de publicação desta revisão e execução sobre o SHA mais recente.
 PR Draft não comprova validação. Não pronta para revisão enquanto houver
 checks ou atualização oficial dos baselines pendentes.
+
+## Primeiro retorno da CI
+
+O commit 3405ab4 foi publicado na mesma PR e ela foi marcada Ready para
+executar a CI 39880281718. O disparo anterior ficou skipped por ser Draft.
+Build/distribuição, política/OpenSpec, Firefox e WebKit passaram. Qualidade
+falhou no tipo da story PaginationFooter, que exigia args. A inspeção do log
+local confirmou a mesma falha, que havia sido reportada incorretamente como
+aprovação do typecheck completo. A story recebeu os args obrigatórios e
+o comando npm run typecheck foi repetido isoladamente: exit code 0.
+
+A interface do workflow oficial de baselines foi consultada porque o plugin
+GitHub não oferece workflow_dispatch. Ela está sem sessão autenticada e não
+foi possível disparar a atualização. Nenhum snapshot foi copiado do executor.
+A conclusão depende dos checks da nova revisão e dos baselines Linux revisados.
+
+O primeiro job Chromium da CI terminou com **199 passaram / 3 falharam**,
+exclusivamente os snapshots componentes-dark, clientes-dark e data-display-dark.
+Os três têm aumento de 32px na altura, coerente com controles e folga vertical
+da paginação. Logo, as outras duas divergências não são tratadas como simples
+variação local nesta change: a CI confirma que precisam de revisão e atualização
+intencional. Firefox e WebKit passaram seus dez casos cada.

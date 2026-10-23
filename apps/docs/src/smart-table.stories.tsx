@@ -172,6 +172,7 @@ export const DarkTheme: Story = {
 };
 
 export const PaginationFooter: Story = {
+	args,
 	render: () => {
 		const [page, setPage] = useState(1),
 			[pageSize, setPageSize] = useState(2);

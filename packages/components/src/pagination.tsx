@@ -373,7 +373,7 @@ export function AdsPagination({
 			>
 				<ul
 					ref={listRef}
-					className="ads-pagination-list m-0 flex min-w-max list-none items-center gap-1"
+					className="ads-pagination-list flex min-w-max list-none items-center gap-1"
 					role="list"
 				>
 					{showFirstLast ? (

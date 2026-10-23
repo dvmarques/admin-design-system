@@ -743,6 +743,9 @@
 	.ads-smart-table-pagination > .ads-pagination {
 		min-width: 0;
 	}
+	.ads-smart-table-pagination > .ads-pagination .ads-pagination-list {
+		margin-inline-start: auto;
+	}
 
 	.ads-smart-table-visually-hidden,
 	.ads-smart-table-status {

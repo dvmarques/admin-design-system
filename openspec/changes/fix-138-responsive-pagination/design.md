@@ -18,7 +18,7 @@ Quando o total positivo torna page inválida, renderizamos a página limitada e 
 
 A composição recebe paginação pelas props existentes, sem regra de tabela na biblioteca base. pageSize/onPageSizeChange habilitam seletor controlado; totalItems/pageSize habilitam resumo somente com intervalo verificável nas rows recebidas. Não inventa registros quando vazio, total desconhecido ou página inválida. Labels do rodapé são personalizáveis. Loading da tabela ou da paginação bloqueia o seletor e a navegação. Mudar tamanho não busca dados nem muda página automaticamente; o consumidor atualiza ambos.
 
-Classes ads- e tokens semânticos existentes preservam identidade, temas e personalização. Estilos são distribuídos no CSS compilado; Next.js importa apenas exports públicos, sem Tailwind no consumidor. Nenhuma dependência nova de runtime. Bundle medido: components 356809 → 382329 bytes (+25520); JavaScript do módulo em gzip 1092 → 3957 (+2865). A nova API exige atualização explícita do baseline de components; tolerância de 10% preservada. Detalhes e método em docs/bundle-baseline.md.
+Classes ads- e tokens semânticos existentes preservam identidade, temas e personalização. Estilos são distribuídos no CSS compilado; Next.js importa apenas exports públicos, sem Tailwind no consumidor. Nenhuma dependência nova de runtime. Bundle medido: components 356809 → 382334 bytes (+25525); JavaScript do módulo em gzip 1092 → 3956 (+2864). A nova API exige atualização explícita do baseline de components; tolerância de 10% preservada. Detalhes e método em docs/bundle-baseline.md.
 
 ## Alternativas, riscos e rollback
 

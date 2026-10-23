@@ -25,3 +25,8 @@ AdsSmartTable MUST permitir composição de AdsPagination com salto direto e MAY
 
 - **WHEN** o consumidor habilita o seletor ou personaliza seus rótulos e o resumo
 - **THEN** o callback recebe apenas tamanho válido e diferente, sem buscar dados ou alterar página implicitamente; carregamento bloqueia ações
+
+#### Scenario: Rodapé padrão preservado
+
+- **WHEN** a tabela recebe somente as props de paginação já existentes
+- **THEN** mantém a paginação alinhada à direita, sem resumo ou seletor, com adaptação ao espaço e folga para foco

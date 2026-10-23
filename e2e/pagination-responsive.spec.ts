@@ -203,3 +203,17 @@ test('SSR contém páginas e hidrata com CSS distribuído sem erros', async ({ p
 	expect(await button.evaluate((n) => getComputedStyle(n).minHeight)).toBe('40px');
 	expect(errors).toEqual([]);
 });
+
+test('preserva o alinhamento original à direita no rodapé da SmartTable', async ({ page }) => {
+	await page.goto('/clientes');
+	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
+	const nav = page.locator('.ads-smart-table-pagination > .ads-pagination');
+	await expect
+		.poll(() =>
+			nav.locator('ul').evaluate((list) => {
+				const outer = list.closest('.ads-pagination-scroll')!.getBoundingClientRect();
+				return Math.abs(outer.right - list.getBoundingClientRect().right);
+			}),
+		)
+		.toBeLessThanOrEqual(1);
+});

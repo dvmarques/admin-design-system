@@ -158,17 +158,17 @@ dependências de runtime.
 
 Build limpo da develop `91d47c9`, com o mesmo TypeScript/Tailwind e LF, em
 cópia isolada: components **356809 bytes / 145 arquivos**. Após a #138:
-**382329 bytes / 145 arquivos** (+25520, 7,15%). Admin: **176382 bytes / 57
+**382334 bytes / 145 arquivos** (+25525, 7,15%). Admin: **176484 bytes / 57
 arquivos**, dentro da tolerância anterior; tokens permanece 36342 bytes.
 
 A expansão funcional de AdsPagination (medição por contêiner, salto por link,
 labels, loading, correção controlada e foco) aumenta o módulo compilado de
-2944 para 13807 bytes; gzip do JavaScript emitido pelo mesmo TypeScript:
-1092 → 3957 bytes (+2865). Esta medição do módulo não é bundle minificado nem
+2944 para 13803 bytes; gzip do JavaScript emitido pelo mesmo TypeScript:
+1092 → 3956 bytes (+2864). Esta medição do módulo não é bundle minificado nem
 inclui React. O restante do dist inclui CSS, declarações e mapas. Sem novos
 arquivos publicados nem dependência de runtime; testes permanecem fora do dist.
 
-O baseline de components foi atualizado de 330033 para **382329**, refletindo
+O baseline de components foi atualizado de 330033 para **382334**, refletindo
 a nova API e comportamentos opt-in exigidos pela issue, além do crescimento
 já absorvido na develop. A tolerância de 10% e as verificações de pacotes não
 foram alteradas. Como nos incrementos públicos anteriores registrados neste

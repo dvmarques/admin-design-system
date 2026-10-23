@@ -94,3 +94,15 @@ Os três têm aumento de 32px na altura, coerente com controles e folga vertical
 da paginação. Logo, as outras duas divergências não são tratadas como simples
 variação local nesta change: a CI confirma que precisam de revisão e atualização
 intencional. Firefox e WebKit passaram seus dez casos cada.
+
+## Revisão visual e de compatibilidade final
+
+A comparação das três telas confirmou a necessidade de mais altura e folga
+vertical. Em clientes, identificou também uma regressão não intencional de
+alinhamento à esquerda: corrigida antes de aceitar o baseline. A SmartTable
+conserva o alinhamento à direita, com E2E dedicado. Na nova revisão, **18 E2E
+focados passaram**. A CI 39880767049 do commit c3279ed aprovou qualidade
+(760 Vitest / 52 arquivos), distribuição, política, Firefox e WebKit; o teste
+condicional de checkout com outro proprietário foi skipped no runner não-root,
+e não é declarado aprovado. A revisão posterior altera CSS/alinhamento e o
+E2E correspondente; seus checks devem ser conferidos no novo SHA.

@@ -72,8 +72,12 @@
 	}
 	.ads-sidebar-item > a[aria-current='page'] {
 		background: var(--ads-color-surface-selected);
+		color: var(--ads-color-on-surface-selected);
 		box-shadow: inset 3px 0 0 var(--ads-color-primary);
 		font-weight: 600;
+	}
+	.ads-sidebar-item > a[aria-current='page'] .ads-sidebar-icon {
+		color: inherit;
 	}
 	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] .ads-sidebar-section-title,
 	.ads-admin-shell-sidebar-desktop[data-collapsed='true'] .ads-sidebar-group-chevron,

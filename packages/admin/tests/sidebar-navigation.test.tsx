@@ -20,8 +20,33 @@ describe('navegação hierárquica do shell', () => {
 			</AdsAdminShell>,
 		);
 		expect(screen.getByText('Componentes').closest('summary,button,a')).toBeNull();
+		expect(screen.getByRole('group', { name: 'Componentes' })).toContainElement(
+			screen.getByRole('link', { name: 'Button' }),
+		);
 		expect(screen.getByText('Básicos').closest('summary')).not.toBeNull();
 		expect(screen.getByRole('link', { name: 'Button' })).toHaveAttribute('href', '/button');
+	});
+	it('mantém ids de título únicos entre instâncias e estáveis ao renderizar novamente', () => {
+		const sections = (
+			<>
+				<AdsAdminShell.NavigationSection label="Componentes">
+					Primeira
+				</AdsAdminShell.NavigationSection>
+				<AdsAdminShell.NavigationSection label="Componentes">
+					Segunda
+				</AdsAdminShell.NavigationSection>
+			</>
+		);
+		const { rerender } = render(sections);
+		const groups = screen.getAllByRole('group', { name: 'Componentes' });
+		const ids = groups.map((group) => group.getAttribute('aria-labelledby'));
+		expect(new Set(ids).size).toBe(2);
+		rerender(sections);
+		expect(
+			screen
+				.getAllByRole('group', { name: 'Componentes' })
+				.map((group) => group.getAttribute('aria-labelledby')),
+		).toEqual(ids);
 	});
 	it('expande a sidebar recolhida ao acionar uma categoria sem perder o foco', () => {
 		render(

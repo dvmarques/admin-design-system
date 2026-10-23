@@ -177,9 +177,9 @@ test('sidebar preserva expansão manual entre rotas e abre o grupo ativo', async
 	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
 	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });
 	const group = (label: string) =>
-		nav
-			.locator('details')
-			.filter({ has: page.locator('summary').filter({ hasText: new RegExp(`^${label}$`) }) });
+		nav.locator('details').filter({
+			has: page.locator('summary').filter({ has: page.getByText(label, { exact: true }) }),
+		});
 	const basics = group('Básicos');
 	const forms = group('Formulários');
 	const data = group('Dados');
@@ -219,8 +219,11 @@ test('sidebar distingue seções e expande categoria por teclado no desktop reco
 		hasText: 'Composições administrativas',
 	});
 	await expect(section).toBeVisible();
+	await expect(
+		nav.getByRole('group', { name: 'Composições administrativas', exact: true }),
+	).toBeVisible();
 	expect(await section.evaluate((node) => node.closest('summary,button,a') === null)).toBe(true);
-	const basics = nav.locator('summary').filter({ hasText: /^Básicos$/ });
+	const basics = nav.locator('summary').filter({ has: page.getByText('Básicos', { exact: true }) });
 	await page.getByRole('button', { name: 'Recolher barra lateral', exact: true }).click();
 	await basics.focus();
 	await page.keyboard.press('Enter');

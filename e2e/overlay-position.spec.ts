@@ -93,7 +93,7 @@ for (const theme of ['light', 'dark']) {
 		test('popover follows dynamic content, scroll, resize and pinch zoom', async ({ page }) => {
 			const errors: string[] = [];
 			page.on('pageerror', (error) => errors.push(error.message));
-			await page.getByLabel('Componente').selectOption('Popover');
+			await page.getByRole('combobox', { name: /^Componente\b/ }).selectOption('Popover');
 			await page.getByRole('button', { name: 'Popover na borda', exact: true }).click();
 			const panel = page.getByRole('dialog', { name: 'Popover na borda' });
 			await expect(panel).toHaveAttribute('data-placement', 'top');
@@ -148,7 +148,7 @@ for (const theme of ['light', 'dark']) {
 						});
 						await page.reload();
 					}
-					await page.getByLabel('Componente').selectOption('Popover');
+					await page.getByRole('combobox', { name: /^Componente\b/ }).selectOption('Popover');
 					const trigger = page.getByRole('button', { name: 'Popover na borda', exact: true });
 					await trigger.evaluate((element) => {
 						const host = element.closest('.ads-popover-anchor')!.parentElement!;
@@ -215,7 +215,7 @@ for (const theme of ['light', 'dark']) {
 		});
 
 		test('popover follows a scrolling and resizing anchor', async ({ page }) => {
-			await page.getByLabel('Componente').selectOption('Popover');
+			await page.getByRole('combobox', { name: /^Componente\b/ }).selectOption('Popover');
 			const trigger = page.getByRole('button', { name: 'Popover na borda', exact: true });
 			await trigger.evaluate((element) => {
 				const host = element.closest('.ads-popover-anchor')!.parentElement!;
@@ -257,7 +257,7 @@ for (const theme of ['light', 'dark']) {
 		});
 
 		test('dropdown at the lower edge preserves keyboard navigation and focus', async ({ page }) => {
-			await page.getByLabel('Componente').selectOption('Dropdown');
+			await page.getByRole('combobox', { name: /^Componente\b/ }).selectOption('Dropdown');
 			const trigger = page.getByRole('button', { name: 'Dropdown na borda' });
 			await trigger.focus();
 			await trigger.press('ArrowDown');

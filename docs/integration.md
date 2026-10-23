@@ -23,6 +23,8 @@ Dentro de `AdsAdminShell.Sidebar`, use `AdsAdminShell.Navigation` como raiz,
 `AdsAdminShellNavigation*Props` são públicos no pacote admin; os estilos já são
 distribuídos em `@admin-ds/admin/styles.css`.
 
+As seções usam `role="group"` com `aria-labelledby` vinculado ao título por um id único, inclusive entre instâncias e durante hidratação.
+
 O grupo usa `details/summary`: Tab move o foco e Enter/Espaço alternam a expansão.
 Para controlar a abertura, passe `open` e `onToggle`; omitir `open` permite o
 comportamento nativo. O consumidor aplica `aria-current="page"` no link e decide

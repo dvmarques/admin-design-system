@@ -7,28 +7,29 @@ import { AdsAdminShell } from '@admin-ds/admin';
 import { AdsIcon, type AdsIconName } from '@admin-ds/components';
 import { catalogEntries } from './catalogo/catalog-data';
 
-type NavigationItem = { href: string; label: string; icon?: AdsIconName };
-type NavigationGroup = { label: string; icon: AdsIconName; items: NavigationItem[] };
+type NavigationIcon = AdsIconName | { initials: string };
+type NavigationItem = { href: string; label: string; icon?: NavigationIcon };
+type NavigationGroup = { label: string; icon: NavigationIcon; items: NavigationItem[] };
 const overview: NavigationItem[] = [
-	{ href: '/', icon: 'info', label: 'Visão geral' },
+	{ href: '/', icon: { initials: 'Vg' }, label: 'Visão geral' },
 	{ href: '/catalogo', icon: 'search', label: 'Catálogo' },
 ];
 const applications: NavigationItem[] = [
-	{ href: '/clientes', icon: 'check', label: 'Clientes' },
+	{ href: '/clientes', icon: { initials: 'Cl' }, label: 'Clientes' },
 	{ href: '/clientes/novo', icon: 'plus', label: 'Novo cliente' },
-	{ href: '/preferencias', icon: 'info', label: 'Preferências' },
-	{ href: '/componentes', icon: 'plus', label: 'Componentes' },
-	{ href: '/data-display', icon: 'search', label: 'Exibição de dados' },
+	{ href: '/preferencias', icon: { initials: 'Pr' }, label: 'Preferências' },
+	{ href: '/componentes', icon: { initials: 'Co' }, label: 'Componentes' },
+	{ href: '/data-display', icon: { initials: 'Ex' }, label: 'Exibição de dados' },
 ];
 function catalogItems(entries: (typeof catalogEntries)[number][]): NavigationItem[] {
 	return entries.map((entry) => ({ href: entry.href, label: entry.name.replace(/^Ads/, '') }));
 }
-const categoryIcons: Record<string, AdsIconName> = {
-	Básicos: 'plus',
+const categoryIcons: Record<string, NavigationIcon> = {
+	Básicos: { initials: 'Bá' },
 	Formulários: 'calendar',
-	Navegação: 'chevronRight',
+	Navegação: { initials: 'Na' },
 	Feedback: 'info',
-	Dados: 'search',
+	Dados: { initials: 'Da' },
 };
 const componentGroups: NavigationGroup[] = Object.entries(categoryIcons).map(([label, icon]) => ({
 	label,
@@ -36,14 +37,14 @@ const componentGroups: NavigationGroup[] = Object.entries(categoryIcons).map(([l
 	items: catalogItems(catalogEntries.filter((entry) => entry.group === label)),
 }));
 const adminCategories = [
-	{ label: 'Layout e dashboard', icon: 'plus', demos: ['AdminShell', 'Dashboard'] },
+	{ label: 'Layout e dashboard', icon: { initials: 'La' }, demos: ['AdminShell', 'Dashboard'] },
 	{
 		label: 'Tabelas e filtros',
-		icon: 'search',
+		icon: { initials: 'Ta' },
 		demos: ['FilterBar', 'SmartTable', 'BulkActionBar'],
 	},
-	{ label: 'Fluxos', icon: 'check', demos: ['ListFlow', 'StepForm', 'ConfirmDialog'] },
-] satisfies { label: string; icon: AdsIconName; demos: string[] }[];
+	{ label: 'Fluxos', icon: { initials: 'Fl' }, demos: ['ListFlow', 'StepForm', 'ConfirmDialog'] },
+] satisfies { label: string; icon: NavigationIcon; demos: string[] }[];
 const adminGroups: NavigationGroup[] = adminCategories.map(({ label, icon, demos }) => ({
 	label,
 	icon,
@@ -58,6 +59,14 @@ export const demoNavigationItems = [
 	...applications,
 ];
 
+function NavigationSymbol({ icon }: { icon: NavigationIcon }) {
+	return typeof icon === 'string' ? (
+		<AdsIcon name={icon} />
+	) : (
+		<span className="demo-nav-monogram">{icon.initials}</span>
+	);
+}
+
 function NavigationLink({ item, pathname }: { item: NavigationItem; pathname: string }) {
 	return (
 		<AdsAdminShell.NavigationItem>
@@ -68,7 +77,7 @@ function NavigationLink({ item, pathname }: { item: NavigationItem; pathname: st
 			>
 				{item.icon && (
 					<span aria-hidden="true" className="ads-sidebar-icon">
-						<AdsIcon name={item.icon} />
+						<NavigationSymbol icon={item.icon} />
 					</span>
 				)}
 				<span className={item.icon ? 'ads-admin-shell-sidebar-label' : undefined}>
@@ -87,7 +96,7 @@ function DemoNavigationGroup({ group, pathname }: { group: NavigationGroup; path
 	return (
 		<AdsAdminShell.NavigationGroup
 			label={group.label}
-			icon={<AdsIcon name={group.icon} />}
+			icon={<NavigationSymbol icon={group.icon} />}
 			open={expanded}
 			onToggle={(event) => setExpanded(event.currentTarget.open)}
 		>

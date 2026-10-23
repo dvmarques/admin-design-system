@@ -65,3 +65,8 @@ A navegação SHALL diferenciar títulos de seção não interativos, grupos exp
 
 - **WHEN** a pessoa ativa por mouse ou teclado um grupo da sidebar recolhida
 - **THEN** a sidebar expande e os links do grupo ficam disponíveis, mantendo o foco no controle acionado
+
+#### Scenario: Seções nomeadas e categorias distinguíveis
+
+- **WHEN** a pessoa explora as seções com tecnologia assistiva ou recolhe a sidebar no desktop
+- **THEN** cada seção associa seu nome ao conteúdo e cada destino visível no modo recolhido possui ícone ou iniciais distintos, preservando seu nome acessível completo

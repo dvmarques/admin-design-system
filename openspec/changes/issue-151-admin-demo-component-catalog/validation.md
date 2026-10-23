@@ -66,3 +66,15 @@ A execução anterior `39979454512` comprova somente a entrega inicial. A CI aci
 - `npm run test:e2e -- --project=chromium --workers=4 --grep-invert 'mantém a apresentação'`: **210 testes funcionais Chromium passaram**, sem falhas, em 5,5 minutos. A exclusão se restringe às comparações com snapshots oficiais Linux, cuja execução local não é suportada.
 - A issue #151 e a descrição da PR #177 registram a navegação hierárquica reutilizável como parte do escopo atual, incluindo APIs públicas adicionais, compatibilidade, acessibilidade, documentação e testes.
 - Commit/push autorizados na branch atual. Apenas arquivos deste ajuste são incluídos; alterações locais preexistentes em package-lock.json e next-env.d.ts permanecem fora do commit. Snapshots oficiais continuam pendentes de atualização e inspeção no workflow do projeto antes do merge.
+
+## Atendimento da terceira revisão da PR #177
+
+- Seções usam role group e aria-labelledby com ids gerados por useId; testes verificam nome/conteúdo, unicidade e estabilidade entre renderizações.
+- Destinos da sidebar recolhida usam ícones públicos adequados ou iniciais distintas, sem iniciais nos links internos. O teste de navegação verifica que não há símbolos repetidos. Changelog Added consolidado em uma entrada.
+- Auditoria inicial identificou contraste insuficiente nas iniciais do link ativo; o estado selecionado agora usa o token on-surface-selected e seus símbolos herdam essa cor. A execução inicial foi interrompida para corrigir a falha. Seletores E2E passaram a localizar o rótulo textual isolado dos símbolos decorativos.
+- `npm run test:quiet`: 55 arquivos / 850 testes Vitest passaram, além dos testes Node. Build completo Next.js/Storybook, lint, tipos, format e OpenSpec estrito passaram. Os pacotes admin e demo foram reconstruídos após a correção de contraste.
+- Regressão focalizada (`npm run test:e2e -- e2e/catalog.spec.ts e2e/data-display.spec.ts --project=chromium --workers=4 --grep 'exibe os sparklines|sidebar preserva|sidebar distingue'`): 3 testes passaram, incluindo axe do destino com iniciais ativo.
+- Inspeção visual local no desktop expandido/recolhido confirmou hierarquia, foco e distinção dos símbolos. Contexto obrigatório de NavigationGroup permanece documentado em docs/integration.md.
+
+- A nova seção nomeada tornou ambíguo o antigo getByLabel parcial de Componente nos testes de overlay. Os seletores agora usam combobox com o nome do campo. `npm run test:e2e -- e2e/overlay-position.spec.ts --project=chromium --workers=4`: 18 testes passaram.
+- Reexecução final `npm run test:e2e -- --project=chromium --workers=4 --grep-invert 'mantém a apresentação'`: **210 testes passaram**, sem falhas, em 1,9 minuto no build de produção. `npm run format` e `npm run lint` passaram após os ajustes dos seletores.

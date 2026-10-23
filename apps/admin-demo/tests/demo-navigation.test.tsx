@@ -21,6 +21,15 @@ describe('DemoNavigation', () => {
 		pathname = '/';
 	});
 
+	it('distingue visualmente todos os destinos disponíveis na sidebar recolhida', () => {
+		const { container } = render(<DemoNavigation />);
+		const symbols = [...container.querySelectorAll('.ads-sidebar-icon')].map(
+			(node) => node.innerHTML,
+		);
+		expect(symbols.length).toBeGreaterThan(0);
+		expect(new Set(symbols).size).toBe(symbols.length);
+	});
+
 	it('lists one link per route with the application-provided hrefs', () => {
 		render(<DemoNavigation />);
 

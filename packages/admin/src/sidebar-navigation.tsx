@@ -1,6 +1,6 @@
 'use client';
 
-import type { DetailsHTMLAttributes, HTMLAttributes, ReactNode } from 'react';
+import { useId, type DetailsHTMLAttributes, type HTMLAttributes, type ReactNode } from 'react';
 import { useAdminShellContext } from './admin-shell-state.js';
 import { classNames } from './class-names.js';
 
@@ -18,9 +18,17 @@ export function AdsAdminShellNavigationSection({
 	className,
 	...props
 }: AdsAdminShellNavigationSectionProps) {
+	const titleId = useId();
 	return (
-		<div {...props} className={classNames('ads-sidebar-section', className)}>
-			<p className="ads-sidebar-section-title ads-admin-shell-sidebar-label">{label}</p>
+		<div
+			{...props}
+			className={classNames('ads-sidebar-section', className)}
+			role="group"
+			aria-labelledby={titleId}
+		>
+			<p id={titleId} className="ads-sidebar-section-title ads-admin-shell-sidebar-label">
+				{label}
+			</p>
 			{children}
 		</div>
 	);

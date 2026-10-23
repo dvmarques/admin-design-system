@@ -16,5 +16,5 @@
 
 ## 4. Validação e entrega
 
-- [x] 4.1 Executados: prettier, lint, build, typecheck, test:quiet (851) e `openspec validate --all --strict`. E2E local (Chromium): novos testes e demais specs aprovados; snapshots visuais de admin-demo, rotas e data-display divergem do mesmo modo na base sem esta change (diferença de renderização do ambiente), sem atualização; validação na CI.
-- [ ] 4.2 Abrir PR para `develop` (`Closes #136` somente com todos os critérios atendidos).
+- [x] 4.1 Executados: prettier, lint, build, typecheck, test:quiet (851) e `openspec validate --all --strict`. E2E: novos testes aprovados localmente; os snapshots visuais divergem localmente também na base (renderização do ambiente) e são validados na CI Linux.
+- [x] 4.2 PR #179 para `develop` com revisão técnica aprovada (sidebar com overflow garantido e capturas do layout desktop real em claro e escuro, baselines Linux gerados pelo workflow oficial); merge por squash e arquivamento autorizados pelo responsável.

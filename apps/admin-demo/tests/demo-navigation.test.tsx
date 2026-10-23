@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DemoNavigation, demoNavigationItems } from '../app/demo-navigation';
 
@@ -42,5 +42,28 @@ describe('DemoNavigation', () => {
 		expect(screen.getAllByRole('link').some((link) => link.hasAttribute('aria-current'))).toBe(
 			false,
 		);
+	});
+	it('preserves group identity and manual expansion when the destination group opens', () => {
+		const { rerender } = render(<DemoNavigation />);
+		const basics = screen.getByText('Básicos', { exact: true }).closest('details')!;
+		const applications = screen
+			.getByText('Exemplos de aplicação', { exact: true })
+			.closest('details')!;
+		basics.open = true;
+		fireEvent(basics, new Event('toggle'));
+		applications.open = false;
+		fireEvent(applications, new Event('toggle'));
+		pathname = '/catalogo/input';
+		rerender(<DemoNavigation />);
+		expect(screen.getByText('Básicos', { exact: true }).closest('details')).toBe(basics);
+		expect(basics).toHaveAttribute('open');
+		expect(applications).not.toHaveAttribute('open');
+		expect(screen.getByText('Formulários', { exact: true }).closest('details')).toHaveAttribute(
+			'open',
+		);
+		pathname = '/catalogo/textarea';
+		rerender(<DemoNavigation />);
+		expect(basics).toHaveAttribute('open');
+		expect(applications).not.toHaveAttribute('open');
 	});
 });

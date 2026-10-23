@@ -170,3 +170,39 @@ test('breadcrumb usa navegação Next.js e preserva links ao expandir', async ({
 	await preview.getByRole('link', { name: 'Catálogo', exact: true }).click();
 	await expect(page).toHaveURL(/\/catalogo$/);
 });
+
+test('sidebar preserva expansão manual entre rotas e abre o grupo ativo', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('/catalogo');
+	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
+	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });
+	const group = (label: string) =>
+		nav
+			.locator('details')
+			.filter({ has: page.locator('summary').filter({ hasText: new RegExp(`^${label}$`) }) });
+	const basics = group('Básicos');
+	const forms = group('Formulários');
+	const applications = group('Exemplos de aplicação');
+	await basics.locator('summary').click();
+	await applications.locator('summary').click();
+	await basics.getByRole('link', { name: 'AdsButton', exact: true }).click();
+	await expect(basics).toHaveAttribute('open', '');
+	await expect(applications).not.toHaveAttribute('open');
+	// Uma rota de outra categoria abre seu grupo, preservando as escolhas anteriores.
+	await page.getByRole('link', { name: 'Voltar ao catálogo', exact: true }).click();
+	await page.getByRole('main').getByRole('link', { name: 'AdsInput', exact: true }).click();
+	await expect(forms).toHaveAttribute('open', '');
+	await expect(basics).toHaveAttribute('open', '');
+	await expect(applications).not.toHaveAttribute('open');
+	await forms.locator('summary').click();
+	await page.goBack();
+	await expect(forms).not.toHaveAttribute('open');
+	await expect(basics).toHaveAttribute('open', '');
+	await page.goForward();
+	await expect(forms).toHaveAttribute('open', '');
+	await expect(nav.getByRole('link', { name: 'AdsInput', exact: true })).toHaveAttribute(
+		'aria-current',
+		'page',
+	);
+	await expect(applications).not.toHaveAttribute('open');
+});

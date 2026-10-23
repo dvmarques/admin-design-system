@@ -12,3 +12,7 @@
 - [x] 10. Validar cobertura automatizada export → JSX executável, teclado, acessibilidade, interações e Playwright em temas/larguras.
 - [x] 11. Atualizar convenções, matriz rastreável e regra para futuras adições; validar consumo do CSS compilado no Next.js e no Storybook.
 - [x] 12. Revisar o diff e corrigir findings; executar OpenSpec estrito, format, lint, build, tipos, quality e `npm run test:e2e` sem falhas. Atualizar apenas snapshots intencionais e revisados pelo workflow oficial; registrar evidências e comandos de diagnóstico.
+
+- [x] 13. Corrigir a perda de expansão manual da sidebar e testar navegação entre grupos/rotas, incluindo abertura do grupo ativo e identidade estável.
+- [x] 14. Integrar `develop` atualizado (75f7d31, overlays #134) sem descartar a implementação da PR.
+- [ ] 15. Repetir format, lint, build, tipos, quality, E2E e OpenSpec na branch integrada; confirmar a CI completa no SHA final e registrar os links da revisão.

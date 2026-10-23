@@ -26,9 +26,23 @@
 
 O ambiente local precisou de navegadores Playwright em diretório temporário e permissão de rede para os subprocessos do build. Isso não exigiu alteração na configuração do projeto. Os 207 cenários funcionais Chromium passaram sem falhas; as sete comparações visuais afetadas pela sidebar foram verificadas pelo workflow oficial, conforme `docs/quality.md`.
 
-## Gates remotos
+## Gates remotos — entrega inicial
 
 - [Workflow oficial de baselines](https://github.com/dvmarques/admin-design-system/actions/runs/39978288343): **sucesso**, com **214 testes Chromium passando duas vezes** (regeneração e comparação sem atualizar imagens).
 - Commit de baselines `a2be249`: 16 PNGs atualizados. Imagens e diferenças foram inspecionadas, incluindo desktop claro/escuro, shell recolhido e drawer móvel. A mudança intencional é a navegação por grupos; telas de negócio e identidade visual foram preservadas.
 - As 12 tasks estão concluídas. A CI da PR no SHA final, incluindo execução de Firefox/WebKit, será acompanhada após marcar Ready for review; os links e o resultado definitivo ficam na descrição/checks da PR.
 - Sem merge, fechamento manual de issue ou arquivamento da change. A revisão humana continua pendente.
+
+## Ajustes da revisão
+
+Referência: [revisão da PR #177](https://github.com/dvmarques/admin-design-system/pull/177#pullrequestreview-5630869592).
+
+- Estado da sidebar: identidade por grupo, estado controlado pelo `toggle` nativo e abertura apenas do grupo de destino em mudanças de rota. As escolhas dos outros grupos sobrevivem à navegação e ao histórico.
+- Regressões: teste unitário preserva identidade DOM e expansão; Playwright abre/recolhe grupos e navega por links e voltar/avançar, verificando o item ativo e as preferências dos demais grupos.
+- Base integrada: `develop` em `75f7d31` (overlays #134 / PR #178), via merge `2071fc9`, sem conflitos. Nenhum commit da base ficou fora da branch no momento da integração.
+- `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck` e `npx @fission-ai/openspec validate --all --strict`: passaram (48 itens OpenSpec).
+- `npm run test:quality`: **54 arquivos / 846 testes Vitest passaram**, além dos testes Node, release, CI e verificações de artefatos/skills.
+- Navegação: **77 testes unitários passaram**, incluindo a regressão de identidade/expansão.
+- `npm run test:e2e -- --project=chromium --workers=4`: **209 testes funcionais passaram**, incluindo a nova regressão. Sete comparações de screenshots diferiram localmente por poucos pixels de rasterização de texto, sem mudança de layout na inspeção. Conforme `docs/quality.md`, os baselines oficiais Linux foram mantidos; a comparação definitiva será feita na CI padronizada.
+
+A tarefa 15 permanece aberta até a confirmação da CI completa da branch integrada. A execução anterior `39979454512` comprova somente a entrega anterior; o gate desta revisão exige os checks do novo SHA, incluindo os passos reais de Playwright em Chromium/Firefox/WebKit. O link dessa nova execução será registrado na PR e aqui após seu término.

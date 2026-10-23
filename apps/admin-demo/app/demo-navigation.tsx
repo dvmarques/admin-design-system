@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
+import { useEffect, useState } from 'react';
 import { catalogEntries } from './catalogo/catalog-data';
 
 type NavigationItem = { href: string; initials: string; label: string };
@@ -37,40 +38,49 @@ export const demoNavigationGroups: NavigationGroup[] = [
 ];
 export const demoNavigationItems = demoNavigationGroups.flatMap((group) => group.items);
 
+function DemoNavigationGroup({ group, pathname }: { group: NavigationGroup; pathname: string }) {
+	const active = group.items.some((item) => item.href === pathname);
+	const [expanded, setExpanded] = useState(
+		active || group.label === 'Visão geral e catálogo' || group.label === 'Exemplos de aplicação',
+	);
+	useEffect(() => {
+		if (active) setExpanded(true);
+	}, [active, pathname]);
+	return (
+		<details
+			className="demo-nav-group"
+			open={expanded}
+			onToggle={(event) => setExpanded(event.currentTarget.open)}
+		>
+			<summary className="demo-nav-group-title">
+				<span className="ads-admin-shell-sidebar-label">{group.label}</span>
+			</summary>
+			<ul className="demo-shell-nav-list">
+				{group.items.map((item) => (
+					<li key={item.href}>
+						<Link
+							aria-current={pathname === item.href ? 'page' : undefined}
+							className="demo-shell-nav-link"
+							href={item.href}
+						>
+							<span aria-hidden="true" className="demo-nav-initial">
+								{item.initials}
+							</span>
+							<span className="ads-admin-shell-sidebar-label">{item.label}</span>
+						</Link>
+					</li>
+				))}
+			</ul>
+		</details>
+	);
+}
+
 export function DemoNavigation() {
 	const pathname = usePathname();
 	return (
 		<div>
 			{demoNavigationGroups.map((group) => (
-				<details
-					className="demo-nav-group"
-					key={`${group.label}-${pathname}`}
-					open={
-						group.items.some((item) => item.href === pathname) ||
-						group.label === 'Visão geral e catálogo' ||
-						group.label === 'Exemplos de aplicação'
-					}
-				>
-					<summary className="demo-nav-group-title">
-						<span className="ads-admin-shell-sidebar-label">{group.label}</span>
-					</summary>
-					<ul className="demo-shell-nav-list">
-						{group.items.map((item) => (
-							<li key={item.href}>
-								<Link
-									aria-current={pathname === item.href ? 'page' : undefined}
-									className="demo-shell-nav-link"
-									href={item.href}
-								>
-									<span aria-hidden="true" className="demo-nav-initial">
-										{item.initials}
-									</span>
-									<span className="ads-admin-shell-sidebar-label">{item.label}</span>
-								</Link>
-							</li>
-						))}
-					</ul>
-				</details>
+				<DemoNavigationGroup key={group.label} group={group} pathname={pathname} />
 			))}
 		</div>
 	);

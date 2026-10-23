@@ -38,6 +38,11 @@ A navegação SHALL agrupar categorias, indicar página ativa, funcionar em disp
 - **WHEN** o catálogo é acessado em largura de celular
 - **THEN** a navegação e os exemplos continuam utilizáveis sem recorte de controles
 
+#### Scenario: Expansão preservada entre rotas
+
+- **WHEN** a pessoa expande ou recolhe grupos da sidebar e navega para outra rota
+- **THEN** os grupos preservam suas escolhas de expansão e o grupo da página de destino é aberto para expor o item ativo, sem remontar os demais grupos
+
 ### Requirement: Preservação dos exemplos de aplicação
 
 As páginas de negócio existentes SHALL permanecer acessíveis por suas rotas atuais ou redirecionamentos equivalentes.

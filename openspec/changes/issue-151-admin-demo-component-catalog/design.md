@@ -21,3 +21,7 @@ Usar APIs Ads* públicas e CSS já compilado dos pacotes; não há Tailwind no c
 Âncoras em uma página única simplificariam o roteamento, mas dificultariam contexto isolado e links diretos. Rotas por export com composições compartilhadas preservam descoberta sem duplicar exemplos semanticamente relacionados. Snippets manuais seriam mais curtos, mas poderiam divergir do exemplo: a extração por AST mantém coerência e imports reais. O custo é manter um artefato gerado, protegido por teste.
 
 Mudança intencional da sidebar altera snapshots das páginas existentes. Diferenças devem ser inspecionadas antes de atualizar baselines pelo workflow oficial. Regressões podem ser revertidas pelo commit da implementação, sem migrações ou mudança de contratos dos pacotes.
+
+## Ajuste da revisão — expansão da sidebar
+
+Cada grupo tem identidade estável pelo rótulo e mantém seu próprio estado de expansão, atualizado pelo evento nativo `toggle`. Navegar abre o grupo da página de destino; as escolhas dos demais grupos sobrevivem à troca de rota, inclusive voltar/avançar. Não há persistência entre recarregamentos nem alteração do estado móvel do shell.

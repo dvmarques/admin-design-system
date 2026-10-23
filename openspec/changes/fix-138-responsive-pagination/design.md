@@ -1,13 +1,25 @@
-# Design
+# Design — paginação responsiva
 
-## Layout and measurement
-Use a client-side ResizeObserver on the pagination container with a stable initial SSR-safe layout. Measure actual control widths and reserve room for mandatory pages and navigation; progressively add siblings and gap tokens. Avoid ResizeObserver feedback loops by separating available width from rendered-content width. When physically too narrow, provide an accessible horizontal fallback with vertical breathing room and no clipped focus outlines.
+## Medição e estabilidade
 
-## API and accessibility
-Keep text previous/next defaults. Opt-in arrow content without an icon dependency; customizable accessible labels and page-jump text/errors. Preserve aria-current, aria-label, keyboard focus, 44px targets where feasible, and avoid nested interactive controls when renderPageLink is used. Optional loading state prevents duplicate callbacks without fetching data. Controlled pageCount shrink requires documented correction behavior without callbacks during render.
+AdsPagination permanece Client Component. O HTML inicial é determinístico e não acessa DOM no render; a adaptação acontece após montagem. ResizeObserver acompanha a área disponível e a lista, inclusive mudanças de fonte, conteúdo e zoom. As larguras reais dos controles de navegação, espaços e itens numéricos determinam a capacidade; não usamos breakpoints ou estimativas fixas para textos. Atualizações são agrupadas em requestAnimationFrame, com igualdade de estado e cleanup de observer/frame/listener. A largura disponível independe da largura intrínseca da lista.
 
-## Styling and compatibility
-Use existing design tokens and static Tailwind classes; preserve dark/light themes and compiled CSS distribution. Avoid new dependencies and SmartTable-specific logic in the base component. Hydrate without layout mismatch; resize adaptation happens after mount.
+Números têm dígitos tabulares e largura estável para o total de páginas. Primeira, atual e última são obrigatórias. Reticências representam lacunas de duas ou mais páginas e são omitidas antes do fallback quando só os números obrigatórios cabem; uma lacuna unitária usa seu número. siblingCount limita adjacentes, mantendo a expansão antiga de totais pequenos quando couber. Se o mínimo não couber, a região rolável é nomeada, focalizável e tem folga para hover e foco. Salto e rodapé quebram linha separadamente.
 
-## Trade-offs
-Width measurement adds observer complexity but handles sidebars/zoom unlike viewport breakpoints. Accessible horizontal scrolling remains last-resort only when mandatory controls physically cannot fit.
+## Contratos públicos e acessibilidade
+
+Texto continua padrão; navigationMode, previousContent, nextContent, showFirstLast, showPageJump, loading e labels são opcionais. Labels distinguem texto visível e nome acessível. Loading mantém os elementos montados/focáveis com aria-disabled e aria-busy e bloqueia ativação em captura (também links e renderPage legado). Não realiza busca de dados.
+
+O salto usa grupo rotulado, não form aninhável: Enter e botão validam inteiro decimal entre 1 e pageCount, distinto da página atual. Erros usam aria-invalid, aria-describedby e alert. Com renderPageLink, a confirmação usa o link do consumidor e Enter ativa esse mesmo link; não cria button dentro de anchor. onPageChange continua reservado ao modo de callback. O campo sincroniza page e pageCount externos.
+
+Quando o total positivo torna page inválida, renderizamos a página limitada e solicitamos onPageChange uma vez por combinação inválida, em efeito após commit, adiado durante loading. O consumidor aplica a correção ao estado/dados. Em modo exclusivamente de links, o consumidor normaliza a URL/dados; não há navegação automática. Total zero não solicita página inexistente. Mudanças externas não deslocam o foco; keys numéricas estáveis evitam substituições e, se um item focado sai durante uma interação/resize, o foco permanece na página atual, somente quando se perdeu dentro da paginação.
+
+## SmartTable e CSS distribuído
+
+A composição recebe paginação pelas props existentes, sem regra de tabela na biblioteca base. pageSize/onPageSizeChange habilitam seletor controlado; totalItems/pageSize habilitam resumo somente com intervalo verificável nas rows recebidas. Não inventa registros quando vazio, total desconhecido ou página inválida. Labels do rodapé são personalizáveis. Loading da tabela ou da paginação bloqueia o seletor e a navegação. Mudar tamanho não busca dados nem muda página automaticamente; o consumidor atualiza ambos.
+
+Classes ads- e tokens semânticos existentes preservam identidade, temas e personalização. Estilos são distribuídos no CSS compilado; Next.js importa apenas exports públicos, sem Tailwind no consumidor. Nenhuma dependência nova de runtime. Bundle medido: components 356809 → 382329 bytes (+25520); JavaScript do módulo em gzip 1092 → 3957 (+2865). A nova API exige atualização explícita do baseline de components; tolerância de 10% preservada. Detalhes e método em docs/bundle-baseline.md.
+
+## Alternativas, riscos e rollback
+
+Breakpoints e larguras mágicas falham com traduções e sidebar; medir apenas a lista renderizada sem controlar largura disponível pode oscilar. Escolhemos medição de controles reais e slots estáveis. Fallback horizontal é necessário somente para impossibilidade física. Links customizados devem espalhar as props recebidas e renderizar um único controle sem interativos aninhados; renderPage é preservado como legado. A aparência responsiva muda intencionalmente a quantidade de números e o espaçamento vertical, exigindo inspeção visual. Rollback reverte conjuntamente componente, CSS, integração e testes desta change; não altera #91.

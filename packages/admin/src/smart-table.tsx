@@ -54,6 +54,9 @@ export interface AdsSmartTableColumn<Row> {
 }
 
 export interface AdsSmartTableLabels {
+	pageSize?: string;
+	pageSummary?: (first: number, last: number, total: number) => string;
+	emptyPage?: string;
 	selectAll: string;
 	selectionColumn: string;
 	selectRow: (rowLabel: string) => string;
@@ -74,7 +77,10 @@ export interface AdsSmartTableLabels {
 	scrollRegion: string;
 }
 
-const defaultLabels: AdsSmartTableLabels = {
+const defaultLabels: Required<AdsSmartTableLabels> = {
+	pageSize: 'Registros por página',
+	pageSummary: (first, last, total) => `Exibindo ${first}–${last} de ${total} registros`,
+	emptyPage: 'Nenhum registro nesta página',
 	selectAll: 'Selecionar todas as linhas da página',
 	selectionColumn: 'Seleção',
 	selectRow: (rowLabel) => `Selecionar ${rowLabel}`,
@@ -277,10 +283,25 @@ export function AdsSmartTable<Row>({
 	const selectedCount = selectedIds.length;
 	const colSpan = Math.max(1, visibleColumns.length + (selectable ? 1 : 0));
 	const showToolbar = selectable || onHiddenColumnsChange !== undefined;
-	const hasTotal = totalItems !== undefined && Number.isFinite(totalItems) && totalItems >= 0;
-	const validPageSize = pageSize !== undefined && Number.isInteger(pageSize) && pageSize > 0;
-	const firstItem = hasTotal && validPageSize && pagination && totalItems! > 0 ? (Math.max(1, pagination.page) - 1) * pageSize! + 1 : 0;
-	const lastItem = hasTotal && validPageSize && firstItem > 0 ? Math.min(totalItems!, firstItem + pageSize! - 1) : 0;
+	const hasTotal = totalItems !== undefined && Number.isSafeInteger(totalItems) && totalItems >= 0;
+	const validPageSize = pageSize !== undefined && Number.isSafeInteger(pageSize) && pageSize > 0;
+	const paginationLoading = loading || pagination?.loading === true;
+	const validPage =
+		pagination &&
+		Number.isSafeInteger(pagination.page) &&
+		pagination.page >= 1 &&
+		pagination.page <= pagination.pageCount;
+	const firstItem = validPage && validPageSize ? (pagination.page - 1) * pageSize + 1 : 0;
+	const lastItem =
+		hasTotal && firstItem > 0
+			? Math.min(totalItems, firstItem + Math.min(pageRows.length, pageSize ?? 0) - 1)
+			: 0;
+	const showSummary =
+		hasTotal &&
+		validPageSize &&
+		!paginationLoading &&
+		!hasError &&
+		(totalItems === 0 || (validPage && firstItem <= totalItems));
 
 	let body: ReactNode;
 	if (hasError) {
@@ -478,16 +499,44 @@ export function AdsSmartTable<Row>({
 			</AdsTable>
 			{pagination ? (
 				<div className="ads-smart-table-pagination">
-					{hasTotal && validPageSize ? <span className="ads-smart-table-page-summary">
-						{totalItems === 0 || firstItem > totalItems! ? 'Nenhum registro' : `Exibindo ${firstItem}–${lastItem} de ${totalItems} registros`}
-					</span> : null}
-					{validPageSize && onPageSizeChange ? <label className="ads-smart-table-page-size">
-						<span>Registros por página</span>
-						<select value={pageSize} onChange={(event) => onPageSizeChange(Number(event.target.value))}>
-							{[...new Set([...pageSizeOptions, pageSize!])].filter((size) => Number.isInteger(size) && size > 0).sort((a,b) => a-b).map((size) => <option key={size} value={size}>{size}</option>)}
-						</select>
-					</label> : null}
-					<AdsPagination {...pagination} />
+					{showSummary ? (
+						<span className="ads-smart-table-page-summary">
+							{totalItems === 0 || pageRows.length === 0
+								? labels.emptyPage
+								: labels.pageSummary(firstItem, lastItem, totalItems!)}
+						</span>
+					) : null}
+					{validPageSize && onPageSizeChange ? (
+						<label className="ads-smart-table-page-size">
+							<span>{labels.pageSize}</span>
+							<select
+								disabled={blocked || paginationLoading}
+								value={pageSize}
+								onChange={(event) => {
+									const next = Number(event.target.value);
+									if (
+										!blocked &&
+										!paginationLoading &&
+										Number.isSafeInteger(next) &&
+										next > 0 &&
+										next !== pageSize &&
+										pageSizeOptions.includes(next)
+									)
+										onPageSizeChange(next);
+								}}
+							>
+								{[...new Set([...pageSizeOptions, pageSize!])]
+									.filter((size) => Number.isSafeInteger(size) && size > 0)
+									.sort((a, b) => a - b)
+									.map((size) => (
+										<option key={size} value={size}>
+											{size}
+										</option>
+									))}
+							</select>
+						</label>
+					) : null}
+					<AdsPagination {...pagination} loading={paginationLoading} />
 				</div>
 			) : null}
 			{/*

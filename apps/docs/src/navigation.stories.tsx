@@ -119,17 +119,32 @@ export const Pagination: Story = {
 
 /** Paginação responsiva em contêiner que pode ser redimensionado no Storybook. */
 export const PaginationResponsive: Story = {
- render: () => {
-  const [page,setPage]=useState(25);
-  return <div style={{width:'min(100%, 420px)',resize:'horizontal',overflow:'auto',padding:'1rem'}}>
-   <AdsPagination page={page} pageCount={50} onPageChange={setPage}
-    navigationMode="arrows" showFirstLast showPageJump />
-  </div>;
- },
+	render: () => {
+		const [page, setPage] = useState(25);
+		return (
+			<div
+				style={{
+					width: 'min(100%, 420px)',
+					resize: 'horizontal',
+					overflow: 'auto',
+					padding: '1rem',
+				}}
+			>
+				<AdsPagination
+					page={page}
+					pageCount={50}
+					onPageChange={setPage}
+					navigationMode="arrows"
+					showFirstLast
+					showPageJump
+				/>
+			</div>
+		);
+	},
 };
 
 export const PaginationLoading: Story = {
- render: () => <AdsPagination page={5} pageCount={20} loading navigationMode="arrows" />,
+	render: () => <AdsPagination page={5} pageCount={20} loading navigationMode="arrows" />,
 };
 
 const ConsumerLink = ({
@@ -338,4 +353,37 @@ export const AccordionOnRaisedSurface: Story = {
 			))}
 		</div>
 	),
+};
+
+export const PaginationLocalizedLoading: Story = {
+	render: () => {
+		const [page, setPage] = useState(2),
+			[loading, setLoading] = useState(false);
+		return (
+			<div style={{ maxWidth: 400 }}>
+				<label>
+					<input type="checkbox" checked={loading} onChange={(e) => setLoading(e.target.checked)} />{' '}
+					Carregando
+				</label>
+				<AdsPagination
+					page={page}
+					pageCount={100}
+					onPageChange={setPage}
+					loading={loading}
+					showPageJump
+					showFirstLast
+					labels={{
+						previousText: 'Back',
+						nextText: 'Forward',
+						previous: 'Previous page',
+						next: 'Next page',
+						jump: 'Go to page',
+						jumpButton: 'Go',
+						jumpError: 'Invalid page',
+						page: (n) => `Page ${n}`,
+					}}
+				/>
+			</div>
+		);
+	},
 };

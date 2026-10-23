@@ -198,3 +198,80 @@
 		outline-offset: 2px;
 	}
 }
+
+@layer components {
+	.ads-pagination {
+		width: 100%;
+	}
+	.ads-pagination-scroll {
+		max-width: 100%;
+		width: 100%;
+		min-width: 0;
+		overflow-x: auto;
+		padding-block: 0.5rem;
+	}
+	.ads-pagination-list {
+		width: max-content;
+		padding: 0.25rem;
+	}
+	.ads-pagination-list > li {
+		flex: none;
+	}
+	.ads-pagination-number,
+	.ads-pagination-ellipsis {
+		box-sizing: border-box;
+		width: max(2.5rem, calc(var(--ads-pagination-digits, 2) * 1ch + 1.5rem));
+	}
+	.ads-pagination-ellipsis {
+		display: inline-flex;
+		justify-content: center;
+	}
+	.ads-pagination [aria-disabled='true'] {
+		cursor: wait;
+		opacity: 0.6;
+	}
+	.ads-pagination-jump {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
+		max-width: 100%;
+		padding: 0.25rem;
+		font-size: 0.875rem;
+	}
+	.ads-pagination-jump label,
+	.ads-pagination-jump [role='alert'] {
+		overflow-wrap: anywhere;
+	}
+	.ads-pagination-jump input {
+		box-sizing: border-box;
+		min-height: 2.5rem;
+		min-width: 0;
+		width: 5rem;
+		max-width: 100%;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background: var(--ads-color-surface);
+		color: var(--ads-color-text);
+		padding: 0.25rem 0.5rem;
+		font: inherit;
+	}
+	.ads-pagination-jump input:focus-visible,
+	.ads-pagination-scroll:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+}
+
+/* Utilities are imported without a cascade layer; keep this scoped size override in the same layer. */
+
+.ads-pagination .ads-pagination-item {
+	min-height: 2.5rem;
+	min-width: 2.5rem;
+	box-sizing: border-box;
+}
+.ads-pagination-ellipsis {
+	font-size: 0.875rem;
+	font-weight: 500;
+}

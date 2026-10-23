@@ -420,3 +420,76 @@ describe('AdsSmartTable', () => {
 		expect(source.startsWith("'use client'")).toBe(true);
 	});
 });
+
+describe('pagination footer options', () => {
+	it('keeps the previous footer unchanged without opt-in data', () => {
+		render(<Harness pagination={{ page: 1, pageCount: 3 }} />);
+		expect(screen.queryByRole('combobox')).toBeNull();
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+	});
+	it('summarizes the received incomplete page and emits only controlled page-size changes', () => {
+		const size = vi.fn();
+		const page = vi.fn();
+		render(
+			<Harness
+				rows={users.slice(0, 2)}
+				pagination={{ page: 2, pageCount: 2, onPageChange: page, showPageJump: true }}
+				totalItems={12}
+				pageSize={10}
+				onPageSizeChange={size}
+				pageSizeOptions={[10, 25, 25, -1]}
+			/>,
+		);
+		expect(screen.getByText('Exibindo 11–12 de 12 registros')).toBeInTheDocument();
+		const select = screen.getByRole('combobox', { name: 'Registros por página' });
+		expect(within(select).getAllByRole('option')).toHaveLength(2);
+		fireEvent.change(select, { target: { value: '25' } });
+		expect(size).toHaveBeenCalledExactlyOnceWith(25);
+		expect(page).not.toHaveBeenCalled();
+	});
+	it('does not invent counts for unknown totals, empty rows or invalid pages', () => {
+		const { rerender } = render(<Harness pagination={{ page: 1, pageCount: 2 }} pageSize={10} />);
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+		rerender(
+			<Harness rows={[]} pagination={{ page: 1, pageCount: 0 }} pageSize={10} totalItems={0} />,
+		);
+		expect(screen.getByText('Nenhum registro nesta página')).toBeInTheDocument();
+		rerender(<Harness pagination={{ page: 30, pageCount: 2 }} pageSize={10} totalItems={12} />);
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+		expect(screen.queryByText('Nenhum registro nesta página')).toBeNull();
+	});
+	it('localizes footer and blocks selection/navigation while the table is loading', () => {
+		const size = vi.fn(),
+			page = vi.fn();
+		const { rerender } = render(
+			<Harness
+				rows={users}
+				pagination={{ page: 1, pageCount: 10, onPageChange: page }}
+				pageSize={10}
+				onPageSizeChange={size}
+				totalItems={100}
+				labels={{
+					pageSize: 'Rows',
+					pageSummary: (first, last, total) => `${first}-${last} of ${total}`,
+				}}
+			/>,
+		);
+		expect(screen.getByText('1-3 of 100')).toBeInTheDocument();
+		expect(screen.getByRole('combobox', { name: 'Rows' })).toBeInTheDocument();
+		rerender(
+			<Harness
+				loading
+				pagination={{ page: 1, pageCount: 10, onPageChange: page }}
+				pageSize={10}
+				onPageSizeChange={size}
+				totalItems={100}
+			/>,
+		);
+		expect(screen.getByRole('combobox')).toBeDisabled();
+		fireEvent.change(screen.getByRole('combobox'), { target: { value: '25' } });
+		expect(size).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
+		expect(page).not.toHaveBeenCalled();
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+	});
+});

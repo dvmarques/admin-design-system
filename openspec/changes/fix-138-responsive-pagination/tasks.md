@@ -1,12 +1,16 @@
-# Tasks
+# Tarefas
 
-- [ ] Inspect AdsPagination, AdsButton, AdsSmartTable, tests, stories and existing APIs; verify baseline behavior.
-- [ ] Implement stable width-aware page layout and smart ellipses with mandatory first/current/last, edge cases and accessible narrow fallback.
-- [ ] Add opt-in arrows/custom navigation content, first/last controls and localized accessible labels.
-- [ ] Add opt-in page jump with controlled validation, Enter/click, error feedback, sync and renderPageLink compatibility.
-- [ ] Add opt-in loading state and controlled pageCount-change behavior; preserve keyboard focus and SSR/hydration.
-- [ ] Add optional SmartTable page-size selection and item summary through existing pagination composition.
-- [ ] Extend unit/component tests for boundaries, resize, keyboard, focus, loading, jump and dynamic counts.
-- [ ] Add Storybook stories, docs and Next.js compiled CSS consumption coverage including zoom and narrow layouts.
-- [ ] Run typecheck, lint, build, tests and npm run test:e2e; review intentional visual snapshots.
-- [ ] Run npx.cmd prettier --write on changed files, npm run format and openspec.cmd validate --all --strict; review and fix all failures before PR.
+- [x] 1. Inspecionar AdsPagination, AdsButton, AdsSmartTable, APIs, testes, stories e contratos existentes; registrar revisão do planejamento.
+- [x] 2. Implementar adaptação por largura real e reticências inteligentes, com páginas obrigatórias, extremos e fallback acessível.
+- [x] 3. Implementar setas/conteúdo customizado, primeira/última e rótulos visíveis e acessíveis opcionais.
+- [x] 4. Implementar salto direto por Enter/clique, validação, sincronização e links sem interativos/formulários aninhados.
+- [x] 5. Implementar loading e correção controlada de pageCount; preservar foco, teclado e SSR/hidratação.
+- [x] 6. Implementar seletor controlado de tamanho e resumo verificável na SmartTable, sem acoplar busca.
+- [x] 7. Ampliar testes unitários e de componentes para extremos, resize, foco, loading, salto, links e totais dinâmicos.
+- [x] 8. Atualizar stories, documentação e consumo Next.js/CSS compilado, com E2E, zoom e inspeção visual.
+- [ ] 9. Executar tipos, lint, build, quality e E2E completos; revisar alterações visuais intencionais, corrigir falhas e conferir CI no SHA final.
+- [ ] 10. Formatar alterações, executar npm run format e OpenSpec estrito; revisar novamente o diff e entregar a PR #176 para revisão humana.
+
+## Evidências
+
+Resultados e limitações em [validation.md](validation.md). Não arquivar nem integrar sem aprovação humana.

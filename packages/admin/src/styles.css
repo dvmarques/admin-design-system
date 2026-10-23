@@ -714,10 +714,30 @@
 		min-width: 0;
 	}
 
-	.ads-smart-table-page-summary { color: var(--ads-color-text-muted); font-size: 0.875rem; }
-	.ads-smart-table-page-size { display: inline-flex; flex-wrap: wrap; align-items: center; gap: 0.5rem; font-size: 0.875rem; }
-	.ads-smart-table-page-size select { min-height: 2.5rem; border: 1px solid var(--ads-color-border); border-radius: var(--ads-radius-md); background: var(--ads-color-surface); color: var(--ads-color-text); padding: 0.25rem 0.5rem; font: inherit; }
-	.ads-smart-table-page-size select:focus-visible { outline: 2px solid var(--ads-color-focus-ring); outline-offset: 2px; }
+	.ads-smart-table-page-summary {
+		color: var(--ads-color-text-muted);
+		font-size: 0.875rem;
+	}
+	.ads-smart-table-page-size {
+		display: inline-flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		font-size: 0.875rem;
+	}
+	.ads-smart-table-page-size select {
+		min-height: 2.5rem;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background: var(--ads-color-surface);
+		color: var(--ads-color-text);
+		padding: 0.25rem 0.5rem;
+		font: inherit;
+	}
+	.ads-smart-table-page-size select:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
 
 	/* A paginação rola dentro do próprio contêiner em vez de alargar a página. */
 	.ads-smart-table-pagination > .ads-pagination {

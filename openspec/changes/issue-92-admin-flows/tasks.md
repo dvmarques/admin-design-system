@@ -5,7 +5,7 @@
 - [x] 3. Implementar a navegação pelo indicador de etapas válidas e os estilos `ads-`/`--ads-`, inclusive `forced-colors`. Concluída quando os cenários de navegação passam por teclado.
 - [x] 4. Atualizar stories (confirmação destrutiva e não destrutiva, StepForm com validação assíncrona e indicador navegável), e catálogo da demonstração (o consumo do CSS compilado segue coberto pelo teste de consumo público existente).
 - [x] 5. Atualizar `docs/limitations.md` e `CHANGELOG.md` (`[0.1.1] - Em andamento`).
-- [ ] 6. Executar `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet`, `npm run test:e2e` e `openspec validate --all --strict`; revisar o diff e registrar em `validation.md`. Pendente: E2E completo e Firefox/WebKit só na CI; 4 snapshots escuros divergem por renderização local (ver `validation.md`).
+- [x] 6. Executar `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet`, `npm run test:e2e` e `openspec validate --all --strict`; revisar o diff e registrar em `validation.md`. Evidência: CI verde no head `a78dfba` (Chromium, Firefox, WebKit, qualidade e artefatos); ver `validation.md`.
 
 ## Evidências
 

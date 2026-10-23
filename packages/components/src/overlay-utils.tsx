@@ -53,6 +53,69 @@ let bodyObserver: MutationObserver | null = null;
 const nonRenderedTags = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'NOSCRIPT', 'TEMPLATE']);
 const overlayRootSelector = '[data-ads-overlay-root]';
 
+/**
+ * Indica se `target` pertence a `container` na hierarquia lógica: dentro dele no DOM ou dentro de um
+ * portal cuja origem (na árvore React) está, recursivamente, dentro dele.
+ */
+function logicalContains(container: Element | null, target: Node): boolean {
+	const seen = new Set<Element>();
+	let node: Node | null = target;
+	while (node) {
+		if (container?.contains(node)) return true;
+		const element: Element | null = node instanceof Element ? node : node.parentElement;
+		const root: Element | null = element?.closest(overlayRootSelector) ?? null;
+		const source: Element | undefined = root ? overlaySources.get(root) : undefined;
+		if (!root || !source || seen.has(root)) return false;
+		seen.add(root);
+		node = source;
+	}
+	return false;
+}
+
+function isTopModal(container: Element) {
+	const top = openModals[openModals.length - 1];
+	return Boolean(top && top.root.contains(container));
+}
+
+// Contêineres de camadas que fecham por clique externo e estão abertas, para o backdrop dos modais.
+const dismissibleLayers = new Set<RefObject<HTMLElement | null>>();
+
+/** Há um popup aberto, com clique externo, logicamente dentro de `container`? */
+export function hasOpenDismissibleChild(container: Element | null) {
+	if (!container) return false;
+	for (const layer of dismissibleLayers) {
+		if (layer.current && layer.current !== container && logicalContains(container, layer.current))
+			return true;
+	}
+	return false;
+}
+
+// Scroll da página: aplicado pelo primeiro modal e liberado pelo último.
+let scrollLock: { overflow: string; paddingRight: string; applied: [string, string] } | null = null;
+
+function lockScroll() {
+	const root = document.documentElement;
+	const scrollbar = window.innerWidth - root.clientWidth;
+	const overflow = root.style.overflow;
+	const paddingRight = root.style.paddingRight;
+	root.style.overflow = 'hidden';
+	if (scrollbar > 0) {
+		const base = Number.parseFloat(getComputedStyle(root).paddingRight) || 0;
+		root.style.paddingRight = `${base + scrollbar}px`;
+	}
+	scrollLock = { overflow, paddingRight, applied: [root.style.overflow, root.style.paddingRight] };
+}
+
+function unlockScroll() {
+	if (!scrollLock) return;
+	const root = document.documentElement;
+	// Só desfaz o que a biblioteca aplicou: uma escrita posterior do consumidor é preservada.
+	if (root.style.overflow === scrollLock.applied[0]) root.style.overflow = scrollLock.overflow;
+	if (root.style.paddingRight === scrollLock.applied[1])
+		root.style.paddingRight = scrollLock.paddingRight;
+	scrollLock = null;
+}
+
 // Um root de overlay continua interativo se for o modal mais recente, um toast, ou um popup cuja
 // origem está dentro de um overlay interativo. Um modal ainda não registrado é tratado como novo.
 function isInteractiveRoot(root: Element): boolean {
@@ -120,6 +183,7 @@ function registerModal(root: HTMLElement) {
 		bodyObserver = new MutationObserver((records) => syncInert(records));
 		bodyObserver.observe(document.body, { childList: true });
 	}
+	if (openModals.length === 1) lockScroll();
 	syncInert();
 	return () => {
 		const index = openModals.indexOf(modal);
@@ -131,6 +195,7 @@ function registerModal(root: HTMLElement) {
 		adoptExternalWrites(bodyObserver?.takeRecords() ?? []);
 		bodyObserver?.disconnect();
 		bodyObserver = null;
+		unlockScroll();
 		for (const node of inertOwned) node.removeAttribute('inert');
 		inertOwned.clear();
 	};
@@ -253,7 +318,16 @@ export function useOverlayFocus(
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key !== 'Tab') return;
 			const container = containerRef.current;
-			if (!container) return;
+			// Só o modal superior governa o Tab; o foco num popup descendente segue o fluxo dele.
+			if (!container || !isTopModal(container)) return;
+			const active = document.activeElement;
+			if (
+				active &&
+				active !== document.body &&
+				!container.contains(active) &&
+				logicalContains(container, active)
+			)
+				return;
 			const elements = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector));
 			if (elements.length === 0) {
 				event.preventDefault();
@@ -262,10 +336,13 @@ export function useOverlayFocus(
 			}
 			const first = elements[0]!;
 			const last = elements[elements.length - 1]!;
-			if (event.shiftKey && document.activeElement === first) {
+			if (!container.contains(active)) {
+				event.preventDefault();
+				(event.shiftKey ? last : first).focus();
+			} else if (event.shiftKey && active === first) {
 				event.preventDefault();
 				last.focus();
-			} else if (!event.shiftKey && document.activeElement === last) {
+			} else if (!event.shiftKey && active === last) {
 				event.preventDefault();
 				first.focus();
 			}
@@ -328,12 +405,17 @@ export function useClickOutside(
 ) {
 	useEffect(() => {
 		if (!open || !onOutside) return;
+		dismissibleLayers.add(containerRef);
 		const listener = (event: MouseEvent) => {
 			const target = event.target;
-			if (target instanceof Node && !containerRef.current?.contains(target)) onOutside(event);
+			if (target instanceof Node && !logicalContains(containerRef.current, target))
+				onOutside(event);
 		};
 		document.addEventListener('mousedown', listener);
-		return () => document.removeEventListener('mousedown', listener);
+		return () => {
+			dismissibleLayers.delete(containerRef);
+			document.removeEventListener('mousedown', listener);
+		};
 	}, [containerRef, onOutside, open]);
 }
 

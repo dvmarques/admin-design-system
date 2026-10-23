@@ -1,17 +1,21 @@
-# Responsive AdsPagination (#138)
+# Paginação responsiva e controles opcionais (#138)
 
-## Why
-AdsPagination overflows narrow containers and clips focus/hover indicators. Consumers need accessible, responsive navigation and optional richer controls without breaking existing behavior.
+## Perfil de risco
+**Critical**: altera API pública de AdsPagination, comportamento acessível, CSS distribuído e composição de múltiplos pacotes. Exige revisão independente e validação de consumidores Next.js, zoom, SSR e E2E.
 
-## What changes
-- Adapt visible page numbers to measured container width; always prioritize first, current, last and previous/next controls.
-- Optional arrow navigation, page jump, loading state, localized labels, first/last navigation.
-- Optional SmartTable page-size selector and item summary, controlled by consumer props.
-- Preserve renderPageLink, legacy renderPage, SSR/hydration and existing defaults.
-- Add tests, stories, docs and Next.js integration coverage.
+## Problema
+AdsPagination calcula números sem considerar a largura do contêiner; overflow horizontal recorta foco e hover. A SmartTable herda o problema.
 
-## Affected packages/APIs
-AdsPagination public props and AdsSmartTable pagination composition; styling, tests, Storybook, documentation.
+## Objetivo
+Adaptar os números à largura real e manter primeira, atual, última e navegação. Oferecer setas, salto direto, carregamento, labels, primeira/última, tamanho da página e resumo apenas por opt-in, preservando APIs e padrões atuais.
 
-## Out of scope
-Unknown total pages; issue #91; data fetching or pagination state ownership.
+## Pacotes e contratos
+- Biblioteca: packages/components (AdsPaginationProps, getAdsPaginationItems, CSS compilado).
+- Composição: packages/admin (AdsSmartTableProps, rodapé controlado).
+- Consumidores: apps/admin-demo, apps/docs (Storybook), integração Next.js e e2e.
+
+## Fora do escopo
+Paginação sem pageCount conhecido, busca de dados, alteração da issue #91 e mudança de identidade visual.
+
+## Compatibilidade e rollback
+Manter texto Anterior/Próxima, siblingCount, renderPage e renderPageLink. Novas props são opcionais. Reverter commits da change se os gates de acessibilidade, CSS ou consumidores falharem; não alterar exports existentes.

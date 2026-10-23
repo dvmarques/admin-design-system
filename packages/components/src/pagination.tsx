@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useRef, useState, type FormEvent, type HTMLAttributes, type ReactNode } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { AdsButton, adsButtonClassName } from './button.js';
 
@@ -103,6 +103,7 @@ export function AdsPagination({
  className, 'aria-label': ariaLabel = 'Paginação', ...props
 }: AdsPaginationProps) {
  const labels = { ...defaultLabels, ...labelOverrides };
+ const jumpId = useId();
  const safePage = Math.min(Math.max(1, page), Math.max(1, pageCount));
  const containerRef = useRef<HTMLElement>(null);
  const [width, setWidth] = useState<number | null>(null);
@@ -162,15 +163,15 @@ export function AdsPagination({
    </ul>
   </div>
   {showPageJump?<form className="flex min-w-0 flex-wrap items-center gap-2" onSubmit={jump}>
-   <label className="text-sm" htmlFor="ads-pagination-jump">{labels.jump}</label>
-   <input id="ads-pagination-jump" aria-invalid={jumpError || undefined}
-    aria-describedby={jumpError?'ads-pagination-jump-error':undefined}
+   <label className="text-sm" htmlFor={jumpId}>{labels.jump}</label>
+   <input id={jumpId} aria-invalid={jumpError || undefined}
+    aria-describedby={jumpError?`${jumpId}-error`:undefined}
     className="min-h-10 w-20 rounded-md border border-border bg-surface px-2 text-text"
     inputMode="numeric" type="number" min={1} max={Math.max(1,pageCount)} step={1}
     disabled={loading || pageCount<=0} value={jumpValue}
     onChange={event=>{setJumpValue(event.target.value);setJumpError(false);}} />
    <AdsButton size="sm" variant="secondary" type="submit" disabled={loading || pageCount<=0}>{labels.jumpButton}</AdsButton>
-   {jumpError?<span id="ads-pagination-jump-error" role="alert" className="text-sm text-danger">{labels.jumpError}</span>:null}
+   {jumpError?<span id={`${jumpId}-error`} role="alert" className="text-sm text-text">{labels.jumpError}</span>:null}
   </form>:null}
  </nav>;
 }

@@ -181,13 +181,45 @@ describe('overlay layer manager', () => {
 		expect(document.activeElement).toBe(inPopover);
 	});
 
-	it('restores focus to a surrounding opener when the trigger was removed', async () => {
+	it('falls back to the opener of the surrounding modal when the trigger was removed', async () => {
+		function Fixture() {
+			const [outer, setOuter] = useState(false);
+			const [inner, setInner] = useState(false);
+			const [showTrigger, setShowTrigger] = useState(true);
+			return (
+				<main>
+					<AdsButton onClick={() => setOuter(true)}>Abrir externo</AdsButton>
+					<AdsDialog onOpenChange={setOuter} open={outer} title="Externo">
+						{showTrigger ? (
+							<AdsButton onClick={() => setInner(true)}>Abrir interno</AdsButton>
+						) : null}
+						<AdsDialog onOpenChange={setInner} open={inner} title="Interno">
+							<AdsButton onClick={() => setShowTrigger(false)}>Remover gatilho</AdsButton>
+						</AdsDialog>
+					</AdsDialog>
+				</main>
+			);
+		}
+		render(<Fixture />);
+		const outerOrigin = screen.getByRole('button', { name: 'Abrir externo' });
+		outerOrigin.focus();
+		fireEvent.click(outerOrigin);
+		const trigger = await screen.findByRole('button', { name: 'Abrir interno' });
+		trigger.focus();
+		fireEvent.click(trigger);
+		fireEvent.click(await screen.findByRole('button', { name: 'Remover gatilho' }));
+		expect(screen.queryByRole('button', { name: 'Abrir interno' })).toBeNull();
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('dialog', { name: 'Interno' })).toBeNull());
+		await waitFor(() => expect(document.activeElement).toBe(outerOrigin));
+	});
+
+	it('does not throw when every opener is gone after the last modal closes', async () => {
 		function Fixture() {
 			const [open, setOpen] = useState(false);
 			const [showTrigger, setShowTrigger] = useState(true);
 			return (
 				<main>
-					<AdsButton>Reserva</AdsButton>
 					{showTrigger ? <AdsButton onClick={() => setOpen(true)}>Abrir</AdsButton> : null}
 					<AdsDialog onOpenChange={setOpen} open={open} title="Modal">
 						<AdsButton onClick={() => setShowTrigger(false)}>Remover gatilho</AdsButton>
@@ -200,7 +232,7 @@ describe('overlay layer manager', () => {
 		fireEvent.click(await screen.findByRole('button', { name: 'Remover gatilho' }));
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-		expect(screen.queryByRole('button', { name: 'Abrir' })).toBeNull();
+		expect(document.documentElement.style.overflow).toBe('');
 	});
 
 	it('leaves no global listeners or styles behind under StrictMode', async () => {

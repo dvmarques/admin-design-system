@@ -174,3 +174,22 @@ já absorvido na develop. A tolerância de 10% e as verificações de pacotes n�
 foram alteradas. Como nos incrementos públicos anteriores registrados neste
 documento, o custo explícito deve ser considerado na revisão desta PR; não
 representa uma correção de tamanho sem custo nem um bundle menor.
+
+## Fluxos administrativos: alertdialog, indicador navegável e validação assíncrona (#92)
+
+Build limpo do commit base `5919f77`, com o mesmo TypeScript/Tailwind e LF, em
+cópia isolada: admin **186447 bytes / 61 arquivos** (já 9,6% acima do baseline
+anterior de 170121, por crescimento absorvido na develop, principalmente a
+navegação hierárquica do shell), components **388846 bytes**. Após a #92: admin
+**195601 bytes / 61 arquivos** (+9154, +4,9% sobre o commit base) e components
+**389188 bytes** (+342, `role` em `AdsDialogProps`); tokens permanece 36342 bytes.
+
+O incremento do admin vem de `AdsStepForm` (validação assíncrona com estado de
+carregamento, descarte de resultado obsoleto, navegação pelo indicador e marcação
+de etapas validadas) e dos estilos do botão do indicador, contados com
+declarações e mapas. Sem novos arquivos publicados nem dependência de runtime.
+
+O baseline de `@admin-ds/admin` foi atualizado de 170121 para **195601**. O de
+components (382334) não foi alterado: 389188 está dentro da tolerância de 10%.
+A tolerância e as verificações de pacotes não mudaram. O custo é explícito para a
+revisão desta PR; o crescimento da develop anterior à #92 não é corrigido aqui.

@@ -37,7 +37,7 @@ Apenas classes `ads-` e variáveis `--ads-*` em `packages/admin/src/styles.css`,
 
 ## Bundle e dependências
 
-Sem dependências novas; crescimento pequeno de JS em `packages/admin`. Conferir `docs/bundle-baseline.md` no gate de qualidade e atualizar se exceder a tolerância.
+Sem dependências novas. Medido: `@admin-ds/admin` 186447 → 195601 bytes (+9154, com declarações e mapas) e `@admin-ds/components` 388846 → 389188 (+342). O baseline do admin foi atualizado de 170121 para 195601 (o commit base já estava 9,6% acima do baseline anterior); detalhes em `docs/bundle-baseline.md`.
 
 ## Rollback
 

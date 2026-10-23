@@ -11,6 +11,7 @@ export default function CatalogPage() {
   return (
     <main className="demo-page demo-shell">
       <h1>Catálogo de componentes</h1>
+      <p><Link href="/catalogo/lacunas">Ver demonstrações de composição de campos e tabelas</Link></p>
       <p>Explore o inventário dos componentes públicos. Os links apontam para exemplos por categoria enquanto as demonstrações individuais são implementadas.</p>
       <label htmlFor="catalog-search">Buscar componente</label>
       <input id="catalog-search" type="search" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="Ex.: AdsButton" className="demo-catalog-search" />

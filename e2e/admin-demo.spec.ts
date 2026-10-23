@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { releaseShellHeight } from './full-page-shell';
 
 async function hideDevelopmentPortal(page: Page) {
 	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
@@ -79,6 +80,7 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 	]);
 	await page.goto('/');
 	await hideDevelopmentPortal(page);
+	await releaseShellHeight(page);
 	await expect(page).toHaveScreenshot('admin-demo-dark.png', { fullPage: true });
 
 	await page.context().addCookies([
@@ -90,6 +92,7 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 	]);
 	await page.reload();
 	await hideDevelopmentPortal(page);
+	await releaseShellHeight(page);
 	await expect(page).toHaveScreenshot('admin-demo-light.png', { fullPage: true });
 });
 

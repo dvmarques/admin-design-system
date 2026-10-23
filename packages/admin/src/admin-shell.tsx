@@ -58,7 +58,9 @@ function AdsAdminShellBody({ className, ...props }: AdsAdminShellBodyProps) {
 
 export type AdsAdminShellMainProps = HTMLAttributes<HTMLElement>;
 function AdsAdminShellMain({ className, ...props }: AdsAdminShellMainProps) {
-	return <main {...props} className={classNames('ads-admin-shell-main', className)} />;
+	// No desktop o main é a região rolável: precisa ser alcançável pelo teclado mesmo sem
+	// conteúdo focável. O consumidor pode sobrescrever `tabIndex`.
+	return <main tabIndex={0} {...props} className={classNames('ads-admin-shell-main', className)} />;
 }
 
 export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {

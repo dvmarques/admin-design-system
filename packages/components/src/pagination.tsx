@@ -109,12 +109,13 @@ export function AdsPagination({
  const [width, setWidth] = useState<number | null>(null);
  const [jumpValue, setJumpValue] = useState(String(safePage));
  const [jumpError, setJumpError] = useState(false);
+ const [measured, setMeasured] = useState(false);
  useEffect(() => {
   const node=containerRef.current;
   if (!node || typeof ResizeObserver === 'undefined') return;
   const observer=new ResizeObserver(entries => {
    const next=entries[0]?.contentRect.width;
-   if (next !== undefined) setWidth(previous => previous === next ? previous : next);
+   if (next !== undefined) { setWidth(previous => previous === next ? previous : next); setMeasured(true); }
   });
   observer.observe(node);
   return () => observer.disconnect();
@@ -146,7 +147,7 @@ export function AdsPagination({
  // A conservative minimum button width avoids resize feedback from the contents.
  const controlsWidth=(navigationMode==='arrows'?88:176)+(showFirstLast?88:0);
  const slots=width===null ? siblingCount*2+5 : Math.max(3,Math.floor((width-controlsWidth-32)/48));
- const items=width===null?getAdsPaginationItems(safePage,pageCount,siblingCount):
+ const items=!measured || width===null?getAdsPaginationItems(safePage,pageCount,siblingCount):
   getAdsResponsivePaginationItems(safePage,pageCount,siblingCount,slots);
  return <nav {...props} ref={containerRef} aria-label={ariaLabel} aria-busy={loading || undefined}
   className={classNames('ads-pagination flex max-w-full min-w-0 flex-wrap items-center gap-2',className)}>

@@ -24,7 +24,10 @@ interface AdsOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>, 'role' | 
 	showCloseButton?: boolean;
 }
 
-export type AdsDialogProps = AdsOverlayProps;
+export interface AdsDialogProps extends AdsOverlayProps {
+	/** `alertdialog` para mensagens que exigem resposta imediata, como confirmar uma ação destrutiva. */
+	role?: 'dialog' | 'alertdialog';
+}
 export interface AdsDrawerProps extends AdsOverlayProps {
 	placement?: 'left' | 'right';
 }
@@ -132,8 +135,8 @@ function OverlayPanel({
 	);
 }
 
-export function AdsDialog(props: AdsDialogProps) {
-	return <OverlayPanel {...props} />;
+export function AdsDialog({ role = 'dialog', ...props }: AdsDialogProps) {
+	return <OverlayPanel {...props} role={role} />;
 }
 
 export function AdsDrawer({ placement = 'right', ...props }: AdsDrawerProps) {

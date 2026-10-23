@@ -19,7 +19,10 @@ export interface AdsConfirmDialogProps extends Omit<
 	onConfirm: () => void;
 	confirmLabel?: string;
 	cancelLabel?: string;
-	/** Usa a variante de perigo na confirmação. Padrão: `true`. */
+	/**
+	 * Usa a variante de perigo na confirmação e o papel `alertdialog` (a menos que `role` seja
+	 * informado). Padrão: `true`.
+	 */
 	destructive?: boolean;
 	/**
 	 * Enquanto o consumidor processa a confirmação: as ações ficam indisponíveis
@@ -50,6 +53,7 @@ export function AdsConfirmDialog({
 	onOpenChange,
 	pending = false,
 	returnFocusRef,
+	role,
 	...props
 }: AdsConfirmDialogProps) {
 	const wasOpen = useRef(props.open);
@@ -88,6 +92,8 @@ export function AdsConfirmDialog({
 			closeOnBackdrop={!pending && (props.closeOnBackdrop ?? true)}
 			closeOnEscape={!pending && (props.closeOnEscape ?? true)}
 			onOpenChange={onOpenChange}
+			// Ação destrutiva pede resposta imediata: `alertdialog`, salvo `role` explícito.
+			role={role ?? (destructive ? 'alertdialog' : 'dialog')}
 			showCloseButton={false}
 		>
 			{children}

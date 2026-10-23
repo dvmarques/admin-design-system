@@ -22,7 +22,12 @@ function Flows() {
 				onActiveStepChange={() => {}}
 				onSubmit={() => {}}
 				steps={[
-					{ id: 'a', label: 'Dados', content: <input aria-label="Nome" /> },
+					{
+						id: 'a',
+						label: 'Dados',
+						content: <input aria-label="Nome" />,
+						validate: () => Promise.resolve(true),
+					},
 					{ id: 'b', label: 'Revisão', content: <p>Resumo</p> },
 				]}
 			/>
@@ -35,6 +40,9 @@ describe('admin flows SSR and hydration', () => {
 		const html = renderToString(<Flows />);
 		expect(html).toContain('1 item selecionado');
 		expect(html).toContain('aria-current="step"');
+		// A etapa anterior à atual é navegável; a marcação depende só das props.
+		expect(html.match(/ads-step-form-step-button/g)).toHaveLength(1);
+		expect(html).not.toContain('aria-busy');
 		const container = document.createElement('div');
 		container.innerHTML = html;
 		document.body.append(container);

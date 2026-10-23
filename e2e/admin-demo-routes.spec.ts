@@ -443,7 +443,7 @@ test.describe('clientes', () => {
 		await expect(bulk).toBeVisible();
 		await bulk.getByRole('button', { name: 'Excluir selecionados' }).click();
 
-		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		const dialog = page.getByRole('alertdialog', { name: 'Excluir 1 cliente?' });
 		await expect(dialog).toBeVisible();
 		await dialog.getByRole('button', { name: 'Excluir' }).click();
 		await expect.poll(async () => await dialog.count()).toBe(0);
@@ -461,7 +461,7 @@ test.describe('clientes', () => {
 			.getByRole('button', { name: 'Excluir selecionados' })
 			.click();
 
-		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		const dialog = page.getByRole('alertdialog', { name: 'Excluir 1 cliente?' });
 		const cancel = dialog.getByRole('button', { name: 'Cancelar' });
 		const confirm = dialog.getByRole('button', { name: 'Excluir' });
 		await confirm.click();
@@ -507,7 +507,7 @@ test.describe('clientes', () => {
 			.getByRole('button', { name: 'Excluir selecionados' })
 			.click();
 
-		const dialog = page.getByRole('dialog', { name: 'Excluir 1 cliente?' });
+		const dialog = page.getByRole('alertdialog', { name: 'Excluir 1 cliente?' });
 		await dialog.getByRole('button', { name: 'Excluir' }).click();
 		await expect.poll(async () => await dialog.count()).toBe(0);
 

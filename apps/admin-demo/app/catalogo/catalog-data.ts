@@ -285,7 +285,8 @@ export const catalogEntries = [
 		group: 'Feedback',
 		slug: 'dialog',
 		demo: 'Dialog',
-		description: 'Overlay com foco contido, Escape e retorno ao gatilho.',
+		description:
+			'Overlay com papel alertdialog em ações destrutivas, foco contido, Escape e retorno ao gatilho.',
 		href: '/catalogo/dialog',
 	},
 	{
@@ -293,7 +294,8 @@ export const catalogEntries = [
 		group: 'Feedback',
 		slug: 'drawer',
 		demo: 'Drawer',
-		description: 'Overlay com foco contido, Escape e retorno ao gatilho.',
+		description:
+			'Overlay com papel alertdialog em ações destrutivas, foco contido, Escape e retorno ao gatilho.',
 		href: '/catalogo/drawer',
 	},
 	{
@@ -501,7 +503,8 @@ export const catalogEntries = [
 		group: 'Admin',
 		slug: 'confirm-dialog',
 		demo: 'ConfirmDialog',
-		description: 'Overlay com foco contido, Escape e retorno ao gatilho.',
+		description:
+			'Overlay com papel alertdialog em ações destrutivas, foco contido, Escape e retorno ao gatilho.',
 		href: '/catalogo/confirm-dialog',
 	},
 	{
@@ -517,7 +520,8 @@ export const catalogEntries = [
 		group: 'Admin',
 		slug: 'step-form',
 		demo: 'StepForm',
-		description: 'Etapas controladas com validação, retorno e confirmação.',
+		description:
+			'Etapas controladas com validação (inclusive assíncrona), navegação pelo indicador e confirmação.',
 		href: '/catalogo/step-form',
 	},
 	{

@@ -78,3 +78,11 @@ A execução anterior `39979454512` comprova somente a entrega inicial. A CI aci
 
 - A nova seção nomeada tornou ambíguo o antigo getByLabel parcial de Componente nos testes de overlay. Os seletores agora usam combobox com o nome do campo. `npm run test:e2e -- e2e/overlay-position.spec.ts --project=chromium --workers=4`: 18 testes passaram.
 - Reexecução final `npm run test:e2e -- --project=chromium --workers=4 --grep-invert 'mantém a apresentação'`: **210 testes passaram**, sem falhas, em 1,9 minuto no build de produção. `npm run format` e `npm run lint` passaram após os ajustes dos seletores.
+
+- Após a solicitação explícita de incluir também os arquivos locais preexistentes, package-lock.json e next-env.d.ts passam a integrar a publicação final. O lockfile foi conferido contra todos os manifests: dependências declaradas coerentes; Next.js, React/React DOM, Inter, Tailwind e Playwright mantêm suas versões. A resolução transitiva local é preservada sem regeneração.
+
+## Baselines Linux da navegação hierárquica
+
+- Workflow oficial https://github.com/dvmarques/admin-design-system/actions/runs/40031384579 concluído com sucesso, regenerando os snapshots e repetindo a suíte Chromium sem atualização. Commit gerado: e28024a (16 PNGs).
+- Todas as 16 diferenças foram inspecionadas em comparativos antes/depois: desktop claro/escuro, sidebar recolhida, drawer móvel e páginas de aplicação. As dimensões das imagens permaneceram iguais. Comparação por pixels confirmou ausência de diferenças fora da sidebar nas 14 imagens desktop; nas duas móveis as diferenças ficam no painel da navegação. O conteúdo das telas de negócio permanece igual.
+- Baselines integrados localmente por fast-forward. O próximo push com a inclusão autorizada de lockfile e tipos gerados também dispara a CI da PR, pois o commit do workflow usa GITHUB_TOKEN e não dispara a CI automaticamente.

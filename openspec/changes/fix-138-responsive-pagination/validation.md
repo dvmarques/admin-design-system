@@ -69,9 +69,8 @@ durante loading. O consumidor continua responsável por dados, tamanho e página
 
 ## CI
 
-Pendente de publicação desta revisão e execução sobre o SHA mais recente.
-PR Draft não comprova validação. Não pronta para revisão enquanto houver
-checks ou atualização oficial dos baselines pendentes.
+O histórico abaixo distingue falhas corrigidas e evidências atuais. A conclusão
+exige CI no SHA mais recente; execuções skipped não comprovam validação.
 
 ## Primeiro retorno da CI
 
@@ -106,3 +105,24 @@ focados passaram**. A CI 39880767049 do commit c3279ed aprovou qualidade
 condicional de checkout com outro proprietário foi skipped no runner não-root,
 e não é declarado aprovado. A revisão posterior altera CSS/alinhamento e o
 E2E correspondente; seus checks devem ser conferidos no novo SHA.
+
+## Baselines oficiais Linux revisados
+
+A CI 39881174015 de 3c1ea3d aprovou qualidade, distribuição, política/OpenSpec,
+Firefox (10) e WebKit (10); Chromium teve 200 aprovações e três falhas visuais.
+O workflow oficial 39884978145, disparado na branch da PR, terminou com sucesso:
+**203 Chromium passaram na geração e outros 203 na confirmação sem atualização**.
+O commit a15eff6 contém somente seis PNGs de clientes, componentes e data-display,
+nos temas claro e escuro. Os dois disparos anteriores em develop foram skipped.
+
+Comparados os seis PNGs oficiais com o commit pai: todas as telas ganharam
+32px de altura, por controles de 40px e folga vertical para hover/foco. Clientes
+preserva alinhamento à direita; componentes conserva primeira/atual/última no
+exemplo estreito, com rolagem acessível quando o mínimo não cabe. Data-display
+conserva o conteúdo e desloca as seções seguintes pela altura da paginação.
+Nenhuma mudança visual alheia ao escopo foi encontrada. Nenhum snapshot local
+foi copiado; somente o workflow oficial alterou os baselines.
+
+A atualização de evidências dispara nova CI da PR, pois o commit criado com
+GITHUB_TOKEN pelo workflow de baselines não a dispara sozinho. Tasks 9 e 10
+permanecem abertas até conferir os gates dessa revisão.

@@ -2,6 +2,7 @@ import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 import { routes, themes, type Theme } from './routes';
+import { releaseShellHeight } from './full-page-shell';
 
 function mainNavigation(page: Page) {
 	return page.getByRole('navigation', { name: 'Navegação do demo' });
@@ -749,6 +750,7 @@ test.describe('snapshots visuais', () => {
 				await page.setViewportSize({ width: 1280, height: 800 });
 				await page.goto(route.path);
 				await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
+				await releaseShellHeight(page);
 				await expect(page).toHaveScreenshot(`${route.name}-${theme}.png`, { fullPage: true });
 			}
 		});

@@ -175,21 +175,34 @@ foram alteradas. Como nos incrementos públicos anteriores registrados neste
 documento, o custo explícito deve ser considerado na revisão desta PR; não
 representa uma correção de tamanho sem custo nem um bundle menor.
 
+## Sidebar desktop fixa no `AdsAdminShell` (#136)
+
+O baseline de `@admin-ds/admin` foi atualizado na change
+`issue-136-admin-shell-fixed-sidebar` de 170121 para **187690 bytes** (+17569),
+medido em LF após o build de tokens, components e admin e
+`inspect:packages`. O valor anterior já estava defasado: a `develop` (`5919f77`,
+catálogo e navegação hierárquica do shell, #151) mede **186447 bytes / 61
+arquivos**, ainda dentro da tolerância de 10% (187133). A change soma **+1243
+bytes** (CSS do layout desktop em `styles.css`, `tabIndex` padrão em
+`AdsAdminShell.Main`, com JavaScript, declarações e source maps), o que passa o
+limite de 187133 e exige a atualização explícita. Sem novas dependências de
+runtime nem novos arquivos publicados.
+
 ## Fluxos administrativos: alertdialog, indicador navegável e validação assíncrona (#92)
 
-Build limpo do commit base `5919f77`, com o mesmo TypeScript/Tailwind e LF, em
-cópia isolada: admin **186447 bytes / 61 arquivos** (já 9,6% acima do baseline
-anterior de 170121, por crescimento absorvido na develop, principalmente a
-navegação hierárquica do shell), components **388846 bytes**. Após a #92: admin
-**198480 bytes / 61 arquivos** (+12033, +6,5% sobre o commit base) e components
+Medição do commit base `5919f77` (antes do #136), em cópia isolada com o mesmo
+TypeScript/Tailwind e LF: admin **186447 bytes / 61 arquivos**, components
+**388846 bytes**. Após a #92: admin **+12033 bytes** (+6,5%) e components
 **389188 bytes** (+342, `role` em `AdsDialogProps`); tokens permanece 36342 bytes.
+Com a `develop` já atualizada pelo #136 (baseline de admin 187690), o build
+integrado desta PR mede admin **199723 bytes / 61 arquivos**.
 
 O incremento do admin vem de `AdsStepForm` (validação assíncrona com estado de
 carregamento, descarte de resultado obsoleto, navegação pelo indicador e marcação
 de etapas validadas) e dos estilos do botão do indicador, contados com
 declarações e mapas. Sem novos arquivos publicados nem dependência de runtime.
 
-O baseline de `@admin-ds/admin` foi atualizado de 170121 para **198480**. O de
+O baseline de `@admin-ds/admin` foi atualizado de 187690 para **199723**. O de
 components (382334) não foi alterado: 389188 está dentro da tolerância de 10%.
 A tolerância e as verificações de pacotes não mudaram. O custo é explícito para a
-revisão desta PR; o crescimento da develop anterior à #92 não é corrigido aqui.
+revisão desta PR.

@@ -124,6 +124,21 @@ describe('AdsAdminShell structure', () => {
 		expect(container.firstElementChild).toHaveClass('ads-admin-shell', 'custom');
 		expect(screen.getByRole('main')).toHaveClass('ads-admin-shell-main', 'main-extra');
 	});
+
+	it('makes the scrollable main reachable by keyboard and lets the consumer override tabIndex', () => {
+		const { rerender } = render(
+			<AdsAdminShell>
+				<AdsAdminShell.Main>x</AdsAdminShell.Main>
+			</AdsAdminShell>,
+		);
+		expect(screen.getByRole('main')).toHaveAttribute('tabindex', '0');
+		rerender(
+			<AdsAdminShell>
+				<AdsAdminShell.Main tabIndex={-1}>x</AdsAdminShell.Main>
+			</AdsAdminShell>,
+		);
+		expect(screen.getByRole('main')).toHaveAttribute('tabindex', '-1');
+	});
 });
 
 describe('desktop sidebar preference', () => {

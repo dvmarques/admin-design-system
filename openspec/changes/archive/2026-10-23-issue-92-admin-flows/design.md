@@ -37,7 +37,7 @@ Apenas classes `ads-` e variáveis `--ads-*` em `packages/admin/src/styles.css`,
 
 ## Bundle e dependências
 
-Sem dependências novas. Medido: `@admin-ds/admin` 186447 → 198480 bytes (+12033, com declarações e mapas) e `@admin-ds/components` 388846 → 389188 (+342). O baseline do admin foi atualizado de 170121 para 198480 (o commit base já estava 9,6% acima do baseline anterior); detalhes em `docs/bundle-baseline.md`.
+Sem dependências novas. Medido: `@admin-ds/admin` +12033 bytes sobre o commit base (186447 → 198480, com declarações e mapas) e `@admin-ds/components` 388846 → 389188 (+342). Integrada à `develop` com o #136, a PR mede 199723 bytes no admin, e o baseline foi atualizado de 187690 para 199723; detalhes em `docs/bundle-baseline.md`.
 
 ## Rollback
 

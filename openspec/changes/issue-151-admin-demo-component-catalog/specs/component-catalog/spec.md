@@ -1,32 +1,38 @@
-# Component catalog specification
+# Catálogo de componentes
 
-## Requirements
-### Searchable component index
-The demo SHALL list existing public UI components in logical categories and allow case-insensitive search, keyboard navigation and direct stable links.
+## ADDED Requirements
 
-#### Scenario: Find component
-Given a visitor searches for a public component, when a matching name is entered, then a result linking to its demonstration is displayed; no matches show a clear empty state.
+### Requirement: Índice pesquisável
+O admin demo SHALL apresentar um índice de componentes públicos por categoria, com pesquisa sem diferenciar maiúsculas de minúsculas e links estáveis.
 
-### Complete demonstrable coverage
-Every public runtime UI export SHALL have a documented navigable example, including compound subcomponents, or an explicit documented exclusion for non-visual utilities/test fixtures. The coverage check SHALL fail on an unregistered UI export.
+#### Scenario: Busca por nome
+- **WHEN** a pessoa pesquisa o nome de um componente público
+- **THEN** o catálogo mostra um link para sua demonstração ou um estado vazio acessível quando não há resultados
 
-#### Scenario: New export
-When a new public UI component is exported without a demo mapping, the automated coverage test fails.
+### Requirement: Cobertura integral rastreável
+O catálogo SHALL demonstrar todos os exports públicos visuais existentes, inclusive subcomponentes, e documentar exclusões de utilitários sem interface.
 
-### Usable examples
-Each page SHALL display a name, description, functional example and applicable variants, states and real TSX snippets with copying when feasible.
+#### Scenario: Novo componente sem exemplo
+- **WHEN** um export público visual é acrescentado sem mapeamento
+- **THEN** a verificação automatizada de cobertura falha
 
-#### Scenario: Interactive example
-When a user changes an interactive control, the example reflects the change and remains keyboard accessible.
+### Requirement: Exemplos interativos
+Cada demonstração SHALL fornecer descrição, exemplos funcionais e variações pertinentes, incluindo código TSX copiável quando viável.
 
-### Responsive accessible navigation
-The catalog SHALL support keyboard focus, active item indication, grouped navigation, narrow viewports, and light/dark preview without clipping.
+#### Scenario: Interação
+- **WHEN** a pessoa interage por teclado com um controle demonstrado
+- **THEN** seu estado é atualizado e a indicação de foco permanece perceptível
 
-#### Scenario: Narrow viewport
-When the viewport is mobile sized, catalog navigation and demos remain operable without horizontal page overflow.
+### Requirement: Navegação responsiva
+A navegação SHALL agrupar categorias, indicar página ativa, funcionar em dispositivos móveis e permitir inspecionar os temas claro e escuro sem overflow horizontal.
 
-### Preserve application demos
-Existing business pages SHALL remain reachable at their current paths or redirect to equivalent paths.
+#### Scenario: Viewport estreita
+- **WHEN** o catálogo é acessado em largura de celular
+- **THEN** a navegação e os exemplos continuam utilizáveis sem recorte de controles
 
-#### Scenario: Existing URL
-When a user visits an existing business route, the relevant business example remains available.
+### Requirement: Preservação dos exemplos de aplicação
+As páginas de negócio existentes SHALL permanecer acessíveis por suas rotas atuais ou redirecionamentos equivalentes.
+
+#### Scenario: Rota existente
+- **WHEN** uma pessoa abre um URL de exemplo de negócio existente
+- **THEN** a demonstração correspondente permanece acessível

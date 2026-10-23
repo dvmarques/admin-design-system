@@ -7,7 +7,7 @@ export const demoNavigationGroups = [
   { label: 'Visão geral', items: [{ href: '/', initials: 'Vg', label: 'Dashboard' }, { href: '/catalogo', initials: 'Ca', label: 'Catálogo' }] },
   { label: 'Componentes básicos', items: [{ href: '/componentes', initials: 'Co', label: 'Componentes' }] },
   { label: 'Formulários', items: [{ href: '/componentes/datas', initials: 'Dt', label: 'Datas' }] },
-  { label: 'Navegação e feedback', items: [{ href: '/catalogo?grupo=Navega%C3%A7%C3%A3o', initials: 'Nv', label: 'Navegação' }, { href: '/catalogo?grupo=Feedback', initials: 'Ov', label: 'Overlays' }] },
+  { label: 'Navegação e feedback', items: [{ href: '/catalogo', initials: 'Nv', label: 'Navegação' }, { href: '/catalogo', initials: 'Ov', label: 'Overlays' }] },
   { label: 'Dados e tabelas', items: [{ href: '/data-display', initials: 'Ex', label: 'Exibição de dados' }] },
   { label: 'Exemplos de aplicação', items: [{ href: '/clientes', initials: 'Cl', label: 'Clientes' }, { href: '/clientes/novo', initials: 'Nc', label: 'Novo cliente' }, { href: '/preferencias', initials: 'Pr', label: 'Preferências' }] },
 ] as const;
@@ -25,7 +25,7 @@ export function DemoNavigation() {
           <ul className="demo-shell-nav-list">
             {group.items.map((item) => (
               <li key={item.href}>
-                <Link aria-current={pathname === item.href.split('?')[0] ? 'page' : undefined} className="demo-shell-nav-link" href={item.href}>
+                <Link aria-current={pathname === item.href ? 'page' : undefined} className="demo-shell-nav-link" href={item.href}>
                   <span aria-hidden="true" className="demo-nav-initial">{item.initials}</span>
                   <span className="ads-admin-shell-sidebar-label">{item.label}</span>
                 </Link>

@@ -325,4 +325,6 @@ export const catalogEntries = [
     "group": "Admin",
     "href": "/clientes"
   }
+  { name: 'ThemeToggle', group: 'Básicos', href: '/preferencias' },
+  { name: 'StyleFixture', group: 'Básicos', href: '/componentes' },
 ] as const;

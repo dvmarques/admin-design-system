@@ -10,6 +10,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `issue-94-quality-documentation` (issue #94) - Inspeção de distribuição e JS/CSS publicado com gzip por arquivo, cenários de bundle minificado, orçamentos versionados, documentação de migração e limitações por componente. Limites iniciais de navegador e cenários são provisórios e precisam ser calibrados em CI; cobertura V8 publicada inicialmente apenas para testes Node. Sem mudança de API pública.
+
+
 - `issue-92-admin-flows` (issue #92) - `AdsDialogProps` expõe `role` (`dialog` | `alertdialog`). `AdsConfirmDialog` usa `alertdialog` quando `destructive` (padrão) e `dialog` caso contrário, com `role` explícito prevalecendo; foco, `Escape` e `pending` não mudam. `AdsStepForm` permite navegar pelo indicador de etapas anteriores e das já validadas ao avançar (editar a etapa remove a marca) e aceita `validate` assíncrona (`Promise<boolean>`) com `aria-busy`, anúncio `labels.validating`, carregamento no botão e descarte de resultado obsoleto; rejeição conta como etapa inválida e `validate` síncrona segue síncrona. Stories e catálogo do admin demo atualizados; `docs/limitations.md` e `docs/integration.md` revisados. Efeito observável: `AdsConfirmDialog` destrutivo passa a expor `role="alertdialog"` (use `role="dialog"` para manter o papel anterior).
 
 - `issue-136-admin-shell-fixed-sidebar` (issue #136) - No layout desktop do `AdsAdminShell`, header e sidebar permanecem fixos e o conteúdo principal e a sidebar rolam de forma independente, com altura limitada à viewport (`100dvh`) e sem rolagem duplicada da página. Header com várias linhas não sobrepõe sidebar nem main. `AdsAdminShell.Main` passa a ser focável por padrão (`tabIndex={0}`, sobrescrevível) por ser a região rolável. Layout móvel e Drawer inalterados; sem mudança incompatível de API pública. Inclui story, documentação de integração e E2E em 1280×800, 768×600, 390×844 e altura reduzida.

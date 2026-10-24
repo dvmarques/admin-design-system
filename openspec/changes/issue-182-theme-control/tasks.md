@@ -26,4 +26,4 @@
 - [x] 4.1 `docs/integration.md` (uso, migração de `ThemeToggle`, SSR e fallback), `docs/admin-demo-catalog.md` e CHANGELOG.
 - [x] 4.2 Executados: prettier, `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` (950 testes) e E2E em Chromium (226 aprovados). Os 9 snapshots visuais restantes divergem por mudança intencional do cabeçalho (ícone no lugar do botão de texto) e pela renderização local, que não é fonte de verdade; seus baselines Linux devem ser regenerados pelo workflow "Atualizar baselines visuais" na branch e revistos na PR. Firefox e WebKit (`theme-control`, `smoke`, `dropdown-focus`) não puderam ser executados localmente: os navegadores não estão instalados; ficam para a CI.
 - [x] 4.3 `openspec validate --all --strict` (49 itens) e `npm run check:agent-skills` aprovados; `npm run test:ci` e `npm run test:release` aprovados.
-- [ ] 4.4 Abrir PR para `develop` com changelog, issue e change, evidências e riscos.
+- [x] 4.4 PR #183 aberta em Draft para `develop` com changelog, issue, change, evidências e riscos; baselines Linux regenerados pelo workflow oficial (commit `bc23f23`), a revisar na PR.

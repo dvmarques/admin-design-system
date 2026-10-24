@@ -64,6 +64,11 @@ test('o menu fecha com Escape devolvendo o foco e o controle cabe em 320 px', as
 	await trigger.focus();
 	await page.keyboard.press('ArrowDown');
 	await expect(page.getByRole('menuitemradio', { name: 'Sistema' })).toBeFocused();
+	// As opções ficam empilhadas, coerente com as setas para cima e para baixo.
+	const tops = await page
+		.getByRole('menuitemradio')
+		.evaluateAll((items) => items.map((item) => Math.round(item.getBoundingClientRect().top)));
+	expect(new Set(tops).size).toBe(3);
 	await page.keyboard.press('Escape');
 	await expect(page.getByRole('menu')).toHaveCount(0);
 	await expect(trigger).toBeFocused();

@@ -202,7 +202,10 @@ export function AdsThemeControl({
 					<AdsIcon name={currentOption.icon} />
 				</AdsDropdown.Trigger>
 			</MaybeTooltip>
-			<AdsDropdown.Content aria-label={text.group} className={iconOnly ? 'min-w-0' : undefined}>
+			<AdsDropdown.Content
+				aria-label={text.group}
+				className={iconOnly ? 'flex min-w-0 flex-col' : undefined}
+			>
 				{options.map((option) => {
 					const selected = option.value === current;
 					return (

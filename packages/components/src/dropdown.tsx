@@ -186,12 +186,10 @@ function AdsDropdownContent({
 	) : null;
 }
 
-export interface AdsDropdownItemProps extends Omit<HTMLAttributes<HTMLElement>, 'role'> {
+export interface AdsDropdownItemProps extends HTMLAttributes<HTMLElement> {
 	disabled?: boolean;
 	href?: string;
 	onSelect?: () => void;
-	/** `menuitemradio` exige `aria-checked`; o padrão `menuitem` é o comportamento anterior. */
-	role?: 'menuitem' | 'menuitemradio';
 }
 function AdsDropdownItem({
 	children,
@@ -200,9 +198,11 @@ function AdsDropdownItem({
 	href,
 	onClick,
 	onSelect,
-	role = 'menuitem',
+	role,
 	...props
 }: AdsDropdownItemProps) {
+	// Só `menuitemradio` é novo; qualquer outro valor mantém o papel `menuitem` de sempre.
+	const itemRole = role === 'menuitemradio' ? 'menuitemradio' : 'menuitem';
 	const { setOpen, triggerRef } = useDropdown();
 	const element = href ? 'a' : 'button';
 	return (
@@ -230,9 +230,9 @@ function AdsDropdownItem({
 						onSelect?.();
 						setOpen(false);
 						// Escolher uma opção de seleção exclusiva devolve o foco ao gatilho, como Escape.
-						if (role === 'menuitemradio') triggerRef.current?.focus();
+						if (itemRole === 'menuitemradio') triggerRef.current?.focus();
 					},
-					role,
+					role: itemRole,
 					tabIndex: disabled ? -1 : -1,
 				},
 				children,

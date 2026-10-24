@@ -252,3 +252,7 @@ Pastas temporárias com prefixo `lint-regression-*` na raiz são reservadas para
 a regressão e ignoradas por Git, ESLint e Prettier. Se uma execução for
 interrompida antes da limpeza automática, remova somente a pasta temporária
 correspondente antes de repetir o teste.
+
+## Cobertura Node na CI
+
+O job **Qualidade rápida** executa `npm run test:ci` com `NODE_V8_COVERAGE` e publica os dados brutos V8 como artefato `cobertura-node-ci` por 14 dias. O artefato cobre somente os testes Node desse comando; não é um relatório consolidado dos testes React/Vitest, nem uma porcentagem de cobertura total. A cobertura de componentes ainda requer configuração própria.

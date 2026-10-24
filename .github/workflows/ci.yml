@@ -50,6 +50,16 @@ jobs:
         run: npm run test:ci
         env:
           NODE_V8_COVERAGE: coverage/node-ci
+      - name: Gerar cobertura dos testes Vitest
+        run: npm run test:coverage
+      - name: Publicar cobertura dos testes Vitest
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: cobertura-vitest
+          path: coverage/vitest/
+          if-no-files-found: warn
+          retention-days: 14
       - name: Publicar cobertura dos testes Node de CI
         if: always()
         uses: actions/upload-artifact@v4

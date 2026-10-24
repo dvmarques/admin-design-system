@@ -253,6 +253,11 @@ a regressão e ignoradas por Git, ESLint e Prettier. Se uma execução for
 interrompida antes da limpeza automática, remova somente a pasta temporária
 correspondente antes de repetir o teste.
 
-## Cobertura Node na CI
+## Cobertura na CI
 
-O job **Qualidade rápida** executa `npm run test:ci` com `NODE_V8_COVERAGE` e publica os dados brutos V8 como artefato `cobertura-node-ci` por 14 dias. O artefato cobre somente os testes Node desse comando; não é um relatório consolidado dos testes React/Vitest, nem uma porcentagem de cobertura total. A cobertura de componentes ainda requer configuração própria.
+O job **Qualidade rápida** publica dois artefatos por 14 dias:
+
+- `cobertura-node-ci`: dados brutos V8 (`NODE_V8_COVERAGE`) de `npm run test:ci`; não é uma porcentagem consolidada.
+- `cobertura-vitest`: relatório de `npm run test:coverage` (resumo, `coverage-summary.json` e `lcov`) dos testes React/Vitest sobre `packages/*/src`.
+
+Não há limite mínimo de cobertura nem serviço externo; os relatórios servem como evidência para inspeção.

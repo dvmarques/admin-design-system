@@ -1,17 +1,17 @@
 {
 	"tokens-public": {
 		"entry": "scripts/scenarios/tokens.mjs",
-		"bytes": 100000,
-		"gzipBytes": 100000
+		"bytes": 3800,
+		"gzipBytes": 1300
 	},
 	"components-public": {
 		"entry": "scripts/scenarios/components.mjs",
-		"bytes": 1000000,
-		"gzipBytes": 1000000
+		"bytes": 30400,
+		"gzipBytes": 11300
 	},
 	"admin-public": {
 		"entry": "scripts/scenarios/admin.mjs",
-		"bytes": 1000000,
-		"gzipBytes": 1000000
+		"bytes": 70000,
+		"gzipBytes": 23900
 	}
 }

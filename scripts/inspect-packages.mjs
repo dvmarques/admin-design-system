@@ -57,6 +57,7 @@ for (const packageName of packageNames) {
 	const browserFiles = files.filter((file) => ['.js', '.mjs', '.css'].includes(extname(file)));
 	const browserContents = await Promise.all(browserFiles.map((file) => readFile(file)));
 	const browserBytes = browserContents.reduce((sum, data) => sum + data.length, 0);
+	// gzip de cada artefato publicado; não representa a transferência de um cenário de consumo.
 	const gzipBytes = browserContents.reduce((sum, data) => sum + gzipSync(data, { level: 9 }).length, 0);
 	const budget = browserBudget[packageName];
 	if (!budget) throw new Error(`Orçamento de navegador ausente: ${packageName}`);

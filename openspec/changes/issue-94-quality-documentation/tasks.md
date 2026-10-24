@@ -1,7 +1,7 @@
 ## 1. Inspeção de pacotes
 - [x] 1.1 Definir orçamento por pacote e por métrica; preservar baseline de distribuição.
 - [x] 1.2 Implementar medição de JS/CSS e gzip, excluindo mapas e declarações do tráfego.
-- [ ] 1.3 Implementar cenários representativos de consumo e diagnósticos de limite.
+- [x] 1.3 Implementar cenários representativos de consumo e diagnósticos de limite.
 - [ ] 1.4 Criar testes para estouro de cada orçamento e documentação de atualização.
 
 ## 2. Qualidade

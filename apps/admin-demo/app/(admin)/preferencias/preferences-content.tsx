@@ -1,17 +1,17 @@
 'use client';
 
-import { AdsRadio, AdsSelectionGroup, AdsSwitch, AdsTypography } from '@admin-ds/components';
+import { AdsSwitch, AdsThemeControl, AdsTypography } from '@admin-ds/components';
 import { useAdsAdminShell } from '@admin-ds/admin';
-import { applyTheme, type Theme } from '../../../lib/theme';
-import { useTheme } from '../../use-theme';
+import { applyThemePreference, type ThemePreference } from '../../../lib/theme';
+import { useThemePreference } from '../../use-theme';
 
 /**
  * Appearance and layout preferences. It renders inside `AdsAdminShell`: the sidebar switch reads
- * and changes the shell state, and the theme group stays in sync with the header toggle through
- * the `data-theme` attribute.
+ * and changes the shell state, and the theme group stays in sync with the header menu through
+ * the preference kept on `<html>`.
  */
-export function PreferencesContent({ initialTheme }: { initialTheme: Theme }) {
-	const theme = useTheme(initialTheme);
+export function PreferencesContent({ initialPreference }: { initialPreference: ThemePreference }) {
+	const preference = useThemePreference(initialPreference);
 	const { collapsed, isDesktop, setCollapsed } = useAdsAdminShell();
 
 	return (
@@ -31,22 +31,13 @@ export function PreferencesContent({ initialTheme }: { initialTheme: Theme }) {
 					<AdsTypography as="h2" id="preferences-appearance" variant="heading2">
 						Aparência
 					</AdsTypography>
-					<AdsSelectionGroup legend="Tema">
-						<AdsRadio
-							checked={theme === 'light'}
-							label="Claro"
-							name="tema"
-							onChange={() => applyTheme('light')}
-							value="light"
-						/>
-						<AdsRadio
-							checked={theme === 'dark'}
-							label="Escuro"
-							name="tema"
-							onChange={() => applyTheme('dark')}
-							value="dark"
-						/>
-					</AdsSelectionGroup>
+					<AdsThemeControl
+						labels={{ group: 'Tema' }}
+						onValueChange={applyThemePreference}
+						optionDisplay="icon-text"
+						value={preference}
+						variant="group"
+					/>
 				</section>
 
 				<section aria-labelledby="preferences-layout" className="demo-section">

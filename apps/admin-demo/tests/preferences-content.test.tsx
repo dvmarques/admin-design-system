@@ -2,36 +2,40 @@ import { AdsAdminShell } from '@admin-ds/admin';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it } from 'vitest';
 import { PreferencesContent } from '../app/(admin)/preferencias/preferences-content';
-import type { Theme } from '../lib/theme';
+import type { ThemePreference } from '../lib/theme';
 
-function render(initialTheme: Theme) {
+function render(initialPreference: ThemePreference) {
 	const container = document.createElement('div');
 	// `useAdsAdminShell` throws outside the shell, so the preferences render inside it.
 	container.innerHTML = renderToString(
 		<AdsAdminShell>
-			<PreferencesContent initialTheme={initialTheme} />
+			<PreferencesContent initialPreference={initialPreference} />
 		</AdsAdminShell>,
 	);
 	return container;
 }
 
-function themeRadio(container: HTMLElement, value: Theme) {
-	return container.querySelector<HTMLInputElement>(`input[type="radio"][value="${value}"]`);
+const labels = { light: 'Claro', dark: 'Escuro', system: 'Sistema' } as const;
+
+function themeRadio(container: HTMLElement, value: ThemePreference) {
+	return Array.from(container.querySelectorAll<HTMLElement>('[role="radio"]')).find((radio) =>
+		radio.textContent?.includes(labels[value]),
+	);
 }
 
 describe('PreferencesContent', () => {
-	it.each<[Theme, Theme]>([
-		['light', 'dark'],
-		['dark', 'light'],
-	])(
-		'checks only the %s radio (and not the %s one) for the server-rendered theme',
-		(initial, other) => {
-			const view = render(initial);
+	it.each<[ThemePreference, ThemePreference[]]>([
+		['light', ['dark', 'system']],
+		['dark', ['light', 'system']],
+		['system', ['light', 'dark']],
+	])('checks only the %s radio for the server-rendered preference', (initial, others) => {
+		const view = render(initial);
 
-			expect(themeRadio(view, initial)?.checked).toBe(true);
-			expect(themeRadio(view, other)?.checked).toBe(false);
-		},
-	);
+		expect(themeRadio(view, initial)?.getAttribute('aria-checked')).toBe('true');
+		for (const other of others) {
+			expect(themeRadio(view, other)?.getAttribute('aria-checked')).toBe('false');
+		}
+	});
 
 	it('renders the same markup twice for the same theme', () => {
 		expect(render('dark').innerHTML).toBe(render('dark').innerHTML);

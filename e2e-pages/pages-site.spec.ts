@@ -1,6 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 import { waitForHydration } from '../e2e/hydration';
 import { routes } from '../e2e/routes';
+import { chooseTheme, themeTrigger } from '../e2e/theme-control';
 
 const base = '/admin-design-system';
 
@@ -23,14 +24,14 @@ for (const route of routes) {
 		await page.goto(`${base}${route.path === '/' ? '/' : `${route.path}/`}`);
 
 		await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
-		await waitForHydration(page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ }));
+		await waitForHydration(themeTrigger(page));
 		expect(errors).toEqual([]);
 	});
 }
 
 test('demo publicado: navega pela navegação principal sem sair do subcaminho', async ({ page }) => {
 	await page.goto(`${base}/`);
-	await waitForHydration(page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ }));
+	await waitForHydration(themeTrigger(page));
 
 	await page
 		.getByRole('navigation', { name: 'Navegação do demo' })
@@ -65,7 +66,7 @@ for (const theme of ['light', 'dark'] as const) {
 		await page.goto(`${base}/`);
 
 		await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
-		await waitForHydration(page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ }));
+		await waitForHydration(themeTrigger(page));
 		await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
 		expect(errors).toEqual([]);
 	});
@@ -73,10 +74,9 @@ for (const theme of ['light', 'dark'] as const) {
 
 test('demo publicado: o tema alternado persiste ao recarregar', async ({ page }) => {
 	await page.goto(`${base}/`);
-	const toggle = page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ });
-	await waitForHydration(toggle);
+	await waitForHydration(themeTrigger(page));
 
-	await toggle.click();
+	await chooseTheme(page, 'dark');
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 	await page.reload();
 

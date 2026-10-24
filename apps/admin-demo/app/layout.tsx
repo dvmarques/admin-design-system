@@ -8,8 +8,9 @@ import '@admin-ds/admin/styles.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
-import { isStaticExport, readServerTheme } from '../lib/server-theme';
-import { themeInitScript } from '../lib/theme';
+import { readServerPreference } from '../lib/server-theme';
+import { themeForPreference, themeInitScript } from '../lib/theme';
+import { ThemeSystemSync } from './theme-system-sync';
 
 export const metadata: Metadata = {
 	title: 'Admin Design System Demo',
@@ -17,22 +18,25 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const theme = await readServerTheme();
+	const preference = await readServerPreference();
 
 	return (
 		<html
 			lang="pt-BR"
 			data-scroll-behavior="smooth"
-			data-theme={theme}
-			// The static export applies the saved theme before hydration, so the attribute differs.
-			suppressHydrationWarning={isStaticExport}
+			// With `system` the server renders the light fallback; the init script corrects it (and
+			// applies the saved preference in the static export) before the first paint.
+			data-theme={themeForPreference(preference)}
+			data-theme-preference={preference}
+			suppressHydrationWarning
 		>
-			{isStaticExport ? (
-				<head>
-					<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
-				</head>
-			) : null}
-			<body>{children}</body>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+			</head>
+			<body>
+				<ThemeSystemSync />
+				{children}
+			</body>
 		</html>
 	);
 }

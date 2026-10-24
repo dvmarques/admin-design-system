@@ -20,7 +20,7 @@ O layout de página mostra nome, descrição, exemplos, orientações de composi
 
 O teste `apps/admin-demo/catalog-coverage.test.ts` compara os exports runtime dos dois índices públicos por AST com o registro, exige URLs únicas e renderização JSX explícita de cada export no snippet da composição e confere a sincronização com o TSX executável. Ele não substitui a execução no navegador. `e2e/catalog.spec.ts` visita todos os exports em 390px/1280px e claro/escuro, verifica erros, conteúdo e overflow, audita as composições com axe e testa busca, cópia, teclado, navegação móvel, campos, seleção, recuperação de erro e etapas.
 
-Excluídos: exports `type` (não possuem runtime), `fixtureVariants` (mapa de estilos), `getAdsPaginationItems` (função de cálculo) e `useAdsAdminShell` (hook sem representação visual própria, exercitado pelos controles do shell). `ThemeToggle` e `StyleFixture` têm exemplos próprios. A lista de exclusões é explícita: um novo export runtime não pode ser ignorado silenciosamente.
+Excluídos: exports `type` (não possuem runtime), `fixtureVariants` (mapa de estilos), `getAdsPaginationItems` (função de cálculo) e `useAdsAdminShell` (hook sem representação visual própria, exercitado pelos controles do shell). `AdsThemeControl`, `ThemeToggle` e `StyleFixture` têm exemplos próprios. A lista de exclusões é explícita: um novo export runtime não pode ser ignorado silenciosamente.
 
 Comandos concisos: `npx vitest run apps/admin-demo/catalog-coverage.test.ts --silent=passed-only`, `npm run test:e2e -- e2e/catalog.spec.ts --workers=4` e `npm run validate`. Diagnóstico: `npm run test:verbose` e `npm run test:e2e:verbose`. O build valida o consumo de CSS compilado pelo Next.js e o Storybook; não há dependência de Tailwind no consumidor.
 
@@ -95,5 +95,6 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsConfirmDialog`    | Admin       | `/catalogo/confirm-dialog`    | `admin-flows.stories.tsx`                                     |
 | `AdsListFlow`         | Admin       | `/catalogo/list-flow`         | `admin-flows.stories.tsx`                                     |
 | `AdsStepForm`         | Admin       | `/catalogo/step-form`         | `admin-flows.stories.tsx`                                     |
+| `AdsThemeControl`     | Básicos     | `/catalogo/theme-control`     | `theme-control.stories.tsx`                                   |
 | `ThemeToggle`         | Básicos     | `/catalogo/theme-toggle`      | `admin-shell.stories.tsx`, `foundation.stories.tsx`           |
 | `StyleFixture`        | Básicos     | `/catalogo/style-fixture`     | `foundation.stories.tsx`                                      |

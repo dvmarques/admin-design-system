@@ -3,6 +3,7 @@ import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 import { routes, themes, type Theme } from './routes';
 import { releaseShellHeight } from './full-page-shell';
+import { chooseTheme, themeTrigger } from './theme-control';
 
 function mainNavigation(page: Page) {
 	return page.getByRole('navigation', { name: 'Navegação do demo' });
@@ -637,9 +638,7 @@ test.describe('novo cliente', () => {
 			await expectNoAxeViolations(page);
 
 			const other = theme === 'light' ? 'dark' : 'light';
-			await page
-				.getByRole('button', { name: `Usar tema ${other === 'dark' ? 'escuro' : 'claro'}` })
-				.click();
+			await chooseTheme(page, other);
 			await expect(page.locator('html')).toHaveAttribute('data-theme', other);
 			await expect(page.getByLabel('Nome')).toHaveAttribute('aria-invalid', 'true');
 
@@ -690,39 +689,144 @@ test.describe('preferências', () => {
 		await useTheme(page, 'light');
 		await page.goto('/preferencias');
 
-		await page.getByText('Escuro', { exact: true }).click();
+		await page.getByRole('radio', { name: 'Escuro' }).click();
 		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
 		const html = await (await page.request.get('/preferencias')).text();
 		expect(html).toMatch(/<html[^>]*data-theme="dark"/);
-		expect(html).toMatch(
-			/<input[^>]*type="radio"[^>]*value="dark"[^>]*checked|<input[^>]*checked[^>]*value="dark"/,
-		);
+		expect(html).toMatch(/<html[^>]*data-theme-preference="dark"/);
 
 		await page.reload();
 		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 		await expect(page.getByRole('radio', { name: 'Escuro' })).toBeChecked();
 	});
 
-	test('o grupo de tema e o botão do cabeçalho se atualizam mutuamente', async ({ page }) => {
+	test('o grupo de tema e o menu do cabeçalho se atualizam mutuamente', async ({ page }) => {
 		await useTheme(page, 'light');
 		await page.goto('/preferencias');
+		await waitForHydration(themeTrigger(page));
 		await expect(page.getByRole('radio', { name: 'Claro' })).toBeChecked();
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Claro');
 
-		await page.getByRole('button', { name: 'Usar tema escuro' }).click();
+		await chooseTheme(page, 'dark');
 		await expect(page.getByRole('radio', { name: 'Escuro' })).toBeChecked();
 		await expect(page.getByRole('radio', { name: 'Claro' })).not.toBeChecked();
 
-		await page.getByText('Claro', { exact: true }).click();
+		await page.getByRole('radio', { name: 'Sistema' }).click();
+		await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'system');
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Sistema');
+
+		await page.getByRole('radio', { name: 'Claro' }).click();
 		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
-		await expect(page.getByRole('button', { name: 'Usar tema escuro' })).toBeVisible();
-		await expect(page.getByRole('button', { name: 'Usar tema claro' })).toHaveCount(0);
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Claro');
 	});
 
-	test('não repete o botão de tema no documento', async ({ page }) => {
+	test('o foco permanece na opção escolhida pelo teclado no grupo de tema', async ({ page }) => {
+		await useTheme(page, 'light');
+		await page.goto('/preferencias');
+		await waitForHydration(themeTrigger(page));
+
+		await page.getByRole('radio', { name: 'Claro' }).focus();
+		await page.keyboard.press('ArrowRight');
+
+		const dark = page.getByRole('radio', { name: 'Escuro' });
+		await expect(dark).toBeFocused();
+		await expect(dark).toBeChecked();
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Escuro');
+	});
+
+	test('sem preferência salva usa Sistema e a preferência escolhida é restaurada', async ({
+		browser,
+	}) => {
+		const context = await browser.newContext({ colorScheme: 'dark' });
+		const page = await context.newPage();
+		await page.goto('/preferencias');
+		await waitForHydration(themeTrigger(page));
+
+		await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'system');
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Sistema');
+
+		await chooseTheme(page, 'light');
+		await page.reload();
+		await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'light');
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+		await chooseTheme(page, 'system');
+		await page.reload();
+		await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'system');
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await context.close();
+	});
+
+	test('Sistema acompanha o sistema operacional e escolhas explícitas não mudam', async ({
+		page,
+	}) => {
+		await page.emulateMedia({ colorScheme: 'light' });
+		await page.goto('/preferencias');
+		await waitForHydration(themeTrigger(page));
+		await chooseTheme(page, 'system');
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+		await page.emulateMedia({ colorScheme: 'dark' });
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Sistema');
+
+		await chooseTheme(page, 'light');
+		await page.emulateMedia({ colorScheme: 'light' });
+		await page.emulateMedia({ colorScheme: 'dark' });
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+	});
+
+	test('o cookie light/dark anterior continua sendo uma preferência explícita', async ({
+		page,
+	}) => {
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: 'dark', url: 'http://127.0.0.1:3000' }]);
+		await page.emulateMedia({ colorScheme: 'light' });
 		await page.goto('/preferencias');
 
-		await expect(page.getByRole('button', { name: /Usar tema/ })).toHaveCount(1);
+		await expect(page.locator('html')).toHaveAttribute('data-theme-preference', 'dark');
+		await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+		await expect(page.getByRole('radio', { name: 'Escuro' })).toBeChecked();
+	});
+
+	test('menu do cabeçalho: nomes acessíveis, foco na opção ativa e Escape devolve o foco', async ({
+		page,
+	}) => {
+		await useTheme(page, 'light');
+		await page.goto('/');
+		await waitForHydration(themeTrigger(page));
+
+		await themeTrigger(page).focus();
+		await page.keyboard.press('Enter');
+		for (const name of ['Claro', 'Escuro', 'Sistema']) {
+			await expect(page.getByRole('menuitemradio', { name, exact: true })).toBeVisible();
+		}
+		await expect(page.getByRole('menuitemradio', { name: 'Claro' })).toBeFocused();
+		await expect(page.getByRole('menuitemradio', { name: 'Claro' })).toHaveAttribute(
+			'aria-checked',
+			'true',
+		);
+
+		await page.keyboard.press('Escape');
+		await expect(page.getByRole('menu')).toHaveCount(0);
+		await expect(themeTrigger(page)).toBeFocused();
+
+		await page.keyboard.press('Enter');
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('ArrowDown');
+		await page.keyboard.press('Enter');
+		await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Sistema');
+		await expect(themeTrigger(page)).toBeFocused();
+	});
+
+	test('não repete o controle de tema do cabeçalho no documento', async ({ page }) => {
+		await page.goto('/preferencias');
+
+		await expect(themeTrigger(page)).toHaveCount(1);
 	});
 
 	for (const theme of themes) {

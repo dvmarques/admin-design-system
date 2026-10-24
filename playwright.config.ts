@@ -28,12 +28,12 @@ export default defineConfig({
 		// Firefox e WebKit executam smoke e foco do dropdown: sem snapshots, que são baselines do Chromium/Linux.
 		{
 			name: 'firefox',
-			testMatch: /(smoke|dropdown-focus)\.spec\.ts$/,
+			testMatch: /(smoke|dropdown-focus|theme-control)\.spec\.ts$/,
 			use: { ...devices['Desktop Firefox'] },
 		},
 		{
 			name: 'webkit',
-			testMatch: /(smoke|dropdown-focus)\.spec\.ts$/,
+			testMatch: /(smoke|dropdown-focus|theme-control)\.spec\.ts$/,
 			use: { ...devices['Desktop Safari'] },
 		},
 	],

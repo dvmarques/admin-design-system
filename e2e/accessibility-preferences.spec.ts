@@ -1,9 +1,9 @@
 import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
+import { chooseTheme, themeTrigger } from './theme-control';
 
-const themeButton = (page: Page) =>
-	page.getByRole('button', { name: /^Usar tema (claro|escuro)$/ });
+const themeButton = themeTrigger;
 
 async function openComponents(page: Page) {
 	await page.goto('/componentes');
@@ -106,7 +106,7 @@ test.describe('maior contraste', () => {
 		expect(await rootVariable(page, '--ads-color-text-muted')).toBe('#0f172a');
 		await expectNoAxeViolations(page);
 
-		await page.getByRole('button', { name: 'Usar tema escuro' }).click();
+		await chooseTheme(page, 'dark');
 		expect(await rootVariable(page, '--ads-color-border-control')).toBe('#e2e8f0');
 		expect(await rootVariable(page, '--ads-color-focus-ring')).toMatch(/^#(fff|ffffff)$/);
 		await expectNoAxeViolations(page);

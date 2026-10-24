@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, extname } from 'node:path';
@@ -7,11 +8,15 @@ import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const packageNames = ['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin'];
-const baseline = JSON.parse(await readFile(resolve(root, 'docs/bundle-baseline.json'), 'utf8'));
-const browserBudget = JSON.parse(await readFile(resolve(root, 'docs/browser-budget.json'), 'utf8'));
-const scenarioBudget = JSON.parse(
-	await readFile(resolve(root, 'docs/scenario-budget.json'), 'utf8'),
-);
+// INSPECT_BUDGET_DIR permite aos testes de integração usar orçamentos reduzidos em fixtures.
+const budgetDirectory = process.env.INSPECT_BUDGET_DIR
+	? resolve(process.env.INSPECT_BUDGET_DIR)
+	: resolve(root, 'docs');
+const readBudget = async (name) =>
+	JSON.parse(await readFile(resolve(budgetDirectory, name), 'utf8'));
+const baseline = await readBudget('bundle-baseline.json');
+const browserBudget = await readBudget('browser-budget.json');
+const scenarioBudget = await readBudget('scenario-budget.json');
 
 async function filesIn(directory) {
 	const entries = await readdir(directory, { withFileTypes: true });
@@ -100,4 +105,22 @@ for (const [name, scenario] of Object.entries(scenarioBudget)) {
 	);
 	checkBudget(name, 'cenário minificado', bytes, scenario.bytes);
 	checkBudget(name, 'cenário gzip', gzipBytes, scenario.gzipBytes);
+
+	// CSS compilado do cenário: arquivos públicos de estilo, minificados e medidos em conjunto.
+	const css = await Promise.all(
+		scenario.cssFiles.map(async (file) => {
+			const result = await build({
+				entryPoints: [resolve(root, file)],
+				minify: true,
+				write: false,
+				outdir: 'out',
+				logLevel: 'silent',
+			});
+			return Buffer.concat(result.outputFiles.map((output) => output.contents));
+		}),
+	);
+	const cssBytes = css.reduce((sum, data) => sum + data.length, 0);
+	const cssGzipBytes = gzipSync(Buffer.concat(css), { level: 9 }).length;
+	checkBudget(name, 'cenário CSS minificado', cssBytes, scenario.cssBytes);
+	checkBudget(name, 'cenário CSS gzip', cssGzipBytes, scenario.cssGzipBytes);
 }

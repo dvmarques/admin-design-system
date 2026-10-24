@@ -1,4 +1,8 @@
-import { readFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { existsSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import assert from 'node:assert/strict';
 import test from 'node:test';
 import { checkBudget } from './quality-budget.mjs';
@@ -57,3 +61,64 @@ test('a CI publica cobertura Node e Vitest como artefatos', () => {
 	}
 	assert.match(workflow, /npm run test:coverage/);
 });
+
+const distributionReady = packages.every((name) =>
+	existsSync(new URL(`../packages/${name.split('/').at(-1)}/dist`, import.meta.url)),
+);
+
+function inspectWith(change) {
+	const directory = mkdtempSync(join(tmpdir(), 'budget-'));
+	try {
+		for (const file of ['bundle-baseline', 'browser-budget', 'scenario-budget']) {
+			const content = readJson(`docs/${file}.json`);
+			if (change.file === file) change.apply(content);
+			writeFileSync(join(directory, `${file}.json`), JSON.stringify(content));
+		}
+		return spawnSync(process.execPath, ['./scripts/inspect-packages.mjs'], {
+			cwd: fileURLToPath(new URL('..', import.meta.url)),
+			env: { ...process.env, INSPECT_BUDGET_DIR: directory },
+			encoding: 'utf8',
+		});
+	} finally {
+		rmSync(directory, { recursive: true, force: true });
+	}
+}
+
+const cases = [
+	['bundle-baseline', '@admin-ds/tokens', 'distribuição', (c) => (c['@admin-ds/tokens'] = 1)],
+	...['bytes', 'gzipBytes'].map((key) => [
+		'browser-budget',
+		'@admin-ds/components',
+		key === 'bytes' ? 'JS/CSS publicados' : 'JS/CSS gzip',
+		(c) => (c['@admin-ds/components'][key] = 1),
+	]),
+	...['tokens-public', 'components-public', 'admin-public'].flatMap((scenario) =>
+		[
+			['bytes', 'cenário minificado'],
+			['gzipBytes', 'cenário gzip'],
+			['cssBytes', 'cenário CSS minificado'],
+			['cssGzipBytes', 'cenário CSS gzip'],
+		].map(([key, metric]) => ['scenario-budget', scenario, metric, (c) => (c[scenario][key] = 1)]),
+	),
+];
+
+for (const [file, subject, metric, apply] of cases) {
+	test(
+		`inspect:packages falha quando ${subject} excede ${metric}`,
+		{ skip: !distributionReady && 'execute npm run build antes' },
+		() => {
+			const result = inspectWith({ file, apply });
+			assert.notEqual(result.status, 0);
+			assert.match(result.stderr, new RegExp(`${subject} / ${metric}[^\\n]* excedeu o orçamento`));
+		},
+	);
+}
+
+test(
+	'inspect:packages passa com os orçamentos versionados',
+	{ skip: !distributionReady && 'execute npm run build antes' },
+	() => {
+		const result = inspectWith({ file: '', apply() {} });
+		assert.equal(result.status, 0, result.stderr);
+	},
+);

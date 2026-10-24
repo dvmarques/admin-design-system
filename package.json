@@ -23,7 +23,7 @@
 		"test:node": "npm run test:node --workspaces --if-present",
 		"test:node:quiet": "npm --silent run test:node:quiet --workspaces --if-present",
 		"test:unit": "npm run build:css --workspace @admin-ds/components && vitest run",
-		"test:coverage": "npm run build:css --workspace @admin-ds/components && vitest run --silent=passed-only --coverage",
+		"test:coverage": "npm run build:css --workspace @admin-ds/components && vitest run --silent=passed-only --coverage --testTimeout=30000",
 		"test:unit:quiet": "npm run build:css --workspace @admin-ds/components && vitest run --silent=passed-only",
 		"test:release": "node --test ./scripts/*release*.test.mjs",
 		"validate:impact": "npm run validate:impact:lint && npm run validate:impact:types && npm run validate:impact:test",

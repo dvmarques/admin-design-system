@@ -78,7 +78,7 @@ for (const [name, scenario] of Object.entries(scenarioBudget)) {
 		write: false,
 		platform: 'browser',
 		format: 'esm',
-		packages: 'external',
+		external: ['react', 'react-dom', 'react/*', 'react-dom/*'],
 		logLevel: 'silent',
 	});
 	const bytes = result.outputFiles.reduce((sum, file) => sum + file.contents.length, 0);

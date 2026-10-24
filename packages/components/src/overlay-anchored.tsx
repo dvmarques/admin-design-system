@@ -35,6 +35,8 @@ export interface AdsTooltipProps {
 	className?: string;
 	/** Com `false`, só o apontamento abre o tooltip; o gatilho mantém seu nome acessível. */
 	showOnFocus?: boolean;
+	/** Com `false`, o gatilho não recebe `aria-describedby`: use quando o tooltip repete o nome acessível. */
+	describeTrigger?: boolean;
 }
 
 export interface AdsPopoverProps extends Omit<
@@ -52,6 +54,7 @@ export function AdsTooltip({
 	children,
 	className,
 	content,
+	describeTrigger = true,
 	placement = 'top',
 	showOnFocus = true,
 }: AdsTooltipProps) {
@@ -68,7 +71,7 @@ export function AdsTooltip({
 	const describedBy = [...new Set([...(consumerIds ?? []), tooltipId])].join(' ');
 	const trigger = cloneElement(
 		children,
-		(open ? { 'aria-describedby': describedBy } : {}) as never,
+		(open && describeTrigger ? { 'aria-describedby': describedBy } : {}) as never,
 	);
 
 	return (

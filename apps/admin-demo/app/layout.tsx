@@ -34,7 +34,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
 			</head>
 			<body>
-				<ThemeSystemSync initialPreference={preference} />
+				<ThemeSystemSync />
 				{children}
 			</body>
 		</html>

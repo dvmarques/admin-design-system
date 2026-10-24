@@ -90,7 +90,13 @@ function MaybeTooltip({
 	showOnFocus?: boolean;
 }) {
 	return enabled ? (
-		<AdsTooltip content={content} placement={placement} showOnFocus={showOnFocus}>
+		// O tooltip repete o nome acessível do controle; descrevê-lo anunciaria o nome duas vezes.
+		<AdsTooltip
+			content={content}
+			describeTrigger={false}
+			placement={placement}
+			showOnFocus={showOnFocus}
+		>
 			{children}
 		</AdsTooltip>
 	) : (

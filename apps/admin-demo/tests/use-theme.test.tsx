@@ -144,7 +144,7 @@ describe('ThemeSystemSync', () => {
 		document.documentElement.dataset.themePreference = 'system';
 		render(
 			<>
-				<ThemeSystemSync initialPreference="system" />
+				<ThemeSystemSync />
 				<ThemeControl initialPreference="system" />
 			</>,
 		);
@@ -162,16 +162,27 @@ describe('ThemeSystemSync', () => {
 	});
 
 	it('never overwrites an explicit preference', () => {
-		render(<ThemeSystemSync initialPreference="light" />);
+		render(<ThemeSystemSync />);
 
 		expect(query.listeners.size).toBe(0);
 		act(() => query.set(true));
 		expect(document.documentElement.dataset.theme).toBe('light');
 	});
 
+	it('does not touch a saved theme the init script applied before hydration', () => {
+		// Static export: the server rendered `system`/light, the script applied the saved dark.
+		document.documentElement.dataset.themePreference = 'dark';
+		document.documentElement.dataset.theme = 'dark';
+
+		render(<ThemeSystemSync />);
+
+		expect(document.documentElement.dataset.theme).toBe('dark');
+		expect(query.listeners.size).toBe(0);
+	});
+
 	it('removes its listener on unmount', () => {
 		document.documentElement.dataset.themePreference = 'system';
-		const { unmount } = render(<ThemeSystemSync initialPreference="system" />);
+		const { unmount } = render(<ThemeSystemSync />);
 		expect(query.listeners.size).toBe(1);
 
 		unmount();
@@ -183,7 +194,7 @@ describe('ThemeSystemSync', () => {
 		document.documentElement.dataset.themePreference = 'system';
 		render(
 			<>
-				<ThemeSystemSync initialPreference="system" />
+				<ThemeSystemSync />
 				<ThemeControl initialPreference="system" />
 			</>,
 		);

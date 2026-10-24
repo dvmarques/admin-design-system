@@ -322,6 +322,38 @@ describe('AdsDropdown radio items', () => {
 	});
 });
 
+describe('AdsThemeControl tooltips', () => {
+	it('do not repeat the accessible name as a description', async () => {
+		render(<AdsThemeControl variant="group" />);
+		const radio = screen.getByRole('radio', { name: 'Claro' });
+		fireEvent.focus(radio);
+		expect(await screen.findByRole('tooltip')).toHaveTextContent('Claro');
+		expect(radio).not.toHaveAttribute('aria-describedby');
+	});
+});
+
+describe('AdsTooltip describeTrigger', () => {
+	it('keeps aria-describedby by default and drops it when disabled', async () => {
+		const { AdsTooltip } = await import('../src/overlay-anchored');
+		const { rerender } = render(
+			<AdsTooltip content="Ajuda">
+				<button type="button">Gatilho</button>
+			</AdsTooltip>,
+		);
+		fireEvent.focus(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(screen.getByRole('button', { name: 'Gatilho' })).toHaveAttribute('aria-describedby');
+		fireEvent.blur(screen.getByRole('button', { name: 'Gatilho' }));
+		rerender(
+			<AdsTooltip content="Ajuda" describeTrigger={false}>
+				<button type="button">Gatilho</button>
+			</AdsTooltip>,
+		);
+		fireEvent.focus(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Gatilho' })).not.toHaveAttribute('aria-describedby');
+	});
+});
+
 describe('AdsTooltip showOnFocus', () => {
 	it('opens on pointer but not on focus when disabled', async () => {
 		const { AdsTooltip } = await import('../src/overlay-anchored');

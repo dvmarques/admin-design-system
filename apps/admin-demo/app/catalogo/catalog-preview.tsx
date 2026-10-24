@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import { AdsButton, AdsField, AdsSelect } from '@admin-ds/components';
-import { applyTheme } from '../../lib/theme';
-import { useTheme } from '../use-theme';
+import { applyThemePreference, resolvePreference } from '../../lib/theme';
+import { useTheme, useThemePreference } from '../use-theme';
 import { catalogDemos } from './catalog-demos';
 
 export function CatalogPreview({
@@ -13,6 +13,7 @@ export function CatalogPreview({
 	demo: keyof typeof catalogDemos;
 	source: string;
 }) {
+	const preference = useThemePreference('system');
 	const theme = useTheme('light');
 	const [width, setWidth] = useState('100%');
 	const [copyStatus, setCopyStatus] = useState('');
@@ -30,11 +31,12 @@ export function CatalogPreview({
 			<div className="demo-catalog-controls">
 				<AdsField label="Tema da demonstração">
 					<AdsSelect
-						value={theme}
-						onChange={(event) => applyTheme(event.target.value as typeof theme)}
+						value={preference}
+						onChange={(event) => applyThemePreference(resolvePreference(event.target.value))}
 					>
 						<option value="light">Claro</option>
 						<option value="dark">Escuro</option>
+						<option value="system">Sistema</option>
 					</AdsSelect>
 				</AdsField>
 				<AdsField label="Largura da demonstração">

@@ -16,29 +16,32 @@ async function load() {
 	return import('../lib/server-theme');
 }
 
-describe('readServerTheme', () => {
-	it('reads the saved theme from the cookie in the regular build', async () => {
-		get.mockReturnValue({ value: 'dark' });
-		const { readServerTheme, isStaticExport } = await load();
+describe('readServerPreference', () => {
+	it.each(['dark', 'light', 'system'])(
+		'reads the saved %s preference from the cookie',
+		async (value) => {
+			get.mockReturnValue({ value });
+			const { readServerPreference, isStaticExport } = await load();
 
-		expect(isStaticExport).toBe(false);
-		await expect(readServerTheme()).resolves.toBe('dark');
-		expect(get).toHaveBeenCalledWith('ads-theme');
-	});
+			expect(isStaticExport).toBe(false);
+			await expect(readServerPreference()).resolves.toBe(value);
+			expect(get).toHaveBeenCalledWith('ads-theme');
+		},
+	);
 
-	it('falls back to light when there is no cookie', async () => {
+	it('falls back to system when there is no cookie', async () => {
 		get.mockReturnValue(undefined);
-		const { readServerTheme } = await load();
+		const { readServerPreference } = await load();
 
-		await expect(readServerTheme()).resolves.toBe('light');
+		await expect(readServerPreference()).resolves.toBe('system');
 	});
 
-	it('returns light without touching cookies in the static export', async () => {
+	it('returns system without touching cookies in the static export', async () => {
 		vi.stubEnv('GITHUB_PAGES', 'true');
-		const { readServerTheme, isStaticExport } = await load();
+		const { readServerPreference, isStaticExport } = await load();
 
 		expect(isStaticExport).toBe(true);
-		await expect(readServerTheme()).resolves.toBe('light');
+		await expect(readServerPreference()).resolves.toBe('system');
 		expect(cookies).not.toHaveBeenCalled();
 	});
 });

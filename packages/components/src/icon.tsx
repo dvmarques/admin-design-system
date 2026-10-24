@@ -9,8 +9,21 @@ const iconPaths = {
 	chevronLeft: <path d="m15 6-6 6 6 6" />,
 	chevronRight: <path d="m9 6 6 6-6 6" />,
 	close: <path d="m6 6 12 12M18 6 6 18" />,
+	monitor: (
+		<>
+			<rect height="12" rx="2" width="18" x="3" y="4" />
+			<path d="M8 20h8M12 16v4" />
+		</>
+	),
+	moon: <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />,
 	info: <path d="M12 16v-4m0-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />,
 	plus: <path d="M12 5v14M5 12h14" />,
+	sun: (
+		<>
+			<circle cx="12" cy="12" r="4" />
+			<path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" />
+		</>
+	),
 	search: <path d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />,
 } as const;
 

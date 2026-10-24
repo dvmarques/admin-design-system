@@ -2,6 +2,7 @@ import { expect, test } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
+import { chooseTheme, themeTrigger } from './theme-control';
 
 for (const theme of ['light', 'dark'] as const) {
 	for (const width of [390, 1280]) {
@@ -14,9 +15,8 @@ for (const theme of ['light', 'dark'] as const) {
 			});
 			await page.setViewportSize({ width, height: 900 });
 			await page.goto('/catalogo');
-			await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
-			if (theme === 'dark')
-				await page.getByRole('button', { name: 'Usar tema escuro', exact: true }).click();
+			await waitForHydration(themeTrigger(page));
+			if (theme === 'dark') await chooseTheme(page, 'dark');
 			for (const entry of catalogEntries) {
 				await page.goto(entry.href);
 				await expect(
@@ -175,7 +175,7 @@ test('breadcrumb usa navegação Next.js e preserva links ao expandir', async ({
 test('sidebar preserva expansão manual entre rotas e abre o grupo ativo', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await page.goto('/catalogo');
-	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
+	await waitForHydration(themeTrigger(page));
 	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });
 	const group = (label: string) =>
 		nav.locator('details').filter({
@@ -214,7 +214,7 @@ test('sidebar distingue seções e expande categoria por teclado no desktop reco
 }) => {
 	await page.setViewportSize({ width: 1280, height: 900 });
 	await page.goto('/catalogo');
-	await waitForHydration(page.getByRole('button', { name: /^Usar tema/ }));
+	await waitForHydration(themeTrigger(page));
 	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });
 	const section = nav.locator('.ads-sidebar-section-title', {
 		hasText: 'Composições administrativas',

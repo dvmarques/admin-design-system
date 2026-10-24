@@ -524,11 +524,21 @@ export const catalogEntries = [
 		href: '/catalogo/step-form',
 	},
 	{
+		name: 'AdsThemeControl',
+		group: 'Básicos',
+		slug: 'theme-control',
+		demo: 'ThemeControl',
+		description:
+			'Preferência Claro, Escuro ou Sistema, em menu compacto de ícones ou em grupo; a aplicação aplica o tema.',
+		href: '/catalogo/theme-control',
+	},
+	{
 		name: 'ThemeToggle',
 		group: 'Básicos',
 		slug: 'theme-toggle',
 		demo: 'ThemeToggle',
-		description: 'Alternância controlada pelo consumidor; o tema do exemplo muda com o botão.',
+		description:
+			'Alternância binária (claro/escuro); prefira AdsThemeControl para incluir Sistema.',
 		href: '/catalogo/theme-toggle',
 	},
 	{

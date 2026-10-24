@@ -58,6 +58,8 @@ import {
 	AdsList,
 	AdsListItem,
 	ThemeToggle,
+	AdsThemeControl,
+	type AdsThemePreference,
 	StyleFixture,
 } from '@admin-ds/components';
 import {
@@ -939,6 +941,33 @@ export function StepFormDemo() {
 	);
 }
 
+export function ThemeControlDemo() {
+	const [preference, setPreference] = useState<AdsThemePreference>('system');
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+				<AdsThemeControl onValueChange={setPreference} value={preference} />
+				<AdsThemeControl
+					optionDisplay="icon-text"
+					onValueChange={setPreference}
+					value={preference}
+				/>
+				<AdsThemeControl disabled value={preference} />
+			</div>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+				<AdsThemeControl onValueChange={setPreference} value={preference} variant="group" />
+				<AdsThemeControl
+					optionDisplay="icon-text"
+					onValueChange={setPreference}
+					value={preference}
+					variant="group"
+				/>
+			</div>
+			<p role="status">Preferência: {preference}</p>
+		</div>
+	);
+}
+
 export function ThemeToggleDemo() {
 	const [theme, setTheme] = useState<'light' | 'dark'>('light');
 	return (
@@ -1008,6 +1037,7 @@ export const catalogDemos = {
 	ListFlow: ListFlowDemo,
 	BulkActionBar: BulkActionBarDemo,
 	StepForm: StepFormDemo,
+	ThemeControl: ThemeControlDemo,
 	ThemeToggle: ThemeToggleDemo,
 	StyleFixture: StyleFixtureDemo,
 };

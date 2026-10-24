@@ -1,5 +1,9 @@
 # Limitações conhecidas
 
+As restrições estão identificadas por componente ou área. Consulte também [histórico por componente](component-changelog.md).
+
+## Limitações de componentes e infraestrutura
+
 Os limites abaixo descrevem o suporte atual dos pacotes, da demonstração e
 das validações automatizadas.
 

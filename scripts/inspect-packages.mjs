@@ -2,6 +2,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, extname } from 'node:path';
 import { build } from 'esbuild';
+import { checkBudget } from './quality-budget.mjs';
 import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -27,11 +28,6 @@ function exportTargets(value) {
 	return Object.values(value).flatMap(exportTargets);
 }
 
-function checkBudget(packageName, metric, actual, limit) {
-	if (!Number.isInteger(limit) || limit < 0) throw new Error(`Orçamento inválido: ${packageName} / ${metric}`);
-	console.log(`${packageName} / ${metric}: ${actual} bytes (limite ${limit})`);
-	if (actual > limit) throw new Error(`${packageName} / ${metric} excedeu o orçamento: ${actual} > ${limit} bytes`);
-}
 
 for (const packageName of packageNames) {
 	const directory = resolve(root, 'packages', packageName.split('/').at(-1));

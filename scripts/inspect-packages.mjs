@@ -1,12 +1,14 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, extname } from 'node:path';
+import { build } from 'esbuild';
 import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const packageNames = ['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin'];
 const baseline = JSON.parse(await readFile(resolve(root, 'docs/bundle-baseline.json'), 'utf8'));
 const browserBudget = JSON.parse(await readFile(resolve(root, 'docs/browser-budget.json'), 'utf8'));
+const scenarioBudget = JSON.parse(await readFile(resolve(root, 'docs/scenario-budget.json'), 'utf8'));
 
 async function filesIn(directory) {
 	const entries = await readdir(directory, { withFileTypes: true });
@@ -64,4 +66,23 @@ for (const packageName of packageNames) {
 	checkBudget(packageName, 'JS/CSS publicados (sem maps e d.ts)', browserBytes, budget.bytes);
 	checkBudget(packageName, 'JS/CSS gzip por arquivo', gzipBytes, budget.gzipBytes);
 	console.log(`${packageName}: ${files.length} arquivos de distribuição, ${browserFiles.length} JS/CSS`);
+}
+
+// Cenários de entrada pública: a medição é de um bundle minificado, não do dist inteiro.
+for (const [name, scenario] of Object.entries(scenarioBudget)) {
+	const entry = resolve(root, scenario.entry);
+	const result = await build({
+		entryPoints: [entry],
+		bundle: true,
+		minify: true,
+		write: false,
+		platform: 'browser',
+		format: 'esm',
+		packages: 'external',
+		logLevel: 'silent',
+	});
+	const bytes = result.outputFiles.reduce((sum, file) => sum + file.contents.length, 0);
+	const gzipBytes = result.outputFiles.reduce((sum, file) => sum + gzipSync(file.contents, { level: 9 }).length, 0);
+	checkBudget(name, 'cenário minificado', bytes, scenario.bytes);
+	checkBudget(name, 'cenário gzip', gzipBytes, scenario.gzipBytes);
 }

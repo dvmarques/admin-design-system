@@ -1,0 +1,14 @@
+{
+	"@admin-ds/tokens": {
+		"bytes": 36342,
+		"gzipBytes": 36342
+	},
+	"@admin-ds/components": {
+		"bytes": 382334,
+		"gzipBytes": 382334
+	},
+	"@admin-ds/admin": {
+		"bytes": 236799,
+		"gzipBytes": 236799
+	}
+}

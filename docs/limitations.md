@@ -1,54 +1,90 @@
 # Limitações conhecidas
 
+As restrições estão identificadas por componente ou área. Consulte também [histórico por componente](component-changelog.md).
+
 Os limites abaixo descrevem o suporte atual dos pacotes, da demonstração e
 das validações automatizadas.
+
+## Dashboard e AdsAdminShell
 
 - `packages/admin` contém o `AdsAdminShell` e seus estilos próprios, e os padrões de
   dashboard (`AdsMetricCard`, `AdsDashboardGrid`, `AdsDashboardPanel`), mas não
   contém gráficos completos (eixos, legendas, tooltips) nem regras de negócio. O
   único gráfico é o `AdsSparkline`, de `@admin-ds/components`, sem interatividade.
+
+## Temas
+
 - A aplicação consumidora decide como persistir a preferência de tema e deve
   aplicá-la no servidor quando quiser evitar uma troca visual na hidratação.
+
+## Snapshots visuais
+
 - Os snapshots visuais usam Chromium e devem ser atualizados conscientemente
   quando tokens, fontes ou o layout de referência mudarem.
+
+## Plataformas de snapshots
+
 - Os baselines visuais são apenas Linux (`*-chromium-linux.png`), gerados em
   `ubuntu-latest`, e os snapshots executam na CI sem serem pulados. Não há
   baselines para Windows nem macOS: renderização de fontes e antialiasing
   diferem, então os snapshots locais nessas plataformas não são suportados.
   Mudanças visuais intencionais são aceitas pelo workflow "Atualizar baselines
   visuais" (ver `docs/quality.md`).
+
+## Orçamentos de distribuição
+
 - O baseline de tamanho cobre os artefatos atuais e permite crescimento de
   até 10%; mudanças maiores exigem revisão explícita do baseline.
+
+## Acessibilidade automatizada
+
 - A validação automatizada de `axe-core` e Playwright não substitui revisão
   manual com teclado, leitor de tela e testes em dispositivos reais. Firefox e
   WebKit têm smoke tests (`/`, `/clientes` e `/componentes`) e a regressão de foco do dropdown, sem
   snapshots e sem a suíte completa; o WebKit do Playwright no Linux não equivale
   ao Safari.
+
+## Contraste e cores forçadas
+
 - `forced-colors` e `prefers-contrast` são validados por emulação em Chromium e
   por testes de CSS e de tokens, sem verificação em Firefox e WebKit. O contraste
   automatizado cobre os pares de tokens listados em
   `packages/tokens/tests/contrast-pairs.mjs`, não combinações arbitrárias de
   sobrescritas da aplicação.
+
+## CSS e Tailwind
+
 - Os utilitários Tailwind só existem no CSS distribuído se aparecerem nas
   fontes de `packages/components`. Por isso o admin demo usa apenas classes
   `demo-` e `ads-`, e um teste de consumo público falha se um `className`
   literal usar outra coisa.
+
+## AdsDialog e AdsDrawer
+
 - O fundo de `AdsDialog` e `AdsDrawer` abertos fica inerte por `inert`, sem fallback: em navegadores
   sem suporte (anteriores a Chromium 102, Firefox 112 e Safari 15.5) ele continua alcançável por
   clique. Overlays de terceiros em `<body>` e o anunciante de rotas do Next.js também ficam inertes
-  enquanto há modal aberto; uma navegação nesse intervalo não é anunciada. A rolagem do fundo não é
-  bloqueada. A validação em navegador real cobre o Chromium.
+  enquanto há modal aberto; uma navegação nesse intervalo não é anunciada. O bloqueio de rolagem depende da implementação atual e deve ser validado em navegador real. A validação em navegador real cobre o Chromium.
+
+## AdsDatePicker
+
 - O `AdsDatePicker` não tem seletor de hora, fusos horários nem calendários não
   gregorianos. Um intervalo pode conter datas desabilitadas, e as regras de
   negócio sobre isso ficam com a aplicação. Os nomes e o formato dependem do
   `Intl` do ambiente, e os textos de interface (`labels`) têm padrão em pt-BR.
   Sem snapshot visual para ele, o comportamento é coberto por testes
   de componente e `axe`.
+
+## AdsFilterBar
+
 - O `AdsFilterBar` só emite o estado do filtro: não consulta nem filtra dados,
   não persiste na URL e não oferece filtros salvos nem operadores lógicos. O
   texto é emitido a cada digitação, e o consumidor aplica debounce quando
   necessário. Sem snapshot visual para ele, o comportamento é coberto
   por testes de componente, SSR e `axe`.
+
+## AdsSmartTable
+
 - O `AdsSmartTable` só apresenta o estado recebido: não busca, ordena, filtra nem
   pagina dados, não persiste ordenação, seleção, colunas nem larguras e não oferece
   edição em linha nem reordenação de colunas. Virtualização de linhas
@@ -68,6 +104,9 @@ das validações automatizadas.
   limpá-los. É um Client Component: `cell`, `exportValue` e `getRowId` são funções
   e não atravessam a fronteira de um Server Component. Sem snapshot visual para
   ele, o comportamento é coberto por testes de componente, SSR, `axe` e E2E.
+
+## Fluxos administrativos: AdsListFlow, AdsBulkActionBar, AdsStepForm e AdsConfirmDialog
+
 - Os fluxos administrativos (`AdsListFlow`, `AdsBulkActionBar`, `AdsStepForm` e
   `AdsConfirmDialog`) só compõem componentes existentes: não persistem nem
   enviam dados e não usam o roteador. `AdsStepForm` não tem etapas condicionais

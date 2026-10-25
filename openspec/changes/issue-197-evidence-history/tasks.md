@@ -8,7 +8,7 @@
 ## 2. Documentação permanente
 
 - [x] 2.1 Corrigir o caminho de #135 e separar cronologia de medição do procedimento atual.
-- [ ] 2.2 Qualificar dados de bundle por data/commit/toolchain verificáveis, inclusive Node 22.
+- [x] 2.2 Qualificar dados de bundle por data/commit/toolchain verificáveis, inclusive Node 22 (histórico preservado; informações ausentes nas medições originais não foram inventadas).
 - [x] 2.3 Distinguir documentação vigente, contribuição e histórico no README.
 
 ## 3. Reconciliação OpenSpec
@@ -19,7 +19,7 @@
 
 ## 4. Validação
 
-- [ ] 4.1 Verificar referências textuais e links relativos, diff apenas documental e integridade dos arquivos preservados.
+- [ ] 4.1 Verificar referências textuais e links relativos, diff apenas documental e integridade dos arquivos preservados (links de nove arquivos verificados; revisão após separação de históricos pendente).
 - [ ] 4.2 Executar npm run validate.
 - [ ] 4.3 Executar openspec.cmd validate --all --strict.
 - [ ] 4.4 Revisar e corrigir os achados, documentando skips/limitações reais.

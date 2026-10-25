@@ -23,4 +23,3 @@ O projeto MUST executar os testes de snapshot visual em toda execução de CI de
 
 - **WHEN** uma PR Ready para develop altera apenas documentação classificada como docs
 - **THEN** os checks de build e E2E podem concluir com suas etapas dispensadas, sem afirmar que snapshots executaram
-

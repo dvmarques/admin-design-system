@@ -13,8 +13,8 @@
 
 ## 3. Reconciliação OpenSpec
 
-- [ ] 3.1 Comparar semanticamente os 17 títulos arquivados com as specs atuais (matriz preliminar por títulos em docs/openspec-history-reconciliation.md; análise de cenários pendente).
-- [ ] 3.2 Registrar equivalência, substituição ou perda e as evidências por requisito (17 candidatos documentados; sem equivalência funcional atestada).
+- [x] 3.1 Comparar semanticamente os 17 títulos arquivados com as specs atuais (títulos, requisitos e cenários cotejados em docs/openspec-history-reconciliation.md; verificação de comportamento não executada).
+- [x] 3.2 Registrar equivalência documental, cobertura parcial ou possível lacuna e as fontes por requisito (17 casos documentados; sem alegar regressão funcional).
 - [x] 3.3 Identificar as três tasks abertas em archives; reutilizar a #164 (inventário em docs/archived-openspec-followups.md).
 
 ## 4. Validação

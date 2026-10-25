@@ -2,7 +2,12 @@
 
 ### Requirement: Snapshots visuais executam na CI com baselines Linux
 
-O projeto MUST executar os testes de snapshot visual em toda execução de CI de Pull Request Ready cujo E2E não foi dispensado pela classificação conservadora de impacto, usando baselines Linux versionados no repositório como única fonte da verdade, sem pular os testes e sem tolerância de diferença de pixels. O projeto MUST disponibilizar um fluxo manual na CI que regenere os baselines e os registre na branch da PR, sem exigir execução local.
+O projeto MUST executar os testes de snapshot visual em toda execução de CI de
+Pull Request Ready cujo E2E não foi dispensado pela classificação conservadora
+de impacto, usando baselines Linux versionados no repositório como única fonte
+da verdade, sem pular os testes e sem tolerância de diferença de pixels. O
+projeto MUST disponibilizar um fluxo manual na CI que regenere os baselines e os
+registre na branch da PR, sem exigir execução local.
 
 #### Scenario: Alteração muda a aparência de uma rota
 

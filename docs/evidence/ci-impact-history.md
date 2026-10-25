@@ -34,4 +34,3 @@ Leitura: `Artefatos de distribuição` já era dispensado em PRs de docs (6 s co
 | Dispensar testes/lint em PRs de docs        | Testes de conteúdo leem documentação e scripts (ex.: `token-override-docs`, `release-workflows`); não há equivalência demonstrada. Qualidade fica completa. |
 | Cache de `node_modules`                     | `npm ci` leva 10–21 s com o cache `~/.npm` do `setup-node`; o ganho não justifica o risco de estado obsoleto.                                               |
 | Pular o job inteiro de E2E                  | Em matriz, o check obrigatório deixaria de ser reportado; mantida a dispensa por etapa.                                                                     |
-

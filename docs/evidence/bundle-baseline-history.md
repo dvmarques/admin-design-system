@@ -12,8 +12,6 @@
 
 > **Registro histórico, não medição atual.** Os valores narrados abaixo pertencem às changes e revisões que os produziram. Não representam o conteúdo de `dist/` na `develop` atual e não devem ser extrapolados entre commits, sistemas de arquivos ou versões de Node/npm. Consulte os três orçamentos JSON versionados e execute `npm run build && npm run inspect:packages` no mesmo commit e toolchain para uma medição reproduzível. O histórico original é preservado, inclusive divergências registradas; esta edição não recalcula números.
 
-
-
 Na primeira medição da change `fix-135-smart-overlay-position`, o pacote `@admin-ds/components`
 passou de 345608 para 355657 bytes (+10049, 2,91%), com 145 arquivos nos dois
 casos. A comparação usa o mesmo compilador e Tailwind, em LF, com o código

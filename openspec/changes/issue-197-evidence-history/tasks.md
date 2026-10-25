@@ -20,6 +20,6 @@
 ## 4. Validação
 
 - [x] 4.1 Verificar referências textuais e links relativos, diff apenas documental e integridade dos arquivos preservados (15 Markdown verificados contra a árvore Git; 18 PNGs migrados com mesmo SHA de blob, sem alterações em e2e/ ou budgets).
-- [ ] 4.2 Executar npm run validate.
-- [ ] 4.3 Executar openspec.cmd validate --all --strict.
-- [ ] 4.4 Revisar e corrigir os achados, documentando skips/limitações reais.
+- [x] 4.2 Executar npm run validate (local, Windows: format, lint, build, typecheck e test:quality executados; 1 falha preexistente de caminho do Windows em scripts/ci-impact.test.mjs, arquivo não alterado e aprovado na CI Linux; E2E local não executado, coberto pela CI de PR).
+- [x] 4.3 Executar openspec.cmd validate --all --strict (55 aprovadas, 0 falhas; a change usa skip_specs por ser documental).
+- [x] 4.4 Revisar e corrigir os achados: Prettier em 6 arquivos, skip_specs ausente e CHANGELOG atualizado; aderência aos critérios da issue conferida (17 títulos, 3 tasks, 18 blobs idênticos, sem alteração em e2e/ ou orçamentos).

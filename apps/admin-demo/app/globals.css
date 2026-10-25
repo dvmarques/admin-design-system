@@ -101,6 +101,13 @@ body {
 	align-items: center;
 	gap: 0.25rem;
 }
+/*
+ * Espaçamento óptico: os ícones de tema e sino têm 10px de respiro dentro do botão de 40px, e o
+ * avatar de 32px só 4px. Os 6px extras igualam o intervalo visível entre os três (24px).
+ */
+.demo-header-tools .ads-account-menu {
+	margin-inline-start: 0.375rem;
+}
 .demo-header-tools:has(.demo-storybook-link) {
 	gap: 0.75rem;
 }

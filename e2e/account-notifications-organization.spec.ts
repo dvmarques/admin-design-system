@@ -223,6 +223,25 @@ for (const theme of ['light', 'dark'] as const) {
 	});
 }
 
+for (const width of [1280, 375]) {
+	test(`os três controles do cabeçalho têm o mesmo intervalo visível em ${width}px`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width, height: 700 });
+		await openDemo(page);
+		const header = page.getByRole('banner');
+		// Mede o que se vê (ícones e avatar), não as caixas dos botões, que têm respiros diferentes.
+		const [theme, notifications, avatar] = await Promise.all([
+			header.locator('.ads-theme-control-trigger svg').boundingBox(),
+			header.locator('.ads-notification-center-trigger svg').boundingBox(),
+			header.locator('.ads-account-menu .ads-avatar').boundingBox(),
+		]);
+		const first = notifications!.x - (theme!.x + theme!.width);
+		const second = avatar!.x - (notifications!.x + notifications!.width);
+		expect(Math.abs(first - second)).toBeLessThanOrEqual(1);
+	});
+}
+
 test('a sidebar sem seletor de organização não deixa espaço residual', async ({ page }) => {
 	await page.setViewportSize({ width: 1280, height: 800 });
 	await page.goto('/catalogo-organizacao/?variante=sem');

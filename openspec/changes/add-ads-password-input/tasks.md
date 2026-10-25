@@ -20,7 +20,7 @@
 - [x] Executar typecheck, lint, build, testes e revisão de acessibilidade.
 - [x] Executar npm run test:e2e sem falhas; atualizar snapshots somente se mudanças visuais intencionais forem revisadas.
 - [x] Executar formatação nos arquivos alterados e npm run format.
-- [ ] Executar `openspec validate --all --strict` (CLI indisponível no ambiente da sessão; executar localmente/CI antes do merge).
+- [x] Executar `openspec validate --all --strict` (54 itens, 0 falhas).
 - [x] Revisar diff e corrigir problemas antes de abrir PR para develop.
 
 ## Validação registrada

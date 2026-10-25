@@ -1,0 +1,51 @@
+# Comparação visual — issue #187 (evidência histórica arquivada)
+
+> Capturas transferidas preservando os blobs Git originais, sem recompressão nem alteração de conteúdo. Referência de revisão: `21aba2e` na `develop`; ambiente: Chromium no Windows, viewport e temas detalhados abaixo; data de arquivamento documental: 2026-10-25. Trata-se de evidência de revisão e não de baseline Linux executável. Change de origem: `2026-10-25-refine-dashboard-sidebar-branding`.
+
+
+Capturas do Chromium no Windows, com Inter e dados atuais do demo.
+A referência anterior é develop em `21aba2e` (inclui #185 e #182).
+Essas imagens são evidências de revisão; não substituem os baselines Linux do E2E.
+
+## Mesmas viewports antes e depois
+
+Desktop: **1280 × 800**. Mobile: **390 × 844** (fechado com página inteira).
+
+- Expandido light: [antes](before/expanded-light.png) · [depois](after/expanded-light.png).
+- Expandido dark: [antes](before/expanded-dark.png) · [depois](after/expanded-dark.png).
+- Recolhido light: [antes](before/collapsed-light.png) · [depois](after/collapsed-light.png).
+- Recolhido dark: [antes](before/collapsed-dark.png) · [depois](after/collapsed-dark.png).
+- Mobile fechado light: [antes](before/mobile-closed-light.png) · [depois](after/mobile-closed-light.png).
+- Mobile fechado dark: [antes](before/mobile-closed-dark.png) · [depois](after/mobile-closed-dark.png).
+- Mobile aberto light: [antes](before/mobile-open-light.png) · [depois](after/mobile-open-light.png).
+- Mobile aberto dark: [antes](before/mobile-open-dark.png) · [depois](after/mobile-open-dark.png).
+
+## Diferenças intencionais revisadas
+
+- Apresentação e indicadores se aproximam; saem as linhas e paddings herdados do catálogo.
+- Em 1280px expandido, quatro indicadores formam 2×2; recolhido ou em 1600px formam quatro colunas. Mobile mantém uma.
+- Descrição e barras de Progresso se aproximam, sem alterar o espaçamento dos componentes em outros consumidores.
+- Marca abreviada Admin DS em uma linha e controle circular com chevron na divisória. Recolhido, símbolo e botão permanecem separados e alinhados; o cabeçalho mantém os mesmos 64px. Headers personalizados maiores continuam com altura natural.
+- Header desktop mantém tema, notificações e conta; header móvel mantém menu e identificação compacta.
+- Navegação light usa preenchimento suavizado também no Drawer; faixa, texto, aria-current e foco permanecem. Cores dark preservadas.
+- Avatar da organização usa primary, como o da conta, em ambos os estados e temas. Organização segue opcional; o showcase /catalogo-shell demonstra o layout sem seletor.
+
+## Verificações adicionais
+
+`e2e/dashboard-sidebar-branding.spec.ts` verifica 320, 390, 640, 1280 e 1600px,
+header de altura variável, textos/valores longos, foco do toggle, retorno ao menu,
+organização, axe e ausência de overflow nos dois temas.
+640px CSS representa o reflow equivalente a 1280px com zoom 200%; não é uma
+captura de zoom nativo do navegador. As regressões existentes cobrem navegação,
+rolagem independente, SSR/hidratação e controles #185/#182.
+
+Snapshots oficiais devem ser regenerados e confirmados em Linux pelo workflow
+**Atualizar baselines visuais**, com revisão das diferenças intencionais antes da entrega.
+
+Refinamento de consistência: o seletor expandido ocupa toda a largura disponível, mesmo com nomes curtos. Recolhido, apenas a cor da borda fica transparente; o avatar conserva a posição. A seleção ativa é de 44×44px no recolhido e mantém o mesmo recuo lateral no expandido, com cálculo que considera a scrollbar. A regressão smoke verifica esses contratos nos três navegadores, com gutter stable e auto.
+
+Alinhamento final: a caixa expandida da organização coincide com os limites laterais do item raiz ativo; o símbolo da marca mantém as coordenadas ao recolher. O menu móvel agora cobre toda a viewport, inclusive o rodapé, e começa diretamente com logo/Admin DS, sem título Navegação do demo duplicado. O smoke verifica os três navegadores em 390×844, 320×568 e 740×390, incluindo rolagem e retorno de foco.
+
+## Scrollbar nativa visível
+
+Regressão reproduzida com a opção --hide-scrollbars removida do Chromium: a seleção antiga ficava em 29×44px. Após a correção, as capturas em 1280×600 mostram x=6px e 44×44px nos dois temas: [light](after/collapsed-visible-scrollbar-light.png) e [dark](after/collapsed-visible-scrollbar-dark.png). O teste verifica também as duas bordas do item por hit testing, para não aceitar uma caixa nominal de 44px visualmente cortada pela scrollbar.

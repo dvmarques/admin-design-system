@@ -89,7 +89,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await expect(bell(page)).toHaveAccessibleName('Notificações, 3 não lidas');
 
 			await panel.getByRole('button', { name: 'Marcar todas como lidas' }).click();
-			await expect(panel.getByText('Nenhuma notificação não lida.')).toBeVisible();
+			await expect(panel.getByRole('status')).toHaveText('Nenhuma notificação não lida.');
 			await expect(bell(page)).toHaveAccessibleName('Notificações');
 
 			await page.keyboard.press('Escape');

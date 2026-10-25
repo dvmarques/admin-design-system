@@ -1,4 +1,4 @@
-import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import { useState } from 'react';
@@ -55,7 +55,9 @@ describe('AdsAccountMenu', () => {
 		const panel = screen.getByRole('dialog', { name: 'Conta' });
 		expect(trigger()).toHaveAttribute('aria-expanded', 'true');
 		expect(trigger()).toHaveAttribute('aria-controls', panel.id);
-		expect(screen.getByText('Ana Souza', { selector: 'strong' })).toBeVisible();
+		expect(
+			within(screen.getByRole('dialog', { name: 'Conta' })).getByText('Ana Souza'),
+		).toBeVisible();
 		expect(screen.getByText('ana@example.com')).toBeVisible();
 		await waitFor(() => expect(screen.getByRole('link', { name: 'Minha conta' })).toHaveFocus());
 		expect(screen.queryByRole('menu')).toBeNull();
@@ -65,6 +67,17 @@ describe('AdsAccountMenu', () => {
 		const events = userEvent.setup();
 		setup();
 		await events.click(trigger());
+		await screen.findByRole('dialog');
+
+		await events.keyboard('{Escape}');
+
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(trigger()).toHaveFocus();
+	});
+
+	it('returns the focus to the trigger on Escape even when it opened already open', async () => {
+		const events = userEvent.setup();
+		setup({ defaultOpen: true });
 		await screen.findByRole('dialog');
 
 		await events.keyboard('{Escape}');
@@ -295,7 +308,7 @@ describe('AdsAccountMenu', () => {
 		render(<AdsAccountMenu groups={groups()} user={{ name, email }} />);
 		await events.click(screen.getByRole('button', { name: `Menu da conta: ${name}` }));
 
-		expect(await screen.findByText(name, { selector: 'strong' })).toHaveAttribute('title', name);
+		expect(await screen.findByTitle(name)).toHaveTextContent(name);
 		expect(screen.getByText(email)).toHaveAttribute('title', email);
 	});
 

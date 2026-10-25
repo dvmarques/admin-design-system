@@ -264,7 +264,12 @@ export function AdsAccountMenu({
 				}
 				onOpenChange={(next) => {
 					reset();
-					if (!next && document.activeElement === document.body) triggerRef.current?.focus();
+					if (!next) {
+						// Escape com o painel aberto sem interação prévia: a primitiva não tem o gatilho como origem.
+						const active = document.activeElement;
+						if (active === document.body || active?.closest('.ads-account-menu-popover'))
+							triggerRef.current?.focus();
+					}
 					setOpen(next);
 				}}
 				open={open}

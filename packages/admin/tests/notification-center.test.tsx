@@ -33,13 +33,13 @@ describe('AdsNotificationCenter bell', () => {
 		setup({ unreadCount: 0 });
 
 		expect(screen.getByRole('button', { name: 'Notificações' })).toBeVisible();
-		expect(document.querySelector('.ads-notification-center-badge')).toBeNull();
+		expect(screen.queryByText(/^\d+\+?$/)).toBeNull();
 	});
 
 	it('limits the visual count to 99+ but keeps the exact accessible count', () => {
 		setup({ unreadCount: 120 });
 
-		expect(document.querySelector('.ads-notification-center-badge')).toHaveTextContent('99+');
+		expect(screen.getByText('99+')).toBeInTheDocument();
 		expect(bell('Notificações, 120 não lidas')).toBeVisible();
 	});
 
@@ -52,13 +52,13 @@ describe('AdsNotificationCenter bell', () => {
 	it('does not assume the unread total equals the loaded items', () => {
 		setup({ unreadCount: 42 });
 
-		expect(document.querySelector('.ads-notification-center-badge')).toHaveTextContent('42');
+		expect(screen.getByText('42')).toBeInTheDocument();
 	});
 
 	it('counts the loaded unread items when no total is given', () => {
 		setup();
 
-		expect(document.querySelector('.ads-notification-center-badge')).toHaveTextContent('2');
+		expect(screen.getByText('2')).toBeInTheDocument();
 	});
 
 	it('has no live region for count or list updates', async () => {
@@ -253,7 +253,7 @@ describe('AdsNotificationCenter panel', () => {
 		setup({ defaultFilter: 'unread', notifications: [items[1]!] });
 		await events.click(screen.getByRole('button', { name: /Notificações/ }));
 
-		expect(await screen.findByText('Nenhuma notificação não lida.')).toBeVisible();
+		expect(await screen.findByRole('status')).toHaveTextContent('Nenhuma notificação não lida.');
 	});
 
 	it('shows the empty state', async () => {
@@ -261,7 +261,7 @@ describe('AdsNotificationCenter panel', () => {
 		setup({ notifications: [] });
 		await events.click(screen.getByRole('button', { name: 'Notificações' }));
 
-		expect(await screen.findByText('Nenhuma notificação por aqui.')).toBeVisible();
+		expect(await screen.findByRole('status')).toHaveTextContent('Nenhuma notificação por aqui.');
 	});
 
 	it('shows a loading status and an error with retry', async () => {
@@ -269,7 +269,7 @@ describe('AdsNotificationCenter panel', () => {
 		const onRetry = vi.fn();
 		const { rerender } = setup({ status: 'loading' });
 		await events.click(bell());
-		expect(await screen.findByText('Carregando notificações')).toBeInTheDocument();
+		expect(await screen.findByRole('status')).toHaveTextContent('Carregando notificações');
 		expect(screen.queryByRole('list')).toBeNull();
 
 		rerender(<AdsNotificationCenter notifications={items} onRetry={onRetry} status="error" />);

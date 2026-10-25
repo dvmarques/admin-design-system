@@ -31,11 +31,13 @@
 - [x] 6.1 Demo: cabeçalho (tema + sino + avatar) e topo da sidebar com dados fictícios e feedback local; testes do demo.
 - [x] 6.2 Catálogo: entradas, composições, snippets (`node scripts/catalog-snippets.mjs`), matriz em `docs/admin-demo-catalog.md` e teste de cobertura.
 - [x] 6.3 E2E: conta, notificações, organização (expandida, recolhida, mobile), overlays aninhados, tema claro/escuro, hidratação e exemplo sem organização.
-- [x] 6.4 Documentação em `docs/integration.md`, `docs/admin-demo-catalog.md`, `docs/bundle-baseline.md` (orçamentos de `@admin-ds/admin` atualizados e justificados) e CHANGELOG `[0.1.1]`. Baselines visuais **não** foram regenerados localmente: 9 snapshots divergem pela mudança intencional do cabeçalho/sidebar e devem ser regenerados pelo workflow "Atualizar baselines visuais" e revistos na PR.
+- [x] 6.4 Documentação em `docs/integration.md`, `docs/admin-demo-catalog.md`, `docs/bundle-baseline.md` (orçamentos de `@admin-ds/admin` atualizados, justificados e aprovados) e CHANGELOG `[0.1.1]`.
+- [ ] 6.5 Regenerar os baselines visuais pelo workflow "Atualizar baselines visuais" e revisar as imagens: 9 snapshots divergem pela mudança intencional do cabeçalho e da sidebar e não foram aceitos localmente.
 
 ## 7. Formatação e validação
 
 - [x] 7.1 `npx prettier --write` nos arquivos alterados e `npm run format`.
 - [x] 7.2 `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` (verboso para diagnóstico: `npm run test:verbose`).
-- [x] 7.3 E2E em Chromium (build de produção, binário local compatível): 246 de 265 aprovados na suíte completa; as 10 falhas de snapshot visual (cabeçalho/sidebar mudaram de forma intencional) ficam para o workflow de baselines e as demais foram corrigidas e reexecutadas (59 aprovados em `overlay-position`, `catalog`, `popover-content` e no spec novo). Firefox e WebKit não foram executados localmente; ficam para a CI.
+- [ ] 7.3 `npm run test:e2e` sem falhas. Parcial: no Chromium, 246 de 265 passaram na suíte completa; as falhas não visuais foram corrigidas e reexecutadas, e restam os 9 snapshots de 6.5. Firefox e WebKit não foram executados localmente e ficam para a CI.
 - [x] 7.4 `openspec validate --all --strict` e `npm run check:agent-skills`.
+- [x] 7.5 Revisão independente (contratos públicos e acessibilidade) tratada: foco em estados pendentes, região viva persistente para mensagens de estado, foco ao dispensar durante ação pendente e Escape com painel aberto sem interação prévia, com testes.

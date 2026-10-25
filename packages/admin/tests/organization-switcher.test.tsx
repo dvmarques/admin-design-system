@@ -40,9 +40,8 @@ describe('AdsOrganizationSwitcher trigger', () => {
 		const name = 'Organização com um nome extraordinariamente longo para a barra lateral';
 		setup({ organizations: [{ id: 'x', name }], value: 'x' });
 
-		expect(screen.getByText(name, { selector: '.ads-organization-switcher-name' })).toHaveAttribute(
-			'title',
-			name,
+		expect(screen.getByRole('button', { name: new RegExp(name.slice(0, 20)) })).toContainElement(
+			screen.getByTitle(name),
 		);
 	});
 
@@ -149,6 +148,17 @@ describe('AdsOrganizationSwitcher panel', () => {
 		expect(trigger()).toHaveFocus();
 	});
 
+	it('returns the focus to the trigger on Escape even when it opened already open', async () => {
+		const events = userEvent.setup();
+		setup({ defaultOpen: true });
+		await screen.findByRole('dialog');
+
+		await events.keyboard('{Escape}');
+
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(trigger()).toHaveFocus();
+	});
+
 	it('moves between options with the arrows', async () => {
 		const events = userEvent.setup();
 		setup();
@@ -196,7 +206,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 
 		await events.clear(search);
 		await events.type(search, 'inexistente');
-		expect(screen.getByText('Nenhuma organização encontrada.')).toBeVisible();
+		expect(screen.getByRole('status')).toHaveTextContent('Nenhuma organização encontrada.');
 		expect(screen.queryByRole('list')).toBeNull();
 	});
 

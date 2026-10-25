@@ -259,7 +259,7 @@ export function AdsOrganizationSwitcher({
 								/>
 							) : null}
 							{status === 'loading' ? (
-								<p className="ads-organization-switcher-state" role="status">
+								<p className="ads-organization-switcher-state">
 									<AdsLoadingIndicator aria-hidden="true" label={labels.loading} size="sm" />
 									{labels.loading}
 								</p>
@@ -273,9 +273,7 @@ export function AdsOrganizationSwitcher({
 									) : null}
 								</div>
 							) : filtered.length === 0 ? (
-								<p className="ads-organization-switcher-state" role="status">
-									{labels.noResults}
-								</p>
+								<p className="ads-organization-switcher-state">{labels.noResults}</p>
 							) : (
 								<ul aria-label={labels.list} className="ads-organization-switcher-list" id={listId}>
 									{filtered.map((organization) => {
@@ -344,11 +342,16 @@ export function AdsOrganizationSwitcher({
 									{labels.switchError}
 								</p>
 							) : null}
-							{pendingId ? (
-								<span className="ads-organization-switcher-visually-hidden" role="status">
-									{labels.switching}
-								</span>
-							) : null}
+							{/* Região viva única e persistente: só o texto muda. */}
+							<span className="ads-organization-switcher-visually-hidden" role="status">
+								{pendingId
+									? labels.switching
+									: status === 'loading'
+										? labels.loading
+										: status === 'ready' && filtered.length === 0
+											? labels.noResults
+											: ''}
+							</span>
 							{manage ? (
 								<div className="ads-organization-switcher-footer">
 									{manage.href ? (
@@ -385,7 +388,9 @@ export function AdsOrganizationSwitcher({
 					reset();
 					if (!next) {
 						setQuery('');
-						if (document.activeElement === document.body) triggerRef.current?.focus();
+						const active = document.activeElement;
+						if (active === document.body || active?.closest('.ads-organization-switcher-popover'))
+							triggerRef.current?.focus();
 					}
 					setOpen(next);
 				}}

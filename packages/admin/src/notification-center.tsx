@@ -297,6 +297,18 @@ export function AdsNotificationCenter({
 		}
 	}, [notifications, open, status]);
 
+	const statusText = loadingMore
+		? labels.loadingMore
+		: item.pendingId || all.pendingId
+			? labels.pending
+			: status === 'loading'
+				? labels.loading
+				: status === 'ready' && visible.length === 0
+					? filter === 'unread'
+						? labels.emptyUnread
+						: labels.empty
+					: '';
+
 	const changeFilter = (next: AdsNotificationFilter) => {
 		if (filterProp === undefined) setUncontrolledFilter(next);
 		onFilterChange?.(next);
@@ -378,12 +390,9 @@ export function AdsNotificationCenter({
 							</button>
 						) : null}
 					</div>
+					{/* Região viva única e persistente: só o texto muda, e as mensagens visíveis não têm role. */}
 					<span className="ads-notification-center-visually-hidden" role="status">
-						{loadingMore
-							? labels.loadingMore
-							: item.pendingId || all.pendingId
-								? labels.pending
-								: ''}
+						{statusText}
 					</span>
 					{all.failedId ? (
 						<p className="ads-notification-center-error" role="alert">
@@ -398,8 +407,7 @@ export function AdsNotificationCenter({
 						tabIndex={0}
 					>
 						{status === 'loading' ? (
-							<div className="ads-notification-center-state" role="status">
-								<span className="ads-notification-center-visually-hidden">{labels.loading}</span>
+							<div className="ads-notification-center-state">
 								<AdsSkeleton aria-hidden="true" className="ads-notification-center-skeleton" />
 								<AdsSkeleton aria-hidden="true" className="ads-notification-center-skeleton" />
 								<AdsSkeleton aria-hidden="true" className="ads-notification-center-skeleton" />
@@ -416,7 +424,7 @@ export function AdsNotificationCenter({
 						) : (
 							<>
 								{visible.length === 0 ? (
-									<p className="ads-notification-center-state" role="status">
+									<p className="ads-notification-center-state">
 										{filter === 'unread' ? labels.emptyUnread : labels.empty}
 									</p>
 								) : (

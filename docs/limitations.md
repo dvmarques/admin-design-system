@@ -40,7 +40,7 @@ das validações automatizadas.
 
 - A validação automatizada de `axe-core` e Playwright não substitui revisão
   manual com teclado, leitor de tela e testes em dispositivos reais. Firefox e
-  WebKit têm smoke tests (`/`, `/clientes` e `/componentes`) e a regressão de foco do dropdown, sem
+  WebKit têm smoke tests (`/`, `/clientes` e `/componentes`), regressão de foco do dropdown e `theme-control`, sem
   snapshots e sem a suíte completa; o WebKit do Playwright no Linux não equivale
   ao Safari.
 

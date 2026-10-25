@@ -60,7 +60,8 @@ export function AdsPasswordInput({
   }
 
   return (
-    <div className="ads-password-input w-full">\n      <div className="relative">
+    <div className="ads-password-input w-full">
+      <div className="relative">
       <AdsInput
         {...props}
         className={classNames('pr-20', className)}

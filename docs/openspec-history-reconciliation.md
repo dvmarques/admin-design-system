@@ -57,3 +57,7 @@ Para encerrar a verificação de **comportamento**, confrontar os cenários com 
 As evidências da [#187](../openspec/changes/archive/2026-10-25-refine-dashboard-sidebar-branding/evidence/README.md) são revisões de UI de outra change, não evidência de equivalência desta matriz. A #196 trata contratos atuais de CI e a #164 é responsável por medições pós-merge; nenhuma dessas tarefas deve ser duplicada.
 
 **Limitação:** comparação documental de requisitos e cenários, sem execução de testes nem auditoria de implementação. Correspondências parciais permanecem indeterminadas quanto à equivalência funcional.
+
+## Governança histórica mantida
+
+A capability `pre-pr-validation` foi [retirada intencionalmente](../openspec/changes/archive/2026-09-07-relocate-pre-pr-governance/proposal.md) das specs ativas; a [change anterior](../openspec/changes/archive/2026-09-06-strengthen-pre-pr-validation/proposal.md) permanece no arquivo histórico. O procedimento atual está em [AGENTS.md](../AGENTS.md), [qualidade](quality.md) e `openspec/config.yaml`. Este inventário **não restaura** essa capability, não muda o gating vigente e não reescreve os registros de 2026-09-06/07.

@@ -1,6 +1,6 @@
 # Evidência histórica — validação incremental e impacto da CI
 
-Registro preservado de `docs/ci-impact-validation.md` na issue #197, com origem em [change arquivada](../../openspec/changes/archive/2026-10-22-optimize-incremental-validation/) e medições documentadas no estado `97dc53d` (distribuição histórica, 54 primeiros-pai). Projeções não são medições de ganhos pós-merge; essa tarefa continua na [#164](https://github.com/dvmarques/admin-design-system/issues/164). Guia atual: [validação por impacto](../ci-impact-validation.md).
+Registro preservado de `docs/ci-impact-validation.md` na issue #197, com origem em [change arquivada](../../openspec/changes/archive/2026-10-22-optimize-incremental-validation/) e medições documentadas no estado `97dc53d` (distribuição histórica, 54 primeiros-pai). Projeções não são medições; a medição pós-merge foi concluída na [#164](https://github.com/dvmarques/admin-design-system/issues/164) e está resumida abaixo. Guia atual: [validação por impacto](../ci-impact-validation.md).
 
 ---
 
@@ -24,7 +24,7 @@ Leitura: `Artefatos de distribuição` já era dispensado em PRs de docs (6 s co
 
 `node scripts/ci-impact.mjs --history 54 --ref origin/develop` classifica os 54 primeiros-pai de `develop` (estado `97dc53d`): `docs` 15 (28%), `scoped` apenas `apps/docs` 4 (7%), `scoped` com o demo 1 (2%), `full` 34 (63%).
 
-**Projeção, não medição:** se o E2E de PRs de docs (15) e de PRs só do Storybook (4) fosse dispensado, cada PR economizaria ≈ 190 s de jobs (≈ 290 s de E2E menos ≈ 100 s de inicialização dos três containers) e ≈ 30 s de duração da execução em PRs de docs (E2E Chromium 133 s → Qualidade rápida 99 s como etapa mais longa). Não há ainda execução pós-mudança: a PR #175 altera `.github/` e `scripts/` e, por política, roda como `full`. Após o merge, as primeiras PRs só de docs fornecem o "depois" para o comando acima; até lá nenhum ganho é declarado como medido.
+**Projeção, não medição:** se o E2E de PRs de docs (15) e de PRs só do Storybook (4) fosse dispensado, cada PR economizaria ≈ 190 s de jobs (≈ 290 s de E2E menos ≈ 100 s de inicialização dos três containers) e ≈ 30 s de duração da execução em PRs de docs (E2E Chromium 133 s → Qualidade rápida 99 s como etapa mais longa). Na PR #175, que altera `.github/` e `scripts/`, a CI rodou como `full` por política, então não serviu de "depois". Após o merge, as primeiras PRs só de docs forneceram o "depois": em três PRs (#200, #202, #203) o tempo total de jobs caiu de 411 s para 299 s (-27,3%) e os três E2E passaram de 78–133 s para 33–35 s, mas a duração da execução subiu 37 s, porque `Qualidade rápida` (99 s → 170 s) passou a ser a etapa mais longa por mudanças posteriores ao baseline. A projeção de ≈ 30 s a menos na duração da execução não se confirmou. Amostra pequena; detalhes em `openspec/changes/archive/2026-10-22-optimize-incremental-validation/evidence/medicao-pos-merge.md`.
 
 ## Avaliado e não adotado
 

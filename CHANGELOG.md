@@ -10,7 +10,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
-- `issue-197-evidence-history` (issue #197) - Separação física entre procedimentos vigentes e histórico de bundle, CI e Playwright, preservando cronologia e proveniência sob docs/evidence/; correção do vínculo para a validação arquivada de #135; índice de documentação, reconciliação documental dos 17 títulos da change de 06/09 (`docs/openspec-history-reconciliation.md`) e inventário das três tasks abertas em changes arquivadas (`docs/archived-openspec-followups.md`), sem alterar orçamentos, snapshots ou testes executáveis.
+- `issue-197-evidence-history` (issue #197) - Separação física entre procedimentos vigentes e histórico de bundle, CI e Playwright, preservando cronologia e proveniência sob docs/evidence/; correção do vínculo para a validação arquivada de #135; índice de documentação, reconciliação documental dos 17 títulos da change de 06/09 (`docs/openspec-history-reconciliation.md`) e inventário das tasks abertas em changes arquivadas (duas ainda abertas; a terceira foi concluída pela #164) (`docs/archived-openspec-followups.md`), sem alterar orçamentos, snapshots ou testes executáveis.
 
 - `add-ads-password-input` (issue #147) - Novo `AdsPasswordInput` em `@admin-ds/components`: campo de senha mascarado, compatível com `AdsField`, controlado ou não, com botão de visibilidade acessível (nome `Mostrar senha`/`Ocultar senha` configurável, sem `aria-pressed`, preserva valor, foco e seleção, não envia o formulário e é desabilitado com o campo), indicador opcional de força apenas orientativo e conservador (`Forte` exige 12 caracteres e três critérios; `showStrength`, `strengthLabels`, `strengthPrefix`) e lista opcional de `rules` com status em texto (cada `test` deve ser puro e não lançar erro; se lançar, a regra fica pendente); força e regras ficam associadas ao campo por `aria-describedby`. Evolução compatível: `AdsInput` passa a aceitar `ref` (`forwardRef`; só quem o chama como função é afetado). Com o teclado o foco permanece no botão; `ref` e `className` vão para o `<input>`. Novos tipos `AdsPasswordRule` e `AdsPasswordStrength`. Inclui showcase em `/catalogo/password-input`, story, documentação em `docs/integration.md`, testes unitários, SSR e E2E; o baseline de `@admin-ds/components` e o limite gzip do orçamento de navegador foram recalibrados (`docs/bundle-baseline.md`).
 
@@ -84,6 +84,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `optimize-incremental-validation` (issue #164) - Registrada a medição pós-merge (tarefa 3.3) com três PRs só de documentação (#200, #202, #203): E2E dispensado, tempo total de jobs -27,3% (411 s → 299 s) e duração da execução +37 s por `Qualidade rápida`; amostra pequena, sem tokens nem custo. Evidência em `evidence/medicao-pos-merge.md` do archive da change.
 - `reconcile-ci-docs-196` (issue #196) - Reconciliadas as instruções de CI, skips por impacto, snapshots Linux, checklist `test:quality`, cobertura cross-browser e contratos SSR/export estático do admin demo, sem alterar runtime ou workflows.
 
 - `fix-pages-navigation` (issue #189) - Move o acesso opcional ao Storybook do cabeçalho para a navegação principal, disponível também na sidebar recolhida e no menu móvel.

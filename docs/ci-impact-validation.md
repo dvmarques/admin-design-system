@@ -87,7 +87,7 @@ Também há o workflow manual **Métricas de CI** (`ci-metrics.yml`, somente lei
 
 ### Evidência histórica, não baseline atual
 
-As medianas por job, distribuição dos 54 commits amostrados e projeções da implantação estão em [registro histórico de impacto na CI](evidence/ci-impact-history.md). Lá permanecem os runs, commits, critérios e alternativas descartadas. **Não atribua ao estado atual os valores anteriores à implantação**, nem transforme projeções em ganhos medidos; o acompanhamento pós-merge continua na [#164](https://github.com/dvmarques/admin-design-system/issues/164).
+As medianas por job, distribuição dos 54 commits amostrados e projeções da implantação estão em [registro histórico de impacto na CI](evidence/ci-impact-history.md). Lá permanecem os runs, commits, critérios e alternativas descartadas. **Não atribua ao estado atual os valores anteriores à implantação**, nem transforme projeções em ganhos medidos; a medição pós-merge (#164) está registrada no mesmo histórico: o tempo total de jobs caiu, mas a duração da execução não, e a projeção de ≈ 30 s não se confirmou.
 
 ## Limitações
 

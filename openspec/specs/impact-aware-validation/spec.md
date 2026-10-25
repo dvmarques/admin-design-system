@@ -27,7 +27,7 @@ O sistema SHALL identificar os workspaces alterados e seus dependentes transitiv
 
 ### Requirement: Escopo da CI sem reduzir gates obrigatórios
 
-A CI SHALL dispensar apenas etapas de build de aplicações e o E2E, e somente em pull requests para `develop` com impacto conhecido. A CI MUST executar por completo os jobs `Qualidade rápida` e `Política de develop`, os builds e a inspeção dos pacotes, e MUST executar tudo em pushes, em pull requests para `master` e quando a detecção falhar. A CI MUST manter os nomes dos checks obrigatórios.
+A CI SHALL dispensar etapas de build de aplicações e o E2E somente em pull requests Ready para `develop` com impacto conhecido. Em PRs `docs_only`, os jobs de build e E2E continuam reportados com sucesso sem executar suas etapas, não significando validação funcional executada. O workflow independente Pages MUST validar build estático e E2E Pages em PRs Ready para develop, sem publicar, e publicar somente no push para develop. PRs Draft não executam os jobs de PR. A CI MUST executar por completo os jobs `Qualidade rápida` e `Política de develop`, os builds e a inspeção dos pacotes, e MUST executar tudo em pushes, em pull requests para `master` e quando a detecção falhar. A CI MUST manter os nomes dos checks obrigatórios.
 
 #### Scenario: PR apenas de documentação
 

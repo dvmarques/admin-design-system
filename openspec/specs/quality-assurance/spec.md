@@ -171,7 +171,7 @@ A CI de Pull Request MUST dispensar a construção dos artefatos e a execução 
 
 ### Requirement: Snapshots visuais executam na CI com baselines Linux
 
-O projeto MUST executar os testes de snapshot visual em toda execução de CI de Pull Request, usando baselines Linux versionados no repositório como única fonte da verdade, sem pular os testes e sem tolerância de diferença de pixels. O projeto MUST disponibilizar um fluxo manual na CI que regenere os baselines e os registre na branch da PR, sem exigir execução local.
+O projeto MUST executar os testes de snapshot visual em toda execução de CI de Pull Request Ready cujo E2E não foi dispensado pela classificação conservadora de impacto, usando baselines Linux versionados no repositório como única fonte da verdade, sem pular os testes e sem tolerância de diferença de pixels. O projeto MUST disponibilizar um fluxo manual na CI que regenere os baselines e os registre na branch da PR, sem exigir execução local.
 
 #### Scenario: Alteração muda a aparência de uma rota
 
@@ -190,7 +190,7 @@ O projeto MUST executar os testes de snapshot visual em toda execução de CI de
 
 ### Requirement: Smoke tests em Firefox e WebKit
 
-O projeto MUST executar smoke tests em Firefox e WebKit para as rotas `/`, `/clientes` e `/componentes` do admin demo, verificando que a página carrega sem erros de console ou de hidratação e que a navegação principal fica operável. Esses navegadores MUST NOT executar comparações de snapshot. Cada navegador MUST ter uma verificação independente e obrigatória na CI.
+O projeto MUST executar smoke tests, a regressão de foco do dropdown e `theme-control` em Firefox e WebKit para as rotas `/`, `/clientes` e `/componentes` do admin demo, verificando que a página carrega sem erros de console ou de hidratação e que a navegação principal fica operável. Esses navegadores MUST NOT executar comparações de snapshot. Cada navegador MUST ter uma verificação independente e obrigatória na CI.
 
 #### Scenario: Rota quebra em um navegador
 

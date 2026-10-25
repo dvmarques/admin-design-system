@@ -82,6 +82,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `reconcile-ci-docs-196` (issue #196) - Reconciliadas as instruções de CI, skips por impacto, snapshots Linux, checklist `test:quality`, cobertura cross-browser e contratos SSR/export estático do admin demo, sem alterar runtime ou workflows.
+
 - `fix-pages-navigation` (issue #189) - Move o acesso opcional ao Storybook do cabeçalho para a navegação principal, disponível também na sidebar recolhida e no menu móvel.
 
 - `issue-151-admin-demo-component-catalog` (issue #151) - Inclui a resolução local de dependências transitivas no lockfile, sem alterar os manifests ou as versões principais da interface, e os imports de tipos gerados para o modo de desenvolvimento do Next.js.

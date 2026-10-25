@@ -14,6 +14,25 @@ Entregue pela issue #164. Reduz **somente** trabalho comprovadamente irrelevante
 
 Os workspaces vêm dos padrões `workspaces` da raiz. O grafo usa `dependencies`, `devDependencies`, `peerDependencies`, `optionalDependencies` e as dependências implícitas `components → tokens` e `admin → tokens` (`implicitDependencies`). O teste `no workspace references another one outside the dependency graph` falha se surgir outra referência (nome de pacote ou import relativo) fora do grafo.
 
+## Matriz normativa de eventos e impacto
+
+| Evento / estado                                          | Política e qualidade                       | Build de apps / E2E da CI principal                                                | Pages (build + E2E Pages)                              |
+| -------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------ |
+| PR Draft para `develop` ou `master`                      | Checks de PR skipped                       | Checks skipped, nenhum teste executado                                             | Job de PR skipped (somente PR para develop)            |
+| PR Ready para `develop`, impacto `docs`                  | Qualidade completa e política de develop   | Jobs concluídos com etapas dispensadas (`docs_only`), sem builds, E2E ou snapshots | Executa integralmente em PR para develop, sem publicar |
+| PR Ready para `develop`, impacto `scoped`                | Qualidade completa e política de develop   | Builds de pacotes e inspeção; apps/E2E somente se afetados                         | Executa integralmente em PR para develop, sem publicar |
+| PR Ready para `develop`, impacto `full` ou indeterminado | Qualidade completa e política de develop   | Builds, inspeção e E2E completos, snapshots Chromium                               | Executa integralmente em PR para develop, sem publicar |
+| PR Ready para `master`                                   | Qualidade completa e política de release   | Completo, sem dispensa por impacto                                                 | Sem gatilho de PR para master                          |
+| Push para `develop`                                      | Qualidade e jobs da CI principal completos | Completo, sem dispensa por impacto                                                 | Build, teste e publicação no Pages                     |
+| Push para `master`                                       | Qualidade e jobs da CI principal completos | Completo, sem dispensa por impacto                                                 | Sem gatilho de push para master                        |
+
+O workflow `pages.yml` (corrigido na #189 / PR #190) valida build estático
+e `test:e2e:pages` em PR Ready para develop; publicar é reservado ao push em
+`develop`. Um check **successful** cujo job dispensou etapas não equivale a build
+ou testes executados: leia o resumo do scope e as etapas efetivamente rodadas.
+Atualizar baselines visuais não faz parte deste fluxo de documentação e só ocorre
+pelo workflow manual Linux.
+
 ## O que a CI dispensa
 
 `scripts/ci-scope.mjs` (usado pelos jobs `build` e `e2e`) escreve `docs_only`, `build_docs`, `build_demo` e `e2e` somente quando o evento é `pull_request` para `develop` e o diff é identificável. Push, PR para `master` (release) e qualquer falha executam tudo.

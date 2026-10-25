@@ -15,7 +15,7 @@ Este documento descreve o fluxo operacional de release do Admin Design System. A
 
 Enquanto um Pull Request estiver em **Draft**, os jobs automáticos de PR ficam skipped: quality, build, E2E, `release-check` e `develop-policy`.
 
-Ao marcar o PR como **Ready for review**, o evento `ready_for_review` dispara uma nova execução completa sobre o commit corrente. `push` para `develop` e `master` continua executando CI normalmente. Se um PR Ready voltar para Draft, não é necessário cancelar retroativamente uma execução que já começou; novos disparos enquanto Draft permanecem skipped.
+Ao marcar o PR como **Ready for review**, o evento `ready_for_review` dispara uma nova execução completa sobre o commit corrente. `push` para `develop` e `master` continua executando CI normalmente. O workflow independente `pages.yml` executa build estático e E2E Pages nas PRs Ready para `develop` sem publicar; o push para `develop` publica no Pages. Um check concluído com etapas dispensadas por `docs_only` não prova execução de build, E2E ou snapshots. Consulte a matriz normativa em `docs/ci-impact-validation.md`. Se um PR Ready voltar para Draft, não é necessário cancelar retroativamente uma execução que já começou; novos disparos enquanto Draft permanecem skipped.
 
 Os jobs `quality`, `build` e `e2e` rodam em paralelo, sem `needs` entre eles; uma falha em um não interrompe os outros. Um novo commit em uma PR cancela a execução anterior dessa PR; execuções de `push` em `develop` e `master` não são canceladas. Os nomes dos checks exigidos pelos rulesets não mudam.
 

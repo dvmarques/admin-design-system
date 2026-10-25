@@ -35,7 +35,7 @@ Componentes que exigem execução no navegador MUST expor um ponto de entrada co
 
 ### Requirement: Hidratação consistente
 
-Os componentes MUST produzir marcação inicial determinística para as mesmas propriedades e o mesmo estado de tema disponíveis no servidor e no cliente.
+Os componentes MUST produzir marcação inicial determinística para as mesmas propriedades e o mesmo estado de tema disponíveis no servidor e no cliente. Em um build normal, o servidor pode ler a preferência explícita do cookie; um export estático não tem renderização por requisição e precisa reconciliar preferência Sistema ou explícita por script pré-hidratação sem prometer SSR personalizado.
 
 #### Scenario: Página é hidratada
 

@@ -20,6 +20,7 @@ Nenhuma.
 ### Modified Capabilities
 
 - `admin-shell-layout`: composição opcional com topo da sidebar alinhado ao header.
+- `organization-switcher`: tom opcional do avatar da organização, mantendo neutral por padrão.
 - `admin-demo-application`: posição responsiva da marca e densidade da visão geral.
 
 ## Impact
@@ -27,3 +28,5 @@ Nenhuma.
 Perfil **Critical**: API aditiva em AdsAdminShellProps (layout) e AdsAdminShellSidebarProps (header), CSS distribuído e acessibilidade transversal. Pacotes: @admin-ds/admin; consumidores: admin-demo e docs. Sem dependência nova. Valor: consumidores podem escolher a composição sem código de medição de altura nem acoplamento ao Next.js.
 
 Fora do escopo: #91, auditoria completa #152, novas paletas, fontes, backend, autenticação, persistência obrigatória e reformulação dos controles #185/#182.
+
+Refinamento aprovado: controle circular na divisória, nome Admin DS em uma linha e avatar da organização primary como o usuário conectado. O recolhimento não aumenta a altura padrão de 64px.

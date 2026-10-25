@@ -13,7 +13,7 @@ export function DemoBrand({ compact = false }: { compact?: boolean }) {
 				height={30}
 				priority
 			/>
-			<strong className="ads-admin-shell-sidebar-label">Admin Design System</strong>
+			<strong className="ads-admin-shell-sidebar-label">Admin DS</strong>
 		</div>
 	);
 }

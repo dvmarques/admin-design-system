@@ -1457,8 +1457,8 @@ Use `<AdsAdminShell layout="sidebar-header">` e passe `header` em
 O padrão continua `standard`, com header de largura completa. O slot aceita
 ReactNode, não cria marca ou organização e, ausente, não cria bloco vazio.
 No desktop opt-in, topo da sidebar e header compartilham altura natural por CSS
-grid/subgrid; navegação e main rolam separadamente. Recolhida, a sidebar empilha
-marca e botão. Use `ads-admin-shell-sidebar-label` no nome para ocultá-lo visualmente
+grid/subgrid; navegação e main rolam separadamente. O controle circular com chevron fica na divisória,
+sem empilhar marca e botão nem aumentar a altura do topo. Use `ads-admin-shell-sidebar-label` no nome para ocultá-lo visualmente
 no desktop recolhido, preservando o nome acessível.
 
 Mantenha `NavigationTrigger` no header principal: o toggle desktop fica oculto no
@@ -1493,3 +1493,5 @@ independentes. O demo sobrescreve essa variável somente no light.
 Veja as stories **Marca na sidebar** e `/catalogo/admin-shell`.
 Estado controlado/não controlado, SSR/hidratação e persistência do consumidor seguem
 os contratos anteriores; não há dependências novas.
+
+Cada item de `AdsOrganizationSwitcher.organizations` aceita `avatarTone` (tons de `AdsAvatar`, padrão `neutral`). O tom vale no gatilho e na opção da lista; `primary` usa o mesmo fundo semântico do avatar da conta no demo. Logos e fallback continuam funcionando.

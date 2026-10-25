@@ -184,7 +184,7 @@ const organizations = [
 	{ description: 'Plano Enterprise', id: 'stark', name: 'Stark Indústrias' },
 	{ description: 'Plano Business', id: 'wayne', name: 'Wayne Participações' },
 	{ description: 'Suspensa', disabled: true, id: 'vandelay', name: 'Vandelay Importações' },
-];
+].map((organization) => ({ ...organization, avatarTone: 'primary' as const }));
 
 /** Opcional: o layout decide se inclui o seletor no topo da sidebar. */
 export function DemoOrganizationSwitcher() {

@@ -32,6 +32,13 @@ for (const theme of ['light', 'dark'] as const) {
 			await page.goto('/');
 			await expect.poll(() => columns(page)).toBe(2);
 			await expect(top(page).locator('img')).toBeVisible();
+			const organizationAvatar = page
+				.getByRole('button', { name: /Organização atual/ })
+				.locator('.ads-avatar');
+			const accountAvatar = header(page).locator('.ads-avatar');
+			expect(await organizationAvatar.evaluate((el) => getComputedStyle(el).backgroundColor)).toBe(
+				await accountAvatar.evaluate((el) => getComputedStyle(el).backgroundColor),
+			);
 			const active = page.locator('.demo-navigation a[aria-current="page"]');
 			const activeColor = await active.evaluate((el) => getComputedStyle(el).backgroundColor);
 			await page.setViewportSize({ width: 390, height: 844 });
@@ -41,6 +48,11 @@ for (const theme of ['light', 'dark'] as const) {
 			await page.setViewportSize({ width: 1280, height: 800 });
 
 			await expect(header(page).locator('.demo-brand-heading')).toBeHidden();
+			expect((await header(page).boundingBox())!.height).toBe(64);
+			await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+			expect((await header(page).boundingBox())!.height).toBe(64);
+			await page.getByRole('button', { name: 'Expandir barra lateral' }).click();
+			expect((await header(page).boundingBox())!.height).toBe(64);
 			expect((await top(page).boundingBox())!.height).toBe(
 				(await header(page).boundingBox())!.height,
 			);
@@ -57,7 +69,12 @@ for (const theme of ['light', 'dark'] as const) {
 			await expect(toggle).toBeFocused();
 			const logoBox = (await top(page).locator('img').boundingBox())!;
 			const toggleBox = (await toggle.boundingBox())!;
-			expect(logoBox.y + logoBox.height).toBeLessThanOrEqual(toggleBox.y);
+			expect(logoBox.x + logoBox.width).toBeLessThanOrEqual(toggleBox.x);
+			expect((await header(page).boundingBox())!.height).toBe(144);
+			const railBox = (await sidebar(page).boundingBox())!;
+			expect(
+				Math.abs(toggleBox.x + toggleBox.width / 2 - (railBox.x + railBox.width)),
+			).toBeLessThanOrEqual(1);
 			await noOverflow(page);
 			await toggle.press('Enter');
 			await page.setViewportSize({ width: 1600, height: 900 });
@@ -90,7 +107,7 @@ for (const theme of ['light', 'dark'] as const) {
 				await expect(header(page).locator('img')).toBeVisible();
 				await trigger.press('Enter');
 				const drawer = page.getByRole('dialog', { name: 'Navegação do demo' });
-				await expect(drawer.locator('.demo-brand-heading')).toHaveText('Admin Design System');
+				await expect(drawer.locator('.demo-brand-heading')).toHaveText('Admin DS');
 				await expect(drawer.getByRole('button', { name: /Organização atual/ })).toBeVisible();
 				await expect(drawer.getByRole('button', { name: 'Recolher barra lateral' })).toBeHidden();
 				await expectNoAxeViolations(page);

@@ -31,3 +31,11 @@
 
 - Regressão final: 1.063 testes aprovados (61 arquivos) e seis E2E novos aprovados após o último build. Storybook iniciado e composição com marca/organização/recolhimento verificada no Chromium. Admin demo dev iniciado em 3001; build de produção validado em 3000.
 - Publicação pendente: revisão automática de aprovação bloqueou o push para origin por exigir autorização explícita do usuário. PR, workflow Linux de baselines e CI dependem dessa autorização; nenhum envio remoto realizado.
+
+## 5. Refinamento aprovado após revisão visual
+
+- [x] 5.1 Aplicar chevron circular na divisória sem alterar altura ao recolher; atualizar marca Admin DS.
+- [x] 5.2 Expor avatarTone opcional por organização, aplicar primary no demo e documentar/testar gatilho e opções.
+- [x] 5.3 Atualizar stories, regressões de geometria e evidências; repetir format, lint, build, tipos, testes e E2E locais.
+
+- Refinamento aprovado: capturas atualizadas e revisadas em light/dark; cabeçalho de 64px antes e depois do recolhimento, controle clicável na divisória e avatar primary igual ao da conta. Sem animação de largura nessa variante para evitar reflow transitório. Testes: 1.064 unitários/integração aprovados e 299 E2E aprovados com --ignore-snapshots. A falha preexistente de test:ci no Windows e os gates remotos pendentes permanecem registrados acima.

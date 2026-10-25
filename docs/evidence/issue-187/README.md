@@ -22,10 +22,10 @@ Desktop: **1280 × 800**. Mobile: **390 × 844** (fechado com página inteira).
 - Apresentação e indicadores se aproximam; saem as linhas e paddings herdados do catálogo.
 - Em 1280px expandido, quatro indicadores formam 2×2; recolhido ou em 1600px formam quatro colunas. Mobile mantém uma.
 - Descrição e barras de Progresso se aproximam, sem alterar o espaçamento dos componentes em outros consumidores.
-- Marca oficial e toggle de painel ficam no topo da sidebar. Recolhido, símbolo e botão ficam empilhados, sem sobreposição; a linha compartilhada cresce naturalmente.
+- Marca abreviada Admin DS em uma linha e controle circular com chevron na divisória. Recolhido, símbolo e botão permanecem separados e alinhados; o cabeçalho mantém os mesmos 64px. Headers personalizados maiores continuam com altura natural.
 - Header desktop mantém tema, notificações e conta; header móvel mantém menu e identificação compacta.
 - Navegação light usa preenchimento suavizado também no Drawer; faixa, texto, aria-current e foco permanecem. Cores dark preservadas.
-- Organização segue opcional; o showcase /catalogo-shell demonstra o layout sem seletor.
+- Avatar da organização usa primary, como o da conta, em ambos os estados e temas. Organização segue opcional; o showcase /catalogo-shell demonstra o layout sem seletor.
 
 ## Verificações adicionais
 

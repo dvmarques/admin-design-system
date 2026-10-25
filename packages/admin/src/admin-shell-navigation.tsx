@@ -72,20 +72,6 @@ export function AdsAdminShellSidebarToggle({
 			type={props.type ?? 'button'}
 		>
 			<span aria-hidden="true" className="ads-admin-shell-sidebar-toggle-icon" />
-			<svg
-				aria-hidden="true"
-				className="ads-admin-shell-sidebar-toggle-panel"
-				viewBox="0 0 24 24"
-				fill="none"
-				stroke="currentColor"
-				strokeWidth="1.75"
-				strokeLinecap="round"
-				strokeLinejoin="round"
-			>
-				<rect x="3" y="4" width="18" height="16" rx="2" />
-				<path d="M9 4v16" />
-				<path className="ads-admin-shell-sidebar-toggle-direction" d="m15 9-3 3 3 3" />
-			</svg>
 		</button>
 	);
 }

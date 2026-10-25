@@ -57,7 +57,7 @@ test('em tela estreita o título do cabeçalho segue acessível e o cabeçalho n
 
 	await expect(page.locator('.demo-brand-heading img:visible')).toBeVisible();
 	await expect(page.locator('.demo-mobile-brand .demo-brand-heading strong')).toHaveText(
-		'Admin Design System',
+		'Admin DS',
 	);
 	const height = await page
 		.locator('header')

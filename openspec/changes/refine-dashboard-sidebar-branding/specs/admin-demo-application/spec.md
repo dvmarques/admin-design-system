@@ -7,7 +7,7 @@ O admin-demo MUST exibir marca oficial e nome no topo da sidebar desktop e dentr
 #### Scenario: Pessoa abre uma rota do demo
 
 - **WHEN** uma pessoa abre qualquer rota administrativa no desktop
-- **THEN** marca e nome aparecem no topo da sidebar junto ao controle de recolhimento, com organização opcional abaixo e ações de tema/notificações/conta no header principal
+- **THEN** marca e nome aparecem no topo da sidebar com nome curto Admin DS em uma linha e controle de recolhimento circular na divisória, com organização opcional abaixo e ações de tema/notificações/conta no header principal
 
 #### Scenario: Pessoa alterna o tema
 
@@ -17,7 +17,7 @@ O admin-demo MUST exibir marca oficial e nome no topo da sidebar desktop e dentr
 #### Scenario: Sidebar recolhida
 
 - **WHEN** a sidebar desktop é recolhida
-- **THEN** símbolo, botão de expansão e navegação por ícones ou abreviações continuam acessíveis e não se sobrepõem
+- **THEN** o topo preserva a altura anterior e símbolo, botão de expansão na divisória e navegação por ícones ou abreviações continuam acessíveis e não se sobrepõem
 
 #### Scenario: Pessoa abre o demo em tela estreita
 
@@ -48,3 +48,12 @@ O item ativo da sidebar do demo MUST usar preenchimento light mais suave preserv
 
 - **WHEN** o usuário navega por teclado entre itens nos dois temas
 - **THEN** foco e seleção são distinguíveis sem depender apenas da cor do preenchimento
+
+### Requirement: Organização usa avatar colorido no demo
+
+O demo MUST fornecer ao avatar da organização o tom primary dos tokens, como no avatar da conta, preservando logo, iniciais, seleção e contraste em ambos os temas.
+
+#### Scenario: Sidebar expandida ou recolhida
+
+- **WHEN** a pessoa alterna o estado da sidebar ou escolhe outra organização
+- **THEN** o avatar mantém o fundo colorido e as iniciais ou logo corretos, sem afetar a seleção

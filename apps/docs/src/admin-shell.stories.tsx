@@ -338,7 +338,7 @@ function SidebarBrand() {
 			>
 				<img src="./admin-ds-favicon.svg" width={30} height={30} alt="" />
 				<strong className="ads-admin-shell-sidebar-label" style={{ overflowWrap: 'anywhere' }}>
-					Admin Design System
+					Admin DS
 				</strong>
 			</div>
 			<AdsAdminShell.SidebarToggle
@@ -366,7 +366,14 @@ function SidebarBrandShell({
 				<AdsAdminShell.Sidebar header={<SidebarBrand />} mobileTitle="Navegação">
 					{organization && (
 						<AdsOrganizationSwitcher
-							organizations={[{ id: 'demo', name: 'Organização de demonstração', initials: 'OD' }]}
+							organizations={[
+								{
+									id: 'demo',
+									name: 'Organização de demonstração',
+									initials: 'OD',
+									avatarTone: 'primary',
+								},
+							]}
 							value="demo"
 						/>
 					)}

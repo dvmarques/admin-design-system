@@ -181,3 +181,15 @@ export const WithoutOrganizationSwitcher: Story = {
 	parameters: { layout: 'fullscreen' },
 	render: () => <ShellExample withSwitcher={false} />,
 };
+
+export const ColoredAvatars: Story = {
+	name: 'Avatares coloridos por organização',
+	args: {
+		organizations: organizations.map((organization) => ({
+			...organization,
+			avatarTone: 'primary' as const,
+		})),
+		defaultValue: 'acme',
+		defaultOpen: true,
+	},
+};

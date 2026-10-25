@@ -408,6 +408,14 @@ function SidebarBrandShell({
 	);
 }
 export const SidebarBranding: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'No desktop, a coluna de ícones mantém sua posição horizontal ao recolher ou expandir, centralizada no destaque selecionado da barra compacta mesmo com scrollbar nativa. O avatar da organização compartilha essa coluna.',
+			},
+		},
+	},
 	name: 'Marca na sidebar, sem organização',
 	render: () => <SidebarBrandShell />,
 };

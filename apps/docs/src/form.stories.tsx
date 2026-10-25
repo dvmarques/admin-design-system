@@ -20,7 +20,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Controles nativos acessíveis e compactos para coleta e seleção de dados administrativos.',
+					'Controles nativos acessíveis e compactos para coleta e seleção de dados administrativos. AdsField mantém ajuda e erro próximos ao controle (4 px pelo token --ads-spacing-1), sem margens nativas adicionais; a distância do rótulo é preservada. AdsFieldDescription e AdsFieldMessage não adicionam margens em composições manuais.',
 			},
 		},
 	},
@@ -34,7 +34,12 @@ export const TextControls: Story = {
 			<AdsField description="Usado para notificações da conta" label="E-mail">
 				<AdsInput type="email" placeholder="nome@empresa.com" />
 			</AdsField>
-			<AdsField error="Informe uma descrição" label="Descrição" validationState="error">
+			<AdsField
+				description="Descreva o motivo da solicitação."
+				error="Informe uma descrição"
+				label="Descrição"
+				validationState="error"
+			>
 				<AdsTextarea rows={3} />
 			</AdsField>
 			<AdsField label="Status">

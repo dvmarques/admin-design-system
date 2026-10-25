@@ -1992,7 +1992,11 @@
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
 			.ads-organization-switcher-trigger {
-			padding-inline: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
+			padding-inline-start: calc(
+				(var(--ads-sidebar-compact-content-width) - 2rem) / 2 - 1px +
+					var(--ads-sidebar-selection-outset)
+			);
+			padding-inline-end: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
 		}
 	}
 	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar-header {
@@ -2003,4 +2007,43 @@
 .ads-admin-shell-mobile-drawer {
 	width: 100%;
 	border-radius: 0;
+}
+
+/* Share the compact selection center between navigation icons and organization avatars. */
+@layer components {
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-desktop > .ads-admin-shell-sidebar {
+			scrollbar-gutter: stable;
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop
+			.ads-organization-switcher[data-collapsed='true']
+			> * {
+			inline-size: var(--ads-sidebar-selection-size);
+			margin-inline: calc((100% - var(--ads-sidebar-selection-size)) / 2);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop
+			.ads-organization-switcher[data-collapsed='true']
+			.ads-organization-switcher-trigger {
+			inline-size: var(--ads-sidebar-selection-size);
+		}
+		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-desktop .ads-sidebar-group-toggle,
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop
+			.ads-sidebar-item
+			> a:has(> .ads-sidebar-icon) {
+			justify-content: flex-start;
+			padding-inline-start: calc((var(--ads-sidebar-compact-content-width) - 1.25rem) / 2);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop
+			.ads-sidebar-item
+			> a[aria-current='page']:has(> .ads-sidebar-icon) {
+			padding-inline-start: calc(
+				(var(--ads-sidebar-compact-content-width) - 1.25rem) / 2 +
+					var(--ads-sidebar-selection-outset)
+			);
+		}
+	}
 }

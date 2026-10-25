@@ -68,12 +68,12 @@ O projeto MUST manter uma aplicação Next.js de referência que consuma os arte
 
 ### Requirement: Padrões avançados na aplicação de referência
 
-A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`, mantendo filtros, ordenação e página de `/clientes` em `searchParams`, tratados de forma determinística no servidor, com dados estáticos.
+A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`, mantendo filtros, ordenação e página de `/clientes` nos parâmetros da URL, tratados deterministicamente no servidor no build normal e no cliente no export estático, com dados estáticos.
 
 #### Scenario: Filtros e ordenação de clientes na URL
 
 - **WHEN** a página `/clientes` é aberta com `?q=`, `?status=`, `?plano=`, `?de=`, `?ate=` ou `?ordem=`
-- **THEN** o servidor exibe somente os clientes correspondentes, na ordem pedida, e abrir a mesma URL de novo produz o mesmo resultado
+- **THEN** somente os clientes correspondentes aparecem, na ordem pedida, com processamento no servidor no build normal ou no cliente após inicialização da página exportada estaticamente; a mesma URL produz o mesmo resultado
 
 #### Scenario: Parâmetros inválidos são normalizados
 
@@ -83,7 +83,7 @@ A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `A
 #### Scenario: Alterar filtro ou ordenação
 
 - **WHEN** a pessoa altera um filtro ou a ordenação em `/clientes`
-- **THEN** a URL é atualizada, a lista é recalculada no servidor e a paginação volta para a página 1
+- **THEN** a URL é atualizada, a lista é recalculada pelo servidor no build normal ou pelo cliente no export estático e a paginação volta para a página 1
 
 #### Scenario: Filtros sem resultado
 

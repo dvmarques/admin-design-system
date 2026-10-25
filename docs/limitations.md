@@ -17,6 +17,12 @@ das validações automatizadas.
 - A aplicação consumidora decide como persistir a preferência de tema e deve
   aplicá-la no servidor quando quiser evitar uma troca visual na hidratação.
 
+## Modos de execução do admin demo
+
+- No build normal, a preferência explícita de tema disponível em cookie pode ser aplicada na resposta SSR; a preferência Sistema/ausente usa fallback inicial `light` no servidor e script antes da pintura para acompanhar `prefers-color-scheme`.
+- Na exportação estática do Pages não há renderização por requisição: o HTML usa fallback e o script pré-hidratação aplica a preferência salva ou Sistema. O comportamento dos filtros em `/clientes` respeita a URL, mas a atualização ocorre no cliente no export estático, em vez de exigir processamento dinâmico no servidor.
+- O link de Storybook permanece na navegação principal quando configurado no build. PRs Ready para develop validam a exportação estática pelo workflow Pages; publicação só ocorre no push para develop.
+
 ## Snapshots visuais
 
 - Os snapshots visuais usam Chromium e devem ser atualizados conscientemente

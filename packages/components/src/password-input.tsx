@@ -162,7 +162,7 @@ export const AdsPasswordInput = forwardRef<HTMLInputElement, AdsPasswordInputPro
 					{showVisibilityToggle ? (
 						<button
 							aria-label={visible ? hidePasswordLabel : showPasswordLabel}
-							className="ads-password-input__toggle absolute inset-y-0 right-0 inline-flex min-w-18 items-center justify-center rounded-r-md px-2 text-sm text-text-muted focus-visible:outline-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
+							className="ads-password-input__toggle absolute inset-y-0 right-0 inline-flex min-w-18 cursor-pointer items-center justify-center rounded-r-md border-0 bg-transparent px-2 text-sm text-text-muted focus-visible:outline-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
 							disabled={disabled}
 							onClick={toggleVisibility}
 							type="button"
@@ -186,7 +186,7 @@ export const AdsPasswordInput = forwardRef<HTMLInputElement, AdsPasswordInputPro
 				) : null}
 				{hasRules ? (
 					<ul
-						className="ads-password-input__rules mt-2 flex flex-col gap-1 text-xs text-text-muted"
+						className="ads-password-input__rules m-0 mt-2 flex list-none flex-col gap-1 p-0 text-xs text-text-muted"
 						aria-label={rulesLabel}
 						id={rulesId}
 					>

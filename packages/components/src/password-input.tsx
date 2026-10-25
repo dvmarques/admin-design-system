@@ -1,6 +1,6 @@
 'use client';
 
-import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type ChangeEvent, type MouseEvent } from 'react';
 import { AdsInput, type AdsInputProps } from './input.js';
 import { classNames } from './class-names.js';
 
@@ -10,6 +10,8 @@ export interface AdsPasswordInputProps extends Omit<AdsInputProps, 'type'> {
   hidePasswordLabel?: string;
   /** Hide the visibility action entirely. */
   showVisibilityToggle?: boolean;
+  /** Show a simple, advisory strength score (never a security guarantee). */
+  showStrength?: boolean;
 }
 
 /** Password input with a keyboard-accessible visibility action. */
@@ -19,9 +21,21 @@ export function AdsPasswordInput({
   hidePasswordLabel = 'Ocultar senha',
   showPasswordLabel = 'Mostrar senha',
   showVisibilityToggle = true,
+  showStrength = false,
+  onChange,
+  value,
+  defaultValue,
   ...props
 }: AdsPasswordInputProps) {
   const [visible, setVisible] = useState(false);
+  const [uncontrolledValue, setUncontrolledValue] = useState(String(defaultValue ?? ''));
+  const password = String(value ?? uncontrolledValue);
+  const score = [password.length >= 8, /[A-Z]/.test(password), /[0-9]/.test(password), /[^A-Za-z0-9]/.test(password)].filter(Boolean).length;
+  const strength = password.length === 0 ? 'Não avaliada' : score <= 1 ? 'Fraca' : score <= 2 ? 'Média' : 'Forte';
+  function handleChange(event: ChangeEvent<HTMLInputElement>) {
+    if (value === undefined) setUncontrolledValue(event.target.value);
+    onChange?.(event);
+  }
   const inputRef = useRef<HTMLInputElement>(null);
   const selectionRef = useRef<{ start: number; end: number } | null>(null);
 
@@ -46,11 +60,14 @@ export function AdsPasswordInput({
   }
 
   return (
-    <div className="ads-password-input relative w-full">
+    <div className="ads-password-input w-full">\n      <div className="relative">
       <AdsInput
         {...props}
         className={classNames('pr-20', className)}
         disabled={disabled}
+        defaultValue={defaultValue}
+        value={value}
+        onChange={handleChange}
         ref={inputRef}
         type={visible ? 'text' : 'password'}
       />
@@ -65,6 +82,12 @@ export function AdsPasswordInput({
         >
           {visible ? 'Ocultar' : 'Mostrar'}
         </button>
+      ) : null}
+      </div>
+      {showStrength ? (
+        <p className="ads-password-input__strength mt-2 text-xs text-text-muted" role="status">
+          Força da senha: {strength}
+        </p>
       ) : null}
     </div>
   );

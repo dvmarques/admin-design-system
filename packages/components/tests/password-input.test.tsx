@@ -1,4 +1,5 @@
 import { fireEvent, render, screen } from '@testing-library/react';
+import { createRef } from 'react';
 import { renderToString } from 'react-dom/server';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsField, AdsPasswordInput } from '../src/index.js';
@@ -16,7 +17,7 @@ describe('AdsPasswordInput', () => {
 		const input = screen.getByLabelText('Senha') as HTMLInputElement;
 		expect(input.type).toBe('password');
 		expect(input.value).toBe('secret');
-		fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }));
+		fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }), { detail: 1 });
 		expect(input.type).toBe('text');
 		expect(input.value).toBe('secret');
 		expect(input).toHaveFocus();
@@ -32,7 +33,7 @@ describe('AdsPasswordInput', () => {
 		render(<AdsPasswordInput aria-label="Senha" defaultValue="abcdef" />);
 		const input = screen.getByLabelText('Senha') as HTMLInputElement;
 		input.setSelectionRange(1, 3);
-		fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }));
+		fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }), { detail: 1 });
 		expect(input.selectionStart).toBe(1);
 		expect(input.selectionEnd).toBe(3);
 	});
@@ -76,12 +77,49 @@ describe('AdsPasswordInput', () => {
 			</AdsField>,
 		);
 		const input = screen.getByLabelText('Senha');
-		expect(screen.getByRole('status')).toHaveTextContent('Força da senha: Não avaliada');
+		expect(screen.getByRole('status')).toBeEmptyDOMElement();
+		expect(screen.getByText('Força da senha: Não avaliada')).toBeInTheDocument();
 		fireEvent.change(input, { target: { value: 'abc' } });
-		expect(screen.getByRole('status')).toHaveTextContent('Fraca');
+		expect(screen.getByRole('status')).toHaveTextContent('Força da senha: Fraca');
 		fireEvent.change(input, { target: { value: 'Abcdefg1' } });
 		expect(screen.getByRole('status')).toHaveTextContent('Forte');
 		expect(input).toHaveAccessibleDescription(/Mínimo de 8 caracteres.*Força da senha: Forte/);
+	});
+
+	it('keeps focus on the button when activated by keyboard', () => {
+		render(<AdsPasswordInput aria-label="Senha" />);
+		const toggle = screen.getByRole('button', { name: 'Mostrar senha' });
+		toggle.focus();
+		fireEvent.click(toggle, { detail: 0 });
+		expect(screen.getByLabelText('Senha')).toHaveAttribute('type', 'text');
+		expect(screen.getByRole('button', { name: 'Ocultar senha' })).toHaveFocus();
+	});
+
+	it('forwards the ref to the input and keeps the consumer description', () => {
+		const ref = createRef<HTMLInputElement>();
+		render(
+			<>
+				<p id="hint">Dica</p>
+				<AdsPasswordInput aria-describedby="hint" aria-label="Senha" ref={ref} showStrength />
+			</>,
+		);
+		expect(ref.current).toBe(screen.getByLabelText('Senha'));
+		expect(ref.current).toHaveAccessibleDescription(/Dica.*Força da senha/);
+	});
+
+	it('supports custom visible text and rule list name', () => {
+		render(
+			<AdsPasswordInput
+				aria-label="Password"
+				hidePasswordLabel="Hide password"
+				rules={[{ id: 'a', label: 'A', test: () => true }]}
+				rulesLabel="Requirements"
+				showPasswordLabel="Show password"
+				showPasswordText="Show"
+			/>,
+		);
+		expect(screen.getByRole('button', { name: 'Show password' })).toHaveTextContent('Show');
+		expect(screen.getByRole('list', { name: 'Requirements' })).toBeInTheDocument();
 	});
 
 	it('supports custom strength labels', () => {
@@ -94,7 +132,7 @@ describe('AdsPasswordInput', () => {
 				strengthPrefix="Strength:"
 			/>,
 		);
-		expect(screen.getByRole('status')).toHaveTextContent('Strength: Weak');
+		expect(screen.getAllByText('Strength: Weak')).toHaveLength(2);
 	});
 
 	it('lists rules with a textual status, not only an icon', () => {

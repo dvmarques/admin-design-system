@@ -19,3 +19,11 @@ Reutilizar exatamente navegação, estrutura de página, playground e exemplos e
 ## Alternativas
 
 Preferir composição com componentes existentes a um campo inteiramente independente; preferir indicador de força opt-in a cálculo obrigatório, evitando peso e comportamento inesperado no bundle.
+
+## Compatibilidade de `AdsInput`
+
+`AdsInput` passa a usar `forwardRef` para que o campo de senha preserve foco e seleção. O uso em JSX é inalterado; apenas quem chama `AdsInput(props)` como função ou depende de `typeof AdsInput` como `FunctionComponent` é afetado. `AdsPasswordInput` também encaminha `ref` ao `<input>`; `className` vai ao `<input>`, não ao contêiner.
+
+## Foco ao alternar
+
+Com ponteiro, o foco volta ao campo com a seleção preservada; com teclado (Enter/Espaço), o foco permanece no botão. Força é lida por `aria-describedby` e anunciada em uma região `role="status"` oculta, cujo texto só muda quando o nível muda.

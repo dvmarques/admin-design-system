@@ -793,8 +793,10 @@ aceita as props nativas de `input`, exceto `type`.
 </AdsField>
 ```
 
-- O botão alterna entre `Mostrar senha` e `Ocultar senha` (`showPasswordLabel` e
-  `hidePasswordLabel`), preserva valor, foco e seleção, nunca envia o formulário e some com
+- O botão exibe `Mostrar`/`Ocultar` (`showPasswordText`, `hidePasswordText`) e tem o nome
+  `Mostrar senha`/`Ocultar senha` (`showPasswordLabel`, `hidePasswordLabel`, que devem começar
+  pelo texto visível). Com o teclado o foco permanece no botão; com o ponteiro volta ao campo.
+  `ref` e `className` vão para o `<input>`, preserva valor, foco e seleção, nunca envia o formulário e some com
   `showVisibilityToggle={false}`. Desabilitar o campo desabilita também o botão.
 - `showStrength` mostra uma pontuação **apenas orientativa** (comprimento, maiúscula, número
   e símbolo), em texto e associada ao campo por `aria-describedby`; use `strengthLabels` e

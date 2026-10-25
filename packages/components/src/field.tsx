@@ -41,10 +41,10 @@ export function AdsField({
 	return (
 		<div
 			{...props}
-			className={classNames('ads-field flex flex-col gap-2 max-md:gap-1.5', className)}
+			className={classNames('ads-field flex flex-col gap-[var(--ads-spacing-1)]', className)}
 		>
 			<label
-				className="ads-field__label text-sm font-medium text-text"
+				className="ads-field__label mb-1 text-sm font-medium text-text max-md:mb-0.5"
 				htmlFor={controlId}
 				id={`${controlId}-label`}
 			>
@@ -53,7 +53,7 @@ export function AdsField({
 			{control}
 			{description ? (
 				<p
-					className="ads-field__description text-xs leading-normal text-text-muted"
+					className="ads-field__description m-0 text-xs leading-normal text-text-muted"
 					id={descriptionId}
 				>
 					{description}
@@ -61,7 +61,7 @@ export function AdsField({
 			) : null}
 			{error ? (
 				<p
-					className="ads-field__message text-xs font-medium leading-normal text-form-invalid"
+					className="ads-field__message m-0 text-xs font-medium leading-normal text-form-invalid"
 					id={errorId}
 					role="alert"
 				>
@@ -97,7 +97,7 @@ export function AdsFieldDescription({ className, ...props }: AdsFieldDescription
 		<p
 			{...props}
 			className={classNames(
-				'ads-field__description text-xs leading-normal text-text-muted',
+				'ads-field__description m-0 text-xs leading-normal text-text-muted',
 				className,
 			)}
 		/>
@@ -113,7 +113,7 @@ export function AdsFieldMessage({ className, ...props }: AdsFieldMessageProps) {
 		<p
 			{...props}
 			className={classNames(
-				'ads-field__message text-xs font-medium leading-normal text-form-invalid',
+				'ads-field__message m-0 text-xs font-medium leading-normal text-form-invalid',
 				className,
 			)}
 			role="alert"

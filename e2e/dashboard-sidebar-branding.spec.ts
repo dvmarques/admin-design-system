@@ -1,5 +1,8 @@
 import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
+import { waitForHydration } from './hydration';
+
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
 
 const sidebar = (page: Page) => page.locator('.ads-admin-shell-sidebar-desktop');
 const top = (page: Page) =>
@@ -113,6 +116,72 @@ for (const theme of ['light', 'dark'] as const) {
 				await expectNoAxeViolations(page);
 				await page.keyboard.press('Escape');
 				await expect(trigger).toBeFocused();
+			}
+		});
+		test('ícones e organização mantêm o eixo do destaque ao expandir e recolher com scrollbar', async ({
+			page,
+		}) => {
+			await page.setViewportSize({ width: 1280, height: 800 });
+			for (const route of ['/', '/catalogo/input']) {
+				await page.goto(route);
+				await waitForHydration(page.getByRole('button', { name: /Organização atual/ }));
+				for (const compactWidth of [72, 88]) {
+					await page.locator('.demo-admin-shell').evaluate((el, width) => {
+						el.style.setProperty('--ads-admin-shell-sidebar-width-collapsed', `${width}px`);
+					}, compactWidth);
+					for (const scrollbarWidth of [0, 16]) {
+						const scrollbarStyle = await page.addStyleTag({
+							content: `.ads-admin-shell-sidebar::-webkit-scrollbar { width: ${scrollbarWidth}px; }`,
+						});
+						const icons = sidebar(page).locator('.ads-sidebar-icon');
+						const positions = () =>
+							icons.evaluateAll((elements) =>
+								elements.map((el) => {
+									const rect = el.getBoundingClientRect();
+									const target = el.parentElement!.getBoundingClientRect();
+									return {
+										center: rect.x + rect.width / 2,
+										left: rect.left,
+										right: rect.right,
+										targetLeft: target.left,
+										targetRight: target.right,
+									};
+								}),
+							);
+						const navigation = (await sidebar(page)
+							.locator('.ads-sidebar-navigation')
+							.boundingBox())!;
+						const rail = (await sidebar(page).boundingBox())!;
+						const axis = navigation.x + (navigation.width - (rail.width - compactWidth)) / 2;
+						const avatar = sidebar(page).locator('.ads-organization-switcher .ads-avatar');
+						const expandedAvatar = (await avatar.boundingBox())!;
+						expect(expandedAvatar.x + expandedAvatar.width / 2).toBeCloseTo(axis, 1);
+						const expanded = await positions();
+						expect(expanded.length).toBeGreaterThan(3);
+						for (const icon of expanded) expect(icon.center).toBeCloseTo(axis, 1);
+						await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+						const collapsed = await positions();
+						expect(collapsed.length).toBe(expanded.length);
+						for (const [index, icon] of collapsed.entries()) {
+							expect(icon.center).toBeCloseTo(expanded[index].center, 1);
+							expect(icon.left).toBeGreaterThanOrEqual(icon.targetLeft);
+							expect(icon.right).toBeLessThanOrEqual(icon.targetRight);
+						}
+						const collapsedAvatar = (await avatar.boundingBox())!;
+						expect(collapsedAvatar.x + collapsedAvatar.width / 2).toBeCloseTo(axis, 1);
+						if (route === '/') {
+							const selected = (await sidebar(page)
+								.locator('a[aria-current="page"]')
+								.boundingBox())!;
+							expect(selected.x + selected.width / 2).toBeCloseTo(axis, 1);
+						}
+						await page.getByRole('button', { name: 'Expandir barra lateral' }).click();
+						expect((await positions()).map((icon) => icon.center)).toEqual(
+							expanded.map((icon) => icon.center),
+						);
+						await scrollbarStyle.evaluate((el) => el.remove());
+					}
+				}
 			}
 		});
 		test('showcase sem organização mantém marca e navegação sem bloco residual', async ({

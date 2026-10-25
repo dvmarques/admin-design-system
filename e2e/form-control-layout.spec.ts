@@ -253,3 +253,87 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 		});
 	}
 }
+
+for (const theme of ['light', 'dark'] as const) {
+	for (const width of [390, 1280]) {
+		test(`mensagens ficam próximas aos campos sem reset em ${theme} a ${width}px`, async ({
+			page,
+		}) => {
+			const { AdsField, AdsInput, AdsSelect, AdsTextarea, AdsFieldDescription, AdsFieldMessage } =
+				await import('@admin-ds/components');
+			const controls = [
+				createElement(AdsInput),
+				createElement(AdsTextarea),
+				createElement(AdsSelect, {}, createElement('option', {}, 'Ativo')),
+			];
+			const help =
+				'Orientação longa para preencher corretamente este campo em uma tela estreita sem perder a legibilidade.';
+			const error =
+				'Revise o valor informado antes de continuar e preencha todas as informações solicitadas neste campo.';
+			const markup = renderToStaticMarkup(
+				createElement(
+					'main',
+					{},
+					...controls.map((children, index) =>
+						createElement(AdsField, {
+							key: index,
+							label: `Campo ${index}`,
+							description: help,
+							error,
+							validationState: 'error',
+							children,
+						}),
+					),
+					createElement(AdsField, {
+						label: 'Somente erro',
+						error,
+						validationState: 'error',
+						children: createElement(AdsInput),
+					}),
+					createElement(AdsField, {
+						label: 'Somente ajuda',
+						description: help,
+						children: createElement(AdsInput),
+					}),
+					createElement(AdsFieldDescription, { children: help, id: 'manual-help' }),
+					createElement(AdsFieldMessage, { children: error, id: 'manual-error' }),
+				),
+			);
+			await page.setViewportSize({ width, height: 900 });
+			await page.setContent(
+				`<!doctype html><html data-theme="${theme}"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+			for (const field of await page.locator('.ads-field').all()) {
+				const geometry = await field.evaluate((element) => {
+					const children = [...element.children];
+					return children.map((child, index) => ({
+						gap: index
+							? child.getBoundingClientRect().top -
+								children[index - 1].getBoundingClientRect().bottom
+							: 0,
+						margin: getComputedStyle(child).margin,
+					}));
+				});
+				expect(geometry[1].gap).toBeCloseTo(width < 768 ? 6 : 8, 1);
+				for (const message of geometry.slice(2)) {
+					expect(message.gap).toBeCloseTo(4, 1);
+					expect(message.margin).toBe('0px');
+				}
+				const control = field.locator('input, textarea, select');
+				await expect(control).toHaveAccessibleName(/\S/);
+				await expect(control).toHaveAccessibleDescription(new RegExp('Orientação|Revise'));
+				if (await field.getByRole('alert').count())
+					await expect(control).toHaveAttribute('aria-invalid', 'true');
+			}
+			await expect(page.locator('#manual-help')).toHaveCSS('margin', '0px');
+			await expect(page.locator('#manual-error')).toHaveCSS('margin', '0px');
+			await expect
+				.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+				.toBeLessThanOrEqual(0);
+			await page
+				.locator('html')
+				.evaluate((element) => element.style.setProperty('--ads-spacing-1', '6px'));
+			await expect(page.locator('.ads-field').first()).toHaveCSS('row-gap', '6px');
+		});
+	}
+}

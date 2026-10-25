@@ -5,7 +5,6 @@ import { readServerPreference } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
 import { DemoAccountMenu, DemoNotifications, DemoOrganizationSwitcher } from '../header-controls';
 import { RouteChangeHandler } from '../route-change-handler';
-import { StorybookLink } from '../storybook-link';
 import { ThemeControl } from '../theme-control';
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -21,7 +20,6 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 					<DemoBrand compact />
 				</div>
 				<div className="demo-header-tools">
-					<StorybookLink />
 					<ThemeControl initialPreference={preference} />
 					<DemoNotifications />
 					<DemoAccountMenu />

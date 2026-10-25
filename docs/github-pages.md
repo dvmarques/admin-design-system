@@ -12,7 +12,7 @@ a demonstração e o catálogo Storybook.
 ## Como funciona
 
 O workflow `.github/workflows/pages.yml` roda a cada push em `develop` e por
-`workflow_dispatch`. Ele constrói os pacotes, gera o demo e o Storybook a partir do
+`workflow_dispatch` em develop. PRs não Draft para develop executam o mesmo build e testes no Linux, sem configurar, enviar artefatos ou publicar no Pages. Cada PR usa concorrência própria. Ele constrói os pacotes, gera o demo e o Storybook a partir do
 mesmo commit, monta `site/`, verifica o site com `npm run test:e2e:pages` e só então publica. Se
 qualquer etapa falhar, nada é publicado e o site anterior continua no ar.
 
@@ -25,10 +25,10 @@ qualquer etapa falhar, nada é publicado e o site anterior continua no ar.
 
 ## Variáveis de build
 
-| Variável                    | Onde                           | Efeito                                                                                           |
-| --------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------ |
-| `GITHUB_PAGES=true`         | build do demo                  | `output: 'export'`, `basePath: '/admin-design-system'`, `trailingSlash` e imagens sem otimização |
-| `NEXT_PUBLIC_STORYBOOK_URL` | definida pelo `next.config.ts` | exibe o link "Storybook (abre em nova aba)" no cabeçalho; sem ela, o link não é renderizado      |
+| Variável                    | Onde                           | Efeito                                                                                                                   |
+| --------------------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------------------------ |
+| `GITHUB_PAGES=true`         | build do demo                  | `output: 'export'`, `basePath: '/admin-design-system'`, `trailingSlash` e imagens sem otimização                         |
+| `NEXT_PUBLIC_STORYBOOK_URL` | definida pelo `next.config.ts` | exibe o link "Storybook (abre em nova aba)" na navegação principal, junto de Catálogo; sem ela, o link não é renderizado |
 
 Sem `GITHUB_PAGES`, o demo se comporta como antes: `next dev`, `next start` e os testes E2E não mudam.
 
@@ -50,6 +50,8 @@ npm run build:pages          # gera o demo estático e o Storybook e monta site/
 node scripts/serve-pages-site.mjs   # serve site/ em http://127.0.0.1:4173/admin-design-system/
 npm run test:e2e:pages       # verifica o site publicado sob o subcaminho
 ```
+
+No Windows, o export do Next.js pode gerar caminhos de prefetch como diretórios onde o cliente solicita nomes separados por pontos, causando 404 na suíte Pages. A validação fiel do site ocorre no Linux da PR; não ignore esses erros para aprovar o build local.
 
 Depois de `build:pages`, rode `npm run build` antes de `npm run test:e2e`: o E2E principal usa o
 build normal do demo, não o estático.

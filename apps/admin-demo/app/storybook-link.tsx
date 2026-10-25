@@ -1,21 +1,24 @@
-/**
- * Link to the published Storybook. It only exists in builds that configure the catalog address
- * (GitHub Pages), so local development and the E2E suite render the header unchanged. A plain
- * anchor, not `next/link`: the destination is another static site and does not get the `basePath`.
- */
+import { AdsAdminShell } from '@admin-ds/admin';
+
+/** Optional external catalog destination, styled like the other sidebar items. */
 export function StorybookLink() {
 	const href = process.env.NEXT_PUBLIC_STORYBOOK_URL;
 	if (!href) return null;
 
 	return (
-		<a
-			aria-label="Storybook (abre em nova aba)"
-			className="demo-action-link demo-storybook-link"
-			href={href}
-			rel="noopener"
-			target="_blank"
-		>
-			Storybook
-		</a>
+		<AdsAdminShell.NavigationItem>
+			<a
+				aria-label="Storybook (abre em nova aba)"
+				href={href}
+				rel="noopener"
+				target="_blank"
+				title="Storybook (abre em nova aba)"
+			>
+				<span aria-hidden="true" className="ads-sidebar-icon">
+					<span className="demo-nav-monogram">Sb</span>
+				</span>
+				<span className="ads-admin-shell-sidebar-label">Storybook</span>
+			</a>
+		</AdsAdminShell.NavigationItem>
 	);
 }

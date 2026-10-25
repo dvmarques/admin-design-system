@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { AdsAdminShell } from '@admin-ds/admin';
 import { AdsIcon, type AdsIconName } from '@admin-ds/components';
 import { catalogEntries } from './catalogo/catalog-data';
+import { StorybookLink } from './storybook-link';
 
 type NavigationIcon = AdsIconName | { initials: string };
 type NavigationItem = { href: string; label: string; icon?: NavigationIcon };
@@ -119,6 +120,7 @@ export function DemoNavigation() {
 				{overview.map((item) => (
 					<NavigationLink key={item.href} item={item} pathname={pathname} />
 				))}
+				<StorybookLink />
 			</ul>
 			<AdsAdminShell.NavigationSection label="Componentes">
 				{componentGroups.map((group) => (

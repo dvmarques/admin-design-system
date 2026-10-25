@@ -8,11 +8,17 @@ describe('StorybookLink', () => {
 	it('renders an accessible link that opens in a new tab when the catalog address is set', () => {
 		vi.stubEnv('NEXT_PUBLIC_STORYBOOK_URL', '/admin-design-system/storybook/');
 
-		render(<StorybookLink />);
+		render(
+			<ul>
+				<StorybookLink />
+			</ul>,
+		);
 
 		const link = screen.getByRole('link', { name: 'Storybook (abre em nova aba)' });
 		expect(link).toHaveAttribute('href', '/admin-design-system/storybook/');
 		expect(link).toHaveAttribute('target', '_blank');
+		expect(link).toHaveAttribute('title', 'Storybook (abre em nova aba)');
+		expect(screen.getByRole('listitem')).toContainElement(link);
 		expect(link).toHaveAttribute('rel', expect.stringContaining('noopener'));
 	});
 

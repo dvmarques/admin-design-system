@@ -49,7 +49,7 @@ expect(results.violations).toHaveLength(0);
 ## Playwright e testes end-to-end
 
 O Playwright executa testes em navegadores reais: Chromium roda toda a suíte e
-Firefox e WebKit rodam um smoke e a regressão de foco do dropdown (ver abaixo).
+Firefox e WebKit rodam smoke, regressão de foco do dropdown e `theme-control` (ver abaixo).
 Ele cobre comportamentos que o ambiente simulado do Vitest e JSDOM não reproduz
 integralmente, como foco visível, navegação por teclado, CSS renderizado,
 responsividade, hidratação do Next.js e fluxos completos entre componentes de
@@ -80,7 +80,7 @@ npx.cmd playwright show-report
 
 ### Snapshots visuais
 
-Os snapshots visuais executam em toda execução de CI de Pull Request, sem
+Os snapshots visuais executam nos jobs E2E habilitados da CI de Pull Request Ready (não nas PRs Draft nem em PRs para `develop` cujo impacto permite dispensar E2E), sem
 tolerância de diferença de pixels, e a única fonte da verdade são os baselines
 Linux versionados (`*-chromium-linux.png`, ao lado de cada spec). Não há
 baselines para outras plataformas e a execução local dos snapshots não é um
@@ -113,7 +113,7 @@ limites de controles, foco e indicadores). Detalhes em
 ### Smoke em Firefox e WebKit
 
 `e2e/smoke.spec.ts` roda nos três navegadores (projetos `chromium`, `firefox` e
-`webkit` em `playwright.config.ts`); Firefox e WebKit também executam a regressão de foco do dropdown.
+`webkit` em `playwright.config.ts`); Firefox e WebKit também executam `dropdown-focus.spec.ts` e `theme-control.spec.ts`.
 Ele cobre `/`, `/clientes` e `/componentes`: carregamento sem erros de console
 nem de página (incluindo hidratação), hidratação do botão de tema e navegação
 pelo menu principal. Não há snapshots nesses navegadores.
@@ -188,7 +188,7 @@ npm run format
 npm run lint
 npm run build
 npm run typecheck
-npm run test:quiet
+npm run test:quality
 npm run test:e2e
 ```
 
@@ -211,10 +211,14 @@ git reset --hard
 A árvore precisa estar limpa: o `git reset --hard` descarta alterações não
 commitadas. Faça commit ou `git stash` antes.
 
-O comando `npm run validate` combina essa sequência de qualidade e também
-executa o E2E após o build. Se uma alteração visual intencional modificar um
-snapshot, revise o diff e atualize-o explicitamente com
-`npm run test:e2e -- --update-snapshots`; não aceite snapshots apenas para
+O comando `npm run validate` executa `format`, `lint`, `build`, `typecheck`,
+`test:quality` e `test:e2e`, nesta ordem. `test:quality` inclui geração de
+tokens, `test:quiet`, testes de release e CI, checagem de skills e dos arquivos
+gerados. `test:quiet` isolado não equivale a `validate`.
+A validação estrita do OpenSpec continua separada: `openspec.cmd validate --all --strict`.
+Um check verde com etapas skipped não comprova que builds, E2E ou snapshots rodaram. Se uma alteração visual intencional modificar um
+snapshot, revise o diff e regenere os baselines Linux pelo workflow manual
+`update-visual-baselines.yml` na branch da PR; não aceite snapshots apenas para
 silenciar uma regressão. Os testes E2E devem preferir nomes acessíveis, funções
 ARIA, identificadores semânticos e headings de seção estáveis a textos
 editoriais incidentais.

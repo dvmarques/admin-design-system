@@ -100,7 +100,7 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 
 - **Referência vigente:** [arquitetura](docs/architecture.md), [integração](docs/integration.md), [qualidade](docs/quality.md), [release](docs/release-process.md) e [limitações](docs/limitations.md). Em caso de divergência, confira o código e a CI da branch consultada.
 - **Contribuição e desenvolvimento:** [AGENTS.md](AGENTS.md), [processo OpenSpec](docs/openspec-commands.md) e [workflow de IA](docs/ai-development-workflow.md). Changes ativas ficam em [`openspec/changes/`](openspec/changes/).
-- **Histórico e evidências (não normativa):** [CHANGELOG.md](CHANGELOG.md), [changes arquivadas](openspec/changes/archive/), [reconciliação OpenSpec #197](docs/openspec-history-reconciliation.md), [pendências arquivadas](docs/archived-openspec-followups.md), [medições de distribuição](docs/bundle-baseline.md), [medições de CI](docs/ci-impact-validation.md) e [capturas de revisão #187](docs/evidence/issue-187/README.md). Resultados antigos não substituem validação corrente.
+- **Histórico e evidências (não normativa):** [CHANGELOG.md](CHANGELOG.md), [changes arquivadas](openspec/changes/archive/), [reconciliação OpenSpec #197](docs/openspec-history-reconciliation.md), [pendências arquivadas](docs/archived-openspec-followups.md), [guia e histórico de distribuição](docs/bundle-baseline.md), [evidência histórica de bundle](docs/evidence/bundle-baseline-history.md), [procedimento de CI](docs/ci-impact-validation.md), [histórico medido da CI](docs/evidence/ci-impact-history.md), [benchmark Playwright](docs/evidence/playwright-container-benchmark.md) e [capturas de revisão #187](docs/evidence/issue-187/README.md). Resultados antigos não substituem validação corrente.
 
 ## Recursos
 

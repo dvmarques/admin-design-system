@@ -1,0 +1,164 @@
+[
+	{
+		"run": {
+			"id": 40225899757,
+			"head_sha": "38bb0dc4d301b9bdfd5b1cb07a98541c6624a650",
+			"event": "pull_request",
+			"conclusion": "success",
+			"run_attempt": 1,
+			"pr": 200
+		},
+		"jobs": [
+			{
+				"name": "Fluxos no navegador (Firefox)",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:24:41Z",
+				"completed_at": "2026-10-25T19:25:14Z"
+			},
+			{
+				"name": "Fluxos no navegador",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:24:41Z",
+				"completed_at": "2026-10-25T19:25:15Z"
+			},
+			{
+				"name": "Fluxos no navegador (WebKit)",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:24:41Z",
+				"completed_at": "2026-10-25T19:25:14Z"
+			},
+			{
+				"name": "Qualidade rápida",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:24:41Z",
+				"completed_at": "2026-10-25T19:27:27Z"
+			},
+			{
+				"name": "Artefatos de distribuição",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:24:41Z",
+				"completed_at": "2026-10-25T19:24:47Z"
+			},
+			{
+				"name": "Política de develop",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:24:41Z",
+				"completed_at": "2026-10-25T19:24:52Z"
+			},
+			{
+				"name": "Validação de release",
+				"conclusion": "skipped",
+				"started_at": "2026-10-25T00:00:00Z",
+				"completed_at": "2026-10-25T00:00:00Z"
+			}
+		]
+	},
+	{
+		"run": {
+			"id": 40228625135,
+			"head_sha": "534e7ebf7ef00b03d3a8ed7cd46731fda8b32795",
+			"event": "pull_request",
+			"conclusion": "success",
+			"run_attempt": 1,
+			"pr": 202
+		},
+		"jobs": [
+			{
+				"name": "Fluxos no navegador",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:59:33Z",
+				"completed_at": "2026-10-25T20:00:06Z"
+			},
+			{
+				"name": "Fluxos no navegador (WebKit)",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:59:32Z",
+				"completed_at": "2026-10-25T20:00:20Z"
+			},
+			{
+				"name": "Política de develop",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:59:32Z",
+				"completed_at": "2026-10-25T19:59:45Z"
+			},
+			{
+				"name": "Qualidade rápida",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:59:32Z",
+				"completed_at": "2026-10-25T20:02:27Z"
+			},
+			{
+				"name": "Artefatos de distribuição",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:59:32Z",
+				"completed_at": "2026-10-25T19:59:40Z"
+			},
+			{
+				"name": "Fluxos no navegador (Firefox)",
+				"conclusion": "success",
+				"started_at": "2026-10-25T19:59:32Z",
+				"completed_at": "2026-10-25T20:00:07Z"
+			},
+			{
+				"name": "Validação de release",
+				"conclusion": "skipped",
+				"started_at": "2026-10-25T00:00:00Z",
+				"completed_at": "2026-10-25T00:00:00Z"
+			}
+		]
+	},
+	{
+		"run": {
+			"id": 40230248797,
+			"head_sha": "6e86b2b4cccbf1e9076c93b99bd186de47ea6a52",
+			"event": "pull_request",
+			"conclusion": "success",
+			"run_attempt": 1,
+			"pr": 203
+		},
+		"jobs": [
+			{
+				"name": "Qualidade rápida",
+				"conclusion": "success",
+				"started_at": "2026-10-25T20:19:52Z",
+				"completed_at": "2026-10-25T20:22:42Z"
+			},
+			{
+				"name": "Fluxos no navegador (Firefox)",
+				"conclusion": "success",
+				"started_at": "2026-10-25T20:19:52Z",
+				"completed_at": "2026-10-25T20:20:30Z"
+			},
+			{
+				"name": "Política de develop",
+				"conclusion": "success",
+				"started_at": "2026-10-25T20:19:52Z",
+				"completed_at": "2026-10-25T20:20:04Z"
+			},
+			{
+				"name": "Artefatos de distribuição",
+				"conclusion": "success",
+				"started_at": "2026-10-25T20:19:52Z",
+				"completed_at": "2026-10-25T20:19:57Z"
+			},
+			{
+				"name": "Fluxos no navegador",
+				"conclusion": "success",
+				"started_at": "2026-10-25T20:19:52Z",
+				"completed_at": "2026-10-25T20:20:33Z"
+			},
+			{
+				"name": "Fluxos no navegador (WebKit)",
+				"conclusion": "success",
+				"started_at": "2026-10-25T20:19:52Z",
+				"completed_at": "2026-10-25T20:20:25Z"
+			},
+			{
+				"name": "Validação de release",
+				"conclusion": "skipped",
+				"started_at": "2026-10-25T00:00:00Z",
+				"completed_at": "2026-10-25T00:00:00Z"
+			}
+		]
+	}
+]

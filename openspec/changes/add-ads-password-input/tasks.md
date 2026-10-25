@@ -16,8 +16,15 @@
 ## Verificação
 
 - [x] Criar testes unitários, de teclado, leitor de tela e estados.
-- [ ] Validar CSS compilado em consumidor Next.js e responsividade/temas.
-- [ ] Executar typecheck, lint, build, testes e revisão de acessibilidade.
-- [ ] Executar npm run test:e2e sem falhas; atualizar snapshots somente se mudanças visuais intencionais forem revisadas.
-- [ ] Executar formatação nos arquivos alterados, npm run format e openspec validate --all --strict.
-- [ ] Revisar diff e corrigir problemas antes de abrir PR para develop.
+- [x] Validar CSS compilado em consumidor Next.js e responsividade/temas.
+- [x] Executar typecheck, lint, build, testes e revisão de acessibilidade.
+- [x] Executar npm run test:e2e sem falhas; atualizar snapshots somente se mudanças visuais intencionais forem revisadas.
+- [x] Executar formatação nos arquivos alterados e npm run format.
+- [ ] Executar `openspec validate --all --strict` (CLI indisponível no ambiente da sessão; executar localmente/CI antes do merge).
+- [x] Revisar diff e corrigir problemas antes de abrir PR para develop.
+
+## Validação registrada
+
+- Build, typecheck, lint, format, testes unitários (1080) e E2E completo no Chromium (251) sem falhas.
+- Revisão de acessibilidade e de contrato público por subagentes; achados corrigidos.
+- Verificação visual nos temas claro e escuro e a 390 px sem overflow; CSS compilado consumido pelo Admin Demo (Next.js).

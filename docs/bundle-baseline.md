@@ -242,10 +242,10 @@ baseline de distribuição de admin 236799 → **332978**; JS/CSS publicados de 
 **13800** (medido 12581). Os orçamentos de JS do cenário (65125 de 70000; gzip 22244 de 23900) não mudaram. O custo é explícito para a revisão desta PR.
 
 O baseline de `@admin-ds/components` foi atualizado na change `add-ads-password-input`
-(issue #147) de 382334 para 427155 bytes (+44821 no `dist/` completo, medido em LF) por
+(issue #147) de 382334 para 427212 bytes (+44878 no `dist/` completo, medido em LF) por
 causa do novo `AdsPasswordInput` (JavaScript, source maps e declarações) e de
 `AdsInput` com `forwardRef`. O gzip por arquivo de JS/CSS publicados do pacote passou de
-um valor abaixo de 56900 para 57137 bytes, então o limite de `docs/browser-budget.json` foi
+um valor abaixo de 56900 para 57169 bytes, então o limite de `docs/browser-budget.json` foi
 recalibrado com cerca de 10% de folga: 56900 → **62700**. Os orçamentos de bytes de JS/CSS e
 dos cenários não mudaram. O componente é um export nomeado sem efeito colateral na importação,
 então só custa a quem o importa; não há dependência de runtime nova.

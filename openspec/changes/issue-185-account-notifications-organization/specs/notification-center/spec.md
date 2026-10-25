@@ -104,6 +104,16 @@ O painel MUST representar carregamento (`role="status"`), vazio, erro com `Tenta
 - **WHEN** `hasMore` é verdadeiro e a pessoa aciona `Carregar mais`
 - **THEN** `onLoadMore` é chamado e, com `loadingMore`, o botão fica ocupado
 
+#### Scenario: Carregar mais sem callback
+
+- **WHEN** `hasMore` é verdadeiro e `onLoadMore` não é informado
+- **THEN** `Carregar mais` não é renderizado, para não haver botão inerte
+
+#### Scenario: Leitura individual e global não se sobrepõem
+
+- **WHEN** a leitura de um item está pendente
+- **THEN** `Marcar todas como lidas` fica inoperante e não chama `onMarkAllRead`, e, com a leitura global pendente, os botões individuais ficam inoperantes e não chamam `onMarkRead`
+
 ### Requirement: Personalização de rótulos, SSR e temas
 
 Todos os textos MUST ser personalizáveis por `labels`. O servidor MUST renderizar apenas o gatilho fechado, sem acessar o DOM. O componente MUST funcionar nos temas claro e escuro, com movimento reduzido e em zoom de 200%.

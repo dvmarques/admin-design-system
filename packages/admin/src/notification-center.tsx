@@ -313,8 +313,10 @@ export function AdsNotificationCenter({
 		if (filterProp === undefined) setUncontrolledFilter(next);
 		onFilterChange?.(next);
 	};
+	// Leitura individual e global não se sobrepõem: uma operação pendente bloqueia a outra, para
+	// não haver mutações simultâneas e fora de ordem.
 	const markRead = (notification: AdsNotification) =>
-		item.run(notification.id, () => onMarkRead?.(notification.id));
+		!all.pendingId && item.run(notification.id, () => onMarkRead?.(notification.id));
 	const activate = (notification: AdsNotification) => {
 		onItemSelect?.(notification);
 		if (markReadOnSelect && !notification.read && onMarkRead) markRead(notification);
@@ -377,9 +379,10 @@ export function AdsNotificationCenter({
 							<button
 								aria-busy={all.pendingId ? true : undefined}
 								className="ads-notification-center-link-button"
-								aria-disabled={count === 0 || Boolean(all.pendingId) || undefined}
+								aria-disabled={count === 0 || Boolean(all.pendingId || item.pendingId) || undefined}
 								onClick={() => {
-									if (count > 0 && !all.pendingId) all.run('all', () => onMarkAllRead());
+									if (count > 0 && !all.pendingId && !item.pendingId)
+										all.run('all', () => onMarkAllRead());
 								}}
 								type="button"
 							>
@@ -431,7 +434,10 @@ export function AdsNotificationCenter({
 									<ul className="ads-notification-center-list">
 										{visible.map((notification) => (
 											<NotificationItem
-												blocked={Boolean(item.pendingId) && item.pendingId !== notification.id}
+												blocked={
+													Boolean(all.pendingId) ||
+													(Boolean(item.pendingId) && item.pendingId !== notification.id)
+												}
 												failed={item.failedId === notification.id}
 												formatTime={formatTime}
 												key={notification.id}
@@ -449,7 +455,8 @@ export function AdsNotificationCenter({
 										))}
 									</ul>
 								)}
-								{hasMore ? (
+								{/* Sem `onLoadMore` não há o que acionar: o botão não é renderizado. */}
+								{hasMore && onLoadMore ? (
 									<div className="ads-notification-center-more">
 										<AdsButton
 											aria-disabled={loadingMore || undefined}

@@ -333,6 +333,50 @@ describe('AdsNotificationCenter panel', () => {
 		expect(busy).toHaveAttribute('aria-disabled', 'true');
 	});
 
+	it('does not render "load more" when hasMore has no onLoadMore', async () => {
+		const events = userEvent.setup();
+		setup({ hasMore: true });
+		await events.click(bell());
+		await screen.findByRole('dialog');
+
+		expect(screen.queryByRole('button', { name: 'Carregar mais' })).toBeNull();
+	});
+
+	it('blocks "mark all" while an individual read is pending, and the other way around', async () => {
+		const events = userEvent.setup();
+		let resolveOne: () => void = () => undefined;
+		let resolveAll: () => void = () => undefined;
+		const onMarkRead = vi.fn(
+			() =>
+				new Promise<void>((done) => {
+					resolveOne = done;
+				}),
+		);
+		const onMarkAllRead = vi.fn(
+			() =>
+				new Promise<void>((done) => {
+					resolveAll = done;
+				}),
+		);
+		setup({ onMarkAllRead, onMarkRead });
+		await events.click(bell());
+		const one = await screen.findByRole('button', { name: 'Marcar como lida: Pedido aprovado' });
+		const all = screen.getByRole('button', { name: 'Marcar todas como lidas' });
+
+		await events.click(one);
+		await events.click(all);
+		expect(onMarkRead).toHaveBeenCalledTimes(1);
+		expect(onMarkAllRead).not.toHaveBeenCalled();
+		expect(all).toHaveAttribute('aria-disabled', 'true');
+		await act(async () => resolveOne());
+
+		await events.click(all);
+		await events.click(screen.getByRole('button', { name: 'Marcar como lida: Novo comentário' }));
+		expect(onMarkAllRead).toHaveBeenCalledTimes(1);
+		expect(onMarkRead).toHaveBeenCalledTimes(1);
+		await act(async () => resolveAll());
+	});
+
 	it('does not render "load more" without more items', async () => {
 		const events = userEvent.setup();
 		setup();

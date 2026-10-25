@@ -19,7 +19,7 @@
 
 ## 4. Validação
 
-- [ ] 4.1 Verificar referências textuais e links relativos, diff apenas documental e integridade dos arquivos preservados (links de nove arquivos verificados; revisão após separação de históricos pendente).
+- [x] 4.1 Verificar referências textuais e links relativos, diff apenas documental e integridade dos arquivos preservados (15 Markdown verificados contra a árvore Git; 18 PNGs migrados com mesmo SHA de blob, sem alterações em e2e/ ou budgets).
 - [ ] 4.2 Executar npm run validate.
 - [ ] 4.3 Executar openspec.cmd validate --all --strict.
 - [ ] 4.4 Revisar e corrigir os achados, documentando skips/limitações reais.

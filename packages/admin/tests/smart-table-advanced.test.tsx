@@ -266,7 +266,14 @@ describe('AdsSmartTable column resizing', () => {
 
 	it('does not change widths on its own', () => {
 		const onChange = vi.fn();
-		render(<Table columnWidths={{ name: 200 }} onColumnWidthsChange={onChange} />);
+		// Poucas linhas bastam: renderizar as 1000 deixava o teste perto do limite de 5 s sob carga.
+		render(
+			<Table
+				columnWidths={{ name: 200 }}
+				onColumnWidthsChange={onChange}
+				rows={items.slice(0, 3)}
+			/>,
+		);
 		fireEvent.keyDown(screen.getAllByRole('separator')[0]!, { key: 'ArrowRight' });
 		expect(onChange).toHaveBeenCalledWith({ name: 210 });
 		expect(screen.getByRole('columnheader', { name: /Nome/ })).toHaveStyle({ width: '200px' });
@@ -295,7 +302,7 @@ describe('AdsSmartTable export', () => {
 	}
 
 	it('has no button without onExport', () => {
-		render(<Table />);
+		render(<Table rows={items.slice(0, 3)} />);
 		expect(screen.queryByRole('button', { name: 'Exportar' })).not.toBeInTheDocument();
 	});
 
@@ -338,7 +345,7 @@ describe('AdsSmartTable export', () => {
 	});
 
 	it('accepts a custom label', () => {
-		render(<Table labels={{ export: 'Baixar' }} onExport={() => {}} />);
+		render(<Table labels={{ export: 'Baixar' }} onExport={() => {}} rows={items.slice(0, 3)} />);
 		expect(screen.getByRole('button', { name: 'Baixar' })).toBeInTheDocument();
 	});
 

@@ -4,6 +4,7 @@ import type { ReactNode } from 'react';
 import Image from 'next/image';
 import { readServerPreference } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
+import { DemoAccountMenu, DemoNotifications, DemoOrganizationSwitcher } from '../header-controls';
 import { RouteChangeHandler } from '../route-change-handler';
 import { StorybookLink } from '../storybook-link';
 import { ThemeControl } from '../theme-control';
@@ -30,10 +31,13 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 				<div className="demo-header-tools">
 					<StorybookLink />
 					<ThemeControl initialPreference={preference} />
+					<DemoNotifications />
+					<DemoAccountMenu />
 				</div>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
 				<AdsAdminShell.Sidebar label="Navegação do demo" mobileTitle="Navegação do demo">
+					<DemoOrganizationSwitcher />
 					<DemoNavigation />
 				</AdsAdminShell.Sidebar>
 				<AdsAdminShell.Main>{children}</AdsAdminShell.Main>

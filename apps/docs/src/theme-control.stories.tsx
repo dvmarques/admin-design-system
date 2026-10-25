@@ -31,6 +31,11 @@ export const GroupWithText: Story = {
 	args: { defaultValue: 'system', optionDisplay: 'icon-text', variant: 'group' },
 };
 
+/** Botão sem borda (`ghost`), como no cabeçalho do admin demo, com o nome nas opções do menu. */
+export const BorderlessTrigger: Story = {
+	args: { defaultValue: 'system', optionDisplay: 'icon-text', triggerVariant: 'ghost' },
+};
+
 export const Disabled: Story = {
 	render: () => (
 		<div style={{ display: 'flex', gap: '1rem' }}>

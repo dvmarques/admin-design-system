@@ -2,13 +2,23 @@ import type { SVGAttributes } from 'react';
 import { classNames } from './class-names.js';
 
 const iconPaths = {
+	bell: <path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4.3 10a2 2 0 0 0 3.4 0" />,
+	building: (
+		<>
+			<path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M15 10h2a2 2 0 0 1 2 2v9M3 21h18" />
+			<path d="M9 7h2M9 11h2M9 15h2" />
+		</>
+	),
 	calendar: (
 		<path d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
 	),
 	check: <path d="m5 12 4 4L19 6" />,
+	chevronDown: <path d="m6 9 6 6 6-6" />,
 	chevronLeft: <path d="m15 6-6 6 6 6" />,
 	chevronRight: <path d="m9 6 6 6-6 6" />,
+	chevronsUpDown: <path d="m8 9 4-4 4 4m0 6-4 4-4-4" />,
 	close: <path d="m6 6 12 12M18 6 6 18" />,
+	logOut: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" />,
 	monitor: (
 		<>
 			<rect height="12" rx="2" width="18" x="3" y="4" />
@@ -24,7 +34,19 @@ const iconPaths = {
 			<path d="M12 2v2m0 16v2M4.9 4.9l1.4 1.4m11.4 11.4 1.4 1.4M2 12h2m16 0h2M4.9 19.1l1.4-1.4m11.4-11.4 1.4-1.4" />
 		</>
 	),
+	settings: (
+		<>
+			<circle cx="12" cy="12" r="3" />
+			<path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3h0a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9v0a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1Z" />
+		</>
+	),
 	search: <path d="m21 21-4.35-4.35m2.1-5.4a7.5 7.5 0 1 1-15 0 7.5 7.5 0 0 1 15 0Z" />,
+	user: (
+		<>
+			<circle cx="12" cy="8" r="4" />
+			<path d="M4 21a8 8 0 0 1 16 0" />
+		</>
+	),
 } as const;
 
 const iconSizes = {

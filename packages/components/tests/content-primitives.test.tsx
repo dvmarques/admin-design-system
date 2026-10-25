@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AdsAvatar } from '../src/avatar';
 import { AdsBadge } from '../src/badge';
 import { AdsIcon } from '../src/icon';
@@ -74,6 +74,92 @@ describe('AdsAvatar', () => {
 		expect(screen.queryByRole('img', { name: 'Ana Silva' })).not.toBeInTheDocument();
 	});
 
+	it('keeps the neutral look by default and offers token tones', () => {
+		const { rerender, container } = render(<AdsAvatar fallback="AS" />);
+		const avatar = () => container.querySelector('.ads-avatar')!;
+		expect(avatar()).toHaveClass('bg-surface-raised', 'text-text');
+		expect(avatar()).not.toHaveAttribute('style');
+
+		rerender(<AdsAvatar fallback="AS" tone="primary" />);
+		expect(avatar()).toHaveClass('bg-primary');
+		expect(avatar()).not.toHaveClass('bg-surface-raised');
+		rerender(<AdsAvatar fallback="AS" tone="danger" />);
+		expect(avatar()).toHaveClass('bg-danger-background', 'text-danger');
+	});
+
+	it('accepts any CSS color for the background and the initials', () => {
+		const { container } = render(
+			<AdsAvatar
+				backgroundColor="#7c3aed"
+				fallback="AS"
+				foregroundColor="#ffffff"
+				tone="primary"
+			/>,
+		);
+
+		expect(container.querySelector('.ads-avatar')).toHaveStyle({
+			backgroundColor: '#7c3aed',
+			color: '#ffffff',
+		});
+	});
+
+	it('tries the new image after a failed source changes', () => {
+		const { rerender } = render(<AdsAvatar alt="Ana Silva" fallback="AS" src="/quebrada.png" />);
+
+		fireEvent.error(screen.getByRole('img', { name: 'Ana Silva' }));
+		expect(screen.queryByRole('img', { name: 'Ana Silva' })).not.toBeInTheDocument();
+
+		rerender(<AdsAvatar alt="Ana Silva" fallback="AS" src="/nova.png" />);
+		expect(screen.getByRole('img', { name: 'Ana Silva' })).toHaveAttribute('src', '/nova.png');
+	});
+
+	it('treats an image that failed before hydration as a failure', () => {
+		const complete = vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true);
+		const width = vi.spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get').mockReturnValue(0);
+		const source = vi
+			.spyOn(HTMLImageElement.prototype, 'currentSrc', 'get')
+			.mockReturnValue('http://localhost/quebrada.png');
+		try {
+			render(<AdsAvatar alt="Ana" fallback="AS" src="/quebrada.png" />);
+
+			expect(screen.queryByRole('img', { name: 'Ana' })).not.toBeInTheDocument();
+			expect(screen.getByText('AS')).toBeVisible();
+		} finally {
+			complete.mockRestore();
+			width.mockRestore();
+			source.mockRestore();
+		}
+	});
+
+	it('keeps a loaded image that is already complete', () => {
+		const complete = vi.spyOn(HTMLImageElement.prototype, 'complete', 'get').mockReturnValue(true);
+		const width = vi.spyOn(HTMLImageElement.prototype, 'naturalWidth', 'get').mockReturnValue(40);
+		try {
+			render(<AdsAvatar alt="Ana" fallback="AS" src="/ok.png" />);
+
+			expect(screen.getByRole('img', { name: 'Ana' })).toBeInTheDocument();
+		} finally {
+			complete.mockRestore();
+			width.mockRestore();
+		}
+	});
+
+	it('keeps the failed fallback while the same source is rendered again', () => {
+		const { rerender } = render(<AdsAvatar alt="Ana" fallback="AS" src="/quebrada.png" />);
+
+		fireEvent.error(screen.getByRole('img', { name: 'Ana' }));
+		rerender(<AdsAvatar alt="Ana" fallback="AS" src="/quebrada.png" size="lg" />);
+
+		expect(screen.queryByRole('img', { name: 'Ana' })).not.toBeInTheDocument();
+		expect(screen.getByText('AS')).toBeVisible();
+	});
+
+	it('keeps its box with an empty fallback and no image', () => {
+		const { container } = render(<AdsAvatar fallback="" />);
+
+		expect(container.querySelector('.ads-avatar')).toHaveClass('h-10', 'w-10');
+	});
+
 	it('does not have detectable accessibility violations with a fallback', async () => {
 		const { container } = render(<AdsAvatar alt="Ana Silva" fallback="AS" />);
 
@@ -83,6 +169,28 @@ describe('AdsAvatar', () => {
 });
 
 describe('AdsIcon', () => {
+	it.each([
+		'bell',
+		'building',
+		'chevronDown',
+		'chevronsUpDown',
+		'logOut',
+		'settings',
+		'user',
+	] as const)('renders the %s icon as decorative by default', (name) => {
+		render(<AdsIcon name={name} />);
+
+		const icon = document.querySelector('.ads-icon');
+		expect(icon).toHaveAttribute('aria-hidden', 'true');
+		expect(icon?.childElementCount).toBeGreaterThan(0);
+	});
+
+	it('names new informative icons', () => {
+		render(<AdsIcon label="Notificações" name="bell" />);
+
+		expect(screen.getByRole('img', { name: 'Notificações' })).toBeInTheDocument();
+	});
+
 	it('hides decorative icons from assistive technology', () => {
 		render(<AdsIcon name="search" />);
 

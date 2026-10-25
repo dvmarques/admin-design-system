@@ -3,7 +3,7 @@ export type { AdsButtonProps, AdsButtonSize, AdsButtonVariant } from './button.j
 export { AdsBadge } from './badge.js';
 export type { AdsBadgeProps, AdsBadgeSize, AdsBadgeVariant } from './badge.js';
 export { AdsAvatar } from './avatar.js';
-export type { AdsAvatarProps, AdsAvatarSize } from './avatar.js';
+export type { AdsAvatarProps, AdsAvatarSize, AdsAvatarTone } from './avatar.js';
 export { AdsIcon } from './icon.js';
 export type { AdsIconName, AdsIconProps, AdsIconSize } from './icon.js';
 export { AdsLoadingIndicator } from './loading-indicator.js';

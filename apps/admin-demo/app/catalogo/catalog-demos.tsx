@@ -63,7 +63,10 @@ import {
 	StyleFixture,
 } from '@admin-ds/components';
 import {
+	AdsAccountMenu,
 	AdsAdminShell,
+	AdsNotificationCenter,
+	AdsOrganizationSwitcher,
 	AdsDashboardGrid,
 	AdsDashboardPanel,
 	AdsMetricCard,
@@ -74,6 +77,7 @@ import {
 	AdsListFlow,
 	AdsStepForm,
 	type AdsFilterValues,
+	type AdsNotification,
 	type AdsSmartTableSort,
 } from '@admin-ds/admin';
 
@@ -968,6 +972,347 @@ export function ThemeControlDemo() {
 	);
 }
 
+export function AccountMenuDemo() {
+	// Imagem corrompida embutida: falha ao decodificar sem requisição de rede.
+	const brokenImage = 'data:image/png;base64,AAAA';
+	const [feedback, setFeedback] = useState('Nenhuma ação executada.');
+	// Foto fictícia embutida: sem rede, e a falha de imagem usa uma origem inexistente.
+	const photo = `data:image/svg+xml,${encodeURIComponent(
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#4f46e5"/><circle cx="20" cy="16" r="7" fill="#fff"/><path d="M6 40a14 14 0 0 1 28 0Z" fill="#fff"/></svg>',
+	)}`;
+	const groups = [
+		{
+			id: 'conta',
+			actions: [
+				{
+					id: 'minha-conta',
+					icon: 'user' as const,
+					label: 'Minha conta',
+					onSelect: () => setFeedback('Minha conta aberta (demonstração).'),
+				},
+				{
+					id: 'preferencias',
+					icon: 'settings' as const,
+					label: 'Preferências',
+					onSelect: () => setFeedback('Preferências abertas (demonstração).'),
+				},
+				{ id: 'indisponivel', label: 'Faturamento', disabled: true },
+			],
+		},
+		{
+			id: 'sessao',
+			actions: [
+				{
+					id: 'sair',
+					icon: 'logOut' as const,
+					label: 'Sair',
+					tone: 'danger' as const,
+					// Assíncrona: o menu fica ocupado e aberto até concluir, sem encerrar sessão real.
+					onSelect: () =>
+						new Promise<void>((resolve) => setTimeout(resolve, 600)).then(() =>
+							setFeedback('Saída simulada: nenhuma sessão real foi encerrada.'),
+						),
+				},
+			],
+		},
+	];
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'center' }}>
+				<AdsAccountMenu
+					groups={groups}
+					user={{ name: 'Ana Souza', email: 'ana.souza@exemplo.com.br', avatarSrc: photo }}
+				/>
+				<AdsAccountMenu
+					groups={groups}
+					switchAccount={{
+						icon: 'user',
+						label: 'Usar outra conta',
+						onSelect: () => setFeedback('Troca de conta solicitada (demonstração).'),
+					}}
+					user={{ name: 'Bruno Lima', email: 'bruno.lima@exemplo.com.br' }}
+				/>
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Carla Dias',
+						email: 'carla.dias@exemplo.com.br',
+						avatarSrc: brokenImage,
+					}}
+				/>
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Maria Aparecida de Albuquerque Montenegro Vasconcelos Figueiredo',
+						email:
+							'maria.aparecida.albuquerque.montenegro@empresa-com-nome-muito-longo.example.com',
+						initials: 'MA',
+					}}
+				/>
+				<AdsAccountMenu groups={groups} user={{}} />
+				<AdsAccountMenu groups={groups} user={{ name: 'Eduardo Prado', avatarTone: 'success' }} />
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Fernanda Rocha',
+						avatarBackgroundColor: '#0f766e',
+						avatarForegroundColor: '#ffffff',
+					}}
+				/>
+			</div>
+			<p role="status">{feedback}</p>
+		</div>
+	);
+}
+
+export function NotificationCenterDemo() {
+	const [scenario, setScenario] = useState<'normal' | 'loading' | 'error' | 'empty' | 'long'>(
+		'normal',
+	);
+	const [read, setRead] = useState<string[]>([]);
+	const [pages, setPages] = useState(1);
+	const [loadingMore, setLoadingMore] = useState(false);
+	const [log, setLog] = useState('Nenhum item aberto.');
+	const wait = (milliseconds: number) =>
+		new Promise((resolve) => setTimeout(resolve, milliseconds));
+	const base: AdsNotification[] = [
+		{
+			id: 'pedido',
+			title: 'Pedido aprovado',
+			description: 'O pedido 1024 foi aprovado.',
+			icon: 'check',
+			timeLabel: 'há 5 min',
+			read: false,
+		},
+		{
+			id: 'comentario',
+			title: 'Novo comentário',
+			description: 'João Mendes comentou no cadastro.',
+			avatar: { fallback: 'JM', alt: 'João Mendes' },
+			timeLabel: 'há 32 min',
+			read: false,
+			href: '#detalhe',
+		},
+		{
+			id: 'exportacao',
+			title: 'Exportação concluída',
+			icon: 'info',
+			timestamp: '2026-10-24T18:30:00Z',
+			read: true,
+		},
+	];
+	const older: AdsNotification[] = Array.from({ length: 4 }, (_, index) => ({
+		id: `antiga-${index}`,
+		title: `Notificação antiga ${index + 1}`,
+		timeLabel: `${index + 2} dias atrás`,
+		read: index % 2 === 0,
+	}));
+	const long: AdsNotification[] = Array.from({ length: 60 }, (_, index) => ({
+		id: `longa-${index}`,
+		title: `Notificação ${index + 1} com um título razoavelmente longo para quebrar linhas`,
+		description: 'Descrição curta da notificação.',
+		timeLabel: `${index + 1} h atrás`,
+		read: index > 40,
+	}));
+	const source =
+		scenario === 'empty'
+			? []
+			: scenario === 'long'
+				? long
+				: [...base, ...older.slice(0, (pages - 1) * 2)];
+	const notifications = source.map((item) => ({
+		...item,
+		read: item.read || read.includes(item.id),
+	}));
+	const loaded = notifications.filter((item) => !item.read).length;
+	const unreadCount =
+		scenario === 'long'
+			? Math.max(120 - read.length, 0)
+			: loaded + (pages < 3 && scenario === 'normal' ? 1 : 0);
+	return (
+		<div style={{ display: 'grid', gap: '1rem', justifyItems: 'start' }}>
+			<AdsField label="Cenário">
+				<AdsSelect
+					value={scenario}
+					onChange={(event) => {
+						setScenario(event.target.value as typeof scenario);
+						setRead([]);
+						setPages(1);
+					}}
+				>
+					<option value="normal">Normal</option>
+					<option value="loading">Carregando</option>
+					<option value="error">Erro ao carregar</option>
+					<option value="empty">Vazio</option>
+					<option value="long">Lista longa (120 não lidas)</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsNotificationCenter
+				hasMore={scenario === 'normal' && pages < 3}
+				historyHref="#historico"
+				loadingMore={loadingMore}
+				notifications={notifications}
+				onItemSelect={(item) => setLog(`Item aberto: ${item.title}`)}
+				onLoadMore={async () => {
+					setLoadingMore(true);
+					await wait(500);
+					setPages((current) => current + 1);
+					setLoadingMore(false);
+				}}
+				onMarkAllRead={async () => {
+					await wait(400);
+					setRead(source.map((item) => item.id));
+				}}
+				onMarkRead={async (id) => {
+					await wait(250);
+					setRead((current) => [...current, id]);
+				}}
+				onRetry={() => setScenario('normal')}
+				status={scenario === 'loading' ? 'loading' : scenario === 'error' ? 'error' : 'ready'}
+				unreadCount={scenario === 'loading' || scenario === 'error' ? 0 : unreadCount}
+			/>
+			<p role="status">{log}</p>
+		</div>
+	);
+}
+
+export function OrganizationSwitcherDemo() {
+	const brokenImage = 'data:image/png;base64,AAAA';
+	const [value, setValue] = useState('acme');
+	const [count, setCount] = useState<'zero' | 'one' | 'many'>('many');
+	const [status, setStatus] = useState<'ready' | 'loading' | 'error'>('ready');
+	const [outcome, setOutcome] = useState<'success' | 'failure'>('success');
+	const [log, setLog] = useState('Organização atual: Acme Brasil.');
+	const all = [
+		{ id: 'acme', name: 'Acme Brasil', description: 'Plano Enterprise' },
+		{ id: 'globex', name: 'Globex Logística', description: 'Plano Business' },
+		{ id: 'initech', name: 'Initech', description: 'Plano Starter' },
+		{ id: 'umbrella', name: 'Umbrella Saúde', logoSrc: brokenImage },
+		{ id: 'hooli', name: 'Hooli Tecnologia' },
+		{ id: 'stark', name: 'Stark Indústrias' },
+		{ id: 'wayne', name: 'Wayne Participações' },
+		{ id: 'vandelay', name: 'Vandelay Importações', disabled: true },
+	];
+	const organizations = count === 'zero' ? [] : count === 'one' ? all.slice(0, 1) : all;
+	const current = organizations.find((item) => item.id === value);
+	const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+	const select = async (id: string) => {
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		if (outcome === 'failure') throw new Error('Falha simulada');
+		setValue(id);
+		setLog(`Organização atual: ${all.find((item) => item.id === id)?.name}.`);
+	};
+	return (
+		<div style={{ display: 'grid', gap: '1.5rem' }}>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+				<AdsField label="Quantidade de organizações">
+					<AdsSelect
+						value={count}
+						onChange={(event) => setCount(event.target.value as typeof count)}
+					>
+						<option value="many">Muitas (com busca)</option>
+						<option value="one">Uma</option>
+						<option value="zero">Nenhuma</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsField label="Lista">
+					<AdsSelect
+						value={status}
+						onChange={(event) => setStatus(event.target.value as typeof status)}
+					>
+						<option value="ready">Pronta</option>
+						<option value="loading">Carregando</option>
+						<option value="error">Erro</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsField label="Resultado da troca">
+					<AdsSelect
+						value={outcome}
+						onChange={(event) => setOutcome(event.target.value as typeof outcome)}
+					>
+						<option value="success">Sucesso (600 ms)</option>
+						<option value="failure">Falha</option>
+					</AdsSelect>
+				</AdsField>
+			</div>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-start' }}>
+				<div style={{ width: '16rem' }}>
+					<AdsOrganizationSwitcher
+						manage={{ onSelect: () => setLog('Gerenciar organizações (demonstração).') }}
+						onRetry={() => setStatus('ready')}
+						onValueChange={select}
+						organizations={organizations}
+						status={status}
+						value={current ? value : undefined}
+					/>
+				</div>
+				<div style={{ width: '4.5rem' }}>
+					<AdsOrganizationSwitcher
+						collapsed
+						onValueChange={select}
+						organizations={organizations}
+						status={status}
+						value={current ? value : undefined}
+					/>
+				</div>
+			</div>
+			<p role="status">{log}</p>
+			<div style={{ display: 'grid', gap: '1rem' }}>
+				<iframe
+					title="Shell com seletor de organização"
+					src={`${basePath}/catalogo-organizacao/?variante=com`}
+					style={{ width: '100%', height: '20rem', border: 0 }}
+				/>
+				<iframe
+					title="Shell sem seletor de organização"
+					src={`${basePath}/catalogo-organizacao/?variante=sem`}
+					style={{ width: '100%', height: '20rem', border: 0 }}
+				/>
+			</div>
+		</div>
+	);
+}
+
+/** Sidebar composta com ou sem o seletor: sem ele, a navegação ocupa o topo, sem espaço residual. */
+export function OrganizationShellExample({ withSwitcher }: { withSwitcher: boolean }) {
+	const [value, setValue] = useState('acme');
+	return (
+		<div style={{ height: '18rem', width: '100%', overflow: 'auto' }}>
+			<AdsAdminShell>
+				<AdsAdminShell.Header>
+					<AdsAdminShell.NavigationTrigger />
+					<AdsAdminShell.SidebarToggle />
+					<span>{withSwitcher ? 'Com seletor de organização' : 'Sem seletor de organização'}</span>
+				</AdsAdminShell.Header>
+				<AdsAdminShell.Body>
+					<AdsAdminShell.Sidebar label="Navegação do exemplo" mobileTitle="Menu do exemplo">
+						{withSwitcher ? (
+							<AdsOrganizationSwitcher
+								onValueChange={setValue}
+								organizations={[
+									{ id: 'acme', name: 'Acme Brasil', description: 'Plano Enterprise' },
+									{ id: 'globex', name: 'Globex Logística' },
+								]}
+								value={value}
+							/>
+						) : null}
+						<AdsAdminShell.Navigation>
+							<AdsAdminShell.NavigationItem>
+								<a aria-current="page" href="#conteudo">
+									Início
+								</a>
+							</AdsAdminShell.NavigationItem>
+						</AdsAdminShell.Navigation>
+					</AdsAdminShell.Sidebar>
+					<AdsAdminShell.Main>
+						<h1 id="conteudo">Conteúdo</h1>
+					</AdsAdminShell.Main>
+				</AdsAdminShell.Body>
+			</AdsAdminShell>
+		</div>
+	);
+}
+
 export function ThemeToggleDemo() {
 	const [theme, setTheme] = useState<'light' | 'dark'>('light');
 	return (
@@ -1038,6 +1383,9 @@ export const catalogDemos = {
 	BulkActionBar: BulkActionBarDemo,
 	StepForm: StepFormDemo,
 	ThemeControl: ThemeControlDemo,
+	AccountMenu: AccountMenuDemo,
+	NotificationCenter: NotificationCenterDemo,
+	OrganizationSwitcher: OrganizationSwitcherDemo,
 	ThemeToggle: ThemeToggleDemo,
 	StyleFixture: StyleFixtureDemo,
 };

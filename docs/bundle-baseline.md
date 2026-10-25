@@ -220,3 +220,23 @@ da janela e botão de exportação) e do CSS `ads-smart-table-*` das alças e da
 virtualizada. Os recursos são opt-in, mas vivem no mesmo pacote; não há dependência
 de runtime nova nem virtualização de terceiros. O baseline de `@admin-ds/admin` foi
 atualizado de 199723 para **236799**, aprovado explicitamente para esta PR.
+
+## Conta, notificações e organização (#185)
+
+Medido com `npm run build` e `inspect:packages` (Node 22.22.0, LF). Na `develop`
+`b1d4695`, `@admin-ds/admin` tem baseline **236799 bytes**. Após a #185: **332978
+bytes** (+96179, +40,6%, 89 arquivos); components mede 410178 (baseline 382334, dentro
+da tolerância de 10%, só os sete ícones novos e o `AdsAvatar`) e tokens não mudou.
+
+O incremento vem de três composições novas (`AdsAccountMenu`, `AdsNotificationCenter` e
+`AdsOrganizationSwitcher`) e de `panel-utils`, cada um com JavaScript, source maps e
+declarações, e do CSS `ads-account-menu-*`, `ads-notification-center-*` e
+`ads-organization-switcher-*` (cerca de 600 linhas). Os componentes são exports nomeados
+(sem efeito colateral na importação), então só custam a quem os importa; não há dependência
+de runtime nova.
+
+Orçamentos atualizados, cada um com cerca de 10% de folga sobre o build medido:
+baseline de distribuição de admin 236799 → **332978**; JS/CSS publicados de admin
+118900 → **171400** (medido 155790) e gzip 34900 → **47100** (medido 42779); cenário
+`admin-public` com CSS minificado 76600 → **91600** (medido 83285) e CSS gzip 12300 →
+**13800** (medido 12581). Os orçamentos de JS do cenário (65125 de 70000; gzip 22244 de 23900) não mudaram. O custo é explícito para a revisão desta PR.

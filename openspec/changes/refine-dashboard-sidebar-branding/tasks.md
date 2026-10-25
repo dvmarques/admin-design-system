@@ -47,3 +47,11 @@
 - [x] 6.3 Validar nomes curtos/longos, foco, geometria e regressões nos navegadores; atualizar evidências e executar gates locais.
 
 - Consistência validada: 21 smoke nos três navegadores e 302 E2E completos aprovados com --ignore-snapshots; 1.064 testes unitários/integração aprovados. Build, Storybook, tipos, lint, formatação, skills, artefatos gerados e 54 itens OpenSpec validados. test:quality continua limitado pela asserção preexistente /work versus C:\\work em test:ci no Windows. Capturas finais atualizadas e revisadas.
+
+## 7. Alinhamento final e menu móvel
+
+- [x] 7.1 Alinhar limites do seletor ao item ativo e estabilizar posição do símbolo da marca.
+- [x] 7.2 Corrigir altura do Drawer, preencher viewport no menu do shell e remover título duplicado do demo, preservando acessibilidade.
+- [x] 7.3 Atualizar testes nos três navegadores, stories, documentação, changelog e capturas; executar gates locais completos.
+
+- Alinhamento final validado: 1.065 testes unitários/integração e 305 E2E locais aprovados com --ignore-snapshots. Cobertura nos três navegadores para coordenadas do símbolo, limites laterais da organização/seleção, menu móvel de 390×844, 320×568 e 740×390, rolagem e foco. Build completo, tipos, lint, formatação e 54 itens OpenSpec aprovados; test:quality mantém apenas a falha conhecida de caminho Windows em test:ci. Capturas finais revisadas e atualizadas.

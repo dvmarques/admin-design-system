@@ -654,3 +654,11 @@ body {
 		flex: 0 0 auto;
 	}
 }
+
+@media (min-width: 48rem) {
+	.demo-admin-shell:has(aside[data-collapsed='false']) .demo-brand-heading {
+		margin-inline-start: calc(
+			(var(--ads-admin-shell-sidebar-width-collapsed) - 1px - 30px) / 2 - var(--ads-spacing-4)
+		);
+	}
+}

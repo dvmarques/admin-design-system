@@ -57,3 +57,12 @@ O demo MUST fornecer ao avatar da organização o tom primary dos tokens, como n
 
 - **WHEN** a pessoa alterna o estado da sidebar ou escolhe outra organização
 - **THEN** o avatar mantém o fundo colorido e as iniciais ou logo corretos, sem afetar a seleção
+
+### Requirement: Branding mantém sua posição ao recolher
+
+O símbolo oficial do demo MUST manter as mesmas coordenadas ao expandir ou recolher a sidebar desktop. Expandido, somente o nome Admin DS aparece ao lado. No mobile o menu MUST usar apenas esse branding como identificação visível, sem título Navegação do demo adicional.
+
+#### Scenario: Alternância de estado
+
+- **WHEN** a pessoa expande ou recolhe a sidebar
+- **THEN** o símbolo permanece centralizado na largura recolhida, na mesma posição horizontal e vertical

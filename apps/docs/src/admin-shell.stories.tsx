@@ -334,6 +334,10 @@ function SidebarBrand() {
 					alignItems: 'center',
 					minWidth: 0,
 					flex: 1,
+					marginInlineStart:
+						isDesktop && !collapsed
+							? 'calc((var(--ads-admin-shell-sidebar-width-collapsed) - 1px - 30px) / 2 - var(--ads-spacing-4))'
+							: 0,
 				}}
 			>
 				<img src="./admin-ds-favicon.svg" width={30} height={30} alt="" />
@@ -363,7 +367,7 @@ function SidebarBrandShell({
 				</div>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
-				<AdsAdminShell.Sidebar header={<SidebarBrand />} mobileTitle="Navegação">
+				<AdsAdminShell.Sidebar header={<SidebarBrand />}>
 					{organization && (
 						<AdsOrganizationSwitcher
 							organizations={[

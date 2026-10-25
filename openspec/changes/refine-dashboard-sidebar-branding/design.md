@@ -37,3 +37,12 @@ API opt-in, nenhuma migração obrigatória. Integrar biblioteca e consumidores 
 - Expandido, o seletor organiza a âncora do popover como item de grid esticado: o gatilho ocupa toda a largura disponível, independente do nome. Não há largura fixa em pixels nem alteração global do Popover; rótulos longos continuam truncáveis.
 - O item ativo recolhido tem 2,75rem por 2,75rem. A navegação é um container inline: unidades cqi permitem calcular a expansão lateral do item considerando o espaço tomado pela scrollbar. No expandido, a mesma expansão considera a diferença entre as larguras da sidebar. Assim o recuo da seleção é igual nos dois estados, sem mudar largura da barra, posição dos ícones ou indentação das categorias. Só o item ativo ganha essa largura adicional.
 - Alternativa descartada: ampliar tudo com uma margem negativa constante produziria seleção maior que 44px em navegadores com scrollbar sobreposta. O cálculo é CSS, sem medição ou estado JavaScript novo.
+
+## Alinhamento final e navegação móvel
+
+- O container inline passa da navegação interna para a região rolável nav do shell, compartilhando o mesmo cálculo de recuo entre seleção e organização. Só a âncora do seletor expandido ganha margem lateral negativa; seu padding compensa a expansão para preservar avatar e texto. Recolhido permanece intacto.
+- O demo desloca o branding expandido para a coordenada horizontal do símbolo centralizado na largura recolhida, considerando largura pública da sidebar, borda e imagem de 30px. Não altera posição do símbolo recolhido nem a altura do topo. As stories demonstram o mesmo alinhamento.
+- O limite max-md de altura pertence apenas a AdsDialog. AdsDrawer já declara h-full/max-h-none, mas recebia também a classe responsiva limitadora de diálogo; retirar esse conflito corrige a faixa descoberta no rodapé para ambos os posicionamentos, sem mudar foco ou overlays.
+- O menu móvel do shell usa largura integral e cantos retos (CSS ads-admin-shell-mobile-drawer fora da layer para prevalecer sobre utilitários distribuídos). O Drawer genérico preserva sua largura padrão. No demo, omite-se mobileTitle: a identificação fica somente no branding, mantendo aria-label e botão de fechar. O topo móvel reserva espaço para esse botão.
+
+- No WebKit, o clique não foca o botão nativamente. NavigationTrigger foca a si mesmo antes de abrir, somente se o evento não foi cancelado; isso registra a origem correta para retorno de foco sem alterar estados ou callbacks públicos. Regressão unitária simula ativação sem foco nativo.

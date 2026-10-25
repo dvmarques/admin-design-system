@@ -27,3 +27,12 @@ O seletor de organização expandido MUST ocupar a largura disponível no contê
 
 - **WHEN** a sidebar está recolhida
 - **THEN** o avatar permanece no mesmo lugar com borda externa transparente, nome acessível e foco visível; o expandido preserva sua borda
+
+### Requirement: Seletor alinha sua caixa ao item ativo
+
+Na composição sidebar-header expandida, o seletor de organização MUST ter a mesma largura e os mesmos limites laterais do destaque de um item raiz ativo da navegação, preservando a posição do avatar e dos rótulos.
+
+#### Scenario: Sidebar com scrollbar
+
+- **WHEN** a largura útil muda por scrollbar ou troca de viewport
+- **THEN** a caixa do seletor e o destaque raiz permanecem alinhados, independentemente do tamanho do nome

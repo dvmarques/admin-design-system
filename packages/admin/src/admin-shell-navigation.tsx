@@ -31,7 +31,11 @@ export function AdsAdminShellNavigationTrigger({
 			className={classNames('ads-admin-shell-navigation-trigger', className)}
 			onClick={(event) => {
 				onClick?.(event);
-				if (!event.defaultPrevented) setMobileOpen(true);
+				if (!event.defaultPrevented) {
+					// Safari does not focus buttons on pointer activation by default.
+					event.currentTarget.focus();
+					setMobileOpen(true);
+				}
 			}}
 			type={props.type ?? 'button'}
 		>

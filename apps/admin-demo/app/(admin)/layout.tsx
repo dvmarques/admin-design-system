@@ -36,7 +36,6 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 						</>
 					}
 					label="Navegação do demo"
-					mobileTitle="Navegação do demo"
 				>
 					<DemoOrganizationSwitcher />
 					<DemoNavigation />

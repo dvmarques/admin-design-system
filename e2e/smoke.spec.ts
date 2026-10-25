@@ -76,11 +76,7 @@ test('mantém seleção proporcional, recuo lateral e seletor de largura estáve
 	const organization = nav.getByRole('button', { name: /^Organização atual/ });
 	await waitForHydration(organization);
 	const initialWidth = (await organization.boundingBox())!.width;
-	expect(
-		Math.abs(
-			initialWidth - (await page.locator('.ads-organization-switcher').boundingBox())!.width,
-		),
-	).toBeLessThanOrEqual(1);
+	expect(Math.abs(initialWidth - (await active.boundingBox())!.width)).toBeLessThanOrEqual(1);
 	for (const name of ['Initech', 'Globex Logística']) {
 		await organization.click();
 		await page
@@ -97,8 +93,18 @@ test('mantém seleção proporcional, recuo lateral e seletor de largura estáve
 			el.style.scrollbarGutter = value;
 		}, gutter);
 		const expanded = (await active.boundingBox())!;
+		const expandedOrganization = (await organization.boundingBox())!;
+		expect(Math.abs(expandedOrganization.width - expanded.width)).toBeLessThanOrEqual(1);
+		expect(Math.abs(expandedOrganization.x - expanded.x)).toBeLessThanOrEqual(1);
+		const mark = page.locator('.ads-admin-shell-sidebar-header .demo-brand-heading img');
+		const expandedMark = (await mark.boundingBox())!;
+
 		await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
 		const collapsed = (await active.boundingBox())!;
+		const collapsedMark = (await mark.boundingBox())!;
+		expect(Math.abs(collapsedMark.x - expandedMark.x)).toBeLessThanOrEqual(0.5);
+		expect(collapsedMark.y).toBe(expandedMark.y);
+
 		expect(collapsed.width).toBeCloseTo(44, 0);
 		expect(collapsed.height).toBeCloseTo(44, 0);
 		expect(Math.abs(collapsed.x - expanded.x)).toBeLessThanOrEqual(1);
@@ -113,5 +119,41 @@ test('mantém seleção proporcional, recuo lateral e seletor de largura estáve
 			el.style.removeProperty('border-color');
 		});
 		await page.getByRole('button', { name: 'Expandir barra lateral' }).click();
+	}
+});
+
+test('menu móvel cobre a viewport e usa somente a marca como identificação visível', async ({
+	page,
+}) => {
+	for (const viewport of [
+		{ width: 390, height: 844 },
+		{ width: 320, height: 568 },
+		{ width: 740, height: 390 },
+	]) {
+		await page.setViewportSize(viewport);
+		await page.goto('/');
+		const trigger = page.getByRole('button', { name: 'Abrir navegação' });
+		await waitForHydration(trigger);
+		await trigger.click();
+		const drawer = page.getByRole('dialog', { name: 'Navegação do demo' });
+		await expect(drawer).toBeVisible();
+		const box = (await drawer.boundingBox())!;
+		expect(box.x).toBe(0);
+		expect(box.y).toBe(0);
+		expect(box.width).toBe(viewport.width);
+		expect(box.height).toBe(viewport.height);
+		await expect(drawer.getByRole('heading', { name: 'Navegação do demo' })).toHaveCount(0);
+		await expect(drawer.locator('.demo-brand-heading')).toHaveText('Admin DS');
+		const close = drawer.getByRole('button', { name: 'Fechar navegação' });
+		expect(
+			await close.evaluate((el) => {
+				const b = el.getBoundingClientRect();
+				return el.contains(document.elementFromPoint(b.x + b.width / 2, b.y + b.height / 2));
+			}),
+		).toBe(true);
+		await drawer.evaluate((el) => el.scrollTo(0, el.scrollHeight));
+		expect(await drawer.evaluate((el) => el.scrollTop)).toBeGreaterThan(0);
+		await page.keyboard.press('Escape');
+		await expect(trigger).toBeFocused();
 	}
 });

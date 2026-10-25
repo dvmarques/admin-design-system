@@ -443,3 +443,18 @@ describe('optional sidebar header composition', () => {
 		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
 	});
 });
+
+it('captures the mobile trigger as focus origin when pointer activation does not focus it', () => {
+	viewport = installViewport(false);
+	let origin: Element | null = null;
+	render(
+		<ExampleShell
+			onMobileOpenChange={(open) => {
+				if (open) origin = document.activeElement;
+			}}
+		/>,
+	);
+	const button = trigger();
+	fireEvent.click(button);
+	expect(origin).toBe(button);
+});

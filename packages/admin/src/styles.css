@@ -1932,7 +1932,7 @@
 		border-color: transparent;
 	}
 	@media (min-width: 48rem) {
-		.ads-admin-shell--sidebar-header .ads-sidebar-navigation {
+		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-desktop > .ads-admin-shell-sidebar {
 			container-type: inline-size;
 			--ads-sidebar-compact-content-width: calc(
 				100cqi -
@@ -1941,7 +1941,7 @@
 		}
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
-			.ads-sidebar-navigation {
+			> .ads-admin-shell-sidebar {
 			--ads-sidebar-compact-content-width: 100cqi;
 		}
 		.ads-admin-shell--sidebar-header
@@ -1961,4 +1961,36 @@
 			padding-inline: var(--ads-sidebar-selection-outset);
 		}
 	}
+}
+
+/* Align the expanded organization frame to the root navigation selection. */
+@layer components {
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher {
+			--ads-sidebar-selection-outset: calc(
+				(2.75rem - var(--ads-sidebar-compact-content-width)) / 2
+			);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher
+			> * {
+			margin-inline: calc(-1 * var(--ads-sidebar-selection-outset));
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher-trigger {
+			padding-inline: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
+		}
+	}
+	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar-header {
+		padding-inline-end: var(--ads-spacing-10);
+	}
+}
+/* Overrides the reusable Drawer's width/radius utilities only in the shell's mobile navigation. */
+.ads-admin-shell-mobile-drawer {
+	width: 100%;
+	border-radius: 0;
 }

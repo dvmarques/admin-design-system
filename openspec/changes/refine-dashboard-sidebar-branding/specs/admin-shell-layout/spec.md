@@ -42,3 +42,12 @@ Na composição sidebar-header, o item ativo recolhido MUST ter destaque de 2,75
 
 - **WHEN** os itens cabem ou o navegador usa scrollbar sobreposta
 - **THEN** o destaque recolhido continua quadrado, com recuo coerente no estado expandido
+
+### Requirement: Menu móvel do shell ocupa a viewport
+
+O menu móvel do shell MUST ocupar a largura e altura da viewport sem faixa de backdrop no rodapé. O branding opcional MUST coexistir com o botão de fechar sem sobreposição, mesmo sem mobileTitle.
+
+#### Scenario: Menu sem título adicional
+
+- **WHEN** o consumidor fornece branding e omite mobileTitle
+- **THEN** marca, organização e navegação aparecem a partir do topo, sem espaço editorial vazio, mantendo nome acessível, fechamento e foco

@@ -40,3 +40,5 @@ Snapshots oficiais devem ser regenerados e confirmados em Linux pelo workflow
 **Atualizar baselines visuais**, com revisão das diferenças intencionais antes da entrega.
 
 Refinamento de consistência: o seletor expandido ocupa toda a largura disponível, mesmo com nomes curtos. Recolhido, apenas a cor da borda fica transparente; o avatar conserva a posição. A seleção ativa é de 44×44px no recolhido e mantém o mesmo recuo lateral no expandido, com cálculo que considera a scrollbar. A regressão smoke verifica esses contratos nos três navegadores, com gutter stable e auto.
+
+Alinhamento final: a caixa expandida da organização coincide com os limites laterais do item raiz ativo; o símbolo da marca mantém as coordenadas ao recolher. O menu móvel agora cobre toda a viewport, inclusive o rodapé, e começa diretamente com logo/Admin DS, sem título Navegação do demo duplicado. O smoke verifica os três navegadores em 390×844, 320×568 e 740×390, incluindo rolagem e retorno de foco.

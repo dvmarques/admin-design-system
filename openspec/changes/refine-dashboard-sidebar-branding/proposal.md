@@ -20,6 +20,7 @@ Nenhuma.
 ### Modified Capabilities
 
 - `admin-shell-layout`: composição opcional com topo da sidebar alinhado ao header.
+- `overlay-dialogs`: corrigir altura total do Drawer no mobile, sem mudar o limite dos diálogos.
 - `organization-switcher`: tom opcional do avatar da organização, mantendo neutral por padrão.
 - `admin-demo-application`: posição responsiva da marca e densidade da visão geral.
 
@@ -30,3 +31,5 @@ Perfil **Critical**: API aditiva em AdsAdminShellProps (layout) e AdsAdminShellS
 Fora do escopo: #91, auditoria completa #152, novas paletas, fontes, backend, autenticação, persistência obrigatória e reformulação dos controles #185/#182.
 
 Refinamento aprovado: controle circular na divisória, nome Admin DS em uma linha e avatar da organização primary como o usuário conectado. O recolhimento não aumenta a altura padrão de 64px.
+
+Refinamento final: seletor expandido alinhado ao retângulo ativo, símbolo da marca com coordenadas invariantes ao recolher, menu móvel de ponta a ponta e identificação somente por marca/nome, sem título editorial duplicado. Afeta também AdsDrawer em @admin-ds/components (correção de max-height no mobile).

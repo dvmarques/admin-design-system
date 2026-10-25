@@ -6,18 +6,23 @@ on:
   push:
     branches:
       - develop
+  pull_request:
+    branches:
+      - develop
+    types: [opened, synchronize, reopened, ready_for_review]
   workflow_dispatch:
 
 permissions:
   contents: read
 
 concurrency:
-  group: pages
+  group: pages-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'publish' }}
   cancel-in-progress: false
 
 jobs:
   build:
     name: Construir o site
+    if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
@@ -35,14 +40,17 @@ jobs:
       - run: npx playwright install --with-deps chromium
       - name: Verificar o site sob o subcaminho do repositório
         run: npm run test:e2e:pages
-      - uses: actions/configure-pages@v5
-      - uses: actions/upload-pages-artifact@v4
+      - if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+        uses: actions/configure-pages@v5
+      - if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
+        uses: actions/upload-pages-artifact@v4
         with:
           path: site
 
   deploy:
     name: Publicar
     needs: build
+    if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'
     runs-on: ubuntu-latest
     permissions:
       pages: write

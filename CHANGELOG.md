@@ -80,6 +80,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `fix-pages-navigation` (issue #189) - Move o acesso opcional ao Storybook do cabeçalho para a navegação principal, disponível também na sidebar recolhida e no menu móvel.
+
 - `issue-151-admin-demo-component-catalog` (issue #151) - Inclui a resolução local de dependências transitivas no lockfile, sem alterar os manifests ou as versões principais da interface, e os imports de tipos gerados para o modo de desenvolvimento do Next.js.
 
 - `enhance-134-overlay-layer-manager` (issue #134) - Gerenciamento interno de camadas dos overlays: somente o modal superior trata Tab/Shift+Tab (popups descendentes seguem o próprio fluxo), o clique externo respeita a hierarquia lógica dos portais, o backdrop fecha apenas a camada superior quando há um popup aberto, e o scroll da página fica bloqueado enquanto houver modal, com restauração ao fechar o último. Sem mudança em APIs públicas ou CSS.
@@ -206,6 +208,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   e processo, sem mudança de API pública nem de pacotes distribuídos.
 
 #### Fixed
+
+- `fix-pages-navigation` (issue #189) - Corrige a validação do logo visível no GitHub Pages para não confundir as marcas responsivas desktop e móvel, cobrindo os estados do menu nos dois temas. A validação Pages também executa em PRs para develop no Linux, sem publicação.
 
 - `issue-151-admin-demo-component-catalog` (issue #151) - Preserva os grupos expandidos/recolhidos da sidebar durante a navegação e abre o grupo do destino sem remontar os demais.
 

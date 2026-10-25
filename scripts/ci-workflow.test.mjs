@@ -131,3 +131,24 @@ test('no workflow uses pull_request_target', () => {
 		assert.doesNotMatch(read(`.github/workflows/${file}`), /pull_request_target/, file);
 	}
 });
+
+test('Pages verifies pull requests in Linux and publishes only develop outside pull requests', () => {
+	const pages = read('.github/workflows/pages.yml');
+	assert.match(pages, /pull_request:\n\s+branches:\n\s+- develop/);
+	assert.match(pages, /types: \[opened, synchronize, reopened, ready_for_review\]/);
+	assert.match(
+		pages,
+		/if: github.event_name != 'pull_request' \|\| github.event.pull_request.draft == false/,
+	);
+	assert.match(pages, /runs-on: ubuntu-latest/);
+	assert.match(pages, /run: npm run test:e2e:pages/);
+	const gate = "if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'";
+	for (const action of ['configure-pages', 'upload-pages-artifact']) {
+		const step = pages.split('\n      - ').find((step) => step.includes(`actions/${action}@`));
+		assert.ok(step?.includes(gate), `${action} must never run in a PR`);
+	}
+	const deploy = pages.slice(pages.indexOf('\n  deploy:'));
+	assert.ok(deploy.includes(gate));
+	assert.match(deploy, /needs: build/);
+	assert.match(pages, /group: pages-.*github.event.pull_request.number/);
+});

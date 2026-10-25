@@ -83,17 +83,38 @@ test('demo publicado: o tema alternado persiste ao recarregar', async ({ page })
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 });
 
-test('demo publicado: o link do cabeçalho leva ao Storybook', async ({ page }) => {
-	await page.goto(`${base}/`);
+for (const theme of ['light', 'dark'] as const) {
+	for (const mode of ['expanded', 'collapsed', 'mobile'] as const) {
+		test(`demo publicado: Storybook na navegação ${mode}, tema ${theme}`, async ({ page }) => {
+			await page
+				.context()
+				.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:4173' }]);
+			await page.setViewportSize({ width: mode === 'mobile' ? 390 : 1280, height: 844 });
+			await page.goto(`${base}/`);
+			await waitForHydration(themeTrigger(page));
+			if (mode === 'mobile') await page.getByRole('button', { name: 'Abrir navegação' }).click();
+			if (mode === 'collapsed')
+				await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
 
-	const link = page.getByRole('link', { name: 'Storybook (abre em nova aba)' });
-	await expect(link).toHaveAttribute('href', `${base}/storybook/`);
-	await expect(link).toHaveAttribute('target', '_blank');
-
-	const popup = page.waitForEvent('popup');
-	await link.click();
-	await expect((await popup).url()).toBe(`http://127.0.0.1:4173${base}/storybook/`);
-});
+			const navigation = page.getByRole('navigation', { name: 'Navegação do demo' });
+			const link = navigation.getByRole('link', { name: 'Storybook (abre em nova aba)' });
+			await expect(link).toBeVisible();
+			await expect(page.getByRole('banner').getByRole('link', { name: /Storybook/ })).toHaveCount(
+				0,
+			);
+			await expect(link).toHaveAttribute('href', `${base}/storybook/`);
+			await expect(link).toHaveAttribute('target', '_blank');
+			await expect(link).toHaveAttribute('rel', /noopener/);
+			await link.focus();
+			await expect(link).toBeFocused();
+			const popup = page.waitForEvent('popup');
+			await page.keyboard.press('Enter');
+			const catalog = await popup;
+			await expect(catalog).toHaveURL(`http://127.0.0.1:4173${base}/storybook/`);
+			await catalog.close();
+		});
+	}
+}
 
 test('storybook publicado: carrega o catálogo em /storybook/', async ({ page, request }) => {
 	const errors = collectBrowserErrors(page);
@@ -107,18 +128,48 @@ test('storybook publicado: carrega o catálogo em /storybook/', async ({ page, r
 	expect(errors).toEqual([]);
 });
 
-test('demo publicado: o logo do cabeçalho carrega sob o subcaminho', async ({ page }) => {
-	const errors = collectBrowserErrors(page);
+for (const theme of ['light', 'dark'] as const) {
+	for (const mobile of [false, true]) {
+		test(`demo publicado: logo visível carrega em ${mobile ? 'celular' : 'desktop'}, tema ${theme}`, async ({
+			page,
+		}) => {
+			const errors = collectBrowserErrors(page);
+			await page
+				.context()
+				.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:4173' }]);
+			await page.setViewportSize({ width: mobile ? 390 : 1280, height: 844 });
+			await page.goto(`${base}/`);
+			await waitForHydration(themeTrigger(page));
 
-	await page.goto(`${base}/`);
-
-	const logo = page.locator('.demo-brand-heading img');
-	await expect(logo).toHaveAttribute('src', `${base}/icon.svg`);
-	await expect
-		.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
-		.toBeGreaterThan(0);
-	expect(errors).toEqual([]);
-});
+			const logo = page.locator('.demo-brand-heading img:visible');
+			async function expectLoadedLogo() {
+				await expect(logo).toHaveCount(1);
+				await expect(logo).toHaveAttribute('src', `${base}/icon.svg`);
+				await expect
+					.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+					.toBeGreaterThan(0);
+			}
+			await expectLoadedLogo();
+			await page
+				.getByRole('button', { name: mobile ? 'Abrir navegação' : 'Recolher barra lateral' })
+				.click();
+			// With a mobile drawer open, scope to its visible brand: the header sits underneath the overlay.
+			if (mobile) {
+				const drawerLogo = page
+					.getByRole('dialog', { name: 'Navegação do demo' })
+					.locator('.demo-brand-heading img');
+				await expect(drawerLogo).toHaveCount(1);
+				await expect(drawerLogo).toHaveAttribute('src', `${base}/icon.svg`);
+				await expect
+					.poll(() => drawerLogo.evaluate((image: HTMLImageElement) => image.naturalWidth))
+					.toBeGreaterThan(0);
+			} else {
+				await expectLoadedLogo();
+			}
+			expect(errors).toEqual([]);
+		});
+	}
+}
 
 for (const [name, path] of [
 	['manager', `${base}/storybook/`],

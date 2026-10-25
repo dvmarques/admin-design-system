@@ -38,6 +38,6 @@
 
 - [x] 7.1 `npx prettier --write` nos arquivos alterados e `npm run format`.
 - [x] 7.2 `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` (verboso para diagnóstico: `npm run test:verbose`).
-- [ ] 7.3 `npm run test:e2e` sem falhas. Parcial: no Chromium, 246 de 265 passaram na suíte completa; as falhas não visuais foram corrigidas e reexecutadas, e restam os 9 snapshots de 6.5. Firefox e WebKit não foram executados localmente e ficam para a CI.
+- [x] 7.3 `npm run test:e2e` sem falhas. Evidência: CI no head `64f099f` (run `40191247153`), com os baselines finais (`13b70b8`): Chromium 267 de 267 aprovados (sem snapshot divergente), Firefox e WebKit aprovados, Qualidade rápida e Artefatos de distribuição aprovados; Validação de release ignorada por não ser PR de release.
 - [x] 7.4 `openspec validate --all --strict` e `npm run check:agent-skills`.
 - [x] 7.5 Revisão independente (contratos públicos e acessibilidade) tratada: foco em estados pendentes, região viva persistente para mensagens de estado, foco ao dispensar durante ação pendente e Escape com painel aberto sem interação prévia, com testes.

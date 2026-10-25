@@ -28,3 +28,17 @@ AdsAdminShell MUST oferecer composição opcional com conteúdo no topo da sideb
 
 - **WHEN** o consumidor aplica temas ou sobrescreve tokens públicos
 - **THEN** superfícies, texto, foco e bordas da nova composição respondem sem Tailwind no consumidor
+
+### Requirement: Seleção recolhida é proporcional e tem recuo consistente
+
+Na composição sidebar-header, o item ativo recolhido MUST ter destaque de 2,75rem por 2,75rem sem alargar a barra. Expandido e recolhido MUST ter o mesmo recuo lateral do destaque, preservando ícones, texto, hierarquia, foco e aria-current, com ou sem espaço ocupado pela scrollbar.
+
+#### Scenario: Recolhimento com scrollbar
+
+- **WHEN** a navegação precisa de scrollbar e a sidebar alterna seu estado
+- **THEN** o destaque mantém o mesmo recuo da borda e fica quadrado no recolhido, sem mudar a largura da barra ou cortar o conteúdo
+
+#### Scenario: Navegação sem scrollbar
+
+- **WHEN** os itens cabem ou o navegador usa scrollbar sobreposta
+- **THEN** o destaque recolhido continua quadrado, com recuo coerente no estado expandido

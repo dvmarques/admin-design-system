@@ -13,3 +13,17 @@ AdsOrganization MUST aceitar avatarTone opcional, com os tons públicos de AdsAv
 
 - **WHEN** avatarTone não é fornecido
 - **THEN** a aparência anterior e o contrato de seleção permanecem inalterados
+
+### Requirement: Seletor expandido conserva largura independente do nome
+
+O seletor de organização expandido MUST ocupar a largura disponível no contêiner e manter seu tamanho ao trocar entre nomes curtos e longos. No modo recolhido, a borda MUST ficar invisível sem mudar posição, dimensões e área de foco do gatilho.
+
+#### Scenario: Nome curto e nome longo
+
+- **WHEN** a organização selecionada muda para um nome menor ou maior
+- **THEN** a borda do gatilho expandido mantém a mesma largura, respeitando o contêiner e truncando rótulos quando necessário
+
+#### Scenario: Organização recolhida
+
+- **WHEN** a sidebar está recolhida
+- **THEN** o avatar permanece no mesmo lugar com borda externa transparente, nome acessível e foco visível; o expandido preserva sua borda

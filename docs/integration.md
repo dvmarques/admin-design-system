@@ -1495,3 +1495,5 @@ Estado controlado/não controlado, SSR/hidratação e persistência do consumido
 os contratos anteriores; não há dependências novas.
 
 Cada item de `AdsOrganizationSwitcher.organizations` aceita `avatarTone` (tons de `AdsAvatar`, padrão `neutral`). O tom vale no gatilho e na opção da lista; `primary` usa o mesmo fundo semântico do avatar da conta no demo. Logos e fallback continuam funcionando.
+
+O seletor expandido preenche a largura de seu contêiner, independente do nome; use um contêiner com largura limitada para restringi-lo. No recolhido, somente a cor da borda fica transparente, preservando a geometria. Na composição sidebar-header, o item ativo recolhido mede 2,75rem quadrados; seu recuo lateral é compartilhado pelo expandido e considera a largura útil com scrollbar.

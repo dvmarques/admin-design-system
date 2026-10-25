@@ -30,3 +30,10 @@ Alinhar marca/header com altura natural; preservar contratos anteriores e manter
 ## Migration Plan
 
 API opt-in, nenhuma migração obrigatória. Integrar biblioteca e consumidores juntos em develop. Rollback: remover layout/header do consumidor e reverter estilos locais. Não arquivar nem fazer merge sem revisão humana.
+
+## Refinamento de seleção e largura do seletor
+
+- No desktop recolhido, somente a cor da borda do gatilho de organização fica transparente; espessura, padding, tamanho e posição do avatar são preservados. O modo expandido mantém a borda.
+- Expandido, o seletor organiza a âncora do popover como item de grid esticado: o gatilho ocupa toda a largura disponível, independente do nome. Não há largura fixa em pixels nem alteração global do Popover; rótulos longos continuam truncáveis.
+- O item ativo recolhido tem 2,75rem por 2,75rem. A navegação é um container inline: unidades cqi permitem calcular a expansão lateral do item considerando o espaço tomado pela scrollbar. No expandido, a mesma expansão considera a diferença entre as larguras da sidebar. Assim o recuo da seleção é igual nos dois estados, sem mudar largura da barra, posição dos ícones ou indentação das categorias. Só o item ativo ganha essa largura adicional.
+- Alternativa descartada: ampliar tudo com uma margem negativa constante produziria seleção maior que 44px em navegadores com scrollbar sobreposta. O cálculo é CSS, sem medição ou estado JavaScript novo.

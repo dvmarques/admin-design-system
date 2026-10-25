@@ -39,3 +39,11 @@
 - [x] 5.3 Atualizar stories, regressões de geometria e evidências; repetir format, lint, build, tipos, testes e E2E locais.
 
 - Refinamento aprovado: capturas atualizadas e revisadas em light/dark; cabeçalho de 64px antes e depois do recolhimento, controle clicável na divisória e avatar primary igual ao da conta. Sem animação de largura nessa variante para evitar reflow transitório. Testes: 1.064 unitários/integração aprovados e 299 E2E aprovados com --ignore-snapshots. A falha preexistente de test:ci no Windows e os gates remotos pendentes permanecem registrados acima.
+
+## 6. Consistência da seleção e do seletor de organização
+
+- [x] 6.1 Fixar largura disponível do seletor expandido e ocultar apenas a cor da borda recolhida.
+- [x] 6.2 Implementar seleção de 44x44px com recuo igual nos estados e scrollbar variável.
+- [x] 6.3 Validar nomes curtos/longos, foco, geometria e regressões nos navegadores; atualizar evidências e executar gates locais.
+
+- Consistência validada: 21 smoke nos três navegadores e 302 E2E completos aprovados com --ignore-snapshots; 1.064 testes unitários/integração aprovados. Build, Storybook, tipos, lint, formatação, skills, artefatos gerados e 54 itens OpenSpec validados. test:quality continua limitado pela asserção preexistente /work versus C:\\work em test:ci no Windows. Capturas finais atualizadas e revisadas.

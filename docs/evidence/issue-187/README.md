@@ -38,3 +38,5 @@ rolagem independente, SSR/hidratação e controles #185/#182.
 
 Snapshots oficiais devem ser regenerados e confirmados em Linux pelo workflow
 **Atualizar baselines visuais**, com revisão das diferenças intencionais antes da entrega.
+
+Refinamento de consistência: o seletor expandido ocupa toda a largura disponível, mesmo com nomes curtos. Recolhido, apenas a cor da borda fica transparente; o avatar conserva a posição. A seleção ativa é de 44×44px no recolhido e mantém o mesmo recuo lateral no expandido, com cálculo que considera a scrollbar. A regressão smoke verifica esses contratos nos três navegadores, com gutter stable e auto.

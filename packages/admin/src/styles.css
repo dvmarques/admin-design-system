@@ -1840,7 +1840,7 @@
 			display: grid;
 			grid-template-rows: subgrid;
 			/* Avoid reflowing expanded branding through intermediate collapsed widths. */
-			transition: none;
+			transition: border-color var(--ads-motion-fast);
 		}
 		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-header {
 			grid-row: 1;
@@ -1916,6 +1916,49 @@
 			> .ads-admin-shell-sidebar-header {
 			justify-content: center;
 			padding-inline: var(--ads-spacing-2);
+		}
+	}
+}
+
+/* Organization width is independent of its label; collapsed geometry stays unchanged. */
+@layer components {
+	.ads-organization-switcher[data-collapsed='false'] {
+		display: grid;
+	}
+	.ads-organization-switcher[data-collapsed='false'] > * {
+		min-width: 0;
+	}
+	.ads-organization-switcher[data-collapsed='true'] .ads-organization-switcher-trigger {
+		border-color: transparent;
+	}
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header .ads-sidebar-navigation {
+			container-type: inline-size;
+			--ads-sidebar-compact-content-width: calc(
+				100cqi -
+					(var(--ads-admin-shell-sidebar-width) - var(--ads-admin-shell-sidebar-width-collapsed))
+			);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
+			.ads-sidebar-navigation {
+			--ads-sidebar-compact-content-width: 100cqi;
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-sidebar-navigation
+			.ads-sidebar-item
+			> a[aria-current='page'] {
+			--ads-sidebar-selection-outset: calc(
+				(2.75rem - var(--ads-sidebar-compact-content-width)) / 2
+			);
+			margin-inline: calc(-1 * var(--ads-sidebar-selection-outset));
+			padding-inline: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
+			.ads-sidebar-item
+			> a[aria-current='page'] {
+			padding-inline: var(--ads-sidebar-selection-outset);
 		}
 	}
 }

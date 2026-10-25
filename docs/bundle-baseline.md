@@ -1,4 +1,8 @@
-# Baseline inicial de distribuição
+# Baseline de distribuição: histórico de decisões
+
+> **Registro histórico, não medição atual.** Os valores narrados abaixo pertencem às changes e revisões que os produziram. Não representam o conteúdo de `dist/` na `develop` atual e não devem ser extrapolados entre commits, sistemas de arquivos ou versões de Node/npm. Consulte os três orçamentos JSON versionados e execute `npm run build && npm run inspect:packages` no mesmo commit e toolchain para uma medição reproduzível. O histórico original é preservado, inclusive divergências registradas; esta edição não recalcula números.
+
+
 
 Na primeira medição da change `fix-135-smart-overlay-position`, o pacote `@admin-ds/components`
 passou de 345608 para 355657 bytes (+10049, 2,91%), com 145 arquivos nos dois
@@ -10,7 +14,7 @@ Não foi adicionada dependência. O valor final permanece dentro da tolerância
 de 10% do baseline versionado de 330033 bytes, que não foi elevado.
 Os testes de posicionamento foram movidos de `src/` para `tests/` para não
 entrarem no pacote distribuído. Resultados e limites da validação estão em
-`openspec/changes/fix-135-smart-overlay-position/validation.md`.
+`openspec/changes/archive/2026-10-22-fix-135-smart-overlay-position/validation.md`.
 
 No retorno da revisão, a origem geométrica para pinch zoom/pan levou o dist
 para **356722 bytes / 145 arquivos** (+1065 bytes sobre a primeira medição).

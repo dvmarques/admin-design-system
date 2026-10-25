@@ -22,6 +22,12 @@ export { AdsSurface } from './surface.js';
 export type { AdsSurfaceProps, AdsSurfaceVariant } from './surface.js';
 export { AdsInput } from './input.js';
 export type { AdsInputProps } from './input.js';
+export { AdsPasswordInput } from './password-input.js';
+export type {
+	AdsPasswordInputProps,
+	AdsPasswordRule,
+	AdsPasswordStrength,
+} from './password-input.js';
 export { AdsTextarea } from './textarea.js';
 export type { AdsTextareaProps } from './textarea.js';
 export { AdsSelect } from './select.js';

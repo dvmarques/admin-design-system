@@ -40,6 +40,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsSkeleton`             | Básicos     | `/catalogo/skeleton`              | `data-display.stories.tsx`                                    |
 | `AdsSparkline`            | Básicos     | `/catalogo/sparkline`             | `dashboard.stories.tsx`, `sparkline.stories.tsx`              |
 | `AdsInput`                | Formulários | `/catalogo/input`                 | `admin-flows.stories.tsx`, `form.stories.tsx`                 |
+| `AdsPasswordInput`        | Formulários | `/catalogo/password-input`        | `form.stories.tsx`                                            |
 | `AdsTextarea`             | Formulários | `/catalogo/textarea`              | `form.stories.tsx`                                            |
 | `AdsSelect`               | Formulários | `/catalogo/select`                | `admin-flows.stories.tsx`, `form.stories.tsx`                 |
 | `AdsCheckbox`             | Formulários | `/catalogo/checkbox`              | `form.stories.tsx`                                            |

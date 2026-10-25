@@ -777,6 +777,35 @@ botão lado a lado, use um adendo de texto em `startContent` e o botão em `endC
 botão dentro de outro elemento no adendo mantém a moldura e a altura do botão, e o campo
 cresce para 34, 38 ou 42px.
 
+## Campo de senha (`AdsPasswordInput`)
+
+`AdsPasswordInput` (em `@admin-ds/components`) é um `AdsInput` mascarado com um botão de
+visibilidade. Funciona dentro de `AdsField`, controlado (`value`) ou não (`defaultValue`), e
+aceita as props nativas de `input`, exceto `type`.
+
+```tsx
+<AdsField label="Senha" description="Use ao menos 8 caracteres.">
+	<AdsPasswordInput
+		autoComplete="new-password"
+		showStrength
+		rules={[{ id: 'length', label: 'Ao menos 8 caracteres', test: (value) => value.length >= 8 }]}
+	/>
+</AdsField>
+```
+
+- O botão exibe `Mostrar`/`Ocultar` (`showPasswordText`, `hidePasswordText`) e tem o nome
+  `Mostrar senha`/`Ocultar senha` (`showPasswordLabel`, `hidePasswordLabel`, que devem começar
+  pelo texto visível). Com o teclado o foco permanece no botão; com o ponteiro volta ao campo.
+  `ref` e `className` vão para o `<input>`, preserva valor, foco e seleção, nunca envia o formulário e some com
+  `showVisibilityToggle={false}`. Desabilitar o campo desabilita também o botão.
+- `showStrength` mostra uma pontuação **apenas orientativa** (comprimento, maiúscula, número
+  e símbolo; `Forte` exige 12 caracteres e três critérios), em texto e associada ao campo por `aria-describedby`; use `strengthLabels` e
+  `strengthPrefix` para traduzir. Não substitui a validação do servidor.
+- `rules` mostra uma lista de regras avaliadas no navegador a cada renderização: cada `test` deve
+  ser puro, síncrono e não lançar erro (se lançar, a regra fica `Pendente`); cada item informa `Atendida` ou
+  `Pendente` em texto (`ruleStatusLabels`), sem depender de cor ou de ícone.
+- A biblioteca não armazena nem transmite a senha e não implementa autenticação.
+
 ## Overlays modais e o conteúdo de fundo
 
 Com um `AdsDialog` ou `AdsDrawer` aberto (inclusive o diálogo de `AdsConfirmDialog` e o drawer de

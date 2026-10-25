@@ -12,4 +12,5 @@
 ## 3. Verificação
 
 - [x] 3.1 Revisar diffs e garantir apenas documentação, sem PNGs ou workflows alterados.
-- [x] 3.2 Executar `npm run validate` e `openspec.cmd validate --all --strict`, registrar eventuais limitações reais.
+- [x] 3.2 Confirmar checks `Qualidade rápida` e `Política de develop` (OpenSpec estrito) na CI, bem como o workflow Pages.
+- [ ] 3.3 Executar localmente `npm run validate` e `openspec.cmd validate --all --strict` (não comprovados pelos checks seletivos da PR `docs_only`).

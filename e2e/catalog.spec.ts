@@ -104,6 +104,19 @@ test('interações de abas, campos, tabela e etapas', async ({ page }) => {
 	);
 	await page.getByRole('button', { name: 'Limpar valor' }).click();
 	await expect(page.getByRole('textbox', { name: 'Valor em reais' })).toHaveValue('0');
+	await page.goto('/catalogo/password-input');
+	const password = page.getByRole('textbox', { name: 'Senha', exact: true });
+	await expect(page.getByLabel('Senha', { exact: true })).toHaveAttribute('type', 'password');
+	await password.fill('Abcdef12');
+	await page.getByRole('button', { name: 'Mostrar senha' }).first().click();
+	await expect(password).toHaveAttribute('type', 'text');
+	await expect(password).toBeFocused();
+	await expect(password).toHaveValue('Abcdef12');
+	await expect(page.getByRole('status').filter({ hasText: 'Força da senha' })).toContainText(
+		'Forte',
+	);
+	await page.getByRole('button', { name: 'Ocultar senha' }).click();
+	await expect(password).toHaveAttribute('type', 'password');
 	await page.goto('/catalogo/smart-table');
 	await page.getByRole('checkbox', { name: /Ana/ }).focus();
 	await page.keyboard.press('Space');

@@ -237,14 +237,25 @@ export function InputDemo() {
 export function PasswordInputDemo() {
 	return (
 		<>
-			<AdsField label="Senha">
-				<AdsPasswordInput autoComplete="new-password" placeholder="Digite sua senha" showStrength />
+			<AdsField description="Use ao menos 8 caracteres." label="Senha">
+				<AdsPasswordInput
+					autoComplete="new-password"
+					placeholder="Digite sua senha"
+					rules={[
+						{ id: 'length', label: 'Ao menos 8 caracteres', test: (value) => value.length >= 8 },
+						{ id: 'digit', label: 'Ao menos um número', test: (value) => /\d/.test(value) },
+					]}
+					showStrength
+				/>
 			</AdsField>
 			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha">
 				<AdsPasswordInput />
 			</AdsField>
 			<AdsField label="Senha desabilitada">
 				<AdsPasswordInput disabled />
+			</AdsField>
+			<AdsField label="Senha sem alternância de visibilidade">
+				<AdsPasswordInput showVisibilityToggle={false} />
 			</AdsField>
 		</>
 	);

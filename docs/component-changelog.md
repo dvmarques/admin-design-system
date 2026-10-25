@@ -4,6 +4,7 @@
 
 | Componente            | Alteração                                               | Referência |
 | --------------------- | ------------------------------------------------------- | ---------- |
+| AdsPasswordInput      | Novo: visibilidade, força e regras opcionais            | #147       |
 | AdsSmartTable         | Virtualização, redimensionamento e exportação opcionais | #93        |
 | AdsConfirmDialog      | Papel alertdialog em confirmação destrutiva             | #92        |
 | AdsStepForm           | Validação assíncrona e navegação entre etapas           | #92        |

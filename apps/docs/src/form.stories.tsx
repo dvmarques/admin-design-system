@@ -155,9 +155,25 @@ export const ValidationAndThemes: Story = {
 export const PasswordInput: Story = {
 	render: () => (
 		<div className="flex max-w-xl flex-col gap-4">
-			<AdsField label="Senha"><AdsPasswordInput autoComplete="new-password" /></AdsField>
-			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha"><AdsPasswordInput /></AdsField>
-			<AdsField label="Desabilitado"><AdsPasswordInput disabled /></AdsField>
+			<AdsField description="Use ao menos 8 caracteres." label="Senha">
+				<AdsPasswordInput
+					autoComplete="new-password"
+					rules={[
+						{ id: 'length', label: 'Ao menos 8 caracteres', test: (value) => value.length >= 8 },
+						{ id: 'digit', label: 'Ao menos um número', test: (value) => /\d/.test(value) },
+					]}
+					showStrength
+				/>
+			</AdsField>
+			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha">
+				<AdsPasswordInput />
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsPasswordInput disabled />
+			</AdsField>
+			<AdsField label="Sem alternância de visibilidade">
+				<AdsPasswordInput showVisibilityToggle={false} />
+			</AdsField>
 		</div>
 	),
 };

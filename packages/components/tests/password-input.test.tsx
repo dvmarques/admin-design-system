@@ -1,33 +1,123 @@
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { renderToString } from 'react-dom/server';
+import { describe, expect, it, vi } from 'vitest';
 import { AdsField, AdsPasswordInput } from '../src/index.js';
 
 describe('AdsPasswordInput', () => {
-  it('masks by default and toggles without submitting forms', () => {
-    render(<AdsField label="Senha"><AdsPasswordInput defaultValue="secret" /></AdsField>);
-    const input = screen.getByLabelText('Senha') as HTMLInputElement;
-    expect(input.type).toBe('password');
-    expect(input.value).toBe('secret');
-    const toggle = screen.getByRole('button', { name: 'Mostrar senha' });
-    fireEvent.click(toggle);
-    expect(input.type).toBe('text');
-    expect(input.value).toBe('secret');
-    expect(input).toHaveFocus();
-    expect(screen.getByRole('button', { name: 'Ocultar senha' })).toHaveAttribute('aria-pressed', 'true');
-    fireEvent.click(screen.getByRole('button', { name: 'Ocultar senha' }));
-    expect(input.type).toBe('password');
-  });
+	it('masks by default and toggles without submitting forms', () => {
+		const onSubmit = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+		render(
+			<form onSubmit={onSubmit}>
+				<AdsField label="Senha">
+					<AdsPasswordInput defaultValue="secret" />
+				</AdsField>
+			</form>,
+		);
+		const input = screen.getByLabelText('Senha') as HTMLInputElement;
+		expect(input.type).toBe('password');
+		expect(input.value).toBe('secret');
+		fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }));
+		expect(input.type).toBe('text');
+		expect(input.value).toBe('secret');
+		expect(input).toHaveFocus();
+		expect(onSubmit).not.toHaveBeenCalled();
+		expect(screen.getByRole('button', { name: 'Ocultar senha' })).not.toHaveAttribute(
+			'aria-pressed',
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Ocultar senha' }));
+		expect(input.type).toBe('password');
+	});
 
-  it('disables both controls and supports invalid state', () => {
-    render(<AdsField label="Senha" error="Senha inválida" validationState="error"><AdsPasswordInput disabled /></AdsField>);
-    expect(screen.getByLabelText('Senha')).toBeDisabled();
-    expect(screen.getByRole('button', { name: 'Mostrar senha' })).toBeDisabled();
-    expect(screen.getByLabelText('Senha')).toHaveAttribute('aria-invalid', 'true');
-    expect(screen.getByRole('alert')).toHaveTextContent('Senha inválida');
-  });
+	it('preserves the selection when toggling', () => {
+		render(<AdsPasswordInput aria-label="Senha" defaultValue="abcdef" />);
+		const input = screen.getByLabelText('Senha') as HTMLInputElement;
+		input.setSelectionRange(1, 3);
+		fireEvent.click(screen.getByRole('button', { name: 'Mostrar senha' }));
+		expect(input.selectionStart).toBe(1);
+		expect(input.selectionEnd).toBe(3);
+	});
 
-  it('supports hiding the toggle', () => {
-    render(<AdsPasswordInput aria-label="Senha" showVisibilityToggle={false} />);
-    expect(screen.queryByRole('button')).not.toBeInTheDocument();
-  });
+	it('works as a controlled input without React warnings', () => {
+		const error = vi.spyOn(console, 'error').mockImplementation(() => undefined);
+		const onChange = vi.fn();
+		render(
+			<AdsPasswordInput aria-label="Senha" defaultValue="x" onChange={onChange} value="abc" />,
+		);
+		const input = screen.getByLabelText('Senha') as HTMLInputElement;
+		expect(input.value).toBe('abc');
+		fireEvent.change(input, { target: { value: 'abcd' } });
+		expect(onChange).toHaveBeenCalledTimes(1);
+		expect(error).not.toHaveBeenCalled();
+		error.mockRestore();
+	});
+
+	it('disables both controls and supports invalid state', () => {
+		render(
+			<AdsField label="Senha" error="Senha inválida" validationState="error">
+				<AdsPasswordInput disabled />
+			</AdsField>,
+		);
+		expect(screen.getByLabelText('Senha')).toBeDisabled();
+		expect(screen.getByRole('button', { name: 'Mostrar senha' })).toBeDisabled();
+		expect(screen.getByLabelText('Senha')).toHaveAttribute('aria-invalid', 'true');
+		expect(screen.getByRole('alert')).toHaveTextContent('Senha inválida');
+		expect(screen.getByLabelText('Senha')).toHaveAccessibleDescription('Senha inválida');
+	});
+
+	it('supports hiding the toggle', () => {
+		render(<AdsPasswordInput aria-label="Senha" showVisibilityToggle={false} />);
+		expect(screen.queryByRole('button')).not.toBeInTheDocument();
+	});
+
+	it('shows advisory strength in text, associated to the field', () => {
+		render(
+			<AdsField description="Mínimo de 8 caracteres" label="Senha">
+				<AdsPasswordInput showStrength />
+			</AdsField>,
+		);
+		const input = screen.getByLabelText('Senha');
+		expect(screen.getByRole('status')).toHaveTextContent('Força da senha: Não avaliada');
+		fireEvent.change(input, { target: { value: 'abc' } });
+		expect(screen.getByRole('status')).toHaveTextContent('Fraca');
+		fireEvent.change(input, { target: { value: 'Abcdefg1' } });
+		expect(screen.getByRole('status')).toHaveTextContent('Forte');
+		expect(input).toHaveAccessibleDescription(/Mínimo de 8 caracteres.*Força da senha: Forte/);
+	});
+
+	it('supports custom strength labels', () => {
+		render(
+			<AdsPasswordInput
+				aria-label="Password"
+				defaultValue="abc"
+				showStrength
+				strengthLabels={{ weak: 'Weak' }}
+				strengthPrefix="Strength:"
+			/>,
+		);
+		expect(screen.getByRole('status')).toHaveTextContent('Strength: Weak');
+	});
+
+	it('lists rules with a textual status, not only an icon', () => {
+		render(
+			<AdsPasswordInput
+				aria-label="Senha"
+				rules={[
+					{ id: 'length', label: '8 caracteres', test: (value) => value.length >= 8 },
+					{ id: 'digit', label: 'Um número', test: (value) => /\d/.test(value) },
+				]}
+			/>,
+		);
+		const input = screen.getByLabelText('Senha');
+		expect(screen.getByText('8 caracteres').closest('li')).toHaveTextContent('Pendente');
+		fireEvent.change(input, { target: { value: 'abcdefgh1' } });
+		expect(screen.getByText('8 caracteres').closest('li')).toHaveTextContent('Atendida');
+		expect(screen.getByText('Um número').closest('li')).toHaveAttribute('data-met', 'true');
+		expect(input).toHaveAccessibleDescription(/8 caracteres.*Atendida/);
+	});
+
+	it('renders on the server without browser APIs', () => {
+		const html = renderToString(<AdsPasswordInput aria-label="Senha" showStrength />);
+		expect(html).toContain('type="password"');
+		expect(html).toContain('ads-password-input__strength');
+	});
 });

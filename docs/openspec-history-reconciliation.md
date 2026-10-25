@@ -48,7 +48,7 @@ Foram lidos os 17 textos `MUST` e respectivos cenários da change de 06/09, conf
 | toast-notifications | **Parcial:** largura estreita, contraste, variantes e fechamento constam; hierarquia visual e caso específico de erro longo exigem revisão cruzada |
 | typography | **Parcial:** escala tipográfica tokenizada consta; hierarquia de título/corpo/auxiliar em uma única seção administrativa não está no cenário candidato |
 
-**Conclusão:** 2 equivalências documentais fortes, 12 coberturas parciais ou dispersas e 3 pontos que merecem atenção adicional na redação normativa (ícone, superfície e hierarquia de notificações; esta última também está classificada como parcial). Essa classificação não significa três bugs, nem confirma regressão funcional. Se uma lacuna de comportamento for comprovada, abrir issue funcional separada.
+**Conclusão:** 2 equivalências documentais fortes, 13 coberturas parciais ou dispersas (inclusive notificações transitórias) e 2 possíveis lacunas normativas específicas (ícone e superfície). Essa classificação não significa três bugs, nem confirma regressão funcional. Se uma lacuna de comportamento for comprovada, abrir issue funcional separada.
 
 ## Próxima verificação
 

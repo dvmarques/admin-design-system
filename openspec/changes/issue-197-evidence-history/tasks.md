@@ -10,6 +10,7 @@
 - [x] 2.1 Corrigir o caminho de #135 e separar cronologia de medição do procedimento atual.
 - [x] 2.2 Qualificar dados de bundle por data/commit/toolchain verificáveis, inclusive Node 22 (histórico preservado; informações ausentes nas medições originais não foram inventadas).
 - [x] 2.3 Distinguir documentação vigente, contribuição e histórico no README.
+- [x] 2.4 Mover as cronologias de bundle, CI e Playwright para comentários nas issues de origem (#135, #8, #57-#61, #118, #89, #92, #93, #136, #138, #147, #164, #171, #185 e #197), sem manter diretório de evidências em docs/
 
 ## 3. Reconciliação OpenSpec
 

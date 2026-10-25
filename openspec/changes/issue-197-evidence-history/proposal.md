@@ -6,7 +6,7 @@ A documentação permanente contém resultados pontuais de auditorias e capturas
 
 - Separar orientação vigente de evidências históricas, com commit, data, ambiente, limitações e fontes.
 - Corrigir o caminho da validação arquivada de #135 e identificar medições históricas de bundle.
-- Inventariar as evidências visuais de #187 antes de qualquer realocação física.
+- Inventariar as evidências visuais de #187 e realocá-las à change arquivada; mover cronologias de medição para comentários nas issues de origem.
 - Reconciliar por evidência os títulos históricos de 2026-09-06-refine-component-visual-language, distinguindo equivalência, substituição e lacuna.
 - Identificar tasks ainda pendentes e encaminhá-las às issues existentes, incluindo #164.
 

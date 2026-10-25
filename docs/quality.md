@@ -113,10 +113,11 @@ limites de controles, foco e indicadores). Detalhes em
 ### Smoke em Firefox e WebKit
 
 `e2e/smoke.spec.ts` roda nos três navegadores (projetos `chromium`, `firefox` e
-`webkit` em `playwright.config.ts`); Firefox e WebKit também executam `dropdown-focus.spec.ts` e `theme-control.spec.ts`.
-Ele cobre `/`, `/clientes` e `/componentes`: carregamento sem erros de console
+`webkit` em `playwright.config.ts`). O smoke cobre `/`, `/clientes` e `/componentes`: carregamento sem erros de console
 nem de página (incluindo hidratação), hidratação do botão de tema e navegação
-pelo menu principal. Não há snapshots nesses navegadores.
+pelo menu principal. Firefox e WebKit também executam `dropdown-focus.spec.ts` e
+`theme-control.spec.ts` (esta última sobre `/catalogo/theme-control`). Não há
+snapshots nesses navegadores.
 
 Na CI, cada navegador é um job paralelo e independente da matrix:
 "Fluxos no navegador" (Chromium), "Fluxos no navegador (Firefox)" e "Fluxos no
@@ -169,6 +170,9 @@ e2e/
 ├── smoke.spec.ts
 └── theme-control.spec.ts
 ```
+
+Cada spec com comparação visual tem, ao lado, uma pasta `<spec>-snapshots/` com os
+baselines Linux; elas não aparecem na lista acima.
 
 Os arquivos `e2e/axe.ts`, `e2e/routes.ts`, `e2e/hydration.ts`,
 `e2e/full-page-shell.ts` e `e2e/theme-control.ts` são apoios compartilhados, não

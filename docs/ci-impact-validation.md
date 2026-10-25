@@ -22,11 +22,13 @@ Os workspaces vêm dos padrões `workspaces` da raiz. O grafo usa `dependencies`
 | PR Ready para `develop`, impacto `docs`                  | Qualidade completa e política de develop   | Jobs concluídos com etapas dispensadas (`docs_only`), sem builds, E2E ou snapshots | Executa integralmente em PR para develop, sem publicar |
 | PR Ready para `develop`, impacto `scoped`                | Qualidade completa e política de develop   | Builds de pacotes e inspeção; apps/E2E somente se afetados                         | Executa integralmente em PR para develop, sem publicar |
 | PR Ready para `develop`, impacto `full` ou indeterminado | Qualidade completa e política de develop   | Builds, inspeção e E2E completos, snapshots Chromium                               | Executa integralmente em PR para develop, sem publicar |
-| PR Ready para `master`                                   | Qualidade completa e política de release   | Completo, sem dispensa por impacto                                                 | Sem gatilho de PR para master                          |
+| PR Ready para `master`                                   | Qualidade completa e `release-check`       | Completo, sem dispensa por impacto                                                 | Sem gatilho de PR para master                          |
 | Push para `develop`                                      | Qualidade e jobs da CI principal completos | Completo, sem dispensa por impacto                                                 | Build, teste e publicação no Pages                     |
 | Push para `master`                                       | Qualidade e jobs da CI principal completos | Completo, sem dispensa por impacto                                                 | Sem gatilho de push para master                        |
 
-O workflow `pages.yml` (corrigido na #189 / PR #190) valida build estático
+O workflow `pages.yml` não usa `ci-scope`: em PR Ready para develop ele constrói o
+site estático e roda o E2E Pages mesmo quando a CI principal dispensa etapas por
+impacto `docs`. Ele (corrigido na #189 / PR #190) valida build estático
 e `test:e2e:pages` em PR Ready para develop; publicar é reservado ao push em
 `develop`. Um check **successful** cujo job dispensou etapas não equivale a build
 ou testes executados: leia o resumo do scope e as etapas efetivamente rodadas.

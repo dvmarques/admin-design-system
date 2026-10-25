@@ -96,6 +96,12 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 - [Comandos úteis do OpenSpec](docs/openspec-commands.md)
 - [Seleção de modelos por tarefa](docs/models.md)
 
+## Como navegar pela documentação
+
+- **Referência vigente:** [arquitetura](docs/architecture.md), [integração](docs/integration.md), [qualidade](docs/quality.md), [release](docs/release-process.md) e [limitações](docs/limitations.md). Em caso de divergência, confira o código e a CI da branch consultada.
+- **Contribuição e desenvolvimento:** [AGENTS.md](AGENTS.md), [processo OpenSpec](docs/openspec-commands.md) e [workflow de IA](docs/ai-development-workflow.md). Changes ativas ficam em [`openspec/changes/`](openspec/changes/).
+- **Histórico e evidências (não normativa):** [CHANGELOG.md](CHANGELOG.md), [changes arquivadas](openspec/changes/archive/), [medições de distribuição](docs/bundle-baseline.md), [medições de CI](docs/ci-impact-validation.md) e [capturas de revisão #187](docs/evidence/issue-187/README.md). Resultados antigos não substituem validação corrente.
+
 ## Recursos
 
 - `@admin-ds/tokens`: design tokens semânticos, temas claro e escuro e CSS público.

@@ -4,6 +4,7 @@ import {
 	AdsCheckbox,
 	AdsField,
 	AdsInput,
+	AdsPasswordInput,
 	AdsInputGroup,
 	AdsRadio,
 	AdsSelect,
@@ -147,6 +148,16 @@ export const ValidationAndThemes: Story = {
 			<AdsField description="Valor verificado" label="Campo válido" validationState="success">
 				<AdsInput defaultValue="Confirmado" />
 			</AdsField>
+		</div>
+	),
+};
+
+export const PasswordInput: Story = {
+	render: () => (
+		<div className="flex max-w-xl flex-col gap-4">
+			<AdsField label="Senha"><AdsPasswordInput autoComplete="new-password" /></AdsField>
+			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha"><AdsPasswordInput /></AdsField>
+			<AdsField label="Desabilitado"><AdsPasswordInput disabled /></AdsField>
 		</div>
 	),
 };

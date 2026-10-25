@@ -37,6 +37,7 @@ export function DemoAccountMenu() {
 	return (
 		<>
 			<AdsAccountMenu
+				className="demo-header-account"
 				groups={[
 					{
 						id: 'conta',

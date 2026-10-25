@@ -1,4 +1,4 @@
-import type { InputHTMLAttributes } from 'react';
+import { forwardRef, type InputHTMLAttributes } from 'react';
 import { formControlClasses } from './form-control-classes.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 
@@ -8,13 +8,13 @@ export interface AdsInputProps
 }
 
 /** A native text input with design-system sizing and validation states. */
-export function AdsInput({
+export const AdsInput = forwardRef<HTMLInputElement, AdsInputProps>(function AdsInput({
 	['aria-invalid']: ariaInvalid,
 	className,
 	size = 'md',
 	validationState = 'default',
 	...props
-}: AdsInputProps) {
+}: AdsInputProps, ref) {
 	return (
 		<input
 			{...props}
@@ -22,4 +22,4 @@ export function AdsInput({
 			className={formControlClasses(size, validationState, className)}
 		/>
 	);
-}
+});

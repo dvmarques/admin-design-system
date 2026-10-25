@@ -9,6 +9,7 @@ import {
 	AdsPopover,
 	AdsTooltip,
 	type AdsOverlayPlacement,
+	type AdsAvatarTone,
 } from '@admin-ds/components';
 import {
 	forwardRef,
@@ -29,6 +30,8 @@ import {
 } from './panel-utils.js';
 
 export interface AdsOrganization {
+	/** Avatar token tone. Defaults to neutral; applies to trigger and options. */
+	avatarTone?: AdsAvatarTone;
 	id: string;
 	name: string;
 	description?: string;
@@ -213,6 +216,7 @@ export function AdsOrganizationSwitcher({
 					fallback={getInitials(current?.name, current?.initials)}
 					size="sm"
 					src={current?.logoSrc}
+					tone={current?.avatarTone ?? 'neutral'}
 				/>
 			</span>
 			<span className="ads-organization-switcher-text">
@@ -297,6 +301,7 @@ export function AdsOrganizationSwitcher({
 															fallback={getInitials(organization.name, organization.initials)}
 															size="sm"
 															src={organization.logoSrc}
+															tone={organization.avatarTone ?? 'neutral'}
 														/>
 													</span>
 													<span className="ads-organization-switcher-option-text">

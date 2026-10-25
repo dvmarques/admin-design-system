@@ -15,7 +15,7 @@ interface OverviewContentProps {
 /** Presentational overview: receives its data as props so it renders the same anywhere. */
 export function OverviewContent({ indicators, progress, activity }: OverviewContentProps) {
 	return (
-		<div className="demo-page">
+		<div className="demo-page demo-overview">
 			<div className="demo-shell">
 				<header className="demo-section">
 					<p className="demo-kicker">Admin Design System</p>

@@ -31,7 +31,11 @@ export function AdsAdminShellNavigationTrigger({
 			className={classNames('ads-admin-shell-navigation-trigger', className)}
 			onClick={(event) => {
 				onClick?.(event);
-				if (!event.defaultPrevented) setMobileOpen(true);
+				if (!event.defaultPrevented) {
+					// Safari does not focus buttons on pointer activation by default.
+					event.currentTarget.focus();
+					setMobileOpen(true);
+				}
 			}}
 			type={props.type ?? 'button'}
 		>
@@ -76,6 +80,11 @@ export function AdsAdminShellSidebarToggle({
 	);
 }
 
+/** Whether a ReactNode would produce output; `0` and `NaN` render text, so they count. */
+function isRenderable(node: ReactNode): boolean {
+	return node != null && typeof node !== 'boolean' && node !== '';
+}
+
 function isHidden(element: Element): boolean {
 	return typeof element.checkVisibility === 'function' && !element.checkVisibility();
 }
@@ -95,6 +104,8 @@ function shouldRedirectFocus(active: Element | null, mobileNavigationId: string)
 export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
 	label?: string;
 	mobileTitle?: ReactNode;
+	/** Optional content above navigation; aligned to Header in layout="sidebar-header". */
+	header?: ReactNode;
 }
 
 /**
@@ -106,6 +117,7 @@ export function AdsAdminShellSidebar({
 	className,
 	label = 'Navegação principal',
 	mobileTitle,
+	header,
 	...props
 }: AdsAdminShellSidebarProps) {
 	const { collapsed, desktopSidebarId, isDesktop, mobileNavigationId, mobileOpen, setMobileOpen } =
@@ -126,6 +138,7 @@ export function AdsAdminShellSidebar({
 	}, [isDesktop, mobileNavigationId, mobileOpen]);
 
 	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
+	const hasHeader = isRenderable(header);
 
 	if (isDesktop) {
 		return (
@@ -134,6 +147,7 @@ export function AdsAdminShellSidebar({
 				data-collapsed={collapsed ? 'true' : 'false'}
 				id={desktopSidebarId}
 			>
+				{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 				<nav
 					{...props}
 					aria-label={label}
@@ -158,6 +172,7 @@ export function AdsAdminShellSidebar({
 			placement="left"
 			title={mobileTitle}
 		>
+			{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 			<nav {...props} aria-label={label} className={navigationClassName}>
 				{children}
 			</nav>

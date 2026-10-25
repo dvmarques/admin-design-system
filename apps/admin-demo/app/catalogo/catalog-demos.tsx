@@ -1,6 +1,7 @@
 'use client';
 import { useState } from 'react';
 import Link from 'next/link';
+import { DemoBrand } from '../demo-brand';
 import {
 	AdsButton,
 	AdsBadge,
@@ -696,14 +697,22 @@ export function ListDemo() {
 export function AdminShellDemo() {
 	return (
 		<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
-			<AdsAdminShell>
+			<AdsAdminShell layout="sidebar-header">
 				<AdsAdminShell.Header>
 					<AdsAdminShell.NavigationTrigger />
-					<AdsAdminShell.SidebarToggle />
-					<span>Shell de exemplo</span>
+					<div className="demo-mobile-brand">
+						<DemoBrand compact />
+					</div>
+					<span className="demo-header-tools">Shell de exemplo</span>
 				</AdsAdminShell.Header>
 				<AdsAdminShell.Body>
 					<AdsAdminShell.Sidebar
+						header={
+							<>
+								<DemoBrand />
+								<AdsAdminShell.SidebarToggle />
+							</>
+						}
 						label="Navegação do shell de exemplo"
 						mobileTitle="Menu do exemplo"
 					>

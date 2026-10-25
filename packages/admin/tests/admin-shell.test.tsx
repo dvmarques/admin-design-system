@@ -388,3 +388,73 @@ describe('breakpoint transitions', () => {
 		act(() => undefined);
 	});
 });
+
+describe('optional sidebar header composition', () => {
+	beforeEach(() => {
+		viewport = installViewport(true);
+	});
+	function BrandedShell({ header = true }: { header?: boolean }) {
+		return (
+			<AdsAdminShell layout="sidebar-header">
+				<AdsAdminShell.Header>
+					<AdsAdminShell.NavigationTrigger />
+				</AdsAdminShell.Header>
+				<AdsAdminShell.Body>
+					<AdsAdminShell.Sidebar
+						header={
+							header && (
+								<>
+									<span>Produto</span>
+									<AdsAdminShell.SidebarToggle />
+								</>
+							)
+						}
+					>
+						<a href="/dashboard">Dashboard</a>
+					</AdsAdminShell.Sidebar>
+					<AdsAdminShell.Main>Conteúdo</AdsAdminShell.Main>
+				</AdsAdminShell.Body>
+			</AdsAdminShell>
+		);
+	}
+	it('keeps collapse control operable in the sidebar header', () => {
+		render(<BrandedShell />);
+		const toggle = screen.getByRole('button', { name: 'Recolher barra lateral' });
+		expect(toggle.closest('aside')).not.toBeNull();
+		fireEvent.click(toggle);
+		expect(screen.getByRole('button', { name: 'Expandir barra lateral' })).toHaveAttribute(
+			'aria-expanded',
+			'false',
+		);
+		expect(screen.getByRole('link', { name: 'Dashboard' })).toBeInTheDocument();
+	});
+	it('does not reserve a header node when content is absent', () => {
+		const { container } = render(<BrandedShell header={false} />);
+		expect(container.querySelector('.ads-admin-shell-sidebar-header')).toBeNull();
+	});
+	it('moves the single header into the mobile drawer across resize', async () => {
+		render(<BrandedShell />);
+		act(() => viewport.setDesktop(false));
+		fireEvent.click(screen.getByRole('button', { name: 'Abrir navegação' }));
+		expect(await screen.findByRole('dialog')).toHaveTextContent('Produto');
+		expect(screen.getAllByText('Produto')).toHaveLength(1);
+		act(() => viewport.setDesktop(true));
+		expect(screen.getAllByText('Produto')).toHaveLength(1);
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+	});
+});
+
+it('captures the mobile trigger as focus origin when pointer activation does not focus it', () => {
+	viewport = installViewport(false);
+	let origin: Element | null = null;
+	render(
+		<ExampleShell
+			onMobileOpenChange={(open) => {
+				if (open) origin = document.activeElement;
+			}}
+		/>,
+	);
+	const button = trigger();
+	fireEvent.click(button);
+	expect(origin).toBe(button);
+});

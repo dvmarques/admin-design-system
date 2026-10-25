@@ -465,3 +465,27 @@ describe('AdsOrganizationSwitcher in the sidebar', () => {
 		);
 	});
 });
+
+it('uses each configured avatar tone in the trigger and options after switching', async () => {
+	const events = userEvent.setup();
+	setup({
+		value: undefined,
+		defaultValue: 'a',
+		organizations: [
+			{ id: 'a', name: 'Acme Brasil', avatarTone: 'primary' },
+			{ id: 'b', name: 'Globex', avatarTone: 'success' },
+		],
+	});
+	expect(trigger().querySelector('.ads-avatar')).toHaveClass('bg-primary');
+	await events.click(trigger());
+	const panel = await screen.findByRole('dialog', { name: 'Trocar de organização' });
+	const option = within(panel).getByRole('button', { name: /^Globex/ });
+	expect(option.querySelector('.ads-avatar')).toHaveClass('bg-success-background');
+	expect(
+		within(panel)
+			.getByRole('button', { name: /^Acme Brasil/ })
+			.querySelector('.ads-avatar'),
+	).toHaveClass('bg-primary');
+	await events.click(option);
+	expect(trigger(/Globex/).querySelector('.ads-avatar')).toHaveClass('bg-success-background');
+});

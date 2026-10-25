@@ -17,11 +17,15 @@ import {
 } from './sidebar-navigation.js';
 
 export interface AdsAdminShellProps
-	extends HTMLAttributes<HTMLDivElement>, Omit<AdsAdminShellStateProps, 'children'> {}
+	extends HTMLAttributes<HTMLDivElement>, Omit<AdsAdminShellStateProps, 'children'> {
+	/** Optional layout aligning Sidebar.header with the main header on desktop. */
+	layout?: 'standard' | 'sidebar-header';
+}
 
 function AdsAdminShellRoot({
 	children,
 	className,
+	layout = 'standard',
 	collapsed,
 	defaultCollapsed,
 	onCollapsedChange,
@@ -31,7 +35,14 @@ function AdsAdminShellRoot({
 	...props
 }: AdsAdminShellProps) {
 	return (
-		<div {...props} className={classNames('ads-admin-shell', className)}>
+		<div
+			{...props}
+			className={classNames(
+				'ads-admin-shell',
+				layout === 'sidebar-header' && 'ads-admin-shell--sidebar-header',
+				className,
+			)}
+		>
 			<AdsAdminShellStateProvider
 				collapsed={collapsed}
 				defaultCollapsed={defaultCollapsed}

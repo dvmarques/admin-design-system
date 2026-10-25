@@ -71,7 +71,7 @@
 		list-style: none;
 	}
 	.ads-sidebar-item > a[aria-current='page'] {
-		background: var(--ads-color-surface-selected);
+		background: var(--ads-sidebar-active-background, var(--ads-color-surface-selected));
 		color: var(--ads-color-on-surface-selected);
 		box-shadow: inset 3px 0 0 var(--ads-color-primary);
 		font-weight: 600;
@@ -1798,4 +1798,209 @@
 		forced-color-adjust: none;
 		background: Highlight;
 	}
+}
+
+/* Opt-in composition: shared natural header row, separate navigation/main scrolling. */
+@layer components {
+	.ads-admin-shell-sidebar-header {
+		display: flex;
+		align-items: center;
+		gap: var(--ads-spacing-2);
+		min-width: 0;
+		padding: var(--ads-spacing-3) var(--ads-spacing-4);
+		background: var(--ads-color-surface-raised);
+	}
+	.ads-admin-shell-sidebar-toggle {
+		flex-shrink: 0;
+	}
+	.ads-admin-shell-sidebar-toggle:disabled {
+		opacity: 0.5;
+		cursor: not-allowed;
+	}
+	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar-header {
+		padding: 0 0 var(--ads-spacing-4);
+		background: transparent;
+	}
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header {
+			--ads-sidebar-header-min-height: 4rem;
+			--ads-sidebar-toggle-size: 1.75rem;
+			/* Touch target of the active item when the sidebar is collapsed (44px). */
+			--ads-sidebar-selection-size: 2.75rem;
+			display: grid;
+			grid-template-columns: auto minmax(0, 1fr);
+			grid-template-rows: auto minmax(0, 1fr);
+		}
+		.ads-admin-shell--sidebar-header > .ads-admin-shell-header {
+			grid-column: 2;
+			grid-row: 1;
+		}
+		.ads-admin-shell--sidebar-header > .ads-admin-shell-body {
+			display: contents;
+		}
+		.ads-admin-shell--sidebar-header > .ads-admin-shell-body > .ads-admin-shell-sidebar-desktop {
+			grid-column: 1;
+			grid-row: 1 / -1;
+			display: grid;
+			grid-template-rows: subgrid;
+			/* Avoid reflowing expanded branding through intermediate collapsed widths. */
+			transition: border-color var(--ads-motion-fast);
+		}
+		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-header {
+			grid-row: 1;
+			position: relative;
+			z-index: 31;
+			min-height: var(--ads-sidebar-header-min-height);
+			padding-inline-end: var(--ads-spacing-6);
+			border-bottom: 1px solid var(--ads-color-border);
+		}
+		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-desktop > .ads-admin-shell-sidebar {
+			grid-row: 2;
+			min-height: 0;
+			height: auto;
+		}
+		.ads-admin-shell--sidebar-header > .ads-admin-shell-body > .ads-admin-shell-main {
+			grid-column: 2;
+			grid-row: 2;
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop:not(:has(> .ads-admin-shell-sidebar-header))
+			> .ads-admin-shell-sidebar {
+			grid-row: 1 / -1;
+		}
+	}
+}
+
+@layer components {
+	@media (min-width: 48rem) {
+		.ads-admin-shell:not(.ads-admin-shell--sidebar-header)
+			.ads-admin-shell-sidebar-desktop:has(> .ads-admin-shell-sidebar-header) {
+			display: flex;
+			flex-direction: column;
+		}
+		.ads-admin-shell:not(.ads-admin-shell--sidebar-header)
+			.ads-admin-shell-sidebar-desktop:has(> .ads-admin-shell-sidebar-header)
+			> .ads-admin-shell-sidebar {
+			height: auto;
+			min-height: 0;
+			flex: 1;
+		}
+	}
+}
+
+/* Chevron on the dividing edge, opt-in only; it does not consume brand-row height. */
+@layer components {
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-header
+			> .ads-admin-shell-sidebar-toggle {
+			position: absolute;
+			inset-inline-end: calc(var(--ads-sidebar-toggle-size) / -2);
+			top: 50%;
+			transform: translateY(-50%);
+			width: var(--ads-sidebar-toggle-size);
+			height: var(--ads-sidebar-toggle-size);
+			border-radius: 50%;
+			background-color: var(--ads-color-surface-raised);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-header
+			> .ads-admin-shell-sidebar-toggle::before {
+			content: '';
+			position: absolute;
+			inset: -0.375rem;
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-header
+			> .ads-admin-shell-sidebar-toggle:hover:not(:disabled) {
+			background-color: var(--ads-color-surface-hover);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
+			> .ads-admin-shell-sidebar-header {
+			justify-content: center;
+			padding-inline: var(--ads-spacing-2);
+		}
+	}
+}
+
+/* Organization width is independent of its label; collapsed geometry stays unchanged. */
+@layer components {
+	.ads-organization-switcher[data-collapsed='false'] {
+		display: grid;
+	}
+	.ads-organization-switcher[data-collapsed='false'] > * {
+		min-width: 0;
+	}
+	.ads-organization-switcher[data-collapsed='true'] .ads-organization-switcher-trigger {
+		border-color: transparent;
+	}
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header .ads-sidebar-navigation,
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher {
+			container-type: inline-size;
+			--ads-sidebar-compact-content-width: calc(
+				100cqi -
+					(var(--ads-admin-shell-sidebar-width) - var(--ads-admin-shell-sidebar-width-collapsed))
+			);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
+			.ads-sidebar-navigation {
+			--ads-sidebar-compact-content-width: 100cqi;
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-sidebar-navigation
+			.ads-sidebar-item
+			> a[aria-current='page'] {
+			--ads-sidebar-selection-outset: calc(
+				(var(--ads-sidebar-selection-size) - var(--ads-sidebar-compact-content-width)) / 2
+			);
+			margin-inline: calc(-1 * var(--ads-sidebar-selection-outset));
+			padding-inline: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
+			.ads-sidebar-item
+			> a[aria-current='page'] {
+			padding-inline: var(--ads-sidebar-selection-outset);
+			inline-size: var(--ads-sidebar-selection-size);
+			min-inline-size: var(--ads-sidebar-selection-size);
+			block-size: var(--ads-sidebar-selection-size);
+		}
+	}
+}
+
+/* Align the expanded organization frame to the root navigation selection. */
+@layer components {
+	@media (min-width: 48rem) {
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher {
+			--ads-sidebar-selection-outset: calc(
+				(var(--ads-sidebar-selection-size) - var(--ads-sidebar-compact-content-width)) / 2
+			);
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher
+			> * {
+			margin-inline: calc(-1 * var(--ads-sidebar-selection-outset));
+		}
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
+			.ads-organization-switcher-trigger {
+			padding-inline: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
+		}
+	}
+	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar-header {
+		padding-inline-end: var(--ads-spacing-10);
+	}
+}
+/* Overrides the reusable Drawer's width/radius utilities only in the shell's mobile navigation. */
+.ads-admin-shell-mobile-drawer {
+	width: 100%;
+	border-radius: 0;
 }

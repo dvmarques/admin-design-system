@@ -86,12 +86,12 @@ function OverlayPanel({
 					aria-labelledby={title ? titleId : props['aria-labelledby']}
 					aria-modal="true"
 					className={classNames(
-						'ads-overlay-panel relative max-h-[calc(100vh-2rem)] overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-lg outline-none max-md:max-h-[calc(100vh-1rem)] max-md:p-4',
+						'ads-overlay-panel relative overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-lg outline-none max-md:p-4',
 						isDrawer
 							? placement === 'left'
 								? 'mr-auto h-full max-h-none w-[min(24rem,100vw)] rounded-r-lg'
 								: 'ml-auto h-full max-h-none w-[min(24rem,100vw)] rounded-l-lg'
-							: 'm-auto w-[min(32rem,calc(100vw-2rem))] rounded-lg',
+							: 'm-auto max-h-[calc(100vh-2rem)] w-[min(32rem,calc(100vw-2rem))] rounded-lg max-md:max-h-[calc(100vh-1rem)]',
 						className,
 					)}
 					ref={(element) => {

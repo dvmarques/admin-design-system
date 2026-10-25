@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAdminShell, useAdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell, AdsOrganizationSwitcher, useAdsAdminShell } from '@admin-ds/admin';
 import {
 	AdsBadge,
 	AdsButton,
@@ -321,4 +321,101 @@ export const TokenCustomization: Story = {
 			<ShellExample />
 		</div>
 	),
+};
+
+function SidebarBrand() {
+	const { collapsed, isDesktop } = useAdsAdminShell();
+	return (
+		<>
+			<div
+				style={{
+					display: 'flex',
+					gap: 'var(--ads-spacing-2)',
+					alignItems: 'center',
+					minWidth: 0,
+					flex: 1,
+					marginInlineStart:
+						isDesktop && !collapsed
+							? 'calc((var(--ads-admin-shell-sidebar-width-collapsed) - 1px - 30px) / 2 - var(--ads-spacing-4))'
+							: 0,
+				}}
+			>
+				<img src="./admin-ds-favicon.svg" width={30} height={30} alt="" />
+				<strong className="ads-admin-shell-sidebar-label" style={{ overflowWrap: 'anywhere' }}>
+					Admin DS
+				</strong>
+			</div>
+			<AdsAdminShell.SidebarToggle
+				title={collapsed && isDesktop ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+			/>
+		</>
+	);
+}
+function SidebarBrandShell({
+	organization = false,
+	collapsed = false,
+}: {
+	organization?: boolean;
+	collapsed?: boolean;
+}) {
+	return (
+		<AdsAdminShell layout="sidebar-header" defaultCollapsed={collapsed}>
+			<AdsAdminShell.Header>
+				<AdsAdminShell.NavigationTrigger />
+				<div className="ml-auto">
+					<ThemeToggle />
+				</div>
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar header={<SidebarBrand />}>
+					{organization && (
+						<AdsOrganizationSwitcher
+							organizations={[
+								{
+									id: 'demo',
+									name: 'Organização de demonstração',
+									initials: 'OD',
+									avatarTone: 'primary',
+								},
+							]}
+							value="demo"
+						/>
+					)}
+					<AdsAdminShell.Navigation>
+						<AdsAdminShell.NavigationItem>
+							<a href="#overview" aria-current="page">
+								<span aria-hidden="true" className="ads-sidebar-icon">
+									Vg
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Visão geral</span>
+							</a>
+						</AdsAdminShell.NavigationItem>
+						<AdsAdminShell.NavigationItem>
+							<a href="#catalog">
+								<span aria-hidden="true" className="ads-sidebar-icon">
+									<AdsIcon name="search" />
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Catálogo</span>
+							</a>
+						</AdsAdminShell.NavigationItem>
+					</AdsAdminShell.Navigation>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					<PageContent />
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	);
+}
+export const SidebarBranding: Story = {
+	name: 'Marca na sidebar, sem organização',
+	render: () => <SidebarBrandShell />,
+};
+export const SidebarBrandingWithOrganization: Story = {
+	name: 'Marca na sidebar, com organização',
+	render: () => <SidebarBrandShell organization />,
+};
+export const SidebarBrandingCollapsed: Story = {
+	name: 'Marca na sidebar recolhida',
+	render: () => <SidebarBrandShell organization collapsed />,
 };

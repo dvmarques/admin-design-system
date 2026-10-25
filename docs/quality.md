@@ -149,15 +149,29 @@ claro e escuro.
 
 ```text
 e2e/
-├── admin-demo.spec.ts
+├── accessibility-preferences.spec.ts
+├── account-notifications-organization.spec.ts
 ├── admin-demo-all-routes.spec.ts
 ├── admin-demo-routes.spec.ts
+├── admin-demo.spec.ts
+├── admin-shell-scroll.spec.ts
+├── catalog.spec.ts
+├── dashboard-sidebar-branding.spec.ts
 ├── data-display.spec.ts
+├── dropdown-focus.spec.ts
+├── form-control-layout.spec.ts
+├── navigation-structure.spec.ts
+├── overlay-position.spec.ts
 ├── overlay.spec.ts
-└── smoke.spec.ts
+├── pagination-responsive.spec.ts
+├── popover-content.spec.ts
+├── smart-table-advanced.spec.ts
+├── smoke.spec.ts
+└── theme-control.spec.ts
 ```
 
-Os arquivos `e2e/axe.ts` e `e2e/routes.ts` são apoio compartilhado, não
+Os arquivos `e2e/axe.ts`, `e2e/routes.ts`, `e2e/hydration.ts`,
+`e2e/full-page-shell.ts` e `e2e/theme-control.ts` são apoios compartilhados, não
 testes: o primeiro injeta o `axe-core` da raiz na página (excluindo o
 `nextjs-portal` do `next dev`) e o segundo lista as rotas do admin demo.
 

@@ -8,15 +8,19 @@ export interface AdsInputProps
 }
 
 /** A native text input with design-system sizing and validation states. */
-export const AdsInput = forwardRef<HTMLInputElement, AdsInputProps>(function AdsInput({
-	['aria-invalid']: ariaInvalid,
-	className,
-	size = 'md',
-	validationState = 'default',
-	...props
-}: AdsInputProps, ref) {
+export const AdsInput = forwardRef<HTMLInputElement, AdsInputProps>(function AdsInput(
+	{
+		['aria-invalid']: ariaInvalid,
+		className,
+		size = 'md',
+		validationState = 'default',
+		...props
+	}: AdsInputProps,
+	ref,
+) {
 	return (
 		<input
+			ref={ref}
 			{...props}
 			aria-invalid={validationState === 'error' ? true : ariaInvalid}
 			className={formControlClasses(size, validationState, className)}

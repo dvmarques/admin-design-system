@@ -96,6 +96,12 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 - [Comandos úteis do OpenSpec](docs/openspec-commands.md)
 - [Seleção de modelos por tarefa](docs/models.md)
 
+## Como navegar pela documentação
+
+- **Referência vigente:** [arquitetura](docs/architecture.md), [integração](docs/integration.md), [qualidade](docs/quality.md), [release](docs/release-process.md) e [limitações](docs/limitations.md). Em caso de divergência, confira o código e a CI da branch consultada.
+- **Contribuição e desenvolvimento:** [AGENTS.md](AGENTS.md), [processo OpenSpec](docs/openspec-commands.md) e [workflow de IA](docs/ai-development-workflow.md). Changes ativas ficam em [`openspec/changes/`](openspec/changes/).
+- **Histórico e evidências (não normativa):** [CHANGELOG.md](CHANGELOG.md), [changes arquivadas](openspec/changes/archive/), [reconciliação OpenSpec #197](docs/openspec-history-reconciliation.md), [pendências arquivadas](docs/archived-openspec-followups.md), [guia e histórico de distribuição](docs/bundle-baseline.md), [procedimento de CI](docs/ci-impact-validation.md), [capturas de revisão #187](openspec/changes/archive/2026-10-25-refine-dashboard-sidebar-branding/evidence/README.md); históricos de bundle, CI e Playwright ficam em comentários das issues de origem, indicados nos guias. Resultados antigos não substituem validação corrente.
+
 ## Recursos
 
 - `@admin-ds/tokens`: design tokens semânticos, temas claro e escuro e CSS público.

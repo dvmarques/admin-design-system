@@ -1,4 +1,6 @@
-# Comparação visual — issue #187
+# Comparação visual — issue #187 (evidência histórica arquivada)
+
+> Capturas transferidas preservando os blobs Git originais, sem recompressão nem alteração de conteúdo. Referência de revisão: `21aba2e` na `develop`; ambiente: Chromium no Windows, viewport e temas detalhados abaixo; data de arquivamento documental: 2026-10-25. Trata-se de evidência de revisão e não de baseline Linux executável. Change de origem: `2026-10-25-refine-dashboard-sidebar-branding`.
 
 Capturas do Chromium no Windows, com Inter e dados atuais do demo.
 A referência anterior é develop em `21aba2e` (inclui #185 e #182).

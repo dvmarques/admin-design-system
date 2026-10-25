@@ -67,6 +67,8 @@ export function HeaderThemeControl({ preference, onChange }: Props) {
   três opções inline.
 - `optionDisplay="icon"` (padrão) usa só ícones, com nome acessível e tooltip;
   `optionDisplay="icon-text"` acrescenta o texto.
+- `triggerVariant` (`secondary` por padrão) muda a aparência do botão do menu; `ghost` o deixa sem
+  borda, como no cabeçalho do admin demo.
   No cabeçalho do admin demo o gatilho é só ícone (com tooltip) e o menu usa
   `optionDisplay="icon-text"`: ao abrir, cada opção mostra ícone e nome.
 - Controlado (`value` + `onValueChange`) ou não controlado (`defaultValue`, padrão
@@ -295,6 +297,10 @@ modal, não um `role="menu"`: mistura identidade (avatar, nome e e-mail, com tru
 - `onSelect` pode retornar uma `Promise`: a ação fica `aria-busy`, as demais ficam inoperantes (sem Sair
   duplicado) e o painel só fecha ao concluir; a rejeição mostra um alerta e reabilita a ação.
 - Aceita `open`/`onOpenChange` (controlado) ou `defaultOpen`, `labels` e `placement`.
+- O avatar do gatilho e da identidade tem fundo (padrão: tom `primary`). Escolha um tom do tema com
+  `user.avatarTone` (`neutral`, `primary`, `success`, `warning`, `danger`) ou qualquer cor CSS com
+  `user.avatarBackgroundColor` e `user.avatarForegroundColor` (cuide do contraste). `AdsAvatar` aceita
+  as mesmas opções (`tone`, `backgroundColor`, `foregroundColor`); o padrão segue neutro.
 - `AdsAvatar` continua utilizável sozinho; passou a tentar de novo a imagem quando `src` muda após uma
   falha e aceita `src={undefined}` explícito.
 

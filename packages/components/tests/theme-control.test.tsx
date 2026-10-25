@@ -369,3 +369,19 @@ describe('AdsTooltip showOnFocus', () => {
 		expect(await screen.findByRole('tooltip')).toHaveTextContent('Ajuda');
 	});
 });
+
+describe('AdsThemeControl trigger appearance', () => {
+	it('keeps the secondary (bordered) trigger by default', () => {
+		render(<AdsThemeControl />);
+
+		expect(screen.getByRole('button', { name: 'Tema: Sistema' })).toHaveClass('border-border');
+	});
+
+	it('can render a borderless ghost trigger', () => {
+		render(<AdsThemeControl triggerVariant="ghost" />);
+
+		const trigger = screen.getByRole('button', { name: 'Tema: Sistema' });
+		expect(trigger).toHaveClass('border-transparent', 'bg-transparent');
+		expect(trigger).not.toHaveClass('border-border');
+	});
+});

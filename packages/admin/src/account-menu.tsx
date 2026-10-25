@@ -5,6 +5,7 @@ import {
 	AdsIcon,
 	AdsLoadingIndicator,
 	AdsPopover,
+	type AdsAvatarTone,
 	type AdsIconName,
 	type AdsOverlayPlacement,
 } from '@admin-ds/components';
@@ -23,6 +24,12 @@ export interface AdsAccountMenuUser {
 	email?: string;
 	/** Photo; the initials are shown when it is missing or fails to load. */
 	avatarSrc?: string;
+	/** Background from the theme tokens when there is no photo. Defaults to `primary`. */
+	avatarTone?: AdsAvatarTone;
+	/** Any CSS color for the avatar background; takes precedence over `avatarTone`. */
+	avatarBackgroundColor?: string;
+	/** Any CSS color for the initials; pair it with `avatarBackgroundColor` for contrast. */
+	avatarForegroundColor?: string;
 	avatarAlt?: string;
 	/** Initials shown without a photo. Derived from `name` when omitted. */
 	initials?: string;
@@ -164,9 +171,12 @@ export function AdsAccountMenu({
 							<div className="ads-account-menu-identity">
 								<AdsAvatar
 									alt={user.avatarAlt ?? ''}
+									backgroundColor={user.avatarBackgroundColor}
 									fallback={initials}
+									foregroundColor={user.avatarForegroundColor}
 									size="lg"
 									src={user.avatarSrc}
+									tone={user.avatarTone ?? 'primary'}
 								/>
 								<span className="ads-account-menu-identity-text">
 									{user.name ? (
@@ -282,7 +292,15 @@ export function AdsAccountMenu({
 					ref={triggerRef}
 					type="button"
 				>
-					<AdsAvatar alt="" fallback={initials} size="sm" src={user.avatarSrc} />
+					<AdsAvatar
+						alt=""
+						backgroundColor={user.avatarBackgroundColor}
+						fallback={initials}
+						foregroundColor={user.avatarForegroundColor}
+						size="sm"
+						src={user.avatarSrc}
+						tone={user.avatarTone ?? 'primary'}
+					/>
 				</button>
 			</AdsPopover>
 		</span>

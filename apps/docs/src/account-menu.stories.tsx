@@ -68,6 +68,27 @@ export const PhotoInitialsAndImageFailure: Story = {
 	),
 };
 
+/** Fundo do avatar: tom do tema ou qualquer cor CSS escolhida pelo consumidor. */
+export const AvatarColors: Story = {
+	args: { groups, user },
+	render: () => (
+		<div style={{ display: 'flex', gap: '1.5rem', alignItems: 'center' }}>
+			<AdsAccountMenu groups={groups} user={{ name: 'Ana Souza' }} />
+			<AdsAccountMenu groups={groups} user={{ name: 'Bruno Lima', avatarTone: 'success' }} />
+			<AdsAccountMenu groups={groups} user={{ name: 'Carla Dias', avatarTone: 'warning' }} />
+			<AdsAccountMenu groups={groups} user={{ name: 'Davi Reis', avatarTone: 'neutral' }} />
+			<AdsAccountMenu
+				groups={groups}
+				user={{
+					name: 'Elisa Prado',
+					avatarBackgroundColor: '#0f766e',
+					avatarForegroundColor: '#ffffff',
+				}}
+			/>
+		</div>
+	),
+};
+
 /** `AdsAvatar` continua útil sozinho, sem nenhum comportamento de menu. */
 export const AvatarAlone: Story = {
 	args: { groups, user },

@@ -37,3 +37,12 @@ O catálogo MUST oferecer showcases próprios e navegáveis de `AdsAccountMenu`,
 
 - **WHEN** o exemplo sem seletor é aberto
 - **THEN** a navegação ocupa o topo da sidebar, sem bloco ou separador residual
+
+### Requirement: Controles do cabeçalho sem borda
+
+No cabeçalho do demo, o botão do menu de tema e o sino de notificações MUST aparecer sem borda, e o menu de tema MUST mostrar ícone e nome em cada opção, mantendo o gatilho só com ícone.
+
+#### Scenario: Cabeçalho
+
+- **WHEN** a pessoa abre o demo em viewport ampla
+- **THEN** tema e sino não têm contorno, o avatar tem fundo colorido e as opções do tema mostram ícone e texto ao abrir o menu

@@ -1050,6 +1050,15 @@ export function AccountMenuDemo() {
 					}}
 				/>
 				<AdsAccountMenu groups={groups} user={{}} />
+				<AdsAccountMenu groups={groups} user={{ name: 'Eduardo Prado', avatarTone: 'success' }} />
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Fernanda Rocha',
+						avatarBackgroundColor: '#0f766e',
+						avatarForegroundColor: '#ffffff',
+					}}
+				/>
 			</div>
 			<p role="status">{feedback}</p>
 		</div>

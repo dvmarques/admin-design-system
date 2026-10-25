@@ -93,3 +93,17 @@ O painel MUST ser operável por teclado (setas, Home, End movem entre ações ha
 
 - **WHEN** o painel abre em viewport de 320 px
 - **THEN** seus limites ficam dentro da viewport
+
+### Requirement: Fundo do avatar configurável
+
+`AdsAccountMenu` MUST dar ao avatar do gatilho e da identidade um fundo, por padrão o tom `primary`, e MUST aceitar `user.avatarTone`, `user.avatarBackgroundColor` e `user.avatarForegroundColor` para escolher o tom do tema ou qualquer cor CSS.
+
+#### Scenario: Fundo padrão
+
+- **WHEN** nenhuma cor é informada e não há foto
+- **THEN** o avatar mostra as iniciais sobre o fundo do tom `primary`
+
+#### Scenario: Cor escolhida pelo consumidor
+
+- **WHEN** `avatarBackgroundColor` e `avatarForegroundColor` são informados
+- **THEN** o gatilho e a identidade do painel usam essas cores

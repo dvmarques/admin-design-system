@@ -74,6 +74,35 @@ describe('AdsAvatar', () => {
 		expect(screen.queryByRole('img', { name: 'Ana Silva' })).not.toBeInTheDocument();
 	});
 
+	it('keeps the neutral look by default and offers token tones', () => {
+		const { rerender, container } = render(<AdsAvatar fallback="AS" />);
+		const avatar = () => container.querySelector('.ads-avatar')!;
+		expect(avatar()).toHaveClass('bg-surface-raised', 'text-text');
+		expect(avatar()).not.toHaveAttribute('style');
+
+		rerender(<AdsAvatar fallback="AS" tone="primary" />);
+		expect(avatar()).toHaveClass('bg-primary');
+		expect(avatar()).not.toHaveClass('bg-surface-raised');
+		rerender(<AdsAvatar fallback="AS" tone="danger" />);
+		expect(avatar()).toHaveClass('bg-danger-background', 'text-danger');
+	});
+
+	it('accepts any CSS color for the background and the initials', () => {
+		const { container } = render(
+			<AdsAvatar
+				backgroundColor="#7c3aed"
+				fallback="AS"
+				foregroundColor="#ffffff"
+				tone="primary"
+			/>,
+		);
+
+		expect(container.querySelector('.ads-avatar')).toHaveStyle({
+			backgroundColor: '#7c3aed',
+			color: '#ffffff',
+		});
+	});
+
 	it('tries the new image after a failed source changes', () => {
 		const { rerender } = render(<AdsAvatar alt="Ana Silva" fallback="AS" src="/quebrada.png" />);
 

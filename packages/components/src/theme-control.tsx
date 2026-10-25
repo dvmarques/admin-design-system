@@ -8,6 +8,7 @@ import {
 	type ReactElement,
 } from 'react';
 import { classNames } from './class-names.js';
+import type { AdsButtonVariant } from './button.js';
 import { AdsDropdown } from './dropdown.js';
 import { AdsIcon, type AdsIconName } from './icon.js';
 import { AdsTooltip, type AdsOverlayPlacement } from './overlay-anchored.js';
@@ -38,6 +39,8 @@ export interface AdsThemeControlProps extends Omit<
 	optionDisplay?: AdsThemeControlOptionDisplay;
 	/** Tooltips nas opções só com ícone. */
 	tooltips?: boolean;
+	/** Aparência do botão do `variant="menu"`; `ghost` o deixa sem borda, como no cabeçalho. */
+	triggerVariant?: AdsButtonVariant;
 	/** Preferência controlada pela aplicação. */
 	value?: AdsThemePreference;
 	/** `menu` (padrão): botão compacto que abre as opções. `group`: opções inline. */
@@ -116,6 +119,7 @@ export function AdsThemeControl({
 	onValueChange,
 	optionDisplay = 'icon',
 	tooltips = true,
+	triggerVariant = 'secondary',
 	value,
 	variant = 'menu',
 	...props
@@ -204,6 +208,7 @@ export function AdsThemeControl({
 					aria-label={triggerLabel}
 					className="ads-theme-control-trigger min-h-10! min-w-10! px-0!"
 					disabled={disabled}
+					variant={triggerVariant}
 				>
 					<AdsIcon name={currentOption.icon} />
 				</AdsDropdown.Trigger>

@@ -18,6 +18,7 @@ export function ThemeControl({
 	return (
 		<AdsThemeControl
 			optionDisplay="icon-text"
+			triggerVariant="ghost"
 			onValueChange={applyThemePreference}
 			value={preference}
 		/>

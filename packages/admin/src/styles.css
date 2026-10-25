@@ -1190,12 +1190,6 @@
 		transition: background-color var(--ads-motion-fast);
 	}
 
-	/* O sino segue o botão do controle de tema; o avatar já tem o seu próprio contorno. */
-	.ads-notification-center-trigger {
-		border-color: var(--ads-color-border);
-		background-color: var(--ads-color-surface);
-	}
-
 	.ads-account-menu-trigger:hover,
 	.ads-notification-center-trigger:hover {
 		background-color: var(--ads-color-surface-hover);

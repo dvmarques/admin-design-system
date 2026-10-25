@@ -22,3 +22,22 @@ Quando a imagem renderizada no servidor falha antes da hidratação, `AdsAvatar`
 
 - **WHEN** a imagem já está concluída e sem dimensões quando o avatar é hidratado
 - **THEN** o avatar exibe o fallback e não a imagem quebrada
+
+### Requirement: Fundo configurável por tom ou por cor livre
+
+`AdsAvatar` MUST aceitar `tone` (`neutral`, `primary`, `success`, `warning`, `danger`), com cores dos tokens do tema e contraste adequado nos temas claro e escuro, e `backgroundColor` e `foregroundColor` com qualquer cor CSS, que prevalecem sobre `tone`. O padrão MUST permanecer o aspecto neutro anterior.
+
+#### Scenario: Aspecto padrão preservado
+
+- **WHEN** `tone`, `backgroundColor` e `foregroundColor` não são informados
+- **THEN** o avatar mantém o fundo e o texto neutros de antes, sem estilo em linha
+
+#### Scenario: Tom do tema
+
+- **WHEN** `tone="primary"` é informado
+- **THEN** o avatar usa o fundo e o texto do tom, definidos pelos tokens
+
+#### Scenario: Cor livre
+
+- **WHEN** `backgroundColor` e `foregroundColor` são informados
+- **THEN** o avatar usa essas cores no fundo e nas iniciais

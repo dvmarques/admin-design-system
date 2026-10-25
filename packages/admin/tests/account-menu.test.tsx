@@ -292,6 +292,29 @@ describe('AdsAccountMenu', () => {
 		expect(await screen.findAllByText('XY')).toHaveLength(2);
 	});
 
+	it('gives the avatar a themed background, configurable by tone or by any color', async () => {
+		const events = userEvent.setup();
+		const { rerender } = setup();
+		const avatar = () => trigger().querySelector('.ads-avatar')!;
+		expect(avatar()).toHaveClass('bg-primary');
+
+		rerender(<AdsAccountMenu groups={groups()} user={{ ...user, avatarTone: 'success' }} />);
+		expect(avatar()).toHaveClass('bg-success-background');
+
+		rerender(
+			<AdsAccountMenu
+				groups={groups()}
+				user={{ ...user, avatarBackgroundColor: '#0f766e', avatarForegroundColor: '#ffffff' }}
+			/>,
+		);
+		expect(avatar()).toHaveStyle({ backgroundColor: '#0f766e', color: '#ffffff' });
+		await events.click(trigger());
+		const identity = (await screen.findByRole('dialog', { name: 'Conta' })).querySelector(
+			'.ads-avatar',
+		)!;
+		expect(identity).toHaveStyle({ backgroundColor: '#0f766e' });
+	});
+
 	it('tolerates a missing name, email and photo', async () => {
 		const events = userEvent.setup();
 		render(<AdsAccountMenu groups={groups()} user={{}} />);

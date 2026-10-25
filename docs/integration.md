@@ -67,6 +67,8 @@ export function HeaderThemeControl({ preference, onChange }: Props) {
   três opções inline.
 - `optionDisplay="icon"` (padrão) usa só ícones, com nome acessível e tooltip;
   `optionDisplay="icon-text"` acrescenta o texto.
+  No cabeçalho do admin demo o gatilho é só ícone (com tooltip) e o menu usa
+  `optionDisplay="icon-text"`: ao abrir, cada opção mostra ícone e nome.
 - Controlado (`value` + `onValueChange`) ou não controlado (`defaultValue`, padrão
   `system`). Mudanças externas atualizam o controle sem remontagem nem `key`, e o
   foco é preservado.

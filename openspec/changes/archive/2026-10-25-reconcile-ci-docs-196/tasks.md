@@ -13,4 +13,4 @@
 
 - [x] 3.1 Revisar diffs e garantir apenas documentação, sem PNGs ou workflows alterados.
 - [x] 3.2 Confirmar checks `Qualidade rápida` e `Política de develop` (OpenSpec estrito) na CI, bem como o workflow Pages.
-- [ ] 3.3 Executar localmente `npm run validate` e `openspec.cmd validate --all --strict` (não comprovados pelos checks seletivos da PR `docs_only`).
+- [x] 3.3 Executar localmente `npm run validate` e `openspec.cmd validate --all --strict`. Limitações reais: `format`, `lint`, `build`, `typecheck` e OpenSpec estrito passaram; `test:quality` teve 1 falha de caminho Windows em `scripts/ci-impact.test.mjs` (alheia à PR) e o E2E não foi executado localmente (snapshots Linux, validados na CI).

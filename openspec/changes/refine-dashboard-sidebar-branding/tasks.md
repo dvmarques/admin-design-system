@@ -18,7 +18,7 @@
 ## 4. Verificação e entrega
 
 - [x] 4.1 Testar consumo Next.js, resize, header variável, 320px, zoom 200%, textos longos, foco e acessibilidade.
-- [ ] 4.2 Capturar depois, revisar comparação light/dark e snapshots intencionais.
+- [x] 4.2 Capturar depois, revisar comparação light/dark e snapshots intencionais.
 - [x] 4.3 Formatar arquivos alterados com npx.cmd prettier --write; executar npm run format, lint, build, typecheck, test:quality; iniciar ambos os apps.
 - [x] 4.4 Executar npm run test:e2e sem falhas antes do commit; diagnóstico por test:e2e:verbose/test:verbose.
 - [ ] 4.5 Executar openspec.cmd validate --all --strict; revisar diff, abrir PR develop e conferir CI no SHA final, sem merge ou archive.

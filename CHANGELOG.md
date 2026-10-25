@@ -216,7 +216,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
-- `stabilize-sidebar-icon-position` (issue #205) - Mantém a posição horizontal dos ícones de navegação ao recolher ou expandir a sidebar desktop na composição `sidebar-header`, centralizando-os no destaque selecionado compacto e alinhando o avatar da organização na mesma coluna, inclusive com scrollbar nativa.
+- `stabilize-sidebar-icon-position` (issue #205) - Mantém a posição horizontal dos ícones de navegação ao recolher ou expandir a sidebar desktop na composição `sidebar-header`, centralizando-os no destaque selecionado compacto e alinhando o avatar da organização na mesma coluna, inclusive com scrollbar nativa. Reserva o gutter da scrollbar no desktop mesmo sem overflow para manter esse eixo estável.
 
 - `tighten-field-feedback-spacing` (issue #205) - Aproxima ajuda e erros dos controles em `AdsField`, usando 4 px por padrão e removendo margens nativas dos parágrafos, inclusive em `AdsFieldDescription` e `AdsFieldMessage`. Preserva a distância do rótulo e as associações acessíveis; beneficia todos os controles compostos com o campo.
 

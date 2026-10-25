@@ -82,6 +82,8 @@ describe('AdsPasswordInput', () => {
 		fireEvent.change(input, { target: { value: 'abc' } });
 		expect(screen.getByRole('status')).toHaveTextContent('Força da senha: Fraca');
 		fireEvent.change(input, { target: { value: 'Abcdefg1' } });
+		expect(screen.getByRole('status')).toHaveTextContent('Média');
+		fireEvent.change(input, { target: { value: 'Abcdefghij1!' } });
 		expect(screen.getByRole('status')).toHaveTextContent('Forte');
 		expect(input).toHaveAccessibleDescription(/Mínimo de 8 caracteres.*Força da senha: Forte/);
 	});
@@ -151,6 +153,24 @@ describe('AdsPasswordInput', () => {
 		expect(screen.getByText('8 caracteres').closest('li')).toHaveTextContent('Atendida');
 		expect(screen.getByText('Um número').closest('li')).toHaveAttribute('data-met', 'true');
 		expect(input).toHaveAccessibleDescription(/8 caracteres.*Atendida/);
+	});
+
+	it('treats a throwing rule as unmet instead of breaking the render', () => {
+		render(
+			<AdsPasswordInput
+				aria-label="Senha"
+				rules={[
+					{
+						id: 'boom',
+						label: 'Regra',
+						test: () => {
+							throw new Error('falha');
+						},
+					},
+				]}
+			/>,
+		);
+		expect(screen.getByText('Regra').closest('li')).toHaveTextContent('Pendente');
 	});
 
 	it('renders on the server without browser APIs', () => {

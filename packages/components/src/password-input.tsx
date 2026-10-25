@@ -16,7 +16,10 @@ import { classNames } from './class-names.js';
 export interface AdsPasswordRule {
 	id: string;
 	label: ReactNode;
-	/** Pure check applied to the current value; it never leaves the browser. */
+	/**
+	 * Check applied to the current value on every render. It must be pure, synchronous and
+	 * must not throw (a thrown error counts as an unmet rule). The value never leaves the browser.
+	 */
 	test: (value: string) => boolean;
 }
 
@@ -33,7 +36,7 @@ export interface AdsPasswordInputProps extends Omit<AdsInputProps, 'type'> {
 	hidePasswordText?: string;
 	/** Hide the visibility action entirely. */
 	showVisibilityToggle?: boolean;
-	/** Show a simple, advisory strength score (never a security guarantee). */
+	/** Show a simple, advisory strength estimate. It measures variety, never real resistance to attacks. */
 	showStrength?: boolean;
 	/** Text for each strength level. */
 	strengthLabels?: Partial<Record<AdsPasswordStrength, string>>;
@@ -54,6 +57,10 @@ const defaultStrengthLabels: Record<AdsPasswordStrength, string> = {
 	strong: 'Forte',
 };
 
+/**
+ * Conservative, advisory heuristic: "strong" needs at least 12 characters and three of the
+ * four criteria. It estimates variety, not resistance to real attacks.
+ */
 function evaluateStrength(password: string): AdsPasswordStrength {
 	if (password.length === 0) return 'empty';
 	const score = [
@@ -62,7 +69,17 @@ function evaluateStrength(password: string): AdsPasswordStrength {
 		/[0-9]/.test(password),
 		/[^A-Za-z0-9]/.test(password),
 	].filter(Boolean).length;
-	return score <= 1 ? 'weak' : score <= 2 ? 'medium' : 'strong';
+	if (score >= 3 && password.length >= 12) return 'strong';
+	return score <= 1 ? 'weak' : 'medium';
+}
+
+function ruleIsMet(rule: AdsPasswordRule, password: string) {
+	try {
+		return rule.test(password);
+	} catch {
+		// A throwing predicate must not break the form render; treat the rule as pending.
+		return false;
+	}
 }
 
 /** Password input with a keyboard-accessible visibility action and optional advisory feedback. */
@@ -191,7 +208,7 @@ export const AdsPasswordInput = forwardRef<HTMLInputElement, AdsPasswordInputPro
 						id={rulesId}
 					>
 						{rules!.map((rule) => {
-							const met = rule.test(password);
+							const met = ruleIsMet(rule, password);
 							return (
 								<li
 									className="ads-password-input__rule flex items-center gap-1.5"

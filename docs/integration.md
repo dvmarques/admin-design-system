@@ -799,9 +799,10 @@ aceita as props nativas de `input`, exceto `type`.
   `ref` e `className` vão para o `<input>`, preserva valor, foco e seleção, nunca envia o formulário e some com
   `showVisibilityToggle={false}`. Desabilitar o campo desabilita também o botão.
 - `showStrength` mostra uma pontuação **apenas orientativa** (comprimento, maiúscula, número
-  e símbolo), em texto e associada ao campo por `aria-describedby`; use `strengthLabels` e
+  e símbolo; `Forte` exige 12 caracteres e três critérios), em texto e associada ao campo por `aria-describedby`; use `strengthLabels` e
   `strengthPrefix` para traduzir. Não substitui a validação do servidor.
-- `rules` mostra uma lista de regras avaliadas no navegador; cada item informa `Atendida` ou
+- `rules` mostra uma lista de regras avaliadas no navegador a cada renderização: cada `test` deve
+  ser puro, síncrono e não lançar erro (se lançar, a regra fica `Pendente`); cada item informa `Atendida` ou
   `Pendente` em texto (`ruleStatusLabels`), sem depender de cor ou de ícone.
 - A biblioteca não armazena nem transmite a senha e não implementa autenticação.
 

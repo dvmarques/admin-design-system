@@ -32,7 +32,7 @@
 - [x] 6.2 Catálogo: entradas, composições, snippets (`node scripts/catalog-snippets.mjs`), matriz em `docs/admin-demo-catalog.md` e teste de cobertura.
 - [x] 6.3 E2E: conta, notificações, organização (expandida, recolhida, mobile), overlays aninhados, tema claro/escuro, hidratação e exemplo sem organização.
 - [x] 6.4 Documentação em `docs/integration.md`, `docs/admin-demo-catalog.md`, `docs/bundle-baseline.md` (orçamentos de `@admin-ds/admin` atualizados, justificados e aprovados) e CHANGELOG `[0.1.1]`.
-- [x] 6.5 Baselines visuais Linux regenerados pelo workflow "Atualizar baselines visuais" (commit `316c5c7`, 18 imagens, todas em `e2e/*-snapshots`), a revisar na PR: cabeçalho com sino e avatar e sidebar com o seletor de organização, em claro e escuro.
+- [x] 6.5 Baselines visuais Linux regenerados pelo workflow "Atualizar baselines visuais" sobre o cabeçalho final (commit `13b70b8`), com validação visual aprovada pelo responsável: tema e sino sem borda, avatar com fundo, intervalo visível igual entre os três controles, menu de tema com ícone e texto, seletor de organização na sidebar, em claro e escuro.
 
 ## 7. Formatação e validação
 

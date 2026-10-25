@@ -216,6 +216,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-ci-docs-review-200` (PR #200, issue #196) - Corrige a revisão retroativa da reconciliação de CI: `theme-control` em Firefox/WebKit passa a ser descrito sobre `/catalogo/theme-control` (e não sobre as rotas do smoke), a matriz indica que o Pages não depende do escopo por impacto e que PRs para `master` usam `release-check`, e o inventário E2E menciona as pastas de snapshots. Sem alterar runtime ou workflows.
+
 - `fix-pages-navigation` (issue #189) - Corrige a validação do logo visível no GitHub Pages para não confundir as marcas responsivas desktop e móvel, cobrindo os estados do menu nos dois temas. A validação Pages também executa em PRs para develop no Linux, sem publicação.
 
 - `issue-151-admin-demo-component-catalog` (issue #151) - Preserva os grupos expandidos/recolhidos da sidebar durante a navegação e abre o grupo do destino sem remontar os demais.

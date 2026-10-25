@@ -13,6 +13,7 @@ import {
 	AdsSkeleton,
 	AdsSparkline,
 	AdsInput,
+	AdsPasswordInput,
 	AdsTextarea,
 	AdsSelect,
 	AdsCheckbox,
@@ -228,6 +229,22 @@ export function InputDemo() {
 			</AdsField>
 			<AdsField label="Válido" validationState="success">
 				<AdsInput placeholder="Digite aqui" />
+			</AdsField>
+		</>
+	);
+}
+
+export function PasswordInputDemo() {
+	return (
+		<>
+			<AdsField label="Senha">
+				<AdsPasswordInput autoComplete="new-password" placeholder="Digite sua senha" />
+			</AdsField>
+			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha">
+				<AdsPasswordInput />
+			</AdsField>
+			<AdsField label="Senha desabilitada">
+				<AdsPasswordInput disabled />
 			</AdsField>
 		</>
 	);
@@ -1359,6 +1376,7 @@ export const catalogDemos = {
 	Skeleton: SkeletonDemo,
 	Sparkline: SparklineDemo,
 	Input: InputDemo,
+	PasswordInput: PasswordInputDemo,
 	Textarea: TextareaDemo,
 	Select: SelectDemo,
 	Checkbox: CheckboxDemo,

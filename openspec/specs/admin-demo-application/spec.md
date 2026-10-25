@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Definir o comportamento observável da aplicação administrativa de demonstração, que integra os componentes e o shell do design system em rotas navegáveis e serve como referência prática de consumo para aplicações Next.js. Os requisitos abaixo são o escopo obrigatório (MVP) da demonstração; filtros complexos, tabelas inteligentes, seletores de data e dashboards avançados são melhorias futuras, tratadas na issue #17, e não são exigidos aqui.
+Definir o comportamento observável da aplicação administrativa de demonstração, que integra os componentes e o shell do design system em rotas navegáveis e serve como referência prática de consumo para aplicações Next.js. Os requisitos descrevem funcionalidades já incorporadas à aplicação de referência, inclusive filtros, tabelas inteligentes, seletores de data e padrões de dashboard; não representam backlog futuro.
 
 ## Requirements
 
@@ -113,7 +113,7 @@ O admin-demo MUST oferecer uma rota de preferências que permita escolher o tema
 #### Scenario: Tema escolhido é restaurado
 
 - **WHEN** a pessoa escolhe um tema e recarrega a página
-- **THEN** a página é renderizada com o tema escolhido desde o servidor, sem alternância visível
+- **THEN** no build normal com SSR a preferência explícita `light` ou `dark` disponível no cookie é aplicada no HTML do servidor; no export estático a preferência é aplicada pelo script inicial antes da pintura, sem assumir leitura de cookie no servidor
 
 ### Requirement: Todas as rotas funcionam nos temas claro e escuro
 
@@ -313,11 +313,11 @@ Enquanto a preferência for Sistema, o admin-demo MUST acompanhar mudanças de `
 
 ### Requirement: Aplicação inicial sem flash e armazenamento resiliente
 
-O admin-demo MUST aplicar a preferência antes da primeira pintura em todos os builds, sem divergência de hidratação. Quando o servidor não conhece a preferência do sistema (Sistema ou ausente), MUST renderizar o fallback `light` e corrigi-lo antes da primeira pintura. A indisponibilidade de armazenamento ou de cookies MUST NOT quebrar a interface: a escolha continua valendo na sessão.
+O admin-demo MUST aplicar a preferência efetiva antes da primeira pintura em ambos os builds, sem divergência de hidratação: cookie explícito pode informar o SSR do build normal; o export estático usa HTML pré-renderizado e script inicial no navegador. Quando o servidor não conhece a preferência do sistema (Sistema ou ausente), MUST renderizar o fallback `light` e corrigi-lo antes da primeira pintura. A indisponibilidade de armazenamento ou de cookies MUST NOT quebrar a interface: a escolha continua valendo na sessão.
 
 #### Scenario: Cookie explícito renderizado no servidor
 
-- **WHEN** o cookie `ads-theme` é `dark`
+- **WHEN** o build normal com SSR recebe cookie `ads-theme` igual a `dark`
 - **THEN** a resposta do servidor já traz `data-theme="dark"` e `data-theme-preference="dark"`
 
 #### Scenario: Sistema escuro antes da pintura

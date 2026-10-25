@@ -72,6 +72,20 @@ export function AdsAdminShellSidebarToggle({
 			type={props.type ?? 'button'}
 		>
 			<span aria-hidden="true" className="ads-admin-shell-sidebar-toggle-icon" />
+			<svg
+				aria-hidden="true"
+				className="ads-admin-shell-sidebar-toggle-panel"
+				viewBox="0 0 24 24"
+				fill="none"
+				stroke="currentColor"
+				strokeWidth="1.75"
+				strokeLinecap="round"
+				strokeLinejoin="round"
+			>
+				<rect x="3" y="4" width="18" height="16" rx="2" />
+				<path d="M9 4v16" />
+				<path className="ads-admin-shell-sidebar-toggle-direction" d="m15 9-3 3 3 3" />
+			</svg>
 		</button>
 	);
 }
@@ -95,6 +109,8 @@ function shouldRedirectFocus(active: Element | null, mobileNavigationId: string)
 export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
 	label?: string;
 	mobileTitle?: ReactNode;
+	/** Optional content above navigation; aligned to Header in layout="sidebar-header". */
+	header?: ReactNode;
 }
 
 /**
@@ -106,6 +122,7 @@ export function AdsAdminShellSidebar({
 	className,
 	label = 'Navegação principal',
 	mobileTitle,
+	header,
 	...props
 }: AdsAdminShellSidebarProps) {
 	const { collapsed, desktopSidebarId, isDesktop, mobileNavigationId, mobileOpen, setMobileOpen } =
@@ -134,6 +151,9 @@ export function AdsAdminShellSidebar({
 				data-collapsed={collapsed ? 'true' : 'false'}
 				id={desktopSidebarId}
 			>
+				{header != null && typeof header !== 'boolean' && header !== '' && (
+					<div className="ads-admin-shell-sidebar-header">{header}</div>
+				)}
 				<nav
 					{...props}
 					aria-label={label}
@@ -158,6 +178,9 @@ export function AdsAdminShellSidebar({
 			placement="left"
 			title={mobileTitle}
 		>
+			{header != null && typeof header !== 'boolean' && header !== '' && (
+				<div className="ads-admin-shell-sidebar-header">{header}</div>
+			)}
 			<nav {...props} aria-label={label} className={navigationClassName}>
 				{children}
 			</nav>

@@ -39,10 +39,10 @@ test('navega pelo menu principal entre as rotas cobertas', async ({ page }) => {
 	}
 });
 
-test('o logo do cabeçalho carrega', async ({ page }) => {
+test('o logo da composição responsiva carrega', async ({ page }) => {
 	await page.goto('/');
 
-	const logo = page.locator('.demo-brand-heading img');
+	const logo = page.locator('.demo-brand-heading img:visible');
 	await expect(logo).toBeVisible();
 	await expect
 		.poll(() => logo.evaluate((image: HTMLImageElement) => image.naturalWidth))
@@ -55,8 +55,10 @@ test('em tela estreita o título do cabeçalho segue acessível e o cabeçalho n
 	await page.setViewportSize({ width: 390, height: 844 });
 	await page.goto('/');
 
-	await expect(page.locator('.demo-brand-heading img')).toBeVisible();
-	await expect(page.locator('.demo-brand-heading strong')).toHaveText('Admin Design System');
+	await expect(page.locator('.demo-brand-heading img:visible')).toBeVisible();
+	await expect(page.locator('.demo-mobile-brand .demo-brand-heading strong')).toHaveText(
+		'Admin Design System',
+	);
 	const height = await page
 		.locator('header')
 		.first()

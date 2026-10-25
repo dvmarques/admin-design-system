@@ -5,14 +5,23 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { AdsAdminShell } from '../src/index.js';
 import { installViewport } from './viewport.js';
 
-function Page() {
+function Page({ branded = false }: { branded?: boolean }) {
 	return (
-		<AdsAdminShell>
+		<AdsAdminShell layout={branded ? 'sidebar-header' : 'standard'}>
 			<AdsAdminShell.Header>
 				<AdsAdminShell.NavigationTrigger />
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
-				<AdsAdminShell.Sidebar>
+				<AdsAdminShell.Sidebar
+					header={
+						branded ? (
+							<>
+								<span>Produto</span>
+								<AdsAdminShell.SidebarToggle />
+							</>
+						) : undefined
+					}
+				>
 					<a href="/dashboard">Dashboard</a>
 				</AdsAdminShell.Sidebar>
 				<AdsAdminShell.Main>Conteúdo</AdsAdminShell.Main>
@@ -40,8 +49,8 @@ describe('AdsAdminShell SSR and hydration', () => {
 		}
 	});
 
-	it('hydrates on a mobile viewport without a hydration mismatch', async () => {
-		const html = renderToString(<Page />);
+	it.each([false, true])('hydrates on mobile without mismatch (branding=%s)', async (branded) => {
+		const html = renderToString(<Page branded={branded} />);
 		viewport = installViewport(false);
 		const container = document.createElement('div');
 		container.innerHTML = html;
@@ -50,7 +59,7 @@ describe('AdsAdminShell SSR and hydration', () => {
 
 		let root!: ReturnType<typeof hydrateRoot>;
 		await act(async () => {
-			root = hydrateRoot(container, <Page />);
+			root = hydrateRoot(container, <Page branded={branded} />);
 		});
 
 		expect(error).not.toHaveBeenCalled();

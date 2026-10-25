@@ -101,3 +101,5 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsThemeControl`         | Básicos     | `/catalogo/theme-control`         | `theme-control.stories.tsx`                                   |
 | `ThemeToggle`             | Básicos     | `/catalogo/theme-toggle`          | `admin-shell.stories.tsx`, `foundation.stories.tsx`           |
 | `StyleFixture`            | Básicos     | `/catalogo/style-fixture`         | `foundation.stories.tsx`                                      |
+
+O showcase de AdsAdminShell demonstra também `layout="sidebar-header"`, marca oficial e toggle no topo, sem organização obrigatória (#187). A navegação principal preserva ícones e abreviações.

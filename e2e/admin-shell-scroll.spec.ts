@@ -154,10 +154,13 @@ test.describe('layout desktop real, sem override de altura', () => {
 			// Nenhum elemento sobrepõe os cantos do header, da sidebar e do main.
 			const hits = await page.evaluate(() => {
 				const at = (x: number, y: number) =>
-					document.elementFromPoint(x, y)?.closest('.ads-admin-shell-header, nav, main')?.tagName;
+					document
+						.elementFromPoint(x, y)
+						?.closest('.ads-admin-shell-sidebar-header, .ads-admin-shell-header, nav, main')
+						?.tagName;
 				return { header: at(4, 4), sidebar: at(4, 790), main: at(1275, 790) };
 			});
-			expect(hits).toEqual({ header: 'HEADER', sidebar: 'NAV', main: 'MAIN' });
+			expect(hits).toEqual({ header: 'DIV', sidebar: 'NAV', main: 'MAIN' });
 
 			await expect(page).toHaveScreenshot(`admin-shell-desktop-scrolled-${theme}.png`);
 		});

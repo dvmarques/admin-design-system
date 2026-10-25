@@ -114,7 +114,7 @@ function DemoNavigationGroup({ group, pathname }: { group: NavigationGroup; path
 export function DemoNavigation() {
 	const pathname = usePathname();
 	return (
-		<AdsAdminShell.Navigation>
+		<AdsAdminShell.Navigation className="demo-navigation">
 			<ul className="demo-shell-nav-list">
 				{overview.map((item) => (
 					<NavigationLink key={item.href} item={item} pathname={pathname} />

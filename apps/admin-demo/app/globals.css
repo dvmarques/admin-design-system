@@ -460,7 +460,7 @@ body {
 
 /* Narrow screens: the logo stands in for the title, which stays available to assistive technology. */
 @media (max-width: 30rem) {
-	.demo-brand-heading strong {
+	.demo-mobile-brand .demo-brand-heading strong {
 		position: absolute;
 		width: 1px;
 		height: 1px;
@@ -572,4 +572,85 @@ body {
 	font-size: 0.75rem;
 	font-weight: 600;
 	line-height: 1;
+}
+
+/* Issue #187: local composition; reusable spacing and dark colors stay unchanged. */
+.demo-overview {
+	padding: var(--ads-spacing-4);
+}
+.demo-overview > .demo-shell {
+	display: grid;
+	gap: var(--ads-spacing-6);
+	container: demo-overview / inline-size;
+}
+.demo-overview .demo-section {
+	padding: 0;
+	border: 0;
+}
+.demo-overview h1,
+.demo-overview h2,
+.demo-overview p {
+	margin-block: 0;
+}
+.demo-overview header.demo-section {
+	display: grid;
+	gap: var(--ads-spacing-2);
+}
+.demo-overview .demo-metrics-grid {
+	grid-template-columns: minmax(0, 1fr);
+	gap: var(--ads-spacing-4);
+	margin-top: var(--ads-spacing-3);
+}
+.demo-overview .demo-progress-list {
+	gap: var(--ads-spacing-4);
+	margin-top: 0;
+}
+.demo-overview .demo-progress-item {
+	gap: var(--ads-spacing-2);
+}
+@container demo-overview (min-width: 40rem) {
+	.demo-overview .demo-metrics-grid {
+		grid-template-columns: repeat(2, minmax(0, 1fr));
+	}
+}
+@container demo-overview (min-width: 64rem) {
+	.demo-overview .demo-metrics-grid {
+		grid-template-columns: repeat(4, minmax(0, 1fr));
+	}
+}
+[data-theme='light'] .demo-navigation {
+	--ads-sidebar-active-background: color-mix(
+		in srgb,
+		var(--ads-color-surface-selected) 35%,
+		var(--ads-color-surface-raised)
+	);
+}
+.demo-brand-heading {
+	flex: 1 1 auto;
+	overflow-wrap: anywhere;
+}
+.demo-brand-heading strong {
+	font-size: 0.875rem;
+	line-height: 1.35;
+}
+.demo-brand-heading--compact strong {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	overflow: hidden;
+	clip-path: inset(50%);
+	white-space: nowrap;
+}
+@media (min-width: 48rem) {
+	.demo-mobile-brand {
+		display: none;
+	}
+	.demo-overview {
+		padding: var(--ads-spacing-4);
+	}
+	.demo-admin-shell:has(aside[data-collapsed='true']) .demo-brand-heading {
+		flex: 0 0 auto;
+	}
 }

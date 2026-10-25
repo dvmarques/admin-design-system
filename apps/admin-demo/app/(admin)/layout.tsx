@@ -1,7 +1,6 @@
-import { AdsTypography } from '@admin-ds/components';
 import { AdsAdminShell } from '@admin-ds/admin';
 import type { ReactNode } from 'react';
-import Image from 'next/image';
+import { DemoBrand } from '../demo-brand';
 import { readServerPreference } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
 import { DemoAccountMenu, DemoNotifications, DemoOrganizationSwitcher } from '../header-controls';
@@ -9,24 +8,17 @@ import { RouteChangeHandler } from '../route-change-handler';
 import { StorybookLink } from '../storybook-link';
 import { ThemeControl } from '../theme-control';
 
-/** `next/image` não aplica o `basePath` a um `src` raiz-relativo; só o export do Pages define um. */
-const logoSrc = `${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/icon.svg`;
-
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
 	const preference = await readServerPreference();
 
 	return (
-		<AdsAdminShell>
+		<AdsAdminShell className="demo-admin-shell" layout="sidebar-header">
 			<RouteChangeHandler />
 
 			<AdsAdminShell.Header>
 				<AdsAdminShell.NavigationTrigger />
-				<AdsAdminShell.SidebarToggle />
-				<div className="demo-brand-heading">
-					<Image src={logoSrc} alt="" width={30} height={30} priority />
-					<AdsTypography as="strong" variant="heading4">
-						Admin Design System
-					</AdsTypography>
+				<div className="demo-mobile-brand">
+					<DemoBrand compact />
 				</div>
 				<div className="demo-header-tools">
 					<StorybookLink />
@@ -36,7 +28,16 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 				</div>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
-				<AdsAdminShell.Sidebar label="Navegação do demo" mobileTitle="Navegação do demo">
+				<AdsAdminShell.Sidebar
+					header={
+						<>
+							<DemoBrand />
+							<AdsAdminShell.SidebarToggle />
+						</>
+					}
+					label="Navegação do demo"
+					mobileTitle="Navegação do demo"
+				>
 					<DemoOrganizationSwitcher />
 					<DemoNavigation />
 				</AdsAdminShell.Sidebar>

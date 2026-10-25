@@ -1449,3 +1449,47 @@ const [widths, setWidths] = useState<Record<string, number>>({});
 Textos configuráveis em `labels.export` e `labels.resizeColumn`. Exemplos:
 `/componentes/tabela-avancada` no admin-demo e as stories Layout/SmartTable
 (Virtualized, ResizableColumns, ExportHook).
+
+## Marca no topo da sidebar (opcional)
+
+Use `<AdsAdminShell layout="sidebar-header">` e passe `header` em
+`AdsAdminShell.Sidebar` com a marca e `AdsAdminShell.SidebarToggle`.
+O padrão continua `standard`, com header de largura completa. O slot aceita
+ReactNode, não cria marca ou organização e, ausente, não cria bloco vazio.
+No desktop opt-in, topo da sidebar e header compartilham altura natural por CSS
+grid/subgrid; navegação e main rolam separadamente. Recolhida, a sidebar empilha
+marca e botão. Use `ads-admin-shell-sidebar-label` no nome para ocultá-lo visualmente
+no desktop recolhido, preservando o nome acessível.
+
+Mantenha `NavigationTrigger` no header principal: o toggle desktop fica oculto no
+mobile. O slot `header` aparece no Drawer aberto; componha também uma identificação
+compacta no header móvel. O consumidor esconde essa alternativa no desktop.
+
+```tsx
+<AdsAdminShell layout="sidebar-header">
+	<AdsAdminShell.Header>
+		<AdsAdminShell.NavigationTrigger />
+		{/* ações do consumidor e identificação compacta móvel */}
+	</AdsAdminShell.Header>
+	<AdsAdminShell.Body>
+		<AdsAdminShell.Sidebar
+			header={
+				<>
+					<span className="ads-admin-shell-sidebar-label">Minha aplicação</span>
+					<AdsAdminShell.SidebarToggle />
+				</>
+			}
+		>
+			{/* organização opcional e navegação */}
+		</AdsAdminShell.Sidebar>
+		<AdsAdminShell.Main>Conteúdo</AdsAdminShell.Main>
+	</AdsAdminShell.Body>
+</AdsAdminShell>
+```
+
+`--ads-sidebar-active-background` personaliza apenas o fundo do item ativo
+(fallback `--ads-color-surface-selected`). Texto, faixa lateral e foco permanecem
+independentes. O demo sobrescreve essa variável somente no light.
+Veja as stories **Marca na sidebar** e `/catalogo/admin-shell`.
+Estado controlado/não controlado, SSR/hidratação e persistência do consumidor seguem
+os contratos anteriores; não há dependências novas.

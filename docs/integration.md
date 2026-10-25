@@ -257,6 +257,97 @@ cookie (para renderizar no servidor sem troca visual) ou `localStorage`.
 O `AdsNav` atual é horizontal. Por isso a sidebar permanece composicional e aceita
 qualquer estrutura de navegação fornecida pela aplicação, como uma lista de links.
 
+## Conta, notificações e organização no shell
+
+Três composições de `@admin-ds/admin`, independentes entre si, completam o cabeçalho e a
+sidebar do `AdsAdminShell`: `AdsAccountMenu`, `AdsNotificationCenter` e
+`AdsOrganizationSwitcher`. Nenhuma implementa autenticação, sessão, autorização,
+multitenancy, backend, persistência ou transporte de notificações: a aplicação fornece os dados
+e executa as ações. Todas são Client Components, não exigem provider, roteador ou o próprio shell,
+e o servidor renderiza apenas os gatilhos fechados. O CSS vem de `@admin-ds/admin/styles.css`.
+
+```tsx
+<AdsAdminShell.Header>
+	{/* ... */}
+	<AdsThemeControl onValueChange={onTheme} value={theme} />
+	<AdsNotificationCenter notifications={items} unreadCount={total} onMarkRead={markRead} />
+	<AdsAccountMenu groups={groups} user={user} />
+</AdsAdminShell.Header>
+<AdsAdminShell.Sidebar>
+	<AdsOrganizationSwitcher organizations={orgs} value={orgId} onValueChange={switchOrg} />
+	<AdsAdminShell.Navigation>{/* ... */}</AdsAdminShell.Navigation>
+</AdsAdminShell.Sidebar>
+```
+
+### Menu de conta (`AdsAccountMenu`)
+
+O gatilho é um botão com o `AdsAvatar` (foto quando carrega; iniciais quando ausente, quando a imagem
+falha ou quando `initials` é informado; sem `initials`, derivam de `name`). O painel é um diálogo não
+modal, não um `role="menu"`: mistura identidade (avatar, nome e e-mail, com truncamento) e ações
+(`groups`, com ícone opcional, `href` ou `onSelect`, `disabled`, `tone="danger"`).
+
+- O foco vai para a primeira ação ao abrir; setas, Home e End movem entre as ações habilitadas; Escape,
+  clique externo e Tab além das extremidades fecham o painel e devolvem o foco ao botão.
+- `switchAccount` é opcional e aparece como grupo próprio "Trocar conta". É troca de identidade
+  (autenticação), não de organização: não a use para o seletor de organização.
+- `onSelect` pode retornar uma `Promise`: a ação fica `aria-busy`, as demais ficam inoperantes (sem Sair
+  duplicado) e o painel só fecha ao concluir; a rejeição mostra um alerta e reabilita a ação.
+- Aceita `open`/`onOpenChange` (controlado) ou `defaultOpen`, `labels` e `placement`.
+- `AdsAvatar` continua utilizável sozinho; passou a tentar de novo a imagem quando `src` muda após uma
+  falha e aceita `src={undefined}` explícito.
+
+### Central de notificações (`AdsNotificationCenter`)
+
+Sino com contador e painel lateral direito modal (sobre `AdsDrawer`: isolamento do fundo, Escape,
+foco e retorno ao sino). Dados, contagem e leitura são controlados:
+
+| Prop                                            | Papel                                                                                                         |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `notifications`                                 | Itens carregados (`id`, `title`, `description`, `timestamp` ou `timeLabel`, `icon`/`avatar`, `read`, `href`). |
+| `unreadCount`                                   | Total de não lidas da aplicação; não presume igualdade com os itens carregados.                               |
+| `onMarkRead`, `onMarkAllRead`                   | Pedem a leitura; o item só vira lido quando `read` muda nos dados. Podem retornar `Promise`.                  |
+| `onItemSelect`, `markReadOnSelect`              | Ativar um item chama `onItemSelect` e, por padrão, `onMarkRead` para itens não lidos.                         |
+| `status`, `onRetry`                             | `ready`, `loading` ou `error` com "Tentar novamente".                                                         |
+| `hasMore`, `onLoadMore`, `loadingMore`          | "Carregar mais" opcional; sem busca nem paginação de backend.                                                 |
+| `filter`/`defaultFilter`/`onFilterChange`       | Filtros "Todas" e "Não lidas".                                                                                |
+| `historyHref`, `labels`, `locale`, `formatTime` | Rodapé opcional, textos e datas do consumidor.                                                                |
+
+Política de leitura: **abrir o painel nunca marca nada como lido.** Cada item separa navegação e
+leitura: o link ou botão do item e o botão "Marcar como lida" são irmãos (nunca um botão dentro de
+link). Ativar um item não lido marca-o como lido por padrão; use `markReadOnSelect={false}` para deixar
+a leitura apenas ao botão. O badge fica oculto em zero e mostra `99+` acima de 99, enquanto o nome
+acessível do sino mantém a contagem exata. Não há região viva: atualizações de lista e contagem não são
+anunciadas. Itens não lidos têm marca visual e texto "Não lida"; os lidos ficam atenuados. A lista rola
+internamente (cabeçalho e ações fixos) e o painel ocupa a largura disponível em telas estreitas. As
+datas só são formatadas dentro do painel, no cliente; sem `formatTime`, usa-se `Intl.DateTimeFormat`
+com `locale`.
+
+### Seletor de organização (`AdsOrganizationSwitcher`)
+
+Opcional e independente: coloque-o como primeiro filho de `AdsAdminShell.Sidebar`. O `AdsAdminShell`
+não o exige nem cria organização fictícia; sem ele, a navegação ocupa o topo, sem bloco, altura
+reservada ou separador residual. O gatilho mostra logo ou iniciais, nome, descrição opcional e seta; o
+painel lista as organizações com a atual marcada (`aria-current`, marca visual e texto), busca a partir
+de 7 opções (`searchable`), estado sem resultados e `manage` ("Gerenciar organizações") opcional.
+
+- A aplicação controla `value` e `onValueChange`. Com uma `Promise`, a opção fica pendente e o gatilho
+  continua mostrando a organização anterior até `value` mudar; a rejeição mantém o painel aberto com um
+  alerta. Permissões e a mudança efetiva de contexto ficam com a aplicação.
+- Cobre zero (gatilho desabilitado), uma e muitas organizações, nomes longos, logo indisponível,
+  opções desabilitadas, `status` `loading` e `error` com `onRetry`.
+- Na sidebar desktop recolhida o gatilho fica compacto (logo ou iniciais, com tooltip e nome acessível)
+  e a seleção continua utilizável sem expandir a sidebar; `collapsed` força esse modo fora do shell. No
+  drawer móvel, o painel é uma camada acima do modal: Escape fecha só o painel.
+
+### Acessibilidade e validação
+
+Gatilhos são botões únicos com nome acessível, `aria-haspopup="dialog"` e `aria-expanded`. O painel
+da conta e o da organização reutilizam `AdsPopover` (diálogo não modal) e o das notificações,
+`AdsDrawer` (modal). Os testes cobrem teclado, foco e retorno, `Promise` pendente ou rejeitada, axe,
+SSR e hidratação; os E2E cobrem os três fluxos no demo, claro e escuro, 320 px, sidebar recolhida,
+menu móvel e overlays aninhados. O demo (`/catalogo/account-menu`, `/catalogo/notification-center` e
+`/catalogo/organization-switcher`) compara a sidebar com e sem o seletor.
+
 ## Padrões de dashboard
 
 `@admin-ds/admin` também exporta `AdsMetricCard`, `AdsDashboardGrid` e

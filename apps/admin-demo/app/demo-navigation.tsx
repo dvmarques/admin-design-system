@@ -44,6 +44,11 @@ const adminCategories = [
 		demos: ['FilterBar', 'SmartTable', 'BulkActionBar'],
 	},
 	{ label: 'Fluxos', icon: { initials: 'Fl' }, demos: ['ListFlow', 'StepForm', 'ConfirmDialog'] },
+	{
+		label: 'Conta e contexto',
+		icon: { initials: 'Ct' },
+		demos: ['AccountMenu', 'NotificationCenter', 'OrganizationSwitcher'],
+	},
 ] satisfies { label: string; icon: NavigationIcon; demos: string[] }[];
 const adminGroups: NavigationGroup[] = adminCategories.map(({ label, icon, demos }) => ({
 	label,

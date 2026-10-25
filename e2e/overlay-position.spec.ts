@@ -195,8 +195,10 @@ for (const theme of ['light', 'dark']) {
 							.poll(() =>
 								panel.evaluate((element) => {
 									const box = element.getBoundingClientRect();
+									// O cabeçalho do demo também tem um popover (conta): ancora pelo gatilho do painel.
 									const anchor = document
-										.querySelector('.ads-popover-anchor')!
+										.querySelector(`[aria-controls="${element.id}"]`)!
+										.closest('.ads-popover-anchor')!
 										.getBoundingClientRect();
 									return Math.max(
 										Math.abs(box.top - anchor.bottom - 8),
@@ -224,7 +226,9 @@ for (const theme of ['light', 'dark']) {
 			await trigger.click();
 			const panel = page.getByRole('dialog', { name: 'Popover na borda' });
 			await insideViewport(panel, page);
-			const anchorElement = page.locator('.ads-popover-anchor');
+			const anchorElement = page
+				.locator('.ads-popover-anchor')
+				.filter({ has: page.getByRole('button', { name: 'Popover na borda', exact: true }) });
 			const anchorBefore = (await anchorElement.boundingBox())!;
 			await page.evaluate(() => window.scrollBy({ top: 80, behavior: 'instant' }));
 			await expect

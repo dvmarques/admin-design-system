@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, type ImgHTMLAttributes } from 'react';
+import { useState, type ImgHTMLAttributes, type RefCallback } from 'react';
 import { classNames } from './class-names.js';
 
 const avatarSizes = {
@@ -19,7 +19,8 @@ export interface AdsAvatarProps extends Omit<
 	className?: string;
 	fallback: string;
 	size?: AdsAvatarSize;
-	src?: string;
+	/** Aceita `undefined` explícito: uma foto ausente cai no fallback. */
+	src?: string | undefined;
 }
 
 /** Represents an entity with an image and a resilient textual fallback. */
@@ -31,8 +32,14 @@ export function AdsAvatar({
 	src,
 	...props
 }: AdsAvatarProps) {
-	const [imageFailed, setImageFailed] = useState(false);
-	const showImage = Boolean(src) && !imageFailed;
+	// Guarda a origem que falhou, não um booleano: trocar `src` tenta a nova imagem.
+	const [failedSrc, setFailedSrc] = useState<string | undefined>();
+	const showImage = Boolean(src) && failedSrc !== src;
+	// Com SSR a imagem pode falhar antes da hidratação, quando `onError` ainda não existe: ao
+	// anexar, uma imagem já concluída e sem dimensões é tratada como falha.
+	const attachImage: RefCallback<HTMLImageElement> = (node) => {
+		if (node?.complete && node.naturalWidth === 0 && node.currentSrc !== '') setFailedSrc(src);
+	};
 
 	return (
 		<span
@@ -50,7 +57,8 @@ export function AdsAvatar({
 					{...props}
 					alt={alt ?? ''}
 					className="absolute inset-0 h-full w-full object-cover"
-					onError={() => setImageFailed(true)}
+					onError={() => setFailedSrc(src)}
+					ref={attachImage}
 					src={src}
 				/>
 			) : null}

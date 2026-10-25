@@ -524,6 +524,33 @@ export const catalogEntries = [
 		href: '/catalogo/step-form',
 	},
 	{
+		name: 'AdsAccountMenu',
+		group: 'Admin',
+		slug: 'account-menu',
+		demo: 'AccountMenu',
+		description:
+			'Menu de conta compacto aberto pelo avatar: identidade, ações, troca de conta opcional e foto, iniciais ou falha de imagem.',
+		href: '/catalogo/account-menu',
+	},
+	{
+		name: 'AdsNotificationCenter',
+		group: 'Admin',
+		slug: 'notification-center',
+		demo: 'NotificationCenter',
+		description:
+			'Sino com contador e painel lateral: filtros, leitura individual e global, estados assíncronos e lista longa.',
+		href: '/catalogo/notification-center',
+	},
+	{
+		name: 'AdsOrganizationSwitcher',
+		group: 'Admin',
+		slug: 'organization-switcher',
+		demo: 'OrganizationSwitcher',
+		description:
+			'Seletor opcional de organização no topo da sidebar: busca, estados, recolhida e exemplo sem o seletor.',
+		href: '/catalogo/organization-switcher',
+	},
+	{
 		name: 'AdsThemeControl',
 		group: 'Básicos',
 		slug: 'theme-control',

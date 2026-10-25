@@ -97,11 +97,12 @@ body {
 }
 .demo-header-tools {
 	margin-left: auto;
-}
-.demo-header-tools:has(.demo-storybook-link) {
 	display: flex;
 	align-items: center;
-	gap: 1rem;
+	gap: 0.25rem;
+}
+.demo-header-tools:has(.demo-storybook-link) {
+	gap: 0.75rem;
 }
 .demo-metrics-grid {
 	display: grid;

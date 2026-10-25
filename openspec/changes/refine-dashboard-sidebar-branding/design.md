@@ -46,3 +46,7 @@ API opt-in, nenhuma migração obrigatória. Integrar biblioteca e consumidores 
 - O menu móvel do shell usa largura integral e cantos retos (CSS ads-admin-shell-mobile-drawer fora da layer para prevalecer sobre utilitários distribuídos). O Drawer genérico preserva sua largura padrão. No demo, omite-se mobileTitle: a identificação fica somente no branding, mantendo aria-label e botão de fechar. O topo móvel reserva espaço para esse botão.
 
 - No WebKit, o clique não foca o botão nativamente. NavigationTrigger foca a si mesmo antes de abrir, somente se o evento não foi cancelado; isso registra a origem correta para retorno de foco sem alterar estados ou callbacks públicos. Regressão unitária simula ativação sem foco nativo.
+
+## Regressão com scrollbar visível
+
+A scrollbar real reduz a largura útil do conteúdo, mas o container de consulta no próprio nav pode expor largura anterior à reserva da scrollbar. Isso reduz novamente a seleção. Navegação e organização expandida passam a estabelecer containers próprios, já dimensionados dentro da área rolável. O item ativo recolhido também recebe dimensões explícitas de 2,75rem, preservando o cálculo de recuo comum. A regressão cobre altura reduzida, overflow real e scrollbar de 16px, além de gutter auto/stable.

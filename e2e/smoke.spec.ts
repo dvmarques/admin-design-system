@@ -1,7 +1,10 @@
+// Exercise actual scrollbar layout; Chromium hides scrollbars by default in headless mode.
 import { expect, test, type Page } from '@playwright/test';
 import { waitForHydration } from './hydration';
 import { routes } from './routes';
 import { themeTrigger } from './theme-control';
+
+test.use({ launchOptions: { ignoreDefaultArgs: ['--hide-scrollbars'] } });
 
 /** Rotas cobertas em todos os navegadores; os snapshots visuais ficam só no Chromium. */
 const smokeRoutes = routes.filter(({ path }) => ['/', '/clientes', '/componentes'].includes(path));
@@ -87,38 +90,56 @@ test('mantém seleção proporcional, recuo lateral e seletor de largura estáve
 		await expect(page.getByRole('dialog', { name: 'Trocar de organização' })).toBeHidden();
 		expect((await organization.boundingBox())!.width).toBe(initialWidth);
 	}
-	// Reserve a real scrollbar gutter even when all items fit, then also test the default behavior.
-	for (const gutter of ['stable', 'auto']) {
-		await nav.evaluate((el, value) => {
-			el.style.scrollbarGutter = value;
-		}, gutter);
-		const expanded = (await active.boundingBox())!;
-		const expandedOrganization = (await organization.boundingBox())!;
-		expect(Math.abs(expandedOrganization.width - expanded.width)).toBeLessThanOrEqual(1);
-		expect(Math.abs(expandedOrganization.x - expanded.x)).toBeLessThanOrEqual(1);
-		const mark = page.locator('.ads-admin-shell-sidebar-header .demo-brand-heading img');
-		const expandedMark = (await mark.boundingBox())!;
+	await page.addStyleTag({
+		content: '.ads-admin-shell-sidebar::-webkit-scrollbar { width: 16px; }',
+	});
+	for (const height of [800, 420]) {
+		await page.setViewportSize({ width: 1280, height });
+		for (const gutter of ['stable', 'auto']) {
+			await nav.evaluate((el, value) => {
+				el.style.scrollbarGutter = value;
+			}, gutter);
+			const expanded = (await active.boundingBox())!;
+			const expandedOrganization = (await organization.boundingBox())!;
+			expect(Math.abs(expandedOrganization.width - expanded.width)).toBeLessThanOrEqual(1);
+			expect(Math.abs(expandedOrganization.x - expanded.x)).toBeLessThanOrEqual(1);
+			const mark = page.locator('.ads-admin-shell-sidebar-header .demo-brand-heading img');
+			const expandedMark = (await mark.boundingBox())!;
 
-		await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
-		const collapsed = (await active.boundingBox())!;
-		const collapsedMark = (await mark.boundingBox())!;
-		expect(Math.abs(collapsedMark.x - expandedMark.x)).toBeLessThanOrEqual(0.5);
-		expect(collapsedMark.y).toBe(expandedMark.y);
+			await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+			const collapsed = (await active.boundingBox())!;
+			if (height === 420)
+				expect(await nav.evaluate((el) => el.scrollHeight > el.clientHeight)).toBe(true);
+			const collapsedMark = (await mark.boundingBox())!;
+			expect(Math.abs(collapsedMark.x - expandedMark.x)).toBeLessThanOrEqual(0.5);
+			expect(collapsedMark.y).toBe(expandedMark.y);
 
-		expect(collapsed.width).toBeCloseTo(44, 0);
-		expect(collapsed.height).toBeCloseTo(44, 0);
-		expect(Math.abs(collapsed.x - expanded.x)).toBeLessThanOrEqual(1);
-		expect((await page.locator('.ads-admin-shell-sidebar-desktop').boundingBox())!.width).toBe(72);
-		await expect(organization).toHaveCSS('border-left-color', 'rgba(0, 0, 0, 0)');
-		const before = (await organization.locator('.ads-avatar').boundingBox())!;
-		await organization.evaluate((el) => {
-			el.style.borderColor = 'gray';
-		});
-		expect(await organization.locator('.ads-avatar').boundingBox()).toEqual(before);
-		await organization.evaluate((el) => {
-			el.style.removeProperty('border-color');
-		});
-		await page.getByRole('button', { name: 'Expandir barra lateral' }).click();
+			expect(collapsed.width).toBeCloseTo(44, 0);
+			expect(collapsed.height).toBeCloseTo(44, 0);
+			expect(
+				await active.evaluate((el) => {
+					const r = el.getBoundingClientRect();
+					return [r.left + 1, r.right - 1].every((x) =>
+						el.contains(document.elementFromPoint(x, r.top + r.height / 2)),
+					);
+				}),
+			).toBe(true);
+
+			expect(Math.abs(collapsed.x - expanded.x)).toBeLessThanOrEqual(1);
+			expect((await page.locator('.ads-admin-shell-sidebar-desktop').boundingBox())!.width).toBe(
+				72,
+			);
+			await expect(organization).toHaveCSS('border-left-color', 'rgba(0, 0, 0, 0)');
+			const before = (await organization.locator('.ads-avatar').boundingBox())!;
+			await organization.evaluate((el) => {
+				el.style.borderColor = 'gray';
+			});
+			expect(await organization.locator('.ads-avatar').boundingBox()).toEqual(before);
+			await organization.evaluate((el) => {
+				el.style.removeProperty('border-color');
+			});
+			await page.getByRole('button', { name: 'Expandir barra lateral' }).click();
+		}
 	}
 });
 

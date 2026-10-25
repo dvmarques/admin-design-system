@@ -55,3 +55,13 @@
 - [x] 7.3 Atualizar testes nos três navegadores, stories, documentação, changelog e capturas; executar gates locais completos.
 
 - Alinhamento final validado: 1.065 testes unitários/integração e 305 E2E locais aprovados com --ignore-snapshots. Cobertura nos três navegadores para coordenadas do símbolo, limites laterais da organização/seleção, menu móvel de 390×844, 320×568 e 740×390, rolagem e foco. Build completo, tipos, lint, formatação e 54 itens OpenSpec aprovados; test:quality mantém apenas a falha conhecida de caminho Windows em test:ci. Capturas finais revisadas e atualizadas.
+
+## 8. Regressão da seleção com scrollbar real
+
+- [x] 8.1 Reproduzir a seleção estreita com conteúdo rolável e scrollbar visível.
+- [x] 8.2 Corrigir o container de medida e garantir destaque de 44×44px, mantendo os demais alinhamentos.
+- [x] 8.3 Validar navegadores, testes e evidências após a correção.
+
+- Reprodução confirmada: removendo --hide-scrollbars do Chromium, a seleção ficou 29×44px com largura útil de 56px no nav. A regressão passa a usar scrollbar visível explicitamente.
+
+- Correção confirmada pelo mesmo teste que falhava: 28×44px antes e 44×44px depois, com scrollbar de 16px. Smoke com scrollbars reais aprovado nos três navegadores; 305 E2E completos e 1.065 testes unitários/integração aprovados. Capturas nativas light/dark revisadas; build, tipos, lint, format, artefatos gerados, skills e OpenSpec aprovados. A limitação Windows em test:ci e os gates remotos pendentes permanecem registrados.

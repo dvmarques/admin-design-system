@@ -42,3 +42,7 @@ Snapshots oficiais devem ser regenerados e confirmados em Linux pelo workflow
 Refinamento de consistência: o seletor expandido ocupa toda a largura disponível, mesmo com nomes curtos. Recolhido, apenas a cor da borda fica transparente; o avatar conserva a posição. A seleção ativa é de 44×44px no recolhido e mantém o mesmo recuo lateral no expandido, com cálculo que considera a scrollbar. A regressão smoke verifica esses contratos nos três navegadores, com gutter stable e auto.
 
 Alinhamento final: a caixa expandida da organização coincide com os limites laterais do item raiz ativo; o símbolo da marca mantém as coordenadas ao recolher. O menu móvel agora cobre toda a viewport, inclusive o rodapé, e começa diretamente com logo/Admin DS, sem título Navegação do demo duplicado. O smoke verifica os três navegadores em 390×844, 320×568 e 740×390, incluindo rolagem e retorno de foco.
+
+## Scrollbar nativa visível
+
+Regressão reproduzida com a opção --hide-scrollbars removida do Chromium: a seleção antiga ficava em 29×44px. Após a correção, as capturas em 1280×600 mostram x=6px e 44×44px nos dois temas: [light](after/collapsed-visible-scrollbar-light.png) e [dark](after/collapsed-visible-scrollbar-dark.png). O teste verifica também as duas bordas do item por hit testing, para não aceitar uma caixa nominal de 44px visualmente cortada pela scrollbar.

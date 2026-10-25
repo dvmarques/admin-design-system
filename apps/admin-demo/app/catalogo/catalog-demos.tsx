@@ -238,7 +238,7 @@ export function PasswordInputDemo() {
 	return (
 		<>
 			<AdsField label="Senha">
-				<AdsPasswordInput autoComplete="new-password" placeholder="Digite sua senha" />
+				<AdsPasswordInput autoComplete="new-password" placeholder="Digite sua senha" showStrength />
 			</AdsField>
 			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha">
 				<AdsPasswordInput />

@@ -27,3 +27,9 @@ Preferir composição com componentes existentes a um campo inteiramente indepen
 ## Foco ao alternar
 
 Com ponteiro, o foco volta ao campo com a seleção preservada; com teclado (Enter/Espaço), o foco permanece no botão. Força é lida por `aria-describedby` e anunciada em uma região `role="status"` oculta, cujo texto só muda quando o nível muda.
+
+## Limitações conhecidas e trabalho futuro
+
+- A força é uma estimativa orientativa de variedade; não substitui validação no servidor nem verificação de senhas vazadas.
+- `className` vai para o `<input>`; um `rootClassName` para o contêiner fica como evolução futura.
+- O contraste dos tokens nos dois temas foi avaliado visualmente; uma medição automatizada específica do componente e testes com leitores de tela reais ficam como trabalho futuro.

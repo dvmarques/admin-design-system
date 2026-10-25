@@ -1,10 +1,10 @@
 # Proposta: AdsPasswordInput (#147)
 
-## Por quê
+## Why
 
 Disponibilizar entrada de senha acessível e reutilizável, coerente com AdsField e a identidade do Design System.
 
-## O que muda
+## What Changes
 
 - `packages/components`: novo AdsPasswordInput e tipos públicos, estilos compilados e testes.
 - `apps/admin-demo`: página e navegação no padrão atual do catálogo de componentes, com exemplos interativos.

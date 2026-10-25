@@ -81,6 +81,14 @@ export const catalogEntries = [
 		href: '/catalogo/input',
 	},
 	{
+		name: 'AdsPasswordInput',
+		group: 'Formulários',
+		slug: 'password-input',
+		demo: 'PasswordInput',
+		description: 'Senha com visibilidade alternável e estados acessíveis.',
+		href: '/catalogo/password-input',
+	},
+	{
 		name: 'AdsTextarea',
 		group: 'Formulários',
 		slug: 'textarea',

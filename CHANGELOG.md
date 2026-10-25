@@ -82,6 +82,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `optimize-incremental-validation` (issue #164) - Registrada a medição pós-merge (tarefa 3.3) com três PRs só de documentação (#200, #202, #203): E2E dispensado, tempo total de jobs -27,3% (411 s → 299 s) e duração da execução +37 s por `Qualidade rápida`; amostra pequena, sem tokens nem custo. Evidência em `evidence/medicao-pos-merge.md` do archive da change.
 - `reconcile-ci-docs-196` (issue #196) - Reconciliadas as instruções de CI, skips por impacto, snapshots Linux, checklist `test:quality`, cobertura cross-browser e contratos SSR/export estático do admin demo, sem alterar runtime ou workflows.
 
 - `fix-pages-navigation` (issue #189) - Move o acesso opcional ao Storybook do cabeçalho para a navegação principal, disponível também na sidebar recolhida e no menu móvel.

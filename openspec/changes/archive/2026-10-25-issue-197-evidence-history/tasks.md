@@ -24,3 +24,4 @@
 - [x] 4.2 Executar npm run validate (local, Windows: format, lint, build, typecheck e test:quality executados; 1 falha preexistente de caminho do Windows em scripts/ci-impact.test.mjs, arquivo não alterado e aprovado na CI Linux; E2E local não executado, coberto pela CI de PR).
 - [x] 4.3 Executar openspec.cmd validate --all --strict (55 aprovadas, 0 falhas; a change usa skip_specs por ser documental).
 - [x] 4.4 Revisar e corrigir os achados: Prettier em 6 arquivos, skip_specs ausente e CHANGELOG atualizado; aderência aos critérios da issue conferida (17 títulos, 3 tasks, 18 blobs idênticos, sem alteração em e2e/ ou orçamentos).
+- [x] 4.5 Tratar a revisão da PR: classificação de `toast-notifications` uniformizada, links diretos para os comentários de evidência nos guias e change arquivada.

@@ -87,7 +87,7 @@ Também há o workflow manual **Métricas de CI** (`ci-metrics.yml`, somente lei
 
 ### Evidência histórica, não baseline atual
 
-As medianas por job, distribuição dos 54 commits amostrados e projeções da implantação estão em [comentário na #164](https://github.com/dvmarques/admin-design-system/issues/164) (histórico de impacto na CI). Lá permanecem os runs, commits, critérios e alternativas descartadas. **Não atribua ao estado atual os valores anteriores à implantação**, nem transforme projeções em ganhos medidos; a medição pós-merge (#164) está registrada no mesmo comentário e em `openspec/changes/archive/2026-10-22-optimize-incremental-validation/evidence/`: o tempo total de jobs caiu, mas a duração da execução não, e a projeção de ≈ 30 s não se confirmou.
+As medianas por job, distribuição dos 54 commits amostrados e projeções da implantação estão em [comentário na #164](https://github.com/dvmarques/admin-design-system/issues/164#issuecomment-6403060682) (histórico de impacto na CI). Lá permanecem os runs, commits, critérios e alternativas descartadas. **Não atribua ao estado atual os valores anteriores à implantação**, nem transforme projeções em ganhos medidos; a medição pós-merge (#164) está registrada no mesmo comentário e em `openspec/changes/archive/2026-10-22-optimize-incremental-validation/evidence/`: o tempo total de jobs caiu, mas a duração da execução não, e a projeção de ≈ 30 s não se confirmou.
 
 ## Limitações
 

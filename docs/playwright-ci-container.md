@@ -49,4 +49,4 @@ Next.js é iniciada por `playwright.config.ts` no próprio container, via
 
 ## Dados de execução histórica
 
-Os runs, durações, diferentes contagens de testes e limitações de causalidade da migração original estão preservados em [comentário na #171](https://github.com/dvmarques/admin-design-system/issues/171) (benchmark de container). **Esses tempos não são benchmarks correntes da CI** e não autorizam alteração de snapshots ou gates.
+Os runs, durações, diferentes contagens de testes e limitações de causalidade da migração original estão preservados em [comentário na #171](https://github.com/dvmarques/admin-design-system/issues/171#issuecomment-6403060885) (benchmark de container). **Esses tempos não são benchmarks correntes da CI** e não autorizam alteração de snapshots ou gates.

@@ -141,7 +141,7 @@ npm run validate
 
 Antes de abrir ou atualizar um PR, prefira a saída concisa dos comandos
 oficiais. A sequência equivalente é `npm run format`, `npm run lint`,
-`npm run build`, `npm run typecheck`, `npm run test:quiet` e
+`npm run build`, `npm run typecheck`, `npm run test:quality` e
 `npm run test:e2e`. Para diagnosticar falhas, use `npm run test:verbose` ou
 `npm run test:e2e:verbose`.
 

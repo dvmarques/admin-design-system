@@ -1823,6 +1823,10 @@
 	}
 	@media (min-width: 48rem) {
 		.ads-admin-shell--sidebar-header {
+			--ads-sidebar-header-min-height: 4rem;
+			--ads-sidebar-toggle-size: 1.75rem;
+			/* Touch target of the active item when the sidebar is collapsed (44px). */
+			--ads-sidebar-selection-size: 2.75rem;
 			display: grid;
 			grid-template-columns: auto minmax(0, 1fr);
 			grid-template-rows: auto minmax(0, 1fr);
@@ -1846,7 +1850,7 @@
 			grid-row: 1;
 			position: relative;
 			z-index: 31;
-			min-height: 4rem;
+			min-height: var(--ads-sidebar-header-min-height);
 			padding-inline-end: var(--ads-spacing-6);
 			border-bottom: 1px solid var(--ads-color-border);
 		}
@@ -1891,11 +1895,11 @@
 			.ads-admin-shell-sidebar-header
 			> .ads-admin-shell-sidebar-toggle {
 			position: absolute;
-			inset-inline-end: -0.875rem;
+			inset-inline-end: calc(var(--ads-sidebar-toggle-size) / -2);
 			top: 50%;
 			transform: translateY(-50%);
-			width: 1.75rem;
-			height: 1.75rem;
+			width: var(--ads-sidebar-toggle-size);
+			height: var(--ads-sidebar-toggle-size);
 			border-radius: 50%;
 			background-color: var(--ads-color-surface-raised);
 		}
@@ -1952,7 +1956,7 @@
 			.ads-sidebar-item
 			> a[aria-current='page'] {
 			--ads-sidebar-selection-outset: calc(
-				(2.75rem - var(--ads-sidebar-compact-content-width)) / 2
+				(var(--ads-sidebar-selection-size) - var(--ads-sidebar-compact-content-width)) / 2
 			);
 			margin-inline: calc(-1 * var(--ads-sidebar-selection-outset));
 			padding-inline: calc(var(--ads-spacing-3) + var(--ads-sidebar-selection-outset));
@@ -1962,9 +1966,9 @@
 			.ads-sidebar-item
 			> a[aria-current='page'] {
 			padding-inline: var(--ads-sidebar-selection-outset);
-			inline-size: 2.75rem;
-			min-inline-size: 2.75rem;
-			block-size: 2.75rem;
+			inline-size: var(--ads-sidebar-selection-size);
+			min-inline-size: var(--ads-sidebar-selection-size);
+			block-size: var(--ads-sidebar-selection-size);
 		}
 	}
 }
@@ -1976,7 +1980,7 @@
 			.ads-admin-shell-sidebar-desktop[data-collapsed='false']
 			.ads-organization-switcher {
 			--ads-sidebar-selection-outset: calc(
-				(2.75rem - var(--ads-sidebar-compact-content-width)) / 2
+				(var(--ads-sidebar-selection-size) - var(--ads-sidebar-compact-content-width)) / 2
 			);
 		}
 		.ads-admin-shell--sidebar-header

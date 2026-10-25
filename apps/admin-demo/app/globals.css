@@ -647,9 +647,6 @@ body {
 	.demo-mobile-brand {
 		display: none;
 	}
-	.demo-overview {
-		padding: var(--ads-spacing-4);
-	}
 	.demo-admin-shell:has(aside[data-collapsed='true']) .demo-brand-heading {
 		flex: 0 0 auto;
 	}

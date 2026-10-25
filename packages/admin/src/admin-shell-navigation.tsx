@@ -80,6 +80,11 @@ export function AdsAdminShellSidebarToggle({
 	);
 }
 
+/** Whether a ReactNode would produce output; `0` and `NaN` render text, so they count. */
+function isRenderable(node: ReactNode): boolean {
+	return node != null && typeof node !== 'boolean' && node !== '';
+}
+
 function isHidden(element: Element): boolean {
 	return typeof element.checkVisibility === 'function' && !element.checkVisibility();
 }
@@ -133,6 +138,7 @@ export function AdsAdminShellSidebar({
 	}, [isDesktop, mobileNavigationId, mobileOpen]);
 
 	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
+	const hasHeader = isRenderable(header);
 
 	if (isDesktop) {
 		return (
@@ -141,9 +147,7 @@ export function AdsAdminShellSidebar({
 				data-collapsed={collapsed ? 'true' : 'false'}
 				id={desktopSidebarId}
 			>
-				{header != null && typeof header !== 'boolean' && header !== '' && (
-					<div className="ads-admin-shell-sidebar-header">{header}</div>
-				)}
+				{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 				<nav
 					{...props}
 					aria-label={label}
@@ -168,9 +172,7 @@ export function AdsAdminShellSidebar({
 			placement="left"
 			title={mobileTitle}
 		>
-			{header != null && typeof header !== 'boolean' && header !== '' && (
-				<div className="ads-admin-shell-sidebar-header">{header}</div>
-			)}
+			{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 			<nav {...props} aria-label={label} className={navigationClassName}>
 				{children}
 			</nav>

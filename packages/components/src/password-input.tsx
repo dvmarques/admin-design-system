@@ -1,6 +1,6 @@
 'use client';
 
-import { useRef, useState, type MouseEvent } from 'react';
+import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
 import { AdsInput, type AdsInputProps } from './input.js';
 import { classNames } from './class-names.js';
 
@@ -23,26 +23,33 @@ export function AdsPasswordInput({
 }: AdsPasswordInputProps) {
   const [visible, setVisible] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
+  const selectionRef = useRef<{ start: number; end: number } | null>(null);
+
+  useLayoutEffect(() => {
+    const input = inputRef.current;
+    if (!input || !selectionRef.current) return;
+    input.focus();
+    const { start, end } = selectionRef.current;
+    selectionRef.current = null;
+    try { input.setSelectionRange(start, end); } catch { /* Browser does not support selection. */ }
+  }, [visible]);
 
   function toggleVisibility(event: MouseEvent<HTMLButtonElement>) {
     event.preventDefault();
     const input = inputRef.current;
-    const start = input?.selectionStart;
-    const end = input?.selectionEnd;
+    try {
+      const start = input?.selectionStart;
+      const end = input?.selectionEnd;
+      selectionRef.current = start != null && end != null ? { start, end } : null;
+    } catch { selectionRef.current = null; }
     setVisible((current) => !current);
-    requestAnimationFrame(() => {
-      input?.focus();
-      if (start != null && end != null) {
-        try { input?.setSelectionRange(start, end); } catch { /* Unsupported input mode */ }
-      }
-    });
   }
 
   return (
     <div className="ads-password-input relative w-full">
       <AdsInput
         {...props}
-        className={classNames('pr-12', className)}
+        className={classNames('pr-20', className)}
         disabled={disabled}
         ref={inputRef}
         type={visible ? 'text' : 'password'}
@@ -51,7 +58,7 @@ export function AdsPasswordInput({
         <button
           aria-label={visible ? hidePasswordLabel : showPasswordLabel}
           aria-pressed={visible}
-          className="ads-password-input__toggle absolute inset-y-0 right-0 inline-flex min-w-11 items-center justify-center rounded-r-md text-sm text-text-muted focus-visible:outline-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
+          className="ads-password-input__toggle absolute inset-y-0 right-0 inline-flex min-w-18 px-2 items-center justify-center rounded-r-md text-sm text-text-muted focus-visible:outline-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
           disabled={disabled}
           onClick={toggleVisibility}
           type="button"

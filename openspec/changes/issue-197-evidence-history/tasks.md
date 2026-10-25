@@ -2,14 +2,14 @@
 
 - [x] 1.1 Confirmar conclusão da #196 e localizar changes arquivadas relevantes.
 - [x] 1.2 Identificar origem e ambiente das capturas de #187, sem afetar baselines oficiais.
-- [ ] 1.3 Verificar referências e acesso às 18 capturas antes de remover o diretório original.
-- [ ] 1.4 Realocar os mesmos blobs para a change arquivada de #187 e atualizar todos os links.
+- [x] 1.3 Verificar referências e acesso às 18 capturas antes de remover o diretório original.
+- [x] 1.4 Realocar os mesmos blobs para a change arquivada de #187 e atualizar todos os links.
 
 ## 2. Documentação permanente
 
-- [ ] 2.1 Corrigir o caminho de #135 e separar cronologia de medição do procedimento atual.
+- [x] 2.1 Corrigir o caminho de #135 e separar cronologia de medição do procedimento atual.
 - [ ] 2.2 Qualificar dados de bundle por data/commit/toolchain verificáveis, inclusive Node 22.
-- [ ] 2.3 Distinguir documentação vigente, contribuição e histórico no README.
+- [x] 2.3 Distinguir documentação vigente, contribuição e histórico no README.
 
 ## 3. Reconciliação OpenSpec
 

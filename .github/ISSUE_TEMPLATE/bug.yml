@@ -1,0 +1,26 @@
+name: Bug
+description: Reportar erro reproduzível no design system ou aplicações consumidoras.
+title: '[Bug] '
+labels: [bug]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Problema, reprodução e resultado esperado
+      description: Descreva comportamento atual, passos mínimos e resultado esperado sem dados sensíveis.
+    validations:
+      required: true
+  - type: textarea
+    id: environment
+    attributes:
+      label: Ambiente e evidências
+      description: Versão, navegador, pacote, tema, capturas, logs sem segredos, testes de regressão.
+    validations:
+      required: true
+  - type: textarea
+    id: acceptance
+    attributes:
+      label: Critérios de aceite, impacto e referências
+      description: Consumo por apps, acessibilidade, Storybook, API pública, issue/change OpenSpec, dependências e riscos.
+    validations:
+      required: true

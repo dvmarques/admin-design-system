@@ -1,0 +1,25 @@
+name: Documentation
+description: Corrigir ou evoluir documentação e processos de contribuição.
+title: "[Documentation] "
+labels: [documentation]
+body:
+  - type: textarea
+    id: problem
+    attributes:
+      label: Documento, lacuna e objetivo
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Escopo, fora do escopo e critérios de aceite
+      description: Indique fontes normativas, links e comportamentos de processo eventualmente alterados.
+    validations:
+      required: true
+  - type: textarea
+    id: verification
+    attributes:
+      label: Referências e plano de validação
+      description: Links, exemplos a conferir, inconsistências, riscos, issue/change OpenSpec e compatibilidade com fluxos vigentes.
+    validations:
+      required: true

@@ -1,0 +1,25 @@
+name: Enhancement
+description: Propor melhoria ou evolução de componentes, APIs ou processo.
+title: "[Enhancement] "
+labels: [enhancement]
+body:
+  - type: textarea
+    id: motivation
+    attributes:
+      label: Motivação e resultado desejado
+    validations:
+      required: true
+  - type: textarea
+    id: scope
+    attributes:
+      label: Escopo, fora do escopo e critérios verificáveis
+      description: Identifique consumidores, tokens, contratos públicos, Storybook, acessibilidade, temas e compatibilidade quando aplicável.
+    validations:
+      required: true
+  - type: textarea
+    id: references
+    attributes:
+      label: Referências, riscos, dependências e validação
+      description: Vincule issues/specs/changes existentes e plano de testes; proposta não autoriza implementação.
+    validations:
+      required: true

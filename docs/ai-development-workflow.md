@@ -24,6 +24,10 @@ Esta política complementa `AGENTS.md` e `openspec/config.yaml`; **não** modifi
 8. **PR:** registrar issue e change, resumo, testes com links para execução, riscos e pendências; usar `develop` como base. Para PR não-release, squash; usar `Closes #N` apenas quando o aceite estiver concluído. Durante a implementação, manter Draft. Quando a implementação e as validações locais estiverem concluídas, marcar Ready for review para disparar a CI: PRs em Draft não a executam. Ready habilita validação e revisão; não significa aprovação ou autorização de merge. Se houver critérios de aceite pendentes, não usar palavra-chave de fechamento; seguir a política de vínculo em Development de `AGENTS.md`.
 9. **CI e revisão:** conferir jobs executados e conclusão real no SHA atual, corrigir falhas, pedir code review e **aguardar aprovação humana para merge**. Arquivar change apenas após tasks e gates concluídos.
 
+## Conclusão da change
+
+Siga [ciclo OpenSpec](openspec-lifecycle.md): para PR comum, apenas após todas as tasks verificáveis concluídas, revisão e autorização cabíveis, sincronizar specs e arquivar na própria branch da PR; revisar e validar novamente o diff, confirmar CI verde no SHA final e aguardar autorização humana para squash. Exceção de integração prévia exige restrição técnica documentada e aprovação; releases preservam o procedimento separado de [release-process.md](release-process.md). Não introduzir archive/merge administrativo como tarefa da change.
+
 ## Exemplos de classificação
 
 ### Fast — corrigir documentação de instalação

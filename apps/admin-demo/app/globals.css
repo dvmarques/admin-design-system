@@ -689,7 +689,7 @@ body {
 .demo-auth-layout {
 	display: grid;
 	flex: 1 1 auto;
-	grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+	grid-template-columns: minmax(0, 1fr);
 	align-items: stretch;
 }
 .demo-auth-main {
@@ -787,6 +787,9 @@ body {
 	letter-spacing: 0.02em;
 }
 @media (min-width: 48rem) {
+	.demo-auth-layout {
+		grid-template-columns: minmax(0, 45fr) minmax(0, 55fr);
+	}
 	.demo-auth-panel {
 		display: block;
 	}

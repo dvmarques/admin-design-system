@@ -110,6 +110,49 @@ test.describe('fluxo de autenticação demonstrativo', () => {
 		}
 	});
 
+	for (const width of [375, 500, 700]) {
+		test(`abaixo de 48rem o formulário ocupa a largura útil (${width}px)`, async ({ page }) => {
+			await page.setViewportSize({ width, height: 812 });
+			for (const path of ['/login', '/esqueci-senha', '/redefinir-senha']) {
+				await page.goto(path);
+				await expect(page.locator('.demo-auth-panel')).toBeHidden();
+
+				const metrics = await page.evaluate(() => {
+					const main = document.querySelector('.demo-auth-main')!.getBoundingClientRect();
+					const shell = document.querySelector('.demo-auth-form-shell')!.getBoundingClientRect();
+					const root = document.documentElement;
+					return {
+						main: main.width,
+						shell: shell.width,
+						horizontalOverflow: root.scrollWidth - root.clientWidth,
+					};
+				});
+				// A coluna do formulário ocupa toda a largura (não fica presa a 45%).
+				expect(metrics.main).toBeGreaterThanOrEqual(width - 1);
+				// Largura do formulário: viewport menos o padding horizontal (até 3rem por lado), limitada a 26rem.
+				expect(metrics.shell).toBeGreaterThanOrEqual(Math.min(width * 0.85, 26 * 16) - 1);
+				expect(metrics.horizontalOverflow).toBeLessThanOrEqual(0);
+			}
+		});
+	}
+
+	test('desktop exibe painel à direita do formulário em 45/55', async ({ page }) => {
+		await page.setViewportSize({ width: 1280, height: 800 });
+		await page.goto('/login');
+		const panel = page.locator('.demo-auth-panel');
+		await expect(panel).toBeVisible();
+
+		const boxes = await page.evaluate(() => {
+			const rect = (selector: string) => {
+				const { left, right, width } = document.querySelector(selector)!.getBoundingClientRect();
+				return { left, right, width };
+			};
+			return { main: rect('.demo-auth-main'), panel: rect('.demo-auth-panel') };
+		});
+		expect(boxes.panel.left).toBeGreaterThanOrEqual(boxes.main.right - 1);
+		expect(boxes.main.width / (boxes.main.width + boxes.panel.width)).toBeCloseTo(0.45, 1);
+	});
+
 	test('desktop exibe painel e passa na auditoria nos dois temas', async ({ page }) => {
 		await page.setViewportSize({ width: 1280, height: 800 });
 		for (const theme of ['light', 'dark'] as const) {

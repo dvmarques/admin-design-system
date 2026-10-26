@@ -32,6 +32,10 @@
 - Vitest: helpers de validação, presença do item de navegação e contrato de imports.
 - Playwright: fluxo login → demo, links entre telas, validação, refresh, histórico (`goBack`), temas, override de `--ads-color-primary` no painel, 375 px sem painel visível.
 
+## Documentação
+
+- `docs/demo-auth-flow.md` descreve rotas, fluxo simulado, validações, limitações (sem backend, token nem armazenamento de credenciais), componentes usados, tema/cor principal no SVG e como testar; é linkado no `README.md`.
+
 ## Alternativas consideradas
 
 - **Componente público `AuthLayout` no DS** — rejeitado: issue exige composição só no demo salvo lacuna comprovada.

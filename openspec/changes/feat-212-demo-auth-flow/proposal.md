@@ -30,5 +30,5 @@ Nenhuma (composição interna do demo).
 
 - `apps/admin-demo` (rotas, estilos `demo-auth-*`, navegação, testes).
 - `e2e` (novo spec de autenticação).
-- Documentação OpenSpec e `CHANGELOG.md`.
+- Documentação OpenSpec, `CHANGELOG.md`, `README.md` e `docs/demo-auth-flow.md`.
 - Pacotes `@admin-ds/*` **sem** alteração de API ou CSS distribuído.

@@ -8,3 +8,7 @@
 - `openspec.cmd validate --all --strict --report findings`: 56 itens válidos, nenhuma falha.
 - Ativação dos hooks na UI e descoberta em uma nova sessão dependem da confiança/revisão do usuário; os testes de subprocesso não concedem confiança. Não foi usado bypass.
 - Acompanhamento do CI Linux atualizado será registrado na PR #208, vinculada à issue #209.
+
+## CI Linux aprovado
+
+No commit `79d36c141d95d44aeb375c3ac7d4f691de00f9ca`, o [CI completo](https://github.com/dvmarques/admin-design-system/actions/runs/40396865296) aprovou qualidade (incluindo os 11 testes de hooks), cobertura, artefatos, política de develop e 311 E2E: 281 Chromium, 15 Firefox e 15 WebKit. Os snapshots Linux existentes passaram sem atualização. O [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/40396865305) também passou. Release e publicação não eram aplicáveis. O commit posterior de registro altera apenas tasks/evidência; não modifica configuração ou implementação testada. Nenhum merge ou archive realizado.

@@ -62,6 +62,10 @@ Para orquestrar uma issue até a revisão da PR, invoque a skill própria `adapt
 6. Use uma branch de trabalho e submeta alterações por Pull Request conforme as
    políticas do repositório.
 
+## Contribuição e conclusão de changes
+
+Para abertura de issues e PRs, veja [CONTRIBUTING.md](CONTRIBUTING.md) e os templates em `.github/`. Para operações de conclusão, consulte [docs/openspec-lifecycle.md](docs/openspec-lifecycle.md): tasks verificáveis concluídas antes do archive; archive/sync autorizado na branch da PR comum; revisão, validação e CI do diff final antes de squash em `develop`. Archive, merge e fechamento administrativo são gates da PR, não tarefas de implementação em `tasks.md`. Somente restrição técnica concreta e aprovada admite integração prévia e PR posterior de archive. **Releases mantêm integralmente o fluxo próprio de `docs/release-process.md`, incluindo merge commit.** Aprovações humanas e validações obrigatórias não são dispensadas.
+
 ## Processo OpenSpec
 
 As specs devem descrever comportamentos observáveis e estáveis. Escreva os

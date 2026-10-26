@@ -27,3 +27,7 @@ A execução nativa em Linux não foi realizada nesta máquina. O usuário autor
 - `npm.cmd run format`, `git diff --check` e `openspec.cmd validate --all --strict --report findings`: aprovados após as configurações; 55 itens OpenSpec válidos.
 - Prettier não possui parser para `.editorconfig` ou `.gitignore`; esses arquivos foram verificados diretamente quanto a encoding, LF, newline final e regras aplicadas.
 - Build e E2E não foram repetidos para este incremento de configuração de edição/ignore; permanece a pendência E2E anterior documentada acima.
+
+## CI Linux da entrega inicial
+
+No commit `de40b2ac81912ff3b4fcb0606ec13aeac54a873d`, o [CI](https://github.com/dvmarques/admin-design-system/actions/runs/40393448890) aprovou qualidade, artefatos, política e 311 E2E (281 Chromium, 15 Firefox e 15 WebKit), incluindo snapshots Linux existentes. O [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/40393448867) também passou. Publicação e validação de release não eram aplicáveis. Nenhum merge realizado.

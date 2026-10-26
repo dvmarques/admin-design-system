@@ -10,7 +10,7 @@
 - [x] 2.1 Confirmar versão, ausência de mudanças pendentes no dry-run, sincronia das skills próprias e `openspec.cmd validate --all --strict`.
 - [x] 2.2 Formatar arquivos alterados com `npx.cmd prettier --write` e executar `npm run format`.
 - [x] 2.3 Executar lint, build, tipos, test:quality e test:e2e localmente e registrar resultados e impedimentos: E2E Windows limitado por nove baselines ausentes, conforme `validation.md`.
-- [ ] 2.4 Confirmar CI Linux no SHA da PR, incluindo E2E e snapshots existentes; nenhum snapshot deve ser atualizado.
+- [x] 2.4 Confirmar CI Linux no SHA da PR, incluindo E2E e snapshots existentes; nenhum snapshot deve ser atualizado.
 
 ## 3. Configurações compartilhadas
 

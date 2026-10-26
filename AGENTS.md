@@ -93,11 +93,16 @@ O repositório é usado com Claude Code, Cursor e Codex.
   do projeto. `skills-lock.json` preserva sua origem e os hashes de importação,
   não os hashes dos textos adaptados. Não sobrescreva as adaptações ao atualizar
   o conteúdo de origem; revise as diferenças e sincronize as cópias.
-- Servidores MCP do projeto ficam em `.mcp.json` (Claude Code) e `.cursor/mcp.json`
-  (Cursor); mantenha ambos iguais. No Codex, registre-os em `~/.codex/config.toml`.
-- Exclusivos do Claude Code: `.claude/settings.json` (hooks que formatam com Prettier após
-  edições e bloqueiam a edição manual de arquivos gerados, em `.claude/hooks`) e os
-  subagents de revisão em `.claude/agents`.
+- Servidores MCP do projeto ficam em `.mcp.json` (Claude Code), `.cursor/mcp.json`
+  (Cursor) e `.codex/config.toml` (Codex); mantenha servidores e versões alinhados.
+  Credenciais, modelos e preferências pessoais permanecem fora do repositório.
+- Claude Code configura hooks em `.claude/settings.json`/`.claude/hooks` e revisores em
+  `.claude/agents`. O Codex usa `.codex/hooks.json`/`.codex/hooks` e revisores TOML em
+  `.codex/agents`. Os formatos são nativos de cada ferramenta; não copie payloads
+  de hooks entre elas. As skills compartilhadas permanecem em `.agents/skills`.
+- Os hooks Codex protegem gerados e formatam arquivos de chamadas `apply_patch`;
+  não interceptam escritas por shell. Revise e confie nos hooks pelo próprio Codex
+  antes de depender deles. Consulte `docs/codex-setup.md` para ativação e limites.
 - Mantenha o texto das skills neutro: diga "invoque a skill X" em vez de `/X` ou `$X`.
 
 ## Releases

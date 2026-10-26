@@ -12,7 +12,9 @@ A issue #210 identificou lacunas na experiência de contribuição e no encerram
 ## Capabilities
 
 ### New Capabilities
+
 - `contribution-governance`: orientação consistente para issues, PRs e encerramento de changes.
 
 ## Impact
+
 Somente documentação e arquivos GitHub/OpenSpec. Não altera componentes, APIs públicas, tokens, pacotes, demos ou comportamento em runtime. Preserva processo de release, skills e CI. Issue #210.

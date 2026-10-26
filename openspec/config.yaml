@@ -75,7 +75,6 @@ operations:
       - Tratar archive, aprovação, merge e fechamento administrativo como gates da PR, nunca como tasks de implementação que gerem dependência circular.
       - Após archive, revisar specs/diff final, revalidar e confirmar CI verde antes de merge autorizado; preservar regras especiais de release-process.md.
       - Integração prévia só por dependência técnica concreta justificada e aprovada, com tarefas restantes e archive posterior em PR de acompanhamento.
-
       - Confirmar que todas as tarefas obrigatórias foram concluídas
       - Confirmar que testes, documentação e exemplos foram atualizados
       - Confirmar o consumo do pacote e dos estilos pela aplicação Next.js

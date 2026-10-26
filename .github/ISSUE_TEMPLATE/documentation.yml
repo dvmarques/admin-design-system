@@ -1,6 +1,6 @@
 name: Documentation
 description: Corrigir ou evoluir documentação e processos de contribuição.
-title: "[Documentation] "
+title: '[Documentation] '
 labels: [documentation]
 body:
   - type: textarea

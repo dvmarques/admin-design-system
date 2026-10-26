@@ -13,5 +13,5 @@
 ## 3. Validação
 
 - [x] 3.1 Validar YAML, links e coerência documental com revisão crítica do diff (a revisão humana ocorre no code review da PR).
-- [ ] 3.2 Executar npm run format, npm run validate e validação OpenSpec completa, anotando evidências.
-- [ ] 3.3 Verificar CI da PR pronta para revisão, revisar diff final e registrar restrições.
+- [x] 3.2 Executar npm run format, npm run validate e validação OpenSpec completa, anotando evidências. Local: format, lint, build, typecheck, test:quality e `openspec validate --all --strict` (CLI 1.10.0) OK; o E2E local não pôde rodar (navegadores do Playwright indisponíveis no sandbox) e foi comprovado pelos jobs de navegador da CI no SHA c96a7cc (Chromium, Firefox e WebKit).
+- [x] 3.3 Verificar CI da PR pronta para revisão, revisar diff final e registrar restrições. CI verde no SHA c96a7cc (PR Ready); restrições registradas na descrição da PR.

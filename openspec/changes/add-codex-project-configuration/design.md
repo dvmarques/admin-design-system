@@ -27,3 +27,7 @@ Disponibilizar recursos equivalentes no formato nativo Codex. Não alterar Claud
 ## Migration Plan
 
 Versionar a configuração, testar os hooks e atualizar a PR existente com escopo claro. Novas sessões carregam configuração e agentes; revisar hooks em `/hooks`. Reversão por commit, sem alteração em dados, tags, pacotes ou configurações pessoais.
+
+## Guia unificado dos agentes
+
+A pedido do usuário, substituir o guia exclusivo do Codex por `docs/agent-setup.md`, reunindo base comum, configuração, ativação e limites reais de Codex, Claude Code e Cursor. Preservar os detalhes do Codex e atualizar os links. Incremento exclusivamente documental, sem mudar comportamento ou exigir novos deltas de specs.

@@ -31,3 +31,7 @@ Afeta `.codex`, scripts de testes, `package.json`, orientações de agentes e do
 Standard: comportamento interno de tooling, sem alteração das permissões do Codex nem da superfície pública. Hooks são uma ajuda de edição, não uma barreira de segurança completa. Manter gates do repositório.
 
 Acompanhamento: [issue #209](https://github.com/dvmarques/admin-design-system/issues/209), na PR #208.
+
+## Guia unificado dos agentes
+
+A pedido do usuário, substituir o guia exclusivo do Codex por `docs/agent-setup.md`, reunindo base comum, configuração, ativação e limites reais de Codex, Claude Code e Cursor. Preservar os detalhes do Codex e atualizar os links. Incremento exclusivamente documental, sem mudar comportamento ou exigir novos deltas de specs.

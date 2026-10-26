@@ -12,3 +12,7 @@
 ## CI Linux aprovado
 
 No commit `79d36c141d95d44aeb375c3ac7d4f691de00f9ca`, o [CI completo](https://github.com/dvmarques/admin-design-system/actions/runs/40396865296) aprovou qualidade (incluindo os 11 testes de hooks), cobertura, artefatos, política de develop e 311 E2E: 281 Chromium, 15 Firefox e 15 WebKit. Os snapshots Linux existentes passaram sem atualização. O [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/40396865305) também passou. Release e publicação não eram aplicáveis. O commit posterior de registro altera apenas tasks/evidência; não modifica configuração ou implementação testada. Nenhum merge ou archive realizado.
+
+## Guia único dos três agentes
+
+O incremento documental substitui `docs/codex-setup.md` por `docs/agent-setup.md`, preserva os detalhes do Codex e acrescenta configuração, ativação e limites reais de Claude Code e Cursor. Documentação oficial conferida e 36 links locais de README, AGENTS, mapa de contexto e guia validados. Sem alterações em scripts, configurações executáveis, pacotes, dependências ou snapshots. `npm run format`, `npm run check:agent-skills`, `git diff --check` e OpenSpec estrito aprovados (56 itens). Build e E2E locais não foram repetidos para este incremento exclusivamente documental; a implementação anterior já passou no CI completo dos commits `79d36c1` e `14b1057`, e os checks automáticos da PR serão conferidos novamente após o push.

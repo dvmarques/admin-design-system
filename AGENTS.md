@@ -102,7 +102,7 @@ O repositório é usado com Claude Code, Cursor e Codex.
   de hooks entre elas. As skills compartilhadas permanecem em `.agents/skills`.
 - Os hooks Codex protegem gerados e formatam arquivos de chamadas `apply_patch`;
   não interceptam escritas por shell. Revise e confie nos hooks pelo próprio Codex
-  antes de depender deles. Consulte `docs/codex-setup.md` para ativação e limites.
+  antes de depender deles. Consulte `docs/agent-setup.md` para ativação e limites.
 - Mantenha o texto das skills neutro: diga "invoque a skill X" em vez de `/X` ou `$X`.
 
 ## Releases

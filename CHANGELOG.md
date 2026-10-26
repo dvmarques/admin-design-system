@@ -86,6 +86,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `add-codex-project-configuration` - Reúne configuração, ativação, skills, MCPs, revisores e limites dos hooks de Codex, Claude Code e Cursor no guia único `docs/agent-setup.md`, substituindo o guia exclusivo do Codex e atualizando os links de entrada.
+
 - `update-openspec-1-15` - Adiciona `.editorconfig` com UTF-8, LF e indentação compatível com o Prettier e amplia `.gitignore` para logs, metadados de macOS/Windows e preferências locais do Claude Code.
 
 - `update-openspec-1-15` - Atualiza as skills geradas do OpenSpec para Codex, Claude Code e Cursor de 1.14.1 para 1.15.0 e alinha as duas validações da CI (antes em 1.10.0) e o guia de comandos à versão 1.15.0, preservando configuração, workflows selecionados e skills próprias. Reorganiza detalhes de três requisitos existentes em cenários para atender à validação estrita da nova versão, sem mudar suas exigências. O teste de confiança do checkout passa a respeitar o formato de caminhos de Linux e Windows.

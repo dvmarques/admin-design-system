@@ -12,6 +12,30 @@ Este guia é operacional. As políticas obrigatórias estão em [AGENTS.md](../A
 
 As tarefas da change são entregas concluíveis **antes** do archive: código, documentação, testes e revisão verificável. Não criar tarefas de “executar archive”, “fazer merge” ou “fechar issue” no `tasks.md`: são gates e ações operacionais da PR; uma tarefa dependente de seu próprio archive cria um ciclo impossível.
 
+## Comandos e checkpoints operacionais
+
+Execute na raiz do repositório e use a CLI OpenSpec instalada no ambiente. No Windows, o comando `openspec.cmd` é o utilizado nas regras deste projeto; nos demais sistemas, use `openspec`. Os comandos abaixo **não autorizam** archive ou merge por si mesmos.
+
+```sh
+openspec list
+openspec status --change <change-id>
+openspec validate --all --strict
+npm run format
+npm run validate
+```
+
+Antes do archive: confira todas as tasks e evidências, complete revisões/CI exigidos, obtenha autorização e consulte as instruções da versão instalada:
+
+```sh
+openspec instructions archive --change <change-id>
+openspec archive <change-id>
+openspec validate --all --strict
+npm run format
+npm run validate
+```
+
+O comando `archive` sincroniza as specs por padrão no fluxo suportado; revise `openspec/specs` e `openspec/changes/archive` no diff. Se a CLI instalada divergir, consulte `openspec --help` e as instruções geradas em vez de presumir opções. Execute archive **na branch da PR comum**, não diretamente em `develop`. Faça commit das specs/archive, confira o SHA final e exija novo CI verde após tornar a PR Ready. O squash só ocorre com revisão humana e autorização; release segue outro fluxo. Não marque como concluídas verificações não executadas.
+
 ## Exceção — dependência real de integração prévia
 Somente se uma validação/delivery depender concretamente de código já integrado, documentar na PR e no design a restrição, evidência, tarefas pendentes, base de destino e PR de acompanhamento, com aprovação específica **antes** da integração. Integrar a PR comum por squash mantendo a change ativa; realizar e comprovar tarefas restantes; só então sincronizar e arquivar em PR de acompanhamento, também sujeita a revisão, CI e squash. Conveniência não é exceção. Nunca arquivar tasks incompletas.
 

@@ -16,6 +16,7 @@ const overview: NavigationItem[] = [
 	{ href: '/catalogo', icon: 'search', label: 'Catálogo' },
 ];
 const applications: NavigationItem[] = [
+	{ href: '/login', icon: 'user', label: 'Login (exemplo)' },
 	{ href: '/clientes', icon: { initials: 'Cl' }, label: 'Clientes' },
 	{ href: '/clientes/novo', icon: 'plus', label: 'Novo cliente' },
 	{ href: '/preferencias', icon: { initials: 'Pr' }, label: 'Preferências' },

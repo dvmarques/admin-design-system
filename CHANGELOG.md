@@ -84,6 +84,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `update-openspec-1-15` - Adiciona `.editorconfig` com UTF-8, LF e indentação compatível com o Prettier e amplia `.gitignore` para logs, metadados de macOS/Windows e preferências locais do Claude Code.
+
+- `update-openspec-1-15` - Atualiza as skills geradas do OpenSpec para Codex, Claude Code e Cursor de 1.14.1 para 1.15.0 e alinha as duas validações da CI (antes em 1.10.0) e o guia de comandos à versão 1.15.0, preservando configuração, workflows selecionados e skills próprias. Reorganiza detalhes de três requisitos existentes em cenários para atender à validação estrita da nova versão, sem mudar suas exigências. O teste de confiança do checkout passa a respeitar o formato de caminhos de Linux e Windows.
+
 - `optimize-incremental-validation` (issue #164) - Registrada a medição pós-merge (tarefa 3.3) com três PRs só de documentação (#200, #202, #203): E2E dispensado, tempo total de jobs -27,3% (411 s → 299 s) e duração da execução +37 s por `Qualidade rápida`; amostra pequena, sem tokens nem custo. Evidência em `evidence/medicao-pos-merge.md` do archive da change.
 - `reconcile-ci-docs-196` (issue #196) - Reconciliadas as instruções de CI, skips por impacto, snapshots Linux, checklist `test:quality`, cobertura cross-browser e contratos SSR/export estático do admin demo, sem alterar runtime ou workflows.
 

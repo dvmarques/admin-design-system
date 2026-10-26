@@ -6,6 +6,7 @@ import { generatedReason, readPatch } from './patch-files.mjs';
 
 try {
 	const input = JSON.parse(readFileSync(0, 'utf8'));
+	// isError é uma indicação defensiva; tool_response não tem status universal documentado.
 	if (!input.tool_response?.isError) {
 		const { root, entries } = readPatch(input);
 		const files = [

@@ -6,7 +6,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "node -e \"const c=require('node:child_process');const p=require('node:path');const root=c.execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8'}).trim();const r=c.spawnSync(process.execPath,[p.join(root,'.codex/hooks/guard-generated.mjs')],{stdio:'inherit'});if(r.error)console.error(r.error.message);process.exit(r.status??1)\"",
+						"command": "node -e \"const c=require('node:child_process');const p=require('node:path');try{const root=c.execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();const r=c.spawnSync(process.execPath,[p.join(root,'.codex/hooks/guard-generated.mjs')],{stdio:'inherit'});if(r.error)throw r.error;if(r.status!==0&&r.status!==2)throw new Error('Hook terminou sem sucesso ('+r.status+')');process.exit(r.status??2)}catch(e){console.error('Proteção de arquivos gerados: '+e.message);process.exit(2)}\"",
 						"timeout": 10,
 						"statusMessage": "Verificando arquivos gerados"
 					}
@@ -19,7 +19,7 @@
 				"hooks": [
 					{
 						"type": "command",
-						"command": "node -e \"const c=require('node:child_process');const p=require('node:path');const root=c.execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8'}).trim();const r=c.spawnSync(process.execPath,[p.join(root,'.codex/hooks/format-edited.mjs')],{stdio:'inherit'});if(r.error)console.error(r.error.message);process.exit(r.status??1)\"",
+						"command": "node -e \"const c=require('node:child_process');const p=require('node:path');try{const root=c.execFileSync('git',['rev-parse','--show-toplevel'],{encoding:'utf8',stdio:['ignore','pipe','pipe']}).trim();const r=c.spawnSync(process.execPath,[p.join(root,'.codex/hooks/format-edited.mjs')],{stdio:'inherit'});if(r.error)throw r.error;if(r.status!==0)throw new Error('Hook terminou sem sucesso ('+r.status+')');process.exit(r.status??0)}catch(e){console.log(JSON.stringify({systemMessage:'Formatação Codex: '+e.message}));process.exit(0)}\"",
 						"timeout": 30,
 						"statusMessage": "Formatando arquivos editados"
 					}

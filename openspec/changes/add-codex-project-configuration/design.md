@@ -15,7 +15,7 @@ Disponibilizar recursos equivalentes no formato nativo Codex. Não alterar Claud
 - Bootstrap Node idêntico em Windows/Linux resolve a raiz com Git e inicia o hook com argumentos e stdin herdado. Evita caminhos absolutos da máquina, dependência de Bash/PowerShell e execução a partir do checkout errado.
 - Compartilhar extração de caminhos e regras entre os dois hooks Codex, sem modificar as implementações do Claude. Hooks pré-edição negam payload inválido; pós-edição reporta falhas sem reverter edições. Prettier do próprio repositório, sem dependências novas e sem shell para nomes de arquivos.
 - Revisores herdam modelo/permissões da sessão. Instruções de somente leitura não representam uma sandbox adicional; o esquema atual não permite impor sandbox por agente.
-- Testes Node de integração com stdin JSON e comandos declarados em hooks.json, executados pelo gate `test:quality` via `test:ci`.
+- Testes Node de integração com payloads simulados via stdin JSON e comandos declarados em hooks.json, executados pelo gate `test:quality` via `test:ci`.
 
 ## Risks / Trade-offs
 
@@ -30,4 +30,8 @@ Versionar a configuração, testar os hooks e atualizar a PR existente com escop
 
 ## Guia unificado dos agentes
 
-A pedido do usuário, substituir o guia exclusivo do Codex por `docs/agent-setup.md`, reunindo base comum, configuração, ativação e limites reais de Codex, Claude Code e Cursor. Preservar os detalhes do Codex e atualizar os links. Incremento exclusivamente documental, sem mudar comportamento ou exigir novos deltas de specs.
+O escopo e a motivação do guia unificado estão em `proposal.md`; a organização dos capítulos não modifica os contratos nem a implementação.
+
+## Correções da revisão Claude
+
+O bootstrap pré-edição também nega com código 2 quando Git ou o script falham; o pós-edição comunica falhas sem rejeitar uma edição concluída. A validação de raiz usa o caminho físico para aceitar worktrees abertas por alias, resolve cada ancestral antes de interpretar symlinks relativos e normaliza caixa das regras no Windows. A indicação `tool_response.isError` é defensiva: o formato de resposta não possui um status universal documentado; os testes simulados não comprovam entrega de evento pela sessão do aplicativo.

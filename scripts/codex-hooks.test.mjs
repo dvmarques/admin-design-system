@@ -184,7 +184,7 @@ test('post-hook uses filenames as arguments rather than shell code', () =>
 		assert.equal(readFileSync(join(root, path), 'utf8'), 'const x = 1;\n');
 	}));
 
-test('post-hook skips failed calls, deletions and files with no parser', () =>
+test('post-hook skips explicitly reported errors, deletions and files with no parser', () =>
 	fixture((root) => {
 		writeFileSync(join(root, 'src/a.ts'), 'const x=1\n');
 		let result = hook(root, 'PostToolUse', patch('*** Update File: src/a.ts'), {
@@ -240,3 +240,73 @@ test('shared configuration keeps local hooks and MCP versions aligned', () => {
 		assert.doesNotMatch(agent, /^model\s*=/m);
 	}
 });
+
+test('pre-hook bootstrap denies when Git root or the guard script is unavailable', () =>
+	fixture((root) => {
+		const outside = mkdtempSync(join(tmpdir(), 'admin-ds no git '));
+		try {
+			denied(root, patch('*** Update File: package-lock.json'), { cwd: outside });
+		} finally {
+			rmSync(outside, { recursive: true, force: true });
+		}
+		rmSync(join(root, '.codex/hooks/guard-generated.mjs'));
+		denied(root, patch('*** Update File: package-lock.json'));
+	}));
+
+test('post-hook bootstrap reports failure without rejecting an already completed edit', () =>
+	fixture((root) => {
+		rmSync(join(root, '.codex/hooks/format-edited.mjs'));
+		const result = hook(root, 'PostToolUse', patch('*** Update File: src/a.ts'));
+		assert.equal(result.status, 0, result.stderr);
+		assert.match(JSON.parse(result.stdout).systemMessage, /Formatação Codex/);
+	}));
+
+test('hooks support a checkout opened through a directory alias', () =>
+	fixture((root) => {
+		const links = mkdtempSync(join(tmpdir(), 'admin-ds alias '));
+		const alias = join(links, 'worktree');
+		try {
+			symlinkSync(root, alias, process.platform === 'win32' ? 'junction' : 'dir');
+			writeFileSync(join(root, 'src/a.ts'), 'const x=1\n');
+			const command = patch('*** Update File: src/a.ts');
+			let result = hook(root, 'PreToolUse', command, { cwd: alias });
+			assert.equal(result.status, 0, result.stderr);
+			result = hook(root, 'PostToolUse', command, { cwd: alias });
+			assert.equal(result.stdout, '', result.stdout);
+			assert.equal(readFileSync(join(root, 'src/a.ts'), 'utf8'), 'const x = 1;\n');
+		} finally {
+			rmSync(links, { recursive: true, force: true });
+		}
+	}));
+
+test(
+	'pre-hook protects alternate filename casing on Windows',
+	{ skip: process.platform !== 'win32' },
+	() =>
+		fixture((root) => {
+			writeFileSync(join(root, 'package-lock.json'), '{}');
+			denied(root, patch('*** Update File: PACKAGE-LOCK.JSON'));
+		}),
+);
+
+test(
+	'pre-hook resolves relative file symlinks against the physical parent',
+	{ skip: process.platform === 'win32' },
+	() =>
+		fixture((root) => {
+			mkdirSync(join(root, 'packages/tokens/deep'), { recursive: true });
+			mkdirSync(join(root, 'packages/tokens/src'), { recursive: true });
+			writeFileSync(join(root, 'packages/tokens/src/generated.ts'), 'generated');
+			symlinkSync('../src/generated.ts', join(root, 'packages/tokens/deep/link.ts'));
+			symlinkSync(join(root, 'packages/tokens/deep'), join(root, 'deep-alias'), 'dir');
+			denied(root, patch('*** Update File: deep-alias/link.ts'));
+		}),
+);
+
+test('post-hook bootstrap converts nonzero child exits into a warning', () =>
+	fixture((root) => {
+		writeFileSync(join(root, '.codex/hooks/format-edited.mjs'), 'process.exit(2);\n');
+		const result = hook(root, 'PostToolUse', patch('*** Update File: src/a.ts'));
+		assert.equal(result.status, 0, result.stderr);
+		assert.match(JSON.parse(result.stdout).systemMessage, /Formatação Codex/);
+	}));

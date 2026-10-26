@@ -17,3 +17,10 @@
 
 - [x] 3.1 Unificar o guia de Codex, Claude Code e Cursor e atualizar todos os links, preservando as diferenças reais das configurações.
 - [x] 3.2 Conferir fontes e links locais, formatação, sincronia de skills e OpenSpec estrito; publicar o incremento documental na PR existente.
+
+## 4. Revisão Claude antes da integração
+
+- [x] 4.1 Reproduzir e corrigir bootstrap, worktree por alias, casing Windows e resolução de symlinks relativos; esclarecer limites de tool_response.
+- [x] 4.2 Reexecutar testes e solicitar nova conferência do Claude antes de arquivar.
+
+- [ ] 4.3 Confirmar CI Linux das correções, incluindo o teste de symlink relativo, antes de arquivar.

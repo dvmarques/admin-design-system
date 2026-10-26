@@ -85,13 +85,17 @@ Antes da edição, qualquer caminho protegido nega o patch inteiro e informa a f
 - `packages/tokens/dist/`: atualizar por build;
 - `e2e/*-snapshots/`: atualizar pelo workflow Linux de baselines, com revisão visual.
 
-Origem e destino de movimentações são verificados. Caminhos relativos são resolvidos pelo `cwd` da chamada, e symlinks são considerados para não formatar arquivos fora da worktree. Payload inválido gera uma negação explícita no hook pré-edição.
+Origem e destino de movimentações são verificados. Caminhos relativos são resolvidos pelo `cwd` da chamada, e symlinks são considerados para não formatar arquivos fora da worktree. Payload inválido ou falha do bootstrap/Git/script gera uma negação explícita no hook pré-edição, quando o processo Node do hook consegue iniciar. Worktrees abertas por symlink/junction são aceitas pelo caminho físico; no Windows, a proteção de gerados ignora diferenças de caixa.
 
 Após uma edição, somente os arquivos finais existentes e não protegidos são enviados ao Prettier instalado no repositório. Remoções são excluídas. Tipos de arquivo desconhecidos pelo Prettier são ignorados. O subprocesso recebe nomes como argumentos, sem interpretação por shell. Se o Prettier estiver ausente ou falhar, o hook informa o problema e preserva a edição; `npm run format` continua obrigatório.
 
 ### Limites e validação
 
 Esses hooks são uma ajuda para o fluxo de edição, não uma barreira completa de segurança. Não analisam comandos de terminal, ferramentas MCP de escrita ou todos os mecanismos de alteração de arquivo. Builds, geração de tokens e instalação de dependências continuam permitidos pelo fluxo normal. As políticas de `AGENTS.md`, permissões do Codex e os gates de CI continuam aplicáveis.
+
+O campo `tool_response` não possui status universal documentado. `isError` é somente uma indicação defensiva: se uma falha vier em outro formato, o pós-hook pode formatar os arquivos elegíveis citados por um patch que falhou. Os testes usam payloads simulados e comandos reais dos hooks; não comprovam o formato de todos os eventos de uma sessão do aplicativo.
+
+A combinação de `..` depois de um symlink no próprio caminho do patch não tem garantia de equivalência com a resolução física do sistema operacional; prefira o caminho físico sem essa combinação. A normalização de caixa é específica do Windows, sem garantia adicional para volumes macOS que ignoram caixa, nomes curtos 8.3 ou pontos/espaços finais. O código de saída 2 segue o [contrato documentado do Codex](https://learn.chatgpt.com/docs/hooks#pretooluse); a entrega de eventos e a confiança na sessão real precisam ser conferidas no aplicativo.
 
 Execute a suíte específica:
 

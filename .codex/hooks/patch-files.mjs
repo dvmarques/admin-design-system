@@ -1,6 +1,6 @@
 import { execFileSync } from 'node:child_process';
 import { lstatSync, readlinkSync, realpathSync } from 'node:fs';
-import { dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
+import { basename, dirname, isAbsolute, join, relative, resolve, sep } from 'node:path';
 
 function inside(root, file) {
 	const path = relative(root, file);
@@ -9,15 +9,21 @@ function inside(root, file) {
 
 // Resolve também os ancestrais de arquivos novos, para não seguir symlinks para fora.
 function canonicalPath(file, visited = new Set()) {
-	if (visited.has(file)) throw new Error(`Symlink circular: ${file}`);
-	visited.add(file);
-	const entry = lstatSync(file, { throwIfNoEntry: false });
-	if (entry?.isSymbolicLink())
-		return canonicalPath(resolve(dirname(file), readlinkSync(file)), visited);
-	if (entry) return realpathSync(file);
 	const parent = dirname(file);
-	if (parent === file) throw new Error(`Caminho sem ancestral existente: ${file}`);
-	return join(canonicalPath(parent, visited), relative(parent, file));
+	if (parent === file) return realpathSync(file);
+	const physicalParent = canonicalPath(parent, visited);
+	const physical = join(physicalParent, basename(file));
+	const entry = lstatSync(physical, { throwIfNoEntry: false });
+	if (entry?.isSymbolicLink()) {
+		if (visited.has(physical)) throw new Error(`Symlink circular: ${file}`);
+		visited.add(physical);
+		try {
+			return canonicalPath(resolve(physicalParent, readlinkSync(physical)), visited);
+		} finally {
+			visited.delete(physical);
+		}
+	}
+	return entry ? realpathSync(physical) : physical;
 }
 
 export function readPatch(input) {
@@ -48,7 +54,7 @@ export function readPatch(input) {
 		}
 		const absolute = resolve(input.cwd, path.replaceAll('\\', '/'));
 		const canonical = canonicalPath(absolute);
-		if (!inside(root, absolute) || !inside(root, canonical)) {
+		if (!inside(root, canonical)) {
 			throw new Error(`Caminho fora da worktree: ${path}`);
 		}
 		current = { action, absolute, canonical, removed: action === 'Delete File' };
@@ -59,7 +65,8 @@ export function readPatch(input) {
 }
 
 export function generatedReason(root, file) {
-	const path = relative(root, file).replaceAll('\\', '/');
+	const relativePath = relative(root, file).replaceAll('\\', '/');
+	const path = process.platform === 'win32' ? relativePath.toLowerCase() : relativePath;
 	const rules = [
 		[/^package-lock\.json$/, 'Use npm install para atualizar o lockfile.'],
 		[

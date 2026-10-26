@@ -36,6 +36,16 @@ O hook pré-edição MUST examinar todos os caminhos de `apply_patch`, incluindo
 - **WHEN** a edição usa caminho absoluto ou segmentos relativos a partir de um subdiretório
 - **THEN** a mesma política é aplicada ao arquivo resolvido na worktree atual
 
+#### Scenario: Worktree por alias e casing Windows
+
+- **WHEN** a worktree é aberta por symlink/junction ou um caminho protegido usa caixa alternativa no Windows
+- **THEN** os caminhos físicos são resolvidos e a mesma proteção continua aplicada
+
+#### Scenario: Falha de inicialização do hook
+
+- **WHEN** o processo Node do hook pré-edição inicia mas Git ou o script de proteção não pode executar
+- **THEN** a chamada é negada explicitamente antes de editar arquivos
+
 ### Requirement: Formatação focal após patches
 
 O hook pós-edição MUST executar o Prettier local apenas nos arquivos existentes afetados pelo patch, sem shell para interpolar nomes de arquivo. Remoções e arquivos gerados MUST ser excluídos. Falhas ou dependências ausentes MUST ser comunicadas sem desfazer a edição.

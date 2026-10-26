@@ -1,31 +1,38 @@
 ## Problema e entrega
-<!-- O que muda e por quê? -->
+<!-- Descreva o resultado e o comportamento antes/depois. -->
 
 ## Escopo e referências
-- Issue: <!-- Closes #N apenas com aceite integral; caso parcial, vínculo manual em Development -->
+- Issue: <!-- Closes #N somente quando todos os critérios forem atendidos; caso parcial, vínculo manual em Development -->
 - Change OpenSpec:
 - Fora do escopo:
-- Pacotes/APIs públicas/consumidores impactados:
+- Pacotes, APIs públicas e consumidores afetados:
 
 ## Evidências e riscos
-<!-- Testes executados com comandos, resultados e links de CI no SHA atual; riscos, migrações e limitações. -->
+<!-- Comandos e resultados reais, links de CI no SHA atual, limitações, compatibilidade e migrações. -->
 
-## Validação
-- [ ] Planejamento OpenSpec revisado; perfil Fast/Standard/Critical justificado.
-- [ ] Critérios de aceite atendidos; diff revisado, testes e documentação atualizados.
-- [ ] `npm run validate` e `openspec.cmd validate --all --strict` executados quando aplicáveis; resultados ou limites registrados.
-- [ ] Temas, responsividade, acessibilidade, Storybook, API pública e apps consumidores verificados quando aplicável.
-- [ ] Changelog atualizado, ou ausência justificada.
-- [ ] PR tornada Ready para disparar CI; jobs pulados/skip não tratados como sucesso.
-- [ ] CI verificada no SHA atual antes da solicitação de code review.
+## Verificação aplicável a qualquer PR
+- [ ] Perfil Fast/Standard/Critical justificado e planejamento revisado.
+- [ ] Critérios de aceite, testes e documentação verificados; diff revisado.
+- [ ] `npm run validate` e `openspec.cmd validate --all --strict` executados, ou limitações justificadas.
+- [ ] Acessibilidade, temas, responsividade, Storybook e consumidores revisados quando aplicável.
+- [ ] CHANGELOG atualizado ou ausência de alteração registrável justificada.
+- [ ] PR marcada Ready for review e CI efetivamente executada no SHA atual; skipped não equivale a sucesso.
 
-## Conclusão de change (PR comum para develop)
-- [ ] Todas as tasks OpenSpec efetivamente concluídas, com evidências.
-- [ ] Archive/sync autorizados, aplicados nesta branch conforme [ciclo OpenSpec](../docs/openspec-lifecycle.md); ou exceção documentada e aprovada.
-- [ ] Diff final das specs/archive revisado, validações reexecutadas e CI verde no SHA final.
-- [ ] Revisão humana e autorização de merge obtidas; integrar PR comum em `develop` por squash.
+## PR comum → develop (squash)
+<!-- Preencher somente para PR sem label release. -->
+- [ ] Tasks OpenSpec efetivamente concluídas, com evidências e revisão.
+- [ ] Archive/sync autorizado realizado na branch desta PR, ou exceção técnica aprovada e documentada.
+- [ ] Diff final de archive/specs revisado, verificações refeitas e CI verde no SHA final.
+- [ ] Code review e autorização humana obtidos antes do squash.
+- Exceção por integração prévia: N/A <!-- Ou registrar restrição concreta, evidências, tarefas dependentes e PR de acompanhamento. -->
 
-**Exceção archive após integração:** N/A <!-- Ou: restrição técnica comprovada, tarefas dependentes, aprovação, branch e PR de acompanhamento. -->
+## PR de release (merge commit)
+<!-- Preencher SOMENTE para PR com label release. A seção de PR comum NÃO se aplica. -->
+- [ ] Label `release`, assignee e destino corretos.
+- [ ] Verificações específicas de release e back-merge atendidas.
+- [ ] Revisão e autorização aplicáveis registradas; integrar por **merge commit**, nunca por squash.
+- [Processo de release](https://github.com/dvmarques/admin-design-system/blob/develop/docs/release-process.md)
 
-## Releases
-<!-- Somente se for PR de release: seguir docs/release-process.md, label release, assignee, merge commit. Não aplicar squash nem fechamento de issue de PR comum. -->
+## Referências operacionais
+- [Ciclo OpenSpec](https://github.com/dvmarques/admin-design-system/blob/develop/docs/openspec-lifecycle.md)
+- [Regras do repositório](https://github.com/dvmarques/admin-design-system/blob/develop/AGENTS.md)

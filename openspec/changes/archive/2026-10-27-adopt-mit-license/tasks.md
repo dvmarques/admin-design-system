@@ -9,7 +9,7 @@
 ## 2. Verificação integrada
 
 - [x] 2.1 Obter revisão independente do diff e dos contratos dos pacotes; registrar achados e correções.
-- [ ] 2.2 Executar npm run validate, incluindo E2E antes do commit, e openspec.cmd validate --all --strict; registrar evidências reais e limitações. Não atualizar snapshots sem mudança visual intencional.
+- [x] 2.2 Executar npm run validate, incluindo E2E antes do commit, e openspec.cmd validate --all --strict; registrar evidências reais e limitações. Não atualizar snapshots sem mudança visual intencional.
 - [x] 2.3 Formatar arquivos alterados com npx.cmd prettier --write e confirmar npm run format após atualizar evidências.
 
 Diagnóstico: npm run test:verbose e npm run test:e2e:verbose. Acessibilidade, temas, exemplos e CSS não recebem alterações; os gates de integração verificam os consumidores existentes.

@@ -25,6 +25,23 @@ const focusableSelector = [
 	'[tabindex]:not([tabindex="-1"])',
 ].join(',');
 
+/**
+ * Elegível ao foco inicial: não desabilitado (inclusive por `fieldset`), sem `inert` e visível
+ * (sem `hidden`, `display: none` ou `visibility: hidden` no elemento ou em ancestrais até o contêiner).
+ */
+function isInitialFocusEligible(element: HTMLElement, container: HTMLElement) {
+	if (element.matches(':disabled') || element.closest('[inert]')) return false;
+	if (getComputedStyle(element).visibility !== 'visible') return false;
+	for (
+		let node: HTMLElement | null = element;
+		node && container.contains(node);
+		node = node.parentElement
+	) {
+		if (node.hidden || getComputedStyle(node).display === 'none') return false;
+	}
+	return true;
+}
+
 export function useStableId(prefix: string) {
 	const reactId = useId();
 	return `${prefix}-${reactId.replaceAll(':', '')}`;
@@ -293,7 +310,9 @@ export function useOverlayFocus(
 		const focus = () => {
 			const container = containerRef.current;
 			if (!container) return;
-			const first = container.querySelector<HTMLElement>(focusableSelector);
+			const first = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).find(
+				(element) => isInitialFocusEligible(element, container),
+			);
 			(first ?? container).focus();
 		};
 		focus();

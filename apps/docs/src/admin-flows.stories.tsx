@@ -98,6 +98,38 @@ export const ListWithBulkActions: Story = {
 	render: () => <ListFlowDemo />,
 };
 
+function ConfirmWithContentDemo() {
+	const [open, setOpen] = useState(false);
+	const [reason, setReason] = useState('');
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)} variant="danger">
+				Arquivar conta
+			</AdsButton>
+			<AdsConfirmDialog
+				confirmLabel="Arquivar"
+				description="A conta deixa de aparecer nas listagens."
+				onConfirm={() => setOpen(false)}
+				onOpenChange={setOpen}
+				open={open}
+				title="Arquivar a conta?"
+			>
+				<AdsField label="Motivo (opcional)">
+					<AdsInput onChange={(event) => setReason(event.target.value)} value={reason} />
+				</AdsField>
+			</AdsConfirmDialog>
+		</>
+	);
+}
+
+/**
+ * Com controles focáveis em `children`, o foco inicial vai ao primeiro controle elegível (não
+ * desabilitado, visível e não inerte). Sem eles, vai a "Cancelar".
+ */
+export const ConfirmWithInteractiveContent: Story = {
+	render: () => <ConfirmWithContentDemo />,
+};
+
 function StepFormDemo({
 	asyncValidation = false,
 	startInvalid = false,

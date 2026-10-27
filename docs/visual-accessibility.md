@@ -14,7 +14,8 @@ duração, herdam `--default-transition-duration`, que aponta para
 `--ads-motion-fast`. Animações contínuas (`AdsLoadingIndicator`, `AdsLoadingText`, `AdsSkeleton`,
 progresso indeterminado e a faixa de carregamento do filtro) e deslocamentos de
 hover são desativados com `motion-reduce:` ou `@media (prefers-reduced-motion)`;
-o estado continua exposto por `role="status"` e texto.
+o estado continua exposto por `role="status"` e texto, exceto em `AdsLoadingText`, que
+não tem `role` nem anúncio (o texto permanece o mesmo; só o brilho é desligado).
 
 Ao personalizar a duração, não a sobrescreva de forma incondicional depois do
 `tokens.css`: ela venceria o bloco de movimento reduzido. Use, por exemplo:

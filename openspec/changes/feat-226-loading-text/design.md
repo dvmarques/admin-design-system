@@ -21,7 +21,9 @@
 
 Somente React e utilitários já existentes. A inclusão é tree-shakeable (arquivo próprio `loading-text.js`, 588 B, sem hooks) e compatível com a saída CSS compilada.
 
-Medição (`npm run build` limpo e `npm run inspect:packages`, `develop` contra a branch, JS+CSS de `@admin-ds/components`): 187.253 B para 188.980 B (+1.727 B: JS 640 B, CSS 1.087 B); gzip 57.418 B para 58.007 B; `dist` 428.169 B para 432.294 B. Os demais pacotes não mudaram. Como a folga era de 247 B, o orçamento de bytes de `components` em `docs/browser-budget.json` sobe de 187.500 para 189.000 B, o mínimo necessário; gzip e `dist` ficam dentro dos tetos atuais.
+Medição (`npm run build` limpo e `npm run inspect:packages`, `develop` contra a branch, JS+CSS de `@admin-ds/components`): 187.253 B para 189.161 B (+1.908 B: JS 640 B, CSS 1.268 B); gzip 57.418 B para 58.038 B; `dist` 428.169 B para 432.475 B. Os demais pacotes não mudaram. Como a folga original era de 247 B, o orçamento de bytes de `components` em `docs/browser-budget.json` sobe de 187.500 para 190.000 B (folga de 839 B); gzip e `dist` ficam dentro dos tetos atuais. O CSS do cenário `admin-public` ficou com folga pequena (91.516 de 91.600 B; gzip 13.639 de 13.800 B); esses limites não foram alterados.
+
+O build do Next converte `:dir(rtl)` em `:lang(ar, he, fa, ...)` para navegadores antigos. Nesses consumidores a inversão do brilho em RTL depende do `lang` do documento; em navegadores modernos sem essa conversão, `:dir(rtl)` vale com `dir` herdado.
 
 ## Validation
 

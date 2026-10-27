@@ -31,16 +31,28 @@
 - 3.3: `npm run format` alterou 9 arquivos, só formatação: `catalog-data.ts`, `catalog-demos.tsx`, `docs/integration.md` e os quatro artefatos do OpenSpec desta change, mais os arquivos da própria change.
 - 3.4: format, lint, typecheck, build, `test:quiet`, `test:release`, `inspect:packages` e E2E executados na branch mesclada com `develop`. E2E local no Windows: 401 passaram e 9 falharam, todos por falta de baseline `*-win32.png` (já conhecido; os baselines oficiais são Linux e o CI valida).
 - 3.5: `openspec.cmd validate --all --strict --no-interactive` com a change ativa e novamente em cópia temporária após `archive` simulado. O spec da change declara `## Purpose`; sem ele o `archive` grava o placeholder `TBD` e o modo estrito falha (57 aprovados, 1 falha).
+- Revisão R1 (itens aplicados): `docs/visual-accessibility.md` ressalva que `AdsLoadingText` não tem `role` nem anúncio; o brilho fica em `@supports ((-webkit-background-clip: text) or (background-clip: text))`, com texto sólido na cor atenuada como fallback; o sentido do brilho inverte em RTL com `:dir(rtl)` (regra separada, `animation-direction: reverse`); a change tem `.openspec.yaml`. Testes: `loading-text-styles.test.ts` (9) e E2E RTL em `e2e/loading-text.spec.ts` (7 no total). Atenção: o build do Next converte `:dir(rtl)` em `:lang(ar, he, fa, ...)` para navegadores antigos; nesse caso a inversão depende do atributo `lang` do documento, não de `dir`.
 - 3.2 permanece aberta para o Revisor.
 
 ## Janela de bundle de `@admin-ds/components`
 
-Medido com `npm run build` limpo e `npm run inspect:packages`, `develop` (08c2e7f) contra esta branch:
+Medido com `npm run build` limpo e `npm run inspect:packages`, `develop` (08c2e7f) contra esta branch (HEAD desta etapa):
 
-| Métrica (JS+CSS) | develop | PR      | Diferença | Limite                  |
-| ---------------- | ------- | ------- | --------- | ----------------------- |
-| Bytes JS+CSS     | 187.253 | 188.980 | +1.727    | 189.000 (antes 187.500) |
-| Gzip JS+CSS      | 57.418  | 58.007  | +589      | 62.700                  |
-| `dist` total     | 428.169 | 432.294 | +4.125    | 470.830                 |
+| Métrica (JS+CSS) | develop | PR      | Diferença | Limite                                  |
+| ---------------- | ------- | ------- | --------- | --------------------------------------- |
+| Bytes JS+CSS     | 187.253 | 189.161 | +1.908    | 190.000 (antes 187.500); folga de 839 B |
+| Gzip JS+CSS      | 57.418  | 58.038  | +620      | 62.700                                  |
+| `dist` total     | 428.169 | 432.475 | +4.306    | 470.830                                 |
 
-Composição dos +1.727 B: `loading-text.js` 588, `index.js` 52 e `styles.css` 1.087. `tokens`, `admin` e `highlighted-code` ficaram idênticos ao `develop`. A reescrita do CSS (camada única, gradiente simples) não reduziu bytes. Sobravam 247 B de folga contra 187.500, então o aumento era inevitável. O limite foi elevado só para 189.000 (valor redondo mínimo), e não 190.000; não houve outro orçamento alterado.
+Composição dos +1.908 B: `loading-text.js` 588, `index.js` 52 e `styles.css` 1.268 (o `@supports` e a regra `:dir(rtl)` somaram 181 B ao CSS). `tokens`, `admin` e `highlighted-code` ficaram idênticos ao `develop`. A reescrita do CSS não reduziu bytes e a folga original era de 247 B, então o aumento era inevitável. Decisão do Daniel: 190.000 (era 189.000 no primeiro commit, com margem de 20 B), alterando só o valor de bytes de `components` em `docs/browser-budget.json`.
+
+Cenários que também consomem o CSS de `components` (limites inalterados):
+
+| Cenário                      | develop | PR     | Limite | Folga   |
+| ---------------------------- | ------- | ------ | ------ | ------- |
+| `admin-public` CSS           | 90.253  | 91.516 | 91.600 | 84 B    |
+| `admin-public` CSS gzip      | 13.398  | 13.639 | 13.800 | 161 B   |
+| `components-public` CSS      | 50.647  | 51.910 | 54.800 | 2.890 B |
+| `components-public` CSS gzip | 8.249   | 8.521  | 9.000  | 479 B   |
+
+A folga do cenário `admin-public` (CSS e gzip) é pequena: qualquer novo CSS em `components` ou `admin` provavelmente exigirá subir esses limites, que não foram alterados nesta PR.

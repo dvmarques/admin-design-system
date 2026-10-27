@@ -71,17 +71,50 @@ test.describe('AdsLoadingText no catálogo', () => {
 	}
 
 	test('o texto longo quebra linha dentro da largura estreita', async ({ page }) => {
-		await page.setViewportSize({ width: 320, height: 800 });
+		const measure = () =>
+			texts(page)
+				.last()
+				.evaluate((element) => ({
+					height: element.getBoundingClientRect().height,
+					fits: document.documentElement.scrollWidth <= window.innerWidth,
+				}));
+		await page.setViewportSize({ width: 1280, height: 800 });
 		await openDemo(page);
-		const long = texts(page).last();
-		const metrics = await long.evaluate((element) => ({
-			lines: element.getClientRects().length,
-			height: element.getBoundingClientRect().height,
-			overflow: document.documentElement.scrollWidth <= window.innerWidth,
-		}));
-		expect(metrics.overflow).toBe(true);
-		expect(metrics.height).toBeGreaterThan(30);
-		await expect(long).toBeVisible();
+		const wide = await measure();
+		await page.setViewportSize({ width: 320, height: 800 });
+		const narrow = await measure();
+		// Mais estreito, o mesmo texto ocupa mais altura (quebrou linha) e não gera rolagem horizontal.
+		expect(narrow.height).toBeGreaterThan(wide.height);
+		expect(narrow.fits).toBe(true);
+		await expect(texts(page).last()).toBeVisible();
+	});
+});
+
+test.describe('AdsLoadingText em RTL', () => {
+	test('o brilho inverte o sentido em RTL sem alterar o layout', async ({ page }) => {
+		await page.emulateMedia({ colorScheme: 'light', reducedMotion: 'no-preference' });
+		await openDemo(page);
+		const state = () =>
+			texts(page).evaluateAll((elements) =>
+				elements.map((element) => {
+					const { width, height } = element.getBoundingClientRect();
+					return { direction: getComputedStyle(element).animationDirection, width, height };
+				}),
+			);
+		const ltr = await state();
+		expect(ltr.map((item) => item.direction)).toEqual(['normal', 'normal', 'normal', 'normal']);
+		await page.evaluate(() => {
+			document.documentElement.dir = 'rtl';
+			// O build do Next converte :dir(rtl) em :lang(ar, he, ...) para navegadores antigos; vale para os dois.
+			document.documentElement.lang = 'ar';
+		});
+		const rtl = await state();
+		expect(rtl.map((item) => item.direction)).toEqual(['reverse', 'reverse', 'reverse', 'reverse']);
+		expect(await shimmerAnimations(page)).toBe(4);
+		const sizes = rtl.map(({ width, height }) => ({ width, height }));
+		await page.getByRole('button', { name: 'Concluir atualização' }).click();
+		await expect(texts(page).first()).not.toHaveAttribute('data-loading', /.*/);
+		expect((await state()).map(({ width, height }) => ({ width, height }))).toEqual(sizes);
 	});
 });
 

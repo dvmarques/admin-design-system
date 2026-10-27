@@ -40,23 +40,42 @@ function mediaBlock(query: string) {
 
 const active = '.ads-loading-text[data-loading=true]';
 
+/** Bloco `@supports` do brilho: contém uma só regra, então termina no primeiro `}}`. */
+function supportsBlock() {
+	const start = css.indexOf(
+		'@supports ((-webkit-background-clip:text) or (background-clip:text)){',
+	);
+	expect(start, 'brilho sem @supports de background-clip').toBeGreaterThanOrEqual(0);
+	return css.slice(start, css.indexOf('}}', start) + 2);
+}
+
 describe('AdsLoadingText no CSS distribuído', () => {
 	it('anima somente com loading=true e não tem regra base que afete o layout', () => {
 		expect(css).not.toContain('.ads-loading-text{');
-		const body = ruleBody(css, active);
+		const body = supportsBlock();
 		expect(body).toContain('animation:2.5s ease-in-out infinite ads-loading-text-shimmer');
 		expect(css).toContain('@keyframes ads-loading-text-shimmer');
 	});
 
 	it('limita o brilho aos glifos sem alterar caixa, dimensões ou posicionamento', () => {
-		const body = ruleBody(css, active);
+		const body = supportsBlock();
 		expect(body).toContain('background-clip:text');
 		expect(body).toContain('-webkit-text-fill-color:transparent');
 		expect(body).not.toMatch(
-			/(^|;)(display|position|width|height|margin|padding|font-[a-z-]+|line-height):/,
+			/[;{](display|position|width|height|margin|padding|font-[a-z-]+|line-height):/,
 		);
 		// O keyframe anima somente a posição do fundo (sem propriedades de layout).
 		expect(css).toContain('@keyframes ads-loading-text-shimmer{to{background-position:-150% 0}}');
+	});
+
+	it('mantém texto sólido e legível quando background-clip: text não é suportado', () => {
+		expect(ruleBody(css, active)).toBe('color:var(--ads-color-text-muted)');
+		expect(css.replace(supportsBlock(), '')).not.toContain('-webkit-text-fill-color:transparent');
+	});
+
+	it('inverte o sentido do brilho em RTL com regra própria e sem propriedades de layout', () => {
+		// Regra isolada (precedida de `}`, fora de lista de seletores): sem :dir() só ela é descartada.
+		expect(css).toContain(`}${active}:dir(rtl){animation-direction:reverse}`);
 	});
 
 	it('define as três velocidades, com normal em 2,5 segundos', () => {
@@ -68,6 +87,7 @@ describe('AdsLoadingText no CSS distribuído', () => {
 	it('usa apenas tokens semânticos de texto, sem cores literais', () => {
 		const rules = [
 			ruleBody(css, active),
+			supportsBlock(),
 			mediaBlock('(prefers-reduced-motion:reduce)'),
 			mediaBlock('(forced-colors:active)'),
 		].join('\n');

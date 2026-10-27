@@ -37,6 +37,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsTypography`           | Básicos     | `/catalogo/typography`            | `admin-shell.stories.tsx`, `typography.stories.tsx`           |
 | `AdsSurface`              | Básicos     | `/catalogo/surface`               | `navigation.stories.tsx`, `surface.stories.tsx`               |
 | `AdsLoadingIndicator`     | Básicos     | `/catalogo/loading-indicator`     | `loading-indicator.stories.tsx`                               |
+| `AdsLoadingText`          | Básicos     | `/catalogo/loading-text`          | `loading-text.stories.tsx`                                    |
 | `AdsSkeleton`             | Básicos     | `/catalogo/skeleton`              | `data-display.stories.tsx`                                    |
 | `AdsSparkline`            | Básicos     | `/catalogo/sparkline`             | `dashboard.stories.tsx`, `sparkline.stories.tsx`              |
 | `AdsInput`                | Formulários | `/catalogo/input`                 | `admin-flows.stories.tsx`, `form.stories.tsx`                 |

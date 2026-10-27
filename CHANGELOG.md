@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `feat-226-loading-text` (issue #226) - Novo atom `AdsLoadingText` com texto sempre visível, efeito shimmer opcional e velocidades configuráveis, temas, reduced motion e forced-colors, exemplos no Storybook e catálogo, testes e documentação.
+
 - `adopt-mit-license` (issue #219) - Licença MIT do código próprio em `LICENSE.md`, identificador SPDX nos manifests e lockfile e documentação de uso, preservando licenças e atribuições de terceiros.
 
 - `feat-213-highlighted-code-snippet` (#213) - Pacote opcional com Shiki e catálogo para destacar código. Tema `auto` por `data-theme` ancestral, sem flash nem tokenização dupla; trata linhas vazias e CRLF, recupera falhas do motor, garante contraste do número de linha e acessibilidade da cópia, e limita a 1000 linhas/100 000 caracteres.

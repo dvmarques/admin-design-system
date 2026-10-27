@@ -8,6 +8,8 @@ export { AdsIcon } from './icon.js';
 export type { AdsIconName, AdsIconProps, AdsIconSize } from './icon.js';
 export { AdsLoadingIndicator } from './loading-indicator.js';
 export type { AdsLoadingIndicatorProps, AdsLoadingIndicatorSize } from './loading-indicator.js';
+export { AdsLoadingText } from './loading-text.js';
+export type { AdsLoadingTextProps, AdsLoadingTextSpeed } from './loading-text.js';
 export { AdsSkeleton } from './skeleton.js';
 export type { AdsSkeletonProps } from './skeleton.js';
 export { AdsSparkline } from './sparkline.js';

@@ -10,6 +10,7 @@ import {
 	AdsTypography,
 	AdsSurface,
 	AdsLoadingIndicator,
+	AdsLoadingText,
 	AdsSkeleton,
 	AdsSparkline,
 	AdsInput,
@@ -186,6 +187,26 @@ export function LoadingIndicatorDemo() {
 				<AdsLoadingIndicator key={size} size={size} label={`Carregando ${size}`} />
 			))}
 		</>
+	);
+}
+
+export function LoadingTextDemo() {
+	const [loading, setLoading] = useState(true);
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<AdsButton onClick={() => setLoading((current) => !current)}>
+				{loading ? 'Concluir atualização' : 'Iniciar atualização'}
+			</AdsButton>
+			{(['slow', 'normal', 'fast'] as const).map((speed) => (
+				<AdsLoadingText key={speed} loading={loading} speed={speed}>
+					{speed}: Processando registros da execução...
+				</AdsLoadingText>
+			))}
+			<AdsLoadingText as="p" loading={loading}>
+				O texto longo permanece visível e se adapta ao espaço disponível, mesmo durante o
+				processamento.
+			</AdsLoadingText>
+		</div>
 	);
 }
 
@@ -1389,6 +1410,7 @@ export const catalogDemos = {
 	Typography: TypographyDemo,
 	Surface: SurfaceDemo,
 	LoadingIndicator: LoadingIndicatorDemo,
+	LoadingText: LoadingTextDemo,
 	Skeleton: SkeletonDemo,
 	Sparkline: SparklineDemo,
 	Input: InputDemo,

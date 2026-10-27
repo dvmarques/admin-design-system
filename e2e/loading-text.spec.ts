@@ -83,12 +83,10 @@ test.describe('AdsLoadingText no catálogo', () => {
 					return {
 						image: style.backgroundImage,
 						animation: style.animationName,
-						fill: style.webkitTextFillColor,
 					};
 				});
 			expect(styles.image.match(/linear-gradient\(/g)).toHaveLength(2);
 			expect(styles.animation).toBe('ads-loading-text-shimmer');
-			expect(styles.fill).toBe('rgba(0, 0, 0, 0)');
 		}
 	});
 

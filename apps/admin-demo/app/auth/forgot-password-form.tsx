@@ -2,7 +2,7 @@
 
 import { AdsButton, AdsField, AdsInput, AdsTypography } from '@admin-ds/components';
 import Link from 'next/link';
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
 	demoAuthNotice,
 	invalidEmailMessage,
@@ -13,7 +13,6 @@ import {
 import { AuthIntro } from './auth-chrome';
 
 export function ForgotPasswordForm() {
-	const statusId = useId();
 	const emailRef = useRef<HTMLInputElement>(null);
 	const statusRef = useRef<HTMLParagraphElement>(null);
 	const [email, setEmail] = useState('');
@@ -56,14 +55,7 @@ export function ForgotPasswordForm() {
 			/>
 			{sent ? (
 				<div className="demo-auth-form">
-					<p
-						aria-live="polite"
-						className="demo-auth-status"
-						id={statusId}
-						ref={statusRef}
-						role="status"
-						tabIndex={-1}
-					>
+					<p className="demo-auth-status" ref={statusRef} role="status" tabIndex={-1}>
 						Envio simulado: se existisse um backend, instruções iriam para {email.trim()}. Continue
 						a demonstração redefinindo a senha ou volte ao login.
 					</p>

@@ -16,7 +16,7 @@
 ## Acessibilidade
 
 - Um `h1` por rota; link "Voltar ao Demo" visível no topo.
-- Erros associados aos campos (`AdsField` + `aria-describedby`); região `role="status"` / `aria-live="polite"` para confirmações simuladas.
+- Erros associados aos campos (`AdsField` + `aria-describedby`); região `role="status"` (que já é `aria-live="polite"` implícito) para confirmações simuladas.
 - Foco no primeiro campo inválido após envio (regras da nova senha no campo **Nova senha**, divergência no campo de confirmação); ao confirmar a recuperação ou a redefinição, o foco vai para a mensagem `role="status"` (`tabIndex={-1}`), porque o formulário é desmontado; "Continuar" e "Voltar ao login" são links; botões e links com foco visível dos tokens.
 - `AdsPasswordInput` com regras e força opcionais na redefinição.
 
@@ -25,13 +25,13 @@
 - Login: e-mail com formato válido e senha não vazia → loading simulado (~400 ms) → `router.push('/')`, sem mensagem de sucesso (a tela é desmontada na navegação) e sem cookie de sessão.
 - Recuperação: confirmação de envio simulada; link para continuar em `/redefinir-senha`.
 - Redefinição: senha e confirmação coincidem e regras atendidas → sucesso simulado.
-- Os campos não têm `name`: o HTML é SSR e o submit nativo (sem JS ou antes da hidratação) é GET; sem `name`, nada digitado vai para a URL. `method="post"` não serve no export estático (405).
+- Os campos não têm `name`: o HTML é SSR e o submit nativo (sem JS ou antes da hidratação, ambos cobertos no E2E) é GET; sem `name`, nada digitado vai para a URL. `method="post"` não serve no export estático (405).
 - "Lembrar-me" só altera estado local na sessão; nada em `localStorage`/cookies além do tema já existente.
 
 ## Testes
 
 - Vitest: helpers de validação, presença do item de navegação e os três formulários (erro, foco, sucesso, atraso simulado com timers falsos). A proteção de imports públicos vem da regra ESLint existente.
-- Playwright: fluxo login → demo, links entre telas, validação, refresh, histórico (`goBack`), temas, override de `--ads-color-primary` no painel, axe em 3 rotas × 2 temas × 320/375/1280 px (e após erro e sucesso), teclado, foco, envio sem JavaScript e 320/375 px sem painel visível nem rolagem horizontal.
+- Playwright: fluxo login → demo, links entre telas, validação, refresh, histórico (`goBack`), temas, override de `--ads-color-primary` no painel, axe em 3 rotas × 2 temas × 320/375/1280 px (e após erro e sucesso, também em 320 px), teclado nas 3 rotas, foco, envio sem JavaScript e 320/375 px sem painel visível nem rolagem horizontal.
 
 ## Documentação
 

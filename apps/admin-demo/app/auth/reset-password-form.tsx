@@ -8,7 +8,7 @@ import {
 	type AdsPasswordRule,
 } from '@admin-ds/components';
 import Link from 'next/link';
-import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {
 	demoAuthNotice,
 	passwordMismatchMessage,
@@ -40,7 +40,6 @@ function rulesMet(password: string): boolean {
 }
 
 export function ResetPasswordForm() {
-	const statusId = useId();
 	const passwordRef = useRef<HTMLInputElement>(null);
 	const confirmRef = useRef<HTMLInputElement>(null);
 	const statusRef = useRef<HTMLParagraphElement>(null);
@@ -88,14 +87,7 @@ export function ResetPasswordForm() {
 			/>
 			{success ? (
 				<div className="demo-auth-form">
-					<p
-						aria-live="polite"
-						className="demo-auth-status"
-						id={statusId}
-						ref={statusRef}
-						role="status"
-						tabIndex={-1}
-					>
+					<p className="demo-auth-status" ref={statusRef} role="status" tabIndex={-1}>
 						Senha redefinida com sucesso (simulação). Você pode voltar ao login e entrar novamente
 						no demo.
 					</p>

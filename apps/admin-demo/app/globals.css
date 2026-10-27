@@ -751,11 +751,6 @@ body {
 	font-size: 0.875rem;
 	line-height: 1.5;
 }
-.demo-auth-form-error {
-	margin: 0;
-	color: var(--ads-color-danger);
-	font-size: 0.875rem;
-}
 .demo-auth-panel {
 	position: relative;
 	display: none;

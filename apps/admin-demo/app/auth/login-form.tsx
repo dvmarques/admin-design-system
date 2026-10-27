@@ -78,7 +78,7 @@ export function LoginForm() {
 					{...(emailError ? { error: emailError } : {})}
 				>
 					<AdsInput
-						autoComplete="email"
+						autoComplete="username"
 						onChange={(event) => {
 							setEmail(event.target.value);
 							setEmailError(undefined);

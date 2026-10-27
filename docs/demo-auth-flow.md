@@ -94,7 +94,8 @@ da hidratação, o navegador faz um envio nativo (GET). Para que nenhum valor
 digitado vá para a URL, o histórico ou logs, os campos de e-mail e senha **não
 têm o atributo `name`**: um envio nativo apenas recarrega a rota, sem parâmetros.
 `method="post"` não é usado porque o export estático do GitHub Pages responde
-405 a POST. Um teste E2E com JavaScript desligado cobre as três rotas.
+405 a POST. Testes E2E cobrem as três rotas com JavaScript desligado e com os chunks JS
+bloqueados (antes da hidratação).
 
 ## O que não existe
 
@@ -135,9 +136,9 @@ As formas do painel não usam cores fixas. Os preenchimentos usam
 - E2E do fluxo, em Chromium:
   `CI=1 npx playwright test e2e/auth-demo.spec.ts --project=chromium`.
   O spec cobre login, validações, recuperação e redefinição, histórico do
-  navegador, foco após o envio, teclado (Tab até o botão e Enter), link no menu
-  móvel, tema e cor principal, ausência de credenciais em cookies,
+  navegador, foco após o envio, teclado nas três rotas (Tab até o botão e Enter), link
+  no menu móvel, tema e cor principal, ausência de credenciais em cookies,
   `localStorage`, `sessionStorage` e cookies do contexto, envio nativo sem
-  JavaScript, layout em 320 px e 375 px sem rolagem horizontal, painel à
+  JavaScript e antes da hidratação, layout em 320 px e 375 px sem rolagem horizontal, painel à
   direita no desktop e auditoria de acessibilidade (axe) em três rotas, dois
   temas e larguras de 320, 375 e 1280 px, inclusive após erro e após sucesso.

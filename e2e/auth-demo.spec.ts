@@ -230,36 +230,74 @@ test.describe('fluxo de autenticação demonstrativo', () => {
 		await expect(page.getByRole('status')).toContainText('Envio simulado');
 		await expect(page.getByRole('status')).toBeFocused();
 	});
+	test('redefinição pelo teclado: Tab até o botão e Enter', async ({ page }) => {
+		await openAuthRoute(page, '/redefinir-senha');
+		const confirm = page.getByLabel('Confirmar senha', { exact: true });
+		await page.getByLabel('Nova senha', { exact: true }).focus();
+		await page.keyboard.type(strongPassword);
+
+		await tabTo(page, confirm);
+		await page.keyboard.type(strongPassword);
+		await tabTo(page, page.getByRole('button', { name: 'Salvar senha simulada' }));
+		await page.keyboard.press('Enter');
+		await expect(page.getByRole('status')).toContainText('simulação');
+		await expect(page.getByRole('status')).toBeFocused();
+	});
 });
+
+const typedSecret = 'SegredoReal123';
+
+/**
+ * Preenche a rota com valores reais e envia pelo botão, esperando a navegação nativa do
+ * navegador (GET). Sem o atributo `name`, a URL final não pode carregar nenhum valor.
+ */
+async function submitNativeAndExpectCleanUrl(page: Page, route: AuthRoute) {
+	let submit: Locator;
+	if (route.path === '/redefinir-senha') {
+		await page.getByLabel('Nova senha', { exact: true }).fill(typedSecret);
+		await page.getByLabel('Confirmar senha', { exact: true }).fill(typedSecret);
+		submit = page.getByRole('button', { name: 'Salvar senha simulada' });
+	} else if (route.path === '/login') {
+		await page.getByRole('textbox', { name: 'E-mail' }).fill(demoEmail);
+		await page.getByLabel('Senha', { exact: true }).fill(typedSecret);
+		submit = page.getByRole('button', { name: 'Entrar' });
+	} else {
+		await page.getByRole('textbox', { name: 'E-mail' }).fill(demoEmail);
+		submit = page.getByRole('button', { name: 'Enviar instruções simuladas' });
+	}
+	await Promise.all([page.waitForEvent('framenavigated'), submit.click()]);
+	await page.waitForLoadState('load');
+
+	const url = new URL(page.url());
+	expect(url.pathname).toBe(route.path);
+	expect(url.search).toBe('');
+	expect(page.url()).not.toContain(typedSecret);
+	expect(page.url()).not.toContain(encodeURIComponent(demoEmail));
+	expect(page.url()).not.toContain(demoEmail);
+}
 
 test.describe('envio nativo sem JavaScript', () => {
 	test.use({ javaScriptEnabled: false });
 
-	const typed = 'SegredoReal123';
 	for (const route of routes) {
 		test(`${route.path} não coloca valores digitados na URL`, async ({ page }) => {
 			await page.goto(route.path);
 			await expect(page.getByRole('heading', { level: 1, name: route.heading })).toBeVisible();
+			await submitNativeAndExpectCleanUrl(page, route);
+		});
+	}
+});
 
-			if (route.path === '/redefinir-senha') {
-				await page.getByLabel('Nova senha', { exact: true }).fill(typed);
-				await page.getByLabel('Confirmar senha', { exact: true }).fill(typed);
-				await page.getByRole('button', { name: 'Salvar senha simulada' }).click();
-			} else if (route.path === '/login') {
-				await page.getByRole('textbox', { name: 'E-mail' }).fill(demoEmail);
-				await page.getByLabel('Senha', { exact: true }).fill(typed);
-				await page.getByRole('button', { name: 'Entrar' }).click();
-			} else {
-				await page.getByRole('textbox', { name: 'E-mail' }).fill(demoEmail);
-				await page.getByRole('button', { name: 'Enviar instruções simuladas' }).click();
-			}
-			await page.waitForLoadState('load');
-
-			const url = new URL(page.url());
-			expect(url.pathname).toBe(route.path);
-			expect(url.search).toBe('');
-			expect(page.url()).not.toContain(typed);
-			expect(page.url()).not.toContain(encodeURIComponent(demoEmail));
+test.describe('envio nativo antes da hidratação', () => {
+	for (const route of routes) {
+		test(`${route.path} não coloca valores digitados na URL com os chunks JS bloqueados`, async ({
+			page,
+		}) => {
+			// Os scripts do Next nunca chegam: o HTML do servidor fica sem hidratar.
+			await page.route(/\/_next\/static\/.*\.js(\?.*)?$/, (request) => request.abort());
+			await page.goto(route.path);
+			await expect(page.getByRole('heading', { level: 1, name: route.heading })).toBeVisible();
+			await submitNativeAndExpectCleanUrl(page, route);
 		});
 	}
 });
@@ -336,7 +374,7 @@ test.describe('acessibilidade do fluxo de autenticação (axe)', () => {
 	];
 	for (const { route, state } of states) {
 		for (const theme of themes) {
-			for (const width of [375, 1280]) {
+			for (const width of [320, 375, 1280]) {
 				test(`${route.path} sem violações após ${state} (${theme}, ${width}px)`, async ({
 					page,
 				}) => {

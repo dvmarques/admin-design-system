@@ -9,4 +9,5 @@ export {
 	normalizeHighlightedLanguage,
 	registerHighlightedLanguageLoader,
 	type AdsHighlightedCodeLanguage,
+	type AdsHighlightedCodeLanguageModule,
 } from './languages.js';

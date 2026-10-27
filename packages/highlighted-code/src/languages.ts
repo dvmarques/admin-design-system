@@ -1,5 +1,3 @@
-import type { LanguageInput } from 'shiki';
-
 export type AdsHighlightedCodeLanguage =
 	| 'typescript'
 	| 'tsx'
@@ -52,9 +50,17 @@ const LABELS: Record<AdsHighlightedCodeLanguage, string> = {
 	bash: 'Bash',
 };
 
-type LanguageModule = { default: LanguageInput };
+/**
+ * Módulo de gramática TextMate no formato do Shiki (`@shikijs/langs/*`): o `default` é uma
+ * gramática ou uma lista delas. O `name` da gramática precisa ser igual ao `id` registrado.
+ */
+export interface AdsHighlightedCodeLanguageModule {
+	default: object | readonly object[];
+}
 
-const LOADERS: Record<AdsHighlightedCodeLanguage, () => Promise<LanguageModule>> = {
+type LanguageLoader = () => Promise<AdsHighlightedCodeLanguageModule>;
+
+const LOADERS: Record<AdsHighlightedCodeLanguage, LanguageLoader> = {
 	typescript: () => import('@shikijs/langs/typescript'),
 	tsx: () => import('@shikijs/langs/tsx'),
 	javascript: () => import('@shikijs/langs/javascript'),
@@ -69,7 +75,7 @@ const LOADERS: Record<AdsHighlightedCodeLanguage, () => Promise<LanguageModule>>
 	bash: () => import('@shikijs/langs/bash'),
 };
 
-const customLoaders = new Map<string, () => Promise<LanguageModule>>();
+const customLoaders = new Map<string, LanguageLoader>();
 
 export function normalizeHighlightedLanguage(
 	language: string | undefined,
@@ -88,10 +94,12 @@ export function languageLabel(language: string | undefined): string {
 	return LABELS[normalized] ?? normalized;
 }
 
-export function registerHighlightedLanguageLoader(
-	id: string,
-	loader: () => Promise<LanguageModule>,
-): void {
+/**
+ * Registra (ou substitui, inclusive uma linguagem embutida) o carregador de uma linguagem.
+ * Registre durante a inicialização da aplicação, antes do primeiro uso da linguagem, e use um
+ * `id` igual ao `name` da gramática: com nomes diferentes o código segue em texto plain.
+ */
+export function registerHighlightedLanguageLoader(id: string, loader: LanguageLoader): void {
 	const key = id.trim().toLowerCase();
 	if (!key) throw new Error('O identificador da linguagem não pode ser vazio.');
 	customLoaders.set(key, loader);
@@ -99,7 +107,11 @@ export function registerHighlightedLanguageLoader(
 
 export async function loadLanguageModule(
 	language: AdsHighlightedCodeLanguage,
-): Promise<LanguageModule> {
+): Promise<AdsHighlightedCodeLanguageModule> {
 	const loader = customLoaders.get(language) ?? LOADERS[language];
 	return loader();
+}
+
+export function resetCustomLanguageLoadersForTests(): void {
+	customLoaders.clear();
 }

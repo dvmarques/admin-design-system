@@ -15,7 +15,7 @@
 
 ## 3. Revisão
 
-- [ ] 3.1 Revisar implementação e corrigir problemas encontrados, mantendo spec/design sincronizados.
+- [x] 3.1 Revisar implementação e corrigir problemas encontrados, mantendo spec/design sincronizados.
 
 ## Evidências (27/10/2026)
 

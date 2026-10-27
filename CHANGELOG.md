@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `adopt-mit-license` (issue #219) - Licença MIT do código próprio em `LICENSE.md`, identificador SPDX nos manifests e lockfile e documentação de uso, preservando licenças e atribuições de terceiros.
+
 - `feat-213-highlighted-code-snippet` (#213) - Pacote opcional com Shiki e catálogo.
 
 - `add-codex-project-configuration` - Configuração Codex versionada com MCPs alinhados ao Claude/Cursor, revisores TOML de acessibilidade e API pública e hooks nativos de `apply_patch` para proteger gerados e formatar os arquivos editados com Prettier. Caminhos portáveis para worktrees Windows/Linux, testes no gate de qualidade e instruções de confiança e limites; skills mantidas em `.agents/skills`.

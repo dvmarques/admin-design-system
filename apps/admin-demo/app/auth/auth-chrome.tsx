@@ -23,7 +23,9 @@ export function AuthChrome({
 				<ThemeControl initialPreference={initialPreference} />
 			</header>
 			<div className="demo-auth-layout">
-				<main className="demo-auth-main">{children}</main>
+				<main aria-label="Autenticação demonstrativa" className="demo-auth-main" tabIndex={0}>
+					{children}
+				</main>
 				<AuthPanel />
 			</div>
 		</div>
@@ -34,10 +36,12 @@ export function AuthIntro({ description, title }: { description: string; title: 
 	return (
 		<header className="demo-auth-intro">
 			<p className="demo-kicker">Demonstração</p>
-			<AdsTypography as="h1" variant="heading1">
+			<AdsTypography as="h1" className="demo-auth-title" variant="heading1">
 				{title}
 			</AdsTypography>
-			<AdsTypography variant="muted">{description}</AdsTypography>
+			<AdsTypography className="demo-auth-description" variant="muted">
+				{description}
+			</AdsTypography>
 		</header>
 	);
 }

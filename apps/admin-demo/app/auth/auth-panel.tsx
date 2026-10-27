@@ -11,6 +11,7 @@ export function AuthPanel() {
 		<div aria-hidden="true" className="demo-auth-panel">
 			<svg
 				className="demo-auth-panel__canvas"
+				preserveAspectRatio="xMidYMid slice"
 				viewBox="0 0 400 480"
 				xmlns="http://www.w3.org/2000/svg"
 			>

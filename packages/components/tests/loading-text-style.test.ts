@@ -1,8 +1,8 @@
 import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
-const css = readFileSync(fileURLToPath(new URL('../src/styles.css', import.meta.url)), 'utf8');
+const css = readFileSync(resolve(import.meta.dirname, '../src/styles.css'), 'utf8');
 const loadingTextCss = css.slice(css.indexOf('@keyframes ads-loading-text-shimmer'));
 
 describe('AdsLoadingText: regressão do shimmer (#228)', () => {

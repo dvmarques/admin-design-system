@@ -9,3 +9,7 @@
 - Conferência visual em 1920×915 e 320×568 no servidor dev: alturas de documento e viewport coincidem (915 e 568), sem overflow do formulário. Demo dev na porta 3107 e Storybook dev na porta 6106 iniciados e encerrados após a conferência.
 - Claude Code realizou revisão independente somente de leitura. Corrigidos foco do scroller, nome acessível e seletor por label; última revisão: sem findings acionáveis restantes. A revisão não substitui aprovação humana nem execução dos testes.
 - Change ativa; archive/sync e merge aguardam os gates e autorização aplicáveis.
+
+## Integração com develop atual
+
+Após rebase sobre #215, as etapas oficiais format, lint, build, typecheck e test:quality passaram novamente: 66 arquivos e 1.106 testes Vitest, além dos testes Node/release/CI e verificações de skills/gerados. OpenSpec: 58 itens válidos. A execução geral de E2E com configuração local isolada e snapshots ignorados teve 400 aprovados e um timeout de hidratação no catálogo de tema do Firefox; o projeto Firefox inteiro foi repetido e seus 15 testes passaram. O timeout não foi reproduzido e nenhuma mudança no helper de hidratação foi feita. CI Linux executará a suíte normal com snapshots habilitados sobre o SHA publicado.

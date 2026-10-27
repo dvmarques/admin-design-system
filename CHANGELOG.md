@@ -82,6 +82,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - `input-group-button-addons` (`add-input-group-multiple-button-addons`, `fix-input-group-button-addon`) - Um `AdsButton` em `startContent` ou `endContent` de `AdsInputGroup` fica rente ao campo e acompanha a altura dele em qualquer `size` (antes crescia o campo para 34, 38 e 42px). Vários botões no mesmo adendo ficam contíguos, com só a quina externa arredondada e junção de 1px. Texto e botão no mesmo adendo continuam sem suporte, agora documentado. Nova story `InputGroupWithButton`.
 
+- `issue-191-button-loading-geometry` (issue #191) - `AdsButton` mantém largura, altura e posição do rótulo ao alternar `isLoading`: o rótulo fica oculto, não removido, e o indicador ocupa a mesma célula, sem alterar o posicionamento definido pelo consumidor. Inclui regressão de geometria em navegador e story.
+
 - `fix-smart-table-caption-padding` - A legenda visível de `AdsSmartTable` ganha o espaçamento horizontal das células e o vertical da densidade. `hideCaption` e `AdsTable` isolada não mudam.
 
 - `fix-demo-narrow-width` - A rota `/componentes` do demo deixa de rolar 6px na horizontal em 320px (grids com `minmax(0, 1fr)` e paginação com rolagem no próprio painel). O E2E de todas as rotas verifica 320px, a largura mínima da spec.

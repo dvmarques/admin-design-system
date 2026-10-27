@@ -52,6 +52,18 @@ describe('AdsButton', () => {
 		expect(onClick).not.toHaveBeenCalled();
 	});
 
+	it('keeps the label mounted and accessible while the indicator overlays it', () => {
+		const { rerender } = render(<AdsButton>Salvar</AdsButton>);
+		const label = screen.getByText('Salvar');
+
+		rerender(<AdsButton isLoading>Salvar</AdsButton>);
+
+		expect(screen.getByText('Salvar')).toBe(label);
+		expect(label).toHaveClass('opacity-0');
+		expect(screen.getByRole('button', { name: 'Salvar' })).not.toHaveClass('relative');
+		expect(screen.queryByRole('status')).not.toBeInTheDocument();
+	});
+
 	it.each(['light', 'dark'] as const)(
 		'renders the %s theme with a visible focusable button',
 		(theme) => {

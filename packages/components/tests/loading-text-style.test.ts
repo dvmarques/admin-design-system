@@ -6,6 +6,14 @@ import { describe, expect, it } from 'vitest';
 const css = readFileSync(resolve(import.meta.dirname, '../src/styles.css'), 'utf8');
 const loadingTextCss = css.slice(css.indexOf('@keyframes ads-loading-text-shimmer'));
 
+// Fatias de text-muted (--ads-loading-text-muted-share) por seletor, na ordem do CSS.
+const mutedShares = [
+	...loadingTextCss.matchAll(/([^{}]+)\{\s*--ads-loading-text-muted-share:\s*(\d+)%/g),
+].map((match) => ({
+	selector: match[1].replace(/\s+/g, ' ').trim(),
+	share: Number(match[2]) / 100,
+}));
+
 describe('AdsLoadingText: regressão do shimmer (#228)', () => {
 	it('mantém duas camadas de gradiente para brilho e texto-base sempre visível', () => {
 		expect(loadingTextCss).toContain(
@@ -21,7 +29,12 @@ describe('AdsLoadingText: regressão do shimmer (#228)', () => {
 		expect(loadingTextCss).toMatch(
 			/color-mix\(\s*in srgb,\s*var\(--ads-color-text-muted\) var\(--ads-loading-text-muted-share\),\s*var\(--ads-color-surface\)\s*\)/,
 		);
-		expect(loadingTextCss).toContain(':root:not([data-theme])');
+		// Mesmos escopos dos tokens: claro (padrão), dark explícito e dark do sistema.
+		expect(mutedShares).toEqual([
+			{ selector: ":root, [data-theme='light']", share: 0.77 },
+			{ selector: "[data-theme='dark']", share: 0.42 },
+			{ selector: ':root:not([data-theme])', share: 0.42 },
+		]);
 		expect(loadingTextCss).not.toMatch(/transparent (0|100)%/);
 	});
 
@@ -50,12 +63,12 @@ describe('AdsLoadingText: regressão do shimmer (#228)', () => {
 		};
 		const tokenRgb = (theme: 'light' | 'dark', role: string) =>
 			rgb(tokenSource.color.reference[tokenSource.color.semantic[theme][role].slice(17, -1)]);
-		// Ordem no CSS: claro (padrão), dark explícito e dark do sistema (escopo mais próximo, como os tokens).
-		const shares = [...loadingTextCss.matchAll(/--ads-loading-text-muted-share:\s*(\d+)%/g)].map(
-			(match) => Number(match[1]) / 100,
-		);
-		expect(shares).toEqual([0.77, 0.42, 0.42]);
-		const mutedShare = { light: shares[0], dark: shares[1] };
+		const shareOf = (selector: string) =>
+			mutedShares.find((entry) => entry.selector.includes(selector))?.share ?? Number.NaN;
+		const mutedShare = {
+			light: shareOf("[data-theme='light']"),
+			dark: shareOf("[data-theme='dark']"),
+		};
 		for (const theme of ['light', 'dark'] as const) {
 			const muted = tokenRgb(theme, 'textMuted');
 			const surface = tokenRgb(theme, 'surface');

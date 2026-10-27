@@ -70,9 +70,7 @@ test.describe('AdsLoadingText no catálogo', () => {
 		});
 	}
 
-	test('o brilho usa duas camadas e mantém o texto de base em ambos os temas', async ({
-		page,
-	}) => {
+	test('o brilho usa duas camadas e mantém o texto de base em ambos os temas', async ({ page }) => {
 		await openDemo(page);
 		for (const theme of ['light', 'dark'] as const) {
 			await page.getByLabel('Tema da demonstração').selectOption(theme);

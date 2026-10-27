@@ -50,6 +50,7 @@ for (const theme of ['light', 'dark'] as const) {
 
 		test('Sair é uma ação de demonstração assíncrona e não encerra a sessão', async ({ page }) => {
 			await openDemo(page);
+			const demoUrl = page.url();
 			await accountTrigger(page).click();
 			const signOut = page.getByRole('button', { name: 'Sair' });
 
@@ -59,7 +60,7 @@ for (const theme of ['light', 'dark'] as const) {
 
 			await expect(page.getByRole('status').filter({ hasText: 'Saída simulada' })).toBeVisible();
 			await expect(page.getByRole('dialog', { name: 'Conta' })).toBeHidden();
-			await expect(page).toHaveURL(/127\.0\.0\.1:3000\/$/);
+			await expect(page).toHaveURL(demoUrl);
 			await expect(page.getByRole('main')).toBeVisible();
 		});
 

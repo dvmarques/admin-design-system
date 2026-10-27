@@ -303,6 +303,80 @@ test.describe('envio nativo antes da hidratação', () => {
 });
 
 test.describe('responsividade do fluxo de autenticação', () => {
+	for (const theme of themes) {
+		for (const viewport of [
+			{ width: 1920, height: 915 },
+			{ width: 1280, height: 720 },
+			{ width: 768, height: 600 },
+			{ width: 390, height: 667 },
+			{ width: 320, height: 568 },
+		]) {
+			test(`login cabe sem rolagem (${theme}, ${viewport.width}×${viewport.height})`, async ({
+				page,
+			}) => {
+				await page.setViewportSize(viewport);
+				await setTheme(page, theme);
+				await openLogin(page);
+				await expect(page.getByRole('link', { name: 'Esqueci a senha' })).toBeInViewport();
+				await expect(page.getByRole('heading', { name: 'Entrar', exact: true })).toBeInViewport();
+				const overflow = await page.evaluate(() => {
+					const root = document.documentElement;
+					const main = document.querySelector('.demo-auth-main')!;
+					return {
+						pageX: root.scrollWidth - root.clientWidth,
+						pageY: root.scrollHeight - root.clientHeight,
+						formY: main.scrollHeight - main.clientHeight,
+					};
+				});
+				expect(overflow).toEqual({ pageX: 0, pageY: 0, formY: 0 });
+			});
+		}
+
+		for (const route of routes) {
+			test(`altura extrema preserva acesso ao formulário (${theme}, ${route.path})`, async ({
+				page,
+			}) => {
+				await page.setViewportSize({ width: 1280, height: 800 });
+				await setTheme(page, theme);
+				await openAuthRoute(page, route);
+				await page.setViewportSize({ width: 320, height: 256 });
+				const main = page.getByRole('main');
+				await main.focus();
+				await page.keyboard.press('Control+Home');
+				await expect(page.getByRole('heading', { level: 1, name: route.heading })).toBeInViewport();
+				await tabTo(
+					page,
+					page.getByRole('button', {
+						name: /^(Entrar|Enviar instruções simuladas|Salvar senha simulada)$/,
+					}),
+				);
+				await expect(
+					page.getByRole('button', {
+						name: /^(Entrar|Enviar instruções simuladas|Salvar senha simulada)$/,
+					}),
+				).toBeInViewport();
+				await page.keyboard.press('Enter');
+				const firstField = page.getByLabel(
+					route.path === '/redefinir-senha' ? 'Nova senha' : 'E-mail',
+					{ exact: true },
+				);
+				await expect(firstField).toBeFocused();
+				await expect(firstField).toBeInViewport();
+				await main.focus();
+				await page.keyboard.press('Control+End');
+				await expect(
+					page.getByRole('link', { name: /^(Esqueci a senha|Voltar ao login)$/ }),
+				).toBeInViewport();
+				const metrics = await page.evaluate(() => ({
+					x: document.documentElement.scrollWidth - document.documentElement.clientWidth,
+					y: document.documentElement.scrollHeight - document.documentElement.clientHeight,
+				}));
+				expect(metrics).toEqual({ x: 0, y: 0 });
+				await expect(page.getByRole('link', { name: 'Voltar ao Demo' })).toBeInViewport();
+			});
+		}
+	}
+
 	for (const width of [320, 375]) {
 		test(`abaixo de 48rem o formulário ocupa a largura útil (${width}px)`, async ({ page }) => {
 			await page.setViewportSize({ width, height: 812 });

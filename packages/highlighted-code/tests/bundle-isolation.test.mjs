@@ -8,6 +8,20 @@ import test from 'node:test';
 
 const root = fileURLToPath(new URL('../../../', import.meta.url));
 
+async function bundleScenario(name) {
+	const result = await build({
+		entryPoints: [resolve(root, `scripts/scenarios/${name}.mjs`)],
+		bundle: true,
+		minify: true,
+		write: false,
+		platform: 'browser',
+		format: 'esm',
+		external: ['react', 'react-dom', 'react/*', 'react-dom/*'],
+		logLevel: 'silent',
+	});
+	return Buffer.concat(result.outputFiles.map((file) => file.contents)).toString('utf8');
+}
+
 test('components-public não inclui Shiki', async () => {
 	const result = await build({
 		entryPoints: [resolve(root, 'scripts/scenarios/components.mjs')],
@@ -45,3 +59,20 @@ test('dist de components não referencia highlighted-code', async () => {
 	assert.equal(index.includes('highlighted-code'), false);
 	assert.equal(index.includes('shiki'), false);
 });
+
+for (const scenario of ['admin', 'tokens']) {
+	test(`${scenario}-public não inclui Shiki`, async () => {
+		const bundle = await bundleScenario(scenario);
+		assert.equal(bundle.includes('shiki'), false);
+		assert.equal(bundle.includes('@shikijs'), false);
+		assert.equal(bundle.includes('highlighted-code'), false);
+	});
+}
+
+for (const pkg of ['admin', 'tokens']) {
+	test(`dist de ${pkg} não referencia highlighted-code nem Shiki`, async () => {
+		const index = await readFile(resolve(root, `packages/${pkg}/dist/index.js`), 'utf8');
+		assert.equal(index.includes('highlighted-code'), false);
+		assert.equal(index.includes('shiki'), false);
+	});
+}

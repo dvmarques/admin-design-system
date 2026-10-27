@@ -51,6 +51,7 @@
 	outline-offset: 2px;
 }
 
+/* A região de status fica sempre montada; vazia, não ocupa espaço. */
 .ads-highlighted-code-snippet__feedback {
 	margin: 0;
 	padding: 0.25rem 0.75rem 0;
@@ -58,11 +59,21 @@
 	color: var(--ads-color-text-muted, #52525b);
 }
 
+.ads-highlighted-code-snippet__feedback:empty {
+	padding: 0;
+}
+
+/*
+ * Enquanto o tema `auto` ainda não foi resolvido (servidor e hidratação) o viewport usa os tokens
+ * da página, que já seguem o tema do ponto da árvore; o tema do Shiki entra depois da montagem.
+ */
 .ads-highlighted-code-snippet__viewport {
 	position: relative;
 	overflow: auto;
 	max-width: 100%;
 	padding: 0.75rem 0;
+	background: var(--ads-color-surface, #ffffff);
+	color: var(--ads-color-text, #18181b);
 }
 
 .ads-highlighted-code-snippet[data-resolved-theme='light'] .ads-highlighted-code-snippet__viewport {
@@ -103,13 +114,24 @@
 	min-width: min-content;
 }
 
+/* O número vive sobre o fundo do tema do snippet, não da página: cor própria por tema (≥ 4,5:1). */
 .ads-highlighted-code-snippet__line-number {
 	flex: 0 0 auto;
 	width: 2.75rem;
 	padding-right: 0.75rem;
 	text-align: right;
 	user-select: none;
-	color: var(--ads-color-text-muted, #71717a);
+	color: var(--ads-color-text-muted, #52525b);
+}
+
+.ads-highlighted-code-snippet[data-resolved-theme='light']
+	.ads-highlighted-code-snippet__line-number {
+	color: #6e7681;
+}
+
+.ads-highlighted-code-snippet[data-resolved-theme='dark']
+	.ads-highlighted-code-snippet__line-number {
+	color: #8b8b8b;
 }
 
 .ads-highlighted-code-snippet__line-content {

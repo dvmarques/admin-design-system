@@ -23,6 +23,21 @@ test.describe('demonstração de código destacado', () => {
 		expect(copied).toContain('AdsButton');
 	});
 
+	test('mantém a altura das linhas vazias depois do destaque', async ({ page }) => {
+		await page.goto('/exemplos/codigo-destacado');
+		await waitForHydration(themeTrigger(page));
+		const snippet = page.locator('.ads-highlighted-code-snippet');
+		await expect(snippet).toHaveAttribute('data-resolved-theme', /light|dark/);
+		await expect(
+			snippet.locator('.ads-highlighted-code-snippet__line-content span[style*="color"]').first(),
+		).toBeVisible();
+		const heights = await snippet
+			.locator('.ads-highlighted-code-snippet__line')
+			.evaluateAll((lines) => lines.map((line) => line.getBoundingClientRect().height));
+		expect(heights.length).toBeGreaterThan(3);
+		expect(Math.min(...heights)).toBeGreaterThan(12);
+	});
+
 	for (const width of [320, 375, 1280]) {
 		for (const theme of ['light', 'dark'] as const) {
 			test(`axe e layout ${theme} em ${width}px`, async ({ page }) => {

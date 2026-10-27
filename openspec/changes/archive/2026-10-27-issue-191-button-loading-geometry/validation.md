@@ -18,3 +18,5 @@ A hipótese da issue #191 foi confirmada por medição. Com `relative` no botão
 ## CI no SHA `1757bc0`
 
 Localmente (Windows) passaram format, lint, build, typecheck, 1153 testes unitários e `openspec validate --all --strict` (58); no E2E, 9 snapshots visuais `win32` não versionados falham por não terem baseline. Na CI Linux, com a PR Ready for review: Qualidade rápida, Fluxos no navegador (Chromium, Firefox e WebKit), Artefatos de distribuição, Construir o site e Política de develop passaram (run 40547740388). Publicar e Validação de release foram ignorados por não se aplicarem. Nenhum snapshot foi atualizado.
+
+Nota final: ao integrar com a `develop` (#227, `AdsLoadingText`), o limite passou a ser o dela, 190.000 B; o conjunto mede 189.409 B. A recalibração para 187.750 B desta change deixou de valer.

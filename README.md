@@ -86,6 +86,7 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 - [Estrutura e arquitetura do monorepo](docs/architecture.md)
 - [Catálogo do admin demo e matriz de cobertura](docs/admin-demo-catalog.md)
 - [Fluxo demonstrativo de autenticação do demo](docs/demo-auth-flow.md)
+- [HighlightedCodeSnippet (pacote opcional)](docs/highlighted-code-snippet.md)
 - [Critérios de qualidade](docs/quality.md)
 - [Acessibilidade visual dos estilos](docs/visual-accessibility.md)
 - [Elevação, densidade e estados](docs/visual-polish.md)

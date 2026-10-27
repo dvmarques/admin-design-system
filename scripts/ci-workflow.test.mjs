@@ -77,6 +77,7 @@ test('package builds and inspection always run in the build job; only app builds
 		'check:generated',
 		'build --workspace @admin-ds/tokens',
 		'build --workspace @admin-ds/components',
+		'build --workspace @admin-ds/highlighted-code',
 		'build --workspace @admin-ds/admin',
 		'inspect:packages',
 	]) {

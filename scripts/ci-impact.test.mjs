@@ -20,19 +20,28 @@ import {
 const workspace = (dir, name, extra = {}) => ({ dir, manifest: { name, ...extra } });
 const fixture = () => [
 	workspace('apps/admin-demo', '@admin-ds/admin-demo', {
-		dependencies: { '@admin-ds/admin': '*', '@admin-ds/components': '*', '@admin-ds/tokens': '*' },
+		dependencies: {
+			'@admin-ds/admin': '*',
+			'@admin-ds/components': '*',
+			'@admin-ds/highlighted-code': '*',
+			'@admin-ds/tokens': '*',
+		},
 	}),
 	workspace('apps/docs', '@admin-ds/docs', {
 		dependencies: { '@admin-ds/admin': '*', '@admin-ds/components': '*', '@admin-ds/tokens': '*' },
 	}),
 	workspace('packages/admin', '@admin-ds/admin', { dependencies: { '@admin-ds/components': '*' } }),
 	workspace('packages/components', '@admin-ds/components', { peerDependencies: { react: '*' } }),
+	workspace('packages/highlighted-code', '@admin-ds/highlighted-code', {
+		peerDependencies: { react: '*' },
+	}),
 	workspace('packages/tokens', '@admin-ds/tokens'),
 ];
 const impact = (files, workspaces = fixture()) => classifyImpact(files, workspaces);
 const everything = [
 	'packages/tokens',
 	'packages/components',
+	'packages/highlighted-code',
 	'packages/admin',
 	'apps/admin-demo',
 	'apps/docs',
@@ -55,6 +64,7 @@ test('affected workspaces are listed with dependencies first', () => {
 		'packages/tokens',
 		'packages/components',
 		'packages/admin',
+		'packages/highlighted-code',
 		'apps/admin-demo',
 		'apps/docs',
 	]);

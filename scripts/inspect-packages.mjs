@@ -7,7 +7,12 @@ import { checkBudget } from './quality-budget.mjs';
 import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
-const packageNames = ['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin'];
+const packageNames = [
+	'@admin-ds/tokens',
+	'@admin-ds/components',
+	'@admin-ds/highlighted-code',
+	'@admin-ds/admin',
+];
 // INSPECT_BUDGET_DIR permite aos testes de integração usar orçamentos reduzidos em fixtures.
 const budgetDirectory = process.env.INSPECT_BUDGET_DIR
 	? resolve(process.env.INSPECT_BUDGET_DIR)

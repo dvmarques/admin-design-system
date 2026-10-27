@@ -14,6 +14,7 @@ const root = fileURLToPath(new URL('..', import.meta.url));
  */
 export const implicitDependencies = {
 	'@admin-ds/components': ['@admin-ds/tokens'],
+	'@admin-ds/highlighted-code': ['@admin-ds/tokens'],
 	'@admin-ds/admin': ['@admin-ds/tokens'],
 };
 

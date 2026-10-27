@@ -34,6 +34,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run build --workspace @admin-ds/tokens
       - run: npm run build --workspace @admin-ds/components
+      - run: npm run build --workspace @admin-ds/highlighted-code
       - run: npm run build --workspace @admin-ds/admin
       - name: Gerar demo estático e Storybook e montar site/
         run: npm run build:pages

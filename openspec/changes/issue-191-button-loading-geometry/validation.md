@@ -14,3 +14,7 @@ A hipótese da issue #191 foi confirmada por medição. Com `relative` no botão
 ## Orçamento de distribuição
 
 `@admin-ds/components` (JS/CSS publicados): 187.253 B na develop → 187.501 B (+248 B: dois contêineres internos e as utilidades `grid`, `m-auto` e `[grid-area:1/1]`). O limite em `docs/browser-budget.json` sobe de 187.500 para 187.750 B, justificado pelo custo medido da correção geométrica, sem `position` que conflitaria com o `className` do consumidor. O gzip permanece dentro do limite.
+
+## CI no SHA `1757bc0`
+
+Localmente (Windows) passaram format, lint, build, typecheck, 1153 testes unitários e `openspec validate --all --strict` (58); no E2E, 9 snapshots visuais `win32` não versionados falham por não terem baseline. Na CI Linux, com a PR Ready for review: Qualidade rápida, Fluxos no navegador (Chromium, Firefox e WebKit), Artefatos de distribuição, Construir o site e Política de develop passaram (run 40547740388). Publicar e Validação de release foram ignorados por não se aplicarem. Nenhum snapshot foi atualizado.

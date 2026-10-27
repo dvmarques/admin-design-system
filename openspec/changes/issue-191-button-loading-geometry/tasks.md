@@ -11,5 +11,5 @@
 
 ## 3. Integração
 
-- [ ] 3.1 Executar npm run validate e openspec.cmd validate --all --strict; confirmar E2E sem falhas e registrar limitações reais. Snapshots somente pelo workflow Linux, se necessário.
+- [x] 3.1 Executar npm run validate e openspec.cmd validate --all --strict; confirmar E2E sem falhas e registrar limitações reais. Snapshots somente pelo workflow Linux, se necessário.
 - [x] 3.2 Formatar arquivos alterados com npx.cmd prettier --write e confirmar npm run format.

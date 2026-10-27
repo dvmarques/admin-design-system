@@ -16,7 +16,7 @@
 ## 3. Documentação e qualidade
 
 - [x] 3.1 Documentar API, usos, limitações e distinção de Spinner/Skeleton; atualizar `CHANGELOG.md` na seção `0.1.1`.
-- [ ] 3.2 Revisar implementação e corrigir problemas encontrados, mantendo spec/design sincronizados.
+- [x] 3.2 Revisar implementação e corrigir problemas encontrados, mantendo spec/design sincronizados.
 - [x] 3.3 Executar formatação dos arquivos alterados e `npm run format`.
 - [x] 3.4 Executar `npm run validate`, incluindo lint, build, typecheck, qualidade e `npm run test:e2e` sem falhas antes do commit final.
 - [x] 3.5 Executar `openspec.cmd validate --all --strict`; registrar evidências e pendências reais, sem marcar como concluídas verificações não executadas.
@@ -32,7 +32,7 @@
 - 3.4: format, lint, typecheck, build, `test:quiet`, `test:release`, `inspect:packages` e E2E executados na branch mesclada com `develop`. E2E local no Windows: 401 passaram e 9 falharam, todos por falta de baseline `*-win32.png` (já conhecido; os baselines oficiais são Linux e o CI valida).
 - 3.5: `openspec.cmd validate --all --strict --no-interactive` com a change ativa e novamente em cópia temporária após `archive` simulado. O spec da change declara `## Purpose`; sem ele o `archive` grava o placeholder `TBD` e o modo estrito falha (57 aprovados, 1 falha).
 - Revisão R1 (itens aplicados): `docs/visual-accessibility.md` ressalva que `AdsLoadingText` não tem `role` nem anúncio; o brilho fica em `@supports ((-webkit-background-clip: text) or (background-clip: text))`, com texto sólido na cor atenuada como fallback; o sentido do brilho inverte em RTL com `:dir(rtl)` (regra separada, `animation-direction: reverse`); a change tem `.openspec.yaml`. Testes: `loading-text-styles.test.ts` (9) e E2E RTL em `e2e/loading-text.spec.ts` (7 no total). Atenção: o build do Next converte `:dir(rtl)` em `:lang(ar, he, fa, ...)` para navegadores antigos; nesse caso a inversão depende do atributo `lang` do documento, não de `dir`.
-- 3.2 permanece aberta para o Revisor.
+- 3.2: revisão de código R1 e R2 concluídas em 27/10/2026, sem itens bloqueantes; as sugestões foram aplicadas em `a762d17`.
 
 ## Janela de bundle de `@admin-ds/components`
 

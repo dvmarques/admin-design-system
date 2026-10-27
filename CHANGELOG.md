@@ -12,6 +12,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - `add-codex-project-configuration` - Configuração Codex versionada com MCPs alinhados ao Claude/Cursor, revisores TOML de acessibilidade e API pública e hooks nativos de `apply_patch` para proteger gerados e formatar os arquivos editados com Prettier. Caminhos portáveis para worktrees Windows/Linux, testes no gate de qualidade e instruções de confiança e limites; skills mantidas em `.agents/skills`.
 
+- `feat-212-demo-auth-flow` (issue #212) - Telas simuladas de login e de senha.
+
 - `issue-210-contribution-governance` (issue #210) - Templates de issues e PR, guia CONTRIBUTING e documentação do ciclo OpenSpec com gates de archive/sync, revisão e merge, preservando o fluxo de releases.
 
 - `issue-197-evidence-history` (issue #197) - Separação física entre procedimentos vigentes e histórico de bundle, CI e Playwright, movendo a cronologia e a proveniência para comentários nas issues de origem (sem diretório de evidências em docs/); correção do vínculo para a validação arquivada de #135; índice de documentação, reconciliação documental dos 17 títulos da change de 06/09 (`docs/openspec-history-reconciliation.md`) e inventário das tasks abertas em changes arquivadas (duas ainda abertas; a terceira foi concluída pela #164) (`docs/archived-openspec-followups.md`), sem alterar orçamentos, snapshots ou testes executáveis.

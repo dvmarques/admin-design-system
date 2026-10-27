@@ -94,6 +94,28 @@ describe('overlay dialogs', () => {
 		expect(document.activeElement).toBe(confirm);
 	});
 
+	it.each([
+		['AdsDialog', AdsDialog],
+		['AdsDrawer', AdsDrawer],
+	])(
+		'%s focuses the first eligible control, skipping disabled, hidden and inert ones',
+		async (_name, Overlay) => {
+			render(
+				<Overlay onOpenChange={() => {}} open showCloseButton={false} title="Filtros">
+					<fieldset disabled>
+						<input aria-label="Em fieldset desabilitado" />
+					</fieldset>
+					<input aria-label="Oculto" hidden />
+					<div inert>
+						<button type="button">Inerte</button>
+					</div>
+					<input aria-label="Elegível" />
+				</Overlay>,
+			);
+			await waitFor(() => expect(screen.getByRole('textbox', { name: 'Elegível' })).toHaveFocus());
+		},
+	);
+
 	it('requests close on Escape and restores focus to the trigger', async () => {
 		render(<DialogFixture />);
 		const trigger = screen.getByRole('button', { name: 'Abrir' });

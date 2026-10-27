@@ -65,12 +65,22 @@ O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsC
 
 ### Requirement: Confirmação de ação destrutiva
 
-`AdsConfirmDialog` MUST usar `AdsDialog` com título e descrição associados e oferecer "Cancelar" e "Confirmar", sem fechar nem confirmar por conta própria: `onConfirm` e `onOpenChange` notificam o consumidor. O foco inicial MUST ir a "Cancelar", `Escape` MUST cancelar e o foco MUST voltar ao elemento que abriu o diálogo ao fechar. Com `destructive`, a confirmação MUST usar a variante de perigo. Com `pending`, as ações MUST ficar indisponíveis, como descrito no cenário Pendente.
+`AdsConfirmDialog` MUST usar `AdsDialog` com título e descrição associados e oferecer "Cancelar" e "Confirmar", sem fechar nem confirmar por conta própria: `onConfirm` e `onOpenChange` notificam o consumidor. O foco inicial MUST ir ao primeiro controle elegível de `children` ou, sem ele, a "Cancelar". `Escape` MUST cancelar e o foco MUST voltar ao elemento que abriu o diálogo. `destructive` MUST usar a variante de perigo e `pending` MUST deixar as ações indisponíveis (cenário Pendente).
 
 #### Scenario: Foco e nome acessível
 
-- **WHEN** o diálogo abre
+- **WHEN** o diálogo abre sem controles interativos em `children`
 - **THEN** ele tem nome e descrição acessíveis e o foco está em "Cancelar"
+
+#### Scenario: Foco no primeiro controle do conteúdo
+
+- **WHEN** o diálogo abre com um controle interativo elegível em `children`
+- **THEN** o foco está nesse primeiro controle, e não em "Cancelar"
+
+#### Scenario: Controles inelegíveis são ignorados
+
+- **WHEN** o diálogo abre e os controles de `children` estão desabilitados, ocultos ou inertes
+- **THEN** o foco está em "Cancelar"
 
 #### Scenario: Cancelar com Escape
 

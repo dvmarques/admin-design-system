@@ -616,7 +616,10 @@ export function ConfirmDialogDemo() {
 					setMessage('Confirmado');
 				}}
 			>
-				<p>Conteúdo do painel.</p>
+				{/* Conteúdo interativo: o foco inicial vai ao primeiro controle elegível, antes de "Cancelar". */}
+				<AdsField label="Motivo (opcional)">
+					<AdsInput />
+				</AdsField>
 			</AdsConfirmDialog>
 			<p role="status">{message}</p>
 		</>

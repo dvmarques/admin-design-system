@@ -1288,7 +1288,10 @@ export function Usuarios({
 }
 ```
 
-`AdsConfirmDialog` usa `AdsDialog`: o foco inicial vai a "Cancelar", `Escape` e o
+`AdsConfirmDialog` usa `AdsDialog`. O foco inicial vai ao primeiro controle
+interativo elegível de `children` (não desabilitado, visível e não inerte) e, sem
+esse controle, a "Cancelar"; por isso, na composição padrão, e com conteúdo apenas
+informativo, o foco inicial é "Cancelar". `Escape` e o
 clique fora cancelam (`onOpenChange(false)`) e `onConfirm` não fecha o diálogo.
 `pending` deixa as ações indisponíveis com `aria-disabled` (o botão focado não
 perde o foco) e suspende `Escape` e o clique fora, mesmo com `closeOnEscape` ou

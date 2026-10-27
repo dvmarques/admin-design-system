@@ -2,7 +2,7 @@ import { fireEvent, render, screen, waitFor, within } from '@testing-library/rea
 import axe from 'axe-core';
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { useRef, useState } from 'react';
+import { useRef, useState, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsButton, AdsPopover } from '@admin-ds/components';
 import {
@@ -84,6 +84,93 @@ describe('AdsConfirmDialog', () => {
 		const dialog = screen.getByRole('alertdialog', { name: 'Excluir 2 itens?' });
 		expect(dialog).toHaveAccessibleDescription('Esta ação não pode ser desfeita.');
 		return waitFor(() => expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveFocus());
+	});
+
+	describe('initial focus composition', () => {
+		function renderWith(children: ReactNode) {
+			return render(
+				<AdsConfirmDialog onConfirm={() => {}} onOpenChange={() => {}} open title="Excluir?">
+					{children}
+				</AdsConfirmDialog>,
+			);
+		}
+
+		it('focuses Cancel when children have no interactive control', async () => {
+			renderWith(<p>Somente texto.</p>);
+			await waitFor(() => expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveFocus());
+		});
+
+		it('focuses the first eligible control of children before Cancel', async () => {
+			renderWith(
+				<>
+					<label>
+						Motivo
+						<input type="text" />
+					</label>
+					<button type="button">Detalhes</button>
+				</>,
+			);
+			await waitFor(() => expect(screen.getByRole('textbox', { name: 'Motivo' })).toHaveFocus());
+			expect(screen.getByRole('button', { name: 'Cancelar' })).not.toHaveFocus();
+		});
+
+		it('skips disabled controls', async () => {
+			renderWith(
+				<>
+					<button disabled type="button">
+						Desabilitado
+					</button>
+					<fieldset disabled>
+						<input aria-label="Em fieldset desabilitado" />
+					</fieldset>
+					<input aria-label="Elegível" />
+				</>,
+			);
+			await waitFor(() => expect(screen.getByRole('textbox', { name: 'Elegível' })).toHaveFocus());
+		});
+
+		it('skips hidden controls', async () => {
+			renderWith(
+				<>
+					<input aria-label="Com hidden" hidden />
+					<div style={{ display: 'none' }}>
+						<input aria-label="Em display none" />
+					</div>
+					<div style={{ visibility: 'hidden' }}>
+						<input aria-label="Com visibility hidden" />
+					</div>
+					<input aria-label="Visível" />
+				</>,
+			);
+			await waitFor(() => expect(screen.getByRole('textbox', { name: 'Visível' })).toHaveFocus());
+		});
+
+		it('skips inert controls', async () => {
+			renderWith(
+				<>
+					<div inert>
+						<button type="button">Inerte</button>
+					</div>
+					<input aria-label="Ativo" />
+				</>,
+			);
+			await waitFor(() => expect(screen.getByRole('textbox', { name: 'Ativo' })).toHaveFocus());
+		});
+
+		it('falls back to Cancel when every control of children is ineligible', async () => {
+			renderWith(
+				<>
+					<button disabled type="button">
+						Desabilitado
+					</button>
+					<input aria-label="Oculto" hidden />
+					<div inert>
+						<button type="button">Inerte</button>
+					</div>
+				</>,
+			);
+			await waitFor(() => expect(screen.getByRole('button', { name: 'Cancelar' })).toHaveFocus());
+		});
 	});
 
 	it('cancels with Escape, restores focus and does not confirm', () => {

@@ -40,9 +40,11 @@ export interface AdsConfirmDialogProps extends Omit<
 }
 
 /**
- * Confirmação de ação destrutiva sobre `AdsDialog`. O foco inicial vai a "Cancelar", `Escape`
- * e o clique fora cancelam (exceto com `pending`). O consumidor decide quando fechar. Se `children`
- * tiver controles focáveis, o foco inicial vai ao primeiro deles, antes de "Cancelar".
+ * Confirmação de ação destrutiva sobre `AdsDialog`. `Escape` e o clique fora cancelam (exceto com
+ * `pending`). O consumidor decide quando fechar.
+ *
+ * Foco inicial: o primeiro controle interativo elegível de `children` (não desabilitado, visível e
+ * não inerte), antes das ações; sem esse controle, "Cancelar". Não há prop para forçar outro alvo.
  */
 export function AdsConfirmDialog({
 	cancelLabel = 'Cancelar',

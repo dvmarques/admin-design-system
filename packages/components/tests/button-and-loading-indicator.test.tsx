@@ -60,7 +60,7 @@ describe('AdsButton', () => {
 
 		expect(screen.getByText('Salvar')).toBe(label);
 		expect(label).toHaveClass('opacity-0');
-		expect(screen.getByRole('button', { name: 'Salvar' })).toHaveClass('relative');
+		expect(screen.getByRole('button', { name: 'Salvar' })).not.toHaveClass('relative');
 		expect(screen.queryByRole('status')).not.toBeInTheDocument();
 	});
 

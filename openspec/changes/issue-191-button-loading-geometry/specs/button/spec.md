@@ -14,6 +14,11 @@ AdsButton MUST usar papéis semânticos de hover e foco que preservem a distinç
 - **WHEN** `isLoading` alterna em um botão `sm`, `md` ou `lg` com rótulo curto ou longo, em tema claro ou escuro
 - **THEN** largura, altura e posição do rótulo permanecem iguais e o indicador aparece centralizado sobre o botão
 
+#### Scenario: Posicionamento do consumidor é preservado
+
+- **WHEN** a aplicação passa `absolute` ou `fixed` por `className`
+- **THEN** o botão mantém esse posicionamento, com ou sem carregamento
+
 #### Scenario: Carregamento preserva a semântica
 
 - **WHEN** o botão está carregando

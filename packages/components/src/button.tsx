@@ -28,7 +28,7 @@ export interface AdsButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> 
 
 // Native buttons do not inherit the page font (the library ships without Tailwind's preflight).
 const buttonBase =
-	'ads-button relative inline-flex items-center justify-center gap-2 rounded-md border [font-family:inherit] font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50';
+	'ads-button inline-flex items-center justify-center gap-2 rounded-md border [font-family:inherit] font-medium transition-[background-color,color,border-color,box-shadow,filter,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] hover:-translate-y-px active:translate-y-px active:scale-[0.99] active:brightness-95 motion-reduce:transform-none motion-reduce:transition-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus-ring focus-visible:ring-2 focus-visible:ring-focus-ring-offset disabled:pointer-events-none disabled:cursor-not-allowed disabled:opacity-50';
 
 /** Internal: the button look for non-button elements (consumer links); not part of the public API. */
 export function adsButtonClassName(variant: AdsButtonVariant, size: AdsButtonSize) {
@@ -59,18 +59,23 @@ export const AdsButton = forwardRef<HTMLButtonElement, AdsButtonProps>(function 
 			ref={ref}
 			type={type}
 		>
-			{isLoading ? (
-				<span className="absolute inset-0 flex items-center justify-center">
-					<AdsLoadingIndicator aria-hidden="true" label={loadingLabel} size="sm" />
+			<span className="grid">
+				<span
+					className={classNames(
+						'inline-flex items-center gap-2 [grid-area:1/1]',
+						isLoading && 'opacity-0',
+					)}
+				>
+					{children}
 				</span>
-			) : null}
-			<span
-				className={classNames(
-					'ads-button-content inline-flex items-center gap-2',
-					isLoading && 'opacity-0',
-				)}
-			>
-				{children}
+				{isLoading ? (
+					<AdsLoadingIndicator
+						aria-hidden="true"
+						className="m-auto [grid-area:1/1]"
+						label={loadingLabel}
+						size="sm"
+					/>
+				) : null}
 			</span>
 		</button>
 	);

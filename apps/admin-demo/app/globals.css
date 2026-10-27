@@ -671,20 +671,44 @@ body {
 	gap: 1rem;
 	padding: clamp(1rem, 3vw, 1.5rem) clamp(1.25rem, 4vw, 2.5rem);
 }
-.demo-auth-back {
+.demo-auth-back,
+.demo-auth-inline-link {
 	color: var(--ads-color-text-secondary);
-	font-size: 0.875rem;
 	font-weight: var(--ads-typography-font-weight-medium);
 	text-decoration: underline;
 	text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
 	text-underline-offset: 0.25em;
 }
-.demo-auth-back:hover {
+.demo-auth-back {
+	font-size: 0.875rem;
+}
+.demo-auth-back:hover,
+.demo-auth-inline-link:hover {
 	color: var(--ads-color-text);
 }
-.demo-auth-back:focus-visible {
+.demo-auth-back:focus-visible,
+.demo-auth-inline-link:focus-visible,
+.demo-auth-link-button:focus-visible,
+.demo-auth-status:focus-visible {
 	outline: 2px solid var(--ads-color-focus-ring);
 	outline-offset: 2px;
+}
+.demo-auth-link-button {
+	display: inline-flex;
+	min-height: var(--ads-dimension-control-md);
+	align-items: center;
+	justify-content: center;
+	padding-inline: 1rem;
+	border: 1px solid transparent;
+	border-radius: var(--ads-radius-md);
+	background: var(--ads-color-primary);
+	color: var(--ads-color-on-primary);
+	font-size: 0.875rem;
+	font-weight: var(--ads-typography-font-weight-medium);
+	text-decoration: none;
+}
+.demo-auth-link-button:hover {
+	background: var(--ads-color-primary-hover);
 }
 .demo-auth-layout {
 	display: grid;
@@ -731,20 +755,6 @@ body {
 	margin: 0;
 	color: var(--ads-color-danger);
 	font-size: 0.875rem;
-}
-.demo-auth-inline-link {
-	color: var(--ads-color-text-secondary);
-	font-weight: var(--ads-typography-font-weight-medium);
-	text-decoration: underline;
-	text-decoration-color: color-mix(in srgb, currentcolor 40%, transparent);
-	text-underline-offset: 0.25em;
-}
-.demo-auth-inline-link:hover {
-	color: var(--ads-color-text);
-}
-.demo-auth-inline-link:focus-visible {
-	outline: 2px solid var(--ads-color-focus-ring);
-	outline-offset: 2px;
 }
 .demo-auth-panel {
 	position: relative;

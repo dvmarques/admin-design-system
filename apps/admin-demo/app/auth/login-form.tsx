@@ -10,7 +10,7 @@ import {
 } from '@admin-ds/components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useRef, useState, type FormEvent } from 'react';
 import {
 	demoAuthNotice,
 	invalidEmailMessage,
@@ -23,7 +23,6 @@ import { AuthIntro } from './auth-chrome';
 
 export function LoginForm() {
 	const router = useRouter();
-	const statusId = useId();
 	const emailRef = useRef<HTMLInputElement>(null);
 	const passwordRef = useRef<HTMLInputElement>(null);
 	const [email, setEmail] = useState('');
@@ -32,7 +31,6 @@ export function LoginForm() {
 	const [emailError, setEmailError] = useState<string | undefined>();
 	const [passwordError, setPasswordError] = useState<string | undefined>();
 	const [loading, setLoading] = useState(false);
-	const [statusMessage, setStatusMessage] = useState('');
 
 	function validate(): boolean {
 		let valid = true;
@@ -57,28 +55,23 @@ export function LoginForm() {
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		setStatusMessage('');
 		if (!validate()) return;
 
 		setLoading(true);
 		await new Promise((resolve) => setTimeout(resolve, simulatedAuthDelayMs));
 		setLoading(false);
-		setStatusMessage('Login simulado concluído. Redirecionando para o demo…');
 		router.push('/');
 	}
 
+	// Os campos não têm `name`: se o envio nativo (GET) ocorrer antes da hidratação ou sem
+	// JavaScript, nenhum valor digitado vai para a URL.
 	return (
 		<div className="demo-auth-form-shell">
 			<AuthIntro
 				description={`${demoAuthNotice} Use qualquer e-mail válido e uma senha não vazia para continuar.`}
 				title="Entrar"
 			/>
-			<form
-				aria-describedby={statusMessage ? statusId : undefined}
-				className="demo-auth-form"
-				noValidate
-				onSubmit={handleSubmit}
-			>
+			<form className="demo-auth-form" noValidate onSubmit={handleSubmit}>
 				<AdsField
 					label="E-mail"
 					validationState={emailError ? 'error' : 'default'}
@@ -86,7 +79,6 @@ export function LoginForm() {
 				>
 					<AdsInput
 						autoComplete="email"
-						name="email"
 						onChange={(event) => {
 							setEmail(event.target.value);
 							setEmailError(undefined);
@@ -104,7 +96,6 @@ export function LoginForm() {
 				>
 					<AdsPasswordInput
 						autoComplete="current-password"
-						name="password"
 						onChange={(event) => {
 							setPassword(event.target.value);
 							setPasswordError(undefined);
@@ -129,11 +120,6 @@ export function LoginForm() {
 						</Link>
 					</AdsTypography>
 				</div>
-				{statusMessage ? (
-					<p aria-live="polite" className="demo-auth-status" id={statusId} role="status">
-						{statusMessage}
-					</p>
-				) : null}
 			</form>
 		</div>
 	);

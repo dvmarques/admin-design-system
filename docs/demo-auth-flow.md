@@ -42,8 +42,8 @@ A change OpenSpec correspondente é `feat-212-demo-auth-flow` (issue #212).
 2. Se houver erro, a mensagem aparece junto ao campo e o foco vai para o
    primeiro campo inválido.
 3. Se estiver válido, o botão mostra o estado de carregamento por cerca de
-   400 ms, a mensagem "Login simulado concluído" é anunciada (`role="status"`)
-   e o demo navega para `/`.
+   400 ms e o demo navega para `/`. Não há mensagem de sucesso: a tela é
+   substituída logo em seguida, então qualquer texto não seria lido.
 
 Qualquer e-mail com formato válido e qualquer senha não vazia são aceitos.
 "Lembrar-me (somente demonstração)" altera só um estado local da tela: nada é
@@ -52,33 +52,49 @@ gravado.
 ### Recuperação (`/esqueci-senha`)
 
 1. A pessoa informa o e-mail e ativa **Enviar instruções simuladas**.
-2. Com e-mail válido, aparece a confirmação "Envio simulado" (nenhum e-mail é
-   enviado) e o botão **Continuar para redefinição** leva a `/redefinir-senha`.
-3. **Voltar ao login** retorna a `/login`.
+2. Com e-mail válido, o formulário dá lugar à confirmação "Envio simulado"
+   (`role="status"`; nenhum e-mail é enviado). O foco vai para essa mensagem,
+   para não se perder no `<body>` quando o formulário some.
+3. **Continuar para redefinição** (link para `/redefinir-senha`) e **Voltar ao
+   login** (link para `/login`) são links, não botões com navegação por
+   script.
 
 ### Redefinição (`/redefinir-senha`)
 
 1. A pessoa informa a nova senha e a confirmação. O `AdsPasswordInput` mostra a
    força (apenas orientativa) e a lista de regras com status em texto.
 2. Ao ativar **Salvar senha simulada**, as regras e a confirmação são
-   conferidas. Em caso de sucesso, aparece "Senha redefinida com sucesso
-   (simulação)" e o botão **Voltar ao login**.
+   conferidas. Regras não atendidas marcam o campo **Nova senha** como inválido
+   e levam o foco a ele; confirmação diferente faz o mesmo no campo
+   **Confirmar senha**.
+3. Em caso de sucesso, o foco vai para a mensagem "Senha redefinida com
+   sucesso (simulação)" e o link **Voltar ao login** fica disponível.
 
 ## Validações e mensagens simuladas
 
-| Situação                            | Mensagem                                                                  |
-| ----------------------------------- | ------------------------------------------------------------------------- |
-| E-mail vazio                        | `Informe o e-mail.`                                                       |
-| E-mail sem formato válido           | `Informe um e-mail válido, como nome@exemplo.com.br.`                     |
-| Senha vazia (login)                 | `Informe a senha.`                                                        |
-| Regras da nova senha não atendidas  | `Atenda todos os requisitos da senha antes de continuar.`                 |
-| Confirmação diferente da nova senha | `As senhas não coincidem.`                                                |
-| Aviso fixo no topo de cada tela     | `Demonstração sem backend: nenhuma credencial é validada nem armazenada.` |
+| Situação                                              | Mensagem                                                                  |
+| ----------------------------------------------------- | ------------------------------------------------------------------------- |
+| E-mail vazio                                          | `Informe o e-mail.`                                                       |
+| E-mail sem formato válido                             | `Informe um e-mail válido, como nome@exemplo.com.br.`                     |
+| Senha vazia (login)                                   | `Informe a senha.`                                                        |
+| Regras da nova senha não atendidas (campo Nova senha) | `Atenda todos os requisitos da senha antes de continuar.`                 |
+| Confirmação diferente da nova senha (campo Confirmar) | `As senhas não coincidem.`                                                |
+| Aviso fixo no topo de cada tela                       | `Demonstração sem backend: nenhuma credencial é validada nem armazenada.` |
 
 Regras da nova senha: pelo menos 8 caracteres, uma letra maiúscula e um número.
 O formato do e-mail é verificado apenas por um padrão simples
 (`texto@dominio.ext`, sem espaços). As mensagens e o atraso simulado ficam em
 `apps/admin-demo/lib/auth-demo.ts`.
+
+## Envio nativo sem JavaScript
+
+O HTML das telas é renderizado no servidor e o tratamento do envio só existe
+depois da hidratação. Se a pessoa enviar o formulário sem JavaScript, ou antes
+da hidratação, o navegador faz um envio nativo (GET). Para que nenhum valor
+digitado vá para a URL, o histórico ou logs, os campos de e-mail e senha **não
+têm o atributo `name`**: um envio nativo apenas recarrega a rota, sem parâmetros.
+`method="post"` não é usado porque o export estático do GitHub Pages responde
+405 a POST. Um teste E2E com JavaScript desligado cobre as três rotas.
 
 ## O que não existe
 
@@ -113,11 +129,15 @@ As formas do painel não usam cores fixas. Os preenchimentos usam
 
 - Manualmente: `npm run dev --workspace @admin-ds/admin-demo` e abra `/login`
   (ou use **Login (exemplo)** na navegação).
-- Unitários: `npm run test:quiet` (validação em `auth-validation.test.ts` e
-  navegação em `auth-navigation.test.tsx`, em `apps/admin-demo/tests`).
+- Unitários: `npm run test:quiet` (validação em `auth-validation.test.ts`,
+  navegação em `auth-navigation.test.tsx` e os três formulários, com erro, foco
+  e sucesso, em `auth-forms.test.tsx`, em `apps/admin-demo/tests`).
 - E2E do fluxo, em Chromium:
   `CI=1 npx playwright test e2e/auth-demo.spec.ts --project=chromium`.
   O spec cobre login, validações, recuperação e redefinição, histórico do
-  navegador, tema e cor principal, ausência de credenciais armazenadas, layout
-  em 375 px, 500 px e 700 px sem rolagem horizontal, painel à direita no
-  desktop e auditoria de acessibilidade nos dois temas.
+  navegador, foco após o envio, teclado (Tab até o botão e Enter), link no menu
+  móvel, tema e cor principal, ausência de credenciais em cookies,
+  `localStorage`, `sessionStorage` e cookies do contexto, envio nativo sem
+  JavaScript, layout em 320 px e 375 px sem rolagem horizontal, painel à
+  direita no desktop e auditoria de acessibilidade (axe) em três rotas, dois
+  temas e larguras de 320, 375 e 1280 px, inclusive após erro e após sucesso.

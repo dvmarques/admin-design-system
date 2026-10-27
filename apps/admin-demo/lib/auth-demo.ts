@@ -5,6 +5,7 @@ export const invalidEmailMessage = 'Informe um e-mail válido, como nome@exemplo
 export const requiredEmailMessage = 'Informe o e-mail.';
 export const requiredPasswordMessage = 'Informe a senha.';
 export const passwordMismatchMessage = 'As senhas não coincidem.';
+export const passwordRulesMessage = 'Atenda todos os requisitos da senha antes de continuar.';
 export const demoAuthNotice =
 	'Demonstração sem backend: nenhuma credencial é validada nem armazenada.';
 

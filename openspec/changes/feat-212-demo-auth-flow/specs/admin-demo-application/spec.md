@@ -25,11 +25,6 @@ O admin-demo MUST oferecer na navegação principal, na seção de exemplos de a
 - **WHEN** a pessoa abre a navegação do demo em desktop ou no menu móvel
 - **THEN** um item leva a `/login` com nome que identifica o exemplo de login
 
-#### Scenario: Rota atual na área administrativa
-
-- **WHEN** a pessoa está em `/login` ou em outra rota de autenticação
-- **THEN** nenhum item da navegação administrativa é marcado como página atual
-
 ### Requirement: Rotas de autenticação fora do shell administrativo
 
 O admin-demo MUST expor `/login`, `/esqueci-senha` e `/redefinir-senha` sem `AdsAdminShell`, com link visível **Voltar ao Demo** para `/` e controle de tema alinhado ao restante da aplicação.
@@ -84,7 +79,7 @@ A rota `/esqueci-senha` MUST solicitar e-mail, validar formato, simular confirma
 #### Scenario: Confirmação simulada
 
 - **WHEN** a pessoa envia um e-mail válido
-- **THEN** uma confirmação de envio simulado é anunciada e links permitem ir para `/redefinir-senha` ou `/login`
+- **THEN** uma confirmação de envio simulado é apresentada com o foco movido para a mensagem e links permitem ir para `/redefinir-senha` ou `/login`
 
 ### Requirement: Redefinição de senha simulada
 
@@ -93,16 +88,16 @@ A rota `/redefinir-senha` MUST oferecer nova senha e confirmação com feedback 
 #### Scenario: Confirmação divergente
 
 - **WHEN** a pessoa envia senhas que não coincidem
-- **THEN** um erro acessível é exibido e a senha não é tratada como redefinida
+- **THEN** um erro acessível é exibido junto ao campo correspondente, com o foco nele, e a senha não é tratada como redefinida
 
 #### Scenario: Sucesso simulado
 
 - **WHEN** a pessoa envia senha e confirmação válidas segundo as regras demonstrativas
-- **THEN** uma mensagem de sucesso simulado é apresentada e a pessoa pode voltar ao login
+- **THEN** uma mensagem de sucesso simulado é apresentada com o foco movido para ela e a pessoa pode voltar ao login por um link
 
 ### Requirement: Fluxo navegável com histórico e recarga
 
-O fluxo de autenticação MUST funcionar com links, recarga da página e histórico do navegador, preservando a preferência de tema do demo e sem armazenar senha, token ou credenciais em cookies ou `localStorage`.
+O fluxo de autenticação MUST funcionar com links, recarga da página e histórico do navegador, preservando a preferência de tema do demo e sem armazenar senha, token ou credenciais em cookies, `localStorage` ou `sessionStorage`, e sem colocar valores digitados na URL quando o envio nativo ocorrer sem JavaScript ou antes da hidratação.
 
 #### Scenario: Navegação por links e voltar
 
@@ -117,7 +112,12 @@ O fluxo de autenticação MUST funcionar com links, recarga da página e histór
 #### Scenario: Ausência de armazenamento de credenciais
 
 - **WHEN** a pessoa conclui login ou redefinição simulados
-- **THEN** nenhum cookie ou entrada de `localStorage` contém senha ou token de autenticação
+- **THEN** nenhum cookie, entrada de `localStorage` ou de `sessionStorage` contém senha ou token de autenticação
+
+#### Scenario: Envio nativo sem JavaScript
+
+- **WHEN** a pessoa envia um formulário de autenticação sem JavaScript ou antes da hidratação
+- **THEN** a URL resultante não contém e-mail nem senha digitados
 
 ### Requirement: Acessibilidade e responsividade do fluxo de autenticação
 
@@ -125,5 +125,10 @@ Cada rota de autenticação MUST ter título principal único, controles operáv
 
 #### Scenario: Auditoria automatizada
 
-- **WHEN** uma rota de autenticação é auditada com verificação automatizada de acessibilidade
-- **THEN** nenhuma violação é reportada nos temas claro e escuro
+- **WHEN** cada rota de autenticação é auditada com verificação automatizada de acessibilidade nos temas claro e escuro, em larguras de 320 px, 375 px e desktop, inclusive após erro de validação e após sucesso simulado
+- **THEN** nenhuma violação é reportada
+
+#### Scenario: Operação por teclado
+
+- **WHEN** a pessoa preenche o formulário e percorre os controles com Tab até o botão de envio e ativa com Enter
+- **THEN** o envio simulado ocorre sem uso do ponteiro

@@ -8,9 +8,13 @@ import {
 	type AdsPasswordRule,
 } from '@admin-ds/components';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useId, useRef, useState, type FormEvent } from 'react';
-import { demoAuthNotice, passwordMismatchMessage, simulatedAuthDelayMs } from '../../lib/auth-demo';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
+import {
+	demoAuthNotice,
+	passwordMismatchMessage,
+	passwordRulesMessage,
+	simulatedAuthDelayMs,
+} from '../../lib/auth-demo';
 import { AuthIntro } from './auth-chrome';
 
 const passwordRules: readonly AdsPasswordRule[] = [
@@ -36,23 +40,30 @@ function rulesMet(password: string): boolean {
 }
 
 export function ResetPasswordForm() {
-	const router = useRouter();
 	const statusId = useId();
+	const passwordRef = useRef<HTMLInputElement>(null);
 	const confirmRef = useRef<HTMLInputElement>(null);
+	const statusRef = useRef<HTMLParagraphElement>(null);
 	const [password, setPassword] = useState('');
 	const [confirm, setConfirm] = useState('');
+	const [passwordError, setPasswordError] = useState<string | undefined>();
 	const [confirmError, setConfirmError] = useState<string | undefined>();
-	const [formError, setFormError] = useState<string | undefined>();
 	const [loading, setLoading] = useState(false);
 	const [success, setSuccess] = useState(false);
 
+	// O formulário é desmontado no sucesso; o foco vai para a mensagem para não cair no <body>.
+	useEffect(() => {
+		if (success) statusRef.current?.focus();
+	}, [success]);
+
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
-		setFormError(undefined);
+		setPasswordError(undefined);
 		setConfirmError(undefined);
 
 		if (!rulesMet(password)) {
-			setFormError('Atenda todos os requisitos da senha antes de continuar.');
+			setPasswordError(passwordRulesMessage);
+			passwordRef.current?.focus();
 			return;
 		}
 		if (password !== confirm) {
@@ -67,6 +78,8 @@ export function ResetPasswordForm() {
 		setSuccess(true);
 	}
 
+	// Os campos não têm `name`: um envio nativo (GET) antes da hidratação ou sem JavaScript não
+	// leva as senhas para a URL.
 	return (
 		<div className="demo-auth-form-shell">
 			<AuthIntro
@@ -75,29 +88,37 @@ export function ResetPasswordForm() {
 			/>
 			{success ? (
 				<div className="demo-auth-form">
-					<p aria-live="polite" className="demo-auth-status" id={statusId} role="status">
+					<p
+						aria-live="polite"
+						className="demo-auth-status"
+						id={statusId}
+						ref={statusRef}
+						role="status"
+						tabIndex={-1}
+					>
 						Senha redefinida com sucesso (simulação). Você pode voltar ao login e entrar novamente
 						no demo.
 					</p>
-					<AdsButton onClick={() => router.push('/login')} type="button">
-						Voltar ao login
-					</AdsButton>
+					<div className="demo-auth-actions">
+						<Link className="demo-auth-link-button" href="/login">
+							Voltar ao login
+						</Link>
+					</div>
 				</div>
 			) : (
-				<form
-					aria-describedby={formError ? statusId : undefined}
-					className="demo-auth-form"
-					noValidate
-					onSubmit={handleSubmit}
-				>
-					<AdsField label="Nova senha">
+				<form className="demo-auth-form" noValidate onSubmit={handleSubmit}>
+					<AdsField
+						label="Nova senha"
+						validationState={passwordError ? 'error' : 'default'}
+						{...(passwordError ? { error: passwordError } : {})}
+					>
 						<AdsPasswordInput
 							autoComplete="new-password"
-							name="password"
 							onChange={(event) => {
 								setPassword(event.target.value);
-								setFormError(undefined);
+								setPasswordError(undefined);
 							}}
+							ref={passwordRef}
 							rules={passwordRules}
 							showStrength
 							value={password}
@@ -110,7 +131,6 @@ export function ResetPasswordForm() {
 					>
 						<AdsPasswordInput
 							autoComplete="new-password"
-							name="confirmPassword"
 							onChange={(event) => {
 								setConfirm(event.target.value);
 								setConfirmError(undefined);
@@ -120,11 +140,6 @@ export function ResetPasswordForm() {
 							value={confirm}
 						/>
 					</AdsField>
-					{formError ? (
-						<p className="demo-auth-form-error" id={statusId} role="alert">
-							{formError}
-						</p>
-					) : null}
 					<div className="demo-auth-actions">
 						<AdsButton isLoading={loading} type="submit">
 							Salvar senha simulada

@@ -15,8 +15,8 @@
 
 ## 3. Testes e documentação
 
-- [x] 3.1 Testes Vitest (validação, navegação, contrato).
-- [x] 3.2 Testes Playwright E2E do fluxo completo, temas, responsividade, histórico e ausência de credenciais persistidas.
+- [x] 3.1 Testes Vitest (validação, navegação e formulários: erro, foco e sucesso).
+- [x] 3.2 Testes Playwright E2E do fluxo completo, temas, responsividade (320/375/1280), axe (rotas × temas × larguras, erro e sucesso), teclado, foco, envio sem JavaScript, histórico e ausência de credenciais persistidas.
 - [x] 3.3 Atualizar `CHANGELOG.md` e marcar checkboxes da issue #212 conforme entregue.
 - [x] 3.4 Documentar rotas, fluxo simulado, limitações, componentes Ads* e testes em `docs/demo-auth-flow.md`, com link no `README.md`.
 

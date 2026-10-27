@@ -2,8 +2,7 @@
 
 import { AdsButton, AdsField, AdsInput, AdsTypography } from '@admin-ds/components';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
-import { useId, useRef, useState, type FormEvent } from 'react';
+import { useEffect, useId, useRef, useState, type FormEvent } from 'react';
 import {
 	demoAuthNotice,
 	invalidEmailMessage,
@@ -14,13 +13,18 @@ import {
 import { AuthIntro } from './auth-chrome';
 
 export function ForgotPasswordForm() {
-	const router = useRouter();
 	const statusId = useId();
 	const emailRef = useRef<HTMLInputElement>(null);
+	const statusRef = useRef<HTMLParagraphElement>(null);
 	const [email, setEmail] = useState('');
 	const [emailError, setEmailError] = useState<string | undefined>();
 	const [loading, setLoading] = useState(false);
 	const [sent, setSent] = useState(false);
+
+	// O formulário é desmontado ao confirmar; o foco vai para a mensagem para não cair no <body>.
+	useEffect(() => {
+		if (sent) statusRef.current?.focus();
+	}, [sent]);
 
 	async function handleSubmit(event: FormEvent<HTMLFormElement>) {
 		event.preventDefault();
@@ -42,6 +46,8 @@ export function ForgotPasswordForm() {
 		setSent(true);
 	}
 
+	// O campo não tem `name`: um envio nativo (GET) antes da hidratação ou sem JavaScript não
+	// leva o e-mail para a URL.
 	return (
 		<div className="demo-auth-form-shell">
 			<AuthIntro
@@ -50,14 +56,21 @@ export function ForgotPasswordForm() {
 			/>
 			{sent ? (
 				<div className="demo-auth-form">
-					<p aria-live="polite" className="demo-auth-status" id={statusId} role="status">
+					<p
+						aria-live="polite"
+						className="demo-auth-status"
+						id={statusId}
+						ref={statusRef}
+						role="status"
+						tabIndex={-1}
+					>
 						Envio simulado: se existisse um backend, instruções iriam para {email.trim()}. Continue
 						a demonstração redefinindo a senha ou volte ao login.
 					</p>
 					<div className="demo-auth-actions demo-auth-actions--stack">
-						<AdsButton onClick={() => router.push('/redefinir-senha')} type="button">
+						<Link className="demo-auth-link-button" href="/redefinir-senha">
 							Continuar para redefinição
-						</AdsButton>
+						</Link>
 						<AdsTypography as="p" variant="muted">
 							<Link className="demo-auth-inline-link" href="/login">
 								Voltar ao login
@@ -74,7 +87,6 @@ export function ForgotPasswordForm() {
 					>
 						<AdsInput
 							autoComplete="email"
-							name="email"
 							onChange={(event) => {
 								setEmail(event.target.value);
 								setEmailError(undefined);

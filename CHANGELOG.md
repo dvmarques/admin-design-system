@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `feat-212-demo-auth-flow` (issue #212) - Telas simuladas de login e de senha.
+
 - `issue-210-contribution-governance` (issue #210) - Templates de issues e PR, guia CONTRIBUTING e documentação do ciclo OpenSpec com gates de archive/sync, revisão e merge, preservando o fluxo de releases.
 
 - `issue-197-evidence-history` (issue #197) - Separação física entre procedimentos vigentes e histórico de bundle, CI e Playwright, movendo a cronologia e a proveniência para comentários nas issues de origem (sem diretório de evidências em docs/); correção do vínculo para a validação arquivada de #135; índice de documentação, reconciliação documental dos 17 títulos da change de 06/09 (`docs/openspec-history-reconciliation.md`) e inventário das tasks abertas em changes arquivadas (duas ainda abertas; a terceira foi concluída pela #164) (`docs/archived-openspec-followups.md`), sem alterar orçamentos, snapshots ou testes executáveis.
@@ -85,11 +87,6 @@ por versão e pelas changes correspondentes do OpenSpec.
   com `@fontsource/inter` (dependência só dessas aplicações).
 
 #### Changed
-
-- `feat-212-demo-auth-flow` (issue #212) - Fluxo demonstrativo de autenticação
-  no Admin Demo (`/login`, `/esqueci-senha`, `/redefinir-senha`): layout split
-  com painel SVG em tokens, link opcional na navegação, validações e login
-  simulado sem backend nem armazenamento de credenciais; testes Vitest e E2E.
 
 - `optimize-incremental-validation` (issue #164) - Registrada a medição pós-merge (tarefa 3.3) com três PRs só de documentação (#200, #202, #203): E2E dispensado, tempo total de jobs -27,3% (411 s → 299 s) e duração da execução +37 s por `Qualidade rápida`; amostra pequena, sem tokens nem custo. Evidência em `evidence/medicao-pos-merge.md` do archive da change.
 - `reconcile-ci-docs-196` (issue #196) - Reconciliadas as instruções de CI, skips por impacto, snapshots Linux, checklist `test:quality`, cobertura cross-browser e contratos SSR/export estático do admin demo, sem alterar runtime ou workflows.

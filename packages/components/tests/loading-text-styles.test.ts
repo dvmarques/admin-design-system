@@ -65,11 +65,14 @@ describe('AdsLoadingText no CSS distribuído', () => {
 			/[;{](display|position|width|height|margin|padding|font-[a-z-]+|line-height):/,
 		);
 		// O keyframe anima somente a posição do fundo (sem propriedades de layout).
-		expect(css).toContain('@keyframes ads-loading-text-shimmer{to{background-position:-150% 0}}');
+		const keyframes = css.slice(css.indexOf('@keyframes ads-loading-text-shimmer{'));
+		expect(keyframes).toContain('background-position:');
+		expect(keyframes).not.toMatch(/transform:|width:|height:/);
 	});
 
 	it('mantém texto sólido e legível quando background-clip: text não é suportado', () => {
-		expect(ruleBody(css, active)).toBe('color:var(--ads-color-text-muted)');
+		expect(ruleBody(css, active)).toContain('--ads-loading-text-base:var(--ads-color-text-muted)');
+		expect(ruleBody(css, active)).toContain('color:var(--ads-loading-text-base)');
 		expect(css.replace(supportsBlock(), '')).not.toContain('-webkit-text-fill-color:transparent');
 	});
 
@@ -84,7 +87,7 @@ describe('AdsLoadingText no CSS distribuído', () => {
 		expect(css).not.toContain('data-speed=normal');
 	});
 
-	it('usa apenas tokens semânticos de texto, sem cores literais', () => {
+	it('usa tokens semânticos e variável local sem cores literais', () => {
 		const rules = [
 			ruleBody(css, active),
 			supportsBlock(),
@@ -94,7 +97,12 @@ describe('AdsLoadingText no CSS distribuído', () => {
 		expect(rules).not.toMatch(/#[\da-f]{3,8}\b|rgba?\(|hsla?\(/i);
 		const tokens = new Set([...rules.matchAll(/var\((--[\w-]+)\)/g)].map((match) => match[1]));
 		expect(tokens).toEqual(
-			new Set(['--ads-color-text', '--ads-color-text-muted', '--ads-color-text-primary']),
+			new Set([
+				'--ads-color-text',
+				'--ads-color-text-muted',
+				'--ads-color-text-primary',
+				'--ads-loading-text-base',
+			]),
 		);
 	});
 

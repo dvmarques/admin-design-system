@@ -82,8 +82,6 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - `issue-191-button-loading-geometry` (issue #191) - `AdsButton` mantém largura, altura e posição do rótulo ao alternar `isLoading`: o rótulo fica oculto, não removido, e o indicador ocupa a mesma célula, sem alterar o posicionamento definido pelo consumidor. Inclui regressão de geometria em navegador e story.
 
-- `fix-213-highlighted-code-review` (#213) - Tema `auto` do snippet por `data-theme` ancestral, sem flash e sem tokenização dupla; linhas vazias/CRLF, recuperação de falhas do motor, contraste do número de linha, a11y da cópia e limite de 1000 linhas/100 000 caracteres.
-
 - `fix-smart-table-caption-padding` - A legenda visível de `AdsSmartTable` ganha o espaçamento horizontal das células e o vertical da densidade. `hideCaption` e `AdsTable` isolada não mudam.
 
 - `fix-demo-narrow-width` - A rota `/componentes` do demo deixa de rolar 6px na horizontal em 320px (grids com `minmax(0, 1fr)` e paginação com rolagem no próprio painel). O E2E de todas as rotas verifica 320px, a largura mínima da spec.

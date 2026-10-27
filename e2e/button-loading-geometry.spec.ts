@@ -112,13 +112,19 @@ for (const dir of ['ltr', 'rtl'] as const) {
 	}
 }
 
-test('className do consumidor com posicionamento absoluto não é sobrescrito', async ({ page }) => {
-	const { AdsButton } = await import('@admin-ds/components');
-	const markup = renderToStaticMarkup(
-		createElement(AdsButton, { className: 'absolute right-2 top-2' }, 'Fechar'),
-	);
-	await page.setContent(
-		`<!doctype html><html data-theme="light"><head><style>${css}</style></head><body>${markup}</body></html>`,
-	);
-	await expect(page.getByRole('button', { name: 'Fechar' })).toHaveCSS('position', 'absolute');
-});
+for (const position of ['absolute', 'fixed'] as const) {
+	for (const isLoading of [false, true]) {
+		test(`className do consumidor com ${position} não é sobrescrito (isLoading=${isLoading})`, async ({
+			page,
+		}) => {
+			const { AdsButton } = await import('@admin-ds/components');
+			const markup = renderToStaticMarkup(
+				createElement(AdsButton, { className: `${position} right-2 top-2`, isLoading }, 'Fechar'),
+			);
+			await page.setContent(
+				`<!doctype html><html data-theme="light"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+			await expect(page.getByRole('button', { name: 'Fechar' })).toHaveCSS('position', position);
+		});
+	}
+}

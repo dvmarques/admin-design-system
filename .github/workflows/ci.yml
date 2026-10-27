@@ -197,7 +197,7 @@ jobs:
         with:
           fetch-depth: 0
       - run: node ./scripts/develop-policy.mjs
-      - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive
+      - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
 
   release-check:
     name: Validação de release
@@ -245,4 +245,4 @@ jobs:
             echo "$BAD" >&2
             exit 1
           fi
-      - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive
+      - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive

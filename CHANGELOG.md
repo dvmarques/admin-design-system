@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-codex-project-configuration` - Configuração Codex versionada com MCPs alinhados ao Claude/Cursor, revisores TOML de acessibilidade e API pública e hooks nativos de `apply_patch` para proteger gerados e formatar os arquivos editados com Prettier. Caminhos portáveis para worktrees Windows/Linux, testes no gate de qualidade e instruções de confiança e limites; skills mantidas em `.agents/skills`.
+
 - `feat-212-demo-auth-flow` (issue #212) - Telas simuladas de login e de senha.
 
 - `issue-210-contribution-governance` (issue #210) - Templates de issues e PR, guia CONTRIBUTING e documentação do ciclo OpenSpec com gates de archive/sync, revisão e merge, preservando o fluxo de releases.
@@ -87,6 +89,12 @@ por versão e pelas changes correspondentes do OpenSpec.
   com `@fontsource/inter` (dependência só dessas aplicações).
 
 #### Changed
+
+- `add-codex-project-configuration` - Reúne configuração, ativação, skills, MCPs, revisores e limites dos hooks de Codex, Claude Code e Cursor no guia único `docs/agent-setup.md`, substituindo o guia exclusivo do Codex e atualizando os links de entrada.
+
+- `update-openspec-1-15` - Adiciona `.editorconfig` com UTF-8, LF e indentação compatível com o Prettier e amplia `.gitignore` para logs, metadados de macOS/Windows e preferências locais do Claude Code.
+
+- `update-openspec-1-15` - Atualiza as skills geradas do OpenSpec para Codex, Claude Code e Cursor de 1.14.1 para 1.15.0 e alinha as duas validações da CI (antes em 1.10.0) e o guia de comandos à versão 1.15.0, preservando configuração, workflows selecionados e skills próprias. Reorganiza detalhes de três requisitos existentes em cenários para atender à validação estrita da nova versão, sem mudar suas exigências. O teste de confiança do checkout passa a respeitar o formato de caminhos de Linux e Windows.
 
 - `optimize-incremental-validation` (issue #164) - Registrada a medição pós-merge (tarefa 3.3) com três PRs só de documentação (#200, #202, #203): E2E dispensado, tempo total de jobs -27,3% (411 s → 299 s) e duração da execução +37 s por `Qualidade rápida`; amostra pequena, sem tokens nem custo. Evidência em `evidence/medicao-pos-merge.md` do archive da change.
 - `reconcile-ci-docs-196` (issue #196) - Reconciliadas as instruções de CI, skips por impacto, snapshots Linux, checklist `test:quality`, cobertura cross-browser e contratos SSR/export estático do admin demo, sem alterar runtime ou workflows.
@@ -219,6 +227,8 @@ por versão e pelas changes correspondentes do OpenSpec.
   e processo, sem mudança de API pública nem de pacotes distribuídos.
 
 #### Fixed
+
+- `add-codex-project-configuration` - Corrige os hooks Codex para negar falhas do bootstrap pré-edição, aceitar worktrees por symlink/junction, resolver symlinks relativos pelo diretório físico e proteger gerados com caixa alternativa no Windows. Documenta os limites da identificação de falha na resposta pós-edição.
 
 - `stabilize-sidebar-icon-position` (issue #205) - Mantém a posição horizontal dos ícones de navegação ao recolher ou expandir a sidebar desktop na composição `sidebar-header`, centralizando-os no destaque selecionado compacto e alinhando o avatar da organização na mesma coluna, inclusive com scrollbar nativa. Reserva o gutter da scrollbar no desktop mesmo sem overflow para manter esse eixo estável.
 

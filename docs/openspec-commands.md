@@ -4,11 +4,22 @@ Este projeto utiliza `openspec.cmd` porque a execução do wrapper
 `openspec.ps1` pode ser bloqueada pela política de execução do PowerShell.
 Execute os comandos na raiz do repositório.
 
+A versão de referência é **OpenSpec 1.15.0**. As skills geradas para Codex,
+Claude Code e Cursor e as duas validações em `.github/workflows/ci.yml`
+devem usar essa versão. O CLI é instalado globalmente; não é uma dependência
+de runtime dos pacotes.
+
 ### Inicialização e atualização
 
 ```powershell
 # Inicializar o OpenSpec e configurar as integrações com Codex e Claude Code
 openspec.cmd init . --tools codex,claude
+
+# Instalar a versão de referência, se necessário
+npm.cmd install --global @fission-ai/openspec@1.15.0
+
+# Conferir os arquivos que serão atualizados
+openspec.cmd update . --dry-run --json
 
 # Atualizar instruções e skills após atualizar o CLI
 openspec.cmd update .

@@ -313,7 +313,13 @@ Enquanto a preferência for Sistema, o admin-demo MUST acompanhar mudanças de `
 
 ### Requirement: Aplicação inicial sem flash e armazenamento resiliente
 
-O admin-demo MUST aplicar a preferência efetiva antes da primeira pintura em ambos os builds, sem divergência de hidratação: cookie explícito pode informar o SSR do build normal; o export estático usa HTML pré-renderizado e script inicial no navegador. Quando o servidor não conhece a preferência do sistema (Sistema ou ausente), MUST renderizar o fallback `light` e corrigi-lo antes da primeira pintura. A indisponibilidade de armazenamento ou de cookies MUST NOT quebrar a interface: a escolha continua valendo na sessão.
+O admin-demo MUST aplicar a preferência efetiva antes da primeira pintura nos builds normal e estático, sem divergência de hidratação. Quando o servidor desconhece a preferência do sistema, MUST renderizar o fallback `light` e corrigi-lo antes da pintura. A indisponibilidade de armazenamento ou cookies MUST NOT quebrar a interface nem impedir a escolha na sessão.
+
+#### Scenario: Estratégia de aplicação por build
+
+- **WHEN** o tema é aplicado nos builds normal e estático
+- **THEN** o cookie explícito pode informar o SSR normal e o export estático usa HTML pré-renderizado e script inicial no navegador
+- **AND** a preferência Sistema ou ausente usa fallback `light` no servidor e é corrigida antes da primeira pintura
 
 #### Scenario: Cookie explícito renderizado no servidor
 

@@ -232,6 +232,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `issue-191-button-loading-geometry` (issue #191) - `AdsButton` mantém largura, altura e posição do rótulo ao alternar `isLoading`: o rótulo permanece montado (oculto) em `span.ads-button-content` e o indicador é sobreposto e centralizado, sem ocupar espaço no fluxo. API, `aria-busy`, bloqueio de acionamento e nome acessível preservados. Inclui regressão de geometria em navegador (claro/escuro), story `LoadingTransition` e alternância no catálogo; relacionada à #152.
+
 - `fix-213-highlighted-code-review` (#213) - Tema `auto` do snippet por `data-theme` ancestral, sem flash e sem tokenização dupla; linhas vazias/CRLF, recuperação de falhas do motor, contraste do número de linha, a11y da cópia e limite de 1000 linhas/100 000 caracteres.
 
 - `fix-demo-auth-viewport` - Telas de autenticação do demo passam a ocupar a viewport sem crescimento causado pelo SVG decorativo. Login compacto em telas baixas e rolagem interna acessível quando o conteúdo excede a área disponível, preservando os temas e os controles.

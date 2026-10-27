@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { useState } from 'react';
 import { AdsButton } from '@admin-ds/components';
 
 const meta = {
@@ -33,4 +34,26 @@ export const States: Story = {
 			<AdsButton disabled>Desabilitado</AdsButton>
 		</div>
 	),
+};
+
+/** Alterna `isLoading` sem mudar a largura, a altura nem a posição do rótulo. */
+export const LoadingTransition: Story = {
+	render: function LoadingTransitionStory() {
+		const [loading, setLoading] = useState(false);
+		return (
+			<div className="flex flex-col items-start gap-4">
+				<AdsButton variant="secondary" onClick={() => setLoading(!loading)}>
+					{loading ? 'Parar carregamento' : 'Iniciar carregamento'}
+				</AdsButton>
+				<div className="flex flex-wrap items-center gap-3">
+					{(['sm', 'md', 'lg'] as const).map((size) => (
+						<AdsButton key={size} size={size} isLoading={loading}>
+							Salvar
+						</AdsButton>
+					))}
+					<AdsButton isLoading={loading}>Enviar relatório mensal consolidado</AdsButton>
+				</div>
+			</div>
+		);
+	},
 };

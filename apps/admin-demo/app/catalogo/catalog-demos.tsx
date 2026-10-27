@@ -85,6 +85,7 @@ import {
 
 export function ButtonDemo() {
 	const [count, setCount] = useState(0);
+	const [loading, setLoading] = useState(false);
 	return (
 		<>
 			<p role="status">{count} ações</p>
@@ -100,6 +101,10 @@ export function ButtonDemo() {
 			))}
 			<AdsButton disabled>Desabilitado</AdsButton>
 			<AdsButton isLoading>Salvando</AdsButton>
+			<AdsButton variant="secondary" onClick={() => setLoading(!loading)}>
+				Alternar carregamento
+			</AdsButton>
+			<AdsButton isLoading={loading}>Enviar relatório</AdsButton>
 		</>
 	);
 }

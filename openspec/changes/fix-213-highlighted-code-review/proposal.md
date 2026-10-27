@@ -8,14 +8,14 @@ A revisão integral da #213 (PR #215, já mergeada em `develop`) encontrou defei
 
 Perfil: **Standard** (correção de comportamento público do pacote opcional, testes e documentação).
 
-- `theme="auto"` resolve pelo `[data-theme]` ancestral mais próximo, depois `documentElement`, depois `prefers-color-scheme`; observa mudanças com `MutationObserver` e resolve antes da pintura no cliente. Antes disso (SSR/hidratação) o snippet usa as cores da página e não tokeniza; o destaque ocorre uma única vez, no tema correto.
+- `theme="auto"` resolve pelo `[data-theme]` válido (`light`/`dark`) mais próximo, depois `documentElement`, depois `prefers-color-scheme`; valores inválidos são ignorados (na raiz valem `light`, como nos tokens); observa mudanças com `MutationObserver` e resolve antes da pintura no cliente. Antes disso (SSR/hidratação) o snippet não tokeniza e usa, por CSS, o fundo e as cores do tema da página; o destaque ocorre uma única vez, no tema correto.
 - Linhas vazias mantêm a altura de uma linha; CRLF/CR são normalizados e uma única quebra final não cria linha extra (plain e destacado iguais).
 - Falhas de motor, gramática ou tema não ficam em cache; carregamentos simultâneos são deduplicados.
 - Cor do número de linha definida por tema do snippet (contraste ≥ 4,5:1).
-- Feedback de cópia numa região de status persistente, limpa por tempo e ao trocar o código; bloco rolável com nome acessível.
+- Feedback de cópia numa região de status persistente, limpa por tempo e ao trocar o código, e reanunciada em cópias seguidas; bloco rolável com nome acessível.
 - Código acima de 1000 linhas ou 100 000 caracteres permanece em plain.
 - `@shikijs/langs` e `@shikijs/themes` declarados (versão exata 4.5.0, a mesma já resolvida) no pacote opcional; carregador de linguagens tipado sem expor tipos internos; `name` da gramática deve ser igual ao `id`.
-- Testes reais de tokenização das 12 linguagens, falha com nova tentativa, concorrência, SSR/hidratação, tema por ancestral e isolamento de bundle também para `admin` e `tokens`.
+- Testes reais de tokenização das 12 linguagens, falha com nova tentativa, concorrência, SSR/hidratação, tema por ancestral (inclusive valor inválido e evento `change` do sistema), componente com o motor real e isolamento de bundle também para `admin` e `tokens`.
 
 Fora do escopo: peso do WASM Oniguruma / motor de regex JavaScript (decisão de produto), `CodeEditor`, novo `CodeSnippet` plain, archive desta change.
 

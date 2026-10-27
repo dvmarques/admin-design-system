@@ -19,6 +19,8 @@
 - [x] 3.1 Testes reais de tokenização, falhas, concorrência, SSR, tema por ancestral, cópia e troca dinâmica (F-11).
 - [x] 3.2 Isolamento de bundle para `admin` e `tokens`; teste E2E da altura das linhas.
 - [x] 3.3 Atualizar `docs/highlighted-code-snippet.md` e `CHANGELOG.md`.
+- [x] 3.4 Tema `auto` ignora `data-theme` inválido e sobe ao próximo válido; testes do evento `change` do sistema e do componente com o motor real (S-1 a S-3).
+- [x] 3.5 Cores do tema escuro/claro antes da resolução por CSS, doc de fallback e reanúncio da mesma mensagem de cópia (S-6 a S-8).
 
 ## 4. Validação
 

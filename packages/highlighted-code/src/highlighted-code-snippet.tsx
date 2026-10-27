@@ -27,11 +27,15 @@ const COPY_FEEDBACK_MS = 4000;
 // useLayoutEffect resolve o tema antes da pintura no cliente; no servidor vira useEffect (sem aviso).
 const useIsomorphicLayoutEffect = typeof window === 'undefined' ? useEffect : useLayoutEffect;
 
-/** Tema efetivo no ponto da árvore: `[data-theme]` mais próximo, o documento ou o sistema. */
+/** `[data-theme]` válido mais próximo (inválido sobe ao ancestral); raiz inválida: light; sem atributo: sistema. */
 function resolveEffectiveTheme(element: Element): AdsHighlightedCodeThemeMode {
-	const scope = element.closest<HTMLElement>('[data-theme]') ?? document.documentElement;
-	const value = scope.dataset.theme;
-	if (value === 'dark' || value === 'light') return value;
+	let scope = element.closest<HTMLElement>('[data-theme]');
+	while (scope) {
+		const value = scope.dataset.theme;
+		if (value === 'dark' || value === 'light') return value;
+		if (scope === document.documentElement) return 'light';
+		scope = scope.parentElement?.closest<HTMLElement>('[data-theme]') ?? null;
+	}
 	return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
@@ -121,6 +125,12 @@ function CodeLines({
 	);
 }
 
+interface CopyFeedback {
+	code: string;
+	message: string;
+	hidden?: boolean;
+}
+
 interface TokenResult {
 	code: string;
 	language: string;
@@ -140,7 +150,7 @@ export function AdsHighlightedCodeSnippet({
 	const sectionRef = useRef<HTMLElement>(null);
 	const resolvedTheme = useResolvedTheme(theme, sectionRef);
 	const [result, setResult] = useState<TokenResult | null>(null);
-	const [copy, setCopy] = useState<{ code: string; message: string } | null>(null);
+	const [copy, setCopy] = useState<CopyFeedback | null>(null);
 	const normalized = normalizeHighlightedLanguage(language);
 	const label = languageLabel(language);
 	const regionLabel = codeLabel ?? `Código ${label}`;
@@ -160,10 +170,12 @@ export function AdsHighlightedCodeSnippet({
 		};
 	}, [displayCode, normalized, resolvedTheme]);
 
-	// O feedback some sozinho e não sobrevive a uma troca de código.
+	// O feedback some sozinho e não sobrevive a uma troca de código. Oculto (mesma mensagem repetida),
+	// volta no tick seguinte: o leitor de tela só reanuncia quando o texto da região muda.
 	useEffect(() => {
 		if (!copy) return;
-		const timer = setTimeout(() => setCopy(null), COPY_FEEDBACK_MS);
+		const { hidden, ...shown } = copy;
+		const timer = setTimeout(() => setCopy(hidden ? shown : null), hidden ? 0 : COPY_FEEDBACK_MS);
 		return () => clearTimeout(timer);
 	}, [copy]);
 
@@ -174,14 +186,22 @@ export function AdsHighlightedCodeSnippet({
 		result.theme === resolvedTheme
 			? result.tokens
 			: null;
-	const copyMessage = copy?.code === code ? copy.message : '';
+	const copyMessage = copy?.code === code && !copy.hidden ? copy.message : '';
+
+	function showCopyFeedback(message: string) {
+		setCopy((prev) =>
+			prev?.code === code && prev.message === message && !prev.hidden
+				? { code, message, hidden: true }
+				: { code, message },
+		);
+	}
 
 	async function copyCode() {
 		try {
 			await navigator.clipboard.writeText(code);
-			setCopy({ code, message: 'Código copiado.' });
+			showCopyFeedback('Código copiado.');
 		} catch {
-			setCopy({ code, message: 'Não foi possível copiar. Selecione o código abaixo.' });
+			showCopyFeedback('Não foi possível copiar. Selecione o código abaixo.');
 		}
 	}
 

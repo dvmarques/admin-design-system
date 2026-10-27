@@ -12,23 +12,28 @@ O componente MUST oferecer cabeçalho com identificação da linguagem e ação 
 #### Scenario: Tema automático
 
 - **WHEN** `theme` é `auto` e o tema efetivo da página alterna entre claro e escuro
-- **THEN** o highlighting acompanha o tema efetivo, definido por `[data-theme]` ancestral, `document.documentElement` ou `prefers-color-scheme`, nessa ordem
+- **THEN** o highlighting acompanha o tema efetivo, definido pelo `[data-theme]` válido (`light` ou `dark`) mais próximo, por `document.documentElement` ou por `prefers-color-scheme`, nessa ordem
 
 ## ADDED Requirements
 
 ### Requirement: Tema automático por escopo
 
-No tema `auto`, o tema efetivo MUST ser o do `[data-theme]` ancestral mais próximo do componente, senão o de `document.documentElement`, senão `prefers-color-scheme`; o componente MUST acompanhar mudanças desse tema, MUST NOT exibir bloco claro antes de resolver um tema escuro e MUST tokenizar apenas no tema efetivo.
+No tema `auto`, o tema efetivo MUST ser o do `[data-theme]` válido (`light` ou `dark`) mais próximo do componente, ignorando valores inválidos, senão o de `document.documentElement` (inválido na raiz vale `light`), senão `prefers-color-scheme`; o componente MUST acompanhar mudanças, MUST NOT exibir bloco claro antes de resolver um tema escuro e MUST tokenizar apenas no tema efetivo.
 
 #### Scenario: Tema automático por ancestral
 
 - **WHEN** `theme` é `auto` e o componente está dentro de um elemento com `data-theme` diferente do de `document.documentElement`
 - **THEN** o tema efetivo é o do ancestral mais próximo e acompanha as mudanças desse atributo
 
+#### Scenario: Valor inválido de data-theme
+
+- **WHEN** `theme` é `auto` e o `[data-theme]` mais próximo tem valor diferente de `light` e `dark`
+- **THEN** esse valor é ignorado e vale o próximo ancestral com `[data-theme]` válido; na raiz, valor inválido vale `light`, e sem atributo vale `prefers-color-scheme`
+
 #### Scenario: Primeira exibição do tema automático
 
 - **WHEN** `theme` é `auto` e o componente é renderizado no servidor ou hidratado
-- **THEN** o código é exibido em plain com as cores da página, sem tokenizar, e o tema efetivo é resolvido antes da primeira pintura no cliente
+- **THEN** o código é exibido em plain, sem tokenizar, com fundo e cores do tema da página escolhidos por CSS, e o tema efetivo é resolvido antes da primeira pintura no cliente
 
 ### Requirement: Recuperação de falhas e carregamento único
 
@@ -65,12 +70,17 @@ O componente MUST manter a altura de uma linha para linhas vazias, MUST exibir p
 
 ### Requirement: Acessibilidade do feedback de cópia
 
-O componente MUST manter uma região de status persistente para o feedback de cópia, MUST limpar a mensagem após um intervalo e quando `code` muda, e MUST dar nome acessível ao bloco de código focável.
+O componente MUST manter uma região de status persistente para o feedback de cópia, MUST limpar a mensagem após um intervalo e quando `code` muda, MUST reanunciar a mesma mensagem em cópias seguidas e MUST dar nome acessível ao bloco de código focável.
 
 #### Scenario: Feedback de cópia
 
 - **WHEN** a cópia é acionada
 - **THEN** a região de status já existente passa a conter a mensagem e é esvaziada depois de alguns segundos
+
+#### Scenario: Cópia repetida
+
+- **WHEN** a cópia é acionada de novo enquanto a mesma mensagem ainda é exibida
+- **THEN** a mensagem é esvaziada e reposta no tick seguinte, sem texto extra, e o tempo de exibição recomeça
 
 #### Scenario: Troca de código
 

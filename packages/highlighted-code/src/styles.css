@@ -64,26 +64,40 @@
 }
 
 /*
- * Enquanto o tema `auto` ainda não foi resolvido (servidor e hidratação) o viewport usa os tokens
- * da página, que já seguem o tema do ponto da árvore; o tema do Shiki entra depois da montagem.
+ * Cores por tema, com as regras dos tokens (`:root`/light, dark e prefers-color-scheme sem atributo):
+ * valem pela herança do `[data-theme]` válido mais próximo e servem ao `auto` antes de resolver.
+ * Depois, `[data-resolved-theme]` as define no próprio snippet.
  */
+:root,
+[data-theme='light'],
+.ads-highlighted-code-snippet[data-resolved-theme='light'] {
+	--ads-hc-surface: #ffffff;
+	--ads-hc-text: #000000;
+	--ads-hc-line-number: #6e7681;
+}
+
+[data-theme='dark'],
+.ads-highlighted-code-snippet[data-resolved-theme='dark'] {
+	--ads-hc-surface: #1e1e1e;
+	--ads-hc-text: #d4d4d4;
+	--ads-hc-line-number: #8b8b8b;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme]) {
+		--ads-hc-surface: #1e1e1e;
+		--ads-hc-text: #d4d4d4;
+		--ads-hc-line-number: #8b8b8b;
+	}
+}
+
 .ads-highlighted-code-snippet__viewport {
 	position: relative;
 	overflow: auto;
 	max-width: 100%;
 	padding: 0.75rem 0;
-	background: var(--ads-color-surface, #ffffff);
-	color: var(--ads-color-text, #18181b);
-}
-
-.ads-highlighted-code-snippet[data-resolved-theme='light'] .ads-highlighted-code-snippet__viewport {
-	background: #ffffff;
-	color: #000000;
-}
-
-.ads-highlighted-code-snippet[data-resolved-theme='dark'] .ads-highlighted-code-snippet__viewport {
-	background: #1e1e1e;
-	color: #d4d4d4;
+	background: var(--ads-hc-surface, #ffffff);
+	color: var(--ads-hc-text, #000000);
 }
 
 .ads-highlighted-code-snippet--wrap .ads-highlighted-code-snippet__line-content {
@@ -121,17 +135,7 @@
 	padding-right: 0.75rem;
 	text-align: right;
 	user-select: none;
-	color: var(--ads-color-text-muted, #52525b);
-}
-
-.ads-highlighted-code-snippet[data-resolved-theme='light']
-	.ads-highlighted-code-snippet__line-number {
-	color: #6e7681;
-}
-
-.ads-highlighted-code-snippet[data-resolved-theme='dark']
-	.ads-highlighted-code-snippet__line-number {
-	color: #8b8b8b;
+	color: var(--ads-hc-line-number, #6e7681);
 }
 
 .ads-highlighted-code-snippet__line-content {

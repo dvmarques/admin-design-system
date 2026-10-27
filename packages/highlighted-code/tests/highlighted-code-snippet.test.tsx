@@ -35,6 +35,41 @@ function mockMatchMedia(matches: boolean) {
 	})) as unknown as typeof window.matchMedia;
 }
 
+/** matchMedia que guarda os handlers de `change` e permite disparar a troca do sistema. */
+function mockMatchMediaWithChange(initial: boolean) {
+	let matches = initial;
+	const handlers = new Set<(event: MediaQueryListEvent) => void>();
+	const addEventListener = vi.fn((type: string, handler: (event: MediaQueryListEvent) => void) => {
+		if (type === 'change') handlers.add(handler);
+	});
+	const removeEventListener = vi.fn(
+		(type: string, handler: (event: MediaQueryListEvent) => void) => {
+			if (type === 'change') handlers.delete(handler);
+		},
+	);
+	window.matchMedia = vi.fn().mockImplementation((query: string) => ({
+		get matches() {
+			return matches;
+		},
+		media: query,
+		onchange: null,
+		addEventListener,
+		removeEventListener,
+		addListener: vi.fn(),
+		removeListener: vi.fn(),
+		dispatchEvent: vi.fn(),
+	})) as unknown as typeof window.matchMedia;
+	return {
+		addEventListener,
+		removeEventListener,
+		handlers,
+		setSystemDark(value: boolean) {
+			matches = value;
+			for (const handler of [...handlers]) handler({ matches: value } as MediaQueryListEvent);
+		},
+	};
+}
+
 function lineTexts(container: HTMLElement) {
 	return [...container.querySelectorAll('.ads-highlighted-code-snippet__line-content')].map(
 		(line) => line.textContent,
@@ -300,6 +335,53 @@ describe('copiar', () => {
 	});
 });
 
+describe('copiar repetido', () => {
+	it('reanuncia a mesma mensagem em dois cliques seguidos sem texto extra', async () => {
+		vi.useFakeTimers();
+		vi.stubGlobal('navigator', {
+			clipboard: { writeText: vi.fn().mockResolvedValue(undefined) },
+		});
+		render(<AdsHighlightedCodeSnippet code="x" language="cobol" theme="light" />);
+		const status = screen.getByRole('status');
+		const texts: string[] = [];
+		const observer = new MutationObserver(() => texts.push(status.textContent ?? ''));
+		observer.observe(status, { childList: true, characterData: true, subtree: true });
+
+		await act(async () => {
+			fireEvent.click(screen.getByRole('button', { name: 'Copiar código' }));
+		});
+		expect(status).toHaveTextContent('Código copiado.');
+		await act(async () => {
+			vi.advanceTimersByTime(3000);
+		});
+
+		await act(async () => {
+			fireEvent.click(screen.getByRole('button', { name: 'Copiar código' }));
+		});
+		expect(status).toBeEmptyDOMElement();
+		await act(async () => {
+			vi.advanceTimersByTime(1);
+		});
+		expect(status).toHaveTextContent('Código copiado.');
+
+		// O timer reinicia a partir da reposição: 3000 ms depois a mensagem ainda está lá.
+		await act(async () => {
+			vi.advanceTimersByTime(3000);
+		});
+		expect(status).toHaveTextContent('Código copiado.');
+		await act(async () => {
+			vi.advanceTimersByTime(1000);
+		});
+		expect(status).toBeEmptyDOMElement();
+
+		await act(async () => {
+			await Promise.resolve();
+		});
+		expect(texts.every((text) => text === '' || text === 'Código copiado.')).toBe(true);
+		observer.disconnect();
+	});
+});
+
 describe('tema', () => {
 	beforeEach(() => mockMatchMedia(false));
 
@@ -393,11 +475,74 @@ describe('tema', () => {
 
 	it('desconecta o MutationObserver e o listener de mídia ao desmontar', () => {
 		const disconnect = vi.spyOn(MutationObserver.prototype, 'disconnect');
+		const media = mockMatchMediaWithChange(false);
 		const { unmount } = render(
 			<AdsHighlightedCodeSnippet code="x" language="cobol" theme="auto" />,
 		);
+		const added = media.addEventListener.mock.calls.filter(([type]) => type === 'change');
+		expect(added).toHaveLength(1);
 		unmount();
 		expect(disconnect).toHaveBeenCalled();
+		expect(media.removeEventListener).toHaveBeenCalledWith('change', added[0]![1]);
+		expect(media.handlers.size).toBe(0);
+	});
+
+	it('auto reage à troca do esquema do sistema (evento change) sem data-theme', async () => {
+		delete document.documentElement.dataset.theme;
+		const media = mockMatchMediaWithChange(false);
+		const { container } = render(
+			<AdsHighlightedCodeSnippet code="x" language="cobol" theme="auto" />,
+		);
+		const section = container.querySelector('section');
+		expect(section).toHaveAttribute('data-resolved-theme', 'light');
+		await act(async () => media.setSystemDark(true));
+		expect(section).toHaveAttribute('data-resolved-theme', 'dark');
+		await act(async () => media.setSystemDark(false));
+		expect(section).toHaveAttribute('data-resolved-theme', 'light');
+	});
+
+	it('auto ignora data-theme inválido no ancestral e sobe ao próximo válido', async () => {
+		document.documentElement.dataset.theme = 'dark';
+		const { container } = render(
+			<div data-theme="system" data-testid="invalido">
+				<AdsHighlightedCodeSnippet code="x" language="cobol" theme="auto" />
+			</div>,
+		);
+		const section = container.querySelector('section');
+		expect(section).toHaveAttribute('data-resolved-theme', 'dark');
+
+		await act(async () => {
+			screen.getByTestId('invalido').dataset.theme = 'light';
+		});
+		await waitFor(() => expect(section).toHaveAttribute('data-resolved-theme', 'light'));
+		await act(async () => {
+			screen.getByTestId('invalido').dataset.theme = 'sistema';
+		});
+		await waitFor(() => expect(section).toHaveAttribute('data-resolved-theme', 'dark'));
+	});
+
+	it('auto ignora ancestrais inválidos aninhados e usa o sistema se a raiz não tem atributo', () => {
+		delete document.documentElement.dataset.theme;
+		mockMatchMedia(true);
+		const { container } = render(
+			<div data-theme="a">
+				<div data-theme="b">
+					<AdsHighlightedCodeSnippet code="x" language="cobol" theme="auto" />
+				</div>
+			</div>,
+		);
+		expect(container.querySelector('section')).toHaveAttribute('data-resolved-theme', 'dark');
+	});
+
+	it('auto trata data-theme inválido na raiz como claro, como os tokens, mesmo com sistema escuro', () => {
+		document.documentElement.dataset.theme = 'weird';
+		mockMatchMedia(true);
+		const { container } = render(
+			<div data-theme="system">
+				<AdsHighlightedCodeSnippet code="x" language="cobol" theme="auto" />
+			</div>,
+		);
+		expect(container.querySelector('section')).toHaveAttribute('data-resolved-theme', 'light');
 	});
 });
 
@@ -442,5 +587,63 @@ describe('SSR e hidratação', () => {
 		expect(errors).not.toHaveBeenCalled();
 		cleanup();
 		container.remove();
+	});
+});
+
+describe('motor real no componente', () => {
+	beforeEach(() => mockMatchMedia(false));
+
+	function tokenColors(container: HTMLElement) {
+		return new Set(
+			[
+				...container.querySelectorAll<HTMLElement>(
+					'.ads-highlighted-code-snippet__line-content span',
+				),
+			]
+				.map((span) => span.style.color)
+				.filter(Boolean),
+		);
+	}
+
+	it('destaca no tema do ancestral e acompanha a troca do atributo', async () => {
+		document.documentElement.dataset.theme = 'light';
+		const { container } = render(
+			<div data-theme="dark" data-testid="escopo">
+				<AdsHighlightedCodeSnippet code="const a = 1;" language="typescript" theme="auto" />
+			</div>,
+		);
+		const section = container.querySelector('section');
+		expect(section).toHaveAttribute('data-resolved-theme', 'dark');
+		await waitFor(() => expect(tokenColors(container).size).toBeGreaterThan(1));
+		const dark = tokenColors(container);
+
+		await act(async () => {
+			screen.getByTestId('escopo').dataset.theme = 'light';
+		});
+		await waitFor(() => expect(section).toHaveAttribute('data-resolved-theme', 'light'));
+		await waitFor(() => {
+			const light = tokenColors(container);
+			expect(light.size).toBeGreaterThan(1);
+			expect([...light].some((color) => !dark.has(color))).toBe(true);
+		});
+		expect(container.textContent).toContain('const a = 1;');
+	});
+
+	it('mantém a linha vazia e a altura de linha depois do destaque real', async () => {
+		const { container } = render(
+			<AdsHighlightedCodeSnippet
+				code={'const a = 1;\n\nconst b = 2;\n'}
+				language="typescript"
+				theme="light"
+				showLineNumbers
+			/>,
+		);
+		expect(lineTexts(container)).toEqual(['const a = 1;', ' ', 'const b = 2;']);
+		await waitFor(() => expect(tokenColors(container).size).toBeGreaterThan(1));
+		expect(lineTexts(container)).toEqual(['const a = 1;', ' ', 'const b = 2;']);
+		expect(container.querySelectorAll('.ads-highlighted-code-snippet__line')).toHaveLength(3);
+		expect(container.querySelectorAll('.ads-highlighted-code-snippet__line-number')).toHaveLength(
+			3,
+		);
 	});
 });

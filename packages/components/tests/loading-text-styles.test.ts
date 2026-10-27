@@ -65,7 +65,8 @@ describe('AdsLoadingText no CSS distribuído', () => {
 			/[;{](display|position|width|height|margin|padding|font-[a-z-]+|line-height):/,
 		);
 		// O keyframe anima somente a posição do fundo (sem propriedades de layout).
-		const keyframes = css.slice(css.indexOf('@keyframes ads-loading-text-shimmer{'));
+		const keyframesStart = css.indexOf('@keyframes ads-loading-text-shimmer{');
+		const keyframes = css.slice(keyframesStart, css.indexOf('}}', keyframesStart) + 2);
 		expect(keyframes).toContain('background-position:');
 		expect(keyframes).not.toMatch(/transform:|width:|height:/);
 	});

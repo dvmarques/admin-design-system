@@ -200,3 +200,36 @@ test('mantém o cabeçalho do Admin Shell dentro da largura em 390px', async ({ 
 		expect(box!.x + box!.width).toBeLessThanOrEqual(390);
 	}
 });
+
+test('alinha o logo ao centro dos ícones da sidebar sem movê-lo ao recolher', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 720 });
+	await page.goto('/');
+	await waitForHydration(page.getByRole('button', { name: 'Recolher barra lateral' }));
+
+	const centers = () =>
+		page.evaluate(() => {
+			const sidebar = document.querySelector('.ads-admin-shell-sidebar-desktop')!;
+			const center = (element: Element) => {
+				const box = element.getBoundingClientRect();
+				return box.left + box.width / 2;
+			};
+			return {
+				logo: center(sidebar.querySelector('.ads-admin-shell-sidebar-header img')!),
+				icon: center(sidebar.querySelector('.ads-sidebar-item .ads-sidebar-icon')!),
+			};
+		});
+
+	const expanded = await centers();
+	expect(Math.abs(expanded.logo - expanded.icon)).toBeLessThanOrEqual(1);
+
+	await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+	await expect(page.getByRole('button', { name: 'Expandir barra lateral' })).toBeVisible();
+	await expect
+		.poll(async () => {
+			const collapsed = await centers();
+			return Math.abs(collapsed.logo - expanded.logo);
+		})
+		.toBeLessThanOrEqual(1);
+	const collapsed = await centers();
+	expect(Math.abs(collapsed.logo - collapsed.icon)).toBeLessThanOrEqual(1);
+});

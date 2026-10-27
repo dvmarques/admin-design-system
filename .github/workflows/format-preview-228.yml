@@ -1,0 +1,21 @@
+name: Temporary Prettier diagnosis 228
+on:
+  push:
+    branches:
+      - fix/228-loading-text-shimmer-visibility
+permissions:
+  contents: read
+jobs:
+  format-preview:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Show Prettier adjustments
+        run: |
+          npx prettier --write packages/components/src/styles.css
+          git diff -- packages/components/src/styles.css

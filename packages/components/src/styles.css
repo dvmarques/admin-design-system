@@ -276,3 +276,33 @@
 	font-size: 0.875rem;
 	font-weight: 500;
 }
+
+/* Texto em atualização: brilho só nos glifos, sem mudar o layout. */
+@keyframes ads-loading-text-shimmer {
+	from { background-position: 150% center, 0 0; }
+	to { background-position: -150% center, 0 0; }
+}
+
+.ads-loading-text[data-loading='true'] {
+	color: var(--ads-color-text-muted);
+	-webkit-text-fill-color: transparent;
+	background-image:
+		linear-gradient(90deg, transparent 0%, transparent 38%, var(--ads-color-text-primary) 50%, transparent 62%, transparent 100%),
+		linear-gradient(var(--ads-color-text-muted), var(--ads-color-text-muted));
+	background-size: 200% 100%, 100% 100%;
+	background-repeat: no-repeat;
+	background-position: 150% center, 0 0;
+	-webkit-background-clip: text;
+	background-clip: text;
+	animation: ads-loading-text-shimmer 2.5s ease-in-out infinite;
+}
+.ads-loading-text[data-speed='slow'] { animation-duration: 4s; }
+.ads-loading-text[data-speed='fast'] { animation-duration: 1.5s; }
+@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+	.ads-loading-text[data-loading='true'] {
+		animation: none;
+		background-image: none;
+		-webkit-text-fill-color: currentColor;
+		color: var(--ads-color-text);
+	}
+}

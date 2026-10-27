@@ -34,6 +34,13 @@ A change OpenSpec correspondente é `feat-212-demo-auth-flow` (issue #212).
   (`app/icon.svg`) e o texto "Admin Design System". Ele não é lido por
   tecnologias assistivas (`aria-hidden`).
 
+A composição ocupa a viewport dinâmica, com cabeçalho visível e ilustração sem
+influência na altura do formulário. Em telas baixas os espaçamentos se compactam.
+O login cabe sem rolagem em 1920×915, 1280×720, 768×600, 390×667 e 320×568
+com fonte padrão. Se zoom, teclado virtual, mensagens ou uma altura extrema
+excederem o espaço disponível, somente a área do formulário rola, preservando
+o acesso ao início, ao fim e aos controles pelo teclado.
+
 ## Fluxo simulado de cada tela
 
 ### Login (`/login`)

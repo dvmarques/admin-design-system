@@ -230,6 +230,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-demo-auth-viewport` - Telas de autenticação do demo passam a ocupar a viewport sem crescimento causado pelo SVG decorativo. Login compacto em telas baixas e rolagem interna acessível quando o conteúdo excede a área disponível, preservando os temas e os controles.
+
 - `add-codex-project-configuration` - Corrige os hooks Codex para negar falhas do bootstrap pré-edição, aceitar worktrees por symlink/junction, resolver symlinks relativos pelo diretório físico e proteger gerados com caixa alternativa no Windows. Documenta os limites da identificação de falha na resposta pós-edição.
 
 - `stabilize-sidebar-icon-position` (issue #205) - Mantém a posição horizontal dos ícones de navegação ao recolher ou expandir a sidebar desktop na composição `sidebar-header`, centralizando-os no destaque selecionado compacto e alinhando o avatar da organização na mesma coluna, inclusive com scrollbar nativa. Reserva o gutter da scrollbar no desktop mesmo sem overflow para manter esse eixo estável.

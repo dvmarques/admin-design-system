@@ -2,8 +2,10 @@
 
 ## Imagem e versões
 
-A matrix E2E em `.github/workflows/ci.yml` usa a imagem oficial
-`mcr.microsoft.com/playwright:v1.62.0-noble` (Ubuntu 24.04). O
+A matrix E2E em `.github/workflows/ci.yml`, o job `build` de
+`.github/workflows/pages.yml` e o workflow `update-visual-baselines.yml` usam a
+imagem oficial `mcr.microsoft.com/playwright:v1.62.0-noble` (Ubuntu 24.04); ao
+atualizar a tag, altere os três. O
 `package-lock.json` fixa `@playwright/test`, `playwright` e `playwright-core` em
 **1.62.0**. A CI verifica as versões instaladas e do lockfile dos três pacotes
 Playwright, Node 24, npm 11.19.1 e os executáveis dos três navegadores antes do
@@ -40,10 +42,12 @@ Next.js é iniciada por `playwright.config.ts` no próprio container, via
 - Se o Chromium falhar por memória, verificar `--ipc=host` e recursos do runner.
   Se houver erro de permissão, inspecionar UID do container e diretórios do
   checkout/cache antes de alterar permissões.
-- Se snapshots Chromium divergirem, comparar rasterização e fontes entre
-  `ubuntu-latest` e Ubuntu Noble. O workflow de atualização de baselines ainda
-  usa o host `ubuntu-latest`; não atualizar PNGs automaticamente, nem elevar
-  tolerâncias. Qualquer baseline novo requer justificativa e revisão visual.
+- Se snapshots Chromium divergirem, comparar rasterização e fontes. O workflow
+  de atualização de baselines roda na mesma imagem da CI, então os PNGs gerados
+  devem ser equivalentes; baselines gerados antes dessa migração no host
+  `ubuntu-latest` podem divergir e precisam ser regenerados. Não atualizar PNGs
+  automaticamente, nem elevar tolerâncias. Qualquer baseline novo requer
+  justificativa e revisão visual.
 - Se o pull da imagem for mais lento que o apt, comparar medianas e considerar
   retorno ao runner nativo ou otimização de mirror, sem reduzir testes.
 

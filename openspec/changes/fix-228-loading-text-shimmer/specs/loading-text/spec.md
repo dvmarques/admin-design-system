@@ -11,6 +11,12 @@ A biblioteca SHALL disponibilizar `AdsLoadingText` como componente público, cap
 - **THEN** o brilho percorre as letras com diferença perceptível da cor base
 - **THEN** a animação não provoca deslocamento de layout
 
+#### Scenario: Contraste entre base e pico
+
+- **WHEN** `AdsLoadingText` recebe `loading=true` em tema claro ou escuro
+- **THEN** a razão de contraste WCAG entre a cor-base e o pico do brilho é de aproximadamente 4,2:1 (entre 4,1:1 e 4,3:1), derivada de tokens semânticos
+- **THEN** o pico mantém contraste alto com a superfície
+
 #### Scenario: Atualização inativa
 
 - **WHEN** `loading=false` ou omitido

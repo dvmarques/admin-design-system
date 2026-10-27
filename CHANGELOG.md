@@ -78,7 +78,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
-- `fix-228-loading-text-shimmer` (issue #228) - Melhora a visibilidade do shimmer de `AdsLoadingText` em tema escuro com duas camadas explícitas de gradiente e base ajustada por tokens, preservando velocidades, acessibilidade e contratos públicos.
+- `fix-228-loading-text-shimmer` (issue #228) - Melhora a visibilidade do shimmer de `AdsLoadingText` nos temas claro e escuro com duas camadas explícitas de gradiente e base derivada de tokens (contraste base/pico de ~4,2:1), preservando velocidades, acessibilidade e contratos públicos.
 
 - `fix-field-sizing-and-layout` (`fix-select-sm-height-and-document-field-button-pairing`, `fix-date-picker-trigger-height`, `fix-form-control-and-shell-header-layout`, `tighten-field-feedback-spacing` #205) - `--ads-dimension-field-sm` passa de `1.75rem` para `1.875rem` (30px): `AdsSelect` `sm` sobe de 28 para 30px, igual ao `AdsInput`. O gatilho do `AdsDatePicker` tem a altura do campo em `sm`, `md` e `lg`. `AdsInput`, `AdsTextarea` e `AdsSelect` usam `box-border`, deixando de ficar 26px mais largos que a coluna em aplicações sem reset. `ThemeToggle` usa a fonte do design system e rótulo em uma linha. `AdsField` aproxima ajuda e erro do controle (4 px, sem margens nativas dos parágrafos), preservando associações acessíveis. Nova seção em `docs/integration.md` sobre botões ao lado de campos.
 

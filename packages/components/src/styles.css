@@ -291,19 +291,28 @@
 	}
 }
 
-/* Texto sempre legível: no dark, um tom-base mais distante do pico evidencia a passagem do brilho. */
+/* Texto sempre legível: base apagada (fallback: text-muted) para o pico text-primary destacar a passagem. */
 .ads-loading-text[data-loading='true'] {
 	--ads-loading-text-base: var(--ads-color-text-muted);
 	color: var(--ads-loading-text-base);
 }
 
-/* A preferência dark explícita prevalece sobre a preferência do sistema. */
+/* Razão base/pico de ~4,2:1 nos dois temas (referência do Daniel), sempre derivada dos tokens. */
 @supports (color: color-mix(in srgb, white, black)) {
+	.ads-loading-text[data-loading='true'] {
+		--ads-loading-text-base: color-mix(
+			in srgb,
+			var(--ads-color-text-muted) 77%,
+			var(--ads-color-surface) 23%
+		);
+	}
+
+	/* A preferência dark explícita prevalece sobre a preferência do sistema. */
 	:where([data-theme='dark']) .ads-loading-text[data-loading='true'] {
 		--ads-loading-text-base: color-mix(
 			in srgb,
-			var(--ads-color-text-muted) 70%,
-			var(--ads-color-surface) 30%
+			var(--ads-color-text-muted) 42%,
+			var(--ads-color-surface) 58%
 		);
 	}
 
@@ -312,8 +321,8 @@
 			.ads-loading-text[data-loading='true'] {
 			--ads-loading-text-base: color-mix(
 				in srgb,
-				var(--ads-color-text-muted) 70%,
-				var(--ads-color-surface) 30%
+				var(--ads-color-text-muted) 42%,
+				var(--ads-color-surface) 58%
 			);
 		}
 	}

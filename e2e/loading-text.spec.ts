@@ -70,6 +70,28 @@ test.describe('AdsLoadingText no catálogo', () => {
 		});
 	}
 
+	test('o brilho usa duas camadas e mantém o texto de base em ambos os temas', async ({
+		page,
+	}) => {
+		await openDemo(page);
+		for (const theme of ['light', 'dark'] as const) {
+			await page.getByLabel('Tema da demonstração').selectOption(theme);
+			const styles = await texts(page)
+				.first()
+				.evaluate((element) => {
+					const style = getComputedStyle(element);
+					return {
+						image: style.backgroundImage,
+						animation: style.animationName,
+						fill: style.webkitTextFillColor,
+					};
+				});
+			expect(styles.image.match(/linear-gradient\(/g)).toHaveLength(2);
+			expect(styles.animation).toBe('ads-loading-text-shimmer');
+			expect(styles.fill).toBe('rgba(0, 0, 0, 0)');
+		}
+	});
+
 	test('o texto longo quebra linha dentro da largura estreita', async ({ page }) => {
 		const measure = () =>
 			texts(page)

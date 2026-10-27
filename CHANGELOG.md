@@ -230,6 +230,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-logo-sidebar-alignment` - Na sidebar com cabeçalho, o logo é alinhado ao centro dos ícones da navegação (descontando a largura medida do gutter de rolagem) e permanece no mesmo lugar ao expandir ou recolher.
+
 - `fix-demo-auth-viewport` - Telas de autenticação do demo passam a ocupar a viewport sem crescimento causado pelo SVG decorativo. Login compacto em telas baixas e rolagem interna acessível quando o conteúdo excede a área disponível, preservando os temas e os controles.
 
 - `add-codex-project-configuration` - Corrige os hooks Codex para negar falhas do bootstrap pré-edição, aceitar worktrees por symlink/junction, resolver symlinks relativos pelo diretório físico e proteger gerados com caixa alternativa no Windows. Documenta os limites da identificação de falha na resposta pós-edição.

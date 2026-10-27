@@ -123,6 +123,7 @@ export function AdsAdminShellSidebar({
 	const { collapsed, desktopSidebarId, isDesktop, mobileNavigationId, mobileOpen, setMobileOpen } =
 		useAdminShellContext();
 	const desktopNavigationRef = useRef<HTMLElement>(null);
+	const desktopSidebarRef = useRef<HTMLElement>(null);
 	const wasMobileOpenRef = useRef(mobileOpen);
 
 	useEffect(() => {
@@ -137,6 +138,15 @@ export function AdsAdminShellSidebar({
 		wasMobileOpenRef.current = mobileOpen;
 	}, [isDesktop, mobileNavigationId, mobileOpen]);
 
+	useEffect(() => {
+		// The stable scrollbar gutter width depends on the platform; the header brand mirrors it in CSS.
+		const sidebar = desktopSidebarRef.current;
+		const navigation = desktopNavigationRef.current;
+		if (!isDesktop || !sidebar || !navigation) return;
+		const gutter = navigation.offsetWidth - navigation.clientWidth;
+		sidebar.style.setProperty('--ads-sidebar-scrollbar-size', `${Math.max(0, gutter)}px`);
+	}, [isDesktop, collapsed]);
+
 	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
 	const hasHeader = isRenderable(header);
 
@@ -146,6 +156,7 @@ export function AdsAdminShellSidebar({
 				className="ads-admin-shell-sidebar-desktop"
 				data-collapsed={collapsed ? 'true' : 'false'}
 				id={desktopSidebarId}
+				ref={desktopSidebarRef}
 			>
 				{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 				<nav

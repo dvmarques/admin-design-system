@@ -2015,6 +2015,16 @@
 		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-desktop > .ads-admin-shell-sidebar {
 			scrollbar-gutter: stable;
 		}
+		/* The shell measures the navigation scrollbar gutter so the brand shares the icons' center. */
+		.ads-admin-shell--sidebar-header
+			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
+			> .ads-admin-shell-sidebar-header::after {
+			content: '';
+			flex: none;
+			/* Cancel the header flex gap so only the gutter width offsets the brand. */
+			margin-inline-start: calc(-1 * var(--ads-spacing-2));
+			inline-size: var(--ads-sidebar-scrollbar-size, 0px);
+		}
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-desktop
 			.ads-organization-switcher[data-collapsed='true']

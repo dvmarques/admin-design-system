@@ -94,6 +94,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `ci-playwright-container-pages-baselines` - Os workflows `pages.yml` (job de build) e `update-visual-baselines.yml` passam a rodar no container oficial `mcr.microsoft.com/playwright:v1.62.0-noble`, como o E2E da CI, sem `playwright install --with-deps` nem limpeza de fontes apt. Reduz o tempo do passo de instalação e faz os baselines Linux serem gerados na mesma imagem em que a CI os compara. Sem mudança em testes, tolerâncias, snapshots ou lockfile.
+
 - `add-codex-project-configuration` - Reúne configuração, ativação, skills, MCPs, revisores e limites dos hooks de Codex, Claude Code e Cursor no guia único `docs/agent-setup.md`, substituindo o guia exclusivo do Codex e atualizando os links de entrada.
 
 - `update-openspec-1-15` - Adiciona `.editorconfig` com UTF-8, LF e indentação compatível com o Prettier e amplia `.gitignore` para logs, metadados de macOS/Windows e preferências locais do Claude Code.
@@ -232,7 +234,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
-- `issue-191-button-loading-geometry` (issue #191) - `AdsButton` mantém largura, altura e posição do rótulo ao alternar `isLoading`: o rótulo permanece montado (oculto) em `span.ads-button-content` e o indicador é sobreposto e centralizado, sem ocupar espaço no fluxo. API, `aria-busy`, bloqueio de acionamento e nome acessível preservados. Inclui regressão de geometria em navegador (claro/escuro), story `LoadingTransition` e alternância no catálogo; relacionada à #152.
+- `fix-logo-sidebar-alignment` - Na sidebar com cabeçalho, o logo é alinhado ao centro dos ícones da navegação (descontando a largura medida do gutter de rolagem) e permanece no mesmo lugar ao expandir ou recolher.
+
+- `issue-191-button-loading-geometry` (issue #191) - `AdsButton` mantém largura, altura e posição do rótulo ao alternar `isLoading`: o rótulo fica oculto, não removido, e o indicador ocupa a mesma célula, sem alterar o posicionamento definido pelo consumidor. Inclui regressão de geometria em navegador e story.
 
 - `fix-213-highlighted-code-review` (#213) - Tema `auto` do snippet por `data-theme` ancestral, sem flash e sem tokenização dupla; linhas vazias/CRLF, recuperação de falhas do motor, contraste do número de linha, a11y da cópia e limite de 1000 linhas/100 000 caracteres.
 

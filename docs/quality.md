@@ -91,7 +91,7 @@ Para aceitar uma mudança visual intencional:
 1. Faça push da branch da PR.
 2. Na aba Actions, execute o workflow "Atualizar baselines visuais"
    (`update-visual-baselines.yml`) escolhendo a branch da PR. Ele regenera os
-   snapshots em `ubuntu-latest`, confirma que a suíte passa com os novos
+   snapshots no container Playwright da CI, confirma que a suíte passa com os novos
    baselines e faz commit dos PNGs na branch.
 3. Revise o diff das imagens na PR antes de aprovar; não aceite baselines apenas
    para eliminar uma falha.

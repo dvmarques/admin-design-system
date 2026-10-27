@@ -12,7 +12,7 @@ a demonstração e o catálogo Storybook.
 ## Como funciona
 
 O workflow `.github/workflows/pages.yml` roda a cada push em `develop` e por
-`workflow_dispatch` em develop. PRs não Draft para develop executam o mesmo build e testes no Linux, sem configurar, enviar artefatos ou publicar no Pages. Cada PR usa concorrência própria. Ele constrói os pacotes, gera o demo e o Storybook a partir do
+`workflow_dispatch` em develop. PRs não Draft para develop executam o mesmo build e testes no Linux, sem configurar, enviar artefatos ou publicar no Pages. Cada PR usa concorrência própria. O job de build roda no container oficial do Playwright (`mcr.microsoft.com/playwright:v1.62.0-noble`, ver `docs/playwright-ci-container.md`), que já traz o Chromium e dispensa `playwright install`. Ele constrói os pacotes, gera o demo e o Storybook a partir do
 mesmo commit, monta `site/`, verifica o site com `npm run test:e2e:pages` e só então publica. Se
 qualquer etapa falhar, nada é publicado e o site anterior continua no ar.
 

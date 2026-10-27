@@ -280,10 +280,14 @@
 /* Texto em atualização: brilho só nos glifos, sem mudar o layout. */
 @keyframes ads-loading-text-shimmer {
 	from {
-		background-position: 150% center, 0 0;
+		background-position:
+			150% center,
+			0 0;
 	}
 	to {
-		background-position: -150% center, 0 0;
+		background-position:
+			-150% center,
+			0 0;
 	}
 }
 
@@ -304,7 +308,8 @@
 	}
 
 	@media (prefers-color-scheme: dark) {
-		:root:not([data-theme='light']):not([data-theme='dark']) .ads-loading-text[data-loading='true'] {
+		:root:not([data-theme='light']):not([data-theme='dark'])
+			.ads-loading-text[data-loading='true'] {
 			--ads-loading-text-base: color-mix(
 				in srgb,
 				var(--ads-color-text-muted) 70%,
@@ -328,9 +333,13 @@
 				transparent 100%
 			),
 			linear-gradient(var(--ads-loading-text-base), var(--ads-loading-text-base));
-		background-size: 200% 100%, 100% 100%;
+		background-size:
+			200% 100%,
+			100% 100%;
 		background-repeat: no-repeat;
-		background-position: 150% center, 0 0;
+		background-position:
+			150% center,
+			0 0;
 		-webkit-background-clip: text;
 		background-clip: text;
 		animation: ads-loading-text-shimmer 2.5s ease-in-out infinite;

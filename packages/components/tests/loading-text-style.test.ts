@@ -10,9 +10,9 @@ describe('AdsLoadingText: regressão do shimmer (#228)', () => {
 		expect(loadingTextCss).toContain(
 			'linear-gradient(var(--ads-loading-text-base), var(--ads-loading-text-base))',
 		);
-		expect(loadingTextCss).toContain('background-size: 200% 100%, 100% 100%');
-		expect(loadingTextCss).toContain('background-position: 150% center, 0 0');
-		expect(loadingTextCss).toContain('background-position: -150% center, 0 0');
+		expect(loadingTextCss).toMatch(/background-size:\s+200% 100%,\s+100% 100%/);
+		expect(loadingTextCss).toMatch(/background-position:\s+150% center,\s+0 0/);
+		expect(loadingTextCss).toMatch(/background-position:\s+-150% center,\s+0 0/);
 	});
 
 	it('reforça contraste no tema escuro utilizando tokens existentes', () => {

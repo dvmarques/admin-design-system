@@ -298,11 +298,20 @@
 }
 .ads-loading-text[data-speed='slow'] { animation-duration: 4s; }
 .ads-loading-text[data-speed='fast'] { animation-duration: 1.5s; }
-@media (prefers-reduced-motion: reduce), (forced-colors: active) {
+@media (prefers-reduced-motion: reduce) {
 	.ads-loading-text[data-loading='true'] {
 		animation: none;
 		background-image: none;
 		-webkit-text-fill-color: currentColor;
 		color: var(--ads-color-text);
+	}
+}
+
+@media (forced-colors: active) {
+	.ads-loading-text[data-loading='true'] {
+		animation: none;
+		background-image: none;
+		-webkit-text-fill-color: CanvasText;
+		color: CanvasText;
 	}
 }

@@ -3,7 +3,7 @@
 ### Requirement: Texto em atualização preserva conteúdo
 A biblioteca SHALL disponibilizar `AdsLoadingText` como componente público, capaz de exibir texto fornecido pelo consumidor enquanto sinaliza visualmente atualização em andamento. Quando `loading=true`, a faixa luminosa SHALL ser perceptível tanto em tema claro quanto escuro e sobre superfícies comuns da aplicação, sem ocultar texto ou alterar layout.
 
-#### Scenario: Atualização ativa e brilho perceptível
+#### Scenario: Atualização ativa
 - **WHEN** `AdsLoadingText` recebe `loading=true` em tema claro ou escuro
 - **THEN** o texto permanece legível durante todo o ciclo
 - **THEN** o brilho percorre as letras com diferença perceptível da cor base

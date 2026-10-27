@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `adopt-mit-license` (issue #219) - Licença MIT do código próprio em `LICENSE.md`, identificador SPDX nos manifests e lockfile e documentação de uso, preservando licenças e atribuições de terceiros.
+
 - `feat-213-highlighted-code-snippet` (#213) - Pacote opcional com Shiki e catálogo.
 
 - `add-codex-project-configuration` - Configuração Codex versionada com MCPs alinhados ao Claude/Cursor, revisores TOML de acessibilidade e API pública e hooks nativos de `apply_patch` para proteger gerados e formatar os arquivos editados com Prettier. Caminhos portáveis para worktrees Windows/Linux, testes no gate de qualidade e instruções de confiança e limites; skills mantidas em `.agents/skills`.
@@ -231,6 +233,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 #### Fixed
 
 - `fix-logo-sidebar-alignment` - Na sidebar com cabeçalho, o logo é alinhado ao centro dos ícones da navegação (descontando a largura medida do gutter de rolagem) e permanece no mesmo lugar ao expandir ou recolher.
+
+- `fix-213-highlighted-code-review` (#213) - Tema `auto` do snippet por `data-theme` ancestral, sem flash e sem tokenização dupla; linhas vazias/CRLF, recuperação de falhas do motor, contraste do número de linha, a11y da cópia e limite de 1000 linhas/100 000 caracteres.
 
 - `fix-demo-auth-viewport` - Telas de autenticação do demo passam a ocupar a viewport sem crescimento causado pelo SVG decorativo. Login compacto em telas baixas e rolagem interna acessível quando o conteúdo excede a área disponível, preservando os temas e os controles.
 

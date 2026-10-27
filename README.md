@@ -130,3 +130,9 @@ os limites de suporte. O histórico está no [changelog](CHANGELOG.md) e em
 - Vitest e React Testing Library
 - Playwright
 - OpenSpec
+
+## Licença
+
+O código próprio do Admin Design System é distribuído sob a [licença MIT](LICENSE.md).
+As licenças e atribuições dos materiais de terceiros estão em
+[Licenças e atribuições](docs/licensing.md) e devem ser preservadas.

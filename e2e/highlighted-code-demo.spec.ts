@@ -23,6 +23,59 @@ test.describe('demonstração de código destacado', () => {
 		expect(copied).toContain('AdsButton');
 	});
 
+	test('mantém a altura das linhas vazias depois do destaque', async ({ page }) => {
+		await page.goto('/exemplos/codigo-destacado');
+		await waitForHydration(themeTrigger(page));
+		const snippet = page.locator('.ads-highlighted-code-snippet');
+		await expect(snippet).toHaveAttribute('data-resolved-theme', /light|dark/);
+		await expect(
+			snippet.locator('.ads-highlighted-code-snippet__line-content span[style*="color"]').first(),
+		).toBeVisible();
+		const heights = await snippet
+			.locator('.ads-highlighted-code-snippet__line')
+			.evaluateAll((lines) => lines.map((line) => line.getBoundingClientRect().height));
+		expect(heights.length).toBeGreaterThan(3);
+		expect(Math.min(...heights)).toBeGreaterThan(12);
+	});
+
+	test('cores do snippet antes da resolução seguem o data-theme válido mais próximo', async ({
+		page,
+	}) => {
+		await page.goto('/exemplos/codigo-destacado');
+		await waitForHydration(themeTrigger(page));
+		const surfaces = await page.evaluate(() => {
+			const root = document.documentElement;
+			const previous = root.getAttribute('data-theme');
+			const read = (themeOnRoot: string, themeOnChild: string | null) => {
+				root.setAttribute('data-theme', themeOnRoot);
+				const child = document.createElement('div');
+				if (themeOnChild) child.setAttribute('data-theme', themeOnChild);
+				document.body.append(child);
+				child.style.background = 'var(--ads-hc-surface)';
+				const value = getComputedStyle(child).backgroundColor;
+				child.remove();
+				return value;
+			};
+			const result = {
+				dark: read('dark', null),
+				light: read('light', null),
+				lightInDark: read('dark', 'light'),
+				invalidInDark: read('dark', 'system'),
+				invalidInLight: read('light', 'system'),
+			};
+			if (previous === null) root.removeAttribute('data-theme');
+			else root.setAttribute('data-theme', previous);
+			return result;
+		});
+		expect(surfaces).toEqual({
+			dark: 'rgb(30, 30, 30)',
+			light: 'rgb(255, 255, 255)',
+			lightInDark: 'rgb(255, 255, 255)',
+			invalidInDark: 'rgb(30, 30, 30)',
+			invalidInLight: 'rgb(255, 255, 255)',
+		});
+	});
+
 	for (const width of [320, 375, 1280]) {
 		for (const theme of ['light', 'dark'] as const) {
 			test(`axe e layout ${theme} em ${width}px`, async ({ page }) => {

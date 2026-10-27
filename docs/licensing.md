@@ -1,5 +1,17 @@
 # Licenças e atribuições
 
+## Licença do projeto
+
+O código próprio do Admin Design System é disponibilizado sob a
+[licença MIT](../LICENSE.md), com copyright de 2026 de Daniel Marques.
+Os manifests da raiz e dos workspaces declaram o identificador SPDX `MIT`.
+O campo `private: true` permanece como proteção contra publicação acidental no npm.
+
+A licença MIT do projeto não substitui as licenças nem os avisos de copyright
+dos materiais de terceiros, que devem ser preservados.
+
+## Dependências e materiais de terceiros
+
 O Admin Design System possui implementação própria. Materiais externos
 incorporados ao projeto devem respeitar suas licenças e preservar as atribuições.
 

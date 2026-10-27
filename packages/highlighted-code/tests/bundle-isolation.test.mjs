@@ -37,7 +37,7 @@ test('highlighted-code-public inclui Shiki apenas no cenário opcional', async (
 	});
 	const bundle = Buffer.concat(result.outputFiles.map((file) => file.contents)).toString('utf8');
 	assert.ok(bundle.length > 1_000_000);
-	assert.ok(bundle.includes('github'));
+	assert.ok(bundle.includes('shiki'));
 });
 
 test('dist de components não referencia highlighted-code', async () => {

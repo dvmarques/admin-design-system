@@ -2,6 +2,7 @@
 	"name": "@admin-ds/tokens",
 	"version": "0.1.0",
 	"private": true,
+	"license": "MIT",
 	"type": "module",
 	"sideEffects": [
 		"./dist/tokens.css"

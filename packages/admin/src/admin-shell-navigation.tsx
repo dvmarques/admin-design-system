@@ -143,8 +143,16 @@ export function AdsAdminShellSidebar({
 		const sidebar = desktopSidebarRef.current;
 		const navigation = desktopNavigationRef.current;
 		if (!isDesktop || !sidebar || !navigation) return;
-		const gutter = navigation.offsetWidth - navigation.clientWidth;
-		sidebar.style.setProperty('--ads-sidebar-scrollbar-size', `${Math.max(0, gutter)}px`);
+		const measure = () => {
+			const gutter = navigation.offsetWidth - navigation.clientWidth;
+			sidebar.style.setProperty('--ads-sidebar-scrollbar-size', `${Math.max(0, gutter)}px`);
+		};
+		measure();
+		// Re-measure when the navigation box changes (zoom, scrollbar settings, collapse transition).
+		if (typeof ResizeObserver === 'undefined') return;
+		const observer = new ResizeObserver(measure);
+		observer.observe(navigation);
+		return () => observer.disconnect();
 	}, [isDesktop, collapsed]);
 
 	const navigationClassName = classNames('ads-admin-shell-sidebar', className);

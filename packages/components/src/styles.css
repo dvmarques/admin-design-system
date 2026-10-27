@@ -276,3 +276,63 @@
 	font-size: 0.875rem;
 	font-weight: 500;
 }
+
+/* Texto em atualização: brilho só nos glifos, sem mudar o layout. */
+@keyframes ads-loading-text-shimmer {
+	to {
+		background-position: -150% 0;
+	}
+}
+
+/* Sem suporte a background-clip: text, o texto fica sólido (cor atenuada) e legível. */
+.ads-loading-text[data-loading='true'] {
+	color: var(--ads-color-text-muted);
+}
+
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+	.ads-loading-text[data-loading='true'] {
+		-webkit-text-fill-color: transparent;
+		background-color: currentColor;
+		background-image: linear-gradient(
+			90deg,
+			transparent 38%,
+			var(--ads-color-text-primary) 50%,
+			transparent 62%
+		);
+		background-size: 200% 100%;
+		background-repeat: no-repeat;
+		background-position: 150% 0;
+		-webkit-background-clip: text;
+		background-clip: text;
+		animation: ads-loading-text-shimmer 2.5s ease-in-out infinite;
+	}
+}
+.ads-loading-text[data-speed='slow'] {
+	animation-duration: 4s;
+}
+.ads-loading-text[data-speed='fast'] {
+	animation-duration: 1.5s;
+}
+
+/* Em RTL o brilho percorre o texto da direita para a esquerda. Regra separada: navegador sem :dir() descarta só ela. */
+.ads-loading-text[data-loading='true']:dir(rtl) {
+	animation-direction: reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ads-loading-text[data-loading='true'] {
+		animation: none;
+		background-image: none;
+		-webkit-text-fill-color: currentColor;
+		color: var(--ads-color-text);
+	}
+}
+
+@media (forced-colors: active) {
+	.ads-loading-text[data-loading='true'] {
+		animation: none;
+		background-image: none;
+		-webkit-text-fill-color: CanvasText;
+		color: CanvasText;
+	}
+}

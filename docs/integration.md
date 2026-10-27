@@ -1532,3 +1532,19 @@ Na composição sidebar-header expandida, o seletor e o destaque de um item raiz
 O destaque recolhido tem dimensões explícitas de 2,75rem. Os containers de consulta ficam no conteúdo da navegação e no seletor expandido, já descontada a scrollbar; não no próprio elemento rolável. Isso preserva proporção e alinhamento com scrollbar nativa visível. O smoke desativa --hide-scrollbars no Chromium para validar o comportamento real.
 
 Na composição desktop `sidebar-header`, os ícones de `NavigationItem` (envolvidos em `.ads-sidebar-icon`) e `NavigationGroup` mantêm a coordenada horizontal ao expandir/recolher. O eixo usa o centro do destaque selecionado compacto, considerando a área útil com scrollbar. O avatar de `AdsOrganizationSwitcher` compartilha esse eixo e também permanece estável entre estados. O destaque ativo continua com 44 px no recolhido, com o ícone centralizado. Em navegadores com scrollbar clássica, o espaço lateral da scrollbar é reservado mesmo sem overflow (`scrollbar-gutter: stable`), evitando deslocamentos quando a rolagem passa a ser necessária. O menu móvel mantém sua composição completa.
+
+## Texto em atualização: AdsLoadingText
+
+Use `AdsLoadingText` quando o conteúdo textual permanecer conhecido mas puder ser atualizado durante processamento ou polling. Não inicia requisições e não substitui `AdsLoadingIndicator` (status acessível) ou `AdsSkeleton` (conteúdo ainda indisponível).
+
+```tsx
+import { AdsLoadingText } from '@admin-ds/components';
+
+<AdsLoadingText loading={emProcessamento} speed="normal">
+	Processando registros...
+</AdsLoadingText>;
+```
+
+A API inclui `loading` (falso por padrão), `speed` (`slow`, `normal`, `fast`), `as` (elemento semântico, padrão `span`) e `className`/atributos HTML. O ciclo normal dura 2,5 segundos. Estilos vêm do CSS público `@admin-ds/components/styles.css` com tokens semânticos; o efeito respeita temas claro/escuro e fica estático com `prefers-reduced-motion` ou cores forçadas. Não há anúncio automático por leitor de tela: para progresso importante, forneça uma região de status acessível separada, evitando anúncios repetidos a cada polling.
+
+Veja as stories `Primitives/LoadingText` e o catálogo `/catalogo/loading-text`.

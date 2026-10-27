@@ -57,6 +57,15 @@ export const catalogEntries = [
 		href: '/catalogo/loading-indicator',
 	},
 	{
+		name: 'AdsLoadingText',
+		group: 'Básicos',
+		slug: 'loading-text',
+		demo: 'LoadingText',
+		description:
+			'Texto legível com brilho deslizante durante atualização; velocidade configurável.',
+		href: '/catalogo/loading-text',
+	},
+	{
 		name: 'AdsSkeleton',
 		group: 'Básicos',
 		slug: 'skeleton',

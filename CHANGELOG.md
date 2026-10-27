@@ -94,6 +94,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `ci-playwright-container-pages-baselines` - Os workflows `pages.yml` (job de build) e `update-visual-baselines.yml` passam a rodar no container oficial `mcr.microsoft.com/playwright:v1.62.0-noble`, como o E2E da CI, sem `playwright install --with-deps` nem limpeza de fontes apt. Reduz o tempo do passo de instalação e faz os baselines Linux serem gerados na mesma imagem em que a CI os compara. Sem mudança em testes, tolerâncias, snapshots ou lockfile.
+
 - `add-codex-project-configuration` - Reúne configuração, ativação, skills, MCPs, revisores e limites dos hooks de Codex, Claude Code e Cursor no guia único `docs/agent-setup.md`, substituindo o guia exclusivo do Codex e atualizando os links de entrada.
 
 - `update-openspec-1-15` - Adiciona `.editorconfig` com UTF-8, LF e indentação compatível com o Prettier e amplia `.gitignore` para logs, metadados de macOS/Windows e preferências locais do Claude Code.

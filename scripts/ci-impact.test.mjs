@@ -2,7 +2,7 @@ import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import test from 'node:test';
 import {
 	classifyImpact,
@@ -479,14 +479,15 @@ test('local detection classifies the working tree against the merge base with de
 });
 
 test('git trusts only the checkout directory, and only on GitHub Actions', () => {
+	const expectedSafeDirectory = `safe.directory=${resolve('/work')}`;
 	assert.deepEqual(gitArguments(['diff'], '/work', { GITHUB_ACTIONS: 'true' }), [
 		'-c',
-		'safe.directory=/work',
+		expectedSafeDirectory,
 		'diff',
 	]);
 	assert.deepEqual(
 		gitArguments(['diff'], '/work/', { GITHUB_ACTIONS: 'true' }),
-		['-c', 'safe.directory=/work', 'diff'],
+		['-c', expectedSafeDirectory, 'diff'],
 		'sem barra final, como o git compara',
 	);
 	assert.deepEqual(gitArguments(['diff'], '/work', {}), ['diff']);

@@ -1,0 +1,9 @@
+# Configuração compartilhada; modelos, permissões e credenciais são pessoais.
+
+[mcp_servers.playwright]
+command = "npx"
+args = ["-y","@playwright/mcp@0.0.83"]
+
+[mcp_servers.context7]
+command = "npx"
+args = ["-y","@upstash/context7-mcp@4.4.2"]

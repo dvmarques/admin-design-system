@@ -190,7 +190,13 @@ O projeto MUST executar os testes de snapshot visual em toda execução de CI de
 
 ### Requirement: Smoke tests em Firefox e WebKit
 
-O projeto MUST executar smoke tests em Firefox e WebKit para as rotas `/`, `/clientes` e `/componentes` do admin demo, verificando que a página carrega sem erros de console ou de hidratação e que a navegação principal fica operável. Firefox e WebKit MUST também executar a regressão de foco do dropdown (`dropdown-focus.spec.ts`) e o controle de tema (`theme-control.spec.ts`, rota `/catalogo/theme-control`). Esses navegadores MUST NOT executar comparações de snapshot. Cada navegador MUST ter uma verificação independente e obrigatória na CI.
+O projeto MUST executar smoke tests em Firefox e WebKit no admin demo, verificando carregamento sem erros de console ou hidratação e navegação principal operável. Ambos MUST executar as regressões de foco do dropdown e controle de tema, e MUST NOT comparar snapshots. Cada navegador MUST ter uma verificação independente e obrigatória na CI.
+
+#### Scenario: Rotas e regressões cobertas
+
+- **WHEN** os smoke tests executam em Firefox e WebKit
+- **THEN** MUST cobrir `/`, `/clientes` e `/componentes`
+- **AND** MUST executar `dropdown-focus.spec.ts` e `theme-control.spec.ts`, este na rota `/catalogo/theme-control`
 
 #### Scenario: Rota quebra em um navegador
 

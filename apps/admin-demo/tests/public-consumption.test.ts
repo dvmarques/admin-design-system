@@ -38,6 +38,7 @@ import {
 	AdsList,
 	AdsListItem,
 	AdsLoadingIndicator,
+	AdsLoadingText,
 	AdsNav,
 	AdsPagination,
 	AdsPopover,
@@ -91,6 +92,7 @@ describe('public component consumption', () => {
 			AdsList,
 			AdsListItem,
 			AdsLoadingIndicator,
+			AdsLoadingText,
 			AdsNav,
 			AdsPagination,
 			AdsPopover,
@@ -114,7 +116,7 @@ describe('public component consumption', () => {
 			AdsTooltip,
 			AdsTypography,
 			AdsAdminShell,
-		]).toHaveLength(47);
+		]).toHaveLength(48);
 	});
 
 	it('includes component styles in the distributed CSS', async () => {
@@ -131,6 +133,7 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.ads-overlay-panel/);
 		expect(css).toMatch(/\.ads-toast/);
 		expect(css).toMatch(/\.ads-breadcrumb/);
+		expect(css).toMatch(/\.ads-loading-text/);
 		expect(css).toMatch(/\.ads-dropdown-content/);
 		expect(css).toMatch(/\.ads-pagination/);
 		expect(css).toMatch(/\.overflow-x-auto/);

@@ -1541,8 +1541,8 @@ Use `AdsLoadingText` quando o conteúdo textual permanecer conhecido mas puder s
 import { AdsLoadingText } from '@admin-ds/components';
 
 <AdsLoadingText loading={emProcessamento} speed="normal">
-  Processando registros...
-</AdsLoadingText>
+	Processando registros...
+</AdsLoadingText>;
 ```
 
 A API inclui `loading` (falso por padrão), `speed` (`slow`, `normal`, `fast`), `as` (elemento semântico, padrão `span`) e `className`/atributos HTML. O ciclo normal dura 2,5 segundos. Estilos vêm do CSS público `@admin-ds/components/styles.css` com tokens semânticos; o efeito respeita temas claro/escuro e fica estático com `prefers-reduced-motion` ou cores forçadas. Não há anúncio automático por leitor de tela: para progresso importante, forneça uma região de status acessível separada, evitando anúncios repetidos a cada polling.

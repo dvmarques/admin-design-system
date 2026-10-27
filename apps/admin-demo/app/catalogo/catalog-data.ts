@@ -61,7 +61,8 @@ export const catalogEntries = [
 		group: 'Básicos',
 		slug: 'loading-text',
 		demo: 'LoadingText',
-		description: 'Texto legível com brilho deslizante durante atualização; velocidade configurável.',
+		description:
+			'Texto legível com brilho deslizante durante atualização; velocidade configurável.',
 		href: '/catalogo/loading-text',
 	},
 	{

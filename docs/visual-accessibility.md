@@ -11,7 +11,7 @@ Com `prefers-reduced-motion: reduce`, `--ads-motion-fast` e `--ads-motion-normal
 passam a `0ms` em todos os temas, e toda transição dos componentes herda esses
 tokens: as classes usam `duration-[var(--ads-motion-*)]` e, quando não declaram
 duração, herdam `--default-transition-duration`, que aponta para
-`--ads-motion-fast`. Animações contínuas (`AdsLoadingIndicator`, `AdsSkeleton`,
+`--ads-motion-fast`. Animações contínuas (`AdsLoadingIndicator`, `AdsLoadingText`, `AdsSkeleton`,
 progresso indeterminado e a faixa de carregamento do filtro) e deslocamentos de
 hover são desativados com `motion-reduce:` ou `@media (prefers-reduced-motion)`;
 o estado continua exposto por `role="status"` e texto.

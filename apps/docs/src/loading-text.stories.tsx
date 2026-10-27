@@ -27,8 +27,9 @@ export const Completed: Story = {
 };
 
 export const Speeds: Story = {
+	args: { children: 'Velocidades do brilho' },
 	render: () => (
-		<div className="grid gap-4">
+		<div style={{ display: 'grid', gap: '1rem' }}>
 			{(['slow', 'normal', 'fast'] as const).map((speed) => (
 				<AdsLoadingText key={speed} loading speed={speed}>
 					{speed}: Atualizando informações da execução

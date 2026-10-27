@@ -188,7 +188,7 @@ export function LoadingIndicatorDemo() {
 export function LoadingTextDemo() {
 	const [loading, setLoading] = useState(true);
 	return (
-		<div className="grid gap-4">
+		<div style={{ display: 'grid', gap: '1rem' }}>
 			<AdsButton onClick={() => setLoading((current) => !current)}>
 				{loading ? 'Concluir atualização' : 'Iniciar atualização'}
 			</AdsButton>
@@ -198,7 +198,8 @@ export function LoadingTextDemo() {
 				</AdsLoadingText>
 			))}
 			<AdsLoadingText as="p" loading={loading}>
-				O texto longo permanece visível e se adapta ao espaço disponível, mesmo durante o processamento.
+				O texto longo permanece visível e se adapta ao espaço disponível, mesmo durante o
+				processamento.
 			</AdsLoadingText>
 		</div>
 	);

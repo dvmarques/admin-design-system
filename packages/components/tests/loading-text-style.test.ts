@@ -18,13 +18,11 @@ describe('AdsLoadingText: regressão do shimmer (#228)', () => {
 
 	it('usa base apagada derivada dos tokens no claro e no escuro, com fallback text-muted', () => {
 		expect(loadingTextCss).toContain('--ads-loading-text-base: var(--ads-color-text-muted);');
-		expect(loadingTextCss).toContain(
-			":where([data-theme='dark']) .ads-loading-text[data-loading='true']",
+		expect(loadingTextCss).toMatch(
+			/color-mix\(\s*in srgb,\s*var\(--ads-color-text-muted\) var\(--ads-loading-text-muted-share\),\s*var\(--ads-color-surface\)\s*\)/,
 		);
-		expect(loadingTextCss).toContain('var(--ads-color-text-muted) 77%');
-		expect(loadingTextCss).toContain('var(--ads-color-surface) 23%');
-		expect(loadingTextCss).toContain('var(--ads-color-text-muted) 42%');
-		expect(loadingTextCss).toContain('var(--ads-color-surface) 58%');
+		expect(loadingTextCss).toContain(':root:not([data-theme])');
+		expect(loadingTextCss).not.toMatch(/transparent (0|100)%/);
 	});
 
 	it('mantém a razão de contraste base/pico em ~4,2:1 (referência do Daniel) nos dois temas', async () => {
@@ -52,8 +50,8 @@ describe('AdsLoadingText: regressão do shimmer (#228)', () => {
 		};
 		const tokenRgb = (theme: 'light' | 'dark', role: string) =>
 			rgb(tokenSource.color.reference[tokenSource.color.semantic[theme][role].slice(17, -1)]);
-		// Ordem no CSS: claro (padrão), dark explícito e dark do sistema.
-		const shares = [...loadingTextCss.matchAll(/var\(--ads-color-text-muted\) (\d+)%/g)].map(
+		// Ordem no CSS: claro (padrão), dark explícito e dark do sistema (escopo mais próximo, como os tokens).
+		const shares = [...loadingTextCss.matchAll(/--ads-loading-text-muted-share:\s*(\d+)%/g)].map(
 			(match) => Number(match[1]) / 100,
 		);
 		expect(shares).toEqual([0.77, 0.42, 0.42]);

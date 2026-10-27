@@ -2,13 +2,13 @@
 
 ### Requirement: Texto em atualização preserva conteúdo
 
-A biblioteca SHALL disponibilizar `AdsLoadingText` como componente público, capaz de exibir texto fornecido pelo consumidor enquanto sinaliza visualmente atualização em andamento. Quando `loading=true`, a faixa luminosa SHALL ser perceptível tanto em tema claro quanto escuro e sobre superfícies comuns da aplicação, sem ocultar texto ou alterar layout.
+A biblioteca SHALL disponibilizar `AdsLoadingText` como componente público, capaz de exibir texto fornecido pelo consumidor enquanto sinaliza visualmente atualização em andamento. Quando `loading=true`, a razão de contraste WCAG entre a cor-base do texto e o pico da faixa luminosa SHALL ser de aproximadamente 4,2:1 (entre 4,1:1 e 4,3:1) tanto em tema claro quanto escuro, sem ocultar texto ou alterar layout.
 
 #### Scenario: Atualização ativa
 
 - **WHEN** `AdsLoadingText` recebe `loading=true` em tema claro ou escuro
 - **THEN** o texto permanece legível durante todo o ciclo
-- **THEN** o brilho percorre as letras com diferença perceptível da cor base
+- **THEN** o brilho percorre as letras com razão de contraste de aproximadamente 4,2:1 em relação à cor-base
 - **THEN** a animação não provoca deslocamento de layout
 
 #### Scenario: Contraste entre base e pico

@@ -279,29 +279,64 @@
 
 /* Texto em atualização: brilho só nos glifos, sem mudar o layout. */
 @keyframes ads-loading-text-shimmer {
+	from {
+		background-position:
+			150% center,
+			0 0;
+	}
 	to {
-		background-position: -150% 0;
+		background-position:
+			-150% center,
+			0 0;
 	}
 }
 
-/* Sem suporte a background-clip: text, o texto fica sólido (cor atenuada) e legível. */
+/* Texto sempre legível: base apagada (fallback: text-muted) para o pico text-primary destacar a passagem. */
 .ads-loading-text[data-loading='true'] {
-	color: var(--ads-color-text-muted);
+	--ads-loading-text-base: var(--ads-color-text-muted);
+	color: var(--ads-loading-text-base);
 }
 
+/* Razão base/pico de ~4,2:1 (referência do Daniel), derivada dos tokens. A fatia de text-muted segue o escopo de tema mais próximo (como os tokens), inclusive tema claro aninhado em raiz escura. */
+@supports (color: color-mix(in srgb, white, black)) {
+	:root,
+	[data-theme='light'] {
+		--ads-loading-text-muted-share: 77%;
+	}
+
+	[data-theme='dark'] {
+		--ads-loading-text-muted-share: 42%;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme]) {
+			--ads-loading-text-muted-share: 42%;
+		}
+	}
+
+	.ads-loading-text[data-loading='true'] {
+		--ads-loading-text-base: color-mix(
+			in srgb,
+			var(--ads-color-text-muted) var(--ads-loading-text-muted-share),
+			var(--ads-color-surface)
+		);
+	}
+}
+
+/* Duas camadas explícitas: faixa luminosa acima da base opaca, ambas recortadas nos glifos. */
 @supports ((-webkit-background-clip: text) or (background-clip: text)) {
 	.ads-loading-text[data-loading='true'] {
 		-webkit-text-fill-color: transparent;
-		background-color: currentColor;
-		background-image: linear-gradient(
-			90deg,
-			transparent 38%,
-			var(--ads-color-text-primary) 50%,
-			transparent 62%
-		);
-		background-size: 200% 100%;
+		background-image:
+			linear-gradient(90deg, transparent 33%, var(--ads-color-text-primary) 50%, transparent 67%),
+			linear-gradient(var(--ads-loading-text-base), var(--ads-loading-text-base));
+		background-size:
+			200% 100%,
+			100% 100%;
 		background-repeat: no-repeat;
-		background-position: 150% 0;
+		background-position:
+			150% center,
+			0 0;
 		-webkit-background-clip: text;
 		background-clip: text;
 		animation: ads-loading-text-shimmer 2.5s ease-in-out infinite;
@@ -314,7 +349,7 @@
 	animation-duration: 1.5s;
 }
 
-/* Em RTL o brilho percorre o texto da direita para a esquerda. Regra separada: navegador sem :dir() descarta só ela. */
+/* Regra separada: :dir() inválido em navegador sem suporte descartaria a regra inteira, então não pode ser agrupada com os seletores acima. Respeita a direção de leitura sem alterar o conteúdo ou a API. */
 .ads-loading-text[data-loading='true']:dir(rtl) {
 	animation-direction: reverse;
 }

@@ -23,7 +23,12 @@ test('rejeita orçamentos inválidos', () => {
 });
 
 const readJson = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'));
-const packages = ['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin'];
+const packages = [
+	'@admin-ds/tokens',
+	'@admin-ds/components',
+	'@admin-ds/highlighted-code',
+	'@admin-ds/admin',
+];
 
 test('todo pacote tem orçamento de distribuição e de navegador válidos', () => {
 	const baseline = readJson('docs/bundle-baseline.json');
@@ -42,6 +47,7 @@ test('cenários públicos usam somente exports públicos e têm limites coerente
 	assert.deepEqual(Object.keys(scenarios).sort(), [
 		'admin-public',
 		'components-public',
+		'highlighted-code-public',
 		'tokens-public',
 	]);
 	for (const [name, scenario] of Object.entries(scenarios)) {
@@ -49,7 +55,11 @@ test('cenários públicos usam somente exports públicos e têm limites coerente
 		assert.ok(scenario.gzipBytes < scenario.bytes, `gzip menor que bytes: ${name}`);
 		const source = readFileSync(new URL(`../${scenario.entry}`, import.meta.url), 'utf8');
 		for (const [, specifier] of source.matchAll(/from '([^']+)'/g)) {
-			assert.match(specifier, /^@admin-ds\/(tokens|components|admin)$/, `${name}: ${specifier}`);
+			assert.match(
+				specifier,
+				/^@admin-ds\/(tokens|components|admin|highlighted-code)$/,
+				`${name}: ${specifier}`,
+			);
 		}
 	}
 });

@@ -15,6 +15,14 @@
 		"cssBytes": 54800,
 		"cssGzipBytes": 9000
 	},
+	"highlighted-code-public": {
+		"entry": "scripts/scenarios/highlighted-code.mjs",
+		"bytes": 1864000,
+		"gzipBytes": 416000,
+		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/highlighted-code/dist/styles.css"],
+		"cssBytes": 16800,
+		"cssGzipBytes": 2600
+	},
 	"admin-public": {
 		"entry": "scripts/scenarios/admin.mjs",
 		"bytes": 70000,

@@ -10,6 +10,7 @@ const plan = (command, files) =>
 const buildLabels = [
 	'build @admin-ds/admin',
 	'build @admin-ds/components',
+	'build @admin-ds/highlighted-code',
 	'build @admin-ds/tokens',
 ];
 
@@ -32,14 +33,14 @@ test('typecheck and tests build the packages first and then target the affected 
 		const { steps } = plan(command, ['packages/admin/src/a.tsx']);
 		assert.deepEqual(
 			steps
-				.slice(0, 3)
+				.slice(0, 4)
 				.map((step) => step.label)
 				.toSorted(),
 			buildLabels,
 		);
 		assert.deepEqual(
-			steps.slice(0, 3).map((step) => step.args[3]),
-			['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin'],
+			steps.slice(0, 4).map((step) => step.args[3]),
+			['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin', '@admin-ds/highlighted-code'],
 			'packages build in dependency order',
 		);
 		const last = steps.at(-1).args;
@@ -70,13 +71,13 @@ test('the fallback runs the same commands as the CI', () => {
 	assert.deepEqual(
 		plan('typecheck', ['scripts/a.mjs'])
 			.steps.map((step) => step.args.join(' '))
-			.slice(3),
+			.slice(4),
 		['run typecheck'],
 	);
 	assert.deepEqual(
 		plan('test', ['scripts/a.mjs'])
 			.steps.map((step) => step.args.join(' '))
-			.slice(3),
+			.slice(4),
 		['run test:quality'],
 	);
 });

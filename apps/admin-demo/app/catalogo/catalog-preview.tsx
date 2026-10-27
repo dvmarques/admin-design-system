@@ -1,7 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { AdsButton, AdsField, AdsSelect } from '@admin-ds/components';
+import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
+import '@admin-ds/highlighted-code/styles.css';
+import { AdsField, AdsSelect } from '@admin-ds/components';
 import { applyThemePreference, resolvePreference } from '../../lib/theme';
 import { useTheme, useThemePreference } from '../use-theme';
 import { catalogDemos } from './catalog-demos';
@@ -16,16 +18,7 @@ export function CatalogPreview({
 	const preference = useThemePreference('system');
 	const theme = useTheme('light');
 	const [width, setWidth] = useState('100%');
-	const [copyStatus, setCopyStatus] = useState('');
 	const Demo = catalogDemos[demo];
-	async function copy() {
-		try {
-			await navigator.clipboard.writeText(source);
-			setCopyStatus('Código copiado.');
-		} catch {
-			setCopyStatus('Não foi possível copiar. Selecione o código abaixo.');
-		}
-	}
 	return (
 		<>
 			<div className="demo-catalog-controls">
@@ -69,11 +62,13 @@ export function CatalogPreview({
 				a viewport real.
 			</p>
 			<h2>Código React/TSX</h2>
-			<AdsButton onClick={copy}>Copiar código</AdsButton>
-			<p role="status">{copyStatus}</p>
-			<pre className="demo-catalog-code" tabIndex={0} aria-label="Código do exemplo">
-				<code>{source}</code>
-			</pre>
+			<AdsHighlightedCodeSnippet
+				className="demo-catalog-code"
+				code={source}
+				language="tsx"
+				theme="auto"
+				codeLabel="Código do exemplo"
+			/>
 		</>
 	);
 }

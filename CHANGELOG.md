@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `feat-213-highlighted-code-snippet` (#213) - Pacote opcional com Shiki e catálogo.
+
 - `feat-212-demo-auth-flow` (issue #212) - Telas simuladas de login e de senha.
 
 - `issue-210-contribution-governance` (issue #210) - Templates de issues e PR, guia CONTRIBUTING e documentação do ciclo OpenSpec com gates de archive/sync, revisão e merge, preservando o fluxo de releases.

@@ -9,7 +9,7 @@
 
 - [x] 2.1 Criar workspace, build, CSS público e verificação de pacote.
 - [x] 2.2 Implementar `AdsHighlightedCodeSnippet` com Shiki sob demanda, fallback plain e API pública.
-- [x] 2.3 Testes Vitest (idiomas, tema, cópia, linhas, wrap, falhas).
+- [x] 2.3 Testes Vitest (idiomas, tema auto, cópia, linhas, wrap, falhas, HTML literal).
 
 ## 3. Demo e catálogo
 

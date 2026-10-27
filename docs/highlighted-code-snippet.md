@@ -7,7 +7,7 @@ O pacote `@admin-ds/highlighted-code` publica `AdsHighlightedCodeSnippet` com sy
 No monorepo o workspace já está registrado. Em um consumidor externo (quando publicado):
 
 ```bash
-npm install @admin-ds/highlighted-code shiki
+npm install @admin-ds/highlighted-code
 ```
 
 Importe estilos e tokens:

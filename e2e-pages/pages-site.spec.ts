@@ -1,4 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
+import { customers } from '../apps/admin-demo/lib/data/customers';
 import { waitForHydration } from '../e2e/hydration';
 import { routes } from '../e2e/routes';
 import { chooseTheme, themeTrigger } from '../e2e/theme-control';
@@ -45,14 +46,19 @@ test('demo publicado: navega pela navegação principal sem sair do subcaminho',
 test('demo publicado: filtros da URL funcionam em /clientes sem servidor', async ({ page }) => {
 	const errors = collectBrowserErrors(page);
 
-	await page.goto(`${base}/clientes/?status=Inativo`);
+	const total = page.getByText(/\d+ clientes? encontrados?/);
 
-	await expect(page.getByRole('region', { name: 'Lista de clientes' })).toBeVisible();
-	await expect(page.getByText(/\d+ clientes? encontrados?/)).toBeVisible();
-	const filtered = await page.getByText(/\d+ clientes? encontrados?/).innerText();
-
+	// O HTML estático sempre traz a lista completa; o filtro só entra após a hidratação.
+	// Por isso a referência é a página sem filtro, e a asserção filtrada tenta de novo.
 	await page.goto(`${base}/clientes/`);
-	await expect(page.getByText(/\d+ clientes? encontrados?/)).not.toHaveText(filtered);
+	await expect(page.getByRole('region', { name: 'Lista de clientes' })).toBeVisible();
+	await expect(total).toHaveText(`${customers.length} clientes encontrados`);
+
+	const inactive = customers.filter((customer) => customer.status === 'Inativo').length;
+	await page.goto(`${base}/clientes/?status=Inativo`);
+	await expect(total).toHaveText(
+		inactive === 1 ? '1 cliente encontrado' : `${inactive} clientes encontrados`,
+	);
 	expect(errors).toEqual([]);
 });
 

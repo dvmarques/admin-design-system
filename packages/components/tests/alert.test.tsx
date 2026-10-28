@@ -1,6 +1,8 @@
 import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it, vi } from 'vitest';
+import { readFile } from 'node:fs/promises';
+import { resolve } from 'node:path';
 import { AdsAlert } from '../src/alert';
 
 describe('AdsAlert', () => {
@@ -69,4 +71,48 @@ describe('AdsAlert', () => {
 			expect(result.violations).toEqual([]);
 		},
 	);
+	it('keeps the same DOM node when rerendered with the same message', () => {
+		const { rerender } = render(<AdsAlert variant="error">Erro ao salvar</AdsAlert>);
+		const node = screen.getByRole('alert');
+		rerender(<AdsAlert variant="error">Erro ao salvar</AdsAlert>);
+		expect(screen.getByRole('alert')).toBe(node);
+	});
+	it('lets consumers override the role and passes through HTML attributes', () => {
+		render(
+			<AdsAlert variant="error" role="status" data-testid="custom" id="feedback">
+				Aviso não urgente
+			</AdsAlert>,
+		);
+		expect(screen.getByRole('status')).toHaveAttribute('id', 'feedback');
+		expect(screen.queryByRole('alert')).not.toBeInTheDocument();
+	});
+	it('renders a keyboard-operable close button that does not submit forms', () => {
+		const onSubmit = vi.fn((event: { preventDefault: () => void }) => event.preventDefault());
+		const onClose = vi.fn();
+		render(
+			<form onSubmit={onSubmit}>
+				<AdsAlert dismissible onClose={onClose} closeLabel="Dispensar">
+					Mensagem
+				</AdsAlert>
+			</form>,
+		);
+		const close = screen.getByRole('button', { name: 'Dispensar' });
+		expect(close).toHaveAttribute('type', 'button');
+		close.focus();
+		expect(close).toHaveFocus();
+		fireEvent.click(close);
+		expect(onSubmit).not.toHaveBeenCalled();
+		expect(onClose).toHaveBeenCalledOnce();
+	});
+	it('ships a forced-colors fallback that does not rely on color alone', async () => {
+		const css = await readFile(resolve(import.meta.dirname, '../dist/styles.css'), 'utf8');
+		const start = css.indexOf('.ads-alert{border-color:canvastext');
+		expect(start, 'regra forced-colors do AdsAlert ausente no CSS distribuído').toBeGreaterThan(-1);
+		const block = css
+			.slice(start, start + 400)
+			.replaceAll('"', '')
+			.replaceAll("'", '');
+		expect(block).toContain('[data-variant=warning]{border-style:dashed');
+		expect(block).toContain('[data-variant=error]{border-style:double');
+	});
 });

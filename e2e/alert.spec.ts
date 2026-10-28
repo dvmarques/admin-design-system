@@ -18,3 +18,27 @@ test('AdsAlert: feedback persistente, ações e fechamento controlado', async ({
 	await expect(preview.getByRole('alert').first()).toHaveAttribute('data-appearance', 'callout');
 	await expectNoAxeViolations(page);
 });
+
+test('AdsAlert: botão de fechar operável por teclado', async ({ page }) => {
+	await page.goto('/catalogo/alert');
+	const preview = page.getByRole('region', { name: 'Demonstração interativa' });
+	const close = preview.getByRole('button', { name: 'Fechar mensagem' });
+	await close.focus();
+	await expect(close).toBeFocused();
+	await page.keyboard.press('Enter');
+	await expect(
+		preview.getByRole('status').filter({ hasText: 'Resultado da operação' }),
+	).toHaveCount(0);
+});
+
+test('AdsAlert: cores forçadas distinguem a severidade sem depender de cor', async ({ page }) => {
+	await page.emulateMedia({ colorScheme: 'light', forcedColors: 'active' });
+	await page.goto('/catalogo/alert');
+	const preview = page.getByRole('region', { name: 'Demonstração interativa' });
+	await preview.getByLabel('Variante').selectOption('error');
+	const style = await preview
+		.getByRole('alert')
+		.first()
+		.evaluate((element) => getComputedStyle(element).borderTopStyle);
+	expect(style).toBe('double');
+});

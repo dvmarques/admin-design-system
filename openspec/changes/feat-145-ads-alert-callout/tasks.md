@@ -10,7 +10,7 @@
 - [x] Implementar `AdsAlert` e tipos/export público, sem dependências novas
 - [x] Implementar semântica e fechamento controlado/não controlado
 - [x] Cobrir temas, responsividade e CSS compilado (build e E2E aprovados)
-- [ ] Validar explicitamente o comportamento visual em `forced-colors`
+- [x] Validar o comportamento em `forced-colors` (CSS distribuído e E2E com emulação ativa; severidade distinguida por estilo de borda)
 
 ## Consumidores
 
@@ -21,7 +21,8 @@
 ## Validação
 
 - [x] Testar comportamento, semântica ARIA e acessibilidade automatizada (Vitest/axe e Playwright/axe)
-- [ ] Validar manualmente navegação por teclado, foco após fechamento e leitor de tela
+- [x] Validar navegação por teclado do botão fechar (E2E: foco + Enter) e botão sem submissão de formulário
+- [ ] Validação manual com leitor de tela (não executável neste ambiente)
 - [x] Executar format, lint, build, typecheck, test:quality, E2E Chromium/Firefox/WebKit e OpenSpec strict (CI #40709162220)
 - [ ] Executar `npm run validate` como comando agregado, se exigido adicionalmente
 - [x] Revisar diff e CI no SHA final, corrigindo falhas e mantendo evidências

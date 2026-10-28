@@ -14,6 +14,34 @@ import '@admin-ds/components/styles.css';
 O CSS distribuído já contém as classes necessárias. A aplicação consumidora
 não precisa instalar ou configurar Tailwind CSS para usar os componentes.
 
+## Feedback persistente: AdsAlert
+
+Use `AdsAlert` para mensagens **inline**, sem timeout e sem portal, como erros de formulário e retorno de operações. Diferentemente de `AdsToast`, permanece no fluxo da página. `appearance="compact"` é o padrão; `appearance="callout"` aumenta o destaque visual. Variantes: `info`, `success`, `warning` e `error`.
+
+```tsx
+'use client';
+import { useState } from 'react';
+import { AdsAlert, AdsButton } from '@admin-ds/components';
+
+export function Feedback() {
+  const [open, setOpen] = useState(true);
+  return (
+    <>
+      <AdsButton onClick={() => setOpen(true)}>Mostrar aviso</AdsButton>
+      <AdsAlert variant="warning" appearance="callout" title="Revise os dados"
+        open={open} dismissible onClose={() => setOpen(false)}
+        actions={<AdsButton size="sm" onClick={() => setOpen(false)}>Entendi</AdsButton>}>
+        Existem campos que precisam ser revisados.
+      </AdsAlert>
+    </>
+  );
+}
+```
+
+Sem `open`, o componente controla internamente o fechamento; use `defaultOpen` para iniciar oculto. Com `open`, `onClose` solicita o fechamento e o consumidor deve atualizar o estado. Use `icon={null}` para ocultar o ícone ou passe um `ReactNode` personalizado. `dismissible` é opcional (padrão `false`); `closeLabel` personaliza o nome acessível do botão. O botão de fechar não submete formulários.
+
+Por padrão, `error` usa `role="alert"` e as demais variantes usam `role="status"`; o consumidor pode sobrescrever `role` conforme a urgência real. Evite remontar a mesma mensagem repetidamente, pois isso pode gerar anúncios duplicados. Traduções de códigos de negócio como `SU`, `ER` e `EP` pertencem ao adaptador do Back Admin, não ao design system.
+
 ## Navegação hierárquica da sidebar
 
 Dentro de `AdsAdminShell.Sidebar`, use `AdsAdminShell.Navigation` como raiz,

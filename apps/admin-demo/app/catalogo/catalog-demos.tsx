@@ -1479,6 +1479,7 @@ const stateOptions = [
 
 export function ComboboxDemo() {
   const [uf, setUf] = useState<string | null>('SP');
+  const [dialogOpen, setDialogOpen] = useState(false);
   return (
     <div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
       <AdsField description="Digite, use as setas ou pressione Enter." label="Estado (controlado)">
@@ -1500,6 +1501,14 @@ export function ComboboxDemo() {
       <AdsField label="Desabilitado">
         <AdsCombobox options={stateOptions} disabled defaultValue="MG" />
       </AdsField>
+      <AdsButton type="button" onClick={() => setDialogOpen(true)}>
+        Abrir diálogo com combobox
+      </AdsButton>
+      <AdsDialog title="Seleção em diálogo" open={dialogOpen} onOpenChange={setDialogOpen}>
+        <AdsField label="Estado em diálogo">
+          <AdsCombobox options={stateOptions} />
+        </AdsField>
+      </AdsDialog>
     </div>
   );
 }

@@ -30,12 +30,17 @@ export function AdsAutocomplete({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const generation = useRef(0);
+  const loadOptionsRef = useRef(loadOptions);
+  const onLoadErrorRef = useRef(onLoadError);
+  loadOptionsRef.current = loadOptions;
+  onLoadErrorRef.current = onLoadError;
+  const remote = Boolean(loadOptions);
   const query = inputValue !== undefined ? inputValue : typedQuery;
 
   useEffect(() => {
     const requestId = ++generation.current;
     const controller = new AbortController();
-    if (!loadOptions || query.trim().length < minQueryLength) {
+    if (!remote || query.trim().length < minQueryLength) {
       setLoading(false);
       setRemoteOptions([]);
       setError(null);
@@ -47,7 +52,7 @@ export function AdsAutocomplete({
     // New query invalidates the previous result immediately.
     const timeout = setTimeout(() => {
       void Promise.resolve()
-        .then(() => loadOptions(query, controller.signal))
+        .then(() => loadOptionsRef.current?.(query, controller.signal) ?? [])
         .then((results) => {
           if (controller.signal.aborted || requestId !== generation.current) return;
           setRemoteOptions(results);
@@ -59,19 +64,16 @@ export function AdsAutocomplete({
           setError(reason instanceof Error ? reason.message : 'Falha ao buscar opções');
           setRemoteOptions([]);
           setLoading(false);
-          onLoadError?.(reason);
+          onLoadErrorRef.current?.(reason);
         });
     }, Math.max(0, debounceMs));
     return () => {
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [debounceMs, loadOptions, minQueryLength, onLoadError, query, retryKey]);
-
-  const remote = Boolean(loadOptions);
+  }, [debounceMs, minQueryLength, query, retryKey, remote]);
   const ready = query.trim().length >= minQueryLength;
-  // Render state is derived from the query generation to avoid showing stale entries.
-  // Requests initialize loading on input events, not during render or in an effect.
+  // Invalidate responses on the input event, before an obsolete provider settles.
   const onTyping: AdsComboboxProps['onInputValueChange'] = (text, reason) => {
     generation.current += 1;
     if (reason === 'input') {

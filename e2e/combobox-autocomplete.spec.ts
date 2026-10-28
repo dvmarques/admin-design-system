@@ -33,3 +33,17 @@ test('autocomplete: local e API simulada, erro, vazio e debounce', async ({ page
   await expect(page.getByRole('option', { name: 'Rio de Janeiro' })).toBeVisible();
   await expectNoAxeViolations(page);
 });
+
+
+test('combobox em diálogo: lista em portal, Escape não fecha o modal', async ({ page }) => {
+  await page.goto('/catalogo/combobox');
+  await page.getByRole('button', { name: 'Abrir diálogo com combobox' }).click();
+  const dialog = page.getByRole('dialog');
+  const input = dialog.getByRole('combobox', { name: 'Estado em diálogo' });
+  await input.fill('Rio');
+  await expect(page.getByRole('option', { name: 'Rio de Janeiro' })).toBeVisible();
+  await input.press('Escape');
+  await expect(dialog).toBeVisible();
+  await page.keyboard.press('Escape');
+  await expect(dialog).toHaveCount(0);
+});

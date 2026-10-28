@@ -62,7 +62,8 @@ export function AdsAlert({
 	const visible = isControlled ? open : internalOpen;
 	if (!visible) return null;
 	const variantStyle = variants[variant];
-	const visual = icon === undefined ? <AdsIcon name={variantStyle.icon} size="md" /> : icon;
+	const iconSize = appearance === 'callout' && title != null ? 'lg' : 'md';
+	const visual = icon === undefined ? <AdsIcon name={variantStyle.icon} size={iconSize} /> : icon;
 
 	function handleClose() {
 		if (!isControlled) setInternalOpen(false);
@@ -104,7 +105,7 @@ export function AdsAlert({
 			{dismissible ? (
 				<button
 					aria-label={closeLabel}
-					className="ads-alert-close inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent bg-overlay-close-background text-overlay-close-content hover:bg-overlay-close-background-hover focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+					className="ads-alert-close -mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent bg-transparent text-text-muted hover:bg-overlay-close-background-hover hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 					onClick={handleClose}
 					type="button"
 				>

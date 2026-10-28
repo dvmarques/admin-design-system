@@ -103,6 +103,52 @@ describe('AdsCombobox', () => {
     expect(new Set(ids).size).toBe(2);
   });
 
+  it('ArrowUp from no highlight selects the last enabled option', () => {
+    const onValueChange = vi.fn();
+    render(<AdsCombobox aria-label="Estado" options={states} onValueChange={onValueChange} />);
+    const input = screen.getByRole('combobox', { name: 'Estado' });
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: 'ArrowUp' });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(onValueChange).toHaveBeenCalledWith('RJ', expect.objectContaining({ value: 'RJ' }));
+  });
+
+  it('requires a real selection for native form validation and excludes disabled fields', () => {
+    const { container } = render(
+      <form>
+        <AdsField label="UF obrigatória">
+          <AdsCombobox name="uf" options={states} required />
+        </AdsField>
+        <AdsCombobox aria-label="Desativado" name="disabledUf" options={states} defaultValue="SP" disabled />
+      </form>,
+    );
+    const input = screen.getByRole('combobox', { name: 'UF obrigatória' }) as HTMLInputElement;
+    expect(input.checkValidity()).toBe(false);
+    expect(new FormData(container.querySelector('form')!).has('disabledUf')).toBe(false);
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: 'ArrowDown' });
+    fireEvent.keyDown(input, { key: 'Enter' });
+    expect(input.checkValidity()).toBe(true);
+    expect(new FormData(container.querySelector('form')!).get('uf')).toBe('SP');
+  });
+
+  it('allows keyboard users to reach retry after remote error', () => {
+    const onRetry = vi.fn();
+    render(
+      <AdsField label="Busca">
+        <AdsCombobox options={[]} error="Falha na consulta" onRetry={onRetry} />
+      </AdsField>,
+    );
+    const input = screen.getByRole('combobox', { name: 'Busca' });
+    fireEvent.focus(input);
+    fireEvent.keyDown(input, { key: 'Tab' });
+    const retry = screen.getByRole('button', { name: 'Tentar novamente' });
+    expect(retry).toHaveFocus();
+    fireEvent.click(retry);
+    expect(onRetry).toHaveBeenCalledTimes(1);
+    expect(input).toHaveFocus();
+  });
+
   it('has no detectable axe violations when its list is open', async () => {
     render(<AdsField label="Estado"><AdsCombobox options={states} /></AdsField>);
     fireEvent.focus(screen.getByRole('combobox'));

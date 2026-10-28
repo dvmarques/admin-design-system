@@ -32,8 +32,10 @@ export function AdsAutocomplete({
   const generation = useRef(0);
   const loadOptionsRef = useRef(loadOptions);
   const onLoadErrorRef = useRef(onLoadError);
-  loadOptionsRef.current = loadOptions;
-  onLoadErrorRef.current = onLoadError;
+  useEffect(() => {
+    loadOptionsRef.current = loadOptions;
+    onLoadErrorRef.current = onLoadError;
+  }, [loadOptions, onLoadError]);
   const remote = Boolean(loadOptions);
   const query = inputValue !== undefined ? inputValue : typedQuery;
 

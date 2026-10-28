@@ -3,7 +3,7 @@
 ## Baseline
 AdsTooltip envolve o filho em span.ads-tooltip-anchor.inline-flex e usa anchorRef para useAnchoredPosition(open, anchorRef, contentRef, placement). A demo define display:flex, flex-direction:column e align-items:stretch em .demo-catalog-preview. Um item flex pode ser esticado transversalmente; o centro calculado do wrapper passa a diferir do botão real. AdsPopover usa um wrapper inline-flex comparável. Dropdown utiliza referência ao gatilho real e não deve ser modificado por analogia sem reprovação de teste.
 
-## Decisão e alternativas
+## Alternativas e decisão
 Medir anchor.getBoundingClientRect(), trigger.getBoundingClientRect(), panel rect e data-placement em ambiente reproduzível (página do catálogo, story e componente em flex/grid). Se o wrapper esticado for a causa, preferir tornar a âncora shrink-to-fit independentemente do layout pai e assegurar que refs/eventos permaneçam no gatilho; alternativa é medir o elemento filho como referência, respeitando botões com largura responsiva. Escolher a menor alteração com comportamento consistente em flex, grid e bloco.
 
 Não corrigir apenas com align-items no preview: consumidores também usam flex/stretch e precisam de robustez da biblioteca. Não aplicar ajuste fixo de left/top arbitrário, nem assumir ausência de colisão. O algoritmo existente de flip/shift/arrowOffset permanece a referência e só muda se medidas revelarem falha distinta.

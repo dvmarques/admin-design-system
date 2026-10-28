@@ -295,7 +295,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
           <span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
         </button>
       </div>
-      {name ? <input name={name} type="hidden" value={selectedValue ?? ''} /> : null}
+      {name ? <input disabled={disabled} name={name} type="hidden" value={selectedValue ?? ''} /> : null}
       {open ? (
         <OverlayPortal>
           <ul

@@ -82,6 +82,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-pages-customers-filter-flaky-test` - Estabiliza o teste E2E do site publicado `filtros da URL funcionam em /clientes sem servidor`: a contagem era lida logo após o HTML estático (ainda sem filtro, antes da hidratação), o que fazia a CI do GitHub Pages falhar de forma intermitente. O teste agora usa a página sem filtro como referência e espera, com nova tentativa, a contagem exata de clientes inativos. Sem mudança em código publicado.
+
 - `fix-228-loading-text-shimmer` (issue #228) - Melhora a visibilidade do shimmer de `AdsLoadingText` nos temas claro e escuro com duas camadas explícitas de gradiente e base derivada de tokens (contraste base/pico de ~4,2:1), preservando velocidades, acessibilidade e contratos públicos.
 
 - `fix-field-sizing-and-layout` (`fix-select-sm-height-and-document-field-button-pairing`, `fix-date-picker-trigger-height`, `fix-form-control-and-shell-header-layout`, `tighten-field-feedback-spacing` #205) - `--ads-dimension-field-sm` passa de `1.75rem` para `1.875rem` (30px): `AdsSelect` `sm` sobe de 28 para 30px, igual ao `AdsInput`. O gatilho do `AdsDatePicker` tem a altura do campo em `sm`, `md` e `lg`. `AdsInput`, `AdsTextarea` e `AdsSelect` usam `box-border`, deixando de ficar 26px mais largos que a coluna em aplicações sem reset. `ThemeToggle` usa a fonte do design system e rótulo em uma linha. `AdsField` aproxima ajuda e erro do controle (4 px, sem margens nativas dos parágrafos), preservando associações acessíveis. Nova seção em `docs/integration.md` sobre botões ao lado de campos.

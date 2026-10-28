@@ -21,12 +21,12 @@ const variants = {
 	warning: {
 		box: 'bg-warning-background border-warning-border',
 		foreground: 'text-warning',
-		icon: 'alert-triangle',
+		icon: 'alertTriangle',
 	},
 	error: {
 		box: 'bg-danger-background border-danger-border',
 		foreground: 'text-danger',
-		icon: 'alert-circle',
+		icon: 'alertCircle',
 	},
 } as const;
 
@@ -36,7 +36,10 @@ const tabbable =
 /** Next tabbable element after `root` in document order, or the last one before it. */
 function neighborFocusTarget(root: HTMLElement): HTMLElement | null {
 	const candidates = Array.from(root.ownerDocument.querySelectorAll<HTMLElement>(tabbable)).filter(
-		(element) => !root.contains(element),
+		(element) =>
+			!root.contains(element) &&
+			!element.closest('[hidden],[inert],fieldset[disabled]') &&
+			element.checkVisibility?.() !== false,
 	);
 	const following = candidates.find(
 		(element) => root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
@@ -96,7 +99,8 @@ export function AdsAlert({
 		const restore = () => {
 			const target = pendingFocus.current;
 			pendingFocus.current = null;
-			if (target?.isConnected && document.activeElement === document.body) target.focus();
+			const doc = target?.ownerDocument;
+			if (target?.isConnected && doc?.activeElement === doc?.body) target.focus();
 		};
 		if (!visible) restore();
 		return restore;
@@ -154,6 +158,10 @@ export function AdsAlert({
 				<button
 					aria-label={closeLabel}
 					className="ads-alert-close -mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent bg-transparent text-text-muted hover:bg-overlay-close-background-hover hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+					onBlur={(event) => {
+						// A real blur (button still mounted) means the user moved on: drop the pending target.
+						if (event.currentTarget.isConnected) pendingFocus.current = null;
+					}}
 					onClick={handleClose}
 					type="button"
 				>

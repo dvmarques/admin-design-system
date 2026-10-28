@@ -24,7 +24,7 @@
 - [x] Validar navegação por teclado do botão fechar (E2E: foco + Enter) e botão sem submissão de formulário
 - [x] Preservar o foco do teclado ao fechar (`returnFocusRef` ou vizinho focável), com testes
 - [ ] Validação manual com leitor de tela (não executável neste ambiente)
-- [x] Executar format, lint, build, typecheck, test:quality, E2E Chromium/Firefox/WebKit e OpenSpec strict (CI #40709162220)
+- [ ] Confirmar format, lint, build, typecheck, test:quality, E2E Chromium/Firefox/WebKit e OpenSpec strict na CI do SHA final (última verde: #40709162220, SHA anterior)
 - [ ] Executar `npm run validate` como comando agregado, se exigido adicionalmente
 - [x] Revisar diff e CI no SHA final, corrigindo falhas e mantendo evidências
 

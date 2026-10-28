@@ -23,8 +23,8 @@ export const Set: Story = {
 			<AdsIcon name="check" />
 			<AdsIcon name="close" />
 			<AdsIcon name="info" label="Informações" />
-			<AdsIcon name="alert-triangle" />
-			<AdsIcon name="alert-circle" />
+			<AdsIcon name="alertTriangle" />
+			<AdsIcon name="alertCircle" />
 			<AdsIcon name="plus" />
 			<AdsIcon name="search" size="lg" />
 		</div>

@@ -1,4 +1,4 @@
-import { createRef } from 'react';
+import { createRef, StrictMode, useState } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it, vi } from 'vitest';
@@ -224,5 +224,71 @@ describe('AdsAlert', () => {
 			</>,
 		);
 		expect(other).toHaveFocus();
+	});
+	it('restores focus when the parent unmounts the alert from onClose', () => {
+		function Harness() {
+			const [show, setShow] = useState(true);
+			return (
+				<>
+					{show ? (
+						<AdsAlert dismissible onClose={() => setShow(false)}>
+							Mensagem
+						</AdsAlert>
+					) : null}
+					<button type="button">Depois</button>
+				</>
+			);
+		}
+		render(
+			<StrictMode>
+				<Harness />
+			</StrictMode>,
+		);
+		const close = screen.getByRole('button', { name: 'Fechar mensagem' });
+		close.focus();
+		fireEvent.click(close);
+		expect(screen.queryByText('Mensagem')).not.toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Depois' })).toHaveFocus();
+	});
+	it('falls back to the neighbor when returnFocusRef is empty and skips hidden candidates', () => {
+		const empty = createRef<HTMLButtonElement>();
+		render(
+			<>
+				<AdsAlert dismissible returnFocusRef={empty}>
+					Mensagem
+				</AdsAlert>
+				<div hidden>
+					<button type="button">Oculto</button>
+				</div>
+				<button type="button">Visível</button>
+			</>,
+		);
+		const close = screen.getByRole('button', { name: 'Fechar mensagem' });
+		close.focus();
+		fireEvent.click(close);
+		expect(screen.getByRole('button', { name: 'Visível' })).toHaveFocus();
+	});
+	it('does not steal focus later when the parent ignored the close request', () => {
+		const { rerender } = render(
+			<>
+				<AdsAlert dismissible open>
+					Mensagem
+				</AdsAlert>
+				<button type="button">Depois</button>
+			</>,
+		);
+		const close = screen.getByRole('button', { name: 'Fechar mensagem' });
+		close.focus();
+		fireEvent.click(close);
+		close.blur();
+		rerender(
+			<>
+				<AdsAlert dismissible open={false}>
+					Mensagem
+				</AdsAlert>
+				<button type="button">Depois</button>
+			</>,
+		);
+		expect(document.body).toHaveFocus();
 	});
 });

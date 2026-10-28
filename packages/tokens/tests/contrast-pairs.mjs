@@ -19,6 +19,12 @@ export const contrastPairs = [
 	...against('text', 'textPrimary', surfaces),
 	...against('text', 'textSecondary', surfaces),
 	...against('text', 'textMuted', surfaces),
+	...against('text', 'textMuted', [
+		'infoBackground',
+		'successBackground',
+		'warningBackground',
+		'dangerBackground',
+	]),
 	...against('text', 'onSurfaceSelected', ['surfaceSelected']),
 	...against('text', 'onPrimary', ['primary', 'success', 'warning', 'danger']),
 	...against('text', 'info', ['infoBackground']),

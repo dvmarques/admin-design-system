@@ -36,8 +36,14 @@ export function AdsAutocomplete({
     const requestId = ++generation.current;
     const controller = new AbortController();
     if (!loadOptions || query.trim().length < minQueryLength) {
+      setLoading(false);
+      setRemoteOptions([]);
+      setError(null);
       return () => controller.abort();
     }
+    setLoading(true);
+    setRemoteOptions([]);
+    setError(null);
     // New query invalidates the previous result immediately.
     const timeout = setTimeout(() => {
       void Promise.resolve()
@@ -67,6 +73,7 @@ export function AdsAutocomplete({
   // Render state is derived from the query generation to avoid showing stale entries.
   // Requests initialize loading on input events, not during render or in an effect.
   const onTyping: AdsComboboxProps['onInputValueChange'] = (text, reason) => {
+    generation.current += 1;
     if (reason === 'input') {
       setTypedQuery(text);
       setError(null);

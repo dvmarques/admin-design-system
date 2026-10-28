@@ -199,7 +199,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
       <div className="relative">
         <input
           {...inputProps}
-          aria-activedescendant={open && active >= 0 ? listId + '-option-' + active : undefined}
+          aria-activedescendant={open && !loading && !error && active >= 0 ? listId + '-option-' + active : undefined}
           aria-autocomplete="list"
           aria-busy={loading || undefined}
           aria-controls={open ? listId : undefined}
@@ -311,12 +311,12 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
             }}
           >
             {loading ? (
-              <li aria-live="polite" className="px-3 py-2 text-text-muted" role="status">
-                {loadingText}
+              <li className="px-3 py-2 text-text-muted" role="presentation">
+                <span aria-live="polite" role="status">{loadingText}</span>
               </li>
             ) : error ? (
-              <li className="flex items-center justify-between gap-2 px-3 py-2 text-form-invalid" role="status">
-                <span>{error}</span>
+              <li className="flex items-center justify-between gap-2 px-3 py-2 text-form-invalid" role="presentation">
+                <span role="status">{error}</span>
                 {onRetry ? (
                   <button className="underline" onClick={onRetry} type="button">
                     Tentar novamente
@@ -324,8 +324,8 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
                 ) : null}
               </li>
             ) : matches.length === 0 ? (
-              <li aria-live="polite" className="px-3 py-2 text-text-muted" role="status">
-                {emptyText}
+              <li className="px-3 py-2 text-text-muted" role="presentation">
+                <span aria-live="polite" role="status">{emptyText}</span>
               </li>
             ) : (
               matches.map((option, index) => (

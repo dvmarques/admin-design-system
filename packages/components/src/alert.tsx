@@ -14,12 +14,12 @@ const variants = {
 	warning: {
 		box: 'bg-warning-background border-warning-border',
 		foreground: 'text-warning',
-		icon: 'info',
+		icon: 'alert-triangle',
 	},
 	error: {
 		box: 'bg-danger-background border-danger-border',
 		foreground: 'text-danger',
-		icon: 'info',
+		icon: 'alert-circle',
 	},
 } as const;
 

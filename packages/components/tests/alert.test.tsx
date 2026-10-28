@@ -139,4 +139,18 @@ describe('AdsAlert', () => {
 		rerender(<AdsAlert variant="error">Mensagem</AdsAlert>);
 		expect(screen.getByRole('alert')).toBe(node);
 	});
+	it('uses a distinct default icon per variant so severity does not rely on color', () => {
+		const paths = (['info', 'success', 'warning', 'error'] as const).map((variant) => {
+			const { container, unmount } = render(<AdsAlert variant={variant}>Mensagem</AdsAlert>);
+			const d = container.querySelector('.ads-alert-icon svg')?.innerHTML;
+			unmount();
+			return d;
+		});
+		expect(paths.every(Boolean)).toBe(true);
+		expect(new Set(paths).size).toBe(4);
+	});
+	it('replaces the default icon with a custom one', () => {
+		render(<AdsAlert icon={<span data-testid="custom-icon" />}>Mensagem</AdsAlert>);
+		expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
+	});
 });

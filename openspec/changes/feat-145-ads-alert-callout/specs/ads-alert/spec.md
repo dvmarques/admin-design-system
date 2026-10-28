@@ -47,3 +47,17 @@ O sistema SHALL oferecer cores semânticas via tokens, responsividade, foco e co
 
 - **WHEN** o componente é visualizado no Storybook
 - **THEN** seus estados principais e semântica estão demonstrados
+
+### Requirement: Ícone padrão distinto por severidade
+
+O sistema SHALL exibir, por padrão, um ícone distinto para cada variante, de modo que a severidade não dependa apenas de cor, e SHALL permitir substituir ou ocultar o ícone.
+
+#### Scenario: Variantes com ícones diferentes
+
+- **WHEN** alertas `info`, `success`, `warning` e `error` são renderizados sem `icon`
+- **THEN** cada um exibe um ícone decorativo diferente dos demais
+
+#### Scenario: Ícone personalizado
+
+- **WHEN** o consumidor informa `icon` com um elemento ou `null`
+- **THEN** o ícone padrão é substituído ou omitido

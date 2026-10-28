@@ -373,9 +373,9 @@
 }
 
 /*
- * AdsAlert: em cores forçadas o fundo semântico é descartado e o ícone de
- * advertência/erro é o mesmo; a severidade passa a ser distinguida também pelo
- * estilo da borda, sem depender de cor.
+ * AdsAlert: em cores forçadas o fundo semântico é descartado; além do ícone
+ * próprio de cada variante, a severidade também é distinguida pelo estilo da
+ * borda, sem depender de cor.
  */
 @media (forced-colors: active) {
 	.ads-alert {

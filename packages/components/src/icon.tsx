@@ -2,6 +2,10 @@ import type { SVGAttributes } from 'react';
 import { classNames } from './class-names.js';
 
 const iconPaths = {
+	alertCircle: <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 8v4m0 4h.01" />,
+	alertTriangle: (
+		<path d="m10.3 4.2-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-2.8l-8-14a2 2 0 0 0-3.4 0ZM12 9v4m0 4h.01" />
+	),
 	bell: <path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4.3 10a2 2 0 0 0 3.4 0" />,
 	building: (
 		<>

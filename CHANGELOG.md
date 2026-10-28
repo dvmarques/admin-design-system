@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `feat-145-ads-alert-callout` (issue #145) - Novo componente `AdsAlert` inline persistente com variantes semânticas, apresentação compacta ou destacada, ações e fechamento opcional controlado/não controlado; exemplos no catálogo e Storybook, ícone padrão distinto por severidade e fallback de `forced-colors` por borda e preservação do foco ao fechar (`returnFocusRef`). Orçamentos elevados pelo custo medido do componente: JS/CSS publicado de `@admin-ds/components` 191.250 → 197.500 bytes (medido 197.216) e CSS gzip do cenário `admin-public` 13.900 → 14.100 bytes (medido 13.915), sem dependência nova. `AdsIcon` ganha `alertTriangle` e `alertCircle` (a união `AdsIconName` fica mais larga; consumidores com `switch` exaustivo precisam tratar os novos nomes).
+
 - `feat-226-loading-text` (issue #226) - Novo atom `AdsLoadingText` com texto sempre visível, efeito shimmer opcional e velocidades configuráveis, temas, reduced motion e forced-colors, exemplos no Storybook e catálogo, testes e documentação.
 
 - `adopt-mit-license` (issue #219) - Licença MIT do código próprio em `LICENSE.md`, identificador SPDX nos manifests e lockfile e documentação de uso, preservando licenças e atribuições de terceiros.

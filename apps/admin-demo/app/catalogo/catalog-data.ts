@@ -331,6 +331,14 @@ export const catalogEntries = [
 		href: '/catalogo/tooltip',
 	},
 	{
+		name: 'AdsAlert',
+		group: 'Feedback',
+		slug: 'alert',
+		demo: 'Alert',
+		description: 'Feedback persistente inline com variantes, ações e fechamento.',
+		href: '/catalogo/alert',
+	},
+	{
 		name: 'AdsToast',
 		group: 'Feedback',
 		slug: 'toast',

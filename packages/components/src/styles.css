@@ -371,3 +371,35 @@
 		color: CanvasText;
 	}
 }
+
+/*
+ * AdsAlert: em cores forçadas o fundo semântico é descartado; além do ícone
+ * próprio de cada variante, a severidade também é distinguida pelo estilo da
+ * borda, sem depender de cor.
+ */
+@media (forced-colors: active) {
+	.ads-alert {
+		border-color: CanvasText;
+	}
+
+	.ads-alert[data-variant='warning'] {
+		border-style: dashed;
+	}
+
+	.ads-alert[data-variant='error'] {
+		border-style: double;
+		border-width: 4px;
+	}
+
+	.ads-alert-icon {
+		color: CanvasText;
+	}
+
+	.ads-alert-close {
+		border-color: ButtonText;
+	}
+
+	.ads-alert-close:focus-visible {
+		outline-color: Highlight;
+	}
+}

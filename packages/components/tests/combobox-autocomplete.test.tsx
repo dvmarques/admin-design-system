@@ -282,7 +282,11 @@ describe('AdsAutocomplete', () => {
 			if (query === 'erro') throw new Error('Falha simulada');
 			return [];
 		});
-		render(<AdsField label="Busca"><AdsAutocomplete debounceMs={0} loadOptions={loadOptions} /></AdsField>);
+		render(
+			<AdsField label="Busca">
+				<AdsAutocomplete debounceMs={0} loadOptions={loadOptions} />
+			</AdsField>,
+		);
 		const input = screen.getByRole('combobox');
 		fireEvent.change(input, { target: { value: 'erro' } });
 		expect(await screen.findByText('Falha simulada')).toBeInTheDocument();

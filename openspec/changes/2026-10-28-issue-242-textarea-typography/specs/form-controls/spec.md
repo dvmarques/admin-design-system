@@ -3,7 +3,7 @@
 ## ADDED Requirements
 
 ### Requirement: Tipografia tokenizada dos controles textuais sem reset externo
-AdsInput, AdsTextarea e AdsSelect MUST apresentar valores, textos digitados e placeholders com a família definida pelo token público --ads-typography-font-family quando consumidos com o CSS compilado distribuído, independentemente de a aplicação aplicar preflight/reset CSS. A regra MUST preservar a possibilidade de personalização intencional do token e não modificar tamanho, valor, semântica ou estado dos controles.
+AdsInput, AdsTextarea e AdsSelect MUST apresentar seus textos visíveis (incluindo valores digitados, rótulos de opções e placeholders onde aplicáveis) com a família definida pelo token público --ads-typography-font-family quando consumidos com o CSS compilado distribuído, independentemente de a aplicação aplicar preflight/reset CSS. A regra MUST preservar a possibilidade de personalização intencional do token e não modificar tamanho, valor, semântica ou estado dos controles.
 
 #### Scenario: Área de texto sem preflight
 - **WHEN** uma aplicação Next.js renderiza AdsTextarea e AdsInput com apenas o CSS publicado do design system, sem reset CSS de elementos nativos

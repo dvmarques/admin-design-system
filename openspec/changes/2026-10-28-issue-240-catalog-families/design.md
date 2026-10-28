@@ -6,7 +6,7 @@ O registro catalogEntries hoje tem uma entrada por export, e a sidebar mapeia to
 ### Modelo
 Criar um mapa de famílias em apps/admin-demo: id/slug canônico, categoria, título, descrição, members (nomes públicos e nomes compostos realmente disponíveis), ids de âncoras e demos. O cadastro dos exports e a matriz de cobertura continuam fontes de verificação; a sidebar recebe apenas as famílias + componentes independentes, e a busca indexa cada member.
 
-As partes de Dropdown e AdminShell disponibilizadas como propriedades (por exemplo AdsDropdown.Trigger e AdsAdminShell.NavigationItem) são aliases de pesquisa/documentação, não novos exports nomeados. Dashboard reúne três exports independentes em um guia de composição, com indicação clara de uso isolado. InputGroup e SelectionGroup permanecem páginas independentes.
+As partes dos objetos compostos Tabs, Accordion, Dropdown e AdminShell disponibilizadas como propriedades (por exemplo AdsTabs.Root, AdsAccordion.Root, AdsDropdown.Trigger e AdsAdminShell.NavigationItem) são aliases de pesquisa/documentação, não novos exports nomeados. Inventariar cada propriedade pública real antes de exibi-la; partes que também possuem export nomeado mantêm esse nome na documentação. Dashboard reúne três exports independentes em um guia de composição, com indicação clara de uso isolado. InputGroup e SelectionGroup permanecem páginas independentes.
 
 ### Rotas e compatibilidade
 A página canônica usa /catalogo/<familia> com seções / IDs determinísticos (por exemplo ads-tabs-trigger). A busca gera link direto à âncora do item encontrado; um resultado de Tabs pode abrir o topo e um resultado de TabsTrigger sua seção. Slugs preexistentes continuam presentes em generateStaticParams para materialização no export estático.

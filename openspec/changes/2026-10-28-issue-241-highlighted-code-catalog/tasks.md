@@ -1,0 +1,11 @@
+# Tasks — issue #241
+
+- [ ] 1. Confirmar props, estilos e exports de @admin-ds/highlighted-code e as exclusões no catálogo; registrar pacotes UI rastreados no teste (critério: não classificar utilitários como UI).
+- [ ] 2. Adicionar entrada AdsHighlightedCodeSnippet em Dados e página /catalogo/highlighted-code-snippet com nome, descrição, instalação, API e import público correto (critério: rota aparece na sidebar e na busca com aliases previstos).
+- [ ] 3. Criar demo funcional e snippets derivados de código TSX real com TypeScript/TSX, Java, SQL, JSON, light/dark/auto, números de linha, wrap, cópia e fallback plain (critério: controles mudam a apresentação sem executar conteúdo arbitrário).
+- [ ] 4. Preservar exemplo existente de aplicação e criar links recíprocos sem duplicar contratos (critério: URL antiga permanece acessível).
+- [ ] 5. Integrar pacote opcional na verificação automatizada export → demo/rota e na matriz docs/admin-demo-catalog.md; alinhar com a consolidação #240 sem dependência cruzada obrigatória (critério: novo export visual sem exemplo é detectado).
+- [ ] 6. Adicionar/atualizar Storybook do pacote, docs/highlighted-code-snippet.md e CHANGELOG.md sob Added (#241) ao implementar (critério: API e defaults refletem código real).
+- [ ] 7. Testar SSR/hidratação, loading assíncrono sem skeleton, falha de gramática e fallback, cópia, ARIA, 320/390px, teclado, light/dark e zoom (critério: sem erros de console, overflow da página ou regressão de acessibilidade).
+- [ ] 8. Medir bundle de @admin-ds/components isolado, cenário opcional e consumidor Next.js sem Tailwind; preservar ausência de Shiki no pacote principal (critério: custo opcional permanece separado e documentado).
+- [ ] 9. Revisar o diff de forma independente e ajustar achados; executar npx.cmd prettier --write nos arquivos alterados, npm run format, npm run lint, npm run build, npm run typecheck, npm run test:quality, npm run test:e2e, npm run validate e openspec.cmd validate --all --strict; confirmar zero E2E falhos antes do commit. Snapshot apenas se diferença visual intencional revisada pelo update-visual-baselines.yml; registrar evidências e diagnósticos.

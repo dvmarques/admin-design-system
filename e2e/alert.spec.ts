@@ -4,7 +4,7 @@ import { expectNoAxeViolations } from './axe';
 test('AdsAlert: feedback persistente, ações e fechamento controlado', async ({ page }) => {
   await page.goto('/catalogo/alert');
   const preview = page.getByRole('region', { name: 'Demonstração interativa' });
-  await expect(preview.getByRole('status', { name: /Resultado da operação/ })).toBeVisible();
+  await expect(preview.getByRole('status').filter({ hasText: 'Resultado da operação' })).toBeVisible();
   await preview.getByLabel('Variante').selectOption('error');
   await expect(preview.getByRole('alert').first()).toContainText('Não foi possível salvar');
   await preview.getByRole('button', { name: 'Fechar mensagem' }).click();

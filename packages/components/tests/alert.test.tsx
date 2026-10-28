@@ -115,4 +115,28 @@ describe('AdsAlert', () => {
 		expect(block).toContain('[data-variant=warning]{border-style:dashed');
 		expect(block).toContain('[data-variant=error]{border-style:double');
 	});
+	it('starts hidden with defaultOpen=false and never shows without a controlled reopen', () => {
+		render(<AdsAlert defaultOpen={false}>Mensagem</AdsAlert>);
+		expect(screen.queryByText('Mensagem')).not.toBeInTheDocument();
+	});
+	it('reopens when the controlled open prop goes back to true', () => {
+		const { rerender } = render(<AdsAlert open={false}>Mensagem</AdsAlert>);
+		expect(screen.queryByText('Mensagem')).not.toBeInTheDocument();
+		rerender(<AdsAlert open>Mensagem</AdsAlert>);
+		expect(screen.getByRole('status')).toHaveTextContent('Mensagem');
+	});
+	it('does not render a close button unless dismissible', () => {
+		render(<AdsAlert>Mensagem</AdsAlert>);
+		expect(screen.queryByRole('button')).not.toBeInTheDocument();
+	});
+	it('never adds aria-live to status variants', () => {
+		render(<AdsAlert variant="success">Salvo</AdsAlert>);
+		expect(screen.getByRole('status')).not.toHaveAttribute('aria-live');
+	});
+	it('keeps the DOM node and updates the role when the variant changes', () => {
+		const { rerender } = render(<AdsAlert variant="info">Mensagem</AdsAlert>);
+		const node = screen.getByRole('status');
+		rerender(<AdsAlert variant="error">Mensagem</AdsAlert>);
+		expect(screen.getByRole('alert')).toBe(node);
+	});
 });

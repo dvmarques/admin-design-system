@@ -32,4 +32,5 @@
 - CI aprovado no SHA `324e042045a897e0846b919e2a108c829b0dc194`: https://github.com/dvmarques/admin-design-system/actions/runs/40709162220
 - Storybook: `apps/docs/src/alert.stories.tsx`; demonstração: `/catalogo/alert`.
 - Testes: `packages/components/tests/alert.test.tsx` e `e2e/alert.spec.ts`.
+- A evidência de CI acima refere-se ao SHA anterior aos commits de revisão; confirmar a CI no SHA final antes do merge.
 - Validações manuais e comando agregado foram mantidos pendentes, pois não há evidência direta de execução.

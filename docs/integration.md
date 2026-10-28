@@ -48,9 +48,9 @@ export function Feedback() {
 }
 ```
 
-Sem `open`, o componente controla internamente o fechamento; use `defaultOpen` para iniciar oculto. Com `open`, `onClose` solicita o fechamento e o consumidor deve atualizar o estado. Use `icon={null}` para ocultar o ícone ou passe um `ReactNode` personalizado. `dismissible` é opcional (padrão `false`); `closeLabel` personaliza o nome acessível do botão. O botão de fechar não submete formulários.
+Sem `open`, o componente controla internamente o fechamento e `defaultOpen` define apenas o estado inicial; depois de fechado não há como reabrir nesse modo. Para reabrir (ou iniciar oculto e exibir depois), use o modo controlado com `open`. Com `open`, `onClose` solicita o fechamento e o consumidor deve atualizar o estado. Use `icon={null}` para ocultar o ícone ou passe um `ReactNode` personalizado. `dismissible` é opcional (padrão `false`); `closeLabel` personaliza o nome acessível do botão. O botão de fechar não submete formulários.
 
-Por padrão, `error` usa `role="alert"` e as demais variantes usam `role="status"`; o consumidor pode sobrescrever `role` conforme a urgência real. Evite remontar a mesma mensagem repetidamente, pois isso pode gerar anúncios duplicados. Traduções de códigos de negócio como `SU`, `ER` e `EP` pertencem ao adaptador do Back Admin, não ao design system.
+Por padrão, `error` usa `role="alert"` e as demais variantes usam `role="status"`; o consumidor pode sobrescrever `role` conforme a urgência real. Evite remontar a mesma mensagem repetidamente, pois isso pode gerar anúncios duplicados. Algumas combinações de leitor de tela não anunciam uma região `status` que já nasce com conteúdo; para mensagens que exigem atenção imediata, use a variante `error` ou mova o foco. Ao fechar, o alerta é desmontado e o foco não é restaurado automaticamente: quando fizer sentido, o consumidor deve mover o foco para um elemento relacionado (por exemplo, o campo ou botão que originou a mensagem). Traduções de códigos de negócio como `SU`, `ER` e `EP` pertencem ao adaptador do Back Admin, não ao design system.
 
 ## Navegação hierárquica da sidebar
 

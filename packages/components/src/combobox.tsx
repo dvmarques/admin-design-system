@@ -106,7 +106,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
   const [draftInput, setDraftInput] = useState(defaultInputValue ?? '');
   const [editing, setEditing] = useState(defaultInputValue !== undefined);
   const [cachedOption, setCachedOption] = useState<AdsComboboxOption | null>(selectedOption ?? null);
-  const [activeIndex, setActiveIndex] = useState(0);
+  const [activeIndex, setActiveIndex] = useState(-1);
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
@@ -118,7 +118,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
     (selectedOption?.value === selectedValue ? selectedOption : null) ??
     (cachedOption?.value === selectedValue ? cachedOption : null);
   const text = inputValue ?? (editing ? draftInput : (selected?.label ?? ''));
-  const query = text.trim().toLocaleLowerCase();
+  const query = (editing || (inputValue !== undefined && selectedValue === null) ? text : '').trim().toLocaleLowerCase();
   const matches = filterOptions
     ? options.filter(
         (option) =>
@@ -127,7 +127,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
       )
     : options;
   const enabledIndices = matches.flatMap((option, index) => (option.disabled ? [] : [index]));
-  const active = enabledIndices.includes(activeIndex) ? activeIndex : (enabledIndices[0] ?? -1);
+  const active = enabledIndices.includes(activeIndex) ? activeIndex : -1;
   const position = useAnchoredPosition(open, rootRef, listRef, 'bottom', 'start');
 
   const setOpen = useCallback(
@@ -141,8 +141,8 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
   const setText = (next: string, reason: AdsComboboxInputReason) => {
     if (inputValue === undefined) {
       setDraftInput(next);
-      setEditing(reason === 'input');
     }
+    setEditing(reason === 'input');
     onInputValueChange?.(next, reason);
   };
 
@@ -161,7 +161,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
     setCachedOption(null);
     setText('', 'clear');
     onValueChange?.(null, null);
-    setActiveIndex(0);
+    setActiveIndex(-1);
     setOpen(false);
     inputRef.current?.focus({ preventScroll: true });
   };
@@ -219,15 +219,16 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
             const next = event.relatedTarget;
             if (
               !event.defaultPrevented &&
-              next instanceof Node &&
-              !rootRef.current?.contains(next) &&
-              !listRef.current?.contains(next)
+              (!next ||
+                (next instanceof Node &&
+                  !rootRef.current?.contains(next) &&
+                  !listRef.current?.contains(next)))
             )
               setOpen(false);
           }}
           onChange={(event) => {
             setText(event.target.value, 'input');
-            setActiveIndex(0);
+            setActiveIndex(-1);
             setOpen(true);
           }}
           onFocus={(event) => {

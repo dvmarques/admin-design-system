@@ -47,3 +47,13 @@ test('combobox em diálogo: lista em portal, Escape não fecha o modal', async (
   await page.keyboard.press('Escape');
   await expect(dialog).toHaveCount(0);
 });
+
+
+test('editar uma seleção limpa o value anterior no formulário', async ({ page }) => {
+  await page.goto('/catalogo/combobox');
+  const input = page.getByRole('combobox', { name: 'Estado (controlado)' });
+  await expect(page.getByLabel('Valor selecionado')).toHaveText('SP');
+  await input.fill('Rio');
+  await expect(page.getByLabel('Valor selecionado')).toHaveText('Nenhum');
+  await expect(input).toHaveValue('Rio');
+});

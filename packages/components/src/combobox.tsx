@@ -151,6 +151,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
     if (option.disabled) return;
     if (value === undefined) setUncontrolledValue(option.value);
     setCachedOption(option);
+    setActiveIndex(-1);
     setText(option.label, 'select');
     onValueChange?.(option.value, option);
     setOpen(false);
@@ -177,7 +178,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
   });
   // An externally controlled selected value supersedes any previous free-text edit.
   useEffect(() => {
-    if (value !== undefined) setEditing(false);
+    if (value !== undefined && value !== null) setEditing(false);
   }, [value]);
 
   useEffect(() => {
@@ -236,13 +237,19 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
               setOpen(false);
           }}
           onChange={(event) => {
+            // Um valor anterior não pode ser enviado enquanto um novo texto está sendo pesquisado.
+            if (selectedValue !== null) {
+              if (value === undefined) setUncontrolledValue(null);
+              setCachedOption(null);
+              onValueChange?.(null, null);
+            }
             setText(event.target.value, 'input');
             setActiveIndex(-1);
-            setOpen(true);
+            if (!open) setOpen(true);
           }}
           onFocus={(event) => {
             onFocus?.(event);
-            if (!event.defaultPrevented && !readOnly) setOpen(true);
+            if (!event.defaultPrevented && !readOnly && !open) setOpen(true);
           }}
           onKeyDown={(event) => {
             inputProps.onKeyDown?.(event);
@@ -316,7 +323,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
         <OverlayPortal>
           <ul
             aria-label="Sugestões"
-            className="ads-combobox__list fixed z-[var(--ads-layer-dropdown)] m-0 max-h-64 overflow-y-auto overscroll-contain rounded-md border border-border bg-surface-raised p-1 font-sans text-sm text-text shadow-md"
+            className="ads-combobox__list fixed z-[var(--ads-layer-overlay)] m-0 max-h-64 overflow-y-auto overscroll-contain rounded-md border border-border bg-surface-raised p-1 font-sans text-sm text-text shadow-md"
             id={listId}
             ref={position.attachContent}
             role="listbox"

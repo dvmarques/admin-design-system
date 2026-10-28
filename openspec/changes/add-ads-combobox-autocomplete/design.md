@@ -20,3 +20,11 @@ Demo no catálogo existente, com busca local, servidor simulado, erros, vazios, 
 
 ## Reversão
 Reverter a PR remove apenas novas APIs e registros de demo, mantendo componentes anteriores intactos.
+
+## Ajustes da revisão
+
+- Digitar após selecionar limpa imediatamente o value anterior (e emite onValueChange(null, null)); não é permitido enviar o valor antigo com um novo texto.
+- Em modo controlado, limpar o value para null não apaga a digitação em andamento.
+- Listbox usa a camada overlay (40), pois dropdown (30) ficaria atrás da camada do AdsDialog (40); portal registrado como descendente lógico do modal.
+- Resultados e erros remotos são associados ao query que os originou; nenhuma resposta anterior é exibida entre um render controlado e o próximo efeito.
+- AdsAutocomplete disabled não dispara consulta remota.

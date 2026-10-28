@@ -22,13 +22,14 @@ export function AdsAutocomplete({
   onLoadError,
   inputValue,
   defaultInputValue,
+  disabled,
   ...props
 }: AdsAutocompleteProps) {
   const [typedQuery, setTypedQuery] = useState(defaultInputValue ?? '');
   const [retryKey, setRetryKey] = useState(0);
-  const [remoteOptions, setRemoteOptions] = useState<readonly AdsComboboxOption[]>([]);
+  const [remoteResult, setRemoteResult] = useState<{ query: string; options: readonly AdsComboboxOption[] } | null>(null);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
+  const [requestError, setRequestError] = useState<{ query: string; message: string } | null>(null);
   const generation = useRef(0);
   const loadOptionsRef = useRef(loadOptions);
   const onLoadErrorRef = useRef(onLoadError);
@@ -42,29 +43,29 @@ export function AdsAutocomplete({
   useEffect(() => {
     const requestId = ++generation.current;
     const controller = new AbortController();
-    if (!remote || query.trim().length < minQueryLength) {
+    if (!remote || disabled || query.trim().length < minQueryLength) {
       setLoading(false);
-      setRemoteOptions([]);
-      setError(null);
+      setRemoteResult(null);
+      setRequestError(null);
       return () => controller.abort();
     }
     setLoading(true);
-    setRemoteOptions([]);
-    setError(null);
+    setRemoteResult(null);
+    setRequestError(null);
     // New query invalidates the previous result immediately.
     const timeout = setTimeout(() => {
       void Promise.resolve()
         .then(() => loadOptionsRef.current?.(query, controller.signal) ?? [])
         .then((results) => {
           if (controller.signal.aborted || requestId !== generation.current) return;
-          setRemoteOptions(results);
-          setError(null);
+          setRemoteResult({ query, options: results });
+          setRequestError(null);
           setLoading(false);
         })
         .catch((reason: unknown) => {
           if (controller.signal.aborted || requestId !== generation.current) return;
-          setError(reason instanceof Error ? reason.message : 'Falha ao buscar opções');
-          setRemoteOptions([]);
+          setRequestError({ query, message: reason instanceof Error ? reason.message : 'Falha ao buscar opções' });
+          setRemoteResult(null);
           setLoading(false);
           onLoadErrorRef.current?.(reason);
         });
@@ -73,21 +74,23 @@ export function AdsAutocomplete({
       clearTimeout(timeout);
       controller.abort();
     };
-  }, [debounceMs, minQueryLength, query, retryKey, remote]);
-  const ready = query.trim().length >= minQueryLength;
+  }, [debounceMs, disabled, minQueryLength, query, retryKey, remote]);
+  const ready = !disabled && query.trim().length >= minQueryLength;
+  const visibleOptions = remoteResult?.query === query ? remoteResult.options : [];
+  const visibleError = requestError?.query === query ? requestError.message : null;
   // Invalidate responses on the input event, before an obsolete provider settles.
   const onTyping: AdsComboboxProps['onInputValueChange'] = (text, reason) => {
     generation.current += 1;
     if (reason === 'input') {
       setTypedQuery(text);
-      setError(null);
-      setRemoteOptions([]);
+      setRequestError(null);
+      setRemoteResult(null);
       setLoading(Boolean(loadOptions && text.trim().length >= minQueryLength));
     } else if (reason === 'clear' || reason === 'select') {
       setTypedQuery('');
       setLoading(false);
-      setError(null);
-      setRemoteOptions([]);
+      setRequestError(null);
+      setRemoteResult(null);
     }
     onInputValueChange?.(text, reason);
   };
@@ -96,20 +99,21 @@ export function AdsAutocomplete({
     <AdsCombobox
       {...props}
       defaultInputValue={defaultInputValue}
-      error={remote && ready ? error : null}
+      disabled={disabled}
+      error={remote && ready ? visibleError : null}
       filterOptions={!remote}
       inputValue={inputValue}
       loading={remote && ready && loading}
       onInputValueChange={onTyping}
       onRetry={() => {
         setLoading(true);
-        setError(null);
+        setRequestError(null);
         setRetryKey((previous) => previous + 1);
       }}
       onValueChange={(value, option) => {
         onValueChange?.(value, option);
       }}
-      options={remote ? (ready ? remoteOptions : []) : options}
+      options={remote ? (ready ? visibleOptions : []) : options}
     />
   );
 }

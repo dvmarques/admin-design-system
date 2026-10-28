@@ -1,6 +1,7 @@
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
 import { renderToString } from 'react-dom/server';
+import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
 import { AdsAutocomplete, AdsCombobox, AdsField } from '../src/index.js';
 
@@ -75,6 +76,34 @@ describe('AdsCombobox', () => {
     expect(select).not.toHaveBeenCalled();
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(input).toHaveAttribute('aria-expanded', 'false');
+  });
+
+  it('clears the old value when editing a selected label, without submitting a stale value', () => {
+    const onValueChange = vi.fn();
+    const { container } = render(
+      <form>
+        <AdsField label="Estado">
+          <AdsCombobox name="uf" defaultValue="SP" options={states} onValueChange={onValueChange} />
+        </AdsField>
+      </form>,
+    );
+    const input = screen.getByRole('combobox', { name: 'Estado' });
+    expect(container.querySelector('input[name="uf"]')).toHaveValue('SP');
+    fireEvent.change(input, { target: { value: 'Rio' } });
+    expect(input).toHaveValue('Rio');
+    expect(onValueChange).toHaveBeenLastCalledWith(null, null);
+    expect(container.querySelector('input[name="uf"]')).toHaveValue('');
+  });
+
+  it('keeps a typed query when the parent clears a controlled selection', () => {
+    const View = () => {
+      const [value, setValue] = useState<string | null>('SP');
+      return <AdsCombobox aria-label="UF" options={states} value={value} onValueChange={setValue} />;
+    };
+    render(<View />);
+    const input = screen.getByRole('combobox', { name: 'UF' });
+    fireEvent.change(input, { target: { value: 'Rio' } });
+    expect(input).toHaveValue('Rio');
   });
 
   it('supports error, disabled, and stable SSR ids', () => {

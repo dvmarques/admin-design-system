@@ -11,6 +11,8 @@ import {
 } from 'react';
 import { classNames } from './class-names.js';
 import { formControlClasses } from './form-control-classes.js';
+import { AdsIcon, type AdsIconName } from './icon.js';
+import { AdsAvatar } from './avatar.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 import {
 	OverlayPortal,
@@ -25,14 +27,17 @@ export interface AdsComboboxOption {
 	label: string;
 	disabled?: boolean;
 	description?: string;
+	icon?: AdsIconName;
+	avatar?: { src?: string | undefined; fallback: string };
 }
 
 export type AdsComboboxInputReason = 'input' | 'select' | 'clear';
 
 export interface AdsComboboxProps
-	extends Omit<
+	extends
+		Omit<
 			InputHTMLAttributes<HTMLInputElement>,
-			'children' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'name'
+			'children' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'name' | 'className'
 		>,
 		AdsFormControlBase {
 	options: readonly AdsComboboxOption[];
@@ -46,6 +51,7 @@ export interface AdsComboboxProps
 	defaultOpen?: boolean;
 	onOpenChange?: (open: boolean) => void;
 	renderOption?: (option: AdsComboboxOption) => ReactNode;
+	showOptionVisuals?: boolean;
 	filterOptions?: boolean;
 	loading?: boolean;
 	error?: ReactNode;
@@ -92,6 +98,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		renderOption,
 		required,
 		selectedOption,
+		showOptionVisuals = true,
 		size = 'md',
 		validationState = 'default',
 		value,
@@ -104,16 +111,19 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
 	const open = !disabled && !readOnly && (controlledOpen ?? uncontrolledOpen);
 	const [draftInput, setDraftInput] = useState(defaultInputValue ?? '');
-	const [editing, setEditing] = useState(defaultInputValue !== undefined);
+	const [editing, setEditing] = useState(defaultInputValue !== undefined && selectedValue === null);
 	// Valores antigos não podem ser enviados enquanto o input exibe texto livre.
 	const committedValue = editing ? null : selectedValue;
-	const [cachedOption, setCachedOption] = useState<AdsComboboxOption | null>(selectedOption ?? null);
+	const [cachedOption, setCachedOption] = useState<AdsComboboxOption | null>(
+		selectedOption ?? null,
+	);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
 	const retryRef = useRef<HTMLButtonElement>(null);
+	const keyboardNavigationRef = useRef(false);
 	const ignoreNextFocusRef = useRef(false);
-	const listRef = useRef<HTMLUListElement>(null);
+	const listRef = useRef<HTMLElement>(null);
 	const stableInputId = useStableId('ads-combobox-input');
 	const listId = useStableId('ads-combobox-list');
 	const inputId = id ?? stableInputId;
@@ -121,10 +131,16 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		options.find((option) => option.value === selectedValue) ??
 		(selectedOption?.value === selectedValue ? selectedOption : null) ??
 		(cachedOption?.value === selectedValue ? cachedOption : null);
-	const text = inputValue ?? (editing ? draftInput : (selected?.label ?? ''));
-	const query = (
-		editing || (inputValue !== undefined && selectedValue === null) ? text : ''
-	)
+	const selectedVisual =
+		showOptionVisuals && !editing && selected && (selected.avatar || selected.icon);
+	const text =
+		inputValue ??
+		(editing
+			? draftInput
+			: selectedValue !== null
+				? (selected?.label ?? defaultInputValue ?? '')
+				: '');
+	const query = (editing || (inputValue !== undefined && selectedValue === null) ? text : '')
 		.trim()
 		.toLocaleLowerCase();
 	const matches = filterOptions
@@ -172,6 +188,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		onValueChange?.(null, null);
 		setActiveIndex(-1);
 		setOpen(false);
+		if (document.activeElement !== inputRef.current) ignoreNextFocusRef.current = true;
 		inputRef.current?.focus({ preventScroll: true });
 	};
 
@@ -189,36 +206,40 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	}, [value]);
 
 	useEffect(() => {
+		if (open && active >= 0 && keyboardNavigationRef.current)
+			document.getElementById(listId + '-option-' + active)?.scrollIntoView?.({ block: 'nearest' });
+	}, [active, listId, open]);
+
+	useEffect(() => {
 		inputRef.current?.setCustomValidity(
 			required && committedValue === null ? 'Selecione uma opção' : '',
 		);
 	}, [committedValue, required]);
 
-	const move = (direction: 'first' | 'last' | 'next' | 'previous') => {
+	const move = (direction: 'next' | 'previous') => {
 		if (!open) setOpen(true);
-		if (enabledIndices.length === 0) return;
+		if (loading || error || enabledIndices.length === 0) return;
+		keyboardNavigationRef.current = true;
 		const position = enabledIndices.indexOf(active);
 		const next =
-			direction === 'first'
-				? 0
-				: direction === 'last'
+			direction === 'next'
+				? (position + 1) % enabledIndices.length
+				: position < 0
 					? enabledIndices.length - 1
-					: direction === 'next'
-						? (position + 1) % enabledIndices.length
-						: position < 0
-							? enabledIndices.length - 1
-							: (position - 1 + enabledIndices.length) % enabledIndices.length;
+					: (position - 1 + enabledIndices.length) % enabledIndices.length;
 		setActiveIndex(enabledIndices[next]!);
 	};
-
 	return (
 		<div className="ads-combobox relative w-full min-w-0" ref={rootRef}>
+			<span role="status" aria-live="polite" className="sr-only">
+				{open ? (loading ? loadingText : error || (matches.length === 0 ? emptyText : null)) : null}
+			</span>
 			<div className="relative">
 				<input
 					{...inputProps}
 					aria-activedescendant={
-				open && !loading && !error && active >= 0 ? listId + '-option-' + active : undefined
-			}
+						open && !loading && !error && active >= 0 ? listId + '-option-' + active : undefined
+					}
 					aria-autocomplete="list"
 					aria-busy={loading || undefined}
 					aria-controls={open ? listId : undefined}
@@ -229,7 +250,8 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 					autoComplete="off"
 					className={classNames(
 						formControlClasses(size, validationState, className),
-						clearable ? 'pr-16' : 'pr-8',
+						clearable ? 'pe-[4.5rem]' : 'pe-9',
+						selectedVisual ? 'ads-combobox__input--visual' : undefined,
 					)}
 					disabled={disabled}
 					id={inputId}
@@ -270,13 +292,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 						if (event.key === 'ArrowDown' || event.key === 'ArrowUp') {
 							event.preventDefault();
 							move(event.key === 'ArrowDown' ? 'next' : 'previous');
-						} else if (event.key === 'Home' && open) {
-							event.preventDefault();
-							move('first');
-						} else if (event.key === 'End' && open) {
-							event.preventDefault();
-							move('last');
-						} else if (event.key === 'Enter' && open && active >= 0) {
+						} else if (event.key === 'Enter' && open && !loading && !error && active >= 0) {
 							event.preventDefault();
 							const option = matches[active];
 							if (option) choose(option);
@@ -287,7 +303,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 							if (!event.shiftKey && open && error && onRetry) {
 								event.preventDefault();
 								retryRef.current?.focus({ preventScroll: true });
-							} else {
+							} else if (open) {
 								dismiss();
 							}
 						}
@@ -304,21 +320,26 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 					type="text"
 					value={text}
 				/>
+				{selectedVisual ? (
+					<span className="ads-combobox__selected-visual" aria-hidden="true">
+						<OptionVisual option={selected!} />
+					</span>
+				) : null}
 				{clearable && (selectedValue !== null || text.length > 0) && !disabled && !readOnly ? (
 					<button
 						aria-label={clearLabel}
-						className="ads-combobox__clear absolute inset-y-0 right-8 px-1 text-text-muted hover:text-text focus-visible:outline-2 focus-visible:outline-focus-ring"
+						className="ads-combobox__clear absolute inset-y-0 end-9 flex w-8 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-text-muted hover:text-text focus-visible:outline-2 focus-visible:outline-focus-ring"
 						onClick={clear}
 						onMouseDown={(event) => event.preventDefault()}
 						type="button"
 					>
-						×
+						<AdsIcon name="close" size="sm" />
 					</button>
 				) : null}
 				<button
-					aria-label={open ? 'Fechar opções' : 'Mostrar opções'}
+					aria-label="Mostrar opções"
 					aria-expanded={open}
-					className="ads-combobox__toggle absolute inset-y-0 right-1 px-2 text-text-muted hover:text-text focus-visible:outline-2 focus-visible:outline-focus-ring disabled:opacity-50"
+					className="ads-combobox__toggle absolute inset-y-0 end-1 flex w-8 cursor-pointer items-center justify-center border-0 bg-transparent p-0 text-text-muted hover:text-text focus-visible:outline-2 focus-visible:outline-focus-ring disabled:cursor-not-allowed disabled:opacity-50"
 					disabled={disabled || readOnly}
 					onClick={() => {
 						const next = !open;
@@ -331,88 +352,154 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 					onMouseDown={(event) => event.preventDefault()}
 					type="button"
 				>
-					<span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
+					<AdsIcon name="chevronDown" size="sm" className={open ? 'rotate-180' : undefined} />
 				</button>
 			</div>
 			{name ? (
-				<input disabled={disabled} name={name} type="hidden" value={committedValue ?? ''} />
+				<input
+					disabled={disabled}
+					form={inputProps.form}
+					name={name}
+					type="hidden"
+					value={committedValue ?? ''}
+				/>
 			) : null}
 			{open ? (
 				<OverlayPortal>
-					<ul
-						aria-label="Sugestões"
+					<section
+						aria-label="Sugestões de pesquisa"
 						className="ads-combobox__list fixed z-[var(--ads-layer-overlay)] m-0 max-h-64 overflow-y-auto overscroll-contain rounded-md border border-border bg-surface-raised p-1 font-sans text-sm text-text shadow-md"
-						id={listId}
 						ref={position.attachContent}
-						role="listbox"
 						style={{
 							...position.style,
 							width: Math.max(200, rootRef.current?.getBoundingClientRect().width ?? 200),
 							maxWidth: 'calc(100vw - 16px)',
 						}}
 					>
-						{loading ? (
-							<li className="px-3 py-2 text-text-muted" role="presentation">
-								<span aria-live="polite" role="status">{loadingText}</span>
-							</li>
-						) : error ? (
-							<li
-							className="flex items-center justify-between gap-2 px-3 py-2 text-form-invalid"
-							role="presentation"
+						<div
+							aria-hidden="true"
+							className={
+								loading || error || matches.length === 0 ? 'px-3 py-2 text-text-muted' : 'sr-only'
+							}
 						>
-								<span role="status">{error}</span>
-								{onRetry ? (
-									<button
-										className="underline"
-										onClick={() => {
-											onRetry();
-											inputRef.current?.focus({ preventScroll: true });
+							{loading ? loadingText : error || (matches.length === 0 ? emptyText : null)}
+						</div>
+						<ul
+							aria-label="Sugestões"
+							id={listId}
+							role="listbox"
+							hidden={Boolean(loading || error || matches.length === 0)}
+							className="m-0 list-none p-0"
+						>
+							{!loading &&
+								!error &&
+								matches.map((option, index) => (
+									<li
+										aria-disabled={option.disabled || undefined}
+										aria-selected={committedValue === option.value}
+										className={classNames(
+											'ads-combobox__option flex items-center gap-2 cursor-pointer rounded px-3 py-2',
+											option.disabled
+												? 'cursor-not-allowed opacity-50'
+												: index === active
+													? 'bg-surface-selected text-on-surface-selected'
+													: 'hover:bg-surface-hover',
+										)}
+										id={listId + '-option-' + index}
+										key={option.value}
+										onClick={() => choose(option)}
+										onMouseDown={(event) => event.preventDefault()}
+										onMouseEnter={() => {
+											keyboardNavigationRef.current = false;
+											if (!option.disabled) setActiveIndex(index);
 										}}
-										ref={retryRef}
-										type="button"
+										role="option"
 									>
-										Tentar novamente
-									</button>
-								) : null}
-							</li>
-						) : matches.length === 0 ? (
-							<li className="px-3 py-2 text-text-muted" role="presentation">
-								<span aria-live="polite" role="status">{emptyText}</span>
-							</li>
-						) : (
-							matches.map((option, index) => (
-								<li
-									aria-disabled={option.disabled || undefined}
-									aria-selected={committedValue === option.value}
-									className={classNames(
-										'ads-combobox__option cursor-pointer rounded px-3 py-2',
-										option.disabled
-											? 'cursor-not-allowed opacity-50'
-											: index === active
-												? 'bg-surface-selected text-on-surface-selected'
-												: 'hover:bg-surface-hover',
-									)}
-									id={listId + '-option-' + index}
-									key={option.value}
-									onClick={() => choose(option)}
-									onMouseDown={(event) => event.preventDefault()}
-									onMouseEnter={() => !option.disabled && setActiveIndex(index)}
-									role="option"
-								>
-									{renderOption ? renderOption(option) : (
-										<span className="flex flex-col gap-0.5">
-											<span>{option.label}</span>
-											{option.description ? (
-												<span className="text-xs opacity-80">{option.description}</span>
-											) : null}
-										</span>
-									)}
-								</li>
-							))
-						)}
-					</ul>
+										{showOptionVisuals && (option.avatar || option.icon) ? (
+											<span className="ads-combobox__visual" aria-hidden="true">
+												<OptionVisual option={option} />
+											</span>
+										) : null}
+										{renderOption ? (
+											renderOption(option)
+										) : (
+											<span className="flex flex-col gap-0.5">
+												<span>{option.label}</span>
+												{option.description ? (
+													<span className="text-xs opacity-80">{option.description}</span>
+												) : null}
+											</span>
+										)}
+									</li>
+								))}
+						</ul>
+						{error && onRetry ? (
+							<button
+								className="underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-focus-ring"
+								onKeyDown={(event) => {
+									if (event.key !== 'Tab') return;
+									if (event.shiftKey) {
+										event.preventDefault();
+										event.stopPropagation();
+										inputRef.current?.focus({ preventScroll: true });
+										return;
+									}
+									const root = rootRef.current;
+									const dialog = root?.closest('[role="dialog"], [role="alertdialog"]');
+									const candidates = Array.from(
+										(dialog ?? document).querySelectorAll<HTMLElement>(
+											'a[href], button:not([disabled]), input:not([disabled]):not([type="hidden"]), select:not([disabled]), textarea:not([disabled]), [tabindex]:not([tabindex="-1"])',
+										),
+									).filter(
+										(element) =>
+											root &&
+											!root.contains(element) &&
+											!listRef.current?.contains(element) &&
+											element.getClientRects().length > 0,
+									);
+									const next =
+										candidates.find(
+											(element) =>
+												root &&
+												Boolean(
+													root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
+												),
+										) ?? (dialog ? (candidates[0] ?? inputRef.current) : null);
+									if (next) {
+										event.preventDefault();
+										event.stopPropagation();
+										setOpen(false);
+										next.focus();
+									}
+								}}
+								ref={retryRef}
+								onMouseDown={(event) => event.preventDefault()}
+								type="button"
+								onBlur={(event) => {
+									if (
+										!rootRef.current?.contains(event.relatedTarget) &&
+										!listRef.current?.contains(event.relatedTarget)
+									)
+										setOpen(false);
+								}}
+								onClick={() => {
+									onRetry();
+									inputRef.current?.focus({ preventScroll: true });
+								}}
+							>
+								Tentar novamente
+							</button>
+						) : null}
+					</section>
 				</OverlayPortal>
 			) : null}
 		</div>
 	);
 });
+
+function OptionVisual({ option }: { option: AdsComboboxOption }) {
+	if (option.avatar)
+		return <AdsAvatar size="sm" fallback={option.avatar.fallback} src={option.avatar.src} />;
+	if (option.icon) return <AdsIcon name={option.icon} size="sm" />;
+	return null;
+}

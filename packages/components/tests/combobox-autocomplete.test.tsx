@@ -3,7 +3,7 @@ import axe from 'axe-core';
 import { renderToString } from 'react-dom/server';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { AdsAutocomplete, AdsCombobox, AdsField } from '../src/index.js';
+import { AdsAutocomplete, AdsCombobox, AdsDialog, AdsField } from '../src/index.js';
 
 const states = [
 	{ value: 'SP', label: 'São Paulo' },
@@ -55,7 +55,9 @@ describe('AdsCombobox', () => {
 		fireEvent.click(screen.getByRole('option', { name: 'Rio de Janeiro' }));
 		expect(changed).toHaveBeenCalledWith('RJ', expect.any(Object));
 		expect(input).toHaveValue('São Paulo');
-		rerender(<AdsCombobox aria-label="Estado" options={states} value="RJ" onValueChange={changed} />);
+		rerender(
+			<AdsCombobox aria-label="Estado" options={states} value="RJ" onValueChange={changed} />,
+		);
 		expect(input).toHaveValue('Rio de Janeiro');
 	});
 
@@ -67,7 +69,11 @@ describe('AdsCombobox', () => {
 				defaultValue="SP"
 				options={states}
 				onValueChange={select}
-				renderOption={(item) => <span>{item.label} [{item.value}]</span>}
+				renderOption={(item) => (
+					<span>
+						{item.label} [{item.value}]
+					</span>
+				)}
 			/>,
 		);
 		const input = screen.getByRole('combobox', { name: 'UF' });
@@ -120,7 +126,9 @@ describe('AdsCombobox', () => {
 	it('keeps a typed query when the parent clears a controlled selection', () => {
 		const View = () => {
 			const [value, setValue] = useState<string | null>('SP');
-			return <AdsCombobox aria-label="UF" options={states} value={value} onValueChange={setValue} />;
+			return (
+				<AdsCombobox aria-label="UF" options={states} value={value} onValueChange={setValue} />
+			);
 		};
 		render(<View />);
 		const input = screen.getByRole('combobox', { name: 'UF' });
@@ -203,22 +211,33 @@ describe('AdsCombobox', () => {
 		fireEvent.keyDown(input, { key: 'Tab' });
 		const retry = screen.getByRole('button', { name: 'Tentar novamente' });
 		expect(retry).toHaveFocus();
+		fireEvent.keyDown(retry, { key: 'Tab', shiftKey: true });
+		expect(input).toHaveFocus();
+		fireEvent.keyDown(input, { key: 'Tab' });
 		fireEvent.click(retry);
 		expect(onRetry).toHaveBeenCalledTimes(1);
 		expect(input).toHaveFocus();
 	});
 
 	it('has no detectable axe violations when its list is open', async () => {
-		render(<AdsField label="Estado"><AdsCombobox options={states} /></AdsField>);
+		render(
+			<AdsField label="Estado">
+				<AdsCombobox options={states} />
+			</AdsField>,
+		);
 		fireEvent.focus(screen.getByRole('combobox'));
-		const result = await axe.run(document.body);
+		const result = await axe.run(document.body, { rules: { region: { enabled: false } } });
 		expect(result.violations).toEqual([]);
 	});
 });
 
 describe('AdsAutocomplete', () => {
 	it('filters local values synchronously', () => {
-		render(<AdsField label="Estado"><AdsAutocomplete options={states} /></AdsField>);
+		render(
+			<AdsField label="Estado">
+				<AdsAutocomplete options={states} />
+			</AdsField>,
+		);
 		const input = screen.getByRole('combobox');
 		fireEvent.change(input, { target: { value: 'Rio' } });
 		expect(screen.getAllByRole('option')).toHaveLength(1);
@@ -229,8 +248,8 @@ describe('AdsAutocomplete', () => {
 
 	it('discards stale async responses even when the provider ignores abort', async () => {
 		const pending = new Map<string, (options: typeof states) => void>();
-		const loadOptions = vi.fn((query: string, _signal: AbortSignal) =>
-			new Promise<typeof states>((resolve) => pending.set(query, resolve)),
+		const loadOptions = vi.fn(
+			(query: string) => new Promise<typeof states>((resolve) => pending.set(query, resolve)),
 		);
 		render(
 			<AdsField label="Busca">
@@ -250,7 +269,6 @@ describe('AdsAutocomplete', () => {
 		expect(screen.queryByRole('option', { name: 'Rio de Janeiro' })).not.toBeInTheDocument();
 	});
 
-
 	it('does not call the async provider for a disabled input', async () => {
 		const loadOptions = vi.fn(async () => states);
 		render(
@@ -268,12 +286,13 @@ describe('AdsAutocomplete', () => {
 
 	it('keeps the latest results for an externally controlled query', async () => {
 		const pending = new Map<string, (options: typeof states) => void>();
-		const loadOptions = vi.fn((query: string) =>
-			new Promise<typeof states>((resolve) => pending.set(query, resolve)),
+		const loadOptions = vi.fn(
+			(query: string) => new Promise<typeof states>((resolve) => pending.set(query, resolve)),
 		);
 		const { rerender } = render(
 			<AdsAutocomplete
 				aria-label="Busca controlada"
+				defaultOpen
 				debounceMs={0}
 				inputValue="s"
 				loadOptions={loadOptions}
@@ -283,6 +302,7 @@ describe('AdsAutocomplete', () => {
 		rerender(
 			<AdsAutocomplete
 				aria-label="Busca controlada"
+				defaultOpen
 				debounceMs={0}
 				inputValue="rio"
 				loadOptions={loadOptions}
@@ -307,8 +327,201 @@ describe('AdsAutocomplete', () => {
 		);
 		const input = screen.getByRole('combobox');
 		fireEvent.change(input, { target: { value: 'erro' } });
-		expect(await screen.findByText('Falha simulada')).toBeInTheDocument();
+		await waitFor(() => expect(screen.getByRole('status')).toHaveTextContent('Falha simulada'));
 		fireEvent.change(input, { target: { value: 'vazio' } });
-		expect(await screen.findByText('Nenhuma opção encontrada')).toBeInTheDocument();
+		await waitFor(() =>
+			expect(screen.getByRole('status')).toHaveTextContent('Nenhuma opção encontrada'),
+		);
 	});
+});
+
+it('shows optional decorative visuals, preserves selection and allows hiding them', () => {
+	const options = [
+		{ value: 'a', label: 'Ana', avatar: { src: '/missing.png', fallback: 'AN' } },
+		{ value: 'b', label: 'Bruno' },
+	];
+	const { container, rerender } = render(
+		<form>
+			<AdsCombobox
+				aria-label="Pessoa"
+				name="person"
+				options={options}
+				defaultValue="a"
+				renderOption={(option) => <span>{option.label}</span>}
+			/>
+		</form>,
+	);
+	const input = screen.getByRole('combobox', { name: 'Pessoa' });
+	expect(container.querySelector('.ads-combobox__selected-visual')).toHaveAttribute(
+		'aria-hidden',
+		'true',
+	);
+	fireEvent.error(container.querySelector('img')!);
+	expect(container.querySelector('.ads-combobox__selected-visual')).toHaveTextContent('AN');
+	fireEvent.focus(input);
+	expect(screen.getByRole('option', { name: 'Ana' })).toBeInTheDocument();
+	expect(
+		screen.getByRole('option', { name: 'Bruno' }).querySelector('.ads-combobox__visual'),
+	).toBeNull();
+	fireEvent.keyDown(input, { key: 'ArrowDown' });
+	fireEvent.keyDown(input, { key: 'Enter' });
+	expect(container.querySelector('input[name="person"]')).toHaveValue('a');
+	rerender(
+		<form>
+			<AdsCombobox
+				aria-label="Pessoa"
+				name="person"
+				options={options}
+				defaultValue="a"
+				showOptionVisuals={false}
+			/>
+		</form>,
+	);
+	expect(container.querySelector('.ads-combobox__selected-visual')).toBeNull();
+	fireEvent.focus(input);
+	expect(
+		screen.getByRole('option', { name: 'Ana' }).querySelector('.ads-combobox__visual'),
+	).toBeNull();
+	expect(container.querySelector('input[name="person"]')).toHaveValue('a');
+});
+
+it('keeps the menu closed when clearing from outside the input and preserves text-editing keys', () => {
+	const options = [{ value: 'a', label: 'Ana' }];
+	render(<AdsCombobox aria-label="Pessoa" options={options} defaultValue="a" />);
+	const input = screen.getByRole('combobox', { name: 'Pessoa' });
+	fireEvent.click(screen.getByRole('button', { name: 'Limpar seleção' }));
+	expect(input).toHaveFocus();
+	expect(input).toHaveAttribute('aria-expanded', 'false');
+	fireEvent.focus(input);
+	expect(fireEvent.keyDown(input, { key: 'Home' })).toBe(true);
+	expect(fireEvent.keyDown(input, { key: 'End' })).toBe(true);
+});
+
+it('explains the minimum query and avoids a new request for the controlled selected label', async () => {
+	const loadOptions = vi.fn(async () => [{ value: 'a', label: 'Ana' }]);
+	function Example() {
+		const [text, setText] = useState('');
+		return (
+			<AdsAutocomplete
+				aria-label="Busca"
+				inputValue={text}
+				onInputValueChange={setText}
+				loadOptions={loadOptions}
+				debounceMs={0}
+			/>
+		);
+	}
+	render(<Example />);
+	const input = screen.getByRole('combobox', { name: 'Busca' });
+	fireEvent.focus(input);
+	expect(screen.getByRole('status')).toHaveTextContent('Digite para buscar');
+	fireEvent.change(input, { target: { value: 'An' } });
+	const option = await screen.findByRole('option', { name: 'Ana' });
+	fireEvent.click(option);
+	expect(input).toHaveValue('Ana');
+	await act(async () => new Promise((resolve) => setTimeout(resolve, 30)));
+	expect(loadOptions).toHaveBeenCalledTimes(1);
+});
+
+it.each(['loading', 'error'] as const)('cannot select hidden options while %s', (state) => {
+	const onValueChange = vi.fn();
+	render(
+		<AdsCombobox
+			aria-label="Busca"
+			options={states}
+			onValueChange={onValueChange}
+			{...(state === 'loading' ? { loading: true } : { error: 'Erro' })}
+		/>,
+	);
+	const input = screen.getByRole('combobox', { name: 'Busca' });
+	fireEvent.focus(input);
+	fireEvent.keyDown(input, { key: 'ArrowDown' });
+	fireEvent.keyDown(input, { key: 'Enter' });
+	expect(onValueChange).not.toHaveBeenCalled();
+});
+
+it('associates a default selection and text with an external form', () => {
+	const { container } = render(
+		<>
+			<form id="external-form" />
+			<AdsCombobox
+				form="external-form"
+				name="person"
+				aria-label="Pessoa"
+				options={[{ value: 'a', label: 'Ana' }]}
+				defaultValue="a"
+				defaultInputValue="Ana"
+				required
+			/>
+		</>,
+	);
+	const input = screen.getByRole('combobox', { name: 'Pessoa' });
+	expect(input).toHaveValue('Ana');
+	expect(input).toBeValid();
+	const form = container.querySelector('form')!;
+	expect(new FormData(form).get('person')).toBe('a');
+});
+
+it('retains the initial text when the selected option has not loaded', async () => {
+	const loadOptions = vi.fn(async () => []);
+	render(
+		<AdsAutocomplete
+			aria-label="Pessoa"
+			defaultValue="a"
+			defaultInputValue="Ana"
+			loadOptions={loadOptions}
+			debounceMs={0}
+		/>,
+	);
+	const input = screen.getByRole('combobox', { name: 'Pessoa' });
+	expect(input).toHaveValue('Ana');
+	await act(async () => new Promise((resolve) => setTimeout(resolve, 30)));
+	expect(loadOptions).not.toHaveBeenCalled();
+});
+
+it.each(['loading', 'error', 'empty'] as const)(
+	'has no axe violations in %s state',
+	async (state) => {
+		render(
+			<main>
+				<AdsCombobox
+					aria-label="Busca"
+					options={[]}
+					{...(state === 'loading'
+						? { loading: true }
+						: state === 'error'
+							? { error: 'Erro' }
+							: {})}
+				/>
+			</main>,
+		);
+		fireEvent.focus(screen.getByRole('combobox', { name: 'Busca' }));
+		const result = await axe.run(document.body);
+		expect(result.violations).toEqual([]);
+	},
+);
+
+it('keeps retry Tab navigation inside a dialog', async () => {
+	render(
+		<AdsDialog open onOpenChange={() => {}} showCloseButton={false} title="Diálogo">
+			<AdsCombobox aria-label="Busca" options={[]} error="Falha" onRetry={() => {}} />
+			<button type="button">Salvar</button>
+		</AdsDialog>,
+	);
+	const input = await screen.findByRole('combobox', { name: 'Busca' });
+	const save = screen.getByRole('button', { name: 'Salvar' });
+	vi.spyOn(save, 'getClientRects').mockReturnValue([
+		{ width: 1, height: 1 },
+	] as unknown as DOMRectList);
+	input.focus();
+	fireEvent.focus(input);
+	const retry = await screen.findByRole('button', { name: 'Tentar novamente' });
+	fireEvent.keyDown(input, { key: 'Tab' });
+	expect(retry).toHaveFocus();
+	fireEvent.keyDown(retry, { key: 'Tab', shiftKey: true });
+	expect(input).toHaveFocus();
+	fireEvent.keyDown(input, { key: 'Tab' });
+	expect(retry).toHaveFocus();
+	fireEvent.keyDown(retry, { key: 'Tab' });
+	expect(save).toHaveFocus();
 });

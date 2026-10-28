@@ -86,7 +86,8 @@ export const catalogEntries = [
 		group: 'Formulários',
 		slug: 'combobox',
 		demo: 'Combobox',
-		description: 'Seleção com pesquisa, teclado e renderização customizada.',
+		description:
+			'Seleção pesquisável em uma lista fornecida pela aplicação, que pode ser atualizada dinamicamente.',
 		href: '/catalogo/combobox',
 	},
 	{
@@ -94,7 +95,8 @@ export const catalogEntries = [
 		group: 'Formulários',
 		slug: 'autocomplete',
 		demo: 'Autocomplete',
-		description: 'Busca local ou remota com debounce, loading, vazio e erro.',
+		description:
+			'Busca em lista local ou assíncrona, com debounce e tratamento de carregamento, vazio e erro.',
 		href: '/catalogo/autocomplete',
 	},
 	{

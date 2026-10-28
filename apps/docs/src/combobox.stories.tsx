@@ -32,17 +32,43 @@ export const Basic: Story = {
 export const States: Story = {
 	render: () => (
 		<div className="flex max-w-md flex-col gap-4">
-			<AdsField label="Vazio"><AdsCombobox options={[]} /></AdsField>
+			<AdsField label="Vazio">
+				<AdsCombobox options={[]} />
+			</AdsField>
 			<AdsField error="Selecione um estado" label="Inválido" validationState="error">
 				<AdsCombobox options={options} />
 			</AdsField>
-			<AdsField label="Desabilitado"><AdsCombobox disabled options={options} /></AdsField>
+			<AdsField label="Desabilitado">
+				<AdsCombobox disabled options={options} />
+			</AdsField>
 			<AdsField label="Opção customizada">
 				<AdsCombobox
 					options={options}
-					renderOption={(option) => <span>{option.label} [{option.value}]</span>}
+					renderOption={(option) => (
+						<span>
+							{option.label} [{option.value}]
+						</span>
+					)}
 				/>
 			</AdsField>
 		</div>
 	),
+};
+
+export const VisualOptions: Story = {
+	args: {
+		options: [
+			{ value: 'a', label: 'Com ícone', icon: 'building' },
+			{ value: 'b', label: 'Sem ícone' },
+		],
+		defaultValue: 'a',
+		renderOption: (option) => (
+			<span>
+				{option.label} [{option.value}]
+			</span>
+		),
+	},
+};
+export const VisualOptionsDisabled: Story = {
+	args: { ...VisualOptions.args, showOptionVisuals: false },
 };

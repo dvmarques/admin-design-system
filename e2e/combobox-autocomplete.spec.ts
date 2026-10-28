@@ -30,14 +30,23 @@ test('autocomplete: local e API simulada, erro, vazio e debounce', async ({ page
 	await expect(page.getByLabel('Valor da busca local')).toHaveText('MG');
 	const remote = page.getByRole('combobox', { name: 'Busca remota simulada' });
 	await remote.fill('erro');
-	await expect(page.getByText('Falha simulada da API')).toBeVisible();
+	await expect(page.getByRole('status').filter({ hasText: 'Falha simulada da API' })).toBeVisible();
+	await remote.press('Tab');
+	const retry = page.getByRole('button', { name: 'Tentar novamente' });
+	await expect(retry).toBeFocused();
+	await retry.press('Shift+Tab');
+	await expect(remote).toBeFocused();
+	await remote.press('Tab');
+	await retry.press('Tab');
+	await expect(page.getByLabel('Debounce (ms)')).toBeFocused();
 	await remote.fill('vazio');
-	await expect(page.getByText('Nenhuma opção encontrada')).toBeVisible();
+	await expect(
+		page.getByRole('status').filter({ hasText: 'Nenhuma opção encontrada' }),
+	).toBeVisible();
 	await remote.fill('Rio');
 	await expect(page.getByRole('option', { name: 'Rio de Janeiro' })).toBeVisible();
 	await expectNoAxeViolations(page);
 });
-
 
 test('combobox em diálogo: lista em portal, Escape não fecha o modal', async ({ page }) => {
 	await page.goto('/catalogo/combobox');
@@ -51,7 +60,6 @@ test('combobox em diálogo: lista em portal, Escape não fecha o modal', async (
 	await page.keyboard.press('Escape');
 	await expect(dialog).toHaveCount(0);
 });
-
 
 test('editar uma seleção limpa o value anterior no formulário', async ({ page }) => {
 	await page.goto('/catalogo/combobox');

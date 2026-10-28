@@ -29,7 +29,9 @@ const applications: NavigationItem[] = [
 	{ href: '/data-display', icon: { initials: 'Ex' }, label: 'Exibição de dados' },
 ];
 function catalogItems(entries: (typeof catalogEntries)[number][]): NavigationItem[] {
-	return entries.map((entry) => ({ href: entry.href, label: entry.name.replace(/^Ads/, '') }));
+	return entries
+		.map((entry) => ({ href: entry.href, label: entry.name.replace(/^Ads/, '') }))
+		.sort((a, b) => a.label.localeCompare(b.label, 'pt-BR'));
 }
 const categoryIcons: Record<string, NavigationIcon> = {
 	Básicos: { initials: 'Bá' },

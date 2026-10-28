@@ -1470,25 +1470,37 @@ export function AlertDemo() {
 	);
 }
 
-const stateOptions = [
-	{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },
-	{ value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
-	{ value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
-	{ value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
-];
-
 export function ComboboxDemo() {
+	const stateOptions = [
+		{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },
+		{ value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
+		{ value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
+		{ value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
+	];
 	const [uf, setUf] = useState<string | null>('SP');
 	const [dialogOpen, setDialogOpen] = useState(false);
+	const [showVisuals, setShowVisuals] = useState(true);
 	return (
 		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
+			<AdsSwitch
+				label="Mostrar ícones nas opções"
+				checked={showVisuals}
+				onChange={(event) => setShowVisuals(event.target.checked)}
+			/>
 			<AdsField description="Digite, use as setas ou pressione Enter." label="Estado (controlado)">
 				<AdsCombobox
 					name="uf"
-					options={stateOptions}
+					options={stateOptions.map((option, index) =>
+						index === 0 ? { ...option, icon: 'building' as const } : option,
+					)}
+					showOptionVisuals={showVisuals}
 					onValueChange={setUf}
 					value={uf}
-					renderOption={(option) => <span>{option.label} [{option.value}]</span>}
+					renderOption={(option) => (
+						<span>
+							{option.label} [{option.value}]
+						</span>
+					)}
 				/>
 			</AdsField>
 			<output aria-label="Valor selecionado">{uf ?? 'Nenhum'}</output>
@@ -1513,32 +1525,54 @@ export function ComboboxDemo() {
 	);
 }
 
-const asyncStates = [
-	{ value: 'SP', label: 'São Paulo' },
-	{ value: 'RJ', label: 'Rio de Janeiro' },
-	{ value: 'MG', label: 'Minas Gerais' },
-	{ value: 'SC', label: 'Santa Catarina' },
-	{ value: 'RS', label: 'Rio Grande do Sul' },
-];
-async function loadStateOptions(query: string, _signal: AbortSignal) {
-	void _signal;
-	// Ignora o abort de propósito: a lista não pode reverter com respostas fora de ordem.
-	await new Promise((resolve) => setTimeout(resolve, query.length < 3 ? 700 : 180));
-	if (query.toLocaleLowerCase().includes('erro')) throw new Error('Falha simulada da API');
-	if (query.toLocaleLowerCase().includes('vazio')) return [];
-	return asyncStates.filter((option) =>
-		option.label.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-	);
-}
-
 export function AutocompleteDemo() {
-	const [value, setValue] = useState<string | null>(null);
+	const stateOptions = [
+		{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },
+		{ value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
+		{ value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
+		{ value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
+	];
+	const asyncStates = [
+		{ value: 'SP', label: 'São Paulo' },
+		{ value: 'RJ', label: 'Rio de Janeiro' },
+		{ value: 'MG', label: 'Minas Gerais' },
+		{ value: 'SC', label: 'Santa Catarina' },
+		{ value: 'RS', label: 'Rio Grande do Sul' },
+	];
+	async function loadStateOptions(query: string, _signal: AbortSignal) {
+		void _signal;
+		// Ignora o abort de propósito: a lista não pode reverter com respostas fora de ordem.
+		await new Promise((resolve) => setTimeout(resolve, query.length < 3 ? 700 : 180));
+		if (query.toLocaleLowerCase().includes('erro')) throw new Error('Falha simulada da API');
+		if (query.toLocaleLowerCase().includes('vazio')) return [];
+		return asyncStates.filter((option) =>
+			option.label.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+		);
+	}
+	const [value, setValue] = useState<string | null>('SP');
 	const [debounceMs, setDebounceMs] = useState(250);
+	const [showVisuals, setShowVisuals] = useState(true);
 	return (
 		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
+			<AdsSwitch
+				label="Mostrar avatares nas opções"
+				checked={showVisuals}
+				onChange={(event) => setShowVisuals(event.target.checked)}
+			/>
 			<AdsField label="Busca local" description="Filtragem instantânea por nome ou sigla.">
 				<AdsAutocomplete
-					options={stateOptions}
+					options={stateOptions.map((option, index) =>
+						index === 0
+							? {
+									...option,
+									avatar: {
+										src: (process.env.NEXT_PUBLIC_BASE_PATH ?? '') + '/icon.svg',
+										fallback: 'SP',
+									},
+								}
+							: option,
+					)}
+					showOptionVisuals={showVisuals}
 					placeholder="Busque um estado"
 					onValueChange={setValue}
 					value={value}
@@ -1557,7 +1591,10 @@ export function AutocompleteDemo() {
 				/>
 			</AdsField>
 			<AdsField label="Debounce (ms)">
-				<AdsSelect value={debounceMs} onChange={(event) => setDebounceMs(Number(event.target.value))}>
+				<AdsSelect
+					value={debounceMs}
+					onChange={(event) => setDebounceMs(Number(event.target.value))}
+				>
 					<option value={0}>Imediato</option>
 					<option value={250}>250 ms</option>
 					<option value={500}>500 ms</option>

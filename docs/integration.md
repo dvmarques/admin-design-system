@@ -1592,52 +1592,54 @@ Veja as stories `Primitives/LoadingText` e o catálogo `/catalogo/loading-text`.
 
 ## AdsCombobox e AdsAutocomplete — migração de react-select (#142)
 
-AdsCombobox permite selecionar uma opção entre alternativas com value e label distintos; AdsAutocomplete utiliza a mesma base e faz busca em options ou em loadOptions(query, signal). Ambos aceitam defaultValue ou value/onValueChange; inputValue/onInputValueChange controla o texto separadamente. O callback onInputValueChange recebe também o motivo (input, select ou clear). renderOption personaliza cada item. Os papéis ARIA, o popover em portal, o foco e os IDs estáveis são responsabilidade da biblioteca.
+AdsCombobox pesquisa e seleciona entre opções fornecidas pela aplicação, que pode atualizá-las dinamicamente. AdsAutocomplete usa a mesma base e também aceita opções locais, mas oferece loadOptions(query, signal) para gerenciar buscas assíncronas, debounce e descarte de respostas obsoletas. Ambos aceitam defaultValue ou value/onValueChange; inputValue/onInputValueChange controla o texto separadamente. O callback onInputValueChange recebe também o motivo (input, select ou clear). renderOption personaliza cada item. Os papéis ARIA, o popover em portal, o foco e os IDs estáveis são responsabilidade da biblioteca.
 
 ### Exemplo local
 
-~~~tsx
+```tsx
 'use client';
 import { AdsCombobox, AdsAutocomplete, AdsField } from '@admin-ds/components';
 
 const options = [
-  { value: 'SP', label: 'São Paulo' },
-  { value: 'RJ', label: 'Rio de Janeiro' },
+	{ value: 'SP', label: 'São Paulo' },
+	{ value: 'RJ', label: 'Rio de Janeiro' },
 ];
 export function Estado() {
-  return (
-    <AdsField label="Estado">
-      <AdsAutocomplete options={options} name="uf" defaultValue="SP" />
-    </AdsField>
-  );
+	return (
+		<AdsField label="Estado">
+			<AdsAutocomplete options={options} name="uf" defaultValue="SP" />
+		</AdsField>
+	);
 }
-~~~
+```
 
 ### Exemplo remoto
 
-~~~tsx
+```tsx
 'use client';
 import { AdsAutocomplete, AdsField } from '@admin-ds/components';
 
 export function EstadoRemoto() {
-  return (
-    <AdsField label="Estado remoto">
-      <AdsAutocomplete
-        name="uf"
-        debounceMs={300}
-        loadOptions={async (query, signal) => {
-          const response = await fetch('/api/estados?q=' + encodeURIComponent(query), { signal });
-          if (!response.ok) throw new Error('Falha na consulta');
-          return response.json();
-        }}
-      />
-    </AdsField>
-  );
+	return (
+		<AdsField label="Estado remoto">
+			<AdsAutocomplete
+				name="uf"
+				debounceMs={300}
+				loadOptions={async (query, signal) => {
+					const response = await fetch('/api/estados?q=' + encodeURIComponent(query), { signal });
+					if (!response.ok) throw new Error('Falha na consulta');
+					return response.json();
+				}}
+			/>
+		</AdsField>
+	);
 }
-~~~
+```
 
 Migração: CampoAutocomplete com lista local corresponde a AdsAutocomplete com options (ou AdsCombobox para seleção base). CampoAutocompleteAsync corresponde a AdsAutocomplete com loadOptions. O formato { value, label } permanece, mas a API de seleção recebe e emite a string value, não o objeto como react-select. O antigo formatOptionLabel vira renderOption. Não são necessários menuPortalTarget nem menuPosition; o sistema existente de overlays fornece portal, tema, empilhamento e reposicionamento dentro de AdsDialog e contêineres com scroll. Consumidores Next.js devem manter a interação em Client Components.
 
 O debounce padrão é 250ms; consultas começam após um caractere. O AbortSignal pode cancelar HTTP, e mesmo provedores que não respeitam o sinal têm respostas obsoletas descartadas. Um texto digitado não se torna automaticamente uma opção válida; ao submeter, o input oculto name contém apenas o value selecionado. Limpar ou selecionar mantém o foco no campo. Para seleção múltipla, use a evolução separada da issue #143.
 
 Ao modificar o texto depois de uma seleção, o componente limpa automaticamente o value anterior e emite onValueChange(null, null); o consumidor deve atualizar o value controlado para evitar enviar valor obsoleto. Resultados assíncronos permanecem vinculados ao termo consultado. O campo desabilitado não inicia novas requisições.
+
+Opções de `AdsCombobox` e `AdsAutocomplete` podem incluir `icon` (nome de `AdsIcon`) ou `avatar: { src, fallback }`; o avatar tem precedência quando ambos são fornecidos. O elemento é decorativo e aparece na lista e na seleção. Use `showOptionVisuals={false}` para ocultar os elementos sem alterar valores. `renderOption` personaliza o conteúdo ao lado do elemento; não repita nele o mesmo ícone. Para opções remotas pré-selecionadas, forneça `selectedOption` com os dados visuais.

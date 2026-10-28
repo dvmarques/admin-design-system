@@ -24,17 +24,27 @@ import { useState } from 'react';
 import { AdsAlert, AdsButton } from '@admin-ds/components';
 
 export function Feedback() {
-  const [open, setOpen] = useState(true);
-  return (
-    <>
-      <AdsButton onClick={() => setOpen(true)}>Mostrar aviso</AdsButton>
-      <AdsAlert variant="warning" appearance="callout" title="Revise os dados"
-        open={open} dismissible onClose={() => setOpen(false)}
-        actions={<AdsButton size="sm" onClick={() => setOpen(false)}>Entendi</AdsButton>}>
-        Existem campos que precisam ser revisados.
-      </AdsAlert>
-    </>
-  );
+	const [open, setOpen] = useState(true);
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)}>Mostrar aviso</AdsButton>
+			<AdsAlert
+				variant="warning"
+				appearance="callout"
+				title="Revise os dados"
+				open={open}
+				dismissible
+				onClose={() => setOpen(false)}
+				actions={
+					<AdsButton size="sm" onClick={() => setOpen(false)}>
+						Entendi
+					</AdsButton>
+				}
+			>
+				Existem campos que precisam ser revisados.
+			</AdsAlert>
+		</>
+	);
 }
 ```
 

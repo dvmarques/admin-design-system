@@ -33,18 +33,20 @@ const variants = {
 const tabbable =
 	'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
 
-/** Next tabbable element after `root` in document order, or the last one before it. */
-function neighborFocusTarget(root: HTMLElement): HTMLElement | null {
+/** Tabbable elements around `root`: those after it in document order, then those before it, nearest first. */
+function neighborFocusTargets(root: HTMLElement): HTMLElement[] {
 	const candidates = Array.from(root.ownerDocument.querySelectorAll<HTMLElement>(tabbable)).filter(
 		(element) =>
 			!root.contains(element) &&
 			!element.closest('[hidden],[inert],fieldset[disabled]') &&
-			element.checkVisibility?.() !== false,
+			element.checkVisibility?.({ visibilityProperty: true, checkVisibilityCSS: true }) !== false,
 	);
-	const following = candidates.find(
-		(element) => root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
-	);
-	return following ?? candidates[candidates.length - 1] ?? null;
+	const isFollowing = (element: HTMLElement) =>
+		Boolean(root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING);
+	return [
+		...candidates.filter(isFollowing),
+		...candidates.filter((e) => !isFollowing(e)).reverse(),
+	];
 }
 
 export type AdsAlertVariant = keyof typeof variants;
@@ -91,16 +93,20 @@ export function AdsAlert({
 	const isControlled = open !== undefined;
 	const visible = isControlled ? open : internalOpen;
 	const rootRef = useRef<HTMLDivElement>(null);
-	const pendingFocus = useRef<HTMLElement | null>(null);
+	const pendingFocus = useRef<HTMLElement[]>([]);
 
 	// Focus would fall back to <body> once the focused close button unmounts; move it to a
 	// stable target, but only if nothing else claimed focus in the meantime.
 	useEffect(() => {
 		const restore = () => {
-			const target = pendingFocus.current;
-			pendingFocus.current = null;
-			const doc = target?.ownerDocument;
-			if (target?.isConnected && doc?.activeElement === doc?.body) target.focus();
+			const targets = pendingFocus.current;
+			pendingFocus.current = [];
+			// Try each candidate until one actually takes focus (some may be unfocusable at runtime).
+			for (const target of targets) {
+				const doc = target.ownerDocument;
+				if (doc.activeElement !== doc.body) break;
+				if (target.isConnected) target.focus();
+			}
 		};
 		if (!visible) restore();
 		return restore;
@@ -115,8 +121,11 @@ export function AdsAlert({
 		const root = rootRef.current;
 		pendingFocus.current =
 			root && root.contains(document.activeElement)
-				? (returnFocusRef?.current ?? neighborFocusTarget(root))
-				: null;
+				? [
+						...(returnFocusRef?.current ? [returnFocusRef.current] : []),
+						...neighborFocusTargets(root),
+					]
+				: [];
 		if (!isControlled) setInternalOpen(false);
 		onClose?.();
 	}
@@ -160,7 +169,7 @@ export function AdsAlert({
 					className="ads-alert-close -mr-1 -mt-1 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-md border border-transparent bg-transparent text-text-muted hover:bg-overlay-close-background-hover hover:text-text focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 					onBlur={(event) => {
 						// A real blur (button still mounted) means the user moved on: drop the pending target.
-						if (event.currentTarget.isConnected) pendingFocus.current = null;
+						if (event.currentTarget.isConnected) pendingFocus.current = [];
 					}}
 					onClick={handleClose}
 					type="button"

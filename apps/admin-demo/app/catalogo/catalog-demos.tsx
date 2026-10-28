@@ -1521,6 +1521,7 @@ const asyncStates = [
   { value: 'RS', label: 'Rio Grande do Sul' },
 ];
 async function loadStateOptions(query: string, _signal: AbortSignal) {
+  void _signal;
   // Ignora o abort de propósito: a lista não pode reverter com respostas fora de ordem.
   await new Promise((resolve) => setTimeout(resolve, query.length < 3 ? 700 : 180));
   if (query.toLocaleLowerCase().includes('erro')) throw new Error('Falha simulada da API');

@@ -56,7 +56,7 @@ describe('AdsCombobox', () => {
     expect(input).toHaveValue('Rio de Janeiro');
   });
 
-  it('filters, skips disabled options, keeps selection on editing, and supports custom rendering', () => {
+  it('filters and skips disabled options while clearing a stale selection', () => {
     const select = vi.fn();
     render(
       <AdsCombobox
@@ -73,7 +73,8 @@ describe('AdsCombobox', () => {
     expect(screen.getByRole('option')).toHaveTextContent('Paraná [PR]');
     fireEvent.keyDown(input, { key: 'ArrowDown' });
     fireEvent.keyDown(input, { key: 'Enter' });
-    expect(select).not.toHaveBeenCalled();
+    expect(select).toHaveBeenCalledWith(null, null);
+    expect(select).not.toHaveBeenCalledWith('PR', expect.anything());
     fireEvent.keyDown(input, { key: 'Escape' });
     expect(input).toHaveAttribute('aria-expanded', 'false');
   });
@@ -214,6 +215,39 @@ describe('AdsAutocomplete', () => {
     await act(async () => pending.get('s')?.([{ value: 'RJ', label: 'Rio de Janeiro' }]));
     expect(screen.getByRole('option')).toHaveTextContent('São Paulo');
     expect(screen.queryByRole('option', { name: 'Rio de Janeiro' })).not.toBeInTheDocument();
+  });
+
+
+  it('does not call the async provider for a disabled input', async () => {
+    const loadOptions = vi.fn(async () => states);
+    render(
+      <AdsAutocomplete
+        aria-label="Busca desabilitada"
+        defaultInputValue="Rio"
+        disabled
+        loadOptions={loadOptions}
+        debounceMs={0}
+      />,
+    );
+    await act(async () => Promise.resolve());
+    expect(loadOptions).not.toHaveBeenCalled();
+  });
+
+  it('keeps the latest results for an externally controlled query', async () => {
+    const pending = new Map<string, (options: typeof states) => void>();
+    const loadOptions = vi.fn((query: string) =>
+      new Promise<typeof states>((resolve) => pending.set(query, resolve)),
+    );
+    const { rerender } = render(
+      <AdsAutocomplete aria-label="Busca controlada" debounceMs={0} inputValue="s" loadOptions={loadOptions} />,
+    );
+    await waitFor(() => expect(loadOptions).toHaveBeenCalledTimes(1));
+    rerender(<AdsAutocomplete aria-label="Busca controlada" debounceMs={0} inputValue="rio" loadOptions={loadOptions} />);
+    await waitFor(() => expect(loadOptions).toHaveBeenCalledTimes(2));
+    await act(async () => pending.get('s')?.(states));
+    expect(screen.queryByRole('option', { name: 'São Paulo' })).not.toBeInTheDocument();
+    await act(async () => pending.get('rio')?.([{ value: 'RJ', label: 'Rio de Janeiro' }]));
+    expect(screen.getByRole('option', { name: 'Rio de Janeiro' })).toBeInTheDocument();
   });
 
   it('exposes error and empty states', async () => {

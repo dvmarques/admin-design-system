@@ -110,6 +110,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
   const retryRef = useRef<HTMLButtonElement>(null);
+  const ignoreNextFocusRef = useRef(false);
   const listRef = useRef<HTMLUListElement>(null);
   const stableInputId = useStableId('ads-combobox-input');
   const listId = useStableId('ads-combobox-list');
@@ -249,7 +250,11 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
           }}
           onFocus={(event) => {
             onFocus?.(event);
-            if (!event.defaultPrevented && !readOnly && !open) setOpen(true);
+            if (ignoreNextFocusRef.current) {
+              ignoreNextFocusRef.current = false;
+            } else if (!event.defaultPrevented && !readOnly && !open) {
+              setOpen(true);
+            }
           }}
           onKeyDown={(event) => {
             inputProps.onKeyDown?.(event);
@@ -310,7 +315,10 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
           onClick={() => {
             const next = !open;
             setOpen(next);
-            if (next) inputRef.current?.focus({ preventScroll: true });
+            if (next && document.activeElement !== inputRef.current) {
+              ignoreNextFocusRef.current = true;
+              inputRef.current?.focus({ preventScroll: true });
+            }
           }}
           onMouseDown={(event) => event.preventDefault()}
           type="button"

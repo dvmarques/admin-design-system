@@ -29,7 +29,10 @@ describe('AdsCombobox', () => {
 		expect(input).toHaveAttribute('aria-activedescendant', expect.stringContaining('-option-0'));
 		fireEvent.keyDown(input, { key: 'ArrowDown' });
 		fireEvent.keyDown(input, { key: 'Enter' });
-		expect(onValueChange).toHaveBeenCalledWith('RJ', expect.objectContaining({ label: 'Rio de Janeiro' }));
+		expect(onValueChange).toHaveBeenCalledWith(
+			'RJ',
+			expect.objectContaining({ label: 'Rio de Janeiro' }),
+		);
 		expect(input).toHaveValue('Rio de Janeiro');
 		expect(input).toHaveFocus();
 		expect(input).toHaveAttribute('aria-expanded', 'false');
@@ -128,7 +131,9 @@ describe('AdsCombobox', () => {
 				<AdsCombobox aria-label="B" options={states} />
 			</div>,
 		);
-		const ids = Array.from(html.matchAll(/id="(ads-combobox-input-[^"]+)"/g)).map((match) => match[1]);
+		const ids = Array.from(html.matchAll(/id="(ads-combobox-input-[^"]+)"/g)).map(
+			(match) => match[1],
+		);
 		expect(ids).toHaveLength(2);
 		expect(new Set(ids).size).toBe(2);
 	});
@@ -149,7 +154,13 @@ describe('AdsCombobox', () => {
 				<AdsField label="UF obrigatória">
 					<AdsCombobox name="uf" options={states} required />
 				</AdsField>
-				<AdsCombobox aria-label="Desativado" name="disabledUf" options={states} defaultValue="SP" disabled />
+				<AdsCombobox
+					aria-label="Desativado"
+					name="disabledUf"
+					options={states}
+					defaultValue="SP"
+					disabled
+				/>
 			</form>,
 		);
 		const input = screen.getByRole('combobox', { name: 'UF obrigatória' }) as HTMLInputElement;
@@ -203,7 +214,11 @@ describe('AdsAutocomplete', () => {
 		const loadOptions = vi.fn((query: string, _signal: AbortSignal) =>
 			new Promise<typeof states>((resolve) => pending.set(query, resolve)),
 		);
-		render(<AdsField label="Busca"><AdsAutocomplete debounceMs={0} loadOptions={loadOptions} /></AdsField>);
+		render(
+			<AdsField label="Busca">
+				<AdsAutocomplete debounceMs={0} loadOptions={loadOptions} />
+			</AdsField>,
+		);
 		const input = screen.getByRole('combobox');
 		fireEvent.change(input, { target: { value: 's' } });
 		await waitFor(() => expect(loadOptions).toHaveBeenCalledTimes(1));
@@ -239,10 +254,22 @@ describe('AdsAutocomplete', () => {
 			new Promise<typeof states>((resolve) => pending.set(query, resolve)),
 		);
 		const { rerender } = render(
-			<AdsAutocomplete aria-label="Busca controlada" debounceMs={0} inputValue="s" loadOptions={loadOptions} />,
+			<AdsAutocomplete
+				aria-label="Busca controlada"
+				debounceMs={0}
+				inputValue="s"
+				loadOptions={loadOptions}
+			/>,
 		);
 		await waitFor(() => expect(loadOptions).toHaveBeenCalledTimes(1));
-		rerender(<AdsAutocomplete aria-label="Busca controlada" debounceMs={0} inputValue="rio" loadOptions={loadOptions} />);
+		rerender(
+			<AdsAutocomplete
+				aria-label="Busca controlada"
+				debounceMs={0}
+				inputValue="rio"
+				loadOptions={loadOptions}
+			/>,
+		);
 		await waitFor(() => expect(loadOptions).toHaveBeenCalledTimes(2));
 		await act(async () => pending.get('s')?.(states));
 		expect(screen.queryByRole('option', { name: 'São Paulo' })).not.toBeInTheDocument();

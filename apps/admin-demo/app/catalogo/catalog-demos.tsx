@@ -1545,7 +1545,10 @@ export function AutocompleteDemo() {
 				/>
 			</AdsField>
 			<output aria-label="Valor da busca local">{value ?? 'Nenhum'}</output>
-			<AdsField label="Busca remota simulada" description="Digite erro, vazio ou rapidamente para testar concorrência.">
+			<AdsField
+				label="Busca remota simulada"
+				description="Digite erro, vazio ou rapidamente para testar concorrência."
+			>
 				<AdsAutocomplete
 					debounceMs={debounceMs}
 					loadOptions={loadStateOptions}

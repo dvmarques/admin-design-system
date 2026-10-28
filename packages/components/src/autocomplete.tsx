@@ -3,7 +3,11 @@
 import { useEffect, useRef, useState } from 'react';
 import { AdsCombobox, type AdsComboboxOption, type AdsComboboxProps } from './combobox.js';
 
-export interface AdsAutocompleteProps extends Omit<AdsComboboxProps, 'options' | 'filterOptions' | 'loading' | 'error' | 'onRetry'> {
+export interface AdsAutocompleteProps
+	extends Omit<
+		AdsComboboxProps,
+		'options' | 'filterOptions' | 'loading' | 'error' | 'onRetry'
+	> {
 	options?: readonly AdsComboboxOption[];
 	loadOptions?: (query: string, signal: AbortSignal) => Promise<readonly AdsComboboxOption[]>;
 	debounceMs?: number;
@@ -27,7 +31,10 @@ export function AdsAutocomplete({
 }: AdsAutocompleteProps) {
 	const [typedQuery, setTypedQuery] = useState(defaultInputValue ?? '');
 	const [retryKey, setRetryKey] = useState(0);
-	const [remoteResult, setRemoteResult] = useState<{ query: string; options: readonly AdsComboboxOption[] } | null>(null);
+	const [remoteResult, setRemoteResult] = useState<{
+		query: string;
+		options: readonly AdsComboboxOption[];
+	} | null>(null);
 	const [loading, setLoading] = useState(false);
 	const [requestError, setRequestError] = useState<{ query: string; message: string } | null>(null);
 	const generation = useRef(0);
@@ -64,7 +71,10 @@ export function AdsAutocomplete({
 				})
 				.catch((reason: unknown) => {
 					if (controller.signal.aborted || requestId !== generation.current) return;
-					setRequestError({ query, message: reason instanceof Error ? reason.message : 'Falha ao buscar opções' });
+					setRequestError({
+					query,
+					message: reason instanceof Error ? reason.message : 'Falha ao buscar opções',
+				});
 					setRemoteResult(null);
 					setLoading(false);
 					onLoadErrorRef.current?.(reason);

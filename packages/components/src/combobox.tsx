@@ -120,7 +120,11 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		(selectedOption?.value === selectedValue ? selectedOption : null) ??
 		(cachedOption?.value === selectedValue ? cachedOption : null);
 	const text = inputValue ?? (editing ? draftInput : (selected?.label ?? ''));
-	const query = (editing || (inputValue !== undefined && selectedValue === null) ? text : '').trim().toLocaleLowerCase();
+	const query = (
+		editing || (inputValue !== undefined && selectedValue === null) ? text : ''
+	)
+		.trim()
+		.toLocaleLowerCase();
 	const matches = filterOptions
 		? options.filter(
 				(option) =>
@@ -210,7 +214,9 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 			<div className="relative">
 				<input
 					{...inputProps}
-					aria-activedescendant={open && !loading && !error && active >= 0 ? listId + '-option-' + active : undefined}
+					aria-activedescendant={
+				open && !loading && !error && active >= 0 ? listId + '-option-' + active : undefined
+			}
 					aria-autocomplete="list"
 					aria-busy={loading || undefined}
 					aria-controls={open ? listId : undefined}
@@ -326,7 +332,9 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 					<span aria-hidden="true">{open ? '⌃' : '⌄'}</span>
 				</button>
 			</div>
-			{name ? <input disabled={disabled} name={name} type="hidden" value={selectedValue ?? ''} /> : null}
+			{name ? (
+				<input disabled={disabled} name={name} type="hidden" value={selectedValue ?? ''} />
+			) : null}
 			{open ? (
 				<OverlayPortal>
 					<ul
@@ -346,7 +354,10 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 								<span aria-live="polite" role="status">{loadingText}</span>
 							</li>
 						) : error ? (
-							<li className="flex items-center justify-between gap-2 px-3 py-2 text-form-invalid" role="presentation">
+							<li
+							className="flex items-center justify-between gap-2 px-3 py-2 text-form-invalid"
+							role="presentation"
+						>
 								<span role="status">{error}</span>
 								{onRetry ? (
 									<button

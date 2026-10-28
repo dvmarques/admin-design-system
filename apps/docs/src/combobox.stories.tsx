@@ -38,7 +38,10 @@ export const States: Story = {
 			</AdsField>
 			<AdsField label="Desabilitado"><AdsCombobox disabled options={options} /></AdsField>
 			<AdsField label="Opção customizada">
-				<AdsCombobox options={options} renderOption={(option) => <span>{option.label} [{option.value}]</span>} />
+				<AdsCombobox
+					options={options}
+					renderOption={(option) => <span>{option.label} [{option.value}]</span>}
+				/>
 			</AdsField>
 		</div>
 	),

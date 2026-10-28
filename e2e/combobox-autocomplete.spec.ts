@@ -11,7 +11,11 @@ test('combobox: teclado, value real, limpar e validação', async ({ page }) => 
 	await expect(input).toHaveValue('Rio de Janeiro');
 	await expect(page.getByLabel('Valor selecionado')).toHaveText('RJ');
 	await expect(input).toBeFocused();
-	await page.locator('.ads-combobox').filter({ has: input }).getByRole('button', { name: 'Limpar seleção' }).click();
+	await page
+		.locator('.ads-combobox')
+		.filter({ has: input })
+		.getByRole('button', { name: 'Limpar seleção' })
+		.click();
 	await expect(page.getByLabel('Valor selecionado')).toHaveText('Nenhum');
 	await expect(input).toHaveValue('');
 	await expectNoAxeViolations(page);

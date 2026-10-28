@@ -1,6 +1,13 @@
 'use client';
 
-import { useState, type HTMLAttributes, type ReactNode } from 'react';
+import {
+	useEffect,
+	useRef,
+	useState,
+	type HTMLAttributes,
+	type ReactNode,
+	type RefObject,
+} from 'react';
 import { classNames } from './class-names.js';
 import { AdsIcon } from './icon.js';
 
@@ -23,6 +30,20 @@ const variants = {
 	},
 } as const;
 
+const tabbable =
+	'a[href],button:not([disabled]),input:not([disabled]):not([type="hidden"]),select:not([disabled]),textarea:not([disabled]),[tabindex]:not([tabindex="-1"])';
+
+/** Next tabbable element after `root` in document order, or the last one before it. */
+function neighborFocusTarget(root: HTMLElement): HTMLElement | null {
+	const candidates = Array.from(root.ownerDocument.querySelectorAll<HTMLElement>(tabbable)).filter(
+		(element) => !root.contains(element),
+	);
+	const following = candidates.find(
+		(element) => root.compareDocumentPosition(element) & Node.DOCUMENT_POSITION_FOLLOWING,
+	);
+	return following ?? candidates[candidates.length - 1] ?? null;
+}
+
 export type AdsAlertVariant = keyof typeof variants;
 export type AdsAlertAppearance = 'compact' | 'callout';
 
@@ -38,6 +59,11 @@ export interface AdsAlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
 	open?: boolean;
 	defaultOpen?: boolean;
 	onClose?: () => void;
+	/**
+	 * Element that receives focus after the close button dismisses the alert. Without it, focus
+	 * moves to the next focusable element after the alert (or the last one before it).
+	 */
+	returnFocusRef?: RefObject<HTMLElement | null>;
 }
 
 /** Persistent inline feedback. Unlike AdsToast, this never uses a portal or a timeout. */
@@ -53,6 +79,7 @@ export function AdsAlert({
 	open,
 	defaultOpen = true,
 	onClose,
+	returnFocusRef,
 	className,
 	role,
 	...props
@@ -60,12 +87,32 @@ export function AdsAlert({
 	const [internalOpen, setInternalOpen] = useState(defaultOpen);
 	const isControlled = open !== undefined;
 	const visible = isControlled ? open : internalOpen;
+	const rootRef = useRef<HTMLDivElement>(null);
+	const pendingFocus = useRef<HTMLElement | null>(null);
+
+	// Focus would fall back to <body> once the focused close button unmounts; move it to a
+	// stable target, but only if nothing else claimed focus in the meantime.
+	useEffect(() => {
+		const restore = () => {
+			const target = pendingFocus.current;
+			pendingFocus.current = null;
+			if (target?.isConnected && document.activeElement === document.body) target.focus();
+		};
+		if (!visible) restore();
+		return restore;
+	}, [visible]);
+
 	if (!visible) return null;
 	const variantStyle = variants[variant];
 	const iconSize = appearance === 'callout' && title != null ? 'lg' : 'md';
 	const visual = icon === undefined ? <AdsIcon name={variantStyle.icon} size={iconSize} /> : icon;
 
 	function handleClose() {
+		const root = rootRef.current;
+		pendingFocus.current =
+			root && root.contains(document.activeElement)
+				? (returnFocusRef?.current ?? neighborFocusTarget(root))
+				: null;
 		if (!isControlled) setInternalOpen(false);
 		onClose?.();
 	}
@@ -73,6 +120,7 @@ export function AdsAlert({
 	return (
 		<div
 			{...props}
+			ref={rootRef}
 			className={classNames(
 				'ads-alert flex min-w-0 items-start gap-3 rounded-lg border font-sans text-text',
 				appearance === 'callout' ? 'p-5 max-sm:p-4' : 'p-3',

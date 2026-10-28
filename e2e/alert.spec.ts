@@ -29,6 +29,7 @@ test('AdsAlert: botão de fechar operável por teclado', async ({ page }) => {
 	await expect(
 		preview.getByRole('status').filter({ hasText: 'Resultado da operação' }),
 	).toHaveCount(0);
+	await expect(page.locator('body')).not.toBeFocused();
 });
 
 test('AdsAlert: cores forçadas distinguem a severidade sem depender de cor', async ({ page }) => {

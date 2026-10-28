@@ -21,3 +21,7 @@ Dois componentes independentes causariam divergência de acessibilidade; provide
 ## Compatibilidade e riscos
 
 API aditiva; possibilidade de alertas repetidos quando aplicação remonta mensagens fica documentada. Validar build de pacotes, Storybook, demo, E2E e contraste nos dois temas. Rollback remove apenas arquivos/export adicionados.
+
+## Foco ao fechar
+
+Ao desmontar o botão focado o navegador devolve o foco ao `body`. `AdsAlert` registra o destino ao clicar em fechar (`returnFocusRef` ou o vizinho focável) e o aplica após a desmontagem, apenas se o foco estiver no `body`. Funciona também com `open` controlado e quando o pai desmonta o componente.

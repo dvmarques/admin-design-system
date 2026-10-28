@@ -22,6 +22,7 @@
 
 - [x] Testar comportamento, semântica ARIA e acessibilidade automatizada (Vitest/axe e Playwright/axe)
 - [x] Validar navegação por teclado do botão fechar (E2E: foco + Enter) e botão sem submissão de formulário
+- [x] Preservar o foco do teclado ao fechar (`returnFocusRef` ou vizinho focável), com testes
 - [ ] Validação manual com leitor de tela (não executável neste ambiente)
 - [x] Executar format, lint, build, typecheck, test:quality, E2E Chromium/Firefox/WebKit e OpenSpec strict (CI #40709162220)
 - [ ] Executar `npm run validate` como comando agregado, se exigido adicionalmente

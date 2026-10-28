@@ -1,3 +1,4 @@
+import { createRef } from 'react';
 import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it, vi } from 'vitest';
@@ -152,5 +153,76 @@ describe('AdsAlert', () => {
 	it('replaces the default icon with a custom one', () => {
 		render(<AdsAlert icon={<span data-testid="custom-icon" />}>Mensagem</AdsAlert>);
 		expect(screen.getByTestId('custom-icon')).toBeInTheDocument();
+	});
+	it('moves focus to the next focusable element when the focused close button dismisses it', () => {
+		render(
+			<>
+				<button type="button">Antes</button>
+				<AdsAlert dismissible>Mensagem</AdsAlert>
+				<button type="button">Depois</button>
+			</>,
+		);
+		const close = screen.getByRole('button', { name: 'Fechar mensagem' });
+		close.focus();
+		fireEvent.click(close);
+		expect(screen.getByRole('button', { name: 'Depois' })).toHaveFocus();
+	});
+	it('falls back to the previous focusable element when none follows the alert', () => {
+		render(
+			<>
+				<button type="button">Antes</button>
+				<AdsAlert dismissible>Mensagem</AdsAlert>
+			</>,
+		);
+		const close = screen.getByRole('button', { name: 'Fechar mensagem' });
+		close.focus();
+		fireEvent.click(close);
+		expect(screen.getByRole('button', { name: 'Antes' })).toHaveFocus();
+	});
+	it('focuses returnFocusRef after a controlled close, including when the parent unmounts it', () => {
+		const target = createRef<HTMLButtonElement>();
+		function Harness({ show }: { show: boolean }) {
+			return (
+				<>
+					<button type="button">Antes</button>
+					{show ? (
+						<AdsAlert dismissible returnFocusRef={target}>
+							Mensagem
+						</AdsAlert>
+					) : null}
+					<button ref={target} type="button">
+						Alvo
+					</button>
+					<button type="button">Depois</button>
+				</>
+			);
+		}
+		const { rerender } = render(<Harness show />);
+		const close = screen.getByRole('button', { name: 'Fechar mensagem' });
+		close.focus();
+		fireEvent.click(close);
+		rerender(<Harness show={false} />);
+		expect(target.current).toHaveFocus();
+	});
+	it('does not steal focus when the alert was not focused or the close was ignored', () => {
+		const { rerender } = render(
+			<>
+				<AdsAlert dismissible open>
+					Mensagem
+				</AdsAlert>
+				<button type="button">Outro</button>
+			</>,
+		);
+		const other = screen.getByRole('button', { name: 'Outro' });
+		other.focus();
+		rerender(
+			<>
+				<AdsAlert dismissible open={false}>
+					Mensagem
+				</AdsAlert>
+				<button type="button">Outro</button>
+			</>,
+		);
+		expect(other).toHaveFocus();
 	});
 });

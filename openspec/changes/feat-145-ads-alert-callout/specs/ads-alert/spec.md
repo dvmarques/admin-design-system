@@ -61,3 +61,17 @@ O sistema SHALL exibir, por padrão, um ícone distinto para cada variante, de m
 
 - **WHEN** o consumidor informa `icon` com um elemento ou `null`
 - **THEN** o ícone padrão é substituído ou omitido
+
+### Requirement: Foco ao fechar
+
+O sistema SHALL preservar o foco do teclado quando o botão de fechar, que possui o foco, dispensa o alerta, movendo-o para `returnFocusRef` ou, na ausência, para o elemento focável vizinho.
+
+#### Scenario: Fechar com o teclado
+
+- **WHEN** o usuário aciona o botão de fechar focado
+- **THEN** o foco vai para o destino configurado ou para o próximo elemento focável, e não para o `body`
+
+#### Scenario: Foco não roubado
+
+- **WHEN** o alerta é fechado sem que o botão de fechar tenha o foco
+- **THEN** o foco atual do usuário não é alterado

@@ -1471,100 +1471,100 @@ export function AlertDemo() {
 }
 
 const stateOptions = [
-  { value: 'SP', label: 'São Paulo', description: 'Sudeste' },
-  { value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
-  { value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
-  { value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
+	{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },
+	{ value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
+	{ value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
+	{ value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
 ];
 
 export function ComboboxDemo() {
-  const [uf, setUf] = useState<string | null>('SP');
-  const [dialogOpen, setDialogOpen] = useState(false);
-  return (
-    <div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
-      <AdsField description="Digite, use as setas ou pressione Enter." label="Estado (controlado)">
-        <AdsCombobox
-          name="uf"
-          options={stateOptions}
-          onValueChange={setUf}
-          value={uf}
-          renderOption={(option) => <span>{option.label} [{option.value}]</span>}
-        />
-      </AdsField>
-      <output aria-label="Valor selecionado">{uf ?? 'Nenhum'}</output>
-      <AdsField label="Seleção inicial não controlada">
-        <AdsCombobox options={stateOptions} defaultValue="RJ" size="sm" />
-      </AdsField>
-      <AdsField label="Inválido" error="Selecione um estado." validationState="error">
-        <AdsCombobox options={stateOptions} />
-      </AdsField>
-      <AdsField label="Desabilitado">
-        <AdsCombobox options={stateOptions} disabled defaultValue="MG" />
-      </AdsField>
-      <AdsButton type="button" onClick={() => setDialogOpen(true)}>
-        Abrir diálogo com combobox
-      </AdsButton>
-      <AdsDialog title="Seleção em diálogo" open={dialogOpen} onOpenChange={setDialogOpen}>
-        <AdsField label="Estado em diálogo">
-          <AdsCombobox options={stateOptions} />
-        </AdsField>
-      </AdsDialog>
-    </div>
-  );
+	const [uf, setUf] = useState<string | null>('SP');
+	const [dialogOpen, setDialogOpen] = useState(false);
+	return (
+		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
+			<AdsField description="Digite, use as setas ou pressione Enter." label="Estado (controlado)">
+				<AdsCombobox
+					name="uf"
+					options={stateOptions}
+					onValueChange={setUf}
+					value={uf}
+					renderOption={(option) => <span>{option.label} [{option.value}]</span>}
+				/>
+			</AdsField>
+			<output aria-label="Valor selecionado">{uf ?? 'Nenhum'}</output>
+			<AdsField label="Seleção inicial não controlada">
+				<AdsCombobox options={stateOptions} defaultValue="RJ" size="sm" />
+			</AdsField>
+			<AdsField label="Inválido" error="Selecione um estado." validationState="error">
+				<AdsCombobox options={stateOptions} />
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsCombobox options={stateOptions} disabled defaultValue="MG" />
+			</AdsField>
+			<AdsButton type="button" onClick={() => setDialogOpen(true)}>
+				Abrir diálogo com combobox
+			</AdsButton>
+			<AdsDialog title="Seleção em diálogo" open={dialogOpen} onOpenChange={setDialogOpen}>
+				<AdsField label="Estado em diálogo">
+					<AdsCombobox options={stateOptions} />
+				</AdsField>
+			</AdsDialog>
+		</div>
+	);
 }
 
 const asyncStates = [
-  { value: 'SP', label: 'São Paulo' },
-  { value: 'RJ', label: 'Rio de Janeiro' },
-  { value: 'MG', label: 'Minas Gerais' },
-  { value: 'SC', label: 'Santa Catarina' },
-  { value: 'RS', label: 'Rio Grande do Sul' },
+	{ value: 'SP', label: 'São Paulo' },
+	{ value: 'RJ', label: 'Rio de Janeiro' },
+	{ value: 'MG', label: 'Minas Gerais' },
+	{ value: 'SC', label: 'Santa Catarina' },
+	{ value: 'RS', label: 'Rio Grande do Sul' },
 ];
 async function loadStateOptions(query: string, _signal: AbortSignal) {
-  void _signal;
-  // Ignora o abort de propósito: a lista não pode reverter com respostas fora de ordem.
-  await new Promise((resolve) => setTimeout(resolve, query.length < 3 ? 700 : 180));
-  if (query.toLocaleLowerCase().includes('erro')) throw new Error('Falha simulada da API');
-  if (query.toLocaleLowerCase().includes('vazio')) return [];
-  return asyncStates.filter((option) =>
-    option.label.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
-  );
+	void _signal;
+	// Ignora o abort de propósito: a lista não pode reverter com respostas fora de ordem.
+	await new Promise((resolve) => setTimeout(resolve, query.length < 3 ? 700 : 180));
+	if (query.toLocaleLowerCase().includes('erro')) throw new Error('Falha simulada da API');
+	if (query.toLocaleLowerCase().includes('vazio')) return [];
+	return asyncStates.filter((option) =>
+		option.label.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+	);
 }
 
 export function AutocompleteDemo() {
-  const [value, setValue] = useState<string | null>(null);
-  const [debounceMs, setDebounceMs] = useState(250);
-  return (
-    <div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
-      <AdsField label="Busca local" description="Filtragem instantânea por nome ou sigla.">
-        <AdsAutocomplete
-          options={stateOptions}
-          placeholder="Busque um estado"
-          onValueChange={setValue}
-          value={value}
-        />
-      </AdsField>
-      <output aria-label="Valor da busca local">{value ?? 'Nenhum'}</output>
-      <AdsField label="Busca remota simulada" description="Digite erro, vazio ou rapidamente para testar concorrência.">
-        <AdsAutocomplete
-          debounceMs={debounceMs}
-          loadOptions={loadStateOptions}
-          name="uf-remota"
-          placeholder="Digite ao menos uma letra"
-        />
-      </AdsField>
-      <AdsField label="Debounce (ms)">
-        <AdsSelect value={debounceMs} onChange={(event) => setDebounceMs(Number(event.target.value))}>
-          <option value={0}>Imediato</option>
-          <option value={250}>250 ms</option>
-          <option value={500}>500 ms</option>
-        </AdsSelect>
-      </AdsField>
-      <AdsField label="Busca remota desabilitada">
-        <AdsAutocomplete disabled loadOptions={loadStateOptions} />
-      </AdsField>
-    </div>
-  );
+	const [value, setValue] = useState<string | null>(null);
+	const [debounceMs, setDebounceMs] = useState(250);
+	return (
+		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
+			<AdsField label="Busca local" description="Filtragem instantânea por nome ou sigla.">
+				<AdsAutocomplete
+					options={stateOptions}
+					placeholder="Busque um estado"
+					onValueChange={setValue}
+					value={value}
+				/>
+			</AdsField>
+			<output aria-label="Valor da busca local">{value ?? 'Nenhum'}</output>
+			<AdsField label="Busca remota simulada" description="Digite erro, vazio ou rapidamente para testar concorrência.">
+				<AdsAutocomplete
+					debounceMs={debounceMs}
+					loadOptions={loadStateOptions}
+					name="uf-remota"
+					placeholder="Digite ao menos uma letra"
+				/>
+			</AdsField>
+			<AdsField label="Debounce (ms)">
+				<AdsSelect value={debounceMs} onChange={(event) => setDebounceMs(Number(event.target.value))}>
+					<option value={0}>Imediato</option>
+					<option value={250}>250 ms</option>
+					<option value={500}>500 ms</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Busca remota desabilitada">
+				<AdsAutocomplete disabled loadOptions={loadStateOptions} />
+			</AdsField>
+		</div>
+	);
 }
 
 export const catalogDemos = {

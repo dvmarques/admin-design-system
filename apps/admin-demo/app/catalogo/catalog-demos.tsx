@@ -45,6 +45,7 @@ import {
 	AdsPopover,
 	AdsTooltip,
 	AdsToast,
+	AdsAlert,
 	AdsEmptyState,
 	AdsProgress,
 	AdsTable,
@@ -1405,6 +1406,47 @@ export function StyleFixtureDemo() {
 	);
 }
 
+export function AlertDemo() {
+  const [variant, setVariant] = useState<'info' | 'success' | 'warning' | 'error'>('info');
+  const [appearance, setAppearance] = useState<'compact' | 'callout'>('compact');
+  const [open, setOpen] = useState(true);
+  const [message, setMessage] = useState('Mensagem persistente de exemplo.');
+  return (
+    <div style={{ display: 'grid', gap: '1rem', width: '100%' }}>
+      <AdsField label="Variante">
+        <AdsSelect value={variant} onChange={(event) => { setVariant(event.target.value as typeof variant); setOpen(true); }}>
+          <option value="info">Informação</option>
+          <option value="success">Sucesso</option>
+          <option value="warning">Atenção</option>
+          <option value="error">Erro</option>
+        </AdsSelect>
+      </AdsField>
+      <AdsField label="Apresentação">
+        <AdsSelect value={appearance} onChange={(event) => setAppearance(event.target.value as typeof appearance)}>
+          <option value="compact">Compacto</option>
+          <option value="callout">Destacado</option>
+        </AdsSelect>
+      </AdsField>
+      <AdsButton variant="secondary" onClick={() => setOpen(true)}>Mostrar mensagem</AdsButton>
+      <AdsAlert
+        variant={variant}
+        appearance={appearance}
+        title={variant === 'error' ? 'Não foi possível salvar' : 'Resultado da operação'}
+        open={open}
+        onClose={() => setOpen(false)}
+        dismissible
+        actions={<AdsButton size="sm" variant="secondary" onClick={() => setMessage('Ação executada no exemplo.')}>Ação opcional</AdsButton>}
+      >{message}</AdsAlert>
+      <AdsAlert variant="error" title="Validação de formulário" dismissible={false}>
+        Informe um nome válido para continuar.
+      </AdsAlert>
+      <AdsAlert variant="success" title="Resposta de operação" appearance="callout">
+        Registro atualizado e disponível para consulta.
+      </AdsAlert>
+    </div>
+  );
+}
+
 export const catalogDemos = {
 	Button: ButtonDemo,
 	Badge: BadgeDemo,
@@ -1438,6 +1480,7 @@ export const catalogDemos = {
 	Popover: PopoverDemo,
 	Tooltip: TooltipDemo,
 	Toast: ToastDemo,
+	Alert: AlertDemo,
 	EmptyState: EmptyStateDemo,
 	Progress: ProgressDemo,
 	Table: TableDemo,

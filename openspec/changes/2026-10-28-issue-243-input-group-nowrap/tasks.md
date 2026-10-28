@@ -1,0 +1,9 @@
+# Tasks — issue #243
+
+- [ ] 1. Reproduzir a quebra de R$, Limpar valor e Restaurar e coletar computed flex widths/white-space no demo e em consumidor Next sem reset (critério: origem da quebra confirmada).
+- [ ] 2. Ajustar AdsInputGroup em @admin-ds/components para preservar adornos e botões sem quebra, permitir redução do controle e desenhar fallback em espaço insuficiente (critério: prefixo e rótulos íntegros, sem página rolando horizontalmente).
+- [ ] 3. Validar combinações startContent/endContent, 1 ou 2 botões, texto simples, conteúdo customizado, sm/md/lg, focus, readonly, disabled e erro, sem alterar estilos de AdsButton fora do grupo (critério: borda/altura/estados e API preservados).
+- [ ] 4. Criar InputGroupDemo específico no catálogo, trocar textos visuais para Limpar e Restaurar e corrigir ação Limpar para valor vazio, com nomes acessíveis contextuais (critério: ambas as ações funcionam e o exemplo não se confunde com AdsField).
+- [ ] 5. Atualizar Storybook, docs/admin-demo-catalog.md e entrada Fixed do CHANGELOG.md (#243) quando houver código implementado; snippets gerados por AST correspondem aos exemplos (critério: API e demonstrações reais).
+- [ ] 6. Acrescentar testes unitários/computed styles, E2E e visual para 320/390px, zoom 200%, light/dark, hover/foco, conteúdo longo e rolagem interna caso exista; conferir CSS compilado em Next.js sem Tailwind (critério: ações acessíveis e sem clipping).
+- [ ] 7. Revisão independente, correção de findings e validações: npx.cmd prettier --write nos arquivos alterados, npm run format, npm run lint, npm run build, npm run typecheck, npm run test:quality, npm run test:e2e, npm run validate e openspec.cmd validate --all --strict; zero E2E falhos antes do commit, baselines apenas intencionais revisados via update-visual-baselines.yml. Registrar resultados reais e diagnósticos.

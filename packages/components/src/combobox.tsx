@@ -105,6 +105,8 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	const open = !disabled && !readOnly && (controlledOpen ?? uncontrolledOpen);
 	const [draftInput, setDraftInput] = useState(defaultInputValue ?? '');
 	const [editing, setEditing] = useState(defaultInputValue !== undefined);
+	// Valores antigos não podem ser enviados enquanto o input exibe texto livre.
+	const committedValue = editing ? null : selectedValue;
 	const [cachedOption, setCachedOption] = useState<AdsComboboxOption | null>(selectedOption ?? null);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const rootRef = useRef<HTMLDivElement>(null);
@@ -188,9 +190,9 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 
 	useEffect(() => {
 		inputRef.current?.setCustomValidity(
-			required && selectedValue === null ? 'Selecione uma opção' : '',
+			required && committedValue === null ? 'Selecione uma opção' : '',
 		);
-	}, [required, selectedValue]);
+	}, [committedValue, required]);
 
 	const move = (direction: 'first' | 'last' | 'next' | 'previous') => {
 		if (!open) setOpen(true);
@@ -245,7 +247,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 					}}
 					onChange={(event) => {
 						// Um valor anterior não pode ser enviado enquanto um novo texto está sendo pesquisado.
-						if (selectedValue !== null) {
+						if (selectedValue !== null && !editing) {
 							if (value === undefined) setUncontrolledValue(null);
 							setCachedOption(null);
 							onValueChange?.(null, null);
@@ -333,7 +335,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 				</button>
 			</div>
 			{name ? (
-				<input disabled={disabled} name={name} type="hidden" value={selectedValue ?? ''} />
+				<input disabled={disabled} name={name} type="hidden" value={committedValue ?? ''} />
 			) : null}
 			{open ? (
 				<OverlayPortal>
@@ -381,7 +383,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 							matches.map((option, index) => (
 								<li
 									aria-disabled={option.disabled || undefined}
-									aria-selected={selectedValue === option.value}
+									aria-selected={committedValue === option.value}
 									className={classNames(
 										'ads-combobox__option cursor-pointer rounded px-3 py-2',
 										option.disabled

@@ -99,6 +99,24 @@ describe('AdsCombobox', () => {
 		expect(container.querySelector('input[name="uf"]')).toHaveValue('');
 	});
 
+	it('does not submit a stale controlled value during unsaved editing', () => {
+		const { container } = render(
+			<form>
+				<AdsCombobox
+					aria-label="UF"
+					name="uf"
+					value="SP"
+					options={states}
+					onValueChange={() => undefined}
+				/>
+			</form>,
+		);
+		const input = screen.getByRole('combobox', { name: 'UF' });
+		fireEvent.change(input, { target: { value: 'Rio' } });
+		expect(input).toHaveValue('Rio');
+		expect(new FormData(container.querySelector('form')!).get('uf')).toBe('');
+	});
+
 	it('keeps a typed query when the parent clears a controlled selection', () => {
 		const View = () => {
 			const [value, setValue] = useState<string | null>('SP');

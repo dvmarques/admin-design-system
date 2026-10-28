@@ -82,6 +82,22 @@ export const catalogEntries = [
 		href: '/catalogo/sparkline',
 	},
 	{
+		name: 'AdsCombobox',
+		group: 'Formulários',
+		slug: 'combobox',
+		demo: 'Combobox',
+		description: 'Seleção com pesquisa, teclado e renderização customizada.',
+		href: '/catalogo/combobox',
+	},
+	{
+		name: 'AdsAutocomplete',
+		group: 'Formulários',
+		slug: 'autocomplete',
+		demo: 'Autocomplete',
+		description: 'Busca local ou remota com debounce, loading, vazio e erro.',
+		href: '/catalogo/autocomplete',
+	},
+	{
 		name: 'AdsInput',
 		group: 'Formulários',
 		slug: 'input',

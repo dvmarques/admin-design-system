@@ -69,6 +69,8 @@ export { AdsDialog, AdsDrawer } from './overlay-dialog.js';
 export type { AdsDialogProps, AdsDrawerProps } from './overlay-dialog.js';
 export { AdsPopover, AdsTooltip } from './overlay-anchored.js';
 export type { AdsOverlayPlacement, AdsPopoverProps, AdsTooltipProps } from './overlay-anchored.js';
+export { AdsAlert } from './alert.js';
+export type { AdsAlertProps, AdsAlertVariant, AdsAlertAppearance } from './alert.js';
 export { AdsToast } from './overlay-toast.js';
 export type { AdsToastProps, AdsToastVariant } from './overlay-toast.js';
 export { AdsBreadcrumb, AdsNav } from './navigation.js';

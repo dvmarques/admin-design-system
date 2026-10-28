@@ -1,0 +1,9 @@
+# Tasks — issue #244
+
+- [ ] 1. Reproduzir no catálogo e Storybook em flex/stretch, coletar retângulos de botão, wrapper e balão, computed styles e placement; testar Popover para confirmar se compartilha defeito (critério: causa/escopo demonstrados).
+- [ ] 2. Corrigir a referência geométrica ou dimensão do wrapper de AdsTooltip no pacote, sem patches exclusivos do demo; ajustar Popover somente se reproduzir o mesmo problema (critério: balão alinhado ao botão quando não há colisão).
+- [ ] 3. Preservar arrowOffset, data-placement, flip/shift, top/bottom/left/right, zoom, scroll e resize; não alterar dropdown sem evidência (critério: posição correta e seta apontando para gatilho real em todas as orientações).
+- [ ] 4. Validar foco, pointer enter/leave, Escape, aria-describedby preexistente, fechamento externo e popovers interativos/aninhados (critério: sem regressão de teclado, foco ou acessibilidade).
+- [ ] 5. Adicionar testes unitários de geometria e E2E comparando retângulos do gatilho real e balão em flex/grid e viewport 320/390px, desktop, claro/escuro, zoom e scroll; tolerar shift geométrico justificado nas bordas (critério: testes falham ao reproduzir o bug).
+- [ ] 6. Atualizar exemplos do catálogo e Storybook, documentação pertinente, Fixed no CHANGELOG.md (#244) quando houver código e testar CSS compilado em consumidor Next.js sem Tailwind (critério: alterações públicas documentadas e sem regressão).
+- [ ] 7. Revisão independente e correção de achados; rodar npx.cmd prettier --write, npm run format, npm run lint, npm run build, npm run typecheck, npm run test:quality, npm run test:e2e, npm run validate e openspec.cmd validate --all --strict. Confirmar zero E2E falhos antes do commit; atualizar snapshots apenas se intencionais e revisados via update-visual-baselines.yml. Registrar evidências e logs de diagnóstico.

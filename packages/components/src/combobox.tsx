@@ -109,6 +109,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
   const [activeIndex, setActiveIndex] = useState(-1);
   const rootRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const retryRef = useRef<HTMLButtonElement>(null);
   const listRef = useRef<HTMLUListElement>(null);
   const stableInputId = useStableId('ads-combobox-input');
   const listId = useStableId('ads-combobox-list');
@@ -179,6 +180,12 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
     if (value !== undefined) setEditing(false);
   }, [value]);
 
+  useEffect(() => {
+    inputRef.current?.setCustomValidity(
+      required && selectedValue === null ? 'Selecione uma opção' : '',
+    );
+  }, [required, selectedValue]);
+
   const move = (direction: 'first' | 'last' | 'next' | 'previous') => {
     if (!open) setOpen(true);
     if (enabledIndices.length === 0) return;
@@ -190,7 +197,9 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
           ? enabledIndices.length - 1
           : direction === 'next'
             ? (position + 1) % enabledIndices.length
-            : (position - 1 + enabledIndices.length) % enabledIndices.length;
+            : position < 0
+              ? enabledIndices.length - 1
+              : (position - 1 + enabledIndices.length) % enabledIndices.length;
     setActiveIndex(enabledIndices[next]!);
   };
 
@@ -255,11 +264,17 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
               event.preventDefault();
               dismiss();
             } else if (event.key === 'Tab') {
-              dismiss();
+              if (!event.shiftKey && open && error && onRetry) {
+                event.preventDefault();
+                retryRef.current?.focus({ preventScroll: true });
+              } else {
+                dismiss();
+              }
             }
           }}
           placeholder={placeholder}
           readOnly={readOnly}
+          required={required}
           ref={(node) => {
             inputRef.current = node;
             if (typeof forwardedRef === 'function') forwardedRef(node);
@@ -286,8 +301,9 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
           className="ads-combobox__toggle absolute inset-y-0 right-1 px-2 text-text-muted hover:text-text focus-visible:outline-2 focus-visible:outline-focus-ring disabled:opacity-50"
           disabled={disabled || readOnly}
           onClick={() => {
-            setOpen(!open);
-            inputRef.current?.focus({ preventScroll: true });
+            const next = !open;
+            setOpen(next);
+            if (next) inputRef.current?.focus({ preventScroll: true });
           }}
           onMouseDown={(event) => event.preventDefault()}
           type="button"
@@ -318,7 +334,15 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
               <li className="flex items-center justify-between gap-2 px-3 py-2 text-form-invalid" role="presentation">
                 <span role="status">{error}</span>
                 {onRetry ? (
-                  <button className="underline" onClick={onRetry} type="button">
+                  <button
+                    className="underline"
+                    onClick={() => {
+                      onRetry();
+                      inputRef.current?.focus({ preventScroll: true });
+                    }}
+                    ref={retryRef}
+                    type="button"
+                  >
                     Tentar novamente
                   </button>
                 ) : null}

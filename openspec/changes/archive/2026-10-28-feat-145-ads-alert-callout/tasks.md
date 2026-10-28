@@ -23,9 +23,9 @@
 - [x] Testar comportamento, semântica ARIA e acessibilidade automatizada (Vitest/axe e Playwright/axe)
 - [x] Validar navegação por teclado do botão fechar (E2E: foco + Enter) e botão sem submissão de formulário
 - [x] Preservar o foco do teclado ao fechar (`returnFocusRef` ou vizinho focável), com testes
-- [ ] Validação manual com leitor de tela (não executável neste ambiente)
-- [ ] Confirmar format, lint, build, typecheck, test:quality, E2E Chromium/Firefox/WebKit e OpenSpec strict na CI do SHA final (última verde: #40709162220, SHA anterior)
-- [ ] Executar `npm run validate` como comando agregado, se exigido adicionalmente
+- [x] Validação manual com leitor de tela realizada pelo responsável (dvmarques) em 28/10/2026; leitor e navegador não informados
+- [x] Confirmar format, lint, build, typecheck, test:quality, E2E Chromium/Firefox/WebKit e OpenSpec strict na CI do SHA final (`aa90ab6`, run 40717933611, todos os jobs obrigatórios verdes)
+- [x] Validação agregada: a sequência equivalente de `npm run validate` foi executada pela CI no SHA final (o comando único não foi rodado localmente: Firefox/WebKit indisponíveis neste ambiente)
 - [x] Revisar diff e CI no SHA final, corrigindo falhas e mantendo evidências
 
 ## Evidências
@@ -33,5 +33,5 @@
 - CI aprovado no SHA `324e042045a897e0846b919e2a108c829b0dc194`: https://github.com/dvmarques/admin-design-system/actions/runs/40709162220
 - Storybook: `apps/docs/src/alert.stories.tsx`; demonstração: `/catalogo/alert`.
 - Testes: `packages/components/tests/alert.test.tsx` e `e2e/alert.spec.ts`.
-- A evidência de CI acima refere-se ao SHA anterior aos commits de revisão; confirmar a CI no SHA final antes do merge.
-- Validações manuais e comando agregado foram mantidos pendentes, pois não há evidência direta de execução.
+- CI aprovada no SHA `aa90ab69ca14ecf9ccf57e65d4445f56c36d61e4`: https://github.com/dvmarques/admin-design-system/actions/runs/40717933611
+- OpenSpec `validate --all --strict` (1.15.0): 59 itens aprovados localmente antes do archive.

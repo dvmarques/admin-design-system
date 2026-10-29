@@ -389,8 +389,12 @@ export function FieldDemo() {
 				startContent="R$"
 				endContent={
 					<>
-						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>Limpar</AdsButton>
-						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>Restaurar</AdsButton>
+						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>
+							Limpar
+						</AdsButton>
+						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>
+							Restaurar
+						</AdsButton>
 					</>
 				}
 			>
@@ -431,8 +435,12 @@ export function InputGroupDemo() {
 				startContent="R$"
 				endContent={
 					<>
-						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>Limpar</AdsButton>
-						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>Restaurar</AdsButton>
+						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>
+							Limpar
+						</AdsButton>
+						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>
+							Restaurar
+						</AdsButton>
 					</>
 				}
 			>

@@ -9,6 +9,11 @@
 - **WHEN** `AdsIcon` renderiza `bell` sem `label`
 - **THEN** o SVG é ocultado de tecnologias assistivas
 
+#### Scenario: Compatibilidade
+
+- **WHEN** `AdsIcon` renderiza um ícone anterior
+- **THEN** o resultado permanece igual em nome público e contrato de propriedades, com alteração visual intencional dos traçados
+
 #### Scenario: Compatibilidade pública
 
 - **WHEN** uma aplicação renderiza qualquer dos 20 nomes públicos nos tamanhos suportados

@@ -40,11 +40,11 @@
 ## Gates pendentes — não marcar como concluídos sem evidência
 
 - [x] Executar testes unitários, de acessibilidade e regressões; corrigir todas as falhas.
-- [ ] Executar Playwright E2E, inclusive temas, 390 px, diálogo/overlay e SSR/hidratação; corrigir falhas.
+- [x] Executar Playwright E2E, inclusive temas, 390 px, diálogo/overlay e SSR/hidratação; corrigir falhas.
 - [x] Executar format/Prettier, lint, build, typecheck, test:quality e OpenSpec estrito; registrar resultados.
 - [x] Medir orçamento de bundle JS/CSS e fazer revisão final de API pública/acessibilidade.
-- [ ] Passar PR #238 para Ready for review e obter CI verde no SHA final.
-- [ ] Concluir revisão independente antes de merge, arquivamento da change ou fechamento da #142.
+- [x] Passar PR #238 para Ready for review e obter CI verde no SHA final.
+- [x] Concluir revisão independente antes de merge, arquivamento da change ou fechamento da #142.
 
 ## Evidência e situação atual
 

@@ -50,15 +50,20 @@ fortemente dessa biblioteca, mas os commits do Admin DS não identificam a
 origem individual dos desenhos. Por cautela, o aviso integral da licença MIT
 do Feather foi preservado em
 [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
-Isso **não certifica** que os ícones sejam cópias do Feather, nem que os
-demais sejam criações originais. A origem de `building` permanece não
-comprovada. Não há evidência que sustente atribuir especificamente
-`building` a Lucide, Tabler ou Heroicons.
+Isso **não certifica** que os outros ícones sejam cópias do Feather, nem
+que sejam criações originais. Na PR #258, o desenho antigo de `building`,
+cuja origem era desconhecida, foi **substituído** pelo
+[`Building06Icon` oficial da Hugeicons Free](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/src/Building06Icon.ts),
+licenciado sob [MIT](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md),
+copyright (c) 2025 Hugeicons. Os quatro paths e a espessura original foram
+preservados, com atribuição e aviso MIT integral em
+[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). `AdsIcon name="building"`
+permanece compatível com a API anterior; apenas o desenho foi alterado.
 
 Licenças de bibliotecas usadas somente como *referência comparativa* não
-são automaticamente atribuições de autoria. Caso uma procedência seja
-demonstrada posteriormente, atualize os avisos e a auditoria antes de
-publicar os desenhos como um pacote de ícones independente.
+são automaticamente atribuições de autoria. Caso uma procedência de outro
+ícone seja demonstrada posteriormente, atualize os avisos e a auditoria
+antes de publicar um pacote de ícones independente.
 
 ## Fontes
 

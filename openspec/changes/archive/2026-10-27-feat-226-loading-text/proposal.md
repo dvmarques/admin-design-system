@@ -2,7 +2,7 @@
 
 ## Why
 
-O Back Admin já usa texto com brilho deslizante para indicar atualização de jobs. Aplicações consumidoras precisam desse padrão sem copiar CSS e lógica locais, com tema e acessibilidade consistentes.
+Aplicações administrativas podem usar texto com brilho deslizante para indicar atualização de dados. Aplicações consumidoras precisam desse padrão reutilizável sem copiar CSS e lógica locais, com tema e acessibilidade consistentes.
 
 ## What Changes
 
@@ -17,7 +17,7 @@ O Back Admin já usa texto com brilho deslizante para indicar atualização de j
 
 ## Out of Scope
 
-Não modificar `abril-leaf/back-admin`, orquestrar jobs, executar polling, anunciar status automaticamente nem substituir Spinner/Skeleton.
+Não modificar aplicações consumidoras, orquestrar jobs, executar polling, anunciar status automaticamente nem substituir Spinner/Skeleton.
 
 ## Value
 

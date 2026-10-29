@@ -2,7 +2,7 @@
 
 ## 1. Implementação
 
-- [x] 1.1 Comparar CSS do Back Admin e Admin DS e identificar limitações de contraste, especialmente dark.
+- [x] 1.1 Comparar a implementação CSS atual com alternativas de gradiente e identificar limitações de contraste, especialmente dark.
 - [x] 1.2 Corrigir base e gradiente de `AdsLoadingText` preservando velocidades e contratos públicos.
 - [x] 1.3 Conferir compatibilidade com reduced motion, forced colors, RTL, fallback sem clip e tema sistema.
 

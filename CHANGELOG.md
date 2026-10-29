@@ -60,6 +60,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `docs-sanitize-private-consumer-references` (PR #251) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec arquivado e dos exemplos e testes do AdminShell (título neutro `Admin Demo`); mantidos os requisitos técnicos genéricos, sem alterar APIs públicas, comportamento ou estilos. Sem change OpenSpec própria: mudança exclusivamente documental.
+
 - `issue-240-catalog-families` (#240) - Sidebar do catálogo apresenta famílias compostas em uma entrada por família; a busca mantém nomes individuais e aliases, levando a seções com API e exemplo. URLs legadas por export continuam acessíveis no site estático.
 
 - `issue-192-confirm-dialog-initial-focus` (issue #192) - Formaliza o foco inicial de `AdsConfirmDialog` na spec, em `docs/integration.md` e no comentário público: primeiro controle interativo elegível de `children` e, sem ele, "Cancelar". O foco inicial de diálogos e drawers passa a ignorar controles desabilitados por `fieldset`, ocultos e inertes. Testes da composição e exemplo com conteúdo interativo no Storybook e no catálogo.

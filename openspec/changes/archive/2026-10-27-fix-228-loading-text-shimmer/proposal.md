@@ -2,7 +2,7 @@
 
 ## Why
 
-O brilho do `AdsLoadingText` publicado é difícil de perceber, especialmente no tema escuro. No tema dark, `--ads-color-text-muted` (slate200) e `--ads-color-text-primary` (slate50) são próximos, resultando em variação visual pequena. Além disso, o CSS atual usa `background-color: currentColor`, ao contrário das duas camadas explícitas do Back Admin.
+O brilho do `AdsLoadingText` publicado é difícil de perceber, especialmente no tema escuro. No tema dark, `--ads-color-text-muted` (slate200) e `--ads-color-text-primary` (slate50) são próximos, resultando em variação visual pequena. Além disso, o CSS atual usa `background-color: currentColor`; avaliar a alternativa de duas camadas explícitas de `background-image` para melhorar a composição visual.
 
 ## What Changes
 
@@ -17,4 +17,4 @@ O brilho do `AdsLoadingText` publicado é difícil de perceber, especialmente no
 
 ## Out of scope
 
-Sem mudanças de API, velocidades, rótulos em inglês, regras de job, Back Admin ou tokens globais.
+Sem mudanças de API, velocidades, rótulos em inglês, regras de job, aplicações consumidoras ou tokens globais.

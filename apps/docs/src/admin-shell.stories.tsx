@@ -105,7 +105,7 @@ function HeaderContent() {
 			<AdsAdminShell.NavigationTrigger />
 			<AdsAdminShell.SidebarToggle />
 			<AdsTypography as="strong" variant="heading4">
-				Admin Abril
+				Admin Demo
 			</AdsTypography>
 			<div className="ml-auto flex flex-wrap items-center gap-2">
 				<AdsBadge>Produção</AdsBadge>
@@ -290,7 +290,7 @@ export const CustomTrigger: Story = {
 		<AdsAdminShell>
 			<AdsAdminShell.Header>
 				<AdsTypography as="strong" variant="heading4">
-					Admin Abril
+					Admin Demo
 				</AdsTypography>
 				<AdsAdminShell.NavigationTrigger className="ml-auto" label="Abrir menu principal" />
 			</AdsAdminShell.Header>

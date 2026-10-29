@@ -62,6 +62,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `docs-sanitize-private-consumer-references` (PR #251) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec arquivado e dos exemplos e testes do AdminShell (título neutro `Admin Demo`); mantidos os requisitos técnicos genéricos, sem alterar APIs públicas, comportamento ou estilos. Sem change OpenSpec própria: mudança exclusivamente documental.
+
 - `enhance-140-ads-select` (issue #140) - Texto longo de **todo** `AdsSelect` simples (com ou sem `placeholder`; não `multiple`) fica contido e truncado com reticências antes da seta (sem estourar o contêiner em 390 px nem com zoom de 200%), preservando RTL, `forced-colors` e os demais controles que usam `formControlClasses()`. Se `placeholder` já era passado a `AdsSelect`, o atributo ignorado pelo navegador passa a criar a opção de ausência.
 
 - `issue-240-catalog-families` (#240) - Sidebar do catálogo apresenta famílias compostas em uma entrada por família; a busca mantém nomes individuais e aliases, levando a seções com API e exemplo. URLs legadas por export continuam acessíveis no site estático.

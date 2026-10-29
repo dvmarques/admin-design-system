@@ -45,7 +45,7 @@ function ExampleShell(props: Omit<ComponentProps<typeof AdsAdminShell>, 'childre
 			<AdsAdminShell.Header>
 				<AdsAdminShell.NavigationTrigger />
 				<AdsAdminShell.SidebarToggle />
-				<span>Admin Abril</span>
+				<span>Admin Demo</span>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
 				<AdsAdminShell.Sidebar>
@@ -109,7 +109,7 @@ describe('AdsAdminShell structure', () => {
 
 	it('renders the administrative landmarks and consumer content', () => {
 		render(<ExampleShell />);
-		expect(screen.getByRole('banner')).toHaveTextContent('Admin Abril');
+		expect(screen.getByRole('banner')).toHaveTextContent('Admin Demo');
 		expect(screen.getByRole('main')).toHaveTextContent('Visão geral');
 		expect(navigations()).toHaveLength(1);
 		expect(navigations()[0]).toHaveTextContent('Dashboard');

@@ -61,7 +61,13 @@ export const catalogFamilies = [
 	{
 		title: 'Dropdown',
 		root: 'AdsDropdown',
-		members: ['AdsDropdown', 'AdsDropdown.Trigger', 'AdsDropdown.Content', 'AdsDropdown.Item'],
+		members: [
+			'AdsDropdown',
+			'AdsDropdown.Root',
+			'AdsDropdown.Trigger',
+			'AdsDropdown.Content',
+			'AdsDropdown.Item',
+		],
 		aliases: [],
 	},
 	{

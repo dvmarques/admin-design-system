@@ -55,18 +55,23 @@ describe('text form controls', () => {
 		for (const control of controls) expect(control).toHaveClass('box-border', 'w-full');
 	});
 
-	it.each(['sm', 'md', 'lg'] as const)('uses tokenized typeface on all text controls in %s', (size) => {
-		render(
-			<>
-				<AdsInput aria-label="Input" size={size} />
-				<AdsTextarea aria-label="Textarea" placeholder="Digite aqui" size={size} />
-				<AdsSelect aria-label="Select" size={size}><option>Um</option></AdsSelect>
-			</>,
-		);
-		expect(screen.getByRole('textbox', { name: 'Input' })).toHaveClass('font-sans');
-		expect(screen.getByRole('textbox', { name: 'Textarea' })).toHaveClass('font-sans');
-		expect(screen.getByRole('combobox', { name: 'Select' })).toHaveClass('font-sans');
-	});
+	it.each(['sm', 'md', 'lg'] as const)(
+		'uses tokenized typeface on all text controls in %s',
+		(size) => {
+			render(
+				<>
+					<AdsInput aria-label="Input" size={size} />
+					<AdsTextarea aria-label="Textarea" placeholder="Digite aqui" size={size} />
+					<AdsSelect aria-label="Select" size={size}>
+						<option>Um</option>
+					</AdsSelect>
+				</>,
+			);
+			expect(screen.getByRole('textbox', { name: 'Input' })).toHaveClass('font-sans');
+			expect(screen.getByRole('textbox', { name: 'Textarea' })).toHaveClass('font-sans');
+			expect(screen.getByRole('combobox', { name: 'Select' })).toHaveClass('font-sans');
+		},
+	);
 
 	it('renders textarea and select with native interaction', () => {
 		render(

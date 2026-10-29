@@ -72,13 +72,18 @@ for (const theme of ['light', 'dark'] as const) {
 		await page.setContent(
 			`<!doctype html><html data-theme="${theme}"><head><style>${css}</style></head><body>${markup}</body></html>`,
 		);
-		const fontFamilies = await page.locator('.ads-form-control').evaluateAll((nodes) =>
-			nodes.map((node) => getComputedStyle(node).fontFamily),
-		);
+		const fontFamilies = await page
+			.locator('.ads-form-control')
+			.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fontFamily));
 		expect(new Set(fontFamilies).size).toBe(1);
-		await page.locator('html').evaluate((element) =>
-			(element as HTMLElement).style.setProperty('--ads-typography-font-family', '"Courier New", monospace'),
-		);
+		await page
+			.locator('html')
+			.evaluate((element) =>
+				(element as HTMLElement).style.setProperty(
+					'--ads-typography-font-family',
+					'"Courier New", monospace',
+				),
+			);
 		for (const selector of ['input', 'select', 'textarea']) {
 			await expect(page.locator(selector)).toHaveCSS('font-family', /Courier New/);
 		}

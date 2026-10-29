@@ -152,7 +152,7 @@ export function AdsInputGroup({
 			className={classNames(
 				'ads-input-group flex max-w-full items-stretch overflow-x-auto rounded-md transition-shadow duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring focus-within:ring-2 focus-within:ring-focus-ring-offset',
 				startContent ? '[&>.ads-form-control]:rounded-l-none' : undefined,
-				'[&>.ads-form-control]:min-w-[4rem] [&>.ads-form-control]:flex-1',
+				'[&>.ads-form-control]:min-w-[4rem]',
 				endContent ? '[&>.ads-form-control]:rounded-r-none' : undefined,
 				className,
 			)}

@@ -1,18 +1,28 @@
-## Contexto e fonte
+## Contexto e decisões de fonte
 
-`building` já é um nome público utilizado por composições. A geometria atual é de origem não documentada. O SVG substituto foi consultado diretamente em [Hugeicons Free Building06Icon](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/src/Building06Icon.ts), licença [MIT do pacote gratuito](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md), copyright (c) 2025 Hugeicons.
+A auditoria da issue #257 não comprovou origem dos 20 traçados históricos. Foi aprovada a substituição pelos SVGs oficiais:
 
-## Decisões
+- **Feather Icons** — 18 SVGs do diretório `icons/`, licença MIT ([original](https://github.com/feathericons/feather/blob/main/LICENSE)), copyright Cole Bemis.
+- **Lucide Icons** — `icons/chevrons-up-down.svg`, ISC ([original](https://github.com/lucide-icons/lucide/blob/main/LICENSE)), copyright Lucide Icons and Contributors.
+- **Hugeicons Free** — `Building06Icon` de `@hugeicons/core-free-icons`, MIT ([original](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md)), copyright Hugeicons.
 
-- Copiar **somente** os quatro paths oficiais na mesma ordem para `iconPaths.building`; não instalar `@hugeicons/core-free-icons`.
-- O componente `AdsIcon` fornece SVG, `viewBox="0 0 24 24"`, `fill="none"`, `currentColor`, classe de tamanho e semântica decorativa/informativa. Preservá-los.
-- Os caminhos oficiais usam `strokeWidth="1.5"`, `strokeLinejoin="round"`, e `strokeLinecap="round"` somente onde declarado; sobrescrever pontualmente `strokeLinecap="butt"` nos caminhos em que a fonte não fornece ponta arredondada para neutralizar a herança `AdsIcon`. Assim o SVG mantém a geometria e a aparência do original.
-- Registrar comentário de origem ao lado de `building` e licença MIT integral em `THIRD_PARTY_NOTICES.md`. Não atribuir os 19 demais ícones à Hugeicons.
-- O teste precisa assegurar quatro caminhos na ordem do original e contratos públicos/a11y; teste visual/Storybook para avaliar a troca de desenho, sem alterar snapshots sem revisão explícita.
-- A mudança visual é intencional: prédios semelhantes, mas com porta visível e contorno redesenhado. Não mudar tokens, CSS, React Client/Server, responsividade ou exportações.
+A tabela completa de URLs oficiais, nomes públicos e blob SHAs consultados fica em `docs/icons-license-audit.md`.
 
-Alternativas descartadas: manter SVG de proveniência incerta (risco documental), usar Tabler `building` simétrico (maior divergência visual), instalar biblioteca inteira (dependência sem benefício para um SVG).
+## SVG, estrutura e contratos
 
-## Validação
+- Renderizar os elementos oficiais `path`, `circle`, `line`, `rect` e `polyline` como JSX, sem dependência externa. A geometria de origem não deve ser simplificada ou redesenhada.
+- Preservar `viewBox="0 0 24 24"`, `currentColor` e `fill="none"` compartilhados de `AdsIcon`.
+- Cada elemento Feather/Lucide recebe `strokeWidth="2"` para não herdar `1.75` do wrapper; Hugeicons preserva `1.5` e pontas `butt`/`round` por path. Cor e stroke-linejoin/linecap normais permanecem herdados quando são idênticos aos originais.
+- Não alterar nomes, tipagem `AdsIconName`, tamanhos `sm/md/lg`, semântica decorativa/informativa, SSR ou tree-shaking existente.
+- Mudanças de geometria são visuais: revisar o Storybook, os consumidores e baselines visuais afetados, sem gerar snapshots indiscriminadamente.
 
-`openspec validate --all --strict`, `npm run format`, testes unitários, lint, tipos, build e `npm run test:e2e`, além de revisão visual dos consumidores e conferência dos avisos de licença.
+## Licenciamento e distribuição
+
+- `THIRD_PARTY_NOTICES.md` na raiz preserva integralmente Feather MIT, Lucide ISC (incluindo seus avisos Feather incorporados) e Hugeicons Free MIT.
+- A pasta publicada `packages/components/dist/` deve conter cópias exatas de `LICENSE.md` e `THIRD_PARTY_NOTICES.md` por `scripts/copy-license-notices.mjs`, executado no build.
+- `scripts/verify-package.mjs` valida as cópias. O `package.json` continua com `files: ["dist"]`, garantindo inclusão na futura distribuição.
+- Sem nova dependência de runtime ou alteração de export público; manter separação entre documentação de origem e certificação indevida da autoria dos traçados antigos.
+
+## Validação e orçamento
+
+Testes de todos os nomes públicos, quantidade de shapes, geometria `building`, stroke de 19 ícones, acessibilidade, temas e Storybook; `npm run format`, lint, typecheck, build, `npm run test:e2e`, `openspec validate --all --strict`. Aumento de bundle/dist deverá ser medido em ambiente de build adequado antes de modificar limites orçamentários. CI e validação visual são gates antes do merge.

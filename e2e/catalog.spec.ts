@@ -146,24 +146,26 @@ for (const width of [390, 1280] as const) {
 		await button.focus();
 		const tooltip = page.getByRole('tooltip');
 		await expect(tooltip).toBeVisible();
-		await expect.poll(async () => {
-			const target = (await button.boundingBox())!;
-			const balloon = (await tooltip.boundingBox())!;
-			const actual = balloon.x + balloon.width / 2;
-			const expected = target.x + target.width / 2;
-			return Math.abs(actual - expected);
-		}).toBeLessThan(2);
+		// Não exigir centralização quando o painel precisa ser deslocado para caber na viewport.
+		// O esperado é centralizar no botão visível e aplicar o limite de colisão de 8px.
+		const horizontalError = async (
+			trigger: import('@playwright/test').Locator,
+			panel: import('@playwright/test').Locator,
+		) => {
+			const anchor = (await trigger.boundingBox())!;
+			const overlay = (await panel.boundingBox())!;
+			const center = anchor.x + anchor.width / 2;
+			const expected = Math.max(8, Math.min(center - overlay.width / 2, width - overlay.width - 8));
+			return Math.abs(overlay.x - expected);
+		};
+		await expect.poll(() => horizontalError(button, tooltip)).toBeLessThan(2);
 		await page.keyboard.press('Escape');
 		await page.goto('/catalogo/popover');
 		const popoverButton = page.getByRole('button', { name: 'Abrir popover' });
 		await popoverButton.click();
 		const popover = page.getByRole('dialog');
 		await expect(popover).toBeVisible();
-		await expect.poll(async () => {
-			const target = (await popoverButton.boundingBox())!;
-			const panel = (await popover.boundingBox())!;
-			return Math.abs(panel.x + panel.width / 2 - target.x - target.width / 2);
-		}).toBeLessThan(2);
+		await expect.poll(() => horizontalError(popoverButton, popover)).toBeLessThan(2);
 	});
 }
 

@@ -506,10 +506,9 @@ export function calculateAnchoredPosition(
 	return { style: { left: x, top: y }, placement, arrowOffset };
 }
 
-// Gatilho = filhos do wrapper, sem o marcador oculto do portal. O painel é posicionado pelo primeiro.
-export function getTriggerElements(anchor: HTMLElement) {
+function getTriggerElements(anchor: HTMLElement) {
 	const items = anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
-		? (Array.from(anchor.children) as HTMLElement[]).filter((el) => !el.hidden)
+		? Array.from(anchor.children as HTMLCollectionOf<HTMLElement>).filter((el) => !el.hidden)
 		: [];
 	return items.length ? items : [anchor];
 }
@@ -614,9 +613,7 @@ export function useAnchoredPosition(
 		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
 		const observeTargets = () => {
 			observer?.disconnect();
-			observer?.observe(anchor);
-			for (const el of getTriggerElements(anchor)) observer?.observe(el);
-			observer?.observe(panel);
+			for (const el of [anchor, ...getTriggerElements(anchor), panel]) observer?.observe(el);
 		};
 		observeTargets();
 		const mutations = new MutationObserver(() => {

@@ -263,6 +263,24 @@ describe('field composition', () => {
 		expect(screen.getByRole('button', { name: 'Filtros' })).toBeInTheDocument();
 	});
 
+	it('keeps currency and buttons unbroken without changing global button styles', () => {
+		const { container } = render(
+			<AdsInputGroup
+				startContent="R$"
+				endContent={<><AdsButton>Limpar</AdsButton><AdsButton>Restaurar</AdsButton></>}
+			>
+				<AdsInput aria-label="Valor" />
+			</AdsInputGroup>,
+		);
+		const start = container.querySelector('.ads-input-group__start');
+		const end = container.querySelector('.ads-input-group__end');
+		expect(start).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(end).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(container.querySelector('.ads-input-group')).toHaveClass('max-w-full', 'overflow-x-auto', '[&>.ads-form-control]:flex-1');
+		expect(end).toHaveClass('[&>.ads-button]:whitespace-nowrap');
+		expect(screen.getByRole('button', { name: 'Limpar' })).not.toHaveClass('whitespace-nowrap');
+	});
+
 	it('keeps several buttons in one addon contiguous with only the outer corner rounded', () => {
 		const { container } = render(
 			<AdsInputGroup

@@ -519,6 +519,22 @@ body {
 	min-width: 0;
 	overflow-wrap: anywhere;
 }
+.demo-catalog-member {
+	margin-block: 1.25rem;
+	padding-block: 0.75rem;
+	border-bottom: 1px solid var(--ads-color-border);
+	scroll-margin-top: 5rem;
+}
+.demo-catalog-member pre {
+	max-width: 100%;
+	overflow-x: auto;
+	padding: 0.75rem;
+	background: var(--ads-color-surface-muted);
+	border-radius: var(--ads-radius-md);
+}
+.demo-catalog-member h3 {
+	margin-block: 0 0.5rem;
+}
 .demo-catalog-controls {
 	display: flex;
 	flex-wrap: wrap;

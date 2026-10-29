@@ -392,8 +392,12 @@ export function FieldDemo() {
 				startContent="R$"
 				endContent={
 					<>
-						<AdsButton onClick={() => setValue('0')}>Limpar valor</AdsButton>
-						<AdsButton onClick={() => setValue('120')}>Restaurar</AdsButton>
+						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>
+							Limpar
+						</AdsButton>
+						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>
+							Restaurar
+						</AdsButton>
 					</>
 				}
 			>
@@ -420,6 +424,44 @@ export function FieldDemo() {
 			>
 				<AdsInput />
 			</AdsField>
+		</>
+	);
+}
+
+export function InputGroupDemo() {
+	const [value, setValue] = useState('120');
+	const [error, setError] = useState(false);
+	return (
+		<>
+			<AdsFieldLabel id="amount-label">Valor em reais</AdsFieldLabel>
+			<AdsInputGroup
+				startContent="R$"
+				endContent={
+					<>
+						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>
+							Limpar
+						</AdsButton>
+						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>
+							Restaurar
+						</AdsButton>
+					</>
+				}
+			>
+				<AdsInput
+					aria-labelledby="amount-label"
+					id="amount"
+					value={value}
+					onChange={(event) => setValue(event.target.value)}
+					validationState={error ? 'error' : 'default'}
+					aria-invalid={error}
+					aria-describedby={error ? 'amount-help amount-error' : 'amount-help'}
+				/>
+			</AdsInputGroup>
+			<AdsFieldDescription id="amount-help">
+				Use os adendos para alterar o valor.
+			</AdsFieldDescription>
+			{error && <AdsFieldMessage id="amount-error">Informe um valor válido.</AdsFieldMessage>}
+			<AdsButton onClick={() => setError(!error)}>Alternar erro</AdsButton>
 		</>
 	);
 }
@@ -1690,6 +1732,7 @@ export const catalogDemos = {
 	Radio: RadioDemo,
 	Switch: SwitchDemo,
 	Field: FieldDemo,
+	InputGroup: InputGroupDemo,
 	SelectionGroup: SelectionGroupDemo,
 	DatePicker: DatePickerDemo,
 	Breadcrumb: BreadcrumbDemo,

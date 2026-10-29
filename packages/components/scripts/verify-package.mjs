@@ -9,14 +9,14 @@ for (const path of [
 	await access(new URL(`../${path.replace('./', '')}`, import.meta.url));
 }
 
-
 for (const name of ['LICENSE.md', 'THIRD_PARTY_NOTICES.md']) {
 	const [source, distributed] = await Promise.all([
 		readFile(new URL(`../../../${name}`, import.meta.url), 'utf8'),
 		readFile(new URL(`../dist/${name}`, import.meta.url), 'utf8'),
 	]);
-	if (distributed !== source)
+	if (distributed !== source) {
 		throw new Error(`Distributed ${name} is missing or differs from the repository notice`);
+	}
 }
 
 // Modules with state or effects must keep the directive; the server ones must stay usable from a

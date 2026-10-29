@@ -127,7 +127,7 @@ export function AdsFieldMessage({ className, ...props }: AdsFieldMessageProps) {
 // abriria uma fresta de 1px. Vários botões no mesmo adendo ficam contíguos: só a quina externa do
 // conjunto é arredondada e cada junção sobrepõe 1px, como a do adendo com o campo.
 const buttonAddonClassName =
-	'has-[>.ads-button]:items-stretch has-[>.ads-button]:border-0 has-[>.ads-button]:bg-transparent has-[>.ads-button]:p-0 [&>.ads-button]:min-h-0! [&>.ads-button]:translate-y-0! [&>.ads-button+.ads-button]:-ml-px';
+	'has-[>.ads-button]:items-stretch has-[>.ads-button]:border-0 has-[>.ads-button]:bg-transparent has-[>.ads-button]:p-0 [&>.ads-button]:shrink-0 [&>.ads-button]:whitespace-nowrap [&>.ads-button]:min-h-0! [&>.ads-button]:translate-y-0! [&>.ads-button+.ads-button]:-ml-px';
 const buttonStartClassName =
 	'has-[>.ads-button]:-mr-px [&>.ads-button]:rounded-r-none [&>.ads-button:not(:first-child)]:rounded-l-none';
 const buttonEndClassName =
@@ -150,8 +150,9 @@ export function AdsInputGroup({
 		<div
 			{...props}
 			className={classNames(
-				'ads-input-group flex items-stretch rounded-md transition-shadow duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring focus-within:ring-2 focus-within:ring-focus-ring-offset',
+				'ads-input-group flex max-w-full items-stretch overflow-x-auto rounded-md transition-shadow duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] focus-within:outline focus-within:outline-2 focus-within:outline-offset-2 focus-within:outline-focus-ring focus-within:ring-2 focus-within:ring-focus-ring-offset',
 				startContent ? '[&>.ads-form-control]:rounded-l-none' : undefined,
+				'[&>.ads-form-control]:min-w-[4rem] [&>.ads-form-control]:flex-1',
 				endContent ? '[&>.ads-form-control]:rounded-r-none' : undefined,
 				className,
 			)}
@@ -159,7 +160,7 @@ export function AdsInputGroup({
 			{startContent ? (
 				<span
 					className={classNames(
-						'ads-input-group__start inline-flex items-center rounded-l-md border border-r-0 border-border bg-surface-muted px-3 text-sm text-text-muted',
+						'ads-input-group__start inline-flex shrink-0 items-center whitespace-nowrap rounded-l-md border border-r-0 border-border bg-surface-muted px-3 text-sm text-text-muted',
 						buttonAddonClassName,
 						buttonStartClassName,
 					)}
@@ -171,7 +172,7 @@ export function AdsInputGroup({
 			{endContent ? (
 				<span
 					className={classNames(
-						'ads-input-group__end inline-flex items-center rounded-r-md border border-l-0 border-border bg-surface-muted px-3 text-sm text-text-muted',
+						'ads-input-group__end inline-flex shrink-0 items-center whitespace-nowrap rounded-r-md border border-l-0 border-border bg-surface-muted px-3 text-sm text-text-muted',
 						buttonAddonClassName,
 						buttonEndClassName,
 					)}

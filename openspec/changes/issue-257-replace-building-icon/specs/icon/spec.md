@@ -37,6 +37,23 @@ Os 20 desenhos SVG incorporados MUST ter arquivo de origem oficialmente identifi
 - **THEN** a documentação fornece link para o arquivo oficial e identifica a licença correspondente
 - **AND** o histórico dos traçados substituídos não é apresentado como autoria própria comprovada
 
+
+### Requirement: Módulo interno de ícones preparado para extração
+
+A implementação de `AdsIcon` MUST separar desenhos SVG, tipos e componente em `packages/components/src/icons/`, preservando as exportações existentes de `@admin-ds/components` e `src/icon.tsx`. Esta entrega MUST NOT criar um pacote independente ou adicionar dependências.
+
+#### Scenario: Import público mantém identidade
+
+- **WHEN** um consumidor importa `AdsIcon` pelo export principal ou por `src/icon.tsx`
+- **THEN** ambos resolvem a mesma implementação modularizada
+- **AND** `AdsIconName`, `AdsIconProps` e `AdsIconSize` continuam compatíveis
+
+#### Scenario: Catálogo de desenhos desacoplado
+
+- **WHEN** o mantenedor consulta os SVGs em `src/icons/paths.tsx`
+- **THEN** encontra os 20 nomes e desenhos oficiais sem alterar geometria, atributos, licença ou renderização
+- **AND** a separação não muda os subpaths públicos do pacote
+
 ### Requirement: Avisos de licença acompanham o pacote distribuído
 
 O build de `@admin-ds/components` MUST publicar as licenças e atribuições relevantes junto dos componentes.

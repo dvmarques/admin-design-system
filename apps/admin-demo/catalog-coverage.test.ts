@@ -7,8 +7,10 @@ import {
 	catalogFamilies,
 	catalogMemberAnchor,
 	catalogMemberHref,
+	catalogFamilyMembers,
 	catalogSearchEntries,
 } from './app/catalogo/catalog-families';
+import { catalogMemberReference } from './app/catalogo/catalog-member-reference';
 import { catalogDemos } from './app/catalogo/catalog-demos';
 import snippets from './app/catalogo/catalog-snippets.json';
 import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';
@@ -80,6 +82,16 @@ describe('rastreabilidade do catálogo', () => {
 				}
 			}
 		}
+	});
+
+	it('documenta corretamente os elementos thead e th e o alias raiz de Dropdown', () => {
+		const thead = catalogMemberReference('AdsTableHead');
+		const th = catalogMemberReference('AdsTableHeader');
+		expect(thead.description).toContain('<thead>');
+		expect(thead.usage).toContain('<AdsTableHead>');
+		expect(th.description).toContain('<th>');
+		expect(th.usage).toContain('scope="col"');
+		expect(catalogFamilyMembers('AdsDropdown')).toContain('AdsDropdown.Root');
 	});
 
 	it('mantém snippets idênticos às funções TSX executadas e tipadas', () => {

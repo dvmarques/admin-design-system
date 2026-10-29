@@ -23,14 +23,24 @@ const focusableSelector = [
 	'object',
 	'[contenteditable="true"]',
 	'[tabindex]:not([tabindex="-1"])',
+	'summary',
 ].join(',');
 
 /**
- * Elegível ao foco inicial: não desabilitado (inclusive por `fieldset`), sem `inert` e visível
- * (sem `hidden`, `display: none` ou `visibility: hidden` no elemento ou em ancestrais até o contêiner).
+ * Elegível ao foco inicial e ao Tab: não desabilitado (inclusive por `fieldset`), sem `inert`, sem
+ * `tabindex` negativo e visível (sem `hidden`, `display: none` ou `visibility: hidden` até o contêiner).
  */
-function isInitialFocusEligible(element: HTMLElement, container: HTMLElement) {
+function isFocusEligible(element: HTMLElement, container: HTMLElement) {
+	// Só o primeiro `summary` de um `details` é o controle de alternância; os demais são conteúdo.
+	if (element.matches('summary')) {
+		const details = element.parentElement;
+		if (details?.tagName !== 'DETAILS' || details.querySelector(':scope>summary') !== element)
+			return false;
+	}
 	if (element.matches(':disabled') || element.closest('[inert]')) return false;
+	if (element.hasAttribute('tabindex') && element.tabIndex < 0) return false;
+	// Cobre também `content-visibility: hidden` (conteúdo de `<details>` fechado), onde o foco não entra.
+	if (element.checkVisibility?.({ visibilityProperty: true }) === false) return false;
 	if (getComputedStyle(element).visibility !== 'visible') return false;
 	for (
 		let node: HTMLElement | null = element;
@@ -40,6 +50,13 @@ function isInitialFocusEligible(element: HTMLElement, container: HTMLElement) {
 		if (node.hidden || getComputedStyle(node).display === 'none') return false;
 	}
 	return true;
+}
+
+/** Candidatos elegíveis dentro de `container`, em ordem de documento. */
+function getEligibleFocusableElements(container: HTMLElement) {
+	return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter((element) =>
+		isFocusEligible(element, container),
+	);
 }
 
 export function useStableId(prefix: string) {
@@ -310,10 +327,7 @@ export function useOverlayFocus(
 		const focus = () => {
 			const container = containerRef.current;
 			if (!container) return;
-			const first = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).find(
-				(element) => isInitialFocusEligible(element, container),
-			);
-			(first ?? container).focus();
+			(getEligibleFocusableElements(container)[0] ?? container).focus();
 		};
 		focus();
 		const timer = window.setTimeout(focus, 0);
@@ -347,7 +361,8 @@ export function useOverlayFocus(
 				logicalContains(container, active)
 			)
 				return;
-			const elements = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector));
+			// Reavaliada a cada Tab: a elegibilidade pode mudar com o modal aberto.
+			const elements = getEligibleFocusableElements(container);
 			if (elements.length === 0) {
 				event.preventDefault();
 				container.focus();
@@ -355,15 +370,20 @@ export function useOverlayFocus(
 			}
 			const first = elements[0]!;
 			const last = elements[elements.length - 1]!;
-			if (!container.contains(active)) {
+			const direction = event.shiftKey
+				? Node.DOCUMENT_POSITION_PRECEDING
+				: Node.DOCUMENT_POSITION_FOLLOWING;
+			// Fora da lista (contêiner ou controle que perdeu a elegibilidade), só dá a volta sem
+			// destino elegível adiante; senão o Tab nativo escaparia da camada.
+			if (
+				!active ||
+				!container.contains(active) ||
+				active === (event.shiftKey ? first : last) ||
+				(!(active instanceof HTMLElement && elements.includes(active)) &&
+					!elements.some((element) => active.compareDocumentPosition(element) & direction))
+			) {
 				event.preventDefault();
 				(event.shiftKey ? last : first).focus();
-			} else if (event.shiftKey && active === first) {
-				event.preventDefault();
-				last.focus();
-			} else if (!event.shiftKey && active === last) {
-				event.preventDefault();
-				first.focus();
 			}
 		};
 		document.addEventListener('keydown', onKeyDown);

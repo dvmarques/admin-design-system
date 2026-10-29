@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
@@ -169,6 +169,36 @@ test('interações de abas, campos, tabela e etapas', async ({ page }) => {
 	const response = await page.goto('/catalogo/componente-inexistente');
 	expect(response?.status()).toBe(404);
 });
+
+for (const width of [390, 1280] as const) {
+	test(`tooltip e popover se ancoram no botão real em flex/stretch a ${width}px`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width, height: 850 });
+		await page.goto('/catalogo/tooltip');
+		const button = page.getByRole('button', { name: 'Ajuda', exact: true });
+		await button.focus();
+		const tooltip = page.getByRole('tooltip');
+		await expect(tooltip).toBeVisible();
+		// Não exigir centralização quando o painel precisa ser deslocado para caber na viewport.
+		// O esperado é centralizar no botão visível e aplicar o limite de colisão de 8px.
+		const horizontalError = async (trigger: Locator, panel: Locator) => {
+			const anchor = (await trigger.boundingBox())!;
+			const overlay = (await panel.boundingBox())!;
+			const center = anchor.x + anchor.width / 2;
+			const expected = Math.max(8, Math.min(center - overlay.width / 2, width - overlay.width - 8));
+			return Math.abs(overlay.x - expected);
+		};
+		await expect.poll(() => horizontalError(button, tooltip)).toBeLessThan(2);
+		await page.keyboard.press('Escape');
+		await page.goto('/catalogo/popover');
+		const popoverButton = page.getByRole('button', { name: 'Abrir popover' });
+		await popoverButton.click();
+		const popover = page.getByRole('dialog');
+		await expect(popover).toBeVisible();
+		await expect.poll(() => horizontalError(popoverButton, popover)).toBeLessThan(2);
+	});
+}
 
 test('overlays e ações administrativas do catálogo', async ({ page }) => {
 	for (const [slug, label] of [

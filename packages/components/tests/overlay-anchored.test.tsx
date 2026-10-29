@@ -85,6 +85,21 @@ describe('anchored overlays', () => {
 		expect(onOpenChange.mock.calls).toEqual([[true], [false], [true]]);
 	});
 
+	it('does not open a popover when clicking empty space in a stretched anchor', () => {
+		const onOpenChange = vi.fn();
+		const { container } = render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={false}>
+				<AdsButton>Gatilho</AdsButton>
+			</AdsPopover>,
+		);
+		const anchor = container.querySelector('.ads-popover-anchor');
+		expect(anchor).toBeInTheDocument();
+		fireEvent.click(anchor!);
+		expect(onOpenChange).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(onOpenChange).toHaveBeenCalledWith(true);
+	});
+
 	it('preserves a trigger handler that stops propagation', () => {
 		const onOpenChange = vi.fn();
 		const onClick = vi.fn();
@@ -113,8 +128,8 @@ describe('anchored overlays', () => {
 		);
 		const trigger = screen.getByRole('button', { name: 'Ajuda' });
 		// JSDOM não faz layout: uma âncora em (0, 0) exige flip para bottom.
-		// Este teste verifica foco/ARIA com espaço realista acima da âncora.
-		vi.spyOn(trigger.parentElement!, 'getBoundingClientRect').mockReturnValue({
+		// Agora a geometria vem do botão real, não do wrapper flexível; usar espaço realista acima dele.
+		vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
 			top: 100,
 			bottom: 120,
 			left: 100,
@@ -135,6 +150,99 @@ describe('anchored overlays', () => {
 		expect(document.activeElement).toBe(trigger);
 		fireEvent.blur(trigger);
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+	});
+
+	it('anchors a tooltip to the real trigger, not to a stretched wrapper', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		const rect = (left: number, width: number) => ({
+			top: 100,
+			bottom: 120,
+			left,
+			right: left + width,
+			width,
+			height: 20,
+			x: left,
+			y: 100,
+			toJSON() {},
+		});
+		vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue(rect(100, 40));
+		vi.spyOn(trigger.parentElement!, 'getBoundingClientRect').mockReturnValue(rect(0, 400));
+		act(() => trigger.focus());
+		const tooltip = await screen.findByRole('tooltip');
+		// O painel mede 0 x 0 no JSDOM; o centro do botão é 120, o do wrapper seria 200.
+		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
+	});
+
+	it('treats every element rendered by the trigger as part of the popover trigger', async () => {
+		const onOpenChange = vi.fn();
+		function SplitTrigger(props: object) {
+			return (
+				<>
+					<AdsButton {...props}>Primeiro</AdsButton>
+					<AdsButton {...props}>Segundo</AdsButton>
+				</>
+			);
+		}
+		const { container } = render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={true}>
+				<SplitTrigger />
+			</AdsPopover>,
+		);
+		await screen.findByRole('dialog');
+		fireEvent.click(screen.getByRole('button', { name: 'Segundo' }));
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		onOpenChange.mockClear();
+		// Pressionar o segundo irmão não conta como clique externo (o clique alterna).
+		fireEvent.mouseDown(screen.getByRole('button', { name: 'Segundo' }));
+		expect(onOpenChange).not.toHaveBeenCalled();
+		// A área vazia do wrapper continua sendo clique externo e não alterna.
+		fireEvent.mouseDown(container.querySelector('.ads-popover-anchor')!);
+		expect(onOpenChange).toHaveBeenCalledWith(false);
+		onOpenChange.mockClear();
+		fireEvent.click(container.querySelector('.ads-popover-anchor')!);
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	it('re-measures the new trigger element when the trigger changes while open', async () => {
+		const rect = (left: number, width: number) => ({
+			top: 100,
+			bottom: 120,
+			left,
+			right: left + width,
+			width,
+			height: 20,
+			x: left,
+			y: 100,
+			toJSON() {},
+		});
+		function Fixture({ swapped }: { swapped: boolean }) {
+			return (
+				<AdsTooltip content="Ajuda contextual">
+					{swapped ? <a href="#destino">Novo</a> : <AdsButton>Antigo</AdsButton>}
+				</AdsTooltip>
+			);
+		}
+		const { rerender } = render(<Fixture swapped={false} />);
+		const oldTrigger = screen.getByRole('button', { name: 'Antigo' });
+		vi.spyOn(oldTrigger, 'getBoundingClientRect').mockReturnValue(rect(100, 40));
+		act(() => oldTrigger.focus());
+		const tooltip = await screen.findByRole('tooltip');
+		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
+		// jsdom não implementa getBoundingClientRect por layout: simula o novo elemento.
+		const spy = vi
+			.spyOn(HTMLAnchorElement.prototype, 'getBoundingClientRect')
+			.mockReturnValue(rect(300, 40));
+		try {
+			rerender(<Fixture swapped={true} />);
+			await waitFor(() => expect(screen.getByRole('tooltip')).toHaveStyle({ left: '320px' }));
+		} finally {
+			spy.mockRestore();
+		}
 	});
 
 	it('shows a tooltip while the pointer hovers the trigger', async () => {
@@ -390,6 +498,14 @@ describe('anchored overlays', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
 		await screen.findByRole('dialog', { name: 'Ações rápidas' });
 		fireEvent.mouseDown(document.body);
+		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+	});
+
+	it('closes a popover when pressing the empty area of a stretched anchor', async () => {
+		const { container } = render(<PopoverFixture />);
+		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
+		await screen.findByRole('dialog', { name: 'Ações rápidas' });
+		fireEvent.mouseDown(container.querySelector('.ads-popover-anchor')!);
 		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
 	});
 

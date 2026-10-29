@@ -226,17 +226,12 @@ for (const theme of ['light', 'dark']) {
 			await trigger.click();
 			const panel = page.getByRole('dialog', { name: 'Popover na borda' });
 			await insideViewport(panel, page);
-			const anchorElement = page
-				.locator('.ads-popover-anchor')
-				.filter({ has: page.getByRole('button', { name: 'Popover na borda', exact: true }) });
-			const anchorBefore = (await anchorElement.boundingBox())!;
+			const anchorBefore = (await trigger.boundingBox())!;
 			await page.evaluate(() => window.scrollBy({ top: 80, behavior: 'instant' }));
-			await expect
-				.poll(async () => (await anchorElement.boundingBox())!.y)
-				.toBeLessThan(anchorBefore.y);
+			await expect.poll(async () => (await trigger.boundingBox())!.y).toBeLessThan(anchorBefore.y);
 			await expect
 				.poll(async () => {
-					const anchor = (await anchorElement.boundingBox())!;
+					const anchor = (await trigger.boundingBox())!;
 					const box = (await panel.boundingBox())!;
 					return (await panel.getAttribute('data-placement')) === 'top'
 						? Math.abs(box.y + box.height + 8 - anchor.y)
@@ -248,7 +243,7 @@ for (const theme of ['light', 'dark']) {
 			});
 			await expect
 				.poll(async () => {
-					const anchor = (await anchorElement.boundingBox())!;
+					const anchor = (await trigger.boundingBox())!;
 					const box = (await panel.boundingBox())!;
 					const expected = Math.max(
 						8,

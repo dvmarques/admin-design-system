@@ -15,6 +15,7 @@ import {
 	useAnchoredPosition,
 	useClickOutside,
 	useEscapeKey,
+	isInsideTrigger,
 	useStableId,
 } from './overlay-utils.js';
 import { AdsTypography } from './typography.js';
@@ -144,7 +145,7 @@ export function AdsPopover({
 
 	useEscapeKey(open, () => onOpenChange(false));
 	useClickOutside(open, contentRef, (event) => {
-		if (!(event.target instanceof Node) || !anchorRef.current?.contains(event.target)) {
+		if (!(event.target instanceof Node) || !isInsideTrigger(anchorRef.current, event.target)) {
 			onOpenChange(false);
 		}
 	});
@@ -159,7 +160,7 @@ export function AdsPopover({
 			className="ads-popover-anchor inline-flex"
 			onClick={(event) => {
 				// React events from the portalled panel also bubble through this anchor.
-				if (event.target instanceof Node && event.currentTarget.contains(event.target)) {
+				if (event.target instanceof Node && isInsideTrigger(event.currentTarget, event.target)) {
 					onOpenChange(!open);
 				}
 			}}

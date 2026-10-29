@@ -506,6 +506,17 @@ export function calculateAnchoredPosition(
 	return { style: { left: x, top: y }, placement, arrowOffset };
 }
 
+const display = (el: Element) => getComputedStyle(el).display;
+
+function getTriggerElements(anchor: HTMLElement) {
+	return anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
+		? [...anchor.children].filter((el) => display(el) !== 'none')
+		: [anchor];
+}
+
+export const isInsideTrigger = (anchor: HTMLElement | null, target: Node) =>
+	anchor && getTriggerElements(anchor).some((el) => el.contains(target));
+
 export function useAnchoredPosition(
 	open: boolean,
 	anchorRef: RefObject<HTMLElement | null>,
@@ -539,7 +550,9 @@ export function useAnchoredPosition(
 		const update = () => {
 			if (disposed) return;
 			const rect = panel.getBoundingClientRect();
-			const anchorRect = anchor.getBoundingClientRect();
+			const anchorRect = (
+				getTriggerElements(anchor).find((el) => display(el) !== 'contents') ?? anchor
+			).getBoundingClientRect();
 			// Uma origem fixed conhecida converte rects visuais sem identificar motores
 			// por aliases CSS. Só precisamos medi-la quando há pan da viewport visual.
 			let dx = 0;
@@ -601,10 +614,19 @@ export function useAnchoredPosition(
 		visual?.addEventListener('resize', schedule);
 		visual?.addEventListener('scroll', schedule);
 		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
-		observer?.observe(anchor);
-		observer?.observe(panel);
+		const watch = () => {
+			observer?.disconnect();
+			for (const el of [anchor, ...anchor.children, panel]) observer?.observe(el);
+		};
+		watch();
+		const mutations = new MutationObserver(() => {
+			watch();
+			schedule();
+		});
+		mutations.observe(anchor, { childList: true });
 		return () => {
 			disposed = true;
+			mutations.disconnect();
 			fixedOrigin?.remove();
 			if (frame !== null) view.cancelAnimationFrame(frame);
 			observer?.disconnect();

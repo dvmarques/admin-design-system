@@ -163,6 +163,14 @@ necessário e ajustam os dois eixos com margem de 8px. `data-placement` informa 
 lado efetivo nos três componentes; a seta do Tooltip acompanha esse lado e o
 centro do gatilho, respeitando os limites do painel. Nenhuma prop mudou.
 
+Tooltip e Popover medem o gatilho visível (os elementos que o filho renderiza), não
+o wrapper `ads-tooltip-anchor`/`ads-popover-anchor`. Assim, em contêineres flex ou
+grid que esticam o wrapper (`align-items: stretch`), o painel e a seta continuam
+centralizados no botão; gatilhos com vários elementos têm o painel posicionado pelo primeiro deles e a
+troca do elemento do gatilho com o painel aberto reposiciona o painel. No Popover,
+cliques em qualquer elemento do gatilho alternam a abertura; a área vazia do
+wrapper esticado não alterna e conta como clique externo.
+
 Os painéis acompanham alterações de tamanho da âncora/conteúdo, scroll de
 ancestrais, resize e mudanças da viewport visual. As medidas usam CSS pixels
 e posicionamento fixo no portal, sem somar o scroll da página. O portal é

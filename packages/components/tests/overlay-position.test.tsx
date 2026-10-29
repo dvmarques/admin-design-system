@@ -112,6 +112,77 @@ describe('anchored portal lifecycle', () => {
 		expect(observers.at(-1)?.observe).toHaveBeenCalledWith(panel);
 	});
 
+	it('measures the first rendered child of a multi-child trigger and follows visibility changes', () => {
+		vi.mocked(HTMLElement.prototype.getBoundingClientRect).mockImplementation(function (
+			this: HTMLElement,
+		) {
+			if (this.dataset.testid === 'first') return rect(10, 10, 20, 20);
+			if (this.dataset.testid === 'second') return anchorRect;
+			return this.hasAttribute('data-ads-fixed-origin') ? fixedOriginRect : panelRect;
+		});
+		let firstShown = false;
+		function Multi() {
+			const anchor = useRef<HTMLDivElement>(null);
+			const content = useRef<HTMLDivElement>(null);
+			const position = useAnchoredPosition(true, anchor, content, 'bottom');
+			return (
+				<>
+					<div ref={anchor} className="ads-popover-anchor">
+						<button style={{ display: firstShown ? undefined : 'none' }} data-testid="first">
+							Primeiro
+						</button>
+						<button data-testid="second">Segundo</button>
+					</div>
+					<OverlayPortal>
+						<div ref={position.attachContent} data-testid="panel" style={position.style}>
+							Painel
+						</div>
+					</OverlayPortal>
+				</>
+			);
+		}
+		const view = render(<Multi />);
+		const panel = screen.getByTestId('panel');
+		expect(panel).toHaveStyle({ top: '162px', left: '120px' });
+		expect(observers.at(-1)?.observe).toHaveBeenCalledWith(screen.getByTestId('first'));
+		firstShown = true;
+		view.rerender(<Multi />);
+		resize();
+		flush();
+		expect(panel).toHaveStyle({ top: '38px', left: '8px' });
+	});
+
+	it('falls back to the wrapper when the only trigger root has display: contents', () => {
+		vi.mocked(HTMLElement.prototype.getBoundingClientRect).mockImplementation(function (
+			this: HTMLElement,
+		) {
+			if (this.dataset.testid === 'boxless') return rect(0, 0, 0, 0);
+			if (this.matches('.ads-popover-anchor')) return anchorRect;
+			return panelRect;
+		});
+		function Contents() {
+			const anchor = useRef<HTMLDivElement>(null);
+			const content = useRef<HTMLDivElement>(null);
+			const position = useAnchoredPosition(true, anchor, content, 'bottom');
+			return (
+				<>
+					<div ref={anchor} className="ads-popover-anchor">
+						<span style={{ display: 'contents' }} data-testid="boxless">
+							<button>Ação</button>
+						</span>
+					</div>
+					<OverlayPortal>
+						<div ref={position.attachContent} data-testid="panel" style={position.style}>
+							Painel
+						</div>
+					</OverlayPortal>
+				</>
+			);
+		}
+		render(<Contents />);
+		expect(screen.getByTestId('panel')).toHaveStyle({ top: '162px', left: '120px' });
+	});
+
 	it('repositions after content and anchor resize and coalesces notifications', () => {
 		render(
 			<StrictMode>

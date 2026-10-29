@@ -1,17 +1,24 @@
 ## 1. Rastreabilidade e planejamento
 
-- [x] 1.1 Confirmar fonte oficial `Building06Icon` e a licença MIT de `@hugeicons/core-free-icons`.
-- [x] 1.2 Registrar alteração de escopo aprovada na issue #257 e criar a change antes do Apply.
+- [x] 1.1 Conferir as fontes oficiais dos 20 desenhos SVG e suas licenças permissivas MIT/ISC.
+- [x] 1.2 Registrar na issue #257 a aprovação da troca dos 20 traçados sem alteração da API.
+- [x] 1.3 Atualizar proposal/design/specs da change para o escopo de 20 ícones.
 
-## 2. Troca e licença
+## 2. Implementação e atribuições
 
-- [x] 2.1 Substituir somente `iconPaths.building` pelo SVG oficial (quatro paths), preservando `AdsIcon`, a API e o comportamento.
-- [x] 2.2 Preservar licença e copyright integral Hugeicons no aviso de terceiros, com fonte/URL; atualizar auditoria e `docs/licensing.md`.
-- [x] 2.3 Atualizar `CHANGELOG.md` no item da issue #257.
+- [x] 2.1 Substituir `building` pelos quatro paths oficiais de Hugeicons Free MIT.
+- [x] 2.2 Substituir 18 ícones por geometria Feather MIT e `chevronsUpDown` por Lucide ISC.
+- [x] 2.3 Registrar links oficiais individuais no inventário `docs/icons-license-audit.md`, com ressalva de autoria histórica.
+- [x] 2.4 Preservar avisos integrais e copyrights Feather, Lucide e Hugeicons em `THIRD_PARTY_NOTICES.md`.
+- [x] 2.5 Atualizar `docs/licensing.md` e Storybook com catálogo visual.
+- [x] 2.6 Incluir os arquivos `LICENSE.md` e `THIRD_PARTY_NOTICES.md` no `dist` distribuído, verificando seu conteúdo.
+- [x] 2.7 Ampliar testes de geometria, largura de traço, tipagem e acessibilidade para os 20 nomes.
+- [ ] 2.8 Atualizar `CHANGELOG.md` incluindo toda a migração e a publicação dos avisos.
 
-## 3. Testes e revisão
+## 3. Validação e conclusão
 
-- [x] 3.1 Incluir teste pontual dos paths e acessibilidade/tamanho para prevenir regressão.
-- [ ] 3.2 Conferir visual no Storybook/demo, temas claro/escuro e tamanho pequeno, e revisar quaisquer baselines visuais afetados antes de regenerar.
-- [ ] 3.3 Rodar formatação dos arquivos alterados, `npm run format`, lint, tipos, build, testes unitários e `npm run test:e2e`.
-- [ ] 3.4 Rodar `openspec validate --all --strict`; revisar diff e CI atual, sem fazer merge ou arquivar sem os gates aplicáveis.
+- [ ] 3.1 Verificar mecanicamente cada SVG transcrito contra os 20 arquivos originais (shape, atributo, order, stroke).
+- [ ] 3.2 Executar build, verificador de pacote, testes, lint, tipos, `npm run format`, `npm run validate` e `npm run test:e2e`; registrar resultados reais.
+- [ ] 3.3 Conferir Storybook/demo, temas claro/escuro e todos os tamanhos; atualizar snapshots somente quando intencionalmente revisados.
+- [ ] 3.4 Medir os orçamentos de distribuição/browser e só ajustá-los com evidências.
+- [ ] 3.5 Executar `openspec validate --all --strict` e revisar diff final/CI. Não fazer merge ou archive sem os gates previstos.

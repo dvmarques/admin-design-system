@@ -43,6 +43,34 @@ for (const theme of ['light', 'dark'] as const) {
 	}
 }
 
+test('busca por subcomponente abre seção da família e preserva URL legada', async ({ page }) => {
+	await page.goto('/catalogo');
+	await page.getByRole('searchbox', { name: 'Buscar componente' }).fill('TabsTrigger');
+	await page.getByRole('link', { name: 'AdsTabsTrigger', exact: true }).click();
+	await expect(page).toHaveURL(/\/catalogo\/tabs#ads-tabs-trigger$/);
+	await expect(
+		page.locator('#ads-tabs-trigger').getByRole('heading', { name: 'AdsTabsTrigger' }),
+	).toBeVisible();
+	await page.goto('/catalogo/tabs-trigger');
+	await expect(page.getByRole('heading', { name: 'AdsTabsTrigger', level: 1 })).toBeVisible();
+	await expect(
+		page.getByRole('link', { name: 'abrir diretamente a seção de AdsTabsTrigger' }),
+	).toHaveAttribute('href', '/catalogo/tabs#ads-tabs-trigger');
+	await page.goto('/catalogo/accordion');
+	for (const part of [
+		'AdsAccordion',
+		'AdsAccordionHeader',
+		'AdsAccordionItem',
+		'AdsAccordionTrigger',
+		'AdsAccordionPanel',
+	]) {
+		await expect(page.getByRole('link', { name: part, exact: true }).first()).toBeVisible();
+	}
+	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });
+	await expect(nav.getByRole('link', { name: 'Tabs', exact: true })).toHaveCount(1);
+	await expect(nav.getByRole('link', { name: 'TabsTrigger', exact: true })).toHaveCount(0);
+});
+
 test('busca, vazio, deep link, cópia, largura e navegação móvel por teclado', async ({
 	page,
 	context,

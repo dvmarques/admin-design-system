@@ -60,6 +60,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `issue-240-catalog-families` (#240) - Sidebar do catálogo apresenta famílias compostas em uma entrada por família; a busca mantém nomes individuais e aliases, levando a seções com API e exemplo. URLs legadas por export continuam acessíveis no site estático.
+
 - `issue-192-confirm-dialog-initial-focus` (issue #192) - Formaliza o foco inicial de `AdsConfirmDialog` na spec, em `docs/integration.md` e no comentário público: primeiro controle interativo elegível de `children` e, sem ele, "Cancelar". O foco inicial de diálogos e drawers passa a ignorar controles desabilitados por `fieldset`, ocultos e inertes. Testes da composição e exemplo com conteúdo interativo no Storybook e no catálogo.
 
 - `modal-inert-background` e `enhance-134-overlay-layer-manager` (issues #149, #134) - Com `AdsDialog` ou `AdsDrawer` aberto, o conteúdo fora do overlay fica `inert`, com restauração do estado anterior ao fechar (inclusive um `inert` da aplicação) e suporte a modais aninhados em qualquer ordem de fechamento. Popovers, tooltips, menus e calendários abertos a partir do modal seguem interativos, e `AdsToast` nunca fica inerte. Gerenciamento interno de camadas: só o modal superior trata Tab, o clique externo respeita a hierarquia dos portais, o backdrop fecha só a camada superior e a rolagem da página fica bloqueada enquanto houver modal. **Mudança de comportamento**: não é mais possível interagir com a página por trás de um modal aberto. Sem `inert` no navegador, o comportamento anterior continua.

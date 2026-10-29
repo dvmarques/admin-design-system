@@ -3,15 +3,22 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { AdsField, AdsInput, AdsEmptyState } from '@admin-ds/components';
-import { catalogEntries } from '../../catalogo/catalog-data';
+import { catalogSearchEntries, catalogFamilyForName } from '../../catalogo/catalog-families';
 
 export default function CatalogPage() {
 	const [query, setQuery] = useState('');
-	const matches = catalogEntries.filter((entry) =>
-		`${entry.name} ${entry.group} ${entry.description}`
+	const normalizedQuery = query.trim().toLocaleLowerCase('pt-BR');
+	const matches = catalogSearchEntries.filter((entry) => {
+		// Na listagem inicial, mostrar apenas famílias e controles independentes.
+		// A busca continua indexando individualmente exports e partes compostas.
+		if (!normalizedQuery) {
+			const family = catalogFamilyForName(entry.name);
+			return !family || entry.name === family.root;
+		}
+		return `${entry.name} ${entry.group} ${entry.description} ${entry.family ?? ''}`
 			.toLocaleLowerCase('pt-BR')
-			.includes(query.trim().toLocaleLowerCase('pt-BR')),
-	);
+			.includes(normalizedQuery);
+	});
 	return (
 		<div className="demo-page demo-shell demo-catalog-page">
 			<h1>Catálogo de componentes</h1>
@@ -43,7 +50,12 @@ export default function CatalogPage() {
 								.map((entry) => (
 									<li key={entry.name}>
 										<Link href={entry.href}>{entry.name}</Link>
-										<p>{entry.description}</p>
+										<p>
+											{entry.family && entry.name !== catalogFamilyForName(entry.name)?.root
+												? `${entry.name} · ${entry.family}. `
+												: ''}
+											{entry.description}
+										</p>
 									</li>
 								))}
 						</ul>

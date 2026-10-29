@@ -20,5 +20,5 @@
 - [x] 3.1 Verificar mecanicamente cada SVG transcrito contra os 20 arquivos originais (shape, atributo, ordem, largura de traço); conferidos os 19 Feather/Lucide e os quatro paths Hugeicons.
 - [ ] 3.2 Executar build, verificador de pacote, testes, lint, tipos, `npm run format`, `npm run validate` e `npm run test:e2e`; registrar resultados reais.
 - [ ] 3.3 Conferir Storybook/demo, temas claro/escuro e todos os tamanhos; atualizar snapshots somente quando intencionalmente revisados.
-- [ ] 3.4 Medir os orçamentos de distribuição/browser e só ajustá-los com evidências.
+- [x] 3.4 Medir os orçamentos de distribuição/browser e só ajustá-los com evidências. CI #40957590062 aprovou cinco ajustes medidos após sincronizar com #254; evidências em docs/bundle-baseline.md.
 - [ ] 3.5 Executar `openspec validate --all --strict` e revisar diff final/CI. Não fazer merge ou archive sem os gates previstos.

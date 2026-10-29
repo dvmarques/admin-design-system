@@ -10,7 +10,7 @@ test('snippet opcional possui página própria e continua vinculado ao exemplo a
 	await expect(page.getByRole('heading', { name: 'AdsHighlightedCodeSnippet', level: 1 })).toBeVisible();
 	const preview = page.getByRole('region', { name: 'Demonstração interativa' });
 	await preview.getByLabel('Linguagem').selectOption('json');
-	await expect(preview.getByRole('code')).toContainText('Admin DS');
+	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText('Admin DS');
 	await preview.getByLabel('Linguagem').selectOption('unknown');
 	await expect(preview.getByRole('code')).toContainText('sem destaque');
 	await preview.getByRole('link', { name: 'Ver demonstração avançada de código destacado' }).click();

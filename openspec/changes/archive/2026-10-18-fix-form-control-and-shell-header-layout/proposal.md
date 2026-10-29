@@ -17,7 +17,7 @@ primeiro em `@admin-ds/components` e o segundo na composição do cabeçalho do
   consumidora sem esse reset vê o problema.
 - O cabeçalho do `AdsAdminShell` em 390px faz a página rolar 22px na
   horizontal: o botão "Conta" fica cortado, "Usar tema escuro" quebra em 3
-  linhas e o título "Admin Abril" em 2. A causa está no conteúdo composto no
+  linhas e o título "Admin Demo" em 2. A causa está no conteúdo composto no
   cabeçalho: o `ThemeToggle` da biblioteca é um `<button>` sem fonte herdada e
   sem `whitespace-nowrap`, e o grupo de ações da story não pode quebrar linha.
 

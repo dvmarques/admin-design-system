@@ -19,6 +19,7 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const TypeScript: Story = {
+	render: (args) => <AdsHighlightedCodeSnippet {...args} />,
 	args: {
 		code: 'export function ola(nome: string) { return `Olá, ${nome}!`; }',
 		language: 'ts',

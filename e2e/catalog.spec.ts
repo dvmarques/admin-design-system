@@ -139,7 +139,9 @@ test('interações de abas, campos, tabela e etapas', async ({ page }) => {
 });
 
 for (const width of [390, 1280] as const) {
-	test(`tooltip e popover se ancoram no botão real em flex/stretch a ${width}px`, async ({ page }) => {
+	test(`tooltip e popover se ancoram no botão real em flex/stretch a ${width}px`, async ({
+		page,
+	}) => {
 		await page.setViewportSize({ width, height: 850 });
 		await page.goto('/catalogo/tooltip');
 		const button = page.getByRole('button', { name: 'Ajuda', exact: true });

@@ -539,10 +539,9 @@ export function useAnchoredPosition(
 		// Tooltip e Popover usam um span para eventos e para o portal. Em flex/stretch
 		// esse span pode ocupar toda a largura, enquanto o gatilho visual é compacto.
 		// Medir o elemento visível preserva também gatilhos de largura integral.
-		const measuredAnchor =
-			anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
-				? (anchor.firstElementChild ?? anchor)
-				: anchor;
+		const measuredAnchor = anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
+			? (anchor.firstElementChild ?? anchor)
+			: anchor;
 		const update = () => {
 			if (disposed) return;
 			const rect = panel.getBoundingClientRect();

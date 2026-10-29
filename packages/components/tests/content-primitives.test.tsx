@@ -217,6 +217,38 @@ describe('AdsIcon', () => {
 		expect(screen.getByRole('img', { name: 'Organização' })).toHaveClass('h-6', 'w-6');
 	});
 
+	it.each([
+		'alertCircle',
+		'alertTriangle',
+		'bell',
+		'calendar',
+		'check',
+		'chevronDown',
+		'chevronLeft',
+		'chevronRight',
+		'chevronsUpDown',
+		'close',
+		'logOut',
+		'monitor',
+		'moon',
+		'info',
+		'plus',
+		'sun',
+		'settings',
+		'search',
+		'user',
+	] as const)('renders the licensed %s SVG with the source stroke width', (name) => {
+		const { container } = render(<AdsIcon name={name} />);
+		const svg = container.querySelector('svg');
+		const shapes = Array.from(
+			svg?.querySelectorAll('path, circle, line, rect, polyline, polygon, ellipse') ?? [],
+		);
+		expect(svg).toHaveAttribute('viewBox', '0 0 24 24');
+		expect(svg).toHaveAttribute('aria-hidden', 'true');
+		expect(shapes.length).toBeGreaterThan(0);
+		expect(shapes.every((shape) => shape.getAttribute('stroke-width') === '2')).toBe(true);
+	});
+
 	it('names new informative icons', () => {
 		render(<AdsIcon label="Notificações" name="bell" />);
 

@@ -48,3 +48,47 @@ export const BuildingMIT: Story = {
 		</div>
 	),
 };
+
+const allLicensedNames = [
+	'alertCircle',
+	'alertTriangle',
+	'bell',
+	'building',
+	'calendar',
+	'check',
+	'chevronDown',
+	'chevronLeft',
+	'chevronRight',
+	'chevronsUpDown',
+	'close',
+	'logOut',
+	'monitor',
+	'moon',
+	'info',
+	'plus',
+	'sun',
+	'settings',
+	'search',
+	'user',
+] as const;
+
+export const LicensedCatalog: Story = {
+	args: { name: 'check' },
+	parameters: {
+		docs: {
+			description: {
+				story: 'Os 20 SVGs têm procedência e licença documentadas: 18 Feather (MIT), 1 Lucide (ISC) e 1 Hugeicons Free (MIT). Consulte docs/icons-license-audit.md e THIRD_PARTY_NOTICES.md.',
+			},
+		},
+	},
+	render: () => (
+		<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+			{allLicensedNames.map((name) => (
+				<div className="flex items-center gap-2" key={name}>
+					<AdsIcon name={name} size="md" />
+					<code>{name}</code>
+				</div>
+			))}
+		</div>
+	),
+};

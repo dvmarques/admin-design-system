@@ -173,8 +173,8 @@ export const catalogEntries = [
 		name: 'AdsInputGroup',
 		group: 'Formulários',
 		slug: 'input-group',
-		demo: 'Field',
-		description: 'Campo composto com rótulo, descrição, mensagem e ações nos adendos.',
+		demo: 'InputGroup',
+		description: 'Campo de entrada com prefixos, sufixos e ações integradas sem quebra indevida.',
 		href: '/catalogo/input-group',
 	},
 	{

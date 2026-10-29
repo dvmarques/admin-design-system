@@ -226,9 +226,6 @@ for (const theme of ['light', 'dark']) {
 			await trigger.click();
 			const panel = page.getByRole('dialog', { name: 'Popover na borda' });
 			await insideViewport(panel, page);
-			const anchorElement = page
-				.locator('.ads-popover-anchor')
-				.filter({ has: page.getByRole('button', { name: 'Popover na borda', exact: true }) });
 			const anchorBefore = (await trigger.boundingBox())!;
 			await page.evaluate(() => window.scrollBy({ top: 80, behavior: 'instant' }));
 			await expect.poll(async () => (await trigger.boundingBox())!.y).toBeLessThan(anchorBefore.y);

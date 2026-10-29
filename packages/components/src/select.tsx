@@ -21,7 +21,7 @@ export interface AdsSelectProps
 	placeholder?: string;
 	/**
 	 * Valor controlado. Com `placeholder`, `null` indica ausência de seleção e `""` seleciona a
-	 * opção real de valor vazio; sem `placeholder`, `null` equivale a `""`.
+	 * opção real de valor vazio; sem `placeholder`, `null` equivale a `""` (ou a `[]` com `multiple`).
 	 */
 	value?: AdsSelectValue;
 	/** Valor inicial não controlado, com a mesma semântica de `value`. */
@@ -54,11 +54,12 @@ export function AdsSelect({
 			/>
 		);
 	}
+	const empty = props.multiple ? [] : '';
 	return (
 		<select
 			{...nativeProps}
-			defaultValue={defaultValue === null ? '' : defaultValue}
-			value={value === null ? '' : value}
+			defaultValue={defaultValue === null ? empty : defaultValue}
+			value={value === null ? empty : value}
 		/>
 	);
 }

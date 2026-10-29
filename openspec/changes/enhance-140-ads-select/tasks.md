@@ -20,4 +20,4 @@
 
 - [x] 4.1 Formatar arquivos alterados via `npx.cmd prettier --write` e aprovar `npm run format`.
 - [x] 4.2 Aprovar `npm run validate`, `openspec.cmd validate enhance-140-ads-select --strict` e `openspec.cmd validate --all --strict`; registrar testes unitários, acessibilidade, E2E e status real de skips.
-- [ ] 4.3 Medir JS/CSS, revisar snapshots apenas após mudança intencional, verificar consumidores Next.js e revisão de compatibilidade de API.
+- [x] 4.3 Medir JS/CSS, revisar snapshots apenas após mudança intencional, verificar consumidores Next.js e revisão de compatibilidade de API.

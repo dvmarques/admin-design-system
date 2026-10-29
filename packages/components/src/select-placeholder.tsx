@@ -20,6 +20,7 @@ export interface AdsSelectPlaceholderProps extends Omit<
 	defaultValue?: AdsSelectValue;
 }
 
+/** Interno, não público. */
 const placeholderAttribute = 'data-ads-select-placeholder';
 const useIsomorphicLayoutEffect = typeof document === 'undefined' ? useEffect : useLayoutEffect;
 
@@ -75,6 +76,7 @@ export function AdsSelectPlaceholder({
 		const form = ref.current?.form;
 		if (!controlled || !form) return;
 		// Controlado: após o reset nativo a seleção volta ao valor das props.
+		// O reset restaura os campos após o evento; adiar ressincroniza.
 		const onReset = () => setTimeout(() => refresh((count) => count + 1), 0);
 		form.addEventListener('reset', onReset);
 		return () => form.removeEventListener('reset', onReset);

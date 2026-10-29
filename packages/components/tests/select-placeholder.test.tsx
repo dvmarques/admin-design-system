@@ -48,6 +48,15 @@ describe('AdsSelect placeholder (opt-in)', () => {
 		expect(selectOf(container).selectedIndex).toBe(1);
 	});
 
+	it('normaliza null para lista vazia com multiple, sem placeholder', () => {
+		const { container } = render(
+			<AdsSelect aria-label="Status" multiple onChange={() => {}} value={null}>
+				{options}
+			</AdsSelect>,
+		);
+		expect(selectOf(container).selectedOptions).toHaveLength(0);
+	});
+
 	it.each([
 		['sem defaultValue', undefined, 0],
 		['defaultValue null', null, 0],

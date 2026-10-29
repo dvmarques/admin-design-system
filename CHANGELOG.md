@@ -10,7 +10,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
-- `enhance-140-ads-select` (issue #140) - `AdsSelect` ganha o `placeholder` opcional (opt-in) para ausência de escolha: `value`/`defaultValue` `null` é ausência e `""` continua sendo a opção real de valor vazio, com `required`, `FormData`, reset e hidratação nativos e sem sentinela (a ausência é a _placeholder label option_ do HTML, não enviada no formulário), stories `Forms/Select`, exemplos no catálogo e guia em `docs/integration.md`. Novos tipo `AdsSelectValue` e módulo cliente `select-placeholder` (somente quando `placeholder` é usado; o select sem placeholder segue compatível com Server Components). Orçamentos elevados pelo custo medido: baseline do dist de `@admin-ds/components` 457.600 → 466.500 bytes (medido 513.058), JS/CSS publicado 226.000 → 228.000 (medido 227.774; gzip 68.500 → 69.100, medido 69.045) e CSS gzip do cenário `components-public` 9.150 → 9.200 (medido 9.167), sem dependência nova.
+- `enhance-140-ads-select` (issue #140) - `AdsSelect` ganha o `placeholder` opcional (opt-in) para ausência de escolha: `value`/`defaultValue` `null` é ausência e `""` continua sendo a opção real de valor vazio, com `required`, `FormData`, reset e hidratação nativos e sem sentinela (a ausência é a _placeholder label option_ do HTML, não enviada no formulário), stories `Forms/Select`, exemplos no catálogo e guia em `docs/integration.md`. Novos tipo `AdsSelectValue` e módulo cliente `select-placeholder`: `AdsSelect` continua sem hooks e renderizável em Server Components, e o módulo cliente só executa e hidrata quando `placeholder` é usado, mas é importado estaticamente e entra no grafo de módulos do consumidor. Orçamentos elevados pelo custo medido: baseline do dist de `@admin-ds/components` 457.600 → 466.700 bytes (medido 513.348), JS/CSS publicado 226.000 → 228.000 (medido 227.930; gzip 68.500 → 69.150, medido 69.109) e CSS gzip do cenário `components-public` 9.150 → 9.200 (medido 9.167), sem dependência nova.
 
 - `issue-241-highlighted-code-catalog` (#241) - O componente opcional AdsHighlightedCodeSnippet passa a integrar a busca, a categoria Dados e a documentação interativa do catálogo, com Storybook e link ao exemplo avançado, sem mover Shiki para os pacotes principais.
 
@@ -62,7 +62,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
-- `enhance-140-ads-select` (issue #140) - Texto longo do `AdsSelect` simples fica contido e truncado com reticências antes da seta (sem estourar o contêiner em 390 px nem com zoom de 200%), preservando RTL, `forced-colors` e os demais controles que usam `formControlClasses()`. Se `placeholder` já era passado a `AdsSelect`, o atributo ignorado pelo navegador passa a criar a opção de ausência.
+- `enhance-140-ads-select` (issue #140) - Texto longo de **todo** `AdsSelect` simples (com ou sem `placeholder`; não `multiple`) fica contido e truncado com reticências antes da seta (sem estourar o contêiner em 390 px nem com zoom de 200%), preservando RTL, `forced-colors` e os demais controles que usam `formControlClasses()`. Se `placeholder` já era passado a `AdsSelect`, o atributo ignorado pelo navegador passa a criar a opção de ausência.
 
 - `issue-240-catalog-families` (#240) - Sidebar do catálogo apresenta famílias compostas em uma entrada por família; a busca mantém nomes individuais e aliases, levando a seções com API e exemplo. URLs legadas por export continuam acessíveis no site estático.
 

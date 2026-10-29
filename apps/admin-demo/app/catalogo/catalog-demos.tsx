@@ -361,11 +361,9 @@ export function SelectDemo() {
 					<option value="i">Inativo</option>
 				</AdsSelect>
 			</AdsField>
-			<AdsField label="Valor controlado">
-				<output data-testid="select-controlled-value">
-					{status === null ? 'ausente' : status === '' ? 'vazio' : status}
-				</output>
-			</AdsField>
+			<p data-testid="select-controlled-value" role="status">
+				{status === null ? 'ausente' : status === '' ? 'vazio' : status}
+			</p>
 			<form
 				aria-label="Formulário de seleção"
 				onSubmit={(event) => {

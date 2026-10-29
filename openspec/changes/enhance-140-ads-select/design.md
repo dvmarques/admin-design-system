@@ -47,4 +47,20 @@ Pontos exigidos pela prova de A e que definem a implementação:
 - **Client/Server:** `AdsSelect` continua sem hooks (Server Component); só o ramo com `placeholder` (e sem `multiple`) renderiza `AdsSelectPlaceholder`, módulo `'use client'` (`select-placeholder.tsx`), verificado por `verify-package.mjs`.
 - **Sem `placeholder`:** `null` em `value`/`defaultValue` equivale a `""`, para não passar `null` ao `<select>`. `AdsSelectValue` é exportado.
 - **Aparência:** `select.ads-select:not([multiple]):not([size])` ganha `min-width: 0`, `max-width: 100%`, `overflow: hidden`, `text-overflow: ellipsis` e `white-space: nowrap`; `.ads-select:has(> [data-ads-select-placeholder]:checked)` atenua o texto com `--ads-color-text-muted` (contraste 7,6:1 no claro; no escuro o diferencial não cromático é o texto explícito da ausência), e as `option` mantêm `--ads-color-text`.
-- **Orçamentos:** o dist de `@admin-ds/components` estava a 20 bytes do limite (503.340 de 503.360). A feature adiciona um módulo (`select-placeholder` com `.d.ts` e mapas) e CSS: baseline do dist 457.600 → 466.500 (medido 513.058), JS/CSS publicado 226.000 → 228.000 bytes (medido 227.774) e gzip 68.500 → 69.100 (medido 69.045), CSS gzip do cenário `components-public` 9.150 → 9.200 (medido 9.167). Nenhuma dependência nova; o cenário minificado de JS `components-public` ficou dentro do limite (30.175 de 30.400 bytes).
+- **Orçamentos:** o dist de `@admin-ds/components` estava a 20 bytes do limite (503.340 de 503.360), logo qualquer adição o excederia. Decomposição por artefato (bytes, dist antes → depois; medição final):
+
+| Artefato                        | Antes   | Depois  | Delta       |
+| ------------------------------- | ------- | ------- | ----------- |
+| `select-placeholder.js`         | 0       | 3.304   | +3.304      |
+| `select-placeholder.js.map`     | 0       | 2.925   | +2.925      |
+| `select-placeholder.d.ts`       | 0       | 777     | +777        |
+| `select-placeholder.d.ts.map`   | 0       | 584     | +584        |
+| `select.js`                     | 594     | 1.103   | +509        |
+| `select.js.map`                 | 531     | 1.072   | +541        |
+| `select.d.ts`                   | 546     | 1.337   | +791        |
+| `select.d.ts.map`               | 484     | 769     | +285        |
+| `index.d.ts` / `index.d.ts.map` | 9.875   | 9.901   | +26         |
+| `styles.css`                    | 42.016  | 42.282  | +266        |
+| **Total do dist**               | 503.340 | 513.348 | **+10.008** |
+
+O maior contribuinte individual é `select-placeholder.js` (3.304 B, 33%); mapas e declarações somam 5.929 B (59%) e não entram no orçamento de JS/CSS publicado, que cresce 4.079 B (JS 3.813 + CSS 266; medido 227.930, gzip 69.109). A elevação foi a mínima que fez as métricas passarem: baseline do dist 457.600 → 466.700 (limite 513.370), JS/CSS publicado 226.000 → 228.000, gzip 68.500 → 69.150 e CSS gzip do cenário `components-public` 9.150 → 9.200 (medido 9.167). O cenário JS minificado `components-public` ficou dentro do limite sem elevação (30.175 de 30.400 bytes). Não há dependência nova.

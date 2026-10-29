@@ -40,6 +40,7 @@ const optionalPackages = [
 			'registerHighlightedLanguageLoader',
 		],
 	},
+	{ path: 'packages/components/src/masked-input.tsx', nonUi: [] as string[] },
 ];
 function runtimeExports(path: string) {
 	const source = ts.createSourceFile(
@@ -48,7 +49,7 @@ function runtimeExports(path: string) {
 		ts.ScriptTarget.Latest,
 		true,
 	);
-	return source.statements
+	const reexported = source.statements
 		.filter(ts.isExportDeclaration)
 		.filter((node) => !node.isTypeOnly)
 		.flatMap((node) =>
@@ -58,6 +59,18 @@ function runtimeExports(path: string) {
 						.map((element) => element.name.text)
 				: [],
 		);
+	// Entradas opcionais como `masked-input.tsx` declaram o componente no próprio módulo.
+	const declared = source.statements
+		.filter(ts.isVariableStatement)
+		.filter((node) =>
+			node.modifiers?.some((modifier) => modifier.kind === ts.SyntaxKind.ExportKeyword),
+		)
+		.flatMap((node) =>
+			node.declarationList.declarations.flatMap((declaration) =>
+				ts.isIdentifier(declaration.name) ? [declaration.name.text] : [],
+			),
+		);
+	return [...reexported, ...declared];
 }
 
 describe('rastreabilidade do catálogo', () => {

@@ -943,6 +943,167 @@ aceita as props nativas de `input`, exceto `type`.
   `Pendente` em texto (`ruleStatusLabels`), sem depender de cor ou de ícone.
 - A biblioteca não armazena nem transmite a senha e não implementa autenticação.
 
+## Campo com máscara (`AdsMaskedInput`)
+
+`AdsMaskedInput` formata o texto durante a digitação, a colagem e a remoção, preservando caret,
+seleção e composição IME. Ele é **opt-in**: fica no subpath `@admin-ds/components/masked-input` e usa
+o peer opcional `react-imask` (`^7.6.1`). O entrypoint `@admin-ds/components` não o reexporta nem o
+carrega, então quem não importa o subpath não instala nem empacota nada de máscara.
+
+```bash
+npm install react-imask
+```
+
+```tsx
+import { AdsField } from '@admin-ds/components';
+import { AdsMaskedInput } from '@admin-ds/components/masked-input';
+
+<AdsField label="Código" description="Seis dígitos.">
+	<AdsMaskedInput
+		inputMode="numeric"
+		mask="000-000"
+		name="codigo"
+		onValueChange={({ maskedValue, unmaskedValue, complete }) => {
+			/* ... */
+		}}
+	/>
+</AdsField>;
+```
+
+É um Client Component (`"use client"`): use-o dentro de um componente de cliente quando precisar
+passar funções (`onValueChange`, `dispatch`, `validate`). Sem acesso a `window`/`document` na
+renderização, o servidor entrega o `defaultValue`/`value` como texto e a hidratação o formata sem
+divergência, inclusive em StrictMode.
+
+### Valores e eventos
+
+`value` e `defaultValue` representam sempre o **texto formatado exibido**. `onValueChange` informa:
+
+| Campo           | Tipo      | Conteúdo                                                                                                  |
+| --------------- | --------- | --------------------------------------------------------------------------------------------------------- |
+| `maskedValue`   | `string`  | Texto exibido, com os literais da máscara.                                                                |
+| `unmaskedValue` | `string`  | Texto sem os literais; sempre string e preserva zeros à esquerda. Em máscaras de data inclui separadores. |
+| `typedValue`    | `unknown` | `number` em máscaras `Number`, `Date` em máscaras `Date`; nos demais casos, o texto bruto.                |
+| `complete`      | `boolean` | Todas as posições obrigatórias preenchidas; sempre `true` sem máscara.                                    |
+
+- `onValueChange` é adaptado do `onAccept` do motor de máscara e é chamado **uma vez por alteração
+  aceita da pessoa usuária**, inclusive quando a máscara ainda está incompleta. Teclas rejeitadas
+  (texto visível inalterado) não notificam. Ele **não** é chamado na montagem, na hidratação nem
+  quando `value` muda por fora.
+- `onChange` continua sendo o evento nativo do input. A documentação do motor recomenda não usá-lo
+  para acompanhar alterações mascaradas, e o DS **não sintetiza** `ChangeEvent`: não há garantia de
+  um `onChange` por alteração aceita. Bibliotecas de formulário devem ser ligadas a `onValueChange`
+  (por exemplo, `field.onChange(maskedValue)` e `field.onBlur` em `onBlur`).
+- Controlado: o campo segue `value`. Se o consumidor não atualizar `value` após `onValueChange`, o
+  texto volta ao valor controlado. Alterações externas de `value` (inclusive limpar) atualizam o
+  texto sem notificação. Passe o **texto formatado** (`maskedValue`) de volta; um texto bruto é
+  reformatado, mas o caret pode ser reposicionado.
+- Não controlado: `defaultValue` é aplicado uma vez na montagem (formatado, sem notificação).
+  Um `<form>` com `reset` restaura o `defaultValue`, formatado, e notifica `onValueChange` quando o
+  texto mudou; em campos controlados o reset reaplica `value`, sem notificação.
+- Mudar `mask` em tempo de execução reformata o texto atual e, se ele mudar, notifica
+  `onValueChange`. Memoize `mask` quando ele contiver funções (`dispatch`, `validate`, `prepare`),
+  para evitar reconfigurar o motor a cada renderização.
+- `ref` e `inputRef` apontam, ambos, para o `HTMLInputElement`; não é a instância do componente do
+  motor, que não é exposta.
+- Sem `mask`, o campo é um input de texto comum e `onValueChange` vem do evento nativo.
+
+### Formulários, validação e acessibilidade
+
+- `name` envia o **texto formatado exibido**. O valor bruto só é enviado se a aplicação criar um
+  campo próprio (por exemplo, um `<input type="hidden">` alimentado por `unmaskedValue`).
+- `required` é a semântica HTML do input e **não** valida a máscara completa. Use `complete` (e a
+  validação do formulário) para exigir todos os dígitos; a máscara não substitui validação de
+  conteúdo nem regras de negócio.
+- `disabled`, `readOnly`, `inputMode`, `autoComplete`, `placeholder` e demais atributos nativos de
+  input passam direto. `AdsField` fornece rótulo, `aria-describedby` e `aria-invalid`;
+  `validationState="error"` também marca o campo como inválido. Escolha `inputMode` e `type`
+  adequados ao teclado móvel (`numeric`, `tel`, `decimal`).
+- Estilo e tamanho (`sm`, `md`, `lg`) são idênticos aos de `AdsInput`, com o CSS compilado do DS e
+  sem Tailwind no consumidor.
+- Descreva o formato esperado: dê sempre ao `AdsField` uma `description` com ele (por exemplo,
+  `Formato 000-000`). `placeholder` **não** substitui a descrição (some ao digitar e não é um rótulo),
+  e o `placeholderChar` de máscaras não lazy (`lazy: false`) é lido por leitores de tela como texto
+  do valor, então prefira o modo lazy (padrão) ou descreva o formato no campo de ajuda.
+- Não use a máscara como único indicador de erro: um valor incompleto não anuncia nada sozinho. O
+  `role="alert"` do `AdsField` só cobre o erro quando `error` é informado; derive `error` e
+  `validationState="error"` de `complete` (e do servidor) e leve o foco ao campo inválido ao enviar.
+- Resolução de módulos: o subpath usa o mapa `exports` do pacote, então o TypeScript do consumidor
+  precisa de `moduleResolution` `Bundler`, `Node16` ou `NodeNext` (o `node10` não resolve
+  `@admin-ds/components/masked-input`). O Next.js App Router já usa `Bundler`.
+
+### Receita: CPF, CNPJ ou documento único
+
+Exemplos com valores fictícios. A máscara **só formata**: ela **não valida o dígito verificador**
+(regra de negócio, fora do componente). O `name` envia o texto formatado; para enviar só dígitos,
+use `unmaskedValue`.
+
+```tsx
+<AdsField label="CPF" description="Formato 000.000.000-00">
+	<AdsMaskedInput inputMode="numeric" mask="000.000.000-00" name="cpf" onValueChange={setCpf} />
+</AdsField>
+
+<AdsField label="CNPJ" description="Formato 00.000.000/0000-00">
+	<AdsMaskedInput inputMode="numeric" mask="00.000.000/0000-00" onValueChange={setCnpj} />
+</AdsField>
+
+{/* CPF (11 dígitos) ou CNPJ (14): a máscara troca ao passar do 11º dígito. */}
+<AdsField label="Documento" description="CPF 000.000.000-00 ou CNPJ 00.000.000/0000-00">
+	<AdsMaskedInput
+		inputMode="numeric"
+		mask={['000.000.000-00', '00.000.000/0000-00']}
+		onValueChange={({ unmaskedValue, complete }) => setDigits(complete ? unmaskedValue : '')}
+	/>
+</AdsField>
+```
+
+Valide o dígito verificador no formulário ou no servidor (por exemplo, quando `complete` for
+`true`) e informe o resultado em `error` e `validationState`. Num campo único, 11 dígitos já são um
+`complete` válido para o CPF; o CNPJ só fica completo com 14.
+
+### Máscaras suportadas
+
+`mask` aceita um padrão (`'000-000'`; `0` dígito, `a` letra, `*` qualquer), uma `RegExp`, `Number`,
+`Date`, uma função de validação, uma **lista** de padrões (máscara dinâmica: usa o primeiro que
+serve) ou um objeto `AdsMaskOptions` (`mask` mais `definitions`, `lazy`, `placeholderChar`, `eager`,
+`overwrite`, `skipInvalid`, `prepare`, `prepareChar`, `validate`, `commit`, `dispatch` e as opções
+de `Number` e `Date`). Esse subconjunto documentado é o contrato; instâncias do motor, `blocks` e
+opções fora da lista não fazem parte da API pública. Os atributos HTML `min`, `max` e `pattern` não
+chegam ao input, porque `min`/`max` pertencem às máscaras numéricas e de data. Máscaras `Date` com
+`pattern` próprio exigem também `format` e `parse`.
+
+### Migração de um campo mascarado existente
+
+Para substituir um `IMaskMixin`/`IMaskInput` aplicado a um controle visual de terceiros:
+
+| Antes (adaptador sobre controle de terceiros) | Depois (`AdsMaskedInput`)                                                               |
+| --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `mask`, `definitions`, `lazy`, `overwrite`…   | `mask` (padrão ou `AdsMaskOptions`); `blocks` e instâncias do motor não têm equivalente |
+| `onAccept(value, maskRef, event)`             | `onValueChange({ maskedValue, unmaskedValue, typedValue, complete })`                   |
+| `onComplete(value)`                           | `complete` no `onValueChange`                                                           |
+| `unmask` (`true`/`'typed'`)                   | Não exposto: `value` é sempre o texto formatado; leia `unmaskedValue` ou `typedValue`   |
+| `value` (texto mascarado)                     | `value` (texto formatado), atualizado a partir de `onValueChange`                       |
+| `inputRef`                                    | `inputRef` ou `ref`, ambos o `HTMLInputElement`                                         |
+| `ref` (instância do componente do motor)      | Não existe equivalente; use `inputRef`                                                  |
+| `onChange`                                    | Não é equivalente ao aceite da máscara; use `onValueChange`                             |
+| Props visuais do controle de terceiros        | `size`, `validationState`, `className` e `AdsField` para rótulo, ajuda e erro           |
+
+A troca no consumidor é uma mudança à parte, com seus testes: verifique `onChange`/`onAccept`,
+`size`, a leitura de `value` e o CSS antes de substituir cada campo.
+
+### Limitações conhecidas
+
+- O DS não oferece máscaras de regras de negócio (documentos, códigos) nem validação semântica.
+- A integração depende da versão `^7.6.1` do peer opcional; outras versões maiores exigem revisão.
+- Composição IME: o motor ignora eventos intermediários e aplica a máscara ao confirmar a
+  composição. Caracteres não aceitos pela máscara (por exemplo, dígitos de largura total em máscara
+  de `0`) são descartados na confirmação.
+- A instalação do peer traz dependências transitivas do motor (por exemplo `imask`,
+  `@babel/runtime-corejs3` e `core-js-pure`, todas MIT); `core-js-pure` declara um script de
+  instalação apenas informativo, que pode ser ignorado com `--ignore-scripts`.
+- O custo adicional medido (cenário `masked-input-public`) está em `docs/scenario-budget.json` e é
+  pago somente por quem importa o subpath.
+
 ## Overlays modais e o conteúdo de fundo
 
 Com um `AdsDialog` ou `AdsDrawer` aberto (inclusive o diálogo de `AdsConfirmDialog` e o drawer de

@@ -15,6 +15,14 @@
 		"cssBytes": 58000,
 		"cssGzipBytes": 9650
 	},
+	"masked-input-public": {
+		"entry": "scripts/scenarios/masked-input.mjs",
+		"bytes": 74100,
+		"gzipBytes": 20900,
+		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
+		"cssBytes": 57800,
+		"cssGzipBytes": 9600
+	},
 	"highlighted-code-public": {
 		"entry": "scripts/scenarios/highlighted-code.mjs",
 		"bytes": 1864000,

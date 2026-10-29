@@ -34,7 +34,15 @@ export { AdsTextarea } from './textarea.js';
 export type { AdsTextareaProps } from './textarea.js';
 export { AdsSelect } from './select.js';
 export { AdsCombobox } from './combobox.js';
-export type { AdsComboboxOption, AdsComboboxInputReason, AdsComboboxProps } from './combobox.js';
+export type {
+	AdsComboboxComponent,
+	AdsComboboxOption,
+	AdsComboboxInputReason,
+	AdsComboboxPopoverProps,
+	AdsComboboxProps,
+	AdsComboboxQueryReason,
+	AdsComboboxTriggerContext,
+} from './combobox.js';
 export { AdsAutocomplete } from './autocomplete.js';
 export type { AdsAutocompleteProps } from './autocomplete.js';
 export type { AdsSelectProps } from './select.js';

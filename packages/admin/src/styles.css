@@ -1204,7 +1204,6 @@
 	.ads-notification-center-history:focus-visible,
 	.ads-account-menu-action:focus-visible,
 	.ads-organization-switcher-trigger:focus-visible,
-	.ads-organization-switcher-option:focus-visible,
 	.ads-organization-switcher-manage:focus-visible {
 		outline: 2px solid var(--ads-color-focus-ring);
 		outline-offset: 2px;
@@ -1689,55 +1688,48 @@
 		display: none;
 	}
 
-	.ads-organization-switcher-popover {
-		width: min(20rem, calc(100vw - 1rem));
-		padding: 0;
-	}
-
-	.ads-organization-switcher-panel-inner {
+	/* O painel é o do AdsCombobox (popover); a classe estreita a aparência do seletor. */
+	.ads-combobox__panel.ads-organization-switcher-popover {
 		display: grid;
 		gap: var(--ads-spacing-2);
-		max-height: min(26rem, calc(100vh - 4rem));
+		width: min(20rem, calc(100vw - 1rem));
+		max-height: min(28rem, calc(100vh - 2rem));
 		overflow-y: auto;
-		padding: var(--ads-spacing-2);
+		/* 1rem de respiro do painel somado a 0.5rem do conteúdo, como no seletor anterior. */
+		padding: calc(var(--ads-spacing-4, 1rem) + var(--ads-spacing-2));
 	}
 
-	.ads-organization-switcher-option {
-		box-sizing: border-box;
-		display: flex;
-		width: 100%;
+	@media (max-width: 47.99rem) {
+		.ads-combobox__panel.ads-organization-switcher-popover {
+			padding: calc(0.75rem + var(--ads-spacing-2));
+		}
+	}
+
+	.ads-organization-switcher-popover .ads-combobox__option--popover {
 		min-height: 2.75rem;
-		align-items: center;
 		gap: var(--ads-spacing-3);
 		padding: var(--ads-spacing-2) var(--ads-spacing-3);
-		border: 0;
-		border-radius: var(--ads-radius-md);
-		background: transparent;
-		color: var(--ads-color-text);
-		font: inherit;
-		text-align: start;
-		cursor: pointer;
 	}
 
-	.ads-organization-switcher-option:hover:not(:disabled) {
+	.ads-organization-switcher-popover .ads-combobox__option--popover[data-active='true'] {
 		background-color: var(--ads-color-surface-hover);
 	}
 
-	.ads-organization-switcher-option[aria-current='true'] {
+	.ads-organization-switcher-popover .ads-combobox__option--popover[aria-selected='true'] {
 		background-color: var(--ads-color-surface-selected);
 		color: var(--ads-color-on-surface-selected);
 	}
 
 	/* Sobre o fundo selecionado, o texto atenuado perderia contraste: herda a cor do estado. */
-	.ads-organization-switcher-option[aria-current='true']
+	.ads-organization-switcher-popover
+		.ads-combobox__option--popover[aria-selected='true']
 		.ads-organization-switcher-option-description,
 	.ads-organization-switcher-trigger[aria-expanded='true'] .ads-organization-switcher-description,
 	.ads-organization-switcher-trigger[aria-expanded='true'] .ads-organization-switcher-chevron {
 		color: inherit;
 	}
 
-	.ads-organization-switcher-option:disabled {
-		cursor: not-allowed;
+	.ads-organization-switcher-popover .ads-combobox__option--popover[aria-disabled='true'] {
 		opacity: 0.55;
 	}
 
@@ -1745,7 +1737,7 @@
 		color: var(--ads-color-primary);
 	}
 
-	.ads-organization-switcher-state {
+	.ads-organization-switcher-popover .ads-combobox__state {
 		display: flex;
 		flex-wrap: wrap;
 		align-items: center;
@@ -1754,6 +1746,14 @@
 		padding: var(--ads-spacing-4, 1rem) var(--ads-spacing-3);
 		color: var(--ads-color-text-muted);
 		font-size: 0.875rem;
+	}
+
+	/* O rodapé do painel só agrupa: a divisória fica no bloco de gerenciamento. */
+	.ads-organization-switcher-popover .ads-combobox__footer {
+		display: grid;
+		gap: var(--ads-spacing-2);
+		padding-top: 0;
+		border-top: 0;
 	}
 
 	.ads-organization-switcher-footer {

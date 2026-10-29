@@ -43,16 +43,16 @@ Não mudam exports, estilos, tokens, React/Next.js ou contratos CSS. Documentar 
 - **Popup em portal e modais aninhados:** inalterados; testes confirmam que o modal superior governa o Tab e que o foco num popover descendente não é interrompido.
 - **Ambiente de medição:** medido com Node 22.22.0/npm 10.9.4 em Linux (a CI usa Node 24/npm 11.19.1); números de bytes não são comparáveis byte a byte entre toolchains.
 
-### Orçamentos sobre a base combinada com `develop` 17d2f08 (#252)
+### Orçamentos sobre a base combinada com `develop` 1eab242 (#252 e #254)
 
-Após `git merge origin/develop`, os limites de `develop` (baseline do `dist` 466.700; JS/CSS publicado 228.000 B e gzip 69.150 B; cenário `components-public` 30.400/11.300) foram remedidos com o build combinado, e só foram elevados ao valor medido mais folga mínima (autorizado pelo mantenedor):
+Após `git merge origin/develop`, os limites de `develop` foram remedidos com o build combinado e só foram elevados ao valor medido mais folga mínima (autorizado pelo mantenedor). Medição local (Node 22); a CI (Node 24) coincidiu byte a byte nas medições anteriores e é registrada na PR.
 
-| Métrica de `@admin-ds/components`            | Medido combinado | Limite de `develop` | Limite novo |
-| -------------------------------------------- | ---------------- | ------------------- | ----------- |
-| `dist` completo (baseline 466.700 → 468.400) | 515.141          | 513.370             | 515.240     |
-| JS/CSS publicado                             | 229.093          | 228.000             | 229.100     |
-| JS/CSS gzip por arquivo                      | 69.579           | 69.150              | 69.600      |
-| `components-public` minificado               | 30.490           | 30.400              | 30.500      |
-| `components-public` gzip                     | 11.321           | 11.300              | 11.330      |
+| Métrica de `@admin-ds/components`            | Medido combinado | Limite de `develop` | Limite novo         |
+| -------------------------------------------- | ---------------- | ------------------- | ------------------- |
+| `dist` completo (baseline 516.000 → 516.600) | 568.252          | 567.600             | 568.260             |
+| JS/CSS publicado                             | 251.145          | 250.800             | 251.150             |
+| JS/CSS gzip por arquivo                      | 76.168           | 76.300              | 76.300 (inalterado) |
+| `components-public` minificado               | 30.490           | 30.400              | 30.500              |
+| `components-public` gzip                     | 11.321           | 11.300              | 11.330              |
 
-Os CSS dos cenários e os demais pacotes seguem dentro dos limites de `develop`. Os valores da CI (Node 24) no SHA final são registrados na PR.
+CSS dos cenários e demais pacotes seguem dentro dos limites de `develop`.

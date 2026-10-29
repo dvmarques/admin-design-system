@@ -175,3 +175,32 @@ test.describe('Popover em portal dentro do modal', () => {
 		await expect(dialog).toHaveCount(0);
 	});
 });
+
+test.describe('Combobox em popover dentro do diálogo', () => {
+	test('Tab e Shift+Tab nas extremidades do popover fecham só o painel e o foco permanece no modal', async ({
+		page,
+	}) => {
+		await page.goto('/catalogo/combobox');
+		await page.getByRole('button', { name: 'Abrir diálogo com combobox' }).click();
+		const dialog = page.getByRole('dialog', { name: 'Seleção em diálogo' });
+		const trigger = dialog.getByRole('button', { name: /Responsável em diálogo/ });
+		const panel = page.getByRole('dialog', { name: 'Escolher responsável no diálogo' });
+		// Shift+Tab no início do painel: fecha o painel e devolve o foco ao gatilho.
+		await trigger.click();
+		await expect(panel.getByRole('searchbox')).toBeFocused();
+		await page.keyboard.press('Shift+Tab');
+		await expect(panel).toBeHidden();
+		await expect(dialog).toBeVisible();
+		await expect(trigger).toBeFocused();
+		// Tab no fim do painel: fecha o painel e o ciclo do modal assume (o gatilho é a última parada).
+		await trigger.click();
+		await expect(panel).toBeVisible();
+		await page.keyboard.press('Tab');
+		await expect(panel).toBeHidden();
+		await expect(dialog).toBeVisible();
+		await expectFocusInside(page, 'dialog', 'Seleção em diálogo');
+		// Escape continua hierárquico: o diálogo fecha e o foco volta à origem.
+		await page.keyboard.press('Escape');
+		await expect(dialog).toBeHidden();
+	});
+});

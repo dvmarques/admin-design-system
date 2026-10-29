@@ -18,5 +18,7 @@
 ## 4. Gates antes de propor conclusão
 
 - [x] 4.1 Formatar arquivos alterados com `npx.cmd prettier --write`; executar e aprovar `npm run format`.
-- [ ] 4.2 Executar `npm run validate` (format, lint, build, typecheck, quality e E2E), `openspec.cmd validate fix-234-overlay-tab-eligibility --strict` e `openspec.cmd validate --all --strict`, registrando logs, falhas e skipped.
-- [ ] 4.3 Revisar impacto em consumidores, snapshots visuais apenas quando intencional e evidências de acessibilidade em navegadores suportados; manter tasks pendentes até validação real.
+- [x] 4.2 Executar `npm run validate` (format, lint, build, typecheck, quality e E2E), `openspec.cmd validate fix-234-overlay-tab-eligibility --strict` e `openspec.cmd validate --all --strict`, registrando logs, falhas e skipped.
+      Evidência: CI run 40955539989 no SHA 3bdc4dd com Qualidade rápida, Chromium, Firefox, WebKit, Artefatos e Política de develop em success (Publicar e Validação de release skipped, não contam como aprovação); local: format, lint, typecheck, 1376 testes unitários e `openspec validate --all --strict` (61). `npm run validate` completo local não rodou por falhas ambientais conhecidas (snapshots e Firefox/WebKit ausentes), cobertas pela CI.
+- [x] 4.3 Revisar impacto em consumidores, snapshots visuais apenas quando intencional e evidências de acessibilidade em navegadores suportados; manter tasks pendentes até validação real.
+      Evidência: revisões independentes de a11y e API pública sem bloqueantes; review do mantenedor incorporado (summary/details); impacto em consumidores (tabindex negativo no foco inicial) documentado em docs/integration.md; limitações em docs/limitations.md e issue #259; nenhum snapshot atualizado.

@@ -138,6 +138,35 @@ test('interações de abas, campos, tabela e etapas', async ({ page }) => {
 	expect(response?.status()).toBe(404);
 });
 
+for (const width of [390, 1280] as const) {
+	test(`tooltip e popover se ancoram no botão real em flex/stretch a ${width}px`, async ({ page }) => {
+		await page.setViewportSize({ width, height: 850 });
+		await page.goto('/catalogo/tooltip');
+		const button = page.getByRole('button', { name: 'Ajuda', exact: true });
+		await button.focus();
+		const tooltip = page.getByRole('tooltip');
+		await expect(tooltip).toBeVisible();
+		await expect.poll(async () => {
+			const target = (await button.boundingBox())!;
+			const balloon = (await tooltip.boundingBox())!;
+			const actual = balloon.x + balloon.width / 2;
+			const expected = target.x + target.width / 2;
+			return Math.abs(actual - expected);
+		}).toBeLessThan(2);
+		await page.keyboard.press('Escape');
+		await page.goto('/catalogo/popover');
+		const popoverButton = page.getByRole('button', { name: 'Abrir popover' });
+		await popoverButton.click();
+		const popover = page.getByRole('dialog');
+		await expect(popover).toBeVisible();
+		await expect.poll(async () => {
+			const target = (await popoverButton.boundingBox())!;
+			const panel = (await popover.boundingBox())!;
+			return Math.abs(panel.x + panel.width / 2 - target.x - target.width / 2);
+		}).toBeLessThan(2);
+	});
+}
+
 test('overlays e ações administrativas do catálogo', async ({ page }) => {
 	for (const [slug, label] of [
 		['dialog', 'Dialog'],

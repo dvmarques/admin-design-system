@@ -150,14 +150,14 @@ for (const width of [390, 1280] as const) {
 		await expect(tooltip).toBeVisible();
 		// Não exigir centralização quando o painel precisa ser deslocado para caber na viewport.
 		// O esperado é centralizar no botão visível e aplicar o limite de colisão de 8px.
-		const horizontalError = async (
-			trigger: Locator,
-			panel: Locator,
-		) => {
+		const horizontalError = async (trigger: Locator, panel: Locator) => {
 			const anchor = (await trigger.boundingBox())!;
 			const overlay = (await panel.boundingBox())!;
 			const center = anchor.x + anchor.width / 2;
-			const expected = Math.max(8, Math.min(center - overlay.width / 2, width - overlay.width - 8));
+			const expected = Math.max(
+				8,
+				Math.min(center - overlay.width / 2, width - overlay.width - 8),
+			);
 			return Math.abs(overlay.x - expected);
 		};
 		await expect.poll(() => horizontalError(button, tooltip)).toBeLessThan(2);

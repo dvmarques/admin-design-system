@@ -6,7 +6,7 @@
 ## 2. Implementação condicionada à reprodução
 
 - [ ] 2.1 Reutilizar um único helper interno de seleção elegível no foco inicial e no trap de Tab, sem mudar props ou exports.
-- [ ] 2.2 Regressões: `fieldset disabled`, `hidden`, `display:none`, `visibility:hidden`, `inert`, lista vazia e mudanças de elegibilidade enquanto aberto.
+- [ ] 2.2 Regressões: `fieldset disabled`, `hidden`, `display:none`, `visibility:hidden`, `inert`, `tabindex` negativo, lista vazia e mudanças de elegibilidade enquanto aberto, verificando reentrada quando o elemento ativo foi desabilitado.
 - [ ] 2.3 Testar modais sobrepostos, popup portalled, `pending`, Escape hierárquico, retorno do foco e SSR/StrictMode.
 
 ## 3. Evidências e documentação

@@ -14,6 +14,11 @@ Em `AdsDialog` e `AdsDrawer`, incluindo o `AdsConfirmDialog` que os compõe, o s
 - **WHEN** um modal aberto contém controles inelegíveis depois do último elegível e o usuário usa Shift+Tab no primeiro elegível
 - **THEN** o foco chega ao último elegível e não vai ao controle inelegível nem ao fundo
 
+#### Scenario: Controle perde elegibilidade com modal aberto
+
+- **WHEN** um controle focado é desabilitado ou ocultado enquanto um modal está aberto e o usuário pressiona Tab ou Shift+Tab
+- **THEN** o foco segue para uma extremidade elegível ou fallback interno sem escapar ao conteúdo de fundo
+
 #### Scenario: Nenhum candidato elegível
 
 - **WHEN** um modal não contém controles elegíveis e o usuário pressiona Tab ou Shift+Tab

@@ -65,8 +65,8 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 			<h2>Exemplos e variações</h2>
 			<CatalogPreview demo={entry.demo} source={snippets[entry.demo]} />
 			{family ? (
-				<section aria-label={`Referência dos membros de ${family.title}`}>
-					<h2>Componentes e APIs individuais</h2>
+				<section aria-labelledby="catalogo-membros">
+					<h2 id="catalogo-membros">Componentes e APIs individuais</h2>
 					{memberNames.map((name) => {
 						const reference = catalogMemberReference(name);
 						return (
@@ -97,7 +97,11 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 					<li key={item.name}>
 						<Link
 							href={catalogMemberHref(item.name)}
-							aria-current={item.name === entry.name ? 'page' : undefined}
+							aria-current={
+								item.name === entry.name && catalogMemberHref(item.name) === entry.href
+									? 'page'
+									: undefined
+							}
 						>
 							{item.name}
 						</Link>

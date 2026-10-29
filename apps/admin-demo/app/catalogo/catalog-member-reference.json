@@ -16,7 +16,7 @@
 	},
 	"AdsTabsPanel": {
 		"description": "Exibe o conteúdo vinculado ao gatilho ativo.",
-		"props": "value, children, className",
+		"props": "value, keepMounted, children, className",
 		"usage": "<AdsTabsPanel value=\"geral\">Conteúdo</AdsTabsPanel>"
 	},
 	"AdsAccordion": {
@@ -146,7 +146,7 @@
 	},
 	"AdsDropdown.Item": {
 		"description": "Opção de menu selecionável.",
-		"props": "children, disabled, onSelect, role",
+		"props": "children, disabled, onSelect, href, role (menuitem | menuitemradio)",
 		"usage": "<AdsDropdown.Item>Exportar</AdsDropdown.Item>"
 	},
 	"AdsDashboardGrid": {
@@ -191,7 +191,7 @@
 	},
 	"AdsAdminShell.Sidebar": {
 		"description": "Barra lateral com navegação.",
-		"props": "header, children, className",
+		"props": "header, label, mobileTitle, children, className",
 		"usage": "<AdsAdminShell.Sidebar>…</AdsAdminShell.Sidebar>"
 	},
 	"AdsAdminShell.SidebarToggle": {

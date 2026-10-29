@@ -112,7 +112,14 @@ export function ComboboxPopover({
 	const [draftQuery, setDraftQuery] = useState(defaultInputValue ?? '');
 	const query = inputValue ?? draftQuery;
 	const [activeIndex, setActiveIndex] = useState(-1);
-	const [invalid, setInvalid] = useState(false);
+	const [invalidReported, setInvalidReported] = useState(false);
+	// O erro de validação deriva do estado atual: some sozinho quando há valor, o campo deixa de ser
+	// obrigatório ou fica somente leitura (fora da validação nativa).
+	const invalid = invalidReported && Boolean(required) && !readOnly && !selectedValue;
+	const clearReported = !invalid && invalidReported;
+	useEffect(() => {
+		if (clearReported) setInvalidReported(false);
+	}, [clearReported]);
 	const rootRef = useRef<HTMLSpanElement>(null);
 	const triggerElRef = useRef<HTMLButtonElement | null>(null);
 	const panelRef = useRef<HTMLElement | null>(null);
@@ -172,7 +179,7 @@ export function ComboboxPopover({
 		if (option.value !== selectedValue) {
 			if (value === undefined) setUncontrolledValue(option.value);
 			setCachedOption(option);
-			setInvalid(false);
+			setInvalidReported(false);
 			onValueChange?.(option.value, option);
 		}
 		// Escolher o valor já confirmado não pede mudança alguma: apenas fecha.
@@ -237,7 +244,7 @@ export function ComboboxPopover({
 		const onReset = () => {
 			setUncontrolledValue(initialValueRef.current);
 			setCachedOption(null);
-			setInvalid(false);
+			setInvalidReported(false);
 		};
 		owner.addEventListener('reset', onReset);
 		return () => owner.removeEventListener('reset', onReset);
@@ -287,6 +294,8 @@ export function ComboboxPopover({
 		'aria-describedby': describedBy,
 		'aria-expanded': open,
 		'aria-haspopup': 'dialog',
+		// `aria-readonly` não é válido em `button`: o estado somente leitura é `aria-disabled`.
+		'aria-disabled': readOnly ? true : undefined,
 		'aria-invalid': validationState === 'error' || invalid ? true : ariaInvalid,
 		'aria-label': ariaLabel,
 		'aria-labelledby': ariaLabelledBy,
@@ -349,7 +358,8 @@ export function ComboboxPopover({
 					{...triggerProps}
 					className={classNames(
 						formControlClasses(size, invalid ? 'error' : validationState, className),
-						'ads-combobox__trigger flex cursor-pointer items-center justify-between gap-2 text-start',
+						'ads-combobox__trigger flex items-center justify-between gap-2 text-start',
+						readOnly ? 'cursor-default bg-surface-muted' : 'cursor-pointer',
 					)}
 				>
 					<span className="flex min-w-0 items-center gap-2">
@@ -381,7 +391,7 @@ export function ComboboxPopover({
 					onInvalid={(event) => {
 						// A interface nativa focaria este controle oculto: o foco vai ao gatilho.
 						event.preventDefault();
-						setInvalid(true);
+						setInvalidReported(true);
 						// Só o primeiro controle inválido do formulário recebe o foco.
 						const first = Array.from(event.currentTarget.form?.elements ?? []).find(
 							(element) =>
@@ -391,12 +401,13 @@ export function ComboboxPopover({
 						if (!first || first === event.currentTarget) focusTrigger();
 					}}
 					ref={validityRef}
+					readOnly={readOnly}
 					required={required}
 					tabIndex={-1}
 					value={selectedValue ?? ''}
 				/>
 			) : null}
-			{invalid && !selectedValue ? (
+			{invalid ? (
 				<span className="sr-only" role="alert">
 					{requiredMessage}
 				</span>

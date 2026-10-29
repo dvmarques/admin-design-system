@@ -30,3 +30,5 @@
 - [x] 5.1 Formatar todos os arquivos alterados via `npx.cmd prettier --write` e aprovar `npm run format`.
 - [ ] 5.2 Executar e aprovar `npm run validate`, `openspec.cmd validate extend-239-combobox-popover --strict` e `openspec.cmd validate --all --strict`; registrar logs, skipped checks, testes E2E e accessibility.
 - [ ] 5.3 Validar builds de Admin Demo/Storybook, CSS publicado e consumidores Next.js; revisar snapshots apenas após diferença intencional, compatibilidade e rollback antes de marcar Ready for review.
+
+<!-- Evidência dos gates 5.2/5.3 (permanecem abertos até o archive autorizado): CI do SHA anterior 9743c3b com Qualidade rápida, Fluxos no navegador (Chromium com snapshots, Firefox e WebKit), Artefatos de distribuição, Política de develop (openspec strict) e Construir o site em success; "Validação de release" e "Publicar" ficaram skipped por não se aplicarem a PR comum e não contam como aprovação. A evidência do SHA final deste ciclo está na PR #254. -->

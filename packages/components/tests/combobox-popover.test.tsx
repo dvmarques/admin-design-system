@@ -632,4 +632,67 @@ describe('AdsCombobox popover review follow-ups', () => {
 		// @ts-expect-error o modo popover não aceita `ref` de input.
 		void (<AdsCombobox options={[]} presentation="popover" ref={ref} />);
 	});
+
+	it('clears the reported invalid state when props make the form valid again', () => {
+		const View = (props: Partial<React.ComponentProps<typeof AdsCombobox>>) => (
+			<form data-testid="f">
+				<Basic name="uf" required value={null} {...props} />
+			</form>
+		);
+		const { rerender } = render(<View />);
+		const form = screen.getByTestId('f') as HTMLFormElement;
+		act(() => {
+			form.reportValidity();
+		});
+		expect(trigger()).toHaveAttribute('aria-invalid', 'true');
+		expect(screen.getByRole('alert')).toBeInTheDocument();
+
+		rerender(<View value="sp" />);
+		expect(trigger()).not.toHaveAttribute('aria-invalid');
+		expect(screen.queryByRole('alert')).toBeNull();
+		expect(form.checkValidity()).toBe(true);
+
+		// Voltar a ficar vazio não reexibe o erro sem uma nova validação.
+		rerender(<View value={null} />);
+		expect(trigger()).not.toHaveAttribute('aria-invalid');
+		act(() => {
+			form.reportValidity();
+		});
+		expect(trigger()).toHaveAttribute('aria-invalid', 'true');
+
+		rerender(<View required={false} />);
+		expect(trigger()).not.toHaveAttribute('aria-invalid');
+		expect(form.checkValidity()).toBe(true);
+	});
+
+	it('does not trap a readOnly required field: valid form, value submitted, state exposed', async () => {
+		const events = userEvent.setup();
+		const { rerender } = render(
+			<form data-testid="f">
+				<Basic name="uf" readOnly required />
+			</form>,
+		);
+		const form = screen.getByTestId('f') as HTMLFormElement;
+		expect(form.checkValidity()).toBe(true);
+		expect(trigger()).toHaveAttribute('aria-disabled', 'true');
+		expect(trigger()).not.toBeDisabled();
+		await events.click(trigger());
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(new FormData(form).get('uf')).toBe('');
+
+		rerender(
+			<form data-testid="f">
+				<Basic name="uf" readOnly required value="rj" />
+			</form>,
+		);
+		expect(new FormData(form).get('uf')).toBe('rj');
+
+		rerender(
+			<form data-testid="f">
+				<Basic name="uf" required />
+			</form>,
+		);
+		expect(trigger()).not.toHaveAttribute('aria-disabled');
+		expect(form.checkValidity()).toBe(false);
+	});
 });

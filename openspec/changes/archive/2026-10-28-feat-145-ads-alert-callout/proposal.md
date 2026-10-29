@@ -13,7 +13,7 @@ Mensagens persistentes inline precisam de um contrato acessível e reutilizável
 
 ## Scope
 
-Pacote `packages/components`, aplicação `apps/admin-demo`, `apps/docs`, documentação, testes e changelog. Não alterar `#91`, `AdsToast` ou contratos de códigos de negócio `SU/ER/EP`; adaptador pertence ao Back Admin.
+Pacote `packages/components`, aplicação `apps/admin-demo`, `apps/docs`, documentação, testes e changelog. Não alterar `#91`, `AdsToast` ou contratos de códigos específicos de negócio; a tradução desses códigos pertence aos adaptadores das aplicações consumidoras.
 
 ## Workflow risk
 

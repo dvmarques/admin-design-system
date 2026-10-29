@@ -22,7 +22,7 @@ A consulta de AdsAutocomplete pode ser local, síncrona ou assíncrona com Abort
 
 ## Demonstração e migração
 
-Demo no catálogo existente, com busca local, servidor simulado, erros, vazios, latência invertida, estados e controle de valor. Storybook documenta controles. Migração: CampoAutocomplete => AdsAutocomplete(options) / AdsCombobox; CampoAutocompleteAsync => AdsAutocomplete(loadOptions). mapear react-select {label,value} para value string; formatOptionLabel => renderOption; menuPortalTarget/menuPosition tratados internamente.
+Demo no catálogo existente, com busca local, servidor simulado, erros, vazios, latência invertida, estados e controle de valor. Storybook documenta controles. Migração: seletores com dados locais => AdsAutocomplete(options) / AdsCombobox; seletores assíncronos => AdsAutocomplete(loadOptions). mapear react-select {label,value} para value string; formatOptionLabel => renderOption; menuPortalTarget/menuPosition tratados internamente.
 
 ## Reversão
 

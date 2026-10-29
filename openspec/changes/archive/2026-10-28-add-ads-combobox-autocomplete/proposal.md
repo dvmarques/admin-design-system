@@ -2,7 +2,7 @@
 
 ## Why
 
-Substituir CampoAutocomplete e CampoAutocompleteAsync na migração do Back Admin, mantendo o design system independente de react-select, CoreUI e backend.
+Oferecer alternativas reutilizáveis para seletores locais e assíncronos existentes, mantendo o design system independente de react-select, CoreUI e backend.
 
 ## What Changes
 
@@ -21,7 +21,7 @@ Critical: altera API pública, acessibilidade e vários consumidores. Preservar 
 
 ## Fora do escopo
 
-Multisseleção (#143), virtualização, criação de novas opções, backend real, alterações no Back Admin e substituição de dependências dos consumidores nesta PR.
+Multisseleção (#143), virtualização, criação de novas opções, backend real, alterações em aplicações consumidoras e substituição de dependências dos consumidores nesta PR.
 
 ## Capabilities
 

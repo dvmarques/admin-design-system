@@ -281,6 +281,32 @@ describe('field composition', () => {
 		expect(screen.getByRole('button', { name: 'Filtros' })).toBeInTheDocument();
 	});
 
+	it('keeps currency and buttons unbroken without changing global button styles', () => {
+		const { container } = render(
+			<AdsInputGroup
+				startContent="R$"
+				endContent={
+					<>
+						<AdsButton>Limpar</AdsButton>
+						<AdsButton>Restaurar</AdsButton>
+					</>
+				}
+			>
+				<AdsInput aria-label="Valor" />
+			</AdsInputGroup>,
+		);
+		const start = container.querySelector('.ads-input-group__start');
+		const end = container.querySelector('.ads-input-group__end');
+		expect(start).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(end).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(container.querySelector('.ads-input-group')).toHaveClass(
+			'overflow-x-auto',
+			'[&>.ads-form-control]:min-w-[4rem]',
+		);
+		// O grupo rola (overflow clipa): o foco dos filhos fica por dentro, sem outline/anel cortado.
+		expect(end).toHaveClass('[&>.ads-button:focus-visible]:outline-offset-[-2px]');
+	});
+
 	it('keeps several buttons in one addon contiguous with only the outer corner rounded', () => {
 		const { container } = render(
 			<AdsInputGroup

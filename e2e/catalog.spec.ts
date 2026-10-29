@@ -103,7 +103,9 @@ test('interações de abas, campos, tabela e etapas', async ({ page }) => {
 		'true',
 	);
 	await page.getByRole('button', { name: 'Limpar valor' }).click();
-	await expect(page.getByRole('textbox', { name: 'Valor em reais' })).toHaveValue('0');
+	await expect(page.getByRole('textbox', { name: 'Valor em reais' })).toHaveValue('');
+	await page.getByRole('button', { name: 'Restaurar valor' }).click();
+	await expect(page.getByRole('textbox', { name: 'Valor em reais' })).toHaveValue('120');
 	await page.goto('/catalogo/password-input');
 	const password = page.getByRole('textbox', { name: 'Senha', exact: true });
 	await expect(page.getByLabel('Senha', { exact: true })).toHaveAttribute('type', 'password');

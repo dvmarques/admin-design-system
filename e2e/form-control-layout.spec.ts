@@ -224,6 +224,12 @@ async function renderInputGroupMarkup(size: 'sm' | 'md' | 'lg') {
 			'div',
 			{ style: { display: 'grid', gap: '16px', padding: '16px' } },
 			group('text', { endContent: 'BRL', startContent: 'R$' }),
+			group('currency', {
+				startContent: 'R$',
+				endContent: [button('Limpar', 'secondary'), button('Restaurar', 'primary')].map(
+					(node, key) => createElement(Fragment, { key }, node),
+				),
+			}),
 			group('end', { endContent: button('Buscar', 'primary') }),
 			group('start', { startContent: button('Filtros', 'secondary') }),
 			group('multi', {
@@ -284,6 +290,34 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 			const before = await box('#end button');
 			await page.locator('#end button').hover();
 			await expect.poll(async () => (await box('#end button')).top).toBeCloseTo(before.top, 0);
+		});
+	}
+}
+
+for (const theme of ['light', 'dark'] as const) {
+	for (const width of [320, 390, 1280]) {
+		test(`InputGroup preserva R$, Limpar e Restaurar sem quebrar em ${theme} a ${width}px`, async ({
+			page,
+		}) => {
+			const markup = await renderInputGroupMarkup('md');
+			await page.setViewportSize({ width, height: 800 });
+			await page.setContent(
+				`<!doctype html><html data-theme="${theme}"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+			const start = page.locator('#currency .ads-input-group__start');
+			const end = page.locator('#currency .ads-input-group__end');
+			await expect(start).toHaveCSS('white-space', 'nowrap');
+			await expect(end).toHaveCSS('white-space', 'nowrap');
+			await expect(page.locator('#currency button').first()).toHaveCSS('white-space', 'nowrap');
+			await expect(page.locator('#currency button').last()).toHaveCSS('white-space', 'nowrap');
+			const startBox = (await start.boundingBox())!;
+			const buttons = await page.locator('#currency button').all();
+			const buttonBoxes = await Promise.all(buttons.map((item) => item.boundingBox()));
+			expect(startBox.height).toBeLessThan(50);
+			expect(buttonBoxes[0]!.height).toBeCloseTo(buttonBoxes[1]!.height, 0);
+			await expect
+				.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+				.toBeLessThanOrEqual(0);
 		});
 	}
 }

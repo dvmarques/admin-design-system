@@ -930,6 +930,16 @@ divergência, inclusive em StrictMode.
   adequados ao teclado móvel (`numeric`, `tel`, `decimal`).
 - Estilo e tamanho (`sm`, `md`, `lg`) são idênticos aos de `AdsInput`, com o CSS compilado do DS e
   sem Tailwind no consumidor.
+- Descreva o formato esperado: dê sempre ao `AdsField` uma `description` com ele (por exemplo,
+  `Formato 000-000`). `placeholder` **não** substitui a descrição (some ao digitar e não é um rótulo),
+  e o `placeholderChar` de máscaras não lazy (`lazy: false`) é lido por leitores de tela como texto
+  do valor, então prefira o modo lazy (padrão) ou descreva o formato no campo de ajuda.
+- Não use a máscara como único indicador de erro: um valor incompleto não anuncia nada sozinho. O
+  `role="alert"` do `AdsField` só cobre o erro quando `error` é informado; derive `error` e
+  `validationState="error"` de `complete` (e do servidor) e leve o foco ao campo inválido ao enviar.
+- Resolução de módulos: o subpath usa o mapa `exports` do pacote, então o TypeScript do consumidor
+  precisa de `moduleResolution` `Bundler`, `Node16` ou `NodeNext` (o `node10` não resolve
+  `@admin-ds/components/masked-input`). O Next.js App Router já usa `Bundler`.
 
 ### Máscaras suportadas
 

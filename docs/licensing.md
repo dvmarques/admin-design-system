@@ -34,7 +34,9 @@ e no `package-lock.json`, evitando duplicar esse inventário nesta página:
 
 `react-imask` e `imask` só são exigidos por quem importa o subpath opcional
 `@admin-ds/components/masked-input`; suas dependências transitivas (`@babel/runtime-corejs3`,
-`core-js-pure`, `prop-types`) também são MIT.
+`core-js-pure`, `prop-types`) também são MIT. O `core-js-pure` declara um script de instalação apenas informativo (mensagem de
+apoio/funding), ignorável com `--ignore-scripts`, que é como a CI e o consumidor de verificação
+instalam.
 
 As dependências transitivas continuam sujeitas às licenças declaradas por
 seus próprios distribuidores. Antes de uma publicação, a lista deve ser

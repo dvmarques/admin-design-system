@@ -169,6 +169,23 @@ describe('AdsMaskedInput with a static mask', () => {
 	});
 });
 
+describe('AdsMaskedInput option filtering', () => {
+	it('drops engine options outside the public contract, such as unmask and blocks', () => {
+		const onValueChange = vi.fn();
+		const hostile = {
+			mask: '000-000',
+			unmask: true,
+			value: 'zzz',
+			onAccept: vi.fn(),
+		} as never;
+		render(<AdsMaskedInput aria-label="Campo" mask={hostile} onValueChange={onValueChange} />);
+		const input = field();
+		typeText(input, '123456');
+		expect(input).toHaveValue('123-456');
+		expect(lastValues(onValueChange)).toMatchObject({ maskedValue: '123-456' });
+	});
+});
+
 describe('AdsMaskedInput with dynamic and typed masks', () => {
 	const phone = ['(00) 0000-0000', '(00) 00000-0000'] as const;
 
@@ -577,20 +594,18 @@ describe('AdsMaskedInput accessibility and composition', () => {
 		expect((await axe.run(container)).violations).toEqual([]);
 	});
 
-	it('marks invalid fields through validationState and passes axe in both themes', async () => {
+	it('exposes name, aria-invalid and aria-describedby under light and dark themes (contrast is covered by E2E)', () => {
 		for (const theme of ['light', 'dark']) {
-			const { container, unmount } = render(
+			const { unmount } = render(
 				<div data-theme={theme}>
 					<AdsField label="Código" validationState="error" error="Valor incompleto">
 						<AdsMaskedInput defaultValue="12" mask="000-000" />
 					</AdsField>
 				</div>,
 			);
-			expect(screen.getByRole('textbox', { name: 'Código' })).toHaveAttribute(
-				'aria-invalid',
-				'true',
-			);
-			expect((await axe.run(container)).violations).toEqual([]);
+			const input = screen.getByRole('textbox', { name: 'Código' });
+			expect(input).toHaveAttribute('aria-invalid', 'true');
+			expect(input.getAttribute('aria-describedby')).toContain('-error');
 			unmount();
 		}
 	});

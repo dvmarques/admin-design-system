@@ -89,8 +89,9 @@ das validações automatizadas.
   nativo e não é sintetizado a cada alteração aceita: use `onValueChange`. Só o subconjunto
   documentado de opções do motor é público (sem `blocks`, `unmask` nem instâncias do motor).
   Caret, colagem, edição no meio e IME são cobertos por testes de componente (jsdom) e E2E em
-  Chromium; Firefox e WebKit não executam o spec dedicado, e a composição IME foi simulada pelo
-  protocolo do Chromium, não por IMEs reais ou teclados móveis.
+  Chromium; Firefox e WebKit não executam o spec dedicado, e a composição IME foi validada apenas
+  em Chromium desktop, simulada pelo protocolo (CDP); IMEs reais e teclados móveis (Gboard, iOS) não
+  foram testados.
 
 ## AdsFilterBar
 

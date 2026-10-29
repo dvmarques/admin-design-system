@@ -1,7 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { createElement } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, test, type Locator, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 
@@ -155,14 +155,50 @@ test('estados desabilitado e somente leitura', async ({ page }) => {
 	await expect(readonly).toHaveValue('123-456');
 });
 
+/** Abre o estado de erro do formulário de exemplo: envio incompleto, com foco no campo inválido. */
+async function openErrorState(page: Page) {
+	const code = page.getByRole('textbox', { name: 'Código do formulário' });
+	await code.click();
+	await code.pressSequentially('12');
+	// Envio implícito pelo teclado: clicar no botão perderia o clique, pois o erro de blur desloca o layout.
+	await code.press('Enter');
+	await expect(code).toHaveAttribute('aria-invalid', 'true');
+	await expect(code).toBeFocused();
+	return code;
+}
+
+async function outlineOf(locator: Locator) {
+	return locator.evaluate((element) => {
+		const style = getComputedStyle(element);
+		return {
+			style: style.outlineStyle,
+			width: style.outlineWidth,
+			color: style.outlineColor,
+		};
+	});
+}
+
 for (const theme of ['light', 'dark'] as const) {
 	test(`acessibilidade, foco visível e responsividade em ${theme}`, async ({ page }) => {
 		await page.setViewportSize({ width: 390, height: 844 });
 		await openDemo(page);
 		await page.getByLabel('Tema da demonstração').selectOption(theme);
 		await fixed(page).focus();
-		const outline = await fixed(page).evaluate((element) => getComputedStyle(element).outlineStyle);
-		expect(outline).not.toBe('none');
+		const outline = await outlineOf(fixed(page));
+		expect(outline.style).not.toBe('none');
+		expect(outline.width).not.toBe('0px');
+		expect(outline.color).not.toBe('rgba(0, 0, 0, 0)');
+		expect(outline.color).not.toBe('transparent');
+		// A página já exibe os campos desabilitado e somente leitura; abrimos também o estado de erro.
+		await expect(page.getByRole('textbox', { name: 'Desabilitado' })).toBeDisabled();
+		await expect(page.getByRole('textbox', { name: 'Somente leitura' })).toHaveAttribute(
+			'readonly',
+		);
+		const code = await openErrorState(page);
+		const invalidOutline = await outlineOf(code);
+		expect(invalidOutline.style).not.toBe('none');
+		expect(invalidOutline.width).not.toBe('0px');
+		expect(invalidOutline.color).not.toBe('rgba(0, 0, 0, 0)');
 		await expectNoAxeViolations(page);
 		expect(
 			await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
@@ -175,22 +211,26 @@ for (const theme of ['light', 'dark'] as const) {
 	});
 }
 
-test('forced-colors mantém borda e foco visíveis', async ({ page }) => {
+test('forced-colors mantém borda e foco visíveis, também no estado de erro', async ({ page }) => {
 	await page.emulateMedia({ forcedColors: 'active' });
 	await openDemo(page);
 	const input = fixed(page);
 	await input.focus();
-	const styles = await input.evaluate((element) => {
-		const style = getComputedStyle(element);
-		return {
-			border: style.borderTopStyle,
-			width: style.borderTopWidth,
-			outline: style.outlineStyle,
-		};
-	});
-	expect(styles.border).not.toBe('none');
-	expect(styles.width).not.toBe('0px');
-	expect(styles.outline).not.toBe('none');
+	const read = (locator: Locator) =>
+		locator.evaluate((element) => {
+			const style = getComputedStyle(element);
+			return { border: style.borderTopStyle, width: style.borderTopWidth };
+		});
+	for (const target of [input, await openErrorState(page)]) {
+		await target.focus();
+		const styles = await read(target);
+		const outline = await outlineOf(target);
+		expect(styles.border).not.toBe('none');
+		expect(styles.width).not.toBe('0px');
+		expect(outline.style).not.toBe('none');
+		expect(outline.width).not.toBe('0px');
+		expect(outline.color).not.toBe('rgba(0, 0, 0, 0)');
+	}
 });
 
 test('consumidor sem Tailwind: só o CSS distribuído estiliza o campo como AdsInput', async ({

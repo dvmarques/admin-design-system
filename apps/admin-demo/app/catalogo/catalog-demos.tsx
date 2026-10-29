@@ -384,7 +384,13 @@ export function MaskedInputDemo() {
 				onSubmit={(event) => {
 					event.preventDefault();
 					setFormTouched(true);
-					if (formComplete) setSent(String(new FormData(event.currentTarget).get('codigo') ?? ''));
+					if (formComplete) {
+						setSent(String(new FormData(event.currentTarget).get('codigo') ?? ''));
+						return;
+					}
+					// Leva o foco ao campo inválido, como em um formulário real.
+					const field = event.currentTarget.elements.namedItem('codigo');
+					if (field instanceof HTMLInputElement) field.focus();
 				}}
 				style={{ display: 'grid', gap: '0.75rem' }}
 			>

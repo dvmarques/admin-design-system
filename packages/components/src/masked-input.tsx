@@ -126,6 +126,15 @@ function isOptions(mask: AdsMask): mask is AdsMaskOptions {
 	);
 }
 
+// Engine options outside the public contract (cannot override `unmask=false` or value ownership).
+const blockedMaskKeys = ['unmask', 'value', 'blocks', 'onAccept', 'onComplete', 'inputRef', 'ref'];
+
+function pickMaskOptions(options: AdsMaskOptions) {
+	const rest: Record<string, unknown> = { ...options };
+	for (const key of blockedMaskKeys) delete rest[key];
+	return rest;
+}
+
 function assignRef<T>(ref: Ref<T> | undefined, node: T | null) {
 	if (typeof ref === 'function') ref(node);
 	else if (ref) (ref as { current: T | null }).current = node;
@@ -170,6 +179,7 @@ export const AdsMaskedInput = forwardRef<HTMLInputElement, AdsMaskedInputProps>(
 			nodeRef.current = node;
 		}, []);
 
+		// `useLayoutEffect` has no SSR guard (React >=18.2 peer), like `overlay-utils`; it never runs on the server.
 		// Both refs point at the HTML input; the engine's own component ref never leaks out.
 		useLayoutEffect(() => {
 			const node = nodeRef.current;
@@ -286,7 +296,7 @@ export const AdsMaskedInput = forwardRef<HTMLInputElement, AdsMaskedInputProps>(
 		const maskProps = !maskActive
 			? {}
 			: isOptions(mask as AdsMask)
-				? { ...(mask as AdsMaskOptions) }
+				? pickMaskOptions(mask as AdsMaskOptions)
 				: { mask };
 
 		return (

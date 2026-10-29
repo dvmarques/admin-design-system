@@ -2,7 +2,12 @@
  * Verifica, com o pacote empacotado de verdade, o contrato do peer opcional `react-imask`:
  * (A) um consumidor do entrypoint raiz instala, tipa, empacota e executa sem a dependência;
  * (B) o subpath `./masked-input` resolve, tipa, empacota e renderiza com a dependência instalada.
- * Exige `npm run build`; usa a rede (registro npm) apenas para instalar o consumidor temporário.
+ * Exige `npm run build` e REDE: o consumidor temporário é instalado pelo registro npm
+ * (`npm install --ignore-scripts`, sem segredos nem credenciais). Para a resolução ser determinística,
+ * as dependências diretas e todo o fecho transitivo de `react`, `react-dom`, `@types/*` e
+ * `react-imask` são fixados em versões EXATAS lidas do `package-lock.json` do workspace (via
+ * `dependencies` exatas e `overrides`). O único não determinismo restante é a disponibilidade do
+ * registro e do pacote em si (integridade conferida pelo npm).
  */
 import { execFileSync } from 'node:child_process';
 import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
@@ -17,14 +22,42 @@ const components = resolve(root, 'packages/components');
 if (!existsSync(resolve(components, 'dist/masked-input.js')))
 	throw new Error('Execute `npm run build` antes de verificar o peer opcional.');
 
-const rootManifest = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const lock = JSON.parse(readFileSync(resolve(root, 'package-lock.json'), 'utf8'));
 const imaskVersion = lock.packages['node_modules/react-imask'].version;
-const react = rootManifest.dependencies.react;
-const reactDom = rootManifest.dependencies['react-dom'];
-const typesReact = rootManifest.devDependencies['@types/react'];
-const typesReactDom = rootManifest.devDependencies['@types/react-dom'];
 const npm = npmCli();
+
+/** Versão exata de um pacote no lockfile do workspace. */
+function locked(name) {
+	const entry = lock.packages[`node_modules/${name}`];
+	if (!entry) throw new Error(`${name} não está no package-lock.json`);
+	return entry.version;
+}
+
+/** Fecho transitivo (dependencies e optionalDependencies) de `roots`, com versões do lockfile. */
+function lockedClosure(roots) {
+	const versions = {};
+	const pending = [...roots];
+	while (pending.length > 0) {
+		const name = pending.pop();
+		if (name in versions) continue;
+		const entry = lock.packages[`node_modules/${name}`];
+		if (!entry) throw new Error(`${name} não está no package-lock.json`);
+		versions[name] = entry.version;
+		pending.push(
+			...Object.keys({ ...entry.dependencies, ...entry.optionalDependencies }).filter(
+				(dependency) => lock.packages[`node_modules/${dependency}`],
+			),
+		);
+	}
+	return versions;
+}
+const pinned = lockedClosure([
+	'react',
+	'react-dom',
+	'@types/react',
+	'@types/react-dom',
+	'react-imask',
+]);
 const tsc = resolve(root, 'node_modules/typescript/bin/tsc');
 
 const work = mkdtempSync(join(tmpdir(), 'ads-optional-peer-'));
@@ -62,11 +95,12 @@ try {
 			type: 'module',
 			dependencies: {
 				'@admin-ds/components': `file:${tarball}`,
-				react,
-				'react-dom': reactDom,
-				'@types/react': typesReact,
-				'@types/react-dom': typesReactDom,
+				react: locked('react'),
+				'react-dom': locked('react-dom'),
+				'@types/react': locked('@types/react'),
+				'@types/react-dom': locked('@types/react-dom'),
 			},
+			overrides: pinned,
 		}),
 	);
 	writeFileSync(
@@ -168,9 +202,25 @@ if (!html.includes('value="Ana"')) throw new Error('SSR do entrypoint raiz falho
 	// 3. Mesmo consumidor COM react-imask na versão do lockfile.
 	run(
 		process.execPath,
-		[npm, 'install', '--ignore-scripts', '--no-audit', '--no-fund', `react-imask@${imaskVersion}`],
+		[
+			npm,
+			'install',
+			'--ignore-scripts',
+			'--no-audit',
+			'--no-fund',
+			'--save-exact',
+			`react-imask@${imaskVersion}`,
+		],
 		app,
 	);
+	for (const name of ['react-imask', 'imask', 'react']) {
+		const installed = JSON.parse(
+			readFileSync(join(app, 'node_modules', name, 'package.json'), 'utf8'),
+		).version;
+		if (installed !== pinned[name])
+			throw new Error(`${name}: instalado ${installed}, esperado ${pinned[name]} (lockfile)`);
+	}
+	log('B: versões instaladas idênticas às do package-lock.json do workspace.');
 	writeFileSync(
 		join(app, 'src/masked.tsx'),
 		`import { AdsField } from '@admin-ds/components';

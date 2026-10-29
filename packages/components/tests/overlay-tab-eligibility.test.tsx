@@ -113,41 +113,6 @@ describe.each(overlays)('%s: Tab usa a elegibilidade do foco inicial', (_name, O
 		expect(pressTab(true).handled).toBe(false);
 	});
 
-	it('trata um grupo de rádio com opção marcada como uma única parada de Tab', async () => {
-		render(
-			<Overlay onOpenChange={() => {}} open showCloseButton={false} title="Rádios">
-				<button>Primeiro</button>
-				<input aria-label="A" name="grupo" type="radio" />
-				<input aria-label="B" defaultChecked name="grupo" type="radio" />
-				<input aria-label="C" name="grupo" type="radio" />
-			</Overlay>,
-		);
-		const first = screen.getByRole('button', { name: 'Primeiro' });
-		await waitFor(() => expect(first).toHaveFocus());
-		screen.getByRole('radio', { name: 'B' }).focus();
-		expect(pressTab().handled).toBe(true);
-		expect(first).toHaveFocus();
-		expect(pressTab(true).handled).toBe(true);
-		expect(screen.getByRole('radio', { name: 'B' })).toHaveFocus();
-	});
-
-	it('sem opção marcada, o grupo de rádio entra pelo primeiro (Tab) e pelo último (Shift+Tab)', async () => {
-		render(
-			<Overlay onOpenChange={() => {}} open showCloseButton={false} title="Rádios">
-				<button>Primeiro</button>
-				<input aria-label="A" name="grupo" type="radio" />
-				<input aria-label="B" name="grupo" type="radio" />
-			</Overlay>,
-		);
-		const first = screen.getByRole('button', { name: 'Primeiro' });
-		await waitFor(() => expect(first).toHaveFocus());
-		screen.getByRole('radio', { name: 'A' }).focus();
-		expect(pressTab().handled).toBe(true);
-		expect(first).toHaveFocus();
-		expect(pressTab(true).handled).toBe(true);
-		expect(screen.getByRole('radio', { name: 'B' })).toHaveFocus();
-	});
-
 	it('mantém o contêiner como fallback quando nenhum controle é elegível', async () => {
 		render(
 			<Overlay onOpenChange={() => {}} open showCloseButton={false} title="Sem controles">

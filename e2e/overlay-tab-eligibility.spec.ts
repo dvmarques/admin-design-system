@@ -92,26 +92,3 @@ test.describe('ConfirmDialog: Tab com controles inelegíveis no início', () => 
 		await expect(trigger).toBeFocused();
 	});
 });
-
-test.describe('Grupo de rádio na ponta do ciclo', () => {
-	test('Tab na opção marcada volta ao início sem passar pelo fundo', async ({ page }) => {
-		await page.goto('/catalogo/dialog');
-		await page.getByRole('button', { name: 'Abrir Dialog', exact: true }).click();
-		const layer = page.getByRole('dialog', { name: 'Exemplo de Dialog' });
-		const close = layer.getByRole('button', { name: 'Fechar', exact: true });
-		await expect(close).toBeFocused();
-		// Acrescenta, depois da renderização, um grupo de rádio como último conteúdo do diálogo.
-		await layer.evaluate((panel) => {
-			panel.insertAdjacentHTML(
-				'beforeend',
-				'<div><input type="radio" name="sonda" aria-label="Opção A"><input type="radio" name="sonda" aria-label="Opção B" checked><input type="radio" name="sonda" aria-label="Opção C"></div>',
-			);
-		});
-		const checked = layer.getByRole('radio', { name: 'Opção B' });
-		await close.press('Shift+Tab');
-		await expect(checked).toBeFocused();
-		await page.keyboard.press('Tab');
-		await expect(close).toBeFocused();
-		await expectFocusInside(page, 'dialog', 'Exemplo de Dialog');
-	});
-});

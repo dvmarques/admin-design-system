@@ -1,4 +1,5 @@
 import type { SelectHTMLAttributes } from 'react';
+import { classNames } from './class-names.js';
 import { formControlClasses } from './form-control-classes.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 
@@ -19,7 +20,7 @@ export function AdsSelect({
 		<select
 			{...props}
 			aria-invalid={validationState === 'error' ? true : ariaInvalid}
-			className={formControlClasses(size, validationState, className)}
+			className={formControlClasses(size, validationState, classNames('ads-select', className))}
 		/>
 	);
 }

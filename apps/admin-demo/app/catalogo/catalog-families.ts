@@ -87,12 +87,10 @@ export function catalogMemberHref(name: string) {
 	const root = catalogFamilyRoot(name);
 	if (!root) return '/catalogo';
 	if (!family || name === root.name) return root.href;
-	// AdsTabs.List é um alias da mesma seção de AdsTabsList; Root aponta para o topo.
-	const resolved = (family.aliases as readonly string[]).includes(name)
-		? name.endsWith('.Root')
-			? root.name
-			: `${root.name}${name.split('.').at(-1)}`
-		: name;
+	// Propriedades compostas sem export nomeado (Dropdown.Trigger, AdminShell.Main)
+	// usam o nome público exato como âncora; normalizar pontos e PascalCase resulta
+	// no mesmo slug, sem pressupor um export inexistente.
+	const resolved = name.endsWith('.Root') ? root.name : name;
 	return resolved === root.name ? root.href : `${root.href}#${catalogMemberAnchor(resolved)}`;
 }
 

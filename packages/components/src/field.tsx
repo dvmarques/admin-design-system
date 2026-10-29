@@ -127,7 +127,7 @@ export function AdsFieldMessage({ className, ...props }: AdsFieldMessageProps) {
 // abriria uma fresta de 1px. Vários botões no mesmo adendo ficam contíguos: só a quina externa do
 // conjunto é arredondada e cada junção sobrepõe 1px, como a do adendo com o campo.
 const buttonAddonClassName =
-	'has-[>.ads-button]:items-stretch has-[>.ads-button]:border-0 has-[>.ads-button]:bg-transparent has-[>.ads-button]:p-0 [&>.ads-button]:shrink-0 [&>.ads-button]:whitespace-nowrap [&>.ads-button]:min-h-0! [&>.ads-button]:translate-y-0! [&>.ads-button+.ads-button]:-ml-px';
+	'has-[>.ads-button]:items-stretch has-[>.ads-button]:border-0 has-[>.ads-button]:bg-transparent has-[>.ads-button]:p-0 [&>.ads-button]:whitespace-nowrap [&>.ads-button]:min-h-0! [&>.ads-button]:translate-y-0! [&>.ads-button+.ads-button]:-ml-px';
 const buttonStartClassName =
 	'has-[>.ads-button]:-mr-px [&>.ads-button]:rounded-r-none [&>.ads-button:not(:first-child)]:rounded-l-none';
 const buttonEndClassName =

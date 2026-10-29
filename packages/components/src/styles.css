@@ -415,6 +415,19 @@ select.ads-select:not([multiple]):not([size]) {
 		right 17px center,
 		right 12px center;
 	background-size: 5px 5px;
+	/* Rótulo longo: contido na caixa, truncado antes da seta e sem alargar o contêiner. */
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+/* Ausência de escolha (`placeholder`): texto explícito e atenuado; as opções mantêm a cor do texto. */
+.ads-select:has(> [data-ads-select-placeholder]:checked) {
+	color: var(--ads-color-text-muted);
+}
+.ads-select:has(> [data-ads-select-placeholder]:checked) option {
+	color: var(--ads-color-text);
 }
 select.ads-select:not([multiple]):not([size]):dir(rtl) {
 	background-position:

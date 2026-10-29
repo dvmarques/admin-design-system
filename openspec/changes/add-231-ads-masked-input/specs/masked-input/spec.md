@@ -16,12 +16,12 @@ O sistema MUST disponibilizar `AdsMaskedInput` e tipos no subpath público opcio
 
 ### Requirement: Valores bruto e formatado têm contrato distinto de eventos
 
-`AdsMaskedInput` MUST usar `value`/`defaultValue` para representar o texto exibido e MUST fornecer `onValueChange` com `maskedValue`, `unmaskedValue`, `typedValue` quando aplicável e indicação `complete`. O handler `onChange` MUST preservar semântica de evento DOM sem ser artificialmente equiparado ao aceite da máscara.
+`AdsMaskedInput` MUST usar `value`/`defaultValue` para representar o texto exibido e MUST fornecer `onValueChange` com `maskedValue`, `unmaskedValue`, `typedValue` quando aplicável e indicação `complete`. O handler `onChange` MUST preservar a semântica de evento DOM, sem equivalência garantida com o aceite da máscara; alterações mascaradas MUST ser notificadas por `onValueChange` baseado em `onAccept`.
 
 #### Scenario: Alteração do usuário e campo controlado
 
 - **WHEN** a pessoa edita um campo mascarado controlado
-- **THEN** `onValueChange` informa valores bruto/formatado coerentes, enquanto o valor exibido segue a prop controlada até o consumidor atualizá-la
+- **THEN** `onValueChange` informa valores bruto/formatado coerentes mesmo se o evento nativo `onChange` não ocorrer, enquanto o valor exibido segue a prop controlada até o consumidor atualizá-la
 
 #### Scenario: Campo não controlado e sincronização externa
 
@@ -73,7 +73,7 @@ O sistema MUST manter `react-imask` fora do runtime e do entrypoint raiz de `@ad
 
 ### Requirement: Entrega demonstrável e migração documentada
 
-O sistema MUST incluir exemplo funcional no Admin Demo e Storybook com dados fictícios, além de documentação de migração de wrappers IMask/CoreUI, limites de validação e semântica de eventos.
+O sistema MUST incluir exemplo funcional no Admin Demo e Storybook com dados fictícios, além de documentação de migração de wrappers IMask/bibliotecas visuais de terceiros, limites de validação e semântica de eventos.
 
 #### Scenario: Demonstração de formulário
 

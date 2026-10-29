@@ -154,10 +154,7 @@ for (const width of [390, 1280] as const) {
 			const anchor = (await trigger.boundingBox())!;
 			const overlay = (await panel.boundingBox())!;
 			const center = anchor.x + anchor.width / 2;
-			const expected = Math.max(
-				8,
-				Math.min(center - overlay.width / 2, width - overlay.width - 8),
-			);
+			const expected = Math.max(8, Math.min(center - overlay.width / 2, width - overlay.width - 8));
 			return Math.abs(overlay.x - expected);
 		};
 		await expect.poll(() => horizontalError(button, tooltip)).toBeLessThan(2);

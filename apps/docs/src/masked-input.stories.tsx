@@ -1,7 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
 import { AdsButton, AdsField } from '@admin-ds/components';
-import { AdsMaskedInput, type AdsMaskedInputValues } from '@admin-ds/components/masked-input';
+import {
+	AdsMaskedInput,
+	type AdsMask,
+	type AdsMaskedInputValues,
+} from '@admin-ds/components/masked-input';
 
 const meta = {
 	title: 'Forms/Masked input',
@@ -94,7 +98,7 @@ function DocumentExample({
 }: {
 	description: string;
 	label: string;
-	mask: Parameters<typeof AdsMaskedInput>[0]['mask'];
+	mask: AdsMask;
 	placeholder: string;
 }) {
 	const [values, setValues] = useState<AdsMaskedInputValues>();

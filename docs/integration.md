@@ -1651,3 +1651,52 @@ O debounce padrão é 250ms; consultas começam após um caractere. O AbortSigna
 Ao modificar o texto depois de uma seleção, o componente limpa automaticamente o value anterior e emite onValueChange(null, null); o consumidor deve atualizar o value controlado para evitar enviar valor obsoleto. Resultados assíncronos permanecem vinculados ao termo consultado. O campo desabilitado não inicia novas requisições.
 
 Opções de `AdsCombobox` e `AdsAutocomplete` podem incluir `icon` (nome de `AdsIcon`) ou `avatar: { src, fallback }`; o avatar tem precedência quando ambos são fornecidos. O elemento é decorativo e aparece na lista e na seleção. Use `showOptionVisuals={false}` para ocultar os elementos sem alterar valores. `renderOption` personaliza o conteúdo ao lado do elemento; não repita nele o mesmo ícone. Para opções remotas pré-selecionadas, forneça `selectedOption` com os dados visuais.
+
+## AdsSelect: placeholder opcional e texto longo (#140)
+
+`AdsSelect` continua sendo o `<select>` nativo. A prop `placeholder` é **opt-in**: sem ela nada muda para as chamadas existentes, inclusive as que usam uma primeira `<option value="">`.
+
+```tsx
+'use client';
+import { useState } from 'react';
+import { AdsField, AdsSelect } from '@admin-ds/components';
+
+export function Equipe() {
+	const [team, setTeam] = useState<string | null>(null);
+	return (
+		<AdsField label="Equipe">
+			<AdsSelect
+				name="team"
+				onChange={(event) => setTeam(event.target.value)}
+				placeholder="Selecione…"
+				required
+				value={team}
+			>
+				<option value="">Sem equipe</option>
+				<option value="fin">Financeiro</option>
+			</AdsSelect>
+		</AdsField>
+	);
+}
+```
+
+### Ausência versus valor vazio
+
+| Valor (`value`/`defaultValue`)   | Com `placeholder`                         | Em `required` | Em `FormData`       |
+| -------------------------------- | ----------------------------------------- | ------------- | ------------------- |
+| `null` ou omitido (não control.) | Exibe o placeholder (ausência)            | Inválido      | Não é enviado       |
+| `""`                             | Seleciona a opção **real** de valor vazio | Válido        | Enviado como `""`   |
+| qualquer outro valor             | Seleciona a opção correspondente          | Válido        | Enviado normalmente |
+
+- A ausência é a primeira `<option>` nativa (`value=""`, desabilitada após a montagem), isto é, a _placeholder label option_ do HTML: `checkValidity()`, `reportValidity()` e a mensagem do navegador funcionam sem sentinelas, e nenhum identificador interno chega ao DOM, ao `onChange` ou ao `FormData`. A opção real `""` é distinguida por identidade, não pelo texto do valor.
+- O placeholder não pode ser reescolhido pelo usuário (opção desabilitada). Para voltar à ausência, controle o valor com `null` ou use o reset do formulário. O reset restaura o valor inicial (`defaultValue`, ou ausência).
+- Valores externos, reset e mudanças de `value` não emitem `onChange`. Se o consumidor não atualizar `value`, a escolha do usuário é revertida, como em um `select` controlado do React.
+- Sem `placeholder`, `null` em `value`/`defaultValue` equivale a `""`. `multiple` ignora o placeholder.
+- Em testes, selecione a opção real vazia por rótulo ou índice (`selectOptions(select, 'Sem equipe')`): selecionar por valor `""` alcançaria a opção de ausência desabilitada.
+- Antes da hidratação, o HTML do servidor já exibe o placeholder (primeira opção) e sem JavaScript o formulário envia o valor vazio, como o `select` nativo.
+
+### Texto longo e estados
+
+O texto da opção selecionada é truncado com reticências dentro da caixa do controle, sem invadir a seta (o recuo de `2,25rem` é preservado, inclusive em RTL) e sem alargar o contêiner; o rótulo completo continua como texto da opção, exposto pela semântica nativa. O estilo é escopado a `select.ads-select` simples (não afeta `multiple` nem os demais controles de `formControlClasses()`). O placeholder aparece com a cor `--ads-color-text-muted` e texto explícito; em `forced-colors` valem as cores do sistema.
+
+Limitações: a aparência da lista aberta é do navegador; as validações automatizadas do `placeholder` usam React 19.2 (o intervalo de peer `>=18.2` não foi exercitado) e Firefox e WebKit são verificados pela CI do repositório. Veja as stories `Forms/Select` e o catálogo `/catalogo/select`.

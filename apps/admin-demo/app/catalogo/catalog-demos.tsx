@@ -313,6 +313,8 @@ export function TextareaDemo() {
 }
 
 export function SelectDemo() {
+	const [status, setStatus] = useState<string | null>(null);
+	const [submitted, setSubmitted] = useState('');
 	return (
 		<>
 			{(['sm', 'md', 'lg'] as const).map((size) => (
@@ -343,6 +345,59 @@ export function SelectDemo() {
 					<option value="">Escolha</option>
 					<option value="a">Ativo</option>
 					<option value="i">Inativo</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField
+				description="null indica ausência de escolha; o valor vazio é uma opção real."
+				label="Placeholder controlado"
+			>
+				<AdsSelect
+					onChange={(event) => setStatus(event.target.value)}
+					placeholder="Selecione…"
+					value={status}
+				>
+					<option value="">Sem status (valor vazio)</option>
+					<option value="a">Ativo</option>
+					<option value="i">Inativo</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Valor controlado">
+				<output data-testid="select-controlled-value">
+					{status === null ? 'ausente' : status === '' ? 'vazio' : status}
+				</output>
+			</AdsField>
+			<form
+				aria-label="Formulário de seleção"
+				onSubmit={(event) => {
+					event.preventDefault();
+					setSubmitted(JSON.stringify([...new FormData(event.currentTarget).entries()]));
+				}}
+			>
+				<AdsField label="Status obrigatório" description="Ausência é inválida.">
+					<AdsSelect name="status" placeholder="Selecione…" required>
+						<option value="a">Ativo</option>
+						<option value="i">Inativo</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsField label="Equipe (vazio válido)" description="Opção real de valor vazio.">
+					<AdsSelect defaultValue="" name="team" placeholder="Selecione…" required>
+						<option value="">Sem equipe</option>
+						<option value="fin">Financeiro</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsButton type="submit">Enviar</AdsButton>
+				<AdsButton type="reset" variant="secondary">
+					Limpar
+				</AdsButton>
+				<output aria-label="Dados enviados">{submitted}</output>
+			</form>
+			<AdsField label="Texto longo">
+				<AdsSelect defaultValue="long">
+					<option value="long">
+						Departamento de operações financeiras, controladoria e planejamento estratégico
+						corporativo da região metropolitana
+					</option>
+					<option value="short">Curto</option>
 				</AdsSelect>
 			</AdsField>
 		</>

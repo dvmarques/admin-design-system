@@ -37,6 +37,29 @@ regenerada a partir do lockfile e revisada com o processo de compliance do
 projeto. Novos ícones, fontes, imagens ou snippets externos devem registrar
 origem, licença e atribuição nesta página antes de serem incorporados.
 
+## Ícones SVG incorporados
+
+O componente `AdsIcon` contém **20 desenhos SVG** embutidos em
+`packages/components/src/icon.tsx`. A
+[auditoria de procedência de 2026-10-29](icons-license-audit.md)
+compara os 20 desenhos com Feather, Lucide, Tabler e Heroicons, inclusive
+`building` e `settings`, e distingue similaridade de comprovação de origem.
+
+Algumas geometrias coincidem com Feather e o ícone `settings` se aproxima
+fortemente dessa biblioteca, mas os commits do Admin DS não identificam a
+origem individual dos desenhos. Por cautela, o aviso integral da licença MIT
+do Feather foi preservado em
+[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
+Isso **não certifica** que os ícones sejam cópias do Feather, nem que os
+demais sejam criações originais. A origem de `building` permanece não
+comprovada. Não há evidência que sustente atribuir especificamente
+`building` a Lucide, Tabler ou Heroicons.
+
+Licenças de bibliotecas usadas somente como *referência comparativa* não
+são automaticamente atribuições de autoria. Caso uma procedência seja
+demonstrada posteriormente, atualize os avisos e a auditoria antes de
+publicar os desenhos como um pacote de ícones independente.
+
 ## Fontes
 
 A pilha tipográfica pública começa em `Inter` e termina em fontes de sistema

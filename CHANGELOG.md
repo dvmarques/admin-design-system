@@ -84,7 +84,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
-- `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes (foco dos filhos desenhado por dentro); exemplo próprio com ações Limpar e Restaurar.
+- `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
 
 - `fix-142-combobox-controlled-sources` (issue #142, revisão da PR #238) - `AdsCombobox` deixa de enviar o `value` antigo quando `inputValue` controlado diverge externamente do rótulo selecionado; `AdsAutocomplete` ganha `requestKey` opcional para invalidar consulta pendente e resultados ao trocar a origem de dados, sem refazer a busca pela mera mudança de identidade de `loadOptions`.
 

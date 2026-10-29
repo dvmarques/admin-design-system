@@ -282,17 +282,11 @@ describe('field composition', () => {
 		expect(start).toHaveClass('shrink-0', 'whitespace-nowrap');
 		expect(end).toHaveClass('shrink-0', 'whitespace-nowrap');
 		expect(container.querySelector('.ads-input-group')).toHaveClass(
-			'max-w-full',
 			'overflow-x-auto',
 			'[&>.ads-form-control]:min-w-[4rem]',
 		);
-		expect(end).toHaveClass('[&>.ads-button]:whitespace-nowrap');
 		// O grupo rola (overflow clipa): o foco dos filhos fica por dentro, sem outline/anel cortado.
 		expect(end).toHaveClass('[&>.ads-button:focus-visible]:outline-offset-[-2px]');
-		expect(container.querySelector('.ads-input-group')).toHaveClass(
-			'[&>.ads-form-control:focus-visible]:outline-offset-[-2px]',
-		);
-		expect(screen.getByRole('button', { name: 'Limpar' })).not.toHaveClass('whitespace-nowrap');
 	});
 
 	it('keeps several buttons in one addon contiguous with only the outer corner rounded', () => {

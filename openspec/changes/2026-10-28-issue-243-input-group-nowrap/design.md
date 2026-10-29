@@ -36,4 +36,8 @@ Risco de overflow, foco clipado, bordas sobrepostas e campos demasiado estreitos
 
 ## Foco com rolagem local
 
-O `overflow-x-auto` do grupo clipa outlines/anéis externos dos filhos; por isso o foco visível de input e botões internos é desenhado por dentro (`outline-offset: -2px`, sem anel externo), e o anel do próprio grupo (`focus-within`) permanece. Efeito: grupos passam a rolar em vez de comprimir em larguras insuficientes.
+O `overflow-x-auto` do grupo clipa outlines/anéis externos dos filhos; por isso o outline dos botões internos é desenhado por dentro (`outline-offset: -2px`), e o foco do campo é sinalizado pelo anel `focus-within` do grupo (não clipado). Efeito: grupos passam a rolar em vez de comprimir em larguras insuficientes.
+
+## Orçamento de CSS
+
+O CSS público de `components-public` passou de ~54,8 KB para ~54,9 KB (+~0,2%) por causa das utilitárias estáticas do grupo; `cssBytes` em `docs/scenario-budget.json` foi elevado de 54800 para 55200 (folga de ~0,5%), sem alterar os demais limites.

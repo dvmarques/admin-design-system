@@ -12,7 +12,7 @@
 
 ## Alternatives
 
-- Copiar `TextoEmAtualizacao` literalmente: rejeitado por não seguir prefixos, tokens e estrutura da biblioteca.
+- Copiar literalmente componentes locais de aplicações: rejeitado por não seguir prefixos, tokens e estrutura da biblioteca.
 - `use client` para animar: desnecessário; CSS é suficiente.
 - Skeleton ou spinner: abstrações diferentes, não preservam texto existente.
 - Anunciar `role=status` automaticamente: rejeitado por risco de repetição em polling.

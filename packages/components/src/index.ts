@@ -45,7 +45,7 @@ export type {
 } from './combobox.js';
 export { AdsAutocomplete } from './autocomplete.js';
 export type { AdsAutocompleteProps } from './autocomplete.js';
-export type { AdsSelectProps } from './select.js';
+export type { AdsSelectProps, AdsSelectValue } from './select.js';
 export type { AdsFormSize, AdsValidationState } from './form-types.js';
 export { AdsCheckbox, AdsRadio, AdsSwitch } from './selection-control.js';
 export type { AdsSelectionControlProps } from './selection-control.js';

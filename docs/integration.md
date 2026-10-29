@@ -50,7 +50,7 @@ export function Feedback() {
 
 Sem `open`, o componente controla internamente o fechamento e `defaultOpen` define apenas o estado inicial; depois de fechado não há como reabrir nesse modo. Para reabrir (ou iniciar oculto e exibir depois), use o modo controlado com `open`. Com `open`, `onClose` solicita o fechamento e o consumidor deve atualizar o estado. Cada variante tem um ícone padrão distinto (`info`, `check`, `alertTriangle`, `alertCircle`). Use `icon={null}` para ocultar o ícone ou passe um `ReactNode` personalizado. `dismissible` é opcional (padrão `false`); `closeLabel` personaliza o nome acessível do botão. O botão de fechar não submete formulários.
 
-Por padrão, `error` usa `role="alert"` e as demais variantes usam `role="status"`; o consumidor pode sobrescrever `role` conforme a urgência real. Evite remontar a mesma mensagem repetidamente, pois isso pode gerar anúncios duplicados. Algumas combinações de leitor de tela não anunciam uma região `status` que já nasce com conteúdo; para mensagens que exigem atenção imediata, use a variante `error` ou mova o foco. Ao fechar pelo botão, o foco não se perde: ele vai para o elemento passado em `returnFocusRef` (por exemplo, o campo ou botão que originou a mensagem) ou, sem ele, para o próximo elemento focável após o alerta (ou o último antes dele). O foco só é movido se o botão de fechar o tinha e nenhum outro elemento o assumiu. Traduções de códigos de negócio como `SU`, `ER` e `EP` pertencem ao adaptador do Back Admin, não ao design system.
+Por padrão, `error` usa `role="alert"` e as demais variantes usam `role="status"`; o consumidor pode sobrescrever `role` conforme a urgência real. Evite remontar a mesma mensagem repetidamente, pois isso pode gerar anúncios duplicados. Algumas combinações de leitor de tela não anunciam uma região `status` que já nasce com conteúdo; para mensagens que exigem atenção imediata, use a variante `error` ou mova o foco. Ao fechar pelo botão, o foco não se perde: ele vai para o elemento passado em `returnFocusRef` (por exemplo, o campo ou botão que originou a mensagem) ou, sem ele, para o próximo elemento focável após o alerta (ou o último antes dele). O foco só é movido se o botão de fechar o tinha e nenhum outro elemento o assumiu. Traduções de códigos e estados específicos de negócio pertencem aos adaptadores das aplicações consumidoras, não ao design system.
 
 ## Navegação hierárquica da sidebar
 
@@ -1735,10 +1735,62 @@ export function EstadoRemoto() {
 }
 ```
 
-Migração: CampoAutocomplete com lista local corresponde a AdsAutocomplete com options (ou AdsCombobox para seleção base). CampoAutocompleteAsync corresponde a AdsAutocomplete com loadOptions. O formato { value, label } permanece, mas a API de seleção recebe e emite a string value, não o objeto como react-select. O antigo formatOptionLabel vira renderOption. Não são necessários menuPortalTarget nem menuPosition; o sistema existente de overlays fornece portal, tema, empilhamento e reposicionamento dentro de AdsDialog e contêineres com scroll. Consumidores Next.js devem manter a interação em Client Components.
+Migração de seletores existentes: para listas locais, usar AdsAutocomplete com options (ou AdsCombobox para seleção básica); para carregamento assíncrono, usar AdsAutocomplete com loadOptions. O formato { value, label } permanece, mas a API de seleção recebe e emite a string value, não o objeto como react-select. A personalização de rótulos via formatOptionLabel pode ser adaptada para renderOption. Não são necessários menuPortalTarget nem menuPosition; o sistema existente de overlays fornece portal, tema, empilhamento e reposicionamento dentro de AdsDialog e contêineres com scroll. Consumidores Next.js devem manter a interação em Client Components.
 
 O debounce padrão é 250ms; consultas começam após um caractere. O AbortSignal pode cancelar HTTP, e mesmo provedores que não respeitam o sinal têm respostas obsoletas descartadas. Um texto digitado não se torna automaticamente uma opção válida; ao submeter, o input oculto name contém apenas o value selecionado. Limpar ou selecionar mantém o foco no campo. Para seleção múltipla, use a evolução separada da issue #143.
 
 Ao modificar o texto depois de uma seleção, o componente limpa automaticamente o value anterior e emite onValueChange(null, null); o consumidor deve atualizar o value controlado para evitar enviar valor obsoleto. Resultados assíncronos permanecem vinculados ao termo consultado. O campo desabilitado não inicia novas requisições.
 
 Opções de `AdsCombobox` e `AdsAutocomplete` podem incluir `icon` (nome de `AdsIcon`) ou `avatar: { src, fallback }`; o avatar tem precedência quando ambos são fornecidos. O elemento é decorativo e aparece na lista e na seleção. Use `showOptionVisuals={false}` para ocultar os elementos sem alterar valores. `renderOption` personaliza o conteúdo ao lado do elemento; não repita nele o mesmo ícone. Para opções remotas pré-selecionadas, forneça `selectedOption` com os dados visuais.
+
+## AdsSelect: placeholder opcional e texto longo (#140)
+
+`AdsSelect` continua sendo o `<select>` nativo. A prop `placeholder` é **opt-in**: sem ela nada muda para as chamadas existentes, inclusive as que usam uma primeira `<option value="">`.
+
+```tsx
+'use client';
+import { useState } from 'react';
+import { AdsField, AdsSelect } from '@admin-ds/components';
+
+export function Equipe() {
+	const [team, setTeam] = useState<string | null>(null);
+	return (
+		<AdsField label="Equipe">
+			<AdsSelect
+				name="team"
+				onChange={(event) => setTeam(event.target.value)}
+				placeholder="Selecione…"
+				required
+				value={team}
+			>
+				<option value="">Sem equipe</option>
+				<option value="fin">Financeiro</option>
+			</AdsSelect>
+		</AdsField>
+	);
+}
+```
+
+### Ausência versus valor vazio
+
+| Valor (`value`/`defaultValue`)   | Com `placeholder`                         | Em `required` | Em `FormData`       |
+| -------------------------------- | ----------------------------------------- | ------------- | ------------------- |
+| `null` ou omitido (não control.) | Exibe o placeholder (ausência)            | Inválido      | Não é enviado       |
+| `""`                             | Seleciona a opção **real** de valor vazio | Válido        | Enviado como `""`   |
+| qualquer outro valor             | Seleciona a opção correspondente          | Válido        | Enviado normalmente |
+
+- A ausência é a primeira `<option>` nativa (`value=""`, desabilitada após a montagem), isto é, a _placeholder label option_ do HTML: `checkValidity()`, `reportValidity()` e a mensagem do navegador funcionam sem sentinelas, e nenhum identificador interno chega ao DOM, ao `onChange` ou ao `FormData`. A opção real `""` é distinguida por identidade, não pelo texto do valor.
+- O placeholder não pode ser reescolhido pelo usuário (opção desabilitada). Para voltar à ausência, controle o valor com `null` ou use o reset do formulário. O reset restaura o valor inicial (`defaultValue`, ou ausência).
+- Valores externos, reset e mudanças de `value` não emitem `onChange`. Se o consumidor não atualizar `value`, a escolha do usuário é revertida, como em um `select` controlado do React.
+- Sem `placeholder`, `null` em `value`/`defaultValue` equivale a `""`. `multiple` ignora o placeholder.
+- Em testes, selecione a opção real vazia por rótulo ou índice (`selectOptions(select, 'Sem equipe')`): selecionar por valor `""` alcançaria a opção de ausência desabilitada.
+- Antes da hidratação, o HTML do servidor já exibe o placeholder (primeira opção) e sem JavaScript o formulário envia o valor vazio, como o `select` nativo.
+- **Migração: não duplique a opção vazia.** O `placeholder` já cria a opção de ausência. Se o select tinha uma `<option value="">Escolha</option>` manual apenas para essa função, **remova-a** ao adotar `placeholder`; mantida junto dele, ela vira uma segunda opção vazia (uma opção real de valor `""`, válida em `required`). Mantenha a opção manual somente quando `""` for um valor de negócio.
+- **Janela sem JavaScript ou pré-hidratação:** nela a opção de ausência ainda é habilitada e selecionável; o valor continua `""`, `required` a invalida e um formulário não obrigatório envia `""`. Ela é desabilitada ao hidratar.
+- `data-ads-select-placeholder` é detalhe interno, **não** contrato público: não use em seletores, testes ou estilos da aplicação.
+
+### Texto longo e estados
+
+O texto da opção selecionada é truncado com reticências dentro da caixa do controle, sem invadir a seta (o recuo de `2,25rem` é preservado, inclusive em RTL) e sem alargar o contêiner; o rótulo completo continua como texto da opção, exposto pela semântica nativa. O estilo é escopado a `select.ads-select` simples (não afeta `multiple` nem os demais controles de `formControlClasses()`). O placeholder aparece com a cor `--ads-color-text-muted` e texto explícito; a atenuação é só reforço visual (no tema escuro e com `prefers-contrast: more` ela quase não difere do texto selecionado), e o diferencial é o texto explícito da ausência. Em `forced-colors` valem as cores do sistema. A atenuação usa `:has()` (navegadores modernos); sem suporte, só ela se perde, e o restante segue igual.
+
+Limitações: a aparência da lista aberta é do navegador; as validações automatizadas do `placeholder` usam React 19.2; o mesmo cenário de prova (45 verificações em Chromium: required, FormData, reset, controlado/não controlado, SSR e hidratação) foi executado uma vez, fora do repositório, com React 18.3.1, sem falhas nem avisos (o intervalo de peer `>=18.2` não tem teste automatizado recorrente) e Firefox e WebKit são verificados pela CI do repositório. Veja as stories `Forms/Select` e o catálogo `/catalogo/select`.

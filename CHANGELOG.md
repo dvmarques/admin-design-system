@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `issue-241-highlighted-code-catalog` (#241) - O componente opcional AdsHighlightedCodeSnippet passa a integrar a busca, a categoria Dados e a documentação interativa do catálogo, com Storybook e link ao exemplo avançado, sem mover Shiki para os pacotes principais.
+
 - `add-ads-combobox-autocomplete` (issue #142) - Novos `AdsCombobox` e `AdsAutocomplete` com ícones e avatares opcionais por opção, exibição configurável e seleção única acessível, valor separado do texto, busca local e remota, debounce, descarte de respostas obsoletas, portal compatível com diálogos e temas, controles de limpar e abrir integrados ao campo e seta do AdsSelect com recuo e espaço para texto (parte da issue #140), exemplos no catálogo com orientação de uso de cada componente e itens da sidebar ordenados alfabeticamente por grupo, stories, testes e guia de migração sem `react-select`. Mudanças observáveis: Home/End preservam a edição de texto (não navegam mais pelas opções), o popup passa a ser uma `section` rotulada com o `ul[role=listbox]` interno (visível apenas com resultados), glifos de limpar/abrir viram `AdsIcon`, todo `AdsSelect` simples emite `ads-select` com seta desenhada por CSS, e o `AdsAutocomplete` remoto exibe "Digite para buscar" abaixo de `minQueryLength`. Orçamentos elevados pelo custo medido: JS/CSS publicado de `@admin-ds/components` 197.500 → 226.000 bytes (medido 221.905; gzip 62.700 → 68.500, medido 67.110), baseline do dist 428.028 → 457.000 e CSS dos cenários `components-public` gzip 9.000 → 9.150 e `admin-public` 93.000 → 94.800 / gzip 14.100 → 14.300, sem dependência nova.
 
 - `feat-145-ads-alert-callout` (issue #145) - Novo componente `AdsAlert` inline persistente com variantes semânticas, apresentação compacta ou destacada, ações e fechamento opcional controlado/não controlado; exemplos no catálogo e Storybook, ícone padrão distinto por severidade e fallback de `forced-colors` por borda e preservação do foco ao fechar (`returnFocusRef`). Orçamentos elevados pelo custo medido do componente: JS/CSS publicado de `@admin-ds/components` 191.250 → 197.500 bytes (medido 197.216) e CSS gzip do cenário `admin-public` 13.900 → 14.100 bytes (medido 13.915), sem dependência nova. `AdsIcon` ganha `alertTriangle` e `alertCircle` (a união `AdsIconName` fica mais larga; consumidores com `switch` exaustivo precisam tratar os novos nomes).
@@ -58,6 +60,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `issue-240-catalog-families` (#240) - Sidebar do catálogo apresenta famílias compostas em uma entrada por família; a busca mantém nomes individuais e aliases, levando a seções com API e exemplo. URLs legadas por export continuam acessíveis no site estático.
+
 - `issue-192-confirm-dialog-initial-focus` (issue #192) - Formaliza o foco inicial de `AdsConfirmDialog` na spec, em `docs/integration.md` e no comentário público: primeiro controle interativo elegível de `children` e, sem ele, "Cancelar". O foco inicial de diálogos e drawers passa a ignorar controles desabilitados por `fieldset`, ocultos e inertes. Testes da composição e exemplo com conteúdo interativo no Storybook e no catálogo.
 
 - `modal-inert-background` e `enhance-134-overlay-layer-manager` (issues #149, #134) - Com `AdsDialog` ou `AdsDrawer` aberto, o conteúdo fora do overlay fica `inert`, com restauração do estado anterior ao fechar (inclusive um `inert` da aplicação) e suporte a modais aninhados em qualquer ordem de fechamento. Popovers, tooltips, menus e calendários abertos a partir do modal seguem interativos, e `AdsToast` nunca fica inerte. Gerenciamento interno de camadas: só o modal superior trata Tab, o clique externo respeita a hierarquia dos portais, o backdrop fecha só a camada superior e a rolagem da página fica bloqueada enquanto houver modal. **Mudança de comportamento**: não é mais possível interagir com a página por trás de um modal aberto. Sem `inert` no navegador, o comportamento anterior continua.
@@ -83,6 +87,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 - `split-long-spec-requirements` e `cleanup-project-docs-and-design-guidance` - Dez requisitos de nove specs reescritos com até 500 caracteres (detalhes movidos para cenários), com `openspec validate --all --strict` sem avisos. Documentação atualizada para os recursos entregues, sem referências externas de design nem textos obsoletos de roadmap; skills de design passam a respeitar a Inter e os tokens. Sem mudança de código, API ou aparência.
 
 #### Fixed
+
+- `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
+
+- `issue-242-textarea-typography` (#242) - Os controles textuais nativos Input, Textarea e Select (e os campos de AdsCombobox/AdsAutocomplete, que compartilham a mesma classe) passam a usar explicitamente a fonte do token público do design system sem depender de preflight CSS do consumidor, preservando a personalização do token.
 
 - `issue-244-tooltip-anchor-position` (#244) - Tooltip e Popover passam a medir o gatilho visual real em layouts flex/grid que esticam o wrapper da âncora, mantendo o posicionamento, a seta e a lógica de colisões existentes. `AdsPopover` só alterna por clique no gatilho real; clique na área vazia do wrapper esticado não alterna e conta como clique externo. Todos os elementos renderizados pelo gatilho contam como gatilho para o clique e o clique externo, o painel é posicionado pelo primeiro deles e a troca do elemento do gatilho com o painel aberto remede a âncora.
 

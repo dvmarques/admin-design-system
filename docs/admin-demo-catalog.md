@@ -18,7 +18,7 @@ O layout de página mostra nome, descrição, exemplos, orientações de composi
 
 ## Verificação e exclusões
 
-O teste `apps/admin-demo/catalog-coverage.test.ts` compara os exports runtime dos dois índices públicos por AST com o registro, exige URLs únicas e renderização JSX explícita de cada export no snippet da composição e confere a sincronização com o TSX executável. Ele não substitui a execução no navegador. `e2e/catalog.spec.ts` visita todos os exports em 390px/1280px e claro/escuro, verifica erros, conteúdo e overflow, audita as composições com axe e testa busca, cópia, teclado, navegação móvel, campos, seleção, recuperação de erro e etapas.
+O teste `apps/admin-demo/catalog-coverage.test.ts` compara os exports runtime dos dois índices públicos (e dos pacotes opcionais declarados no teste, hoje `@admin-ds/highlighted-code`, exceto os utilitários sem UI listados) por AST com o registro, exige URLs únicas e renderização JSX explícita de cada export no snippet da composição e confere a sincronização com o TSX executável. Ele não substitui a execução no navegador. `e2e/catalog.spec.ts` visita todos os exports em 390px/1280px e claro/escuro, verifica erros, conteúdo e overflow, audita as composições com axe e testa busca, cópia, teclado, navegação móvel, campos, seleção, recuperação de erro e etapas.
 
 Excluídos: exports `type` (não possuem runtime), `fixtureVariants` (mapa de estilos), `getAdsPaginationItems` (função de cálculo) e `useAdsAdminShell` (hook sem representação visual própria, exercitado pelos controles do shell). `AdsThemeControl`, `ThemeToggle` e `StyleFixture` têm exemplos próprios. `AdsAccountMenu`, `AdsNotificationCenter` e `AdsOrganizationSwitcher` (#185) têm showcases próprios na categoria "Conta e contexto": foto, iniciais e falha de imagem; leitura, filtros e estados de carregamento, vazio e erro; troca de organização com busca, estados e sidebar recolhida; e a sidebar com e sem o seletor (`/catalogo-organizacao/?variante=com|sem`, carregada em `iframe` pelo showcase). No cabeçalho e na sidebar do demo os três componentes usam dados fictícios e ações com feedback local (Sair não encerra sessão real). A lista de exclusões é explícita: um novo export runtime não pode ser ignorado silenciosamente.
 
@@ -28,80 +28,89 @@ Comandos concisos: `npx vitest run apps/admin-demo/catalog-coverage.test.ts --si
 
 Todos os links abaixo abrem exemplos executáveis. As famílias compartilham composições quando a semântica exige contexto (campos, abas, accordion, tabela, card, lista e dashboard). O status final das validações fica na PR e em `validation.md` da change OpenSpec.
 
-| Export público            | Grupo       | Rota                              | Storybook (família)                                           |
-| ------------------------- | ----------- | --------------------------------- | ------------------------------------------------------------- |
-| `AdsButton`               | Básicos     | `/catalogo/button`                | `admin-flows.stories.tsx`, `admin-shell.stories.tsx`          |
-| `AdsBadge`                | Básicos     | `/catalogo/badge`                 | `admin-flows.stories.tsx`, `admin-shell.stories.tsx`          |
-| `AdsAvatar`               | Básicos     | `/catalogo/avatar`                | `avatar.stories.tsx`                                          |
-| `AdsIcon`                 | Básicos     | `/catalogo/icon`                  | `icon.stories.tsx`                                            |
-| `AdsTypography`           | Básicos     | `/catalogo/typography`            | `admin-shell.stories.tsx`, `typography.stories.tsx`           |
-| `AdsSurface`              | Básicos     | `/catalogo/surface`               | `navigation.stories.tsx`, `surface.stories.tsx`               |
-| `AdsLoadingIndicator`     | Básicos     | `/catalogo/loading-indicator`     | `loading-indicator.stories.tsx`                               |
-| `AdsLoadingText`          | Básicos     | `/catalogo/loading-text`          | `loading-text.stories.tsx`                                    |
-| `AdsSkeleton`             | Básicos     | `/catalogo/skeleton`              | `data-display.stories.tsx`                                    |
-| `AdsSparkline`            | Básicos     | `/catalogo/sparkline`             | `dashboard.stories.tsx`, `sparkline.stories.tsx`              |
-| `AdsInput`                | Formulários | `/catalogo/input`                 | `admin-flows.stories.tsx`, `form.stories.tsx`                 |
-| `AdsPasswordInput`        | Formulários | `/catalogo/password-input`        | `form.stories.tsx`                                            |
-| `AdsTextarea`             | Formulários | `/catalogo/textarea`              | `form.stories.tsx`                                            |
-| `AdsSelect`               | Formulários | `/catalogo/select`                | `admin-flows.stories.tsx`, `form.stories.tsx`                 |
-| `AdsCheckbox`             | Formulários | `/catalogo/checkbox`              | `form.stories.tsx`                                            |
-| `AdsRadio`                | Formulários | `/catalogo/radio`                 | `form.stories.tsx`                                            |
-| `AdsSwitch`               | Formulários | `/catalogo/switch`                | `form.stories.tsx`                                            |
-| `AdsField`                | Formulários | `/catalogo/field`                 | `admin-flows.stories.tsx`, `date-picker.stories.tsx`          |
-| `AdsFieldLabel`           | Formulários | `/catalogo/field-label`           | `catalog-composition.stories.tsx`                             |
-| `AdsFieldDescription`     | Formulários | `/catalogo/field-description`     | `catalog-composition.stories.tsx`                             |
-| `AdsFieldMessage`         | Formulários | `/catalogo/field-message`         | `catalog-composition.stories.tsx`                             |
-| `AdsInputGroup`           | Formulários | `/catalogo/input-group`           | `form.stories.tsx`, `catalog-composition.stories.tsx`         |
-| `AdsSelectionGroup`       | Formulários | `/catalogo/selection-group`       | `form.stories.tsx`                                            |
-| `AdsDatePicker`           | Formulários | `/catalogo/date-picker`           | `date-picker.stories.tsx`                                     |
-| `AdsBreadcrumb`           | Navegação   | `/catalogo/breadcrumb`            | `navigation.stories.tsx`                                      |
-| `AdsNav`                  | Navegação   | `/catalogo/nav`                   | `navigation.stories.tsx`                                      |
-| `AdsTabs`                 | Navegação   | `/catalogo/tabs`                  | `navigation.stories.tsx`                                      |
-| `AdsTabsList`             | Navegação   | `/catalogo/tabs-list`             | `navigation.stories.tsx`                                      |
-| `AdsTabsPanel`            | Navegação   | `/catalogo/tabs-panel`            | `navigation.stories.tsx`                                      |
-| `AdsTabsTrigger`          | Navegação   | `/catalogo/tabs-trigger`          | `navigation.stories.tsx`                                      |
-| `AdsAccordion`            | Navegação   | `/catalogo/accordion`             | `navigation.stories.tsx`                                      |
-| `AdsAccordionHeader`      | Navegação   | `/catalogo/accordion-header`      | `navigation.stories.tsx`                                      |
-| `AdsAccordionItem`        | Navegação   | `/catalogo/accordion-item`        | `navigation.stories.tsx`                                      |
-| `AdsAccordionPanel`       | Navegação   | `/catalogo/accordion-panel`       | `navigation.stories.tsx`                                      |
-| `AdsAccordionTrigger`     | Navegação   | `/catalogo/accordion-trigger`     | `navigation.stories.tsx`                                      |
-| `AdsDropdown`             | Navegação   | `/catalogo/dropdown`              | `navigation.stories.tsx`, `overlay.stories.tsx`               |
-| `AdsPagination`           | Navegação   | `/catalogo/pagination`            | `navigation.stories.tsx`, `smart-table.stories.tsx`           |
-| `AdsDialog`               | Feedback    | `/catalogo/dialog`                | `overlay.stories.tsx`                                         |
-| `AdsDrawer`               | Feedback    | `/catalogo/drawer`                | `overlay.stories.tsx`                                         |
-| `AdsPopover`              | Feedback    | `/catalogo/popover`               | `overlay.stories.tsx`                                         |
-| `AdsTooltip`              | Feedback    | `/catalogo/tooltip`               | `overlay.stories.tsx`                                         |
-| `AdsToast`                | Feedback    | `/catalogo/toast`                 | `overlay.stories.tsx`                                         |
-| `AdsEmptyState`           | Feedback    | `/catalogo/empty-state`           | `dashboard.stories.tsx`, `data-display.stories.tsx`           |
-| `AdsProgress`             | Feedback    | `/catalogo/progress`              | `data-display.stories.tsx`                                    |
-| `AdsTable`                | Dados       | `/catalogo/table`                 | `data-display.stories.tsx`, `smart-table.stories.tsx`         |
-| `AdsTableBody`            | Dados       | `/catalogo/table-body`            | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
-| `AdsTableCaption`         | Dados       | `/catalogo/table-caption`         | `catalog-composition.stories.tsx`                             |
-| `AdsTableCell`            | Dados       | `/catalogo/table-cell`            | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
-| `AdsTableHead`            | Dados       | `/catalogo/table-head`            | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
-| `AdsTableHeader`          | Dados       | `/catalogo/table-header`          | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
-| `AdsTableRow`             | Dados       | `/catalogo/table-row`             | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
-| `AdsCard`                 | Dados       | `/catalogo/card`                  | `admin-shell.stories.tsx`, `data-display.stories.tsx`         |
-| `AdsCardActions`          | Dados       | `/catalogo/card-actions`          | `data-display.stories.tsx`                                    |
-| `AdsCardContent`          | Dados       | `/catalogo/card-content`          | `data-display.stories.tsx`                                    |
-| `AdsCardHeader`           | Dados       | `/catalogo/card-header`           | `data-display.stories.tsx`                                    |
-| `AdsList`                 | Dados       | `/catalogo/list`                  | `admin-flows.stories.tsx`, `data-display.stories.tsx`         |
-| `AdsListItem`             | Dados       | `/catalogo/list-item`             | `data-display.stories.tsx`                                    |
-| `AdsAdminShell`           | Admin       | `/catalogo/admin-shell`           | `admin-shell.stories.tsx`                                     |
-| `AdsDashboardGrid`        | Admin       | `/catalogo/dashboard-grid`        | `dashboard.stories.tsx`                                       |
-| `AdsDashboardPanel`       | Admin       | `/catalogo/dashboard-panel`       | `dashboard.stories.tsx`                                       |
-| `AdsMetricCard`           | Admin       | `/catalogo/metric-card`           | `dashboard.stories.tsx`                                       |
-| `AdsFilterBar`            | Admin       | `/catalogo/filter-bar`            | `filter-bar.stories.tsx`, `smart-table.stories.tsx`           |
-| `AdsSmartTable`           | Admin       | `/catalogo/smart-table`           | `admin-flows.stories.tsx`, `smart-table.stories.tsx`          |
-| `AdsBulkActionBar`        | Admin       | `/catalogo/bulk-action-bar`       | `admin-flows.stories.tsx`, `catalog-composition.stories.tsx`  |
-| `AdsConfirmDialog`        | Admin       | `/catalogo/confirm-dialog`        | `admin-flows.stories.tsx`                                     |
-| `AdsListFlow`             | Admin       | `/catalogo/list-flow`             | `admin-flows.stories.tsx`                                     |
-| `AdsStepForm`             | Admin       | `/catalogo/step-form`             | `admin-flows.stories.tsx`                                     |
-| `AdsAccountMenu`          | Admin       | `/catalogo/account-menu`          | `account-menu.stories.tsx`                                    |
-| `AdsNotificationCenter`   | Admin       | `/catalogo/notification-center`   | `notification-center.stories.tsx`                             |
-| `AdsOrganizationSwitcher` | Admin       | `/catalogo/organization-switcher` | `organization-switcher.stories.tsx`                           |
-| `AdsThemeControl`         | Básicos     | `/catalogo/theme-control`         | `theme-control.stories.tsx`                                   |
-| `ThemeToggle`             | Básicos     | `/catalogo/theme-toggle`          | `admin-shell.stories.tsx`, `foundation.stories.tsx`           |
-| `StyleFixture`            | Básicos     | `/catalogo/style-fixture`         | `foundation.stories.tsx`                                      |
+| Export público              | Grupo       | Rota                                 | Storybook (família)                                           |
+| --------------------------- | ----------- | ------------------------------------ | ------------------------------------------------------------- |
+| `AdsButton`                 | Básicos     | `/catalogo/button`                   | `admin-flows.stories.tsx`, `admin-shell.stories.tsx`          |
+| `AdsBadge`                  | Básicos     | `/catalogo/badge`                    | `admin-flows.stories.tsx`, `admin-shell.stories.tsx`          |
+| `AdsAvatar`                 | Básicos     | `/catalogo/avatar`                   | `avatar.stories.tsx`                                          |
+| `AdsIcon`                   | Básicos     | `/catalogo/icon`                     | `icon.stories.tsx`                                            |
+| `AdsTypography`             | Básicos     | `/catalogo/typography`               | `admin-shell.stories.tsx`, `typography.stories.tsx`           |
+| `AdsSurface`                | Básicos     | `/catalogo/surface`                  | `navigation.stories.tsx`, `surface.stories.tsx`               |
+| `AdsLoadingIndicator`       | Básicos     | `/catalogo/loading-indicator`        | `loading-indicator.stories.tsx`                               |
+| `AdsLoadingText`            | Básicos     | `/catalogo/loading-text`             | `loading-text.stories.tsx`                                    |
+| `AdsSkeleton`               | Básicos     | `/catalogo/skeleton`                 | `data-display.stories.tsx`                                    |
+| `AdsSparkline`              | Básicos     | `/catalogo/sparkline`                | `dashboard.stories.tsx`, `sparkline.stories.tsx`              |
+| `AdsInput`                  | Formulários | `/catalogo/input`                    | `admin-flows.stories.tsx`, `form.stories.tsx`                 |
+| `AdsPasswordInput`          | Formulários | `/catalogo/password-input`           | `form.stories.tsx`                                            |
+| `AdsTextarea`               | Formulários | `/catalogo/textarea`                 | `form.stories.tsx`                                            |
+| `AdsSelect`                 | Formulários | `/catalogo/select`                   | `admin-flows.stories.tsx`, `form.stories.tsx`                 |
+| `AdsCheckbox`               | Formulários | `/catalogo/checkbox`                 | `form.stories.tsx`                                            |
+| `AdsRadio`                  | Formulários | `/catalogo/radio`                    | `form.stories.tsx`                                            |
+| `AdsSwitch`                 | Formulários | `/catalogo/switch`                   | `form.stories.tsx`                                            |
+| `AdsField`                  | Formulários | `/catalogo/field`                    | `admin-flows.stories.tsx`, `date-picker.stories.tsx`          |
+| `AdsFieldLabel`             | Formulários | `/catalogo/field-label`              | `catalog-composition.stories.tsx`                             |
+| `AdsFieldDescription`       | Formulários | `/catalogo/field-description`        | `catalog-composition.stories.tsx`                             |
+| `AdsFieldMessage`           | Formulários | `/catalogo/field-message`            | `catalog-composition.stories.tsx`                             |
+| `AdsInputGroup`             | Formulários | `/catalogo/input-group`              | `form.stories.tsx`, `catalog-composition.stories.tsx`         |
+| `AdsSelectionGroup`         | Formulários | `/catalogo/selection-group`          | `form.stories.tsx`                                            |
+| `AdsDatePicker`             | Formulários | `/catalogo/date-picker`              | `date-picker.stories.tsx`                                     |
+| `AdsBreadcrumb`             | Navegação   | `/catalogo/breadcrumb`               | `navigation.stories.tsx`                                      |
+| `AdsNav`                    | Navegação   | `/catalogo/nav`                      | `navigation.stories.tsx`                                      |
+| `AdsTabs`                   | Navegação   | `/catalogo/tabs`                     | `navigation.stories.tsx`                                      |
+| `AdsTabsList`               | Navegação   | `/catalogo/tabs-list`                | `navigation.stories.tsx`                                      |
+| `AdsTabsPanel`              | Navegação   | `/catalogo/tabs-panel`               | `navigation.stories.tsx`                                      |
+| `AdsTabsTrigger`            | Navegação   | `/catalogo/tabs-trigger`             | `navigation.stories.tsx`                                      |
+| `AdsAccordion`              | Navegação   | `/catalogo/accordion`                | `navigation.stories.tsx`                                      |
+| `AdsAccordionHeader`        | Navegação   | `/catalogo/accordion-header`         | `navigation.stories.tsx`                                      |
+| `AdsAccordionItem`          | Navegação   | `/catalogo/accordion-item`           | `navigation.stories.tsx`                                      |
+| `AdsAccordionPanel`         | Navegação   | `/catalogo/accordion-panel`          | `navigation.stories.tsx`                                      |
+| `AdsAccordionTrigger`       | Navegação   | `/catalogo/accordion-trigger`        | `navigation.stories.tsx`                                      |
+| `AdsDropdown`               | Navegação   | `/catalogo/dropdown`                 | `navigation.stories.tsx`, `overlay.stories.tsx`               |
+| `AdsPagination`             | Navegação   | `/catalogo/pagination`               | `navigation.stories.tsx`, `smart-table.stories.tsx`           |
+| `AdsDialog`                 | Feedback    | `/catalogo/dialog`                   | `overlay.stories.tsx`                                         |
+| `AdsDrawer`                 | Feedback    | `/catalogo/drawer`                   | `overlay.stories.tsx`                                         |
+| `AdsPopover`                | Feedback    | `/catalogo/popover`                  | `overlay.stories.tsx`                                         |
+| `AdsTooltip`                | Feedback    | `/catalogo/tooltip`                  | `overlay.stories.tsx`                                         |
+| `AdsToast`                  | Feedback    | `/catalogo/toast`                    | `overlay.stories.tsx`                                         |
+| `AdsEmptyState`             | Feedback    | `/catalogo/empty-state`              | `dashboard.stories.tsx`, `data-display.stories.tsx`           |
+| `AdsProgress`               | Feedback    | `/catalogo/progress`                 | `data-display.stories.tsx`                                    |
+| `AdsHighlightedCodeSnippet` | Dados       | `/catalogo/highlighted-code-snippet` | `highlighted-code.stories.tsx` (pacote opcional)              |
+| `AdsTable`                  | Dados       | `/catalogo/table`                    | `data-display.stories.tsx`, `smart-table.stories.tsx`         |
+| `AdsTableBody`              | Dados       | `/catalogo/table-body`               | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
+| `AdsTableCaption`           | Dados       | `/catalogo/table-caption`            | `catalog-composition.stories.tsx`                             |
+| `AdsTableCell`              | Dados       | `/catalogo/table-cell`               | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
+| `AdsTableHead`              | Dados       | `/catalogo/table-head`               | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
+| `AdsTableHeader`            | Dados       | `/catalogo/table-header`             | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
+| `AdsTableRow`               | Dados       | `/catalogo/table-row`                | `data-display.stories.tsx`, `catalog-composition.stories.tsx` |
+| `AdsCard`                   | Dados       | `/catalogo/card`                     | `admin-shell.stories.tsx`, `data-display.stories.tsx`         |
+| `AdsCardActions`            | Dados       | `/catalogo/card-actions`             | `data-display.stories.tsx`                                    |
+| `AdsCardContent`            | Dados       | `/catalogo/card-content`             | `data-display.stories.tsx`                                    |
+| `AdsCardHeader`             | Dados       | `/catalogo/card-header`              | `data-display.stories.tsx`                                    |
+| `AdsList`                   | Dados       | `/catalogo/list`                     | `admin-flows.stories.tsx`, `data-display.stories.tsx`         |
+| `AdsListItem`               | Dados       | `/catalogo/list-item`                | `data-display.stories.tsx`                                    |
+| `AdsAdminShell`             | Admin       | `/catalogo/admin-shell`              | `admin-shell.stories.tsx`                                     |
+| `AdsDashboardGrid`          | Admin       | `/catalogo/dashboard-grid`           | `dashboard.stories.tsx`                                       |
+| `AdsDashboardPanel`         | Admin       | `/catalogo/dashboard-panel`          | `dashboard.stories.tsx`                                       |
+| `AdsMetricCard`             | Admin       | `/catalogo/metric-card`              | `dashboard.stories.tsx`                                       |
+| `AdsFilterBar`              | Admin       | `/catalogo/filter-bar`               | `filter-bar.stories.tsx`, `smart-table.stories.tsx`           |
+| `AdsSmartTable`             | Admin       | `/catalogo/smart-table`              | `admin-flows.stories.tsx`, `smart-table.stories.tsx`          |
+| `AdsBulkActionBar`          | Admin       | `/catalogo/bulk-action-bar`          | `admin-flows.stories.tsx`, `catalog-composition.stories.tsx`  |
+| `AdsConfirmDialog`          | Admin       | `/catalogo/confirm-dialog`           | `admin-flows.stories.tsx`                                     |
+| `AdsListFlow`               | Admin       | `/catalogo/list-flow`                | `admin-flows.stories.tsx`                                     |
+| `AdsStepForm`               | Admin       | `/catalogo/step-form`                | `admin-flows.stories.tsx`                                     |
+| `AdsAccountMenu`            | Admin       | `/catalogo/account-menu`             | `account-menu.stories.tsx`                                    |
+| `AdsNotificationCenter`     | Admin       | `/catalogo/notification-center`      | `notification-center.stories.tsx`                             |
+| `AdsOrganizationSwitcher`   | Admin       | `/catalogo/organization-switcher`    | `organization-switcher.stories.tsx`                           |
+| `AdsThemeControl`           | Básicos     | `/catalogo/theme-control`            | `theme-control.stories.tsx`                                   |
+| `ThemeToggle`               | Básicos     | `/catalogo/theme-toggle`             | `admin-shell.stories.tsx`, `foundation.stories.tsx`           |
+| `StyleFixture`              | Básicos     | `/catalogo/style-fixture`            | `foundation.stories.tsx`                                      |
 
 O showcase de AdsAdminShell demonstra também `layout="sidebar-header"`, marca oficial e toggle no topo, sem organização obrigatória (#187). A navegação principal preserva ícones e abreviações.
+
+## Documentação por famílias (#240)
+
+A sidebar agora mostra uma entrada por família de composição: Tabs, Accordion, Field, Table, Card, List, Dropdown e AdminShell; Dashboard reúne Grid, Panel e MetricCard como componentes independentes, não como partes obrigatórias. Input, InputGroup, PasswordInput, Radio, SelectionGroup, Table/SmartTable e Dialog/ConfirmDialog permanecem independentes.
+
+A busca continua indexando **cada export visual** e também os nomes de propriedades reais da API composta. Selecionar um subcomponente abre a página canônica e a sua seção identificada por âncora estável. Cada página lista os nomes exatos com papéis, API e exemplos; o código TSX interativo continua derivado do exemplo real.
+
+As rotas anteriores por export não são removidas da geração estática: funcionam como aliases navegáveis, inclusive em GitHub Pages. Novos links devem usar `/catalogo/<familia>#<secao>` para abrir diretamente a parte. A verificação de cobertura permanece por **export**, independentemente da quantidade de links na sidebar; novos componentes continuam exigindo demos e stories correspondentes.

@@ -88,3 +88,102 @@ A sidebar do catálogo SHALL ordenar alfabeticamente os nomes dos itens de cada 
 
 - **WHEN** uma pessoa expande um grupo da sidebar
 - **THEN** encontra os itens em ordem alfabética pelo nome exibido e os grupos permanecem na ordem definida
+
+### Requirement: Descoberta de componentes de pacotes opcionais
+
+O catálogo MUST incluir componentes públicos visuais distribuídos em pacotes opcionais explicitamente suportados, sem exigir que sejam reexportados pelo pacote principal. O índice, a sidebar, a documentação e o teste de cobertura MUST distinguir componentes de utilitários e tipos sem interface.
+
+#### Scenario: Busca por HighlightedCodeSnippet
+
+- **WHEN** a pessoa pesquisa AdsHighlightedCodeSnippet, HighlightedCode, CodeSnippet ou Código destacado no catálogo
+- **THEN** encontra o componente visual AdsHighlightedCodeSnippet na categoria Dados com acesso à página /catalogo/highlighted-code-snippet
+
+#### Scenario: Pacote opcional não entra no bundle principal
+
+- **WHEN** uma aplicação consome apenas @admin-ds/components e seu CSS público
+- **THEN** Shiki e @admin-ds/highlighted-code não são carregados em decorrência do registro no catálogo
+
+#### Scenario: Export opcional fica sem exemplo
+
+- **WHEN** um novo export visual do pacote opcional explicitamente incluído na cobertura não tem página e demo executável
+- **THEN** a verificação de cobertura do catálogo falha com identificação do export ausente
+
+### Requirement: Documentação e demonstração do código destacado
+
+A página canônica de AdsHighlightedCodeSnippet MUST documentar instalação do pacote opcional, API e props reais e MUST fornecer exemplos interativos de highlighting, temas, linhas, wrap, copiar e fallback, preservando a página preexistente de exemplo de aplicação.
+
+#### Scenario: Pessoa experimenta variantes
+
+- **WHEN** a pessoa altera linguagem, tema, exibição de linhas ou wrap nos exemplos
+- **THEN** a demonstração atualiza o snippet, preservando código original copiável e feedback acessível nos temas claro e escuro
+
+#### Scenario: Linguagem desconhecida
+
+- **WHEN** a pessoa seleciona uma linguagem não suportada no exemplo
+- **THEN** o código permanece legível e copiável em plain, sem erro fatal ou execução de markup
+
+#### Scenario: Retorno ao exemplo antigo
+
+- **WHEN** a pessoa abre /exemplos/codigo-destacado no site estático
+- **THEN** o exemplo existente continua funcional e oferece navegação para a nova documentação oficial
+
+#### Scenario: Uso em viewport estreita
+
+- **WHEN** a demonstração é acessada em largura de celular ou por teclado
+- **THEN** o código longo dispõe de rolagem local ou wrap, os controles e a ação de copiar continuam utilizáveis e a página não apresenta overflow horizontal
+
+### Requirement: Páginas canônicas por família de composição
+
+O catálogo MUST apresentar uma única entrada por família de composição na sidebar e MUST documentar todos os seus membros públicos na página canônica, preservando páginas próprias para componentes independentes. O agrupamento MUST corresponder às APIs reais; um exemplo de uso conjunto MUST NOT transformar exports independentes em partes obrigatórias.
+
+#### Scenario: Pessoa navega pelas abas
+
+- **WHEN** a pessoa expande Navegação na sidebar do catálogo
+- **THEN** encontra uma entrada Tabs, sem links isolados para TabsList, TabsTrigger e TabsPanel, e a página Tabs lista e documenta explicitamente esses quatro nomes públicos
+
+#### Scenario: Pessoa explora uma composição independente
+
+- **WHEN** a pessoa acessa o grupo Dashboard ou usa um InputGroup
+- **THEN** a documentação informa quais elementos são reutilizáveis independentemente e mantém páginas próprias para controles que não são partes da mesma API
+
+### Requirement: Busca individual de membros de famílias
+
+O índice MUST permitir pesquisar o nome exato de todo export público visual e das partes realmente oferecidas por uma API composta, retornando resultado com indicação da família e destino na seção correspondente da página canônica.
+
+#### Scenario: Busca por TabsTrigger
+
+- **WHEN** a pessoa pesquisa TabsTrigger, com ou sem prefixo Ads
+- **THEN** o resultado identifica TabsTrigger como parte de Tabs e abre diretamente sua seção documentada
+
+#### Scenario: Busca por parte exposta por propriedade
+
+- **WHEN** a pessoa pesquisa Dropdown.Trigger ou AdminShell.NavigationItem
+- **THEN** encontra essa parte como alias da API pública real, sem alegar que exista um export nomeado adicional
+
+#### Scenario: Resultado vazio
+
+- **WHEN** não há membro com nome ou descrição correspondente à busca
+- **THEN** um estado vazio acessível é apresentado, sem resultados falsos
+
+### Requirement: Nomes completos e links diretos em páginas de famílias
+
+Cada página familiar MUST listar todos os membros pelo nome técnico exato no início e MUST manter um heading e uma âncora estável para seção com função, propriedades relevantes e exemplo de uso de cada membro.
+
+#### Scenario: Acesso direto a uma seção
+
+- **WHEN** a pessoa abre um link com âncora para AdsTableCaption em tela estreita
+- **THEN** chega à seção AdsTableCaption, com heading legível, link estável e conteúdo utilizável por teclado nos temas claro e escuro
+
+### Requirement: Compatibilidade de URLs e cobertura de exports
+
+O catálogo MUST preservar acesso a slugs antigos dos exports públicos em geração estática, mesmo após consolidar as páginas, e MUST manter cobertura verificável de todos os exports visuais independentemente do número de páginas.
+
+#### Scenario: Deep link legado no GitHub Pages
+
+- **WHEN** uma pessoa abre ou recarrega diretamente um antigo slug de subcomponente no site estático
+- **THEN** encontra a documentação da família/seção correspondente ou um alias navegável sem 404, inclusive sem JavaScript
+
+#### Scenario: Export sem documentação individual
+
+- **WHEN** um export visual deixa de ter mapeamento para família, seção ou exemplo executável
+- **THEN** o teste automatizado de cobertura falha em vez de aceitar uma página familiar genérica

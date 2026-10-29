@@ -16,7 +16,11 @@ async function renderMarkup() {
 		createElement(
 			'div',
 			{ style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', padding: '16px' } },
-			createElement('div', { id: 'cell-text' }, createElement(AdsInput, { 'aria-label': 'Busca' })),
+			createElement(
+				'div',
+				{ id: 'cell-text' },
+				createElement(AdsInput, { 'aria-label': 'Busca', placeholder: 'Buscar' }),
+			),
 			createElement(
 				'div',
 				{ id: 'cell-select' },
@@ -29,7 +33,7 @@ async function renderMarkup() {
 			createElement(
 				'div',
 				{ id: 'cell-area', style: { gridColumn: '1 / -1' } },
-				createElement(AdsTextarea, { 'aria-label': 'Descrição' }),
+				createElement(AdsTextarea, { 'aria-label': 'Descrição', placeholder: 'Descreva' }),
 			),
 		),
 	);
@@ -76,6 +80,12 @@ for (const theme of ['light', 'dark'] as const) {
 			.locator('.ads-form-control')
 			.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fontFamily));
 		expect(new Set(fontFamilies).size).toBe(1);
+		const placeholderFamilies = await page
+			.locator('input, textarea')
+			.evaluateAll((nodes) =>
+				nodes.map((node) => getComputedStyle(node, '::placeholder').fontFamily),
+			);
+		expect(placeholderFamilies).toEqual([fontFamilies[0], fontFamilies[0]]);
 		await page
 			.locator('html')
 			.evaluate((element) =>

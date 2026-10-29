@@ -14,16 +14,20 @@ import snippets from '../../../catalogo/catalog-snippets.json';
 
 export const dynamicParams = false;
 export function generateStaticParams() {
+	// Materializar todos os slugs históricos permite abrir e atualizar URLs no GitHub Pages.
 	return catalogEntries.map(({ slug }) => ({ slug }));
 }
+
 export default async function ComponentPage({ params }: { params: Promise<{ slug: string }> }) {
 	const { slug } = await params;
-	const entry = catalogEntries.find((entry) => entry.slug === slug);
+	const entry = catalogEntries.find((item) => item.slug === slug);
 	if (!entry) notFound();
+
 	const composition = catalogEntries.filter((item) => item.demo === entry.demo);
 	const family = catalogFamilyForName(entry.name);
 	const familyRoot = catalogFamilyRoot(entry.name) ?? entry;
 	const memberNames = catalogFamilyMembers(entry.name);
+
 	return (
 		<div className="demo-page demo-shell demo-catalog-page">
 			<Link href="/catalogo">Voltar ao catálogo</Link>
@@ -33,16 +37,26 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 			{family ? (
 				<>
 					<p>
-						Família <strong>{family.title}</strong>. Todos os membros estão documentados nesta página.
+						Família <strong>{family.title}</strong>. Todos os membros estão documentados nesta
+						página.
 						{entry.name !== familyRoot.name ? (
-							<> Esta é uma rota legada; <Link href={catalogMemberHref(entry.name)}>abrir diretamente a seção de {entry.name}</Link>.</>
+							<>
+								{' '}
+								Esta é uma rota legada;{' '}
+								<Link href={catalogMemberHref(entry.name)}>
+									abrir diretamente a seção de {entry.name}
+								</Link>
+								.
+							</>
 						) : null}
 					</p>
 					<h2>Componentes desta família</h2>
 					<nav aria-label={`Subcomponentes de ${family.title}`}>
 						<ul>
 							{memberNames.map((name) => (
-								<li key={name}><Link href={catalogMemberHref(name)}>{name}</Link></li>
+								<li key={name}>
+									<Link href={catalogMemberHref(name)}>{name}</Link>
+								</li>
 							))}
 						</ul>
 					</nav>
@@ -59,9 +73,15 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 							<section id={catalogMemberAnchor(name)} key={name} className="demo-catalog-member">
 								<h3>{name}</h3>
 								<p>{reference.description}</p>
-								<p><strong>API / propriedades:</strong> {reference.props}</p>
-								<p><strong>Exemplo de composição:</strong></p>
-								<pre><code>{reference.usage}</code></pre>
+								<p>
+									<strong>API / propriedades:</strong> {reference.props}
+								</p>
+								<p>
+									<strong>Exemplo de composição:</strong>
+								</p>
+								<pre>
+									<code>{reference.usage}</code>
+								</pre>
 							</section>
 						);
 					})}
@@ -75,7 +95,10 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 			<ul>
 				{composition.map((item) => (
 					<li key={item.name}>
-						<Link href={catalogMemberHref(item.name)} aria-current={item.name === entry.name ? 'page' : undefined}>
+						<Link
+							href={catalogMemberHref(item.name)}
+							aria-current={item.name === entry.name ? 'page' : undefined}
+						>
 							{item.name}
 						</Link>
 					</li>

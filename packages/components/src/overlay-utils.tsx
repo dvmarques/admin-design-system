@@ -23,6 +23,7 @@ const focusableSelector = [
 	'object',
 	'[contenteditable="true"]',
 	'[tabindex]:not([tabindex="-1"])',
+	'summary',
 ].join(',');
 
 /**
@@ -30,6 +31,12 @@ const focusableSelector = [
  * `tabindex` negativo e visível (sem `hidden`, `display: none` ou `visibility: hidden` até o contêiner).
  */
 function isFocusEligible(element: HTMLElement, container: HTMLElement) {
+	// Só o primeiro `summary` de um `details` é o controle de alternância; os demais são conteúdo.
+	if (element.matches('summary')) {
+		const details = element.parentElement;
+		if (details?.tagName !== 'DETAILS' || details.querySelector(':scope>summary') !== element)
+			return false;
+	}
 	if (element.matches(':disabled') || element.closest('[inert]')) return false;
 	if (element.hasAttribute('tabindex') && element.tabIndex < 0) return false;
 	// Cobre também `content-visibility: hidden` (conteúdo de `<details>` fechado), onde o foco não entra.

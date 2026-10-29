@@ -113,7 +113,7 @@ test.describe('Dialog: elegibilidade dinâmica e conteúdo recolhido', () => {
 		});
 	}
 
-	test('controles dentro de <details> fechado não prendem nem deixam escapar o Tab', async ({
+	test('<summary> é parada de Tab e Enter alterna os controles internos do <details>', async ({
 		page,
 	}) => {
 		await page.goto('/catalogo/dialog');
@@ -127,12 +127,33 @@ test.describe('Dialog: elegibilidade dinâmica e conteúdo recolhido', () => {
 				'<details><summary>Mais opções</summary><button type="button">Dentro</button></details>',
 			);
 		});
-		// Percorre o ciclo inteiro: o foco nunca sai do diálogo.
-		for (let step = 0; step < 6; step++) {
-			await page.keyboard.press('Tab');
-			await expectFocusInside(page, 'dialog', 'Exemplo de Dialog');
-		}
+		const summary = layer.getByText('Mais opções');
+		const inside = layer.getByRole('button', { name: 'Dentro' });
+		const isFocused = (locator: typeof summary) =>
+			locator.evaluate((element) => element === document.activeElement);
+		// Fechado: o <summary> é a última parada; os controles internos não são candidatos.
 		await page.keyboard.press('Shift+Tab');
+		await expect.poll(() => isFocused(summary)).toBe(true);
+		await page.keyboard.press('Tab');
+		await expect(close).toBeFocused();
+		await page.keyboard.press('Shift+Tab');
+		await expect.poll(() => isFocused(summary)).toBe(true);
+		// Enter abre: o controle interno passa a ser tabulável e a última parada do ciclo.
+		await page.keyboard.press('Enter');
+		await expect(inside).toBeVisible();
+		await page.keyboard.press('Tab');
+		await expect(inside).toBeFocused();
+		await page.keyboard.press('Tab');
+		await expect(close).toBeFocused();
+		await page.keyboard.press('Shift+Tab');
+		await expect(inside).toBeFocused();
+		await page.keyboard.press('Shift+Tab');
+		await expect.poll(() => isFocused(summary)).toBe(true);
+		// Enter fecha: o controle interno sai do ciclo de novo.
+		await page.keyboard.press('Enter');
+		await expect(inside).toBeHidden();
+		await page.keyboard.press('Tab');
+		await expect(close).toBeFocused();
 		await expectFocusInside(page, 'dialog', 'Exemplo de Dialog');
 	});
 });

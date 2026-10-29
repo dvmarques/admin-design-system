@@ -76,7 +76,11 @@ das validações automatizadas.
   Shift+Tab); com um grupo na ponta do ciclo, um Tab pode sair brevemente da camada e o seguinte
   volta a ela. Normalizar o grupo custaria cerca de +226 B minificados e +95 B gzip e excederia o
   orçamento do cenário `components-public` (não o do `dist`, já elevado nesta change); acompanhamento
-  a registrar. Um `iframe` na ponta também transfere o foco para dentro dele, onde o ciclo não alcança.
+  a registrar.
+- `tabindex` positivo reordena a tabulação nativa, mas o ciclo de Tab de `AdsDialog` e `AdsDrawer` decide
+  as pontas pela ordem do documento; com `tabindex` positivo dentro do modal o ciclo pode não
+  coincidir com a ordem real (limitação anterior à #234; acompanhamento a registrar).
+- Um `iframe` na ponta do ciclo transfere o foco para dentro dele, onde o ciclo não alcança.
 
 ## AdsDatePicker
 

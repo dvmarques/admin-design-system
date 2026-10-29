@@ -113,6 +113,26 @@ describe.each(overlays)('%s: Tab usa a elegibilidade do foco inicial', (_name, O
 		expect(pressTab(true).handled).toBe(false);
 	});
 
+	it('trata o primeiro summary de um details como parada de Tab e ignora os demais', async () => {
+		render(
+			<Overlay onOpenChange={() => {}} open showCloseButton={false} title="Details">
+				<button>Primeiro</button>
+				<details>
+					<summary>Alternar</summary>
+					<summary>Conteúdo, não alterna</summary>
+				</details>
+			</Overlay>,
+		);
+		const first = screen.getByRole('button', { name: 'Primeiro' });
+		await waitFor(() => expect(first).toHaveFocus());
+		const toggle = screen.getByText('Alternar');
+		toggle.focus();
+		expect(pressTab().handled).toBe(true);
+		expect(first).toHaveFocus();
+		expect(pressTab(true).handled).toBe(true);
+		expect(toggle).toHaveFocus();
+	});
+
 	it('mantém o contêiner como fallback quando nenhum controle é elegível', async () => {
 		render(
 			<Overlay onOpenChange={() => {}} open showCloseButton={false} title="Sem controles">

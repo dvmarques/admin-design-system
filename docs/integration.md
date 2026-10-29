@@ -877,7 +877,7 @@ Ao fechar, o estado anterior é restaurado. Com modais aninhados só o mais rece
   escapar para o navegador. Sem nenhum controle elegível, o foco fica no próprio painel. Controles
   intermediários mantêm a navegação nativa e um popover aberto a partir do modal segue o fluxo dele.
   Conteúdo recolhido (`content-visibility: hidden`, como o de um `<details>` fechado) também fica
-  fora. Efeito colateral intencional no foco inicial: controles nativos (`button`, `input` etc.) com
+  fora, e o `summary` do `details` é uma parada de Tab (Enter expande e os controles internos entram no ciclo). Efeito colateral intencional no foco inicial: controles nativos (`button`, `input` etc.) com
   `tabindex` negativo, inclusive `-2` ou menor, deixam de receber o foco inicial; antes só o seletor
   genérico `[tabindex]` era filtrado.
 - A rolagem do fundo não é bloqueada.

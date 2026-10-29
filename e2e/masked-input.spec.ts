@@ -133,13 +133,14 @@ test('formulário valida a completude, envia o texto formatado e redefine', asyn
 	).toBeVisible();
 	await expect(code).toHaveAttribute('aria-invalid', 'true');
 	await expect(code).toHaveAccessibleDescription(/Preencha os seis dígitos\./);
+	await code.press('End');
 	await code.pressSequentially('456');
 	await page.getByRole('button', { name: 'Enviar formulário' }).click();
-	await expect(page.getByText('Enviado o texto formatado: 123-456')).toBeVisible();
+	await expect(page.getByText('Enviado o texto formatado: 123-456', { exact: true })).toBeVisible();
 	await expect(code).not.toHaveAttribute('aria-invalid', 'true');
 	await page.getByRole('button', { name: 'Redefinir formulário' }).click();
 	await expect(code).toHaveValue('');
-	await expect(page.getByText('Nada enviado.')).toBeVisible();
+	await expect(page.getByText('Nada enviado.', { exact: true })).toBeVisible();
 	await code.pressSequentially('12');
 	await expect(code).toHaveValue('12');
 });

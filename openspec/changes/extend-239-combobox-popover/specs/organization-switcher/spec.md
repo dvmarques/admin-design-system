@@ -9,6 +9,11 @@
 - **WHEN** uma aplicação consome o `AdsOrganizationSwitcher` anteriormente disponível, com ou sem seletor na sidebar
 - **THEN** não precisa mudar props, assinaturas, estrutura do shell ou importar novas primitivas; a ausência continua sem espaço residual
 
+#### Scenario: Avatar com tom configurado
+
+- **WHEN** uma organização possui `avatarTone` ou a foto está indisponível
+- **THEN** gatilho e opções preservam tom e fallback sem duplicação visual nem regras de domínio na primitiva
+
 #### Scenario: Pesquisa automática, avatar e sidebar recolhida
 
 - **WHEN** `searchable="auto"` é usado com sete ou mais organizações ou a sidebar é recolhida

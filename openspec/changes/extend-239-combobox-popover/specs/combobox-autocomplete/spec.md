@@ -2,7 +2,7 @@
 
 ### Requirement: AdsCombobox oferece apresentação popover genérica
 
-`AdsCombobox` MUST oferecer `presentation="popover"` como extensão opt-in ao modo input, com gatilho customizável `renderTrigger`, conteúdo `footer` separado da lista e refs distintas para gatilho e campo de pesquisa. O modo input padrão MUST preservar o contrato anterior, inclusive `AdsAutocomplete`.
+`AdsCombobox` MUST oferecer `presentation="popover"` como extensão opt-in ao modo input, com gatilho customizável `renderTrigger`, conteúdo `footer` separado da lista e refs distintas para gatilho e campo de pesquisa, busca opcional `searchable` e filtro opcional `filterOption`. O modo input padrão MUST preservar o contrato anterior, inclusive `AdsAutocomplete`.
 
 #### Scenario: Gatilho com conteúdo customizado
 
@@ -13,6 +13,11 @@
 
 - **WHEN** o consumidor não informa `presentation` ou usa `input`
 - **THEN** as props, callbacks, ref do input, teclado, foco, formulário e semântica `combobox/listbox` existentes não mudam
+
+#### Scenario: Sem busca e com filtro configurado
+
+- **WHEN** o consumidor configura `searchable={false}` ou `filterOption` para texto normalizado e descrição
+- **THEN** o popup conserva navegação por teclado sem busca ou filtra opções sem duplicar seleção
 
 #### Scenario: Footer com ação
 
@@ -33,10 +38,15 @@ A apresentação popover MUST preservar `value`/`defaultValue` controlados ou n�
 - **WHEN** um consumidor controlado usa `closeOnSelect={false}` e o usuário solicita outra opção
 - **THEN** o callback é emitido, mas seleção visual e abertura seguem as props até o consumidor confirmá-las; não há atualização otimista
 
+#### Scenario: Pesquisa não altera o valor confirmado
+
+- **WHEN** o usuário pesquisa ou limpa a consulta com uma opção já confirmada
+- **THEN** o valor do gatilho/formulário persiste e a consulta não emite seleção fictícia
+
 #### Scenario: Formulário, reset e disabled
 
 - **WHEN** um formulário usa `name` e `required` na apresentação popover
-- **THEN** somente o valor confirmado é serializado, ausência participa corretamente da validação e `disabled` segue semântica de formulário; nenhum rótulo nem consulta é submetido
+- **THEN** somente o valor confirmado é serializado, ausência é detectada por `reportValidity()` com foco/feedback acessíveis mesmo em formulário externo e `disabled` segue semântica de formulário; nenhum rótulo nem consulta é submetido
 
 #### Scenario: Estados e opções
 

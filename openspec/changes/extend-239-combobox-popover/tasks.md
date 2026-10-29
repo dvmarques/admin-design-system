@@ -1,9 +1,9 @@
 ## 1. Contratos e infraestrutura compartilhada
 
-- [ ] 1.1 Definir e validar tipos aditivos `presentation`, `renderTrigger`, `footer`, `triggerRef`, `searchInputRef`, `closeOnSelect` e props de pesquisa/seleção sem regressão `forwardRef<HTMLInputElement>` no modo input.
+- [ ] 1.1 Definir e validar tipos aditivos `presentation`, `renderTrigger`, `footer`, `triggerRef`, `searchInputRef`, `searchable`, `filterOption`, `closeOnSelect` e props de pesquisa/seleção sem regressão `forwardRef<HTMLInputElement>` no modo input.
 - [ ] 1.2 Extrair estado e lógica compartilhados de seleção, opções ativas, filtro, portais e value/label sem nova dependência nem import de `admin` em `components`.
-- [ ] 1.3 Implementar gatilho customizado, painel de diálogo não modal, pesquisa separada, lista sem interativos aninhados e footer; manter `AdsAutocomplete` funcionando como antes.
-- [ ] 1.4 Tratar `name`, `required`, controle/descontrole, reset, erro, loading, vazio, disabled, readOnly, opção visual, value distinto de query e regra `closeOnSelect={false}`.
+- [ ] 1.3 Implementar gatilho customizado com apenas um handler de abertura, painel de diálogo não modal, pesquisa separada, lista sem interativos aninhados e footer; manter `AdsAutocomplete` funcionando como antes.
+- [ ] 1.4 **Antes do Apply**, prototipar `name`, `required`, `form`, `reportValidity()`, foco inválido, `FormData` e reset; implementar controle/descontrole, erro/loading/vazio, disabled/readOnly, valor distinto da consulta e `closeOnSelect={false}`.
 
 ## 2. Acessibilidade e casos difíceis
 
@@ -13,8 +13,8 @@
 
 ## 3. Refatoração de OrganizationSwitcher
 
-- [ ] 3.1 Mapear organizações → `AdsComboboxOption` e substituir navegação/filtro próprios por composição da nova apresentação; preservar busca por nome/descrição e limiar `searchable="auto"`.
-- [ ] 3.2 Manter `AdsOrganizationSwitcherProps` e aparência: gatilho expandido/recolhido, logo/avatar/fallback/tom, tooltip, labels, placement, opção atual e footer `manage`.
+- [ ] 3.1 Mapear organizações → `AdsComboboxOption` e substituir navegação/filtro próprios por composição da nova apresentação; preservar busca por nome/descrição via `filterOption` com diacríticos, ausência de busca e limiar `searchable="auto"`.
+- [ ] 3.2 Manter `AdsOrganizationSwitcherProps` e aparência: gatilho expandido/recolhido, logo/avatar/fallback/tom via slots sem duplicação, tooltip, labels, placement, opção atual e footer `manage`.
 - [ ] 3.3 Preservar troca síncrona/assíncrona via `useGuardedAction`, pending/error, rejeição e race guard; valor controlado sem confirmação otimista, retorno de foco e click outside.
 - [ ] 3.4 Testar sidebar expandida/recolhida/mobile, sem OrganizationSwitcher, 0/1/muitas organizações, opções disabled e links/callback manage.
 

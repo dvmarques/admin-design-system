@@ -9,6 +9,7 @@ import {
 	catalogMemberHref,
 } from '../../../catalogo/catalog-families';
 import { catalogMemberReference } from '../../../catalogo/catalog-member-reference';
+import { HighlightedCodeApi } from '../../../catalogo/highlighted-code-api';
 import { CatalogPreview } from '../../../catalogo/catalog-preview';
 import snippets from '../../../catalogo/catalog-snippets.json';
 
@@ -87,6 +88,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 					})}
 				</section>
 			) : null}
+			{entry.slug === 'highlighted-code-snippet' ? <HighlightedCodeApi /> : null}
 			<h2>Composição e orientações</h2>
 			<p>
 				Use os exports públicos e o CSS compilado dos pacotes. Preserve os rótulos e as relações

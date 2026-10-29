@@ -55,6 +55,24 @@ describe('text form controls', () => {
 		for (const control of controls) expect(control).toHaveClass('box-border', 'w-full');
 	});
 
+	it.each(['sm', 'md', 'lg'] as const)(
+		'uses tokenized typeface on all text controls in %s',
+		(size) => {
+			render(
+				<>
+					<AdsInput aria-label="Input" size={size} />
+					<AdsTextarea aria-label="Textarea" placeholder="Digite aqui" size={size} />
+					<AdsSelect aria-label="Select" size={size}>
+						<option>Um</option>
+					</AdsSelect>
+				</>,
+			);
+			expect(screen.getByRole('textbox', { name: 'Input' })).toHaveClass('font-sans');
+			expect(screen.getByRole('textbox', { name: 'Textarea' })).toHaveClass('font-sans');
+			expect(screen.getByRole('combobox', { name: 'Select' })).toHaveClass('font-sans');
+		},
+	);
+
 	it('renders textarea and select with native interaction', () => {
 		render(
 			<form>
@@ -261,6 +279,32 @@ describe('field composition', () => {
 		expect(screen.getByText('BRL')).toHaveClass('border', 'bg-surface-muted', 'px-3');
 		expect(screen.getByRole('button', { name: 'Buscar' })).toBeInTheDocument();
 		expect(screen.getByRole('button', { name: 'Filtros' })).toBeInTheDocument();
+	});
+
+	it('keeps currency and buttons unbroken without changing global button styles', () => {
+		const { container } = render(
+			<AdsInputGroup
+				startContent="R$"
+				endContent={
+					<>
+						<AdsButton>Limpar</AdsButton>
+						<AdsButton>Restaurar</AdsButton>
+					</>
+				}
+			>
+				<AdsInput aria-label="Valor" />
+			</AdsInputGroup>,
+		);
+		const start = container.querySelector('.ads-input-group__start');
+		const end = container.querySelector('.ads-input-group__end');
+		expect(start).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(end).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(container.querySelector('.ads-input-group')).toHaveClass(
+			'overflow-x-auto',
+			'[&>.ads-form-control]:min-w-[4rem]',
+		);
+		// O grupo rola (overflow clipa): o foco dos filhos fica por dentro, sem outline/anel cortado.
+		expect(end).toHaveClass('[&>.ads-button:focus-visible]:outline-offset-[-2px]');
 	});
 
 	it('keeps several buttons in one addon contiguous with only the outer corner rounded', () => {

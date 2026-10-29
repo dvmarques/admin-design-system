@@ -28,6 +28,19 @@ const exclusions = [
 	'getAdsSmartTableCsv',
 	'useAdsAdminShell',
 ];
+// Pacotes opcionais incluídos no catálogo: todo export runtime é considerado UI e exige rota,
+// exceto os utilitários sem interface listados explicitamente (um novo export visual falha o teste).
+const optionalPackages = [
+	{
+		path: 'packages/highlighted-code/src/index.ts',
+		nonUi: [
+			'ADS_HIGHLIGHTED_CODE_LANGUAGES',
+			'languageLabel',
+			'normalizeHighlightedLanguage',
+			'registerHighlightedLanguageLoader',
+		],
+	},
+];
 function runtimeExports(path: string) {
 	const source = ts.createSourceFile(
 		path,
@@ -49,9 +62,14 @@ function runtimeExports(path: string) {
 
 describe('rastreabilidade do catálogo', () => {
 	it('cobre todo export público de UI com rota própria, sem duplicatas', () => {
-		const exports = ['packages/components/src/index.ts', 'packages/admin/src/index.ts'].flatMap(
-			runtimeExports,
-		);
+		const exports = [
+			...['packages/components/src/index.ts', 'packages/admin/src/index.ts'].flatMap(
+				runtimeExports,
+			),
+			...optionalPackages.flatMap(({ path, nonUi }) =>
+				runtimeExports(path).filter((name) => !nonUi.includes(name)),
+			),
+		];
 		expect(catalogEntries.map((entry) => entry.name).sort()).toEqual(
 			exports.filter((name) => !exclusions.includes(name)).sort(),
 		);

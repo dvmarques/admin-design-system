@@ -16,7 +16,11 @@ async function renderMarkup() {
 		createElement(
 			'div',
 			{ style: { display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', padding: '16px' } },
-			createElement('div', { id: 'cell-text' }, createElement(AdsInput, { 'aria-label': 'Busca' })),
+			createElement(
+				'div',
+				{ id: 'cell-text' },
+				createElement(AdsInput, { 'aria-label': 'Busca', placeholder: 'Buscar' }),
+			),
 			createElement(
 				'div',
 				{ id: 'cell-select' },
@@ -29,7 +33,7 @@ async function renderMarkup() {
 			createElement(
 				'div',
 				{ id: 'cell-area', style: { gridColumn: '1 / -1' } },
-				createElement(AdsTextarea, { 'aria-label': 'Descrição' }),
+				createElement(AdsTextarea, { 'aria-label': 'Descrição', placeholder: 'Descreva' }),
 			),
 		),
 	);
@@ -63,6 +67,36 @@ for (const viewport of [
 		await expect
 			.poll(() => page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth))
 			.toBeLessThanOrEqual(0);
+	});
+}
+
+for (const theme of ['light', 'dark'] as const) {
+	test(`controles usam fonte do token mesmo sem preflight em ${theme}`, async ({ page }) => {
+		const markup = await renderMarkup();
+		await page.setContent(
+			`<!doctype html><html data-theme="${theme}"><head><style>${css}</style></head><body>${markup}</body></html>`,
+		);
+		const fontFamilies = await page
+			.locator('.ads-form-control')
+			.evaluateAll((nodes) => nodes.map((node) => getComputedStyle(node).fontFamily));
+		expect(new Set(fontFamilies).size).toBe(1);
+		const placeholderFamilies = await page
+			.locator('input, textarea')
+			.evaluateAll((nodes) =>
+				nodes.map((node) => getComputedStyle(node, '::placeholder').fontFamily),
+			);
+		expect(placeholderFamilies).toEqual([fontFamilies[0], fontFamilies[0]]);
+		await page
+			.locator('html')
+			.evaluate((element) =>
+				(element as HTMLElement).style.setProperty(
+					'--ads-typography-font-family',
+					'"Courier New", monospace',
+				),
+			);
+		for (const selector of ['input', 'select', 'textarea']) {
+			await expect(page.locator(selector)).toHaveCSS('font-family', /Courier New/);
+		}
 	});
 }
 
@@ -190,6 +224,12 @@ async function renderInputGroupMarkup(size: 'sm' | 'md' | 'lg') {
 			'div',
 			{ style: { display: 'grid', gap: '16px', padding: '16px' } },
 			group('text', { endContent: 'BRL', startContent: 'R$' }),
+			group('currency', {
+				startContent: 'R$',
+				endContent: [button('Limpar', 'secondary'), button('Restaurar', 'primary')].map(
+					(node, key) => createElement(Fragment, { key }, node),
+				),
+			}),
 			group('end', { endContent: button('Buscar', 'primary') }),
 			group('start', { startContent: button('Filtros', 'secondary') }),
 			group('multi', {
@@ -250,6 +290,34 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 			const before = await box('#end button');
 			await page.locator('#end button').hover();
 			await expect.poll(async () => (await box('#end button')).top).toBeCloseTo(before.top, 0);
+		});
+	}
+}
+
+for (const theme of ['light', 'dark'] as const) {
+	for (const width of [320, 390, 1280]) {
+		test(`InputGroup preserva R$, Limpar e Restaurar sem quebrar em ${theme} a ${width}px`, async ({
+			page,
+		}) => {
+			const markup = await renderInputGroupMarkup('md');
+			await page.setViewportSize({ width, height: 800 });
+			await page.setContent(
+				`<!doctype html><html data-theme="${theme}"><head><style>${css}</style></head><body>${markup}</body></html>`,
+			);
+			const start = page.locator('#currency .ads-input-group__start');
+			const end = page.locator('#currency .ads-input-group__end');
+			await expect(start).toHaveCSS('white-space', 'nowrap');
+			await expect(end).toHaveCSS('white-space', 'nowrap');
+			await expect(page.locator('#currency button').first()).toHaveCSS('white-space', 'nowrap');
+			await expect(page.locator('#currency button').last()).toHaveCSS('white-space', 'nowrap');
+			const startBox = (await start.boundingBox())!;
+			const buttons = await page.locator('#currency button').all();
+			const buttonBoxes = await Promise.all(buttons.map((item) => item.boundingBox()));
+			expect(startBox.height).toBeLessThan(50);
+			expect(buttonBoxes[0]!.height).toBeCloseTo(buttonBoxes[1]!.height, 0);
+			await expect
+				.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+				.toBeLessThanOrEqual(0);
 		});
 	}
 }

@@ -191,8 +191,8 @@ export const catalogEntries = [
 		name: 'AdsInputGroup',
 		group: 'Formulários',
 		slug: 'input-group',
-		demo: 'Field',
-		description: 'Campo composto com rótulo, descrição, mensagem e ações nos adendos.',
+		demo: 'InputGroup',
+		description: 'Campo de entrada com prefixos, sufixos e ações integradas sem quebra indevida.',
 		href: '/catalogo/input-group',
 	},
 	{
@@ -379,6 +379,15 @@ export const catalogEntries = [
 		demo: 'Progress',
 		description: 'Progresso determinado e indeterminado.',
 		href: '/catalogo/progress',
+	},
+	{
+		name: 'AdsHighlightedCodeSnippet',
+		group: 'Dados',
+		slug: 'highlighted-code-snippet',
+		demo: 'HighlightedCodeSnippet',
+		description:
+			'Código com Shiki em pacote opcional: TSX, Java, SQL, JSON, temas, cópia e fallback; código destacado, CodeSnippet.',
+		href: '/catalogo/highlighted-code-snippet',
 	},
 	{
 		name: 'AdsTable',

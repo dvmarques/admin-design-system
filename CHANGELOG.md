@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `issue-241-highlighted-code-catalog` (#241) - O componente opcional AdsHighlightedCodeSnippet passa a integrar a busca, a categoria Dados e a documentação interativa do catálogo, com Storybook e link ao exemplo avançado, sem mover Shiki para os pacotes principais.
+
 - `add-ads-combobox-autocomplete` (issue #142) - Novos `AdsCombobox` e `AdsAutocomplete` com ícones e avatares opcionais por opção, exibição configurável e seleção única acessível, valor separado do texto, busca local e remota, debounce, descarte de respostas obsoletas, portal compatível com diálogos e temas, controles de limpar e abrir integrados ao campo e seta do AdsSelect com recuo e espaço para texto (parte da issue #140), exemplos no catálogo com orientação de uso de cada componente e itens da sidebar ordenados alfabeticamente por grupo, stories, testes e guia de migração sem `react-select`. Mudanças observáveis: Home/End preservam a edição de texto (não navegam mais pelas opções), o popup passa a ser uma `section` rotulada com o `ul[role=listbox]` interno (visível apenas com resultados), glifos de limpar/abrir viram `AdsIcon`, todo `AdsSelect` simples emite `ads-select` com seta desenhada por CSS, e o `AdsAutocomplete` remoto exibe "Digite para buscar" abaixo de `minQueryLength`. Orçamentos elevados pelo custo medido: JS/CSS publicado de `@admin-ds/components` 197.500 → 226.000 bytes (medido 221.905; gzip 62.700 → 68.500, medido 67.110), baseline do dist 428.028 → 457.000 e CSS dos cenários `components-public` gzip 9.000 → 9.150 e `admin-public` 93.000 → 94.800 / gzip 14.100 → 14.300, sem dependência nova.
 
 - `feat-145-ads-alert-callout` (issue #145) - Novo componente `AdsAlert` inline persistente com variantes semânticas, apresentação compacta ou destacada, ações e fechamento opcional controlado/não controlado; exemplos no catálogo e Storybook, ícone padrão distinto por severidade e fallback de `forced-colors` por borda e preservação do foco ao fechar (`returnFocusRef`). Orçamentos elevados pelo custo medido do componente: JS/CSS publicado de `@admin-ds/components` 191.250 → 197.500 bytes (medido 197.216) e CSS gzip do cenário `admin-public` 13.900 → 14.100 bytes (medido 13.915), sem dependência nova. `AdsIcon` ganha `alertTriangle` e `alertCircle` (a união `AdsIconName` fica mais larga; consumidores com `switch` exaustivo precisam tratar os novos nomes).
@@ -85,6 +87,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 - `split-long-spec-requirements` e `cleanup-project-docs-and-design-guidance` - Dez requisitos de nove specs reescritos com até 500 caracteres (detalhes movidos para cenários), com `openspec validate --all --strict` sem avisos. Documentação atualizada para os recursos entregues, sem referências externas de design nem textos obsoletos de roadmap; skills de design passam a respeitar a Inter e os tokens. Sem mudança de código, API ou aparência.
 
 #### Fixed
+
+- `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
+
+- `issue-242-textarea-typography` (#242) - Os controles textuais nativos Input, Textarea e Select (e os campos de AdsCombobox/AdsAutocomplete, que compartilham a mesma classe) passam a usar explicitamente a fonte do token público do design system sem depender de preflight CSS do consumidor, preservando a personalização do token.
 
 - `fix-142-combobox-controlled-sources` (issue #142, revisão da PR #238) - `AdsCombobox` deixa de enviar o `value` antigo quando `inputValue` controlado diverge externamente do rótulo selecionado; `AdsAutocomplete` ganha `requestKey` opcional para invalidar consulta pendente e resultados ao trocar a origem de dados, sem refazer a busca pela mera mudança de identidade de `loadOptions`.
 

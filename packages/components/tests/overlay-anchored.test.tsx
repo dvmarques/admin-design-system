@@ -178,6 +178,73 @@ describe('anchored overlays', () => {
 		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
 	});
 
+	it('treats every element rendered by the trigger as part of the popover trigger', async () => {
+		const onOpenChange = vi.fn();
+		function SplitTrigger(props: object) {
+			return (
+				<>
+					<AdsButton {...props}>Primeiro</AdsButton>
+					<AdsButton {...props}>Segundo</AdsButton>
+				</>
+			);
+		}
+		const { container } = render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={true}>
+				<SplitTrigger />
+			</AdsPopover>,
+		);
+		await screen.findByRole('dialog');
+		fireEvent.click(screen.getByRole('button', { name: 'Segundo' }));
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		onOpenChange.mockClear();
+		// Pressionar o segundo irmão não conta como clique externo (o clique alterna).
+		fireEvent.mouseDown(screen.getByRole('button', { name: 'Segundo' }));
+		expect(onOpenChange).not.toHaveBeenCalled();
+		// A área vazia do wrapper continua sendo clique externo e não alterna.
+		fireEvent.mouseDown(container.querySelector('.ads-popover-anchor')!);
+		expect(onOpenChange).toHaveBeenCalledWith(false);
+		onOpenChange.mockClear();
+		fireEvent.click(container.querySelector('.ads-popover-anchor')!);
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	it('re-measures the new trigger element when the trigger changes while open', async () => {
+		const rect = (left: number, width: number) => ({
+			top: 100,
+			bottom: 120,
+			left,
+			right: left + width,
+			width,
+			height: 20,
+			x: left,
+			y: 100,
+			toJSON() {},
+		});
+		function Fixture({ swapped }: { swapped: boolean }) {
+			return (
+				<AdsTooltip content="Ajuda contextual">
+					{swapped ? <a href="#destino">Novo</a> : <AdsButton>Antigo</AdsButton>}
+				</AdsTooltip>
+			);
+		}
+		const { rerender } = render(<Fixture swapped={false} />);
+		const oldTrigger = screen.getByRole('button', { name: 'Antigo' });
+		vi.spyOn(oldTrigger, 'getBoundingClientRect').mockReturnValue(rect(100, 40));
+		act(() => oldTrigger.focus());
+		const tooltip = await screen.findByRole('tooltip');
+		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
+		// jsdom não implementa getBoundingClientRect por layout: simula o novo elemento.
+		const spy = vi
+			.spyOn(HTMLAnchorElement.prototype, 'getBoundingClientRect')
+			.mockReturnValue(rect(300, 40));
+		try {
+			rerender(<Fixture swapped={true} />);
+			await waitFor(() => expect(screen.getByRole('tooltip')).toHaveStyle({ left: '320px' }));
+		} finally {
+			spy.mockRestore();
+		}
+	});
+
 	it('shows a tooltip while the pointer hovers the trigger', async () => {
 		render(
 			<AdsTooltip content="Ajuda por hover">

@@ -506,6 +506,17 @@ export function calculateAnchoredPosition(
 	return { style: { left: x, top: y }, placement, arrowOffset };
 }
 
+// Gatilho = filhos do wrapper, sem o marcador oculto do portal. O painel é posicionado pelo primeiro.
+export function getTriggerElements(anchor: HTMLElement) {
+	const items = anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
+		? (Array.from(anchor.children) as HTMLElement[]).filter((el) => !el.hidden)
+		: [];
+	return items.length ? items : [anchor];
+}
+
+export const isInsideTrigger = (anchor: HTMLElement | null, target: Node) =>
+	!!anchor && getTriggerElements(anchor).some((el) => el.contains(target));
+
 export function useAnchoredPosition(
 	open: boolean,
 	anchorRef: RefObject<HTMLElement | null>,
@@ -536,16 +547,10 @@ export function useAnchoredPosition(
 		let frame: number | null = null;
 		let disposed = false;
 		let fixedOrigin: HTMLDivElement | null = null;
-		// Tooltip e Popover usam um span para eventos e para o portal. Em flex/stretch
-		// esse span pode ocupar toda a largura, enquanto o gatilho visual é compacto.
-		// Medir o elemento visível preserva também gatilhos de largura integral.
-		const measuredAnchor = anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
-			? (anchor.firstElementChild ?? anchor)
-			: anchor;
 		const update = () => {
 			if (disposed) return;
 			const rect = panel.getBoundingClientRect();
-			const anchorRect = measuredAnchor.getBoundingClientRect();
+			const anchorRect = getTriggerElements(anchor)[0]!.getBoundingClientRect();
 			// Uma origem fixed conhecida converte rects visuais sem identificar motores
 			// por aliases CSS. Só precisamos medi-la quando há pan da viewport visual.
 			let dx = 0;
@@ -607,11 +612,21 @@ export function useAnchoredPosition(
 		visual?.addEventListener('resize', schedule);
 		visual?.addEventListener('scroll', schedule);
 		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
-		observer?.observe(anchor);
-		if (measuredAnchor !== anchor) observer?.observe(measuredAnchor);
-		observer?.observe(panel);
+		const observeTargets = () => {
+			observer?.disconnect();
+			observer?.observe(anchor);
+			for (const el of getTriggerElements(anchor)) observer?.observe(el);
+			observer?.observe(panel);
+		};
+		observeTargets();
+		const mutations = new MutationObserver(() => {
+			observeTargets();
+			schedule();
+		});
+		mutations.observe(anchor, { childList: true });
 		return () => {
 			disposed = true;
+			mutations.disconnect();
 			fixedOrigin?.remove();
 			if (frame !== null) view.cancelAnimationFrame(frame);
 			observer?.disconnect();

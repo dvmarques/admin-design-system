@@ -26,4 +26,21 @@ Uma estratégia shrink-to-fit pode alterar casos com gatilho width:100%; validar
 
 ## Decisão implementada
 
-Optou-se por medir o primeiro elemento filho do wrapper (`.ads-tooltip-anchor` e `.ads-popover-anchor`) em `useAnchoredPosition`, mantendo o wrapper como está (inclusive o `self-stretch` do `AdsDatePicker`). O hook passa a conhecer esses dois seletores internos; o rollback inclui, portanto, `overlay-utils.tsx`. Gatilhos com mais de um elemento raiz usam o primeiro. Em área esticada vazia, foco e hover do Tooltip continuam no wrapper (comportamento anterior preservado); no Popover, clique nessa área não alterna nem conta como clique interno.
+Optou-se por medir o primeiro elemento filho do wrapper (`.ads-tooltip-anchor` e `.ads-popover-anchor`) em `useAnchoredPosition`, mantendo o wrapper como está (inclusive o `self-stretch` do `AdsDatePicker`). O hook passa a conhecer esses dois seletores internos; o rollback inclui, portanto, `overlay-utils.tsx`. Gatilhos que renderizam mais de um elemento raiz (ignorando o marcador oculto do portal) têm todos os elementos tratados como gatilho para alternar o Popover e para o clique externo; o painel é posicionado pelo primeiro. A âncora é reavaliada a cada medição e um `MutationObserver` (childList do wrapper) reobserva e remede quando o elemento do gatilho muda com o overlay aberto. Em área esticada vazia, foco e hover do Tooltip continuam no wrapper (comportamento anterior preservado); no Popover, clique nessa área não alterna nem conta como clique interno.
+
+## Orçamento de distribuição
+
+O `dist` completo de `@admin-ds/components` (JS, `.d.ts` e mapas) passou de 501.863 para 503.235 bytes (+1.372 B: helpers de gatilho, reobservação por `MutationObserver` e mapas). O limite de 10% sobre o baseline (457.000, ou seja 502.700) tinha folga de 837 B; o baseline foi elevado para 457.600 (limite 503.360) de forma explícita, por código público novo, e não para mascarar regressão. Sem mudança em exports, props ou CSS.
+
+## Evidências de reprodução (task 1)
+
+Build de produção do `admin-demo`, Chromium, `/catalogo/tooltip` com foco no botão "Ajuda" do preview (`.demo-catalog-preview`: `display:flex; flex-direction:column; align-items:stretch`). Retângulos em px; "antes" = `useAnchoredPosition` e Popover de `develop`.
+
+| Viewport | Botão (x, largura) | Wrapper `.ads-tooltip-anchor` (largura) | Centro do botão | Centro do balão antes | Centro do balão depois |
+| -------- | ------------------ | --------------------------------------- | --------------- | --------------------- | ---------------------- |
+| 390      | 49, 72,5           | 292                                     | 85,2            | 195,0 (delta +109,8)  | 85,2 (delta 0)         |
+| 1280     | 348,2, 72,5        | 839,6                                   | 384,4           | 768,0 (delta +383,6)  | 384,4 (delta 0)        |
+
+Computed styles: wrapper `display:flex; align-self:auto; width` igual à do contêiner (292 / 839,6 px); `placement` permaneceu `top` nos dois casos. Causa: o wrapper esticado era a referência geométrica.
+
+Popover (`/catalogo/popover`, botão "Abrir popover", largura 126,2): compartilha o defeito. Antes, centro do botão 112,1 vs centro do painel 195,0 (390px) e 411,3 vs 768,0 (1280px); depois, ambos 112,1 e 411,3 (delta 0). O E2E `tooltip e popover se ancoram no botão real em flex/stretch` falha antes (erro de 109,8px) e passa depois.

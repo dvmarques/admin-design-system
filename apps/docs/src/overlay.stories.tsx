@@ -214,6 +214,33 @@ export const Tooltip: Story = {
 	),
 };
 
+export const TooltipInStretchedColumn: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Em um contêiner flex em coluna com `align-items: stretch`, o wrapper do gatilho ocupa toda a largura, mas o tooltip e o popover se ancoram no botão visível: o balão e a seta ficam centralizados nele, não no wrapper.',
+			},
+		},
+	},
+	render: () => (
+		<div
+			style={{
+				display: 'flex',
+				flexDirection: 'column',
+				alignItems: 'stretch',
+				gap: '4rem',
+				paddingBlock: '4rem',
+				width: '24rem',
+			}}
+		>
+			<AdsTooltip content="Ancorado no botão">
+				<AdsButton variant="ghost">Ajuda</AdsButton>
+			</AdsTooltip>
+		</div>
+	),
+};
+
 export const TooltipWithDescribedTrigger: Story = {
 	render: () => {
 		const helpId = useId();

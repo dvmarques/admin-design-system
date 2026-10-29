@@ -32,6 +32,23 @@ A branch da PR #258 recebeu `develop` (incluindo [PR #254](https://github.com/dv
 
 O pacote `@admin-ds/components` agora inclui `LICENSE.md` e `THIRD_PARTY_NOTICES.md` com as licenças MIT/ISC dos ícones, além dos novos elementos SVG. Esses arquivos legais não devem ser retirados para atender ao budget. Os novos limites só devem ser alterados se uma **CI executada após a sincronização** demonstrar um excesso, devidamente atribuído à mudança de #257. Não elevar orçamentos sem medição, nem confundir aumento do pacote distribuído com custo de JS/CSS entregue ao consumidor.
 
+### Resultado final medido após sincronizar com develop
+
+O job [Artefatos de distribuição — CI #40957590062](https://github.com/dvmarques/admin-design-system/actions/runs/40957590062) **passou** em 29/10/2026, em Linux/Node 24.22.1, com as seguintes métricas do pacote `@admin-ds/components` e cenários de consumo:
+
+| Métrica | Medição atual | Limite da develop (#254) | Limite final da PR #258 |
+| --- | ---: | ---: | ---: |
+| Distribuição completa `@admin-ds/components` | 584.641 B | 567.600 B | **585.200 B** (baseline 532.000 B +10%) |
+| JS/CSS publicado `@admin-ds/components` | 254.232 B | 250.800 B | **255.000 B** |
+| JS/CSS gzip `@admin-ds/components` | 76.243 B | 76.300 B | **76.300 B — inalterado** |
+| JS minificado `components-public` | 32.663 B | 30.400 B | **33.000 B** |
+| JS gzip `components-public` | 11.511 B | 11.300 B | **11.700 B** |
+| JS minificado `admin-public` | 70.669 B | 70.000 B | **71.000 B** |
+
+Também passaram, **sem nenhum aumento de orçamento**, os CSS dos cenários: `components-public` 57.742/58.000 B e gzip 9.568/9.650 B; `admin-public` 97.524/97.800 B e gzip 14.655/14.800 B; `admin-public` JS gzip 23.714/23.900 B, e os pacotes `tokens`, `highlighted-code` e `admin`.
+
+O merge da PR #254 havia medido 566.459 B de distribuição e 249.982 B de JS/CSS do components (conforme o changelog da #254). A PR #258 combinada mede +18.182 B e +4.250 B, respectivamente. **Essas diferenças incluem a troca da geometria SVG e a inclusão obrigatória de avisos MIT/ISC; não são uma decomposição byte a byte por arquivo**, e podem conter variação residual de toolchain/ambiente. Todos os cinco ajustes acima são restritos aos budgets com excesso demonstrado; os demais valores foram preservados do último `develop`.
+
 ## Registro de decisões e resultados passados
 
 A cronologia de medições foi movida para comentários nas issues de origem de cada change (por exemplo [#135](https://github.com/dvmarques/admin-design-system/issues/135#issuecomment-6403057452), [#138](https://github.com/dvmarques/admin-design-system/issues/138#issuecomment-6403059227), [#136](https://github.com/dvmarques/admin-design-system/issues/136#issuecomment-6403059406), [#92](https://github.com/dvmarques/admin-design-system/issues/92#issuecomment-6403059645), [#93](https://github.com/dvmarques/admin-design-system/issues/93#issuecomment-6403059824), [#185](https://github.com/dvmarques/admin-design-system/issues/185#issuecomment-6403060029) e [#147](https://github.com/dvmarques/admin-design-system/issues/147#issuecomment-6403060274)); trechos sem issue única identificada estão na [#197](https://github.com/dvmarques/admin-design-system/issues/197#issuecomment-6403060491). Os comentários documentam aumentos históricos por change, revisões, commits e exceções de toolchain. Os números ali **não** são a medição do HEAD atual. Alguns registros foram medidos em Node 22.22.0/LF (por exemplo, AdsSmartTable), enquanto o fluxo atual usa Node 24/npm 11.19.1. Preserve diferenças, anotações e incertezas na evidência original; não as «corrija» retroativamente com um novo build.

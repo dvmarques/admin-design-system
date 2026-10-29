@@ -17,5 +17,6 @@
 | AdsTooltip              | Preservação de aria-describedby e Escape                | #148, #91  |
 | AdsTooltip e AdsPopover | Âncora no gatilho real em flex/stretch                  | #244       |
 | AdsDialog e AdsDrawer   | Fundo inerte durante modal                              | #149       |
+| AdsDialog e AdsDrawer   | Ciclo de Tab limitado a controles elegíveis             | #234       |
 
 Atualize este índice juntamente com o changelog principal quando uma mudança afetar um componente público.

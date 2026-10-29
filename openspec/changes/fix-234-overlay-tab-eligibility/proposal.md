@@ -25,3 +25,7 @@ Perfil **Critical** (acessibilidade transversal e foco em APIs públicas), apesa
 Limites: não alterar a seleção de foco de popovers descendentes, retorno de foco, `pending`, `Escape` em camadas, `role`, API pública nem o conteúdo de outras issues. Preservar orçamento JS/CSS publicado (baseline atual do orçamento `@admin-ds/components`: 226.000 B / 68.500 B gzip); medir e justificar qualquer delta.
 
 Referências: [issue #234](https://github.com/dvmarques/admin-design-system/issues/234), #192 e PR #229.
+
+## Resultado da reprodução (Apply)
+
+A hipótese **foi reproduzida** antes de qualquer alteração de runtime, em JSDOM (45 de 48 casos falharam no runtime original) e no Chromium real do Admin Demo: com `fieldset disabled` na ponta, Tab no último controle elegível e Shift+Tab no primeiro deixavam o foco fora da camada (`document.activeElement` fora do diálogo). Após a correção os mesmos testes passam. Detalhes e limites em `design.md`.

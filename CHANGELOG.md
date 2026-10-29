@@ -88,6 +88,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-234-overlay-tab-eligibility` (#234) - A armadilha de Tab de `AdsDialog`, `AdsDrawer` e `AdsConfirmDialog` passa a usar o mesmo critério de elegibilidade do foco inicial, num helper interno único: controles desabilitados (inclusive por `fieldset disabled`), `inert`, ocultos, com `visibility: hidden` ou com `tabindex` negativo deixam de ser pontos de virada, a lista é reavaliada a cada Tab e, se o controle focado ficou inelegível na ponta, ou se o painel está focado, o foco dá a volta em vez de escapar do modal. Reproduzido antes da correção em JSDOM e no Chromium (Admin Demo); exemplo em `/catalogo/dialog`, `/catalogo/drawer` e `/catalogo/confirm-dialog` e story `TabWithIneligibleControls`. Sem prop nova nem mudança de API; efeito observável: um botão com `tabindex="-1"` deixa de receber o foco inicial. Limitação registrada: grupos de rádio e `iframe` nas pontas (`docs/limitations.md`). Baseline de distribuição de `@admin-ds/components` 457.600 → 458.400 bytes (medido 504.181 contra 503.340); orçamentos dos cenários e do JS/CSS publicado inalterados (`components-public` +108 B minificado, +103 B gzip).
+
 - `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
 
 - `issue-242-textarea-typography` (#242) - Os controles textuais nativos Input, Textarea e Select (e os campos de AdsCombobox/AdsAutocomplete, que compartilham a mesma classe) passam a usar explicitamente a fonte do token público do design system sem depender de preflight CSS do consumidor, preservando a personalização do token.

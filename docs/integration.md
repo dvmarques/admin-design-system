@@ -869,6 +869,15 @@ Ao fechar, o estado anterior é restaurado. Com modais aninhados só o mais rece
   de origem fechou antes de um modal aninhado), volta ao elemento que abriu o modal ao redor.
 - O atributo exige suporte do navegador (Chromium 102+, Firefox 112+, Safari 15.5+); sem ele o foco
   continua preso por teclado e `aria-modal` segue exposto, mas o fundo ainda é alcançável por clique.
+- **Tab e Shift+Tab** circulam somente pelos controles elegíveis, os mesmos que podem receber o foco
+  inicial: o ciclo ignora controles desabilitados (inclusive por `fieldset disabled`), `inert`,
+  `hidden`, `display: none`, `visibility: hidden` (também herdados) e `tabindex` negativo. A lista é
+  reavaliada a cada Tab, então um campo bloqueado ou ocultado com o modal aberto deixa de ser ponta
+  do ciclo: se o controle focado ficou inelegível na ponta, o foco volta ao outro extremo em vez de
+  escapar para o navegador. Sem nenhum controle elegível, o foco fica no próprio painel. Controles
+  intermediários mantêm a navegação nativa e um popover aberto a partir do modal segue o fluxo dele.
+  Efeito colateral no foco inicial: um controle com `tabindex="-1"` deixa de ser escolhido, como já
+  acontecia com elementos que só tinham o atributo.
 - A rolagem do fundo não é bloqueada.
 - Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O
   atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da

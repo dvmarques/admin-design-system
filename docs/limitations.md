@@ -71,6 +71,11 @@ das validações automatizadas.
   sem suporte (anteriores a Chromium 102, Firefox 112 e Safari 15.5) ele continua alcançável por
   clique. Overlays de terceiros em `<body>` e o anunciante de rotas do Next.js também ficam inertes
   enquanto há modal aberto; uma navegação nesse intervalo não é anunciada. O bloqueio de rolagem depende da implementação atual e deve ser validado em navegador real. A validação em navegador real cobre o Chromium.
+- O ciclo de Tab trata cada `input type="radio"` como uma parada própria. Navegadores tratam um grupo
+  de rádio como uma parada única (a opção marcada ou, sem marcada, a primeira em Tab e a última em
+  Shift+Tab); com um grupo na ponta do ciclo, um Tab pode sair brevemente da camada e o seguinte
+  volta a ela. Corrigir exigiria elevar o orçamento do cenário `components-public`; fica como
+  melhoria futura. Um `iframe` na ponta também transfere o foco para dentro dele, onde o ciclo não alcança.
 
 ## AdsDatePicker
 

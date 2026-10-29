@@ -19,6 +19,11 @@ Em `AdsDialog` e `AdsDrawer`, incluindo o `AdsConfirmDialog` que os compõe, o s
 - **WHEN** um controle focado é desabilitado ou ocultado enquanto um modal está aberto e o usuário pressiona Tab ou Shift+Tab
 - **THEN** o foco segue para uma extremidade elegível ou fallback interno sem escapar ao conteúdo de fundo
 
+#### Scenario: Controle com tabindex negativo não é ponta do ciclo
+
+- **WHEN** um modal aberto contém um controle com `tabindex` negativo antes do primeiro ou depois do último controle elegível
+- **THEN** esse controle não recebe o foco inicial nem atua como ponto de virada, e o ciclo usa o controle elegível mais próximo da extremidade
+
 #### Scenario: Nenhum candidato elegível
 
 - **WHEN** um modal não contém controles elegíveis e o usuário pressiona Tab ou Shift+Tab

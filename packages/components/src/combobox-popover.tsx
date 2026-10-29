@@ -208,7 +208,6 @@ export function ComboboxPopover({
 			if (!current || current === document.body) focusTrigger();
 		}
 		previousOpen.current = open;
-		// eslint-disable-next-line react-hooks/exhaustive-deps -- só a transição de `open` importa.
 	}, [open]);
 
 	// Foco inicial na pesquisa, na lista ou no painel; repete se o alvo surgir depois (fim do loading).

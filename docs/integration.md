@@ -381,8 +381,13 @@ com `locale`.
 Opcional e independente: coloque-o como primeiro filho de `AdsAdminShell.Sidebar`. O `AdsAdminShell`
 não o exige nem cria organização fictícia; sem ele, a navegação ocupa o topo, sem bloco, altura
 reservada ou separador residual. O gatilho mostra logo ou iniciais, nome, descrição opcional e seta; o
-painel lista as organizações com a atual marcada (`aria-current`, marca visual e texto), busca a partir
-de 7 opções (`searchable`), estado sem resultados e `manage` ("Gerenciar organizações") opcional.
+painel lista as organizações com a atual marcada (`aria-selected`, marca visual e texto), busca a partir
+de 7 opções (`searchable`), estado sem resultados e `manage` ("Gerenciar organizações") opcional. Desde
+a #239 o painel é o do `AdsCombobox` com `presentation="popover"` (veja
+[AdsCombobox apresentação popover](#adscombobox-apresentação-popover-239)): a API pública, as classes
+`ads-organization-switcher-*` e o visual são os mesmos; só a semântica interna do painel muda, de uma
+lista de botões (`aria-current`) para `listbox`/`option` (`aria-selected`). Quem testa o seletor deve
+procurar `role="option"` no painel e a região `role="status"` (a falha da troca continua `role="alert"`).
 
 - A aplicação controla `value` e `onValueChange`. Com uma `Promise`, a opção fica pendente e o gatilho
   continua mostrando a organização anterior até `value` mudar; a rejeição mantém o painel aberto com um
@@ -396,11 +401,84 @@ de 7 opções (`searchable`), estado sem resultados e `manage` ("Gerenciar organ
 ### Acessibilidade e validação
 
 Gatilhos são botões únicos com nome acessível, `aria-haspopup="dialog"` e `aria-expanded`. O painel
-da conta e o da organização reutilizam `AdsPopover` (diálogo não modal) e o das notificações,
+da conta reutiliza `AdsPopover` e o da organização, o `AdsCombobox` popover (ambos diálogos não modais) e o das notificações,
 `AdsDrawer` (modal). Os testes cobrem teclado, foco e retorno, `Promise` pendente ou rejeitada, axe,
 SSR e hidratação; os E2E cobrem os três fluxos no demo, claro e escuro, 320 px, sidebar recolhida,
 menu móvel e overlays aninhados. O demo (`/catalogo/account-menu`, `/catalogo/notification-center` e
 `/catalogo/organization-switcher`) compara a sidebar com e sem o seletor.
+
+## AdsCombobox apresentação popover (#239)
+
+`AdsCombobox` tem duas apresentações. `presentation="input"` (padrão) é o campo editável de sempre, com
+`role="combobox"`, e **não mudou**, nem `AdsAutocomplete`. `presentation="popover"` é um botão que abre
+um painel com pesquisa separada, uma lista de seleção única e um rodapé opcional. É genérica: não
+conhece organizações, rotas nem regras de negócio.
+
+```tsx
+<AdsCombobox
+	presentation="popover"
+	options={options}
+	value={owner}
+	onValueChange={setOwner}
+	panelLabel="Escolher responsável"
+	searchLabel="Pesquisar responsável"
+	renderTrigger={({ selectedOption, triggerProps }) => (
+		<button {...triggerProps}>{selectedOption?.label ?? 'Sem responsável'}</button>
+	)}
+	footer={<a href="/equipe">Gerenciar equipe</a>}
+/>
+```
+
+- **Props exclusivas do popover:** `renderTrigger`, `footer`, `triggerRef`, `searchInputRef`,
+  `searchable` (padrão `true`), `filterOption(option, query)`, `closeOnSelect` (padrão `true`),
+  `panelLabel`, `searchLabel`, `searchPlaceholder`, `listLabel`, `retryLabel`, `statusMessage`,
+  `panelClassName`, `placement` e `align`. Reutiliza `options`, `value`/`defaultValue`,
+  `onValueChange(value, option)`, `selectedOption`, `open`/`defaultOpen`/`onOpenChange`, `renderOption`,
+  `showOptionVisuals`, `filterOptions`, `loading`, `error`, `onRetry`, `emptyText`, `loadingText`,
+  `disabled`, `readOnly`, `name`, `form` e `required`. O tipo é discriminado por `presentation`
+  (`AdsComboboxPopoverProps`); `AdsComboboxProps` continua descrevendo só o modo input.
+- **Valor e consulta são independentes:** `inputValue`/`defaultInputValue`/`onInputValueChange(query,
+reason)` são a **consulta** (`reason`: `input`, `select` ou `close`). Digitar nunca limpa nem
+  substitui a seleção confirmada; a consulta é zerada ao fechar. Escolher a opção já confirmada não
+  emite `onValueChange`.
+- **`renderTrigger` e um único dono do toggle:** devolva **um** `<button>` e espalhe `triggerProps`
+  nele (`aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`, `type="button"`, `disabled`,
+  `ref` e `onClick`). Não ligue outro `onClick` que alterne a abertura; para compor o seu, chame o
+  de `triggerProps` dentro dele. Pode ser envolvido, por exemplo, por `AdsTooltip`.
+- **Semântica ARIA:** o gatilho **não** é `role="combobox"`. O painel é um `dialog` não modal
+  rotulado (`panelLabel`); o campo de pesquisa é um `searchbox` com `aria-controls` e
+  `aria-activedescendant` para a `listbox`, que contém apenas `option`s (`aria-selected` marca o valor
+  **confirmado**, nunca o destaque). `renderOption` não deve criar botões ou links dentro da opção:
+  ações vão no `footer`, fora da lista.
+- **Teclado e foco:** o foco inicial vai ao campo de pesquisa (ou à lista, com `searchable={false}`).
+  Setas movem o destaque ignorando opções desabilitadas, Enter confirma, Home/End só atuam na lista
+  sem pesquisa, Escape fecha **somente** o painel (camada superior) e devolve o foco ao gatilho, e um
+  clique externo fecha sem roubar o foco do controle clicado. Tab percorre pesquisa e rodapé; ao passar
+  da última extremidade (ou Shift+Tab na primeira) o painel fecha e o fluxo da página continua a partir
+  do gatilho, sem prender o foco.
+- **Seleção controlada de forma assíncrona:** com `closeOnSelect={false}` e `value` controlado, pedir
+  outra opção só emite `onValueChange`; painel e seleção visual seguem as props até o consumidor
+  confirmar (sem atualização otimista). `statusMessage` anuncia a operação pendente. É assim que
+  `AdsOrganizationSwitcher` aguarda a `Promise`; a primitiva não interpreta `Promise`.
+- **Formulários:** com `name`, só o valor confirmado é enviado (nunca o rótulo nem a consulta), inclusive
+  em formulários externos (`form`). Com `required`, a ausência de seleção é detectada pela validação
+  nativa (`checkValidity`, `reportValidity`, envio); o foco vai ao gatilho, que recebe
+  `aria-invalid`, e o texto "Selecione uma opção" é anunciado. O controle validável é um `input`
+  oculto, sem tab stop e fora da árvore de acessibilidade. `reset` restaura o `defaultValue`
+  (não controlado), e `disabled` o exclui do envio.
+- **Overlays:** o painel usa `OverlayPortal`, posicionamento ancorado e as pilhas de Escape e de
+  clique externo da biblioteca; dentro de `AdsDialog` ou do drawer móvel ele fica acima do modal e
+  Escape fecha só o painel. Para Next.js, mantenha o uso em Client Components; o servidor renderiza
+  apenas o gatilho fechado, com ids estáveis. O painel é `fixed` no portal e acompanha rolagem e
+  redimensionamento.
+- **Estilo:** o painel, as opções e o rodapé têm classes públicas `ads-combobox__panel`,
+  `ads-combobox__option--popover`, `ads-combobox__list-popover`, `ads-combobox__state`,
+  `ads-combobox__retry` e `ads-combobox__footer`, estilizadas com tokens `--ads-*`; use
+  `panelClassName` para estreitá-las, sem exigir Tailwind no consumidor.
+
+Migração interna: `AdsOrganizationSwitcher` deixou de usar `AdsPopover`, `AdsInput` e a navegação
+própria; consumidores do seletor não precisam migrar. Outros popovers com busca podem adotar
+`presentation="popover"` por conta própria; nenhum foi migrado por oportunidade.
 
 ## Padrões de dashboard
 

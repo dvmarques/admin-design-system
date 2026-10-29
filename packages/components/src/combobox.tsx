@@ -74,7 +74,6 @@ const ComboboxInput = forwardRef<HTMLInputElement, AdsComboboxProps>(function Co
 		onValueChange,
 		open: controlledOpen,
 		options,
-		presentation: _presentation,
 		placeholder = 'Selecione uma opção',
 		readOnly,
 		renderOption,
@@ -488,11 +487,11 @@ export interface AdsComboboxComponent {
  */
 export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps | AdsComboboxPopoverProps>(
 	function AdsCombobox(props, ref) {
-		return props.presentation === 'popover' ? (
-			<ComboboxPopover {...props} />
-		) : (
-			<ComboboxInput {...props} ref={ref} />
-		);
+		if (props.presentation === 'popover') return <ComboboxPopover {...props} />;
+		// `presentation` seleciona o modo e não é um atributo do `input`.
+		const inputProps: AdsComboboxProps = { ...props };
+		delete inputProps.presentation;
+		return <ComboboxInput {...inputProps} ref={ref} />;
 	},
 ) as unknown as AdsComboboxComponent;
 AdsCombobox.displayName = 'AdsCombobox';

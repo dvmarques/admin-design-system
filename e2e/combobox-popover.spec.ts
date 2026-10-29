@@ -1,8 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 
-const owner = (page: import('@playwright/test').Page) =>
+const owner = (page: Page) =>
 	page.getByRole('button', { name: /Responsável \(popover controlado\)/ });
 
 test.beforeEach(async ({ page }) => {
@@ -145,3 +145,27 @@ test('modo input permanece combobox editável ao lado do popover', async ({ page
 	await expect(page.getByRole('combobox', { name: 'Estado (controlado)' })).toBeVisible();
 	await expect(page.getByRole('combobox', { name: /Responsável/ })).toHaveCount(0);
 });
+
+for (const theme of ['light', 'dark'] as const) {
+	test(`popover: tema ${theme} e reflow equivalente a zoom 200% sem violações de acessibilidade`, async ({
+		page,
+		context,
+	}) => {
+		await context.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+		await page.setViewportSize({ width: 640, height: 400 });
+		await page.goto('/catalogo/combobox');
+		const trigger = owner(page);
+		await waitForHydration(trigger);
+		await trigger.scrollIntoViewIfNeeded();
+		await trigger.click();
+		const panel = page.getByRole('dialog', { name: 'Escolher responsável controlado' });
+		await expect(panel).toBeVisible();
+		await expect(panel.locator('..')).toHaveAttribute('data-theme', theme);
+		const box = await panel.boundingBox();
+		expect(box!.x).toBeGreaterThanOrEqual(0);
+		expect(box!.x + box!.width).toBeLessThanOrEqual(640);
+		expect(box!.y).toBeGreaterThanOrEqual(0);
+		expect(box!.y + box!.height).toBeLessThanOrEqual(400);
+		await expectNoAxeViolations(page);
+	});
+}

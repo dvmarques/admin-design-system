@@ -19,6 +19,12 @@ describe('text control box sizing in the distributed CSS', () => {
 	});
 });
 
+describe('typography in the distributed CSS without preflight', () => {
+	it('includes the tokenized font-sans utility used by native text controls', () => {
+		expect(css).toMatch(/\.font-sans\{font-family:var\(--ads-typography-font-family\)\}/);
+	});
+});
+
 describe('date picker trigger height in the distributed CSS', () => {
 	it('contains the utilities that let the trigger follow the field height', () => {
 		expect(css).toContain(

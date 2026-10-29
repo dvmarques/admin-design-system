@@ -26,7 +26,7 @@ Em **2026-10-29**, o job [Artefatos de distribuição da PR #258](https://github
 
 O aumento nesta mudança tem causa funcional identificada: o `dist` agora inclui `LICENSE.md` e `THIRD_PARTY_NOTICES.md` com as licenças integrais MIT/ISC dos ícones Feather, Lucide e Hugeicons Free, além dos novos elementos SVG oficiais e seus artefatos de compilação. Os avisos de terceiros precisam acompanhar a distribuição; não devem ser excluídos para cumprir o orçamento.
 
-O baseline de distribuição de `@admin-ds/components` foi ajustado para **484.000 bytes** (limite executável de **532.400 bytes**, com a tolerância de 10% já definida no projeto), deixando 866 bytes de margem frente à medição indicada. **Não foram alterados os orçamentos de JS/CSS de navegador nem de cenários** sem medições específicas. A CI seguinte deve confirmar os tamanhos reais após a formatação.
+O baseline de distribuição de `@admin-ds/components` foi ajustado para **484.000 bytes** (limite executável de **532.400 bytes**, com a tolerância de 10% já definida no projeto), deixando 866 bytes de margem frente à medição indicada. O job [Artefatos de distribuição da execução seguinte](https://github.com/dvmarques/admin-design-system/actions/runs/40950748996) mediu **232.180 bytes** de JS/CSS publicados de `@admin-ds/components`, acima do orçamento anterior de **228.000 bytes**. Por essa razão, o limite de JS/CSS sem compressão foi elevado especificamente para **233.000 bytes** (820 bytes de margem sobre a medição), em `docs/browser-budget.json`. Os orçamentos de gzip e dos cenários permanecem inalterados até que seus valores possam ser medidos, sem elevar limites preventivamente.
 
 ## Registro de decisões e resultados passados
 

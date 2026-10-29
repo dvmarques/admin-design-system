@@ -33,6 +33,10 @@ export type {
 export { AdsTextarea } from './textarea.js';
 export type { AdsTextareaProps } from './textarea.js';
 export { AdsSelect } from './select.js';
+export { AdsCombobox } from './combobox.js';
+export type { AdsComboboxOption, AdsComboboxInputReason, AdsComboboxProps } from './combobox.js';
+export { AdsAutocomplete } from './autocomplete.js';
+export type { AdsAutocompleteProps } from './autocomplete.js';
 export type { AdsSelectProps } from './select.js';
 export type { AdsFormSize, AdsValidationState } from './form-types.js';
 export { AdsCheckbox, AdsRadio, AdsSwitch } from './selection-control.js';

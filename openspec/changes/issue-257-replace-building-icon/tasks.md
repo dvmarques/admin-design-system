@@ -13,11 +13,11 @@
 - [x] 2.5 Atualizar `docs/licensing.md` e Storybook com catálogo visual.
 - [x] 2.6 Incluir os arquivos `LICENSE.md` e `THIRD_PARTY_NOTICES.md` no `dist` distribuído, verificando seu conteúdo.
 - [x] 2.7 Ampliar testes de geometria, largura de traço, tipagem e acessibilidade para os 20 nomes.
-- [ ] 2.8 Atualizar `CHANGELOG.md` incluindo toda a migração e a publicação dos avisos.
+- [x] 2.8 Atualizar `CHANGELOG.md` incluindo toda a migração e a publicação dos avisos.
 
 ## 3. Validação e conclusão
 
-- [ ] 3.1 Verificar mecanicamente cada SVG transcrito contra os 20 arquivos originais (shape, atributo, order, stroke).
+- [x] 3.1 Verificar mecanicamente cada SVG transcrito contra os 20 arquivos originais (shape, atributo, ordem, largura de traço); conferidos os 19 Feather/Lucide e os quatro paths Hugeicons.
 - [ ] 3.2 Executar build, verificador de pacote, testes, lint, tipos, `npm run format`, `npm run validate` e `npm run test:e2e`; registrar resultados reais.
 - [ ] 3.3 Conferir Storybook/demo, temas claro/escuro e todos os tamanhos; atualizar snapshots somente quando intencionalmente revisados.
 - [ ] 3.4 Medir os orçamentos de distribuição/browser e só ajustá-los com evidências.

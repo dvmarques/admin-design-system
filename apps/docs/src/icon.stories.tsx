@@ -36,7 +36,7 @@ export const BuildingMIT: Story = {
 	parameters: {
 		docs: {
 			description: {
-			story: 'Building06Icon de Hugeicons Free (MIT), com geometria SVG preservada; o aviso integral da licença está em THIRD_PARTY_NOTICES.md.',
+			story: 'Building06Icon (MIT). Licença integral em THIRD_PARTY_NOTICES.md.',
 		},
 		},
 	},
@@ -77,7 +77,7 @@ export const LicensedCatalog: Story = {
 	parameters: {
 		docs: {
 			description: {
-				story: 'Os 20 SVGs têm procedência e licença documentadas: 18 Feather (MIT), 1 Lucide (ISC) e 1 Hugeicons Free (MIT). Consulte docs/icons-license-audit.md e THIRD_PARTY_NOTICES.md.',
+				story: '20 SVGs licenciados: 18 Feather (MIT), 1 Lucide (ISC), 1 Hugeicons Free (MIT).',
 			},
 		},
 	},

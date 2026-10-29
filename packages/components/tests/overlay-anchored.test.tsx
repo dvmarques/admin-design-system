@@ -113,8 +113,8 @@ describe('anchored overlays', () => {
 		);
 		const trigger = screen.getByRole('button', { name: 'Ajuda' });
 		// JSDOM não faz layout: uma âncora em (0, 0) exige flip para bottom.
-		// Este teste verifica foco/ARIA com espaço realista acima da âncora.
-		vi.spyOn(trigger.parentElement!, 'getBoundingClientRect').mockReturnValue({
+		// Agora a geometria vem do botão real, não do wrapper flexível; usar espaço realista acima dele.
+		vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
 			top: 100,
 			bottom: 120,
 			left: 100,

@@ -85,6 +85,21 @@ describe('anchored overlays', () => {
 		expect(onOpenChange.mock.calls).toEqual([[true], [false], [true]]);
 	});
 
+	it('does not open a popover when clicking empty space in a stretched anchor', () => {
+		const onOpenChange = vi.fn();
+		const { container } = render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={false}>
+				<AdsButton>Gatilho</AdsButton>
+			</AdsPopover>,
+		);
+		const anchor = container.querySelector('.ads-popover-anchor');
+		expect(anchor).toBeInTheDocument();
+		fireEvent.click(anchor!);
+		expect(onOpenChange).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(onOpenChange).toHaveBeenCalledWith(true);
+	});
+
 	it('preserves a trigger handler that stops propagation', () => {
 		const onOpenChange = vi.fn();
 		const onClick = vi.fn();

@@ -287,6 +287,11 @@ describe('field composition', () => {
 			'[&>.ads-form-control]:min-w-[4rem]',
 		);
 		expect(end).toHaveClass('[&>.ads-button]:whitespace-nowrap');
+		// O grupo rola (overflow clipa): o foco dos filhos fica por dentro, sem outline/anel cortado.
+		expect(end).toHaveClass('[&>.ads-button:focus-visible]:outline-offset-[-2px]');
+		expect(container.querySelector('.ads-input-group')).toHaveClass(
+			'[&>.ads-form-control:focus-visible]:outline-offset-[-2px]',
+		);
 		expect(screen.getByRole('button', { name: 'Limpar' })).not.toHaveClass('whitespace-nowrap');
 	});
 

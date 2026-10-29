@@ -33,3 +33,7 @@ O CSS distribuído é compilado em @admin-ds/components e deve funcionar em Next
 ## Riscos, rollback e revisão
 
 Risco de overflow, foco clipado, bordas sobrepostas e campos demasiado estreitos no zoom 200%. Testes geométricos e snapshots revisados em light/dark. Reverter apenas classes do grupo caso não atendam consumidores, sem mexer na API.
+
+## Foco com rolagem local
+
+O `overflow-x-auto` do grupo clipa outlines/anéis externos dos filhos; por isso o foco visível de input e botões internos é desenhado por dentro (`outline-offset: -2px`, sem anel externo), e o anel do próprio grupo (`focus-within`) permanece. Efeito: grupos passam a rolar em vez de comprimir em larguras insuficientes.

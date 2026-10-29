@@ -536,10 +536,17 @@ export function useAnchoredPosition(
 		let frame: number | null = null;
 		let disposed = false;
 		let fixedOrigin: HTMLDivElement | null = null;
+		// Tooltip e Popover usam um span para eventos e para o portal. Em flex/stretch
+		// esse span pode ocupar toda a largura, enquanto o gatilho visual é compacto.
+		// Medir o elemento visível preserva também gatilhos de largura integral.
+		const measuredAnchor =
+			anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
+				? (anchor.firstElementChild ?? anchor)
+				: anchor;
 		const update = () => {
 			if (disposed) return;
 			const rect = panel.getBoundingClientRect();
-			const anchorRect = anchor.getBoundingClientRect();
+			const anchorRect = measuredAnchor.getBoundingClientRect();
 			// Uma origem fixed conhecida converte rects visuais sem identificar motores
 			// por aliases CSS. Só precisamos medi-la quando há pan da viewport visual.
 			let dx = 0;
@@ -602,6 +609,7 @@ export function useAnchoredPosition(
 		visual?.addEventListener('scroll', schedule);
 		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
 		observer?.observe(anchor);
+		if (measuredAnchor !== anchor) observer?.observe(measuredAnchor);
 		observer?.observe(panel);
 		return () => {
 			disposed = true;

@@ -20,5 +20,6 @@
 ## 4. Gates
 
 - [x] 4.1 Formatar os arquivos via `npx.cmd prettier --write` e aprovar `npm run format`. Evidência: `npm run format` e prettier nos arquivos alterados passam local e na CI (job "Qualidade rápida").
-- [ ] 4.2 Executar e aprovar `npm run validate`, `openspec.cmd validate add-231-ads-masked-input --strict` e `openspec.cmd validate --all --strict`; registrar logs, skips e evidências de testes/E2E.
+- [x] 4.2 Executar e aprovar `npm run validate`, `openspec.cmd validate add-231-ads-masked-input --strict` e `openspec.cmd validate --all --strict`; registrar logs, skips e evidências de testes/E2E.
+      Evidência: CI run 40958737350 no SHA aa8516f com Qualidade rápida, Chromium, Firefox, WebKit, Artefatos de distribuição (inclui verify:optional-peer) e Política de develop em success (Publicar e Validação de release skipped, não contam como aprovação); local: format, lint, typecheck, test:quality, verify:optional-peer e `openspec validate --all --strict` (61). `npm run validate` encadeado local não rodou por falhas ambientais conhecidas (snapshots e Firefox/WebKit ausentes), cobertas pela CI.
 - [x] 4.3 Revisar tipos, exports, bundle sem IMask no root, compatibilidade com consumidores e snapshots intencionais antes de Ready for review. Evidência: CI "Artefatos de distribuição" (`inspect:packages`, `verify:optional-peer`), `verify-package`, typecheck e builds dos apps; revisões somente leitura de a11y e API pública aprovadas sem bloqueantes.

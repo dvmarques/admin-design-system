@@ -25,4 +25,4 @@ Controladores server-safe permanecem compatíveis com renderização no servidor
 
 ## Riscos, rollback e revisão
 
-Mudanças calculadas de largura podem afetar placeholder e alinhamento; comparar antes/depois em temas, zoom e tamanhos. Não atualizar snapshots sem revisão dos deltas. Rollback é remover a regra compartilhada caso regressões não resolvidas sejam identificadas; não há migração de API.
+A troca da fonte do user-agent pela fonte do token pode alterar sutilmente a largura do texto e do placeholder; comparar antes/depois em temas, zoom e tamanhos. Como `classNames` apenas concatena classes (sem tailwind-merge), uma utilitária de fonte do consumidor via `className` compete com `font-sans` pela ordem do CSS (mesma especificidade), como ocorre com as demais utilitárias do controle; a personalização garantida é pelo token `--ads-typography-font-family`. Não atualizar snapshots sem revisão dos deltas. Rollback é remover a regra compartilhada caso regressões não resolvidas sejam identificadas; não há migração de API.

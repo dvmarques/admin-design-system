@@ -26,11 +26,14 @@ const focusableSelector = [
 ].join(',');
 
 /**
- * Elegível ao foco inicial: não desabilitado (inclusive por `fieldset`), sem `inert` e visível
- * (sem `hidden`, `display: none` ou `visibility: hidden` no elemento ou em ancestrais até o contêiner).
+ * Elegível ao foco inicial e ao ciclo de Tab: não desabilitado (inclusive por `fieldset`), sem
+ * `inert`, com `tabindex` não negativo (um `tabindex` explícito negativo sai da ordem de Tab) e
+ * visível (sem `hidden`, `display: none` ou `visibility: hidden` no elemento ou em ancestrais até o
+ * contêiner).
  */
-function isInitialFocusEligible(element: HTMLElement, container: HTMLElement) {
+function isFocusEligible(element: HTMLElement, container: HTMLElement) {
 	if (element.matches(':disabled') || element.closest('[inert]')) return false;
+	if (element.hasAttribute('tabindex') && element.tabIndex < 0) return false;
 	if (getComputedStyle(element).visibility !== 'visible') return false;
 	for (
 		let node: HTMLElement | null = element;
@@ -40,6 +43,28 @@ function isInitialFocusEligible(element: HTMLElement, container: HTMLElement) {
 		if (node.hidden || getComputedStyle(node).display === 'none') return false;
 	}
 	return true;
+}
+
+/**
+ * Candidatos ao foco dentro de `container`, em ordem de documento, já filtrados por elegibilidade e
+ * reduzidos a uma parada de Tab por grupo de rádio: o marcado ou, sem marcado, o primeiro (Tab) ou o
+ * último (Shift+Tab, com `backwards`).
+ */
+function getEligibleFocusableElements(container: HTMLElement, backwards = false) {
+	const eligible = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter(
+		(element) => isFocusEligible(element, container),
+	);
+	const radios = eligible.filter(
+		(element): element is HTMLInputElement =>
+			element instanceof HTMLInputElement && element.type === 'radio' && element.name !== '',
+	);
+	const skipped = new Set<HTMLElement>();
+	for (const radio of radios) {
+		const group = radios.filter((other) => other.name === radio.name && other.form === radio.form);
+		const stop = group.find((other) => other.checked) ?? group[backwards ? group.length - 1 : 0];
+		if (radio !== stop) skipped.add(radio);
+	}
+	return skipped.size === 0 ? eligible : eligible.filter((element) => !skipped.has(element));
 }
 
 export function useStableId(prefix: string) {
@@ -310,10 +335,7 @@ export function useOverlayFocus(
 		const focus = () => {
 			const container = containerRef.current;
 			if (!container) return;
-			const first = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).find(
-				(element) => isInitialFocusEligible(element, container),
-			);
-			(first ?? container).focus();
+			(getEligibleFocusableElements(container)[0] ?? container).focus();
 		};
 		focus();
 		const timer = window.setTimeout(focus, 0);
@@ -347,7 +369,8 @@ export function useOverlayFocus(
 				logicalContains(container, active)
 			)
 				return;
-			const elements = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector));
+			// Reavaliada a cada Tab: a elegibilidade pode mudar com o modal aberto.
+			const elements = getEligibleFocusableElements(container, event.shiftKey);
 			if (elements.length === 0) {
 				event.preventDefault();
 				container.focus();
@@ -355,7 +378,7 @@ export function useOverlayFocus(
 			}
 			const first = elements[0]!;
 			const last = elements[elements.length - 1]!;
-			if (!container.contains(active)) {
+			if (!active || !container.contains(active)) {
 				event.preventDefault();
 				(event.shiftKey ? last : first).focus();
 			} else if (event.shiftKey && active === first) {
@@ -364,6 +387,16 @@ export function useOverlayFocus(
 			} else if (!event.shiftKey && active === last) {
 				event.preventDefault();
 				first.focus();
+			} else if (!elements.includes(active as HTMLElement)) {
+				// O ativo (o contêiner ou um controle que perdeu a elegibilidade) está fora da lista.
+				// Sem destino elegível adiante, o Tab nativo escaparia da camada: dá a volta.
+				const direction = event.shiftKey
+					? Node.DOCUMENT_POSITION_PRECEDING
+					: Node.DOCUMENT_POSITION_FOLLOWING;
+				if (!elements.some((element) => active.compareDocumentPosition(element) & direction)) {
+					event.preventDefault();
+					(event.shiftKey ? last : first).focus();
+				}
 			}
 		};
 		document.addEventListener('keydown', onKeyDown);

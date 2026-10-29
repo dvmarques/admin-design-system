@@ -2,9 +2,6 @@ name: Atualizar baselines visuais
 
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - fix/242-textarea-typography
 
 permissions:
   contents: write

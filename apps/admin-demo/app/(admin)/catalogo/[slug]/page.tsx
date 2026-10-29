@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import { catalogEntries } from '../../../catalogo/catalog-data';
+import { HighlightedCodeApi } from '../../../catalogo/highlighted-code-api';
 import { CatalogPreview } from '../../../catalogo/catalog-preview';
 import snippets from '../../../catalogo/catalog-snippets.json';
 
@@ -21,6 +22,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 			<p>{entry.description}</p>
 			<h2>Exemplos e variações</h2>
 			<CatalogPreview demo={entry.demo} source={snippets[entry.demo]} />
+			{entry.slug === 'highlighted-code-snippet' ? <HighlightedCodeApi /> : null}
 			<h2>Composição e orientações</h2>
 			<p>
 				Use os exports públicos e o CSS compilado dos pacotes. Preserve os rótulos e as relações

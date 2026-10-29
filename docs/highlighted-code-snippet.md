@@ -86,7 +86,7 @@ O conteúdo é renderizado como texto em React a partir dos tokens do Shiki; nã
 
 ## Demonstração
 
-No Admin Demo: **Código destacado** em exemplos de aplicação (`/exemplos/codigo-destacado`) e snippets do catálogo com `language="tsx"`.
+No Admin Demo: a página oficial do componente no catálogo (`/catalogo/highlighted-code-snippet`, grupo Dados, com instalação, props e controles de linguagem, tema, linhas e wrap), o exemplo avançado **Código destacado** (`/exemplos/codigo-destacado`, com ligação recíproca) e os snippets do catálogo com `language="tsx"`. A cobertura do catálogo declara `@admin-ds/highlighted-code` como pacote opcional rastreado: um novo export visual sem página falha `catalog-coverage.test.ts`, e os utilitários sem UI ficam em lista explícita.
 
 ## Bundle
 

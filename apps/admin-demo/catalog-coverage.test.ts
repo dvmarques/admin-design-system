@@ -4,6 +4,7 @@ import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { catalogEntries } from './app/catalogo/catalog-data';
 import {
+	canonicalCatalogPath,
 	catalogFamilies,
 	catalogMemberAnchor,
 	catalogMemberHref,
@@ -11,11 +12,16 @@ import {
 	catalogSearchEntries,
 } from './app/catalogo/catalog-families';
 import { catalogMemberReference } from './app/catalogo/catalog-member-reference';
+import referenceData from './app/catalogo/catalog-member-reference.json';
+import * as adminComponents from '@admin-ds/admin';
+import * as uiComponents from '@admin-ds/components';
 import { catalogDemos } from './app/catalogo/catalog-demos';
 import snippets from './app/catalogo/catalog-snippets.json';
 import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';
 
 const root = resolve(process.cwd()) + '/';
+const referenceKeys = Object.keys(referenceData);
+const publicComponents = { ...uiComponents, ...adminComponents };
 const exclusions = [
 	'fixtureVariants',
 	'getAdsPaginationItems',
@@ -81,6 +87,35 @@ describe('rastreabilidade do catálogo', () => {
 					);
 				}
 			}
+		}
+	});
+
+	it('mantém cada nome público em uma única família, com referência própria e export real', () => {
+		const seen = new Set<string>();
+		for (const family of catalogFamilies) {
+			for (const member of family.members) {
+				expect(seen.has(member), `${member} duplicado`).toBe(false);
+				seen.add(member);
+				// A referência genérica de fallback não deve mascarar membro sem documentação.
+				expect(referenceKeys, member).toContain(member);
+				const [base, part] = member.split('.');
+				if (!part) {
+					expect(
+						catalogEntries.some((entry) => entry.name === member),
+						member,
+					).toBe(true);
+				} else {
+					expect((publicComponents as Record<string, unknown>)[base!]).toHaveProperty(part);
+				}
+			}
+		}
+	});
+
+	it('mantém rotas legadas por export e normaliza a barra final do Pages', () => {
+		for (const entry of catalogEntries) {
+			expect(canonicalCatalogPath(`${entry.href}/`)).toBe(
+				catalogMemberHref(entry.name).split('#')[0],
+			);
 		}
 	});
 

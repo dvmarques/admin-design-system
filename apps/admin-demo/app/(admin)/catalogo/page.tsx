@@ -51,7 +51,7 @@ export default function CatalogPage() {
 									<li key={entry.name}>
 										<Link href={entry.href}>{entry.name}</Link>
 										<p>
-											{entry.family && entry.name !== `Ads${entry.family}`
+											{entry.family && entry.name !== catalogFamilyForName(entry.name)?.root
 												? `${entry.name} · ${entry.family}. `
 												: ''}
 											{entry.description}

@@ -106,7 +106,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 
 O showcase de AdsAdminShell demonstra também `layout="sidebar-header"`, marca oficial e toggle no topo, sem organização obrigatória (#187). A navegação principal preserva ícones e abreviações.
 
-## Evolução #240 — documentação por famílias (planejada/implementada nesta branch)
+## Documentação por famílias (#240)
 
 A sidebar agora mostra uma entrada por família de composição: Tabs, Accordion, Field, Table, Card, List, Dropdown e AdminShell; Dashboard reúne Grid, Panel e MetricCard como componentes independentes, não como partes obrigatórias. Input, InputGroup, PasswordInput, Radio, SelectionGroup, Table/SmartTable e Dialog/ConfirmDialog permanecem independentes.
 

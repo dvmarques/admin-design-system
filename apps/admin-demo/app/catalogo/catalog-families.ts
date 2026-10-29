@@ -121,8 +121,10 @@ export function catalogFamilyRoot(name: string) {
 }
 
 export function canonicalCatalogPath(pathname: string) {
-	const entry = catalogEntries.find((item) => item.href === pathname);
-	return entry ? (catalogFamilyRoot(entry.name)?.href ?? pathname) : pathname;
+	// O export estático do Pages usa trailingSlash; a comparação ignora a barra final.
+	const normalized = pathname.length > 1 ? pathname.replace(/\/+$/, '') : pathname;
+	const entry = catalogEntries.find((item) => item.href === normalized);
+	return entry ? (catalogFamilyRoot(entry.name)?.href ?? normalized) : normalized;
 }
 
 export function catalogMemberHref(name: string) {

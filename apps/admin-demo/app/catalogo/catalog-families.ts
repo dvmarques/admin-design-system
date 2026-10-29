@@ -87,7 +87,13 @@ export function catalogMemberHref(name: string) {
 	const root = catalogFamilyRoot(name);
 	if (!root) return '/catalogo';
 	if (!family || name === root.name) return root.href;
-	return `${root.href}#${catalogMemberAnchor(name)}`;
+	// AdsTabs.List é um alias da mesma seção de AdsTabsList; Root aponta para o topo.
+	const resolved = (family.aliases as readonly string[]).includes(name)
+		? name.endsWith('.Root')
+			? root.name
+			: `${root.name}${name.split('.').at(-1)}`
+		: name;
+	return resolved === root.name ? root.href : `${root.href}#${catalogMemberAnchor(resolved)}`;
 }
 
 export function catalogFamilyMembers(exportName: string) {

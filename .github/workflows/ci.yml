@@ -107,6 +107,8 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_demo != 'false'
       - run: npm run inspect:packages
         if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run verify:optional-peer
+        if: steps.scope.outputs.docs_only != 'true'
 
   e2e:
     name: ${{ matrix.check }}

@@ -48,6 +48,7 @@ test('cenários públicos usam somente exports públicos e têm limites coerente
 		'admin-public',
 		'components-public',
 		'highlighted-code-public',
+		'masked-input-public',
 		'tokens-public',
 	]);
 	for (const [name, scenario] of Object.entries(scenarios)) {
@@ -57,7 +58,7 @@ test('cenários públicos usam somente exports públicos e têm limites coerente
 		for (const [, specifier] of source.matchAll(/from '([^']+)'/g)) {
 			assert.match(
 				specifier,
-				/^@admin-ds\/(tokens|components|admin|highlighted-code)$/,
+				/^@admin-ds\/(tokens|components|components\/masked-input|admin|highlighted-code)$/,
 				`${name}: ${specifier}`,
 			);
 		}

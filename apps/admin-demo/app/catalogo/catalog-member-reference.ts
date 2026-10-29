@@ -7,7 +7,7 @@ export interface CatalogMemberReference {
 	usage: string;
 }
 
-const references: Record<string, CatalogMemberReference> = referenceData;
+const references = referenceData as Record<string, CatalogMemberReference>;
 
 export function catalogMemberReference(name: string): CatalogMemberReference {
 	return references[name] ?? {

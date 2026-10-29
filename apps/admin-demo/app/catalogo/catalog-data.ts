@@ -116,6 +116,15 @@ export const catalogEntries = [
 		href: '/catalogo/password-input',
 	},
 	{
+		name: 'AdsMaskedInput',
+		group: 'Formulários',
+		slug: 'masked-input',
+		demo: 'MaskedInput',
+		description:
+			'Entrada com máscara estática, dinâmica ou numérica, valores bruto e formatado e subpath opcional.',
+		href: '/catalogo/masked-input',
+	},
+	{
 		name: 'AdsTextarea',
 		group: 'Formulários',
 		slug: 'textarea',

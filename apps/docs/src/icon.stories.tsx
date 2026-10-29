@@ -30,3 +30,21 @@ export const Set: Story = {
 		</div>
 	),
 };
+
+export const BuildingMIT: Story = {
+	args: { name: 'building' },
+	parameters: {
+		docs: {
+			description: {
+			story: 'Building06Icon de Hugeicons Free (MIT), com geometria SVG preservada; o aviso integral da licença está em THIRD_PARTY_NOTICES.md.',
+		},
+		},
+	},
+	render: () => (
+		<div className="flex items-center gap-6">
+			<AdsIcon name="building" size="sm" />
+			<AdsIcon name="building" size="md" />
+			<AdsIcon name="building" size="lg" label="Edifício" />
+		</div>
+	),
+};

@@ -231,9 +231,7 @@ for (const theme of ['light', 'dark']) {
 				.filter({ has: page.getByRole('button', { name: 'Popover na borda', exact: true }) });
 			const anchorBefore = (await trigger.boundingBox())!;
 			await page.evaluate(() => window.scrollBy({ top: 80, behavior: 'instant' }));
-			await expect
-				.poll(async () => (await trigger.boundingBox())!.y)
-				.toBeLessThan(anchorBefore.y);
+			await expect.poll(async () => (await trigger.boundingBox())!.y).toBeLessThan(anchorBefore.y);
 			await expect
 				.poll(async () => {
 					const anchor = (await trigger.boundingBox())!;

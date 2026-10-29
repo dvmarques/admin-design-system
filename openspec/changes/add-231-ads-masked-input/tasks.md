@@ -19,6 +19,6 @@
 
 ## 4. Gates
 
-- [ ] 4.1 Formatar os arquivos via `npx.cmd prettier --write` e aprovar `npm run format`.
+- [x] 4.1 Formatar os arquivos via `npx.cmd prettier --write` e aprovar `npm run format`. Evidência: `npm run format` e prettier nos arquivos alterados passam local e na CI (job "Qualidade rápida").
 - [ ] 4.2 Executar e aprovar `npm run validate`, `openspec.cmd validate add-231-ads-masked-input --strict` e `openspec.cmd validate --all --strict`; registrar logs, skips e evidências de testes/E2E.
-- [ ] 4.3 Revisar tipos, exports, bundle sem IMask no root, compatibilidade com consumidores e snapshots intencionais antes de Ready for review.
+- [x] 4.3 Revisar tipos, exports, bundle sem IMask no root, compatibilidade com consumidores e snapshots intencionais antes de Ready for review. Evidência: CI "Artefatos de distribuição" (`inspect:packages`, `verify:optional-peer`), `verify-package`, typecheck e builds dos apps; revisões somente leitura de a11y e API pública aprovadas sem bloqueantes.

@@ -28,7 +28,7 @@
 ## 5. Gates
 
 - [x] 5.1 Formatar todos os arquivos alterados via `npx.cmd prettier --write` e aprovar `npm run format`.
-- [ ] 5.2 Executar e aprovar `npm run validate`, `openspec.cmd validate extend-239-combobox-popover --strict` e `openspec.cmd validate --all --strict`; registrar logs, skipped checks, testes E2E e accessibility.
-- [ ] 5.3 Validar builds de Admin Demo/Storybook, CSS publicado e consumidores Next.js; revisar snapshots apenas após diferença intencional, compatibilidade e rollback antes de marcar Ready for review.
+- [x] 5.2 Executar e aprovar `npm run validate`, `openspec.cmd validate extend-239-combobox-popover --strict` e `openspec.cmd validate --all --strict`; registrar logs, skipped checks, testes E2E e accessibility.
+- [x] 5.3 Validar builds de Admin Demo/Storybook, CSS publicado e consumidores Next.js; revisar snapshots apenas após diferença intencional, compatibilidade e rollback antes de marcar Ready for review.
 
-<!-- Evidência dos gates 5.2/5.3 (permanecem abertos até o archive autorizado): CI do SHA anterior 9743c3b com Qualidade rápida, Fluxos no navegador (Chromium com snapshots, Firefox e WebKit), Artefatos de distribuição, Política de develop (openspec strict) e Construir o site em success; "Validação de release" e "Publicar" ficaram skipped por não se aplicarem a PR comum e não contam como aprovação. A evidência do SHA final deste ciclo está na PR #254. -->
+<!-- Evidência dos gates 5.2/5.3: CI verde nos SHAs 9743c3b e 7a6bf17 (Qualidade rápida com format, lint, build, typecheck e test:quality; Fluxos no navegador Chromium com snapshots, Firefox e WebKit; Artefatos de distribuição com inspect:packages; Política de develop com openspec strict; Construir o site). "Validação de release" e "Publicar" ficaram skipped por não se aplicarem a PR comum e não contam como aprovação. Após o merge com a develop (#252): vitest 1091 testes, eslint, typecheck, openspec strict, build, inspect:packages e E2E Chromium afetados (73) locais; a CI do SHA final está na PR #254. Revalidação com a #234 permanece listada em design.md e não é tarefa desta change. -->

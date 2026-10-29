@@ -3,7 +3,7 @@
 **Data:** 2026-10-29  
 **Issue:** [#257](https://github.com/dvmarques/admin-design-system/issues/257)  
 **PR:** [#258](https://github.com/dvmarques/admin-design-system/pull/258)  
-**Escopo:** os 20 identificadores públicos de `packages/components/src/icon.tsx`.  
+**Escopo:** os 20 identificadores públicos implementados em `packages/components/src/icons/paths.tsx`, com reexport de compatibilidade em `src/icon.tsx`.  
 **Estado na branch da PR:** **todos os 20 SVGs atuais têm código-fonte oficial identificado e licença permissiva MIT ou ISC**. A revisão visual e testes/CI do projeto ainda são gates pendentes.
 
 ## Critério de regularização

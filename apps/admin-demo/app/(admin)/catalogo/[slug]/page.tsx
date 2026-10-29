@@ -75,7 +75,7 @@ export default async function ComponentPage({ params }: { params: Promise<{ slug
 			<ul>
 				{composition.map((item) => (
 					<li key={item.name}>
-						<Link href={item.href} aria-current={item.name === entry.name ? 'page' : undefined}>
+						<Link href={catalogMemberHref(item.name)} aria-current={item.name === entry.name ? 'page' : undefined}>
 							{item.name}
 						</Link>
 					</li>

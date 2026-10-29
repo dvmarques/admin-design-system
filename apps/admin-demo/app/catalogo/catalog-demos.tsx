@@ -614,6 +614,7 @@ export function PaginationDemo() {
 
 export function DialogDemo() {
 	const [open, setOpen] = useState(false);
+	const [locked, setLocked] = useState(false);
 	return (
 		<>
 			<AdsButton onClick={() => setOpen(true)}>Abrir Dialog</AdsButton>
@@ -623,7 +624,28 @@ export function DialogDemo() {
 				open={open}
 				onOpenChange={setOpen}
 			>
-				<p>Conteúdo do painel.</p>
+				<div style={{ display: 'grid', gap: '0.75rem' }}>
+					<p>Conteúdo do painel.</p>
+					{/* Controles desabilitados ou inertes nas pontas não participam do ciclo de Tab. */}
+					<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Dados bloqueados</legend>
+						<AdsField label="Código interno">
+							<AdsInput defaultValue="A-102" />
+						</AdsField>
+					</fieldset>
+					<AdsField label="Nome do registro">
+						<AdsInput />
+					</AdsField>
+					<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+						{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+					</AdsButton>
+					<fieldset disabled={locked} style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Campos finais</legend>
+						<AdsField label="Observação">
+							<AdsInput />
+						</AdsField>
+					</fieldset>
+				</div>
 			</AdsDialog>
 		</>
 	);
@@ -631,6 +653,7 @@ export function DialogDemo() {
 
 export function DrawerDemo() {
 	const [open, setOpen] = useState(false);
+	const [locked, setLocked] = useState(false);
 	return (
 		<>
 			<AdsButton onClick={() => setOpen(true)}>Abrir Drawer</AdsButton>
@@ -640,7 +663,28 @@ export function DrawerDemo() {
 				open={open}
 				onOpenChange={setOpen}
 			>
-				<p>Conteúdo do painel.</p>
+				<div style={{ display: 'grid', gap: '0.75rem' }}>
+					<p>Conteúdo do painel.</p>
+					{/* Controles desabilitados ou inertes nas pontas não participam do ciclo de Tab. */}
+					<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Dados bloqueados</legend>
+						<AdsField label="Código interno">
+							<AdsInput defaultValue="A-102" />
+						</AdsField>
+					</fieldset>
+					<AdsField label="Nome do registro">
+						<AdsInput />
+					</AdsField>
+					<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+						{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+					</AdsButton>
+					<fieldset disabled={locked} style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Campos finais</legend>
+						<AdsField label="Observação">
+							<AdsInput />
+						</AdsField>
+					</fieldset>
+				</div>
 			</AdsDrawer>
 		</>
 	);
@@ -663,6 +707,12 @@ export function ConfirmDialogDemo() {
 				}}
 			>
 				{/* Conteúdo interativo: o foco inicial vai ao primeiro controle elegível, antes de "Cancelar". */}
+				<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+					<legend>Dados bloqueados</legend>
+					<AdsField label="Código interno">
+						<AdsInput defaultValue="A-102" />
+					</AdsField>
+				</fieldset>
 				<AdsField label="Motivo (opcional)">
 					<AdsInput />
 				</AdsField>

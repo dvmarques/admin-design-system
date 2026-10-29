@@ -178,6 +178,7 @@ test('popover: cores forçadas mantêm a seleção perceptível por contorno', a
 	await expect(selected).toHaveAttribute('aria-selected', 'true');
 	await expect(selected).toHaveCSS('outline-style', 'solid');
 	await expect(selected).toHaveCSS('outline-width', '2px');
+	await expect(selected).toHaveCSS('border-inline-start-width', '4px');
 });
 
 test('seletor de organização: falha simulada mantém a organização e o painel', async ({ page }) => {

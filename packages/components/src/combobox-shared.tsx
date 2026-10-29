@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, type Ref } from 'react';
 import { AdsAvatar } from './avatar.js';
 import { AdsIcon } from './icon.js';

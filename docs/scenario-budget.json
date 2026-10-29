@@ -12,7 +12,7 @@
 		"bytes": 30400,
 		"gzipBytes": 11300,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 57500,
+		"cssBytes": 57700,
 		"cssGzipBytes": 9600
 	},
 	"highlighted-code-public": {
@@ -32,7 +32,7 @@
 			"packages/components/dist/styles.css",
 			"packages/admin/dist/styles.css"
 		],
-		"cssBytes": 97300,
+		"cssBytes": 97500,
 		"cssGzipBytes": 14750
 	}
 }

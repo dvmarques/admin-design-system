@@ -386,8 +386,15 @@ de 7 opções (`searchable`), estado sem resultados e `manage` ("Gerenciar organ
 a #239 o painel é o do `AdsCombobox` com `presentation="popover"` (veja
 [AdsCombobox apresentação popover](#adscombobox-apresentação-popover-239)): a API pública, as classes
 `ads-organization-switcher-*` e o visual são os mesmos; só a semântica interna do painel muda, de uma
-lista de botões (`aria-current`) para `listbox`/`option` (`aria-selected`). Quem testa o seletor deve
-procurar `role="option"` no painel e a região `role="status"` (a falha da troca continua `role="alert"`).
+lista de botões (`aria-current`) para `listbox`/`option` (`aria-selected`).
+
+**Possível quebra para testes de consumidores** (não para o código de produção): consultas como
+`getByRole('button', { name: 'Globex' })`, `[aria-current="true"]`, `getByRole('listitem')`,
+`aria-busy` na opção ou `getByRole('alert')` para o erro de carregamento da lista deixam de
+funcionar. Migração: use `getByRole('option', { name })` e `aria-selected="true"` (a opção atual
+continua com o texto "(organização atual)"), `getByRole('option')` em vez de `listitem`, a região
+`getByRole('status')` para "Trocando de organização", carregamento e erro da lista (antes `alert`
+no erro; a falha da troca continua `role="alert"`) e o `searchbox` de antes, que não mudou.
 
 - A aplicação controla `value` e `onValueChange`. Com uma `Promise`, a opção fica pendente e o gatilho
   continua mostrando a organização anterior até `value` mudar; a rejeição mantém o painel aberto com um
@@ -471,6 +478,12 @@ reason)` são a **consulta** (`reason`: `input`, `select` ou `close`). Digitar n
   Escape fecha só o painel. Para Next.js, mantenha o uso em Client Components; o servidor renderiza
   apenas o gatilho fechado, com ids estáveis. O painel é `fixed` no portal e acompanha rolagem e
   redimensionamento.
+- **Orientações ao consumidor:** nomeie o gatilho com `AdsField`/`<label for>` ou `aria-labelledby`
+  (sem `panelLabel`, o diálogo herda o nome do gatilho); em `renderTrigger`, `required` não é
+  propagado ao botão: descreva a obrigatoriedade com `aria-describedby`; o painel limita a altura
+  com `100vh`, então use `max-height` com `dvh` em `panelClassName` se precisar acompanhar a barra de
+  endereço móvel; `statusMessage` substitui o texto do estado na região viva. O destaque do teclado
+  usa contorno próprio (`data-active`) e, em cores forçadas, a opção selecionada tem barra lateral.
 - **Estilo:** o painel, as opções e o rodapé têm classes públicas `ads-combobox__panel`,
   `ads-combobox__option--popover`, `ads-combobox__list-popover`, `ads-combobox__state`,
   `ads-combobox__retry` e `ads-combobox__footer`, estilizadas com tokens `--ads-*`; use

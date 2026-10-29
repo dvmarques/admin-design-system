@@ -3,10 +3,15 @@ import userEvent from '@testing-library/user-event';
 import axe from 'axe-core';
 import { StrictMode, createRef, useState } from 'react';
 import { renderToString } from 'react-dom/server';
-import { describe, expect, it, vi } from 'vitest';
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, expectTypeOf, it, vi } from 'vitest';
 import {
 	AdsAutocomplete,
 	AdsCombobox,
+	type AdsAutocompleteProps,
+	type AdsComboboxProps,
+	type AdsComboboxPopoverProps,
 	AdsDialog,
 	AdsField,
 	type AdsComboboxOption,
@@ -537,5 +542,94 @@ describe('AdsCombobox popover overlays and accessibility', () => {
 		expect(html).toContain('aria-expanded="true"');
 		expect(html).not.toContain('role="listbox"');
 		fireEvent.focus(document.body);
+	});
+});
+
+describe('AdsCombobox popover review follow-ups', () => {
+	it('keeps one persistent, non aria-hidden status region that is filled after mounting', async () => {
+		const events = userEvent.setup();
+		const { rerender } = render(<Basic />);
+		await events.click(trigger());
+		const status = await screen.findByRole('status');
+		expect(status).toBeEmptyDOMElement();
+		expect(status.closest('[aria-hidden="true"]')).toBeNull();
+		rerender(<Basic options={[]} />);
+		expect(screen.getByRole('status')).toBe(status);
+		expect(status).toHaveTextContent('Nenhuma opção encontrada');
+		expect(status).toHaveClass('ads-combobox__state');
+		expect(screen.getAllByRole('status')).toHaveLength(1);
+	});
+
+	it('names the dialog from the trigger when no panelLabel is given', async () => {
+		const events = userEvent.setup();
+		render(<AdsCombobox aria-label="Estado" options={options} presentation="popover" />);
+		await events.click(trigger());
+		expect(await screen.findByRole('dialog', { name: 'Estado' })).toBeVisible();
+	});
+
+	it('only focuses the trigger when it is the first invalid control of the form', () => {
+		render(
+			<form data-testid="f">
+				<input aria-label="Antes" required />
+				<AdsCombobox
+					aria-label="Estado"
+					name="uf"
+					options={options}
+					presentation="popover"
+					required
+				/>
+			</form>,
+		);
+		const form = screen.getByTestId('f') as HTMLFormElement;
+		act(() => {
+			form.reportValidity();
+		});
+		expect(trigger()).not.toHaveFocus();
+		expect(trigger()).toHaveAttribute('aria-invalid', 'true');
+		screen.getByLabelText('Antes').setAttribute('value', 'x');
+		(screen.getByLabelText('Antes') as HTMLInputElement).value = 'x';
+		act(() => {
+			form.reportValidity();
+		});
+		expect(trigger()).toHaveFocus();
+	});
+
+	it('treats Shift+Tab with the focus on the panel itself as the start of the panel', async () => {
+		const events = userEvent.setup();
+		render(
+			<>
+				<input aria-label="Antes" />
+				<Basic loading searchable={false} />
+			</>,
+		);
+		await events.click(trigger());
+		const panel = await screen.findByRole('dialog');
+		await waitFor(() => expect(panel).toHaveFocus());
+		await events.tab({ shift: true });
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(trigger()).toHaveFocus();
+	});
+
+	it('styles the keyboard-active option with its own outline, also over the selected one', () => {
+		const css = readFileSync(join(process.cwd(), 'packages/components/src/styles.css'), 'utf8');
+		expect(css).toMatch(
+			/\.ads-combobox__option--popover\[data-active='true'\]\s*\{[^}]*outline: 2px solid var\(--ads-color-focus-ring\)/,
+		);
+		expect(css).toMatch(
+			/forced-colors: active[^]*aria-selected='true'\]\s*\{\s*border-inline-start: 0\.25rem solid Highlight/,
+		);
+		expect(css).not.toMatch(/\.ads-combobox__option-description\s*\{[^}]*opacity/);
+	});
+
+	it('keeps the public types of the input presentation and AdsAutocomplete intact', () => {
+		expectTypeOf<AdsAutocompleteProps>().toHaveProperty('onValueChange');
+		expectTypeOf<AdsAutocompleteProps['presentation']>().toEqualTypeOf<'input' | undefined>();
+		expectTypeOf<AdsComboboxProps['presentation']>().toEqualTypeOf<'input' | undefined>();
+		expectTypeOf<AdsComboboxPopoverProps['presentation']>().toEqualTypeOf<'popover'>();
+		expectTypeOf<AdsComboboxProps>().not.toHaveProperty('renderTrigger');
+		const ref = createRef<HTMLInputElement>();
+		void (<AdsCombobox options={[]} ref={ref} />);
+		// @ts-expect-error o modo popover não aceita `ref` de input.
+		void (<AdsCombobox options={[]} presentation="popover" ref={ref} />);
 	});
 });

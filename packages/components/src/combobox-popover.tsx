@@ -274,7 +274,8 @@ export function ComboboxPopover({
 		);
 		const current = document.activeElement;
 		const atEnd = !event.shiftKey && (focusable.length === 0 || current === focusable.at(-1));
-		const atStart = event.shiftKey && (focusable.length === 0 || current === focusable[0]);
+		const atStart =
+			event.shiftKey && (focusable.length === 0 || current === panel || current === focusable[0]);
 		if (!atEnd && !atStart) return;
 		dismiss();
 		focusTrigger();
@@ -332,7 +333,11 @@ export function ComboboxPopover({
 		...position.style,
 		'--ads-combobox-anchor-width': `${open ? (rootRef.current?.getBoundingClientRect().width ?? 0) : 0}px`,
 	} as CSSProperties;
-	const liveText = statusMessage ?? (open && stateShown ? stateNode : null);
+	const liveContent = statusMessage ?? (stateShown ? stateNode : null);
+	const [announce, setAnnounce] = useState(false);
+	useEffect(() => {
+		setAnnounce(open);
+	}, [open]);
 	const requiredMessage = 'Selecione uma opção';
 
 	return (
@@ -377,7 +382,13 @@ export function ComboboxPopover({
 						// A interface nativa focaria este controle oculto: o foco vai ao gatilho.
 						event.preventDefault();
 						setInvalid(true);
-						focusTrigger();
+						// Só o primeiro controle inválido do formulário recebe o foco.
+						const first = Array.from(event.currentTarget.form?.elements ?? []).find(
+							(element) =>
+								(element as HTMLInputElement).willValidate &&
+								(element as HTMLInputElement).validity.valid === false,
+						);
+						if (!first || first === event.currentTarget) focusTrigger();
 					}}
 					ref={validityRef}
 					required={required}
@@ -394,6 +405,7 @@ export function ComboboxPopover({
 				<OverlayPortal>
 					<section
 						aria-label={panelLabel}
+						aria-labelledby={panelLabel ? undefined : triggerId}
 						className={classNames('ads-combobox__panel', panelClassName)}
 						data-placement={position.placement}
 						id={panelId}
@@ -427,11 +439,14 @@ export function ComboboxPopover({
 								value={query}
 							/>
 						) : null}
-						{stateShown ? (
-							<div aria-hidden="true" className="ads-combobox__state">
-								{stateNode}
-							</div>
-						) : null}
+						{/* Região viva única e persistente: nasce vazia e é preenchida depois da montagem. */}
+						<div
+							aria-live="polite"
+							className={stateShown ? 'ads-combobox__state' : 'sr-only'}
+							role="status"
+						>
+							{announce ? liveContent : null}
+						</div>
 						<ul
 							aria-activedescendant={
 								!searchable && listVisible && active >= 0 ? listId + '-option-' + active : undefined
@@ -488,9 +503,6 @@ export function ComboboxPopover({
 								{retryLabel}
 							</button>
 						) : null}
-						<span aria-live="polite" className="sr-only" role="status">
-							{liveText}
-						</span>
 						{footer ? <div className="ads-combobox__footer">{footer}</div> : null}
 					</section>
 				</OverlayPortal>

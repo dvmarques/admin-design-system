@@ -506,6 +506,14 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		background-color: var(--ads-color-surface-selected);
 		color: var(--ads-color-on-surface-selected);
 	}
+	/* Destaque do teclado: contorno próprio, visível também sobre a opção selecionada. */
+	.ads-combobox__option--popover[data-active='true'] {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: -2px;
+	}
+	.ads-combobox__option--popover[aria-selected='true'] .ads-combobox__option-description {
+		color: inherit;
+	}
 	.ads-combobox__option--popover[aria-disabled='true'] {
 		cursor: not-allowed;
 		opacity: 0.5;
@@ -518,7 +526,7 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 	}
 	.ads-combobox__option-description {
 		font-size: var(--ads-typography-font-size-xs);
-		opacity: 0.8;
+		color: var(--ads-color-text-muted);
 	}
 	.ads-combobox__state {
 		padding: var(--ads-spacing-2, 0.5rem) var(--ads-spacing-3, 0.75rem);
@@ -544,8 +552,11 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		padding-top: var(--ads-spacing-1, 0.25rem);
 	}
 }
+/* Cores forçadas: selecionada = barra lateral (borda); ativa = contorno; ambas são distintas. */
 @media (forced-colors: active) {
-	.ads-combobox__option--popover[aria-selected='true'],
+	.ads-combobox__option--popover[aria-selected='true'] {
+		border-inline-start: 0.25rem solid Highlight;
+	}
 	.ads-combobox__option--popover[data-active='true'] {
 		outline: 2px solid Highlight;
 		outline-offset: -2px;

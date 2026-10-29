@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react';
 import { AdsAdminShell } from '@admin-ds/admin';
 import { AdsIcon, type AdsIconName } from '@admin-ds/components';
 import { catalogEntries } from './catalogo/catalog-data';
+import { canonicalCatalogPath, catalogFamilyForName } from './catalogo/catalog-families';
 import { StorybookLink } from './storybook-link';
 
 type NavigationIcon = AdsIconName | { initials: string };
@@ -29,7 +30,11 @@ const applications: NavigationItem[] = [
 	{ href: '/data-display', icon: { initials: 'Ex' }, label: 'Exibição de dados' },
 ];
 function catalogItems(entries: (typeof catalogEntries)[number][]): NavigationItem[] {
-	return entries.map((entry) => ({ href: entry.href, label: entry.name.replace(/^Ads/, '') }));
+	return entries.flatMap((entry) => {
+		const family = catalogFamilyForName(entry.name);
+		if (family && entry.name !== family.root) return [];
+		return [{ href: entry.href, label: family?.title ?? entry.name.replace(/^Ads/, '') }];
+	});
 }
 const categoryIcons: Record<string, NavigationIcon> = {
 	Básicos: { initials: 'Bá' },
@@ -84,7 +89,7 @@ function NavigationLink({ item, pathname }: { item: NavigationItem; pathname: st
 		<AdsAdminShell.NavigationItem>
 			<Link
 				href={item.href}
-				aria-current={pathname === item.href ? 'page' : undefined}
+				aria-current={canonicalCatalogPath(pathname) === item.href ? 'page' : undefined}
 				title={item.label}
 			>
 				{item.icon && (
@@ -100,7 +105,7 @@ function NavigationLink({ item, pathname }: { item: NavigationItem; pathname: st
 	);
 }
 function DemoNavigationGroup({ group, pathname }: { group: NavigationGroup; pathname: string }) {
-	const active = group.items.some((item) => item.href === pathname);
+	const active = group.items.some((item) => item.href === canonicalCatalogPath(pathname));
 	const [expanded, setExpanded] = useState(active);
 	useEffect(() => {
 		if (active) setExpanded(true);

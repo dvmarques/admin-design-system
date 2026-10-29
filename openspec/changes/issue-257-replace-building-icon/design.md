@@ -16,6 +16,15 @@ A tabela completa de URLs oficiais, nomes públicos e blob SHAs consultados fica
 - Não alterar nomes, tipagem `AdsIconName`, tamanhos `sm/md/lg`, semântica decorativa/informativa, SSR ou tree-shaking existente.
 - Mudanças de geometria são visuais: revisar o Storybook, os consumidores e baselines visuais afetados, sem gerar snapshots indiscriminadamente.
 
+## Modularização para futura extração
+
+- `packages/components/src/icons/paths.tsx` contém **somente** os 20 SVGs licenciados, com comentários de origem no próprio registro. Não alterar sua geometria nem suas propriedades ao mover.
+- `packages/components/src/icons/types.ts` define `AdsIconName` a partir das chaves de `iconPaths`, `AdsIconSize` e `AdsIconProps`. Isso preserva a união fechada de nomes e a tipagem existente.
+- `packages/components/src/icons/icon.tsx` contém o componente React e os estilos por tamanho. O import relativo de `classNames` permanece uma dependência interna de `@admin-ds/components`.
+- `packages/components/src/icons/index.ts` centraliza os exports internos; `packages/components/src/icon.tsx` permanece um **reexport de compatibilidade** de `./icons/index.js`, para manter os imports públicos e os consumidores existentes, inclusive `src/index.ts`.
+- Nenhuma nova exportação de subpath no `package.json`, pacote npm, biblioteca runtime ou dependência. Uma futura extração para `@admin-ds/icons` requer change separada para resolver `classNames`, distribuição de licenças, tipos e compatibilidade de imports, sem antecipar essa decisão agora.
+- Teste de contrato garante identidade das exportações do módulo público e do reexport, preserva exatamente 20 chaves e verifica HTML de renderização dos nomes.
+
 ## Licenciamento e distribuição
 
 - `THIRD_PARTY_NOTICES.md` na raiz preserva integralmente Feather MIT, Lucide ISC (incluindo seus avisos Feather incorporados) e Hugeicons Free MIT.

@@ -560,6 +560,19 @@ body {
 	grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
 }
 
+.demo-api-table-scroll:focus-visible {
+	outline: 2px solid var(--ads-color-focus-ring);
+	outline-offset: 2px;
+}
+.demo-highlighted-code-page a {
+	color: var(--ads-color-text);
+	text-underline-offset: 0.2em;
+}
+.demo-highlighted-code-page a:focus-visible {
+	outline: 2px solid var(--ads-color-focus-ring);
+	outline-offset: 3px;
+}
+
 .demo-catalog-page a {
 	color: var(--ads-color-text);
 	text-underline-offset: 0.2em;

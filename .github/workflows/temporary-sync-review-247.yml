@@ -1,0 +1,36 @@
+name: Temporary catalog snippet synchronizer 247
+on:
+  push:
+    branches:
+      - feat/241-highlighted-code-catalog
+permissions:
+  contents: write
+jobs:
+  sync:
+    if: "!contains(github.event.head_commit.message, '[sync-review]')"
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts
+      - name: Normalize sources and generate snippets from TSX
+        shell: bash
+        run: |
+          npx prettier --write apps/admin-demo/app/catalogo/catalog-demos.tsx apps/docs/src/highlighted-code.stories.tsx
+          node scripts/catalog-snippets.mjs
+          npx prettier --write apps/admin-demo/app/catalogo/catalog-snippets.json
+      - name: Commit generated excerpts
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -u
+          if ! git diff --cached --quiet; then
+            git commit -m "docs(#247): regenerate catalog snippets from formatted TSX [sync-review]"
+            git push origin HEAD:feat/241-highlighted-code-catalog
+          fi

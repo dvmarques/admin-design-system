@@ -100,16 +100,43 @@ const iconPaths = {
 			<line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" />
 		</>
 	),
-	logOut: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" />,
-	monitor: (
+	// Feather Icons (MIT): icons/log-out.svg.
+	logOut: (
 		<>
-			<rect height="12" rx="2" width="18" x="3" y="4" />
-			<path d="M8 20h8M12 16v4" />
+			<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" strokeWidth="2" />
+			<polyline points="16 17 21 12 16 7" strokeWidth="2" />
+			<line x1="21" y1="12" x2="9" y2="12" strokeWidth="2" />
 		</>
 	),
-	moon: <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />,
-	info: <path d="M12 16v-4m0-4h.01M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0Z" />,
-	plus: <path d="M12 5v14M5 12h14" />,
+	// Feather Icons (MIT): icons/monitor.svg.
+	monitor: (
+		<>
+			<rect x="2" y="3" width="20" height="14" rx="2" ry="2" strokeWidth="2" />
+			<line x1="8" y1="21" x2="16" y2="21" strokeWidth="2" />
+			<line x1="12" y1="17" x2="12" y2="21" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/moon.svg.
+	moon: (
+		<>
+			<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/info.svg.
+	info: (
+		<>
+			<circle cx="12" cy="12" r="10" strokeWidth="2" />
+			<line x1="12" y1="16" x2="12" y2="12" strokeWidth="2" />
+			<line x1="12" y1="8" x2="12.01" y2="8" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/plus.svg.
+	plus: (
+		<>
+			<line x1="12" y1="5" x2="12" y2="19" strokeWidth="2" />
+			<line x1="5" y1="12" x2="19" y2="12" strokeWidth="2" />
+		</>
+	),
 	sun: (
 		<>
 			<circle cx="12" cy="12" r="4" />

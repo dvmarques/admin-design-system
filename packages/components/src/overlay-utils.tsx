@@ -623,7 +623,7 @@ export function useAnchoredPosition(
 			observeTargets();
 			schedule();
 		});
-		mutations.observe(anchor, { childList: true });
+		mutations.observe(anchor, { childList: true, subtree: true, attributeFilter: ['hidden'] });
 		return () => {
 			disposed = true;
 			mutations.disconnect();

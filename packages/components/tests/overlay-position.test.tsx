@@ -112,6 +112,38 @@ describe('anchored portal lifecycle', () => {
 		expect(observers.at(-1)?.observe).toHaveBeenCalledWith(panel);
 	});
 
+	it('reobserves a multi-child trigger when a child toggles hidden while open', async () => {
+		function Multi() {
+			const anchor = useRef<HTMLDivElement>(null);
+			const content = useRef<HTMLDivElement>(null);
+			const position = useAnchoredPosition(true, anchor, content, 'bottom');
+			return (
+				<>
+					<div ref={anchor} className="ads-popover-anchor">
+						<button hidden data-testid="first">
+							Primeiro
+						</button>
+						<button data-testid="second">Segundo</button>
+					</div>
+					<OverlayPortal>
+						<div ref={position.attachContent} style={position.style}>
+							Painel
+						</div>
+					</OverlayPortal>
+				</>
+			);
+		}
+		render(<Multi />);
+		const first = screen.getByTestId('first');
+		const observe = observers.at(-1)!.observe;
+		expect(observe).not.toHaveBeenCalledWith(first);
+		await act(async () => {
+			first.hidden = false;
+		});
+		flush();
+		expect(observe).toHaveBeenCalledWith(first);
+	});
+
 	it('repositions after content and anchor resize and coalesces notifications', () => {
 		render(
 			<StrictMode>

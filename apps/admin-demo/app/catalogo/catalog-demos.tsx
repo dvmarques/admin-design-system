@@ -1621,7 +1621,7 @@ export function HighlightedCodeSnippetDemo() {
 		unknown: 'Este código permanece sem destaque e continua copiável.',
 	};
 	return (
-		<div className="flex flex-col gap-3">
+		<div className="demo-highlighted-code-page">
 			<AdsField label="Linguagem">
 				<AdsSelect
 					value={language}

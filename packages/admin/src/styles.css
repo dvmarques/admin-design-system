@@ -1693,9 +1693,16 @@
 		display: grid;
 		gap: var(--ads-spacing-2);
 		width: min(20rem, calc(100vw - 1rem));
-		max-height: min(26rem, calc(100vh - 4rem));
+		max-height: min(28rem, calc(100vh - 2rem));
 		overflow-y: auto;
-		padding: var(--ads-spacing-2);
+		/* 1rem de respiro do painel somado a 0.5rem do conteúdo, como no seletor anterior. */
+		padding: calc(var(--ads-spacing-4, 1rem) + var(--ads-spacing-2));
+	}
+
+	@media (max-width: 47.99rem) {
+		.ads-combobox__panel.ads-organization-switcher-popover {
+			padding: calc(0.75rem + var(--ads-spacing-2));
+		}
 	}
 
 	.ads-organization-switcher-popover .ads-combobox__option--popover {

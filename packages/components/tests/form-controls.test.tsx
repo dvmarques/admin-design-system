@@ -284,7 +284,7 @@ describe('field composition', () => {
 		expect(container.querySelector('.ads-input-group')).toHaveClass(
 			'max-w-full',
 			'overflow-x-auto',
-			'[&>.ads-form-control]:flex-1',
+			'[&>.ads-form-control]:min-w-[4rem]',
 		);
 		expect(end).toHaveClass('[&>.ads-button]:whitespace-nowrap');
 		expect(screen.getByRole('button', { name: 'Limpar' })).not.toHaveClass('whitespace-nowrap');

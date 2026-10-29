@@ -6,14 +6,29 @@ import {
 	useEffect,
 	useRef,
 	useState,
-	type InputHTMLAttributes,
-	type ReactNode,
+	type ReactElement,
+	type RefAttributes,
 } from 'react';
 import { classNames } from './class-names.js';
 import { formControlClasses } from './form-control-classes.js';
-import { AdsIcon, type AdsIconName } from './icon.js';
-import { AdsAvatar } from './avatar.js';
-import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
+import { AdsIcon } from './icon.js';
+import {
+	OptionVisual,
+	assignRef,
+	defaultOptionMatch,
+	enabledIndicesOf,
+	stepEnabledIndex,
+	useComboboxSelection,
+} from './combobox-shared.js';
+import { ComboboxPopover } from './combobox-popover.js';
+import type {
+	AdsComboboxInputReason,
+	AdsComboboxOption,
+	AdsComboboxPopoverProps,
+	AdsComboboxProps,
+	AdsComboboxQueryReason,
+	AdsComboboxTriggerContext,
+} from './combobox-types.js';
 import {
 	OverlayPortal,
 	useAnchoredPosition,
@@ -22,51 +37,17 @@ import {
 	useStableId,
 } from './overlay-utils.js';
 
-export interface AdsComboboxOption {
-	value: string;
-	label: string;
-	disabled?: boolean;
-	description?: string;
-	icon?: AdsIconName;
-	avatar?: { src?: string | undefined; fallback: string };
-}
-
-export type AdsComboboxInputReason = 'input' | 'select' | 'clear';
-
-export interface AdsComboboxProps
-	extends
-		Omit<
-			InputHTMLAttributes<HTMLInputElement>,
-			'children' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'name' | 'className'
-		>,
-		AdsFormControlBase {
-	options: readonly AdsComboboxOption[];
-	value?: string | null;
-	defaultValue?: string | null;
-	onValueChange?: (value: string | null, option: AdsComboboxOption | null) => void;
-	inputValue?: string;
-	defaultInputValue?: string;
-	onInputValueChange?: (text: string, reason: AdsComboboxInputReason) => void;
-	open?: boolean;
-	defaultOpen?: boolean;
-	onOpenChange?: (open: boolean) => void;
-	renderOption?: (option: AdsComboboxOption) => ReactNode;
-	showOptionVisuals?: boolean;
-	filterOptions?: boolean;
-	loading?: boolean;
-	error?: ReactNode;
-	emptyText?: string;
-	loadingText?: string;
-	clearLabel?: string;
-	clearable?: boolean;
-	size?: AdsFormSize;
-	name?: string;
-	selectedOption?: AdsComboboxOption | null;
-	onRetry?: () => void;
-}
+export type {
+	AdsComboboxInputReason,
+	AdsComboboxOption,
+	AdsComboboxPopoverProps,
+	AdsComboboxProps,
+	AdsComboboxQueryReason,
+	AdsComboboxTriggerContext,
+};
 
 /** Single-select ARIA combobox. The selected value and the input text are separate states. */
-export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(function AdsCombobox(
+const ComboboxInput = forwardRef<HTMLInputElement, AdsComboboxProps>(function ComboboxInput(
 	{
 		['aria-describedby']: describedBy,
 		['aria-invalid']: ariaInvalid,
@@ -106,15 +87,16 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	},
 	forwardedRef,
 ) {
-	const [uncontrolledValue, setUncontrolledValue] = useState<string | null>(defaultValue);
-	const selectedValue = value !== undefined ? value : uncontrolledValue;
+	const { selected, selectedValue, setCachedOption, setUncontrolledValue } = useComboboxSelection({
+		defaultValue,
+		options,
+		selectedOption,
+		value,
+	});
 	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
 	const open = !disabled && !readOnly && (controlledOpen ?? uncontrolledOpen);
 	const [draftInput, setDraftInput] = useState(defaultInputValue ?? '');
 	const [editing, setEditing] = useState(defaultInputValue !== undefined && selectedValue === null);
-	const [cachedOption, setCachedOption] = useState<AdsComboboxOption | null>(
-		selectedOption ?? null,
-	);
 	const [activeIndex, setActiveIndex] = useState(-1);
 	const rootRef = useRef<HTMLDivElement>(null);
 	const inputRef = useRef<HTMLInputElement>(null);
@@ -125,10 +107,6 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	const stableInputId = useStableId('ads-combobox-input');
 	const listId = useStableId('ads-combobox-list');
 	const inputId = id ?? stableInputId;
-	const selected =
-		options.find((option) => option.value === selectedValue) ??
-		(selectedOption?.value === selectedValue ? selectedOption : null) ??
-		(cachedOption?.value === selectedValue ? cachedOption : null);
 	// Reset externo: restaurar o rótulo da seleção por `inputValue` encerra a edição.
 	const [previousInputValue, setPreviousInputValue] = useState(inputValue);
 	if (inputValue !== previousInputValue) {
@@ -154,13 +132,9 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		.trim()
 		.toLocaleLowerCase();
 	const matches = filterOptions
-		? options.filter(
-				(option) =>
-					option.label.toLocaleLowerCase().includes(query) ||
-					option.value.toLocaleLowerCase().includes(query),
-			)
+		? options.filter((option) => defaultOptionMatch(option, query))
 		: options;
-	const enabledIndices = matches.flatMap((option, index) => (option.disabled ? [] : [index]));
+	const enabledIndices = enabledIndicesOf(matches);
 	const active = enabledIndices.includes(activeIndex) ? activeIndex : -1;
 	const position = useAnchoredPosition(open, rootRef, listRef, 'bottom', 'start');
 
@@ -230,14 +204,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		if (!open) setOpen(true);
 		if (loading || error || enabledIndices.length === 0) return;
 		keyboardNavigationRef.current = true;
-		const position = enabledIndices.indexOf(active);
-		const next =
-			direction === 'next'
-				? (position + 1) % enabledIndices.length
-				: position < 0
-					? enabledIndices.length - 1
-					: (position - 1 + enabledIndices.length) % enabledIndices.length;
-		setActiveIndex(enabledIndices[next]!);
+		setActiveIndex(stepEnabledIndex(enabledIndices, active, direction));
 	};
 	return (
 		<div className="ads-combobox relative w-full min-w-0" ref={rootRef}>
@@ -323,8 +290,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 					required={required}
 					ref={(node) => {
 						inputRef.current = node;
-						if (typeof forwardedRef === 'function') forwardedRef(node);
-						else if (forwardedRef) forwardedRef.current = node;
+						assignRef(forwardedRef, node);
 					}}
 					role="combobox"
 					type="text"
@@ -507,9 +473,25 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	);
 });
 
-function OptionVisual({ option }: { option: AdsComboboxOption }) {
-	if (option.avatar)
-		return <AdsAvatar size="sm" fallback={option.avatar.fallback} src={option.avatar.src} />;
-	if (option.icon) return <AdsIcon name={option.icon} size="sm" />;
-	return null;
+export interface AdsComboboxComponent {
+	/** Apresentação botão → popover com pesquisa separada. */
+	(props: AdsComboboxPopoverProps): ReactElement | null;
+	/** Campo editável com lista de sugestões (padrão); o `ref` aponta ao `input`. */
+	(props: AdsComboboxProps & RefAttributes<HTMLInputElement>): ReactElement | null;
+	displayName?: string;
 }
+
+/**
+ * Single-select combobox. `presentation="input"` (padrão) é o campo editável com sugestões;
+ * `presentation="popover"` é um botão que abre um painel com pesquisa separada e lista.
+ */
+export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps | AdsComboboxPopoverProps>(
+	function AdsCombobox(props, ref) {
+		if (props.presentation === 'popover') return <ComboboxPopover {...props} />;
+		// `presentation` seleciona o modo e não é um atributo do `input`.
+		const inputProps: AdsComboboxProps = { ...props };
+		delete inputProps.presentation;
+		return <ComboboxInput {...inputProps} ref={ref} />;
+	},
+) as unknown as AdsComboboxComponent;
+AdsCombobox.displayName = 'AdsCombobox';

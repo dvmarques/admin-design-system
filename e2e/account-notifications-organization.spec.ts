@@ -132,12 +132,9 @@ for (const theme of ['light', 'dark'] as const) {
 			await expectNoAxeViolations(page);
 
 			await panel.getByRole('searchbox').fill('globex');
-			await expect(panel.getByRole('listitem')).toHaveCount(1);
-			await panel.getByRole('button', { name: /^Globex/ }).click();
-			await expect(panel.getByRole('button', { name: /^Globex/ })).toHaveAttribute(
-				'aria-busy',
-				'true',
-			);
+			await expect(panel.getByRole('option')).toHaveCount(1);
+			await panel.getByRole('option', { name: /^Globex/ }).click();
+			await expect(panel.getByRole('status')).toHaveText('Trocando de organização');
 			await expect(trigger).toContainText('Acme Brasil');
 
 			await expect(panel).toBeHidden();
@@ -160,7 +157,7 @@ for (const theme of ['light', 'dark'] as const) {
 			const panel = page.getByRole('dialog', { name: 'Trocar de organização' });
 			await expect(panel).toBeVisible();
 			await panel.getByRole('searchbox').fill('initech');
-			await panel.getByRole('button', { name: /^Initech/ }).click();
+			await panel.getByRole('option', { name: /^Initech/ }).click();
 			await expect(panel).toBeHidden();
 			await expect(trigger).toHaveAttribute('aria-label', /Initech/);
 			await expect(page.getByRole('button', { name: 'Expandir barra lateral' })).toBeVisible();
@@ -180,7 +177,7 @@ for (const theme of ['light', 'dark'] as const) {
 			expect(box!.x).toBeGreaterThanOrEqual(0);
 			expect(box!.x + box!.width).toBeLessThanOrEqual(375);
 			await panel.getByRole('searchbox').fill('wayne');
-			await panel.getByRole('button', { name: /^Wayne/ }).click();
+			await panel.getByRole('option', { name: /^Wayne/ }).click();
 			await expect(drawer.getByRole('button', { name: /^Organização atual: / })).toContainText(
 				'Wayne Participações',
 			);

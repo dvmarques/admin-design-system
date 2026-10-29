@@ -79,12 +79,15 @@ describe('AdsOrganizationSwitcher panel', () => {
 		const panel = await screen.findByRole('dialog', { name: 'Trocar de organização' });
 		expect(trigger()).toHaveAttribute('aria-expanded', 'true');
 		expect(trigger()).toHaveAttribute('aria-controls', panel.id);
-		const current = within(panel).getByRole('button', { name: /^Acme Brasil/ });
-		expect(current).toHaveAttribute('aria-current', 'true');
+		const current = within(panel).getByRole('option', { name: /^Acme Brasil/ });
+		expect(current).toHaveAttribute('aria-selected', 'true');
 		expect(current).toHaveTextContent('(organização atual)');
-		await waitFor(() => expect(current).toHaveFocus());
-		expect(within(panel).getByRole('button', { name: 'Globex' })).not.toHaveAttribute(
-			'aria-current',
+		const list = within(panel).getByRole('listbox', { name: 'Organizações' });
+		await waitFor(() => expect(list).toHaveFocus());
+		expect(list).toHaveAttribute('aria-activedescendant', current.id);
+		expect(within(panel).getByRole('option', { name: 'Globex' })).toHaveAttribute(
+			'aria-selected',
+			'false',
 		);
 	});
 
@@ -94,7 +97,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 		setup({ onValueChange });
 		await events.click(trigger());
 
-		await events.click(await screen.findByRole('button', { name: 'Globex' }));
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 
 		expect(onValueChange).toHaveBeenCalledWith('globex');
 		expect(screen.queryByRole('dialog')).toBeNull();
@@ -108,7 +111,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 		setup({ onValueChange });
 		await events.click(trigger());
 
-		await events.click(await screen.findByRole('button', { name: /^Acme Brasil/ }));
+		await events.click(await screen.findByRole('option', { name: /^Acme Brasil/ }));
 
 		expect(onValueChange).not.toHaveBeenCalled();
 		expect(screen.queryByRole('dialog')).toBeNull();
@@ -120,8 +123,8 @@ describe('AdsOrganizationSwitcher panel', () => {
 		setup({ onValueChange });
 		await events.click(trigger());
 
-		const initech = await screen.findByRole('button', { name: 'Initech' });
-		expect(initech).toBeDisabled();
+		const initech = await screen.findByRole('option', { name: 'Initech' });
+		expect(initech).toHaveAttribute('aria-disabled', 'true');
 		await events.click(initech);
 		expect(onValueChange).not.toHaveBeenCalled();
 	});
@@ -131,7 +134,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 		render(<AdsOrganizationSwitcher defaultValue="acme" organizations={organizations} />);
 		await events.click(trigger());
 
-		await events.click(await screen.findByRole('button', { name: 'Globex' }));
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 
 		expect(screen.getByRole('button', { name: /Organização atual: Globex/ })).toBeVisible();
 	});
@@ -163,12 +166,17 @@ describe('AdsOrganizationSwitcher panel', () => {
 		const events = userEvent.setup();
 		setup();
 		await events.click(trigger());
-		const acme = await screen.findByRole('button', { name: /^Acme Brasil/ });
-		await waitFor(() => expect(acme).toHaveFocus());
+		const acme = await screen.findByRole('option', { name: /^Acme Brasil/ });
+		const list = screen.getByRole('listbox');
+		await waitFor(() => expect(list).toHaveFocus());
+		expect(list).toHaveAttribute('aria-activedescendant', acme.id);
 
 		await events.keyboard('{ArrowDown}');
 
-		expect(screen.getByRole('button', { name: 'Globex' })).toHaveFocus();
+		expect(list).toHaveAttribute(
+			'aria-activedescendant',
+			screen.getByRole('option', { name: 'Globex' }).id,
+		);
 	});
 
 	it('hides the search for few organizations and shows it for many', async () => {
@@ -201,13 +209,13 @@ describe('AdsOrganizationSwitcher panel', () => {
 		const search = await screen.findByRole('searchbox');
 
 		await events.type(search, 'agua');
-		expect(screen.getAllByRole('listitem')).toHaveLength(1);
-		expect(screen.getByRole('button', { name: /Água Azul/ })).toBeVisible();
+		expect(screen.getAllByRole('option')).toHaveLength(1);
+		expect(screen.getByRole('option', { name: /Água Azul/ })).toBeVisible();
 
 		await events.clear(search);
 		await events.type(search, 'inexistente');
 		expect(screen.getByRole('status')).toHaveTextContent('Nenhuma organização encontrada.');
-		expect(screen.queryByRole('list')).toBeNull();
+		expect(screen.queryByRole('listbox')).toBeNull();
 	});
 
 	it('can force the search for a short list', async () => {
@@ -250,7 +258,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 		setup({ organizations: [organizations[0]!] });
 		await events.click(trigger());
 
-		expect(await screen.findAllByRole('listitem')).toHaveLength(1);
+		expect(await screen.findAllByRole('option')).toHaveLength(1);
 		expect(screen.queryByRole('searchbox')).toBeNull();
 	});
 
@@ -269,7 +277,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 				value="acme"
 			/>,
 		);
-		expect(screen.getByRole('alert')).toHaveTextContent('Não foi possível carregar');
+		expect(screen.getByRole('status')).toHaveTextContent('Não foi possível carregar');
 		await events.click(screen.getByRole('button', { name: 'Tentar novamente' }));
 		expect(onRetry).toHaveBeenCalledTimes(1);
 	});
@@ -299,16 +307,23 @@ describe('AdsOrganizationSwitcher panel', () => {
 		render(<Controlled />);
 		await events.click(trigger());
 
-		await events.click(await screen.findByRole('button', { name: 'Globex' }));
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 
-		const globex = screen.getByRole('button', { name: 'Globex' });
-		expect(globex).toHaveAttribute('aria-busy', 'true');
-		expect(globex).not.toHaveAttribute('aria-current');
-		expect(screen.getByRole('button', { name: /^Acme Brasil/ })).toHaveAttribute(
-			'aria-current',
+		const globex = screen.getByRole('option', { name: 'Globex' });
+		expect(globex).toHaveAttribute('aria-selected', 'false');
+		expect(screen.getByRole('status')).toHaveTextContent('Trocando de organização');
+		expect(screen.getByRole('option', { name: /^Acme Brasil/ })).toHaveAttribute(
+			'aria-selected',
 			'true',
 		);
-		expect(screen.getByRole('button', { name: /^Acme Brasil/ })).toBeDisabled();
+		expect(screen.getByRole('option', { name: /^Acme Brasil/ })).toHaveAttribute(
+			'aria-disabled',
+			'true',
+		);
+		// Outra troca não é executada enquanto a primeira está pendente.
+		await events.click(screen.getByRole('option', { name: /^Acme Brasil/ }));
+		expect(onValueChange).toHaveBeenCalledTimes(1);
+		expect(trigger()).toHaveTextContent('Acme Brasil');
 		expect(screen.getByRole('dialog')).toBeVisible();
 
 		await act(async () => resolve());
@@ -322,12 +337,12 @@ describe('AdsOrganizationSwitcher panel', () => {
 		setup({ onValueChange });
 		await events.click(trigger());
 
-		await events.click(await screen.findByRole('button', { name: 'Globex' }));
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 
 		expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível trocar');
 		expect(screen.getByRole('dialog')).toBeVisible();
 		expect(trigger()).toHaveTextContent('Acme Brasil');
-		expect(screen.getByRole('button', { name: 'Globex' })).toBeEnabled();
+		expect(screen.getByRole('option', { name: 'Globex' })).not.toHaveAttribute('aria-disabled');
 	});
 
 	it('keeps the controlled value when the consumer does not update it', async () => {
@@ -335,7 +350,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 		setup({ onValueChange: vi.fn() });
 		await events.click(trigger());
 
-		await events.click(await screen.findByRole('button', { name: 'Globex' }));
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 
 		expect(trigger()).toHaveTextContent('Acme Brasil');
 	});
@@ -377,11 +392,11 @@ describe('AdsOrganizationSwitcher focus', () => {
 		const { rerender } = setup({ status: 'loading' });
 		await events.click(trigger());
 		const panel = await screen.findByRole('dialog', { name: 'Trocar de organização' });
-		await waitFor(() => expect(panel.firstElementChild).toHaveFocus());
+		await waitFor(() => expect(panel).toHaveFocus());
 
 		rerender(<AdsOrganizationSwitcher organizations={organizations} status="ready" value="acme" />);
 
-		await waitFor(() => expect(screen.getByRole('button', { name: /^Acme Brasil/ })).toHaveFocus());
+		await waitFor(() => expect(screen.getByRole('listbox')).toHaveFocus());
 	});
 
 	it('does not steal the focus when a pending switch resolves after the panel was dismissed', async () => {
@@ -404,7 +419,7 @@ describe('AdsOrganizationSwitcher focus', () => {
 			</>,
 		);
 		await events.click(trigger());
-		await events.click(await screen.findByRole('button', { name: 'Globex' }));
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 		await events.keyboard('{Escape}');
 		screen.getByLabelText('Outro campo').focus();
 
@@ -479,13 +494,102 @@ it('uses each configured avatar tone in the trigger and options after switching'
 	expect(trigger().querySelector('.ads-avatar')).toHaveClass('bg-primary');
 	await events.click(trigger());
 	const panel = await screen.findByRole('dialog', { name: 'Trocar de organização' });
-	const option = within(panel).getByRole('button', { name: /^Globex/ });
+	const option = within(panel).getByRole('option', { name: /^Globex/ });
 	expect(option.querySelector('.ads-avatar')).toHaveClass('bg-success-background');
 	expect(
 		within(panel)
-			.getByRole('button', { name: /^Acme Brasil/ })
+			.getByRole('option', { name: /^Acme Brasil/ })
 			.querySelector('.ads-avatar'),
 	).toHaveClass('bg-primary');
 	await events.click(option);
 	expect(trigger(/Globex/).querySelector('.ads-avatar')).toHaveClass('bg-success-background');
+});
+
+describe('AdsOrganizationSwitcher composes the AdsCombobox popover', () => {
+	it('renders the primitive panel with a listbox, a labelled dialog and no nested interactive options', async () => {
+		const events = userEvent.setup();
+		setup({ manage: { href: '/organizacoes' }, searchable: true });
+		await events.click(trigger());
+
+		const panel = await screen.findByRole('dialog', { name: 'Trocar de organização' });
+		expect(panel).toHaveClass('ads-combobox__panel', 'ads-organization-switcher-popover');
+		const list = within(panel).getByRole('listbox', { name: 'Organizações' });
+		expect(list).not.toContainElement(within(panel).getByRole('link', { name: /Gerenciar/ }));
+		for (const option of within(list).getAllByRole('option'))
+			expect(option.querySelector('button, a, input')).toBeNull();
+		expect(screen.queryByRole('combobox')).toBeNull();
+		expect(trigger()).toHaveAttribute('aria-haspopup', 'dialog');
+	});
+
+	it('does not confirm an uncontrolled switch until the promise resolves', async () => {
+		const events = userEvent.setup();
+		let resolve: () => void = () => undefined;
+		render(
+			<AdsOrganizationSwitcher
+				defaultValue="acme"
+				onValueChange={() =>
+					new Promise<void>((done) => {
+						resolve = done;
+					})
+				}
+				organizations={organizations}
+			/>,
+		);
+		await events.click(trigger());
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
+
+		expect(trigger()).toHaveTextContent('Acme Brasil');
+		expect(screen.getByRole('dialog')).toBeVisible();
+
+		await act(async () => resolve());
+		await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
+		expect(screen.getByRole('button', { name: /Organização atual: Globex/ })).toHaveFocus();
+	});
+
+	it('reports a synchronous failure and keeps the previous organization', async () => {
+		const events = userEvent.setup();
+		setup({
+			onValueChange: () => {
+				throw new Error('falha');
+			},
+		});
+		await events.click(trigger());
+		await events.click(await screen.findByRole('option', { name: 'Globex' }));
+
+		expect(await screen.findByRole('alert')).toHaveTextContent('Não foi possível trocar');
+		expect(trigger()).toHaveTextContent('Acme Brasil');
+		expect(screen.getByRole('dialog')).toBeVisible();
+	});
+
+	it('clears the search when the panel closes and keeps manage with a callback in the footer', async () => {
+		const events = userEvent.setup();
+		const onSelect = vi.fn();
+		setup({ manage: { onSelect }, searchable: true });
+		await events.click(trigger());
+		await events.type(await screen.findByRole('searchbox'), 'glo');
+		expect(screen.getAllByRole('option')).toHaveLength(1);
+		await events.keyboard('{Escape}');
+		await events.click(trigger());
+		expect(await screen.findByRole('searchbox')).toHaveValue('');
+		expect(screen.getAllByRole('option')).toHaveLength(3);
+		await events.click(screen.getByRole('button', { name: 'Gerenciar organizações' }));
+		expect(onSelect).toHaveBeenCalledTimes(1);
+		expect(screen.queryByRole('dialog')).toBeNull();
+		expect(trigger()).toHaveFocus();
+	});
+
+	it('selects with the keyboard from the search field in a long list', async () => {
+		const events = userEvent.setup();
+		const onValueChange = vi.fn();
+		const many = Array.from({ length: 8 }, (_, index) => ({
+			id: `o${index}`,
+			name: `Empresa ${index}`,
+		}));
+		setup({ organizations: many, value: 'o0', onValueChange });
+		await events.click(screen.getByRole('button', { name: /Organização atual: Empresa 0/ }));
+		const search = await screen.findByRole('searchbox');
+		await events.type(search, 'empresa 5');
+		await events.keyboard('{Enter}');
+		expect(onValueChange).toHaveBeenCalledWith('o5');
+	});
 });

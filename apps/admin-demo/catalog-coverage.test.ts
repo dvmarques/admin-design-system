@@ -63,7 +63,13 @@ describe('rastreabilidade do catálogo', () => {
 			}
 			for (const alias of family.aliases) {
 				expect(catalogSearchEntries.some((entry) => entry.name === alias)).toBe(true);
-				expect(catalogMemberHref(alias)).toContain(root!.href);
+				const destination = catalogMemberHref(alias);
+				expect(destination).toContain(root!.href);
+				if (!alias.endsWith('.Root')) {
+					const anchor = destination.split('#')[1];
+					expect(anchor).toBeDefined();
+					expect(family.members.some((member) => catalogMemberAnchor(member) === anchor)).toBe(true);
+				}
 			}
 		}
 	});

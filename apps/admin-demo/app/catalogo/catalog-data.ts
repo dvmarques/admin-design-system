@@ -363,6 +363,14 @@ export const catalogEntries = [
 		href: '/catalogo/progress',
 	},
 	{
+		name: 'AdsHighlightedCodeSnippet',
+		group: 'Dados',
+		slug: 'highlighted-code-snippet',
+		demo: 'HighlightedCodeSnippet',
+		description: 'Código com Shiki em pacote opcional: TSX, Java, SQL, JSON, temas, cópia e fallback; código destacado, CodeSnippet.',
+		href: '/catalogo/highlighted-code-snippet',
+	},
+	{
 		name: 'AdsTable',
 		group: 'Dados',
 		slug: 'table',

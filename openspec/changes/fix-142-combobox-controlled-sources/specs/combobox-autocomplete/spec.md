@@ -8,7 +8,7 @@ O `AdsCombobox` MUST tratar como texto livre um `inputValue` controlado que dive
 
 - **WHEN** o consumidor altera `inputValue` externamente sem alterar `value`
 - **THEN** o formulário não envia o `value` antigo por `name`
-- **AND** voltar o texto ao rótulo da opção restaura o envio do `value`
+- **AND** voltar o texto ao rótulo da opção restaura o envio do `value`, inclusive após uma edição do usuário
 
 ### Requirement: Identidade da origem de dados
 
@@ -18,6 +18,11 @@ O `AdsAutocomplete` MUST permitir identificar a origem dos dados por `requestKey
 
 - **WHEN** `requestKey` muda mantendo o mesmo termo pesquisado
 - **THEN** a consulta anterior é abortada, os resultados antigos deixam de ser exibidos e a busca é refeita
+
+#### Scenario: Primeiro render após a troca
+
+- **WHEN** `requestKey` muda e uma resposta ou erro da origem anterior já estava armazenado
+- **THEN** o primeiro render da nova origem não exibe esses dados
 
 #### Scenario: Função inline
 

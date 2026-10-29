@@ -600,4 +600,51 @@ describe('revisão da #142: origens e texto controlado externos', () => {
 		});
 		expect(loader).toHaveBeenCalledTimes(1);
 	});
+	it('não renderiza resultados da origem anterior no primeiro render da nova requestKey', async () => {
+		const seen: string[] = [];
+		const field = (
+			key: string,
+			loadOptions: () => Promise<readonly { value: string; label: string }[]>,
+		) => (
+			<AdsAutocomplete
+				aria-label="Busca"
+				debounceMs={0}
+				inputValue="op"
+				loadOptions={loadOptions}
+				renderOption={(option) => {
+					seen.push(option.label);
+					return option.label;
+				}}
+				requestKey={key}
+			/>
+		);
+		const { rerender } = render(field('a', async () => [{ value: 'A', label: 'Opção A' }]));
+		fireEvent.focus(screen.getByRole('combobox', { name: 'Busca' }));
+		await screen.findByRole('option', { name: 'Opção A' });
+		seen.length = 0;
+		rerender(field('b', () => new Promise(() => {})));
+		expect(seen).not.toContain('Opção A');
+		expect(screen.queryByRole('option', { name: 'Opção A' })).toBeNull();
+	});
+
+	it('restaura o value ao devolver externamente o rótulo após uma edição', () => {
+		const field = (inputValue: string) => (
+			<form>
+				<AdsCombobox
+					aria-label="Estado"
+					inputValue={inputValue}
+					name="uf"
+					options={states}
+					value="SP"
+				/>
+			</form>
+		);
+		const { container, rerender } = render(field('São Paulo'));
+		const input = screen.getByRole('combobox', { name: 'Estado' });
+		fireEvent.change(input, { target: { value: 'Rio' } });
+		rerender(field('Rio'));
+		expect(new FormData(container.querySelector('form')!).get('uf')).toBe('');
+		rerender(field('São Paulo'));
+		expect(new FormData(container.querySelector('form')!).get('uf')).toBe('SP');
+	});
 });

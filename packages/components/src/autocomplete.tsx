@@ -45,11 +45,16 @@ export function AdsAutocomplete({
 	});
 	const [retryKey, setRetryKey] = useState(0);
 	const [remoteResult, setRemoteResult] = useState<{
+		key: AdsAutocompleteProps['requestKey'];
 		query: string;
 		options: readonly AdsComboboxOption[];
 	} | null>(null);
 	const [loading, setLoading] = useState(false);
-	const [requestError, setRequestError] = useState<{ query: string; message: string } | null>(null);
+	const [requestError, setRequestError] = useState<{
+		key: AdsAutocompleteProps['requestKey'];
+		query: string;
+		message: string;
+	} | null>(null);
 	const generation = useRef(0);
 	const loadOptionsRef = useRef(loadOptions);
 	const onLoadErrorRef = useRef(onLoadError);
@@ -81,13 +86,14 @@ export function AdsAutocomplete({
 					.then(() => loadOptionsRef.current?.(query, controller.signal) ?? [])
 					.then((results) => {
 						if (controller.signal.aborted || requestId !== generation.current) return;
-						setRemoteResult({ query, options: results });
+						setRemoteResult({ key: requestKey, query, options: results });
 						setRequestError(null);
 						setLoading(false);
 					})
 					.catch((reason: unknown) => {
 						if (controller.signal.aborted || requestId !== generation.current) return;
 						setRequestError({
+							key: requestKey,
 							query,
 							message: (reason instanceof Error && reason.message) || 'Falha ao buscar opções',
 						});
@@ -104,8 +110,10 @@ export function AdsAutocomplete({
 		};
 	}, [debounceMs, disabled, minQueryLength, query, requestKey, retryKey, remote, suppressRemote]);
 	const ready = !disabled && !suppressRemote && query.trim().length >= minQueryLength;
-	const visibleOptions = remoteResult?.query === query ? remoteResult.options : [];
-	const visibleError = requestError?.query === query ? requestError.message : null;
+	const visibleOptions =
+		remoteResult?.query === query && remoteResult.key === requestKey ? remoteResult.options : [];
+	const visibleError =
+		requestError?.query === query && requestError.key === requestKey ? requestError.message : null;
 	// Invalidate responses on the input event, before an obsolete provider settles.
 	const onTyping: AdsComboboxProps['onInputValueChange'] = (text, reason) => {
 		generation.current += 1;

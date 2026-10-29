@@ -129,6 +129,12 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		options.find((option) => option.value === selectedValue) ??
 		(selectedOption?.value === selectedValue ? selectedOption : null) ??
 		(cachedOption?.value === selectedValue ? cachedOption : null);
+	// Reset externo: restaurar o rótulo da seleção por `inputValue` encerra a edição.
+	const [previousInputValue, setPreviousInputValue] = useState(inputValue);
+	if (inputValue !== previousInputValue) {
+		setPreviousInputValue(inputValue);
+		if (editing && selected && inputValue === selected.label) setEditing(false);
+	}
 	// Valores antigos não podem ser enviados enquanto o input exibe texto livre, inclusive quando
 	// o texto controlado diverge externamente do rótulo da opção selecionada.
 	const textDiverges =

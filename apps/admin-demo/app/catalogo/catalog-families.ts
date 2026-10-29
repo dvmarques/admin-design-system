@@ -11,8 +11,20 @@ export const catalogFamilies = [
 	{
 		title: 'Accordion',
 		root: 'AdsAccordion',
-		members: ['AdsAccordion', 'AdsAccordionHeader', 'AdsAccordionItem', 'AdsAccordionTrigger', 'AdsAccordionPanel'],
-		aliases: ['AdsAccordion.Root', 'AdsAccordion.Header', 'AdsAccordion.Item', 'AdsAccordion.Trigger', 'AdsAccordion.Panel'],
+		members: [
+			'AdsAccordion',
+			'AdsAccordionHeader',
+			'AdsAccordionItem',
+			'AdsAccordionTrigger',
+			'AdsAccordionPanel',
+		],
+		aliases: [
+			'AdsAccordion.Root',
+			'AdsAccordion.Header',
+			'AdsAccordion.Item',
+			'AdsAccordion.Trigger',
+			'AdsAccordion.Panel',
+		],
 	},
 	{
 		title: 'Field',
@@ -23,7 +35,15 @@ export const catalogFamilies = [
 	{
 		title: 'Table',
 		root: 'AdsTable',
-		members: ['AdsTable', 'AdsTableHead', 'AdsTableBody', 'AdsTableHeader', 'AdsTableRow', 'AdsTableCell', 'AdsTableCaption'],
+		members: [
+			'AdsTable',
+			'AdsTableHead',
+			'AdsTableBody',
+			'AdsTableHeader',
+			'AdsTableRow',
+			'AdsTableCell',
+			'AdsTableCaption',
+		],
 		aliases: [],
 	},
 	{
@@ -53,7 +73,20 @@ export const catalogFamilies = [
 	{
 		title: 'AdminShell',
 		root: 'AdsAdminShell',
-		members: ['AdsAdminShell', 'AdsAdminShell.Root', 'AdsAdminShell.Header', 'AdsAdminShell.Body', 'AdsAdminShell.Main', 'AdsAdminShell.Sidebar', 'AdsAdminShell.SidebarToggle', 'AdsAdminShell.NavigationTrigger', 'AdsAdminShell.Navigation', 'AdsAdminShell.NavigationSection', 'AdsAdminShell.NavigationGroup', 'AdsAdminShell.NavigationItem'],
+		members: [
+			'AdsAdminShell',
+			'AdsAdminShell.Root',
+			'AdsAdminShell.Header',
+			'AdsAdminShell.Body',
+			'AdsAdminShell.Main',
+			'AdsAdminShell.Sidebar',
+			'AdsAdminShell.SidebarToggle',
+			'AdsAdminShell.NavigationTrigger',
+			'AdsAdminShell.Navigation',
+			'AdsAdminShell.NavigationSection',
+			'AdsAdminShell.NavigationGroup',
+			'AdsAdminShell.NavigationItem',
+		],
 		aliases: [],
 	},
 ] as const;
@@ -62,13 +95,17 @@ type CatalogFamily = (typeof catalogFamilies)[number];
 
 /** IDs não dependem de ordem: links compartilhados permanecem estáveis. */
 export function catalogMemberAnchor(name: string) {
-	return name.replace(/([a-z])([A-Z])/g, '$1-$2').replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase();
+	return name
+		.replace(/([a-z])([A-Z])/g, '$1-$2')
+		.replace(/[^a-zA-Z0-9]+/g, '-')
+		.toLowerCase();
 }
 
 export function catalogFamilyForName(name: string): CatalogFamily | undefined {
-	return catalogFamilies.find((family) =>
-		(family.members as readonly string[]).includes(name) ||
-		(family.aliases as readonly string[]).includes(name),
+	return catalogFamilies.find(
+		(family) =>
+			(family.members as readonly string[]).includes(name) ||
+			(family.aliases as readonly string[]).includes(name),
 	);
 }
 

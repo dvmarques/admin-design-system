@@ -30,7 +30,9 @@ for (const theme of ['light', 'dark'] as const) {
 						.locator(':scope > *')
 						.count(),
 				).toBeGreaterThan(0);
-				await expect(page.locator('.demo-catalog-code').getByRole('code')).toContainText(entry.name);
+				await expect(page.locator('.demo-catalog-code').getByRole('code')).toContainText(
+					entry.name,
+				);
 				expect(
 					await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
 					entry.name,
@@ -46,12 +48,22 @@ test('busca por subcomponente abre seção da família e preserva URL legada', a
 	await page.getByRole('searchbox', { name: 'Buscar componente' }).fill('TabsTrigger');
 	await page.getByRole('link', { name: 'AdsTabsTrigger', exact: true }).click();
 	await expect(page).toHaveURL(/\/catalogo\/tabs#ads-tabs-trigger$/);
-	await expect(page.locator('#ads-tabs-trigger').getByRole('heading', { name: 'AdsTabsTrigger' })).toBeVisible();
+	await expect(
+		page.locator('#ads-tabs-trigger').getByRole('heading', { name: 'AdsTabsTrigger' }),
+	).toBeVisible();
 	await page.goto('/catalogo/tabs-trigger');
 	await expect(page.getByRole('heading', { name: 'AdsTabsTrigger', level: 1 })).toBeVisible();
-	await expect(page.getByRole('link', { name: 'abrir diretamente a seção de AdsTabsTrigger' })).toHaveAttribute('href', '/catalogo/tabs#ads-tabs-trigger');
+	await expect(
+		page.getByRole('link', { name: 'abrir diretamente a seção de AdsTabsTrigger' }),
+	).toHaveAttribute('href', '/catalogo/tabs#ads-tabs-trigger');
 	await page.goto('/catalogo/accordion');
-	for (const part of ['AdsAccordion', 'AdsAccordionHeader', 'AdsAccordionItem', 'AdsAccordionTrigger', 'AdsAccordionPanel']) {
+	for (const part of [
+		'AdsAccordion',
+		'AdsAccordionHeader',
+		'AdsAccordionItem',
+		'AdsAccordionTrigger',
+		'AdsAccordionPanel',
+	]) {
 		await expect(page.getByRole('link', { name: part, exact: true }).first()).toBeVisible();
 	}
 	const nav = page.getByRole('navigation', { name: 'Navegação do demo' });

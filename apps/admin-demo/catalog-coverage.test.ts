@@ -3,7 +3,12 @@ import { resolve } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { catalogEntries } from './app/catalogo/catalog-data';
-import { catalogFamilies, catalogMemberAnchor, catalogMemberHref, catalogSearchEntries } from './app/catalogo/catalog-families';
+import {
+	catalogFamilies,
+	catalogMemberAnchor,
+	catalogMemberHref,
+	catalogSearchEntries,
+} from './app/catalogo/catalog-families';
 import { catalogDemos } from './app/catalogo/catalog-demos';
 import snippets from './app/catalogo/catalog-snippets.json';
 import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';
@@ -59,7 +64,8 @@ describe('rastreabilidade do catálogo', () => {
 				expect(found, member).toBeDefined();
 				const destination = catalogMemberHref(member);
 				expect(destination).toContain(root!.href);
-				if (member !== family.root) expect(destination).toContain('#' + catalogMemberAnchor(member));
+				if (member !== family.root)
+					expect(destination).toContain('#' + catalogMemberAnchor(member));
 			}
 			for (const alias of family.aliases) {
 				expect(catalogSearchEntries.some((entry) => entry.name === alias)).toBe(true);
@@ -68,7 +74,9 @@ describe('rastreabilidade do catálogo', () => {
 				if (!alias.endsWith('.Root')) {
 					const anchor = destination.split('#')[1];
 					expect(anchor).toBeDefined();
-					expect(family.members.some((member) => catalogMemberAnchor(member) === anchor)).toBe(true);
+					expect(family.members.some((member) => catalogMemberAnchor(member) === anchor)).toBe(
+						true,
+					);
 				}
 			}
 		}

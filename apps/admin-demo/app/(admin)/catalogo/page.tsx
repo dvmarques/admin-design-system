@@ -50,7 +50,12 @@ export default function CatalogPage() {
 								.map((entry) => (
 									<li key={entry.name}>
 										<Link href={entry.href}>{entry.name}</Link>
-										<p>{entry.family && entry.name !== `Ads${entry.family}` ? `${entry.name} · ${entry.family}. ` : ''}{entry.description}</p>
+										<p>
+											{entry.family && entry.name !== `Ads${entry.family}`
+												? `${entry.name} · ${entry.family}. `
+												: ''}
+											{entry.description}
+										</p>
 									</li>
 								))}
 						</ul>

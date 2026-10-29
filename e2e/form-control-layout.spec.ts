@@ -192,8 +192,8 @@ async function renderInputGroupMarkup(size: 'sm' | 'md' | 'lg') {
 			group('text', { endContent: 'BRL', startContent: 'R$' }),
 			group('currency', {
 				startContent: 'R$',
-				endContent: [button('Limpar', 'secondary'), button('Restaurar', 'primary')].map((node, key) =>
-					createElement(Fragment, { key }, node),
+				endContent: [button('Limpar', 'secondary'), button('Restaurar', 'primary')].map(
+					(node, key) => createElement(Fragment, { key }, node),
 				),
 			}),
 			group('end', { endContent: button('Buscar', 'primary') }),
@@ -262,7 +262,9 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 
 for (const theme of ['light', 'dark'] as const) {
 	for (const width of [320, 390, 1280]) {
-		test(`InputGroup preserva R$, Limpar e Restaurar sem quebrar em ${theme} a ${width}px`, async ({ page }) => {
+		test(`InputGroup preserva R$, Limpar e Restaurar sem quebrar em ${theme} a ${width}px`, async ({
+			page,
+		}) => {
 			const markup = await renderInputGroupMarkup('md');
 			await page.setViewportSize({ width, height: 800 });
 			await page.setContent(
@@ -279,7 +281,9 @@ for (const theme of ['light', 'dark'] as const) {
 			const buttonBoxes = await Promise.all(buttons.map((item) => item.boundingBox()));
 			expect(startBox.height).toBeLessThan(50);
 			expect(buttonBoxes[0]!.height).toBeCloseTo(buttonBoxes[1]!.height, 0);
-			await expect.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
+			await expect
+				.poll(() => page.evaluate(() => document.documentElement.scrollWidth - innerWidth))
+				.toBeLessThanOrEqual(0);
 		});
 	}
 }

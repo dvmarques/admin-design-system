@@ -36,14 +36,14 @@ O pacote `@admin-ds/components` agora inclui `LICENSE.md` e `THIRD_PARTY_NOTICES
 
 O job [Artefatos de distribuição — CI #40957590062](https://github.com/dvmarques/admin-design-system/actions/runs/40957590062) **passou** em 29/10/2026, em Linux/Node 24.22.1, com as seguintes métricas do pacote `@admin-ds/components` e cenários de consumo:
 
-| Métrica | Medição atual | Limite da develop (#254) | Limite final da PR #258 |
-| --- | ---: | ---: | ---: |
-| Distribuição completa `@admin-ds/components` | 584.641 B | 567.600 B | **585.200 B** (baseline 532.000 B +10%) |
-| JS/CSS publicado `@admin-ds/components` | 254.232 B | 250.800 B | **255.000 B** |
-| JS/CSS gzip `@admin-ds/components` | 76.243 B | 76.300 B | **76.300 B — inalterado** |
-| JS minificado `components-public` | 32.663 B | 30.400 B | **33.000 B** |
-| JS gzip `components-public` | 11.511 B | 11.300 B | **11.700 B** |
-| JS minificado `admin-public` | 70.669 B | 70.000 B | **71.000 B** |
+| Métrica                                      | Medição atual | Limite da develop (#254) |                 Limite final da PR #258 |
+| -------------------------------------------- | ------------: | -----------------------: | --------------------------------------: |
+| Distribuição completa `@admin-ds/components` |     584.641 B |                567.600 B | **585.200 B** (baseline 532.000 B +10%) |
+| JS/CSS publicado `@admin-ds/components`      |     254.232 B |                250.800 B |                           **255.000 B** |
+| JS/CSS gzip `@admin-ds/components`           |      76.243 B |                 76.300 B |               **76.300 B — inalterado** |
+| JS minificado `components-public`            |      32.663 B |                 30.400 B |                            **33.000 B** |
+| JS gzip `components-public`                  |      11.511 B |                 11.300 B |                            **11.700 B** |
+| JS minificado `admin-public`                 |      70.669 B |                 70.000 B |                            **71.000 B** |
 
 Também passaram, **sem nenhum aumento de orçamento**, os CSS dos cenários: `components-public` 57.742/58.000 B e gzip 9.568/9.650 B; `admin-public` 97.524/97.800 B e gzip 14.655/14.800 B; `admin-public` JS gzip 23.714/23.900 B, e os pacotes `tokens`, `highlighted-code` e `admin`.
 

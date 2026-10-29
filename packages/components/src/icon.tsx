@@ -7,10 +7,29 @@ const iconPaths = {
 		<path d="m10.3 4.2-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-2.8l-8-14a2 2 0 0 0-3.4 0ZM12 9v4m0 4h.01" />
 	),
 	bell: <path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4.3 10a2 2 0 0 0 3.4 0" />,
+	// Hugeicons Free Building06Icon (MIT); original paths and license in THIRD_PARTY_NOTICES.md.
 	building: (
 		<>
-			<path d="M5 21V5a2 2 0 0 1 2-2h6a2 2 0 0 1 2 2v16M15 10h2a2 2 0 0 1 2 2v9M3 21h18" />
-			<path d="M9 7h2M9 11h2M9 15h2" />
+			<path
+				d="M12 2H6C3.518 2 3 2.518 3 5V22H15V5C15 2.518 14.482 2 12 2Z"
+				strokeLinecap="butt"
+				strokeWidth="1.5"
+			/>
+			<path
+				d="M18 8H15V22H21V11C21 8.518 20.482 8 18 8Z"
+				strokeLinecap="butt"
+				strokeWidth="1.5"
+			/>
+			<path
+				d="M8 6L10 6M8 9L10 9M8 12L10 12"
+				strokeLinecap="round"
+				strokeWidth="1.5"
+			/>
+			<path
+				d="M11.5 22V18C11.5 17.0572 11.5 16.5858 11.2071 16.2929C10.9142 16 10.4428 16 9.5 16H8.5C7.55719 16 7.08579 16 6.79289 16.2929C6.5 16.5858 6.5 17.0572 6.5 18V22"
+				strokeLinecap="butt"
+				strokeWidth="1.5"
+			/>
 		</>
 	),
 	calendar: (
@@ -68,7 +87,7 @@ export interface AdsIconProps extends Omit<SVGAttributes<SVGSVGElement>, 'childr
 	size?: AdsIconSize;
 }
 
-/** Renders a small, independently authored, typed icon set. */
+/** Renders a small, typed icon set with documented third-party artwork. */
 export function AdsIcon({ className, label, name, size = 'md', ...props }: AdsIconProps) {
 	const isInformative = Boolean(label);
 

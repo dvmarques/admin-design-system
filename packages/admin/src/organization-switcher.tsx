@@ -3,17 +3,17 @@
 import {
 	AdsAvatar,
 	AdsButton,
+	AdsCombobox,
 	AdsIcon,
-	AdsInput,
 	AdsLoadingIndicator,
-	AdsPopover,
 	AdsTooltip,
-	type AdsOverlayPlacement,
 	type AdsAvatarTone,
+	type AdsComboboxOption,
+	type AdsOverlayPlacement,
 } from '@admin-ds/components';
 import {
 	forwardRef,
-	useId,
+	useMemo,
 	useRef,
 	useState,
 	type ButtonHTMLAttributes,
@@ -21,13 +21,7 @@ import {
 } from 'react';
 import { useOptionalAdminShellContext } from './admin-shell-state.js';
 import { classNames } from './class-names.js';
-import {
-	PanelContent,
-	getInitials,
-	handlePanelKeyDown,
-	useGuardedAction,
-	useOpenState,
-} from './panel-utils.js';
+import { getInitials, useGuardedAction, useOpenState } from './panel-utils.js';
 
 export interface AdsOrganization {
 	/** Avatar token tone. Defaults to neutral; applies to trigger and options. */
@@ -142,6 +136,10 @@ const TriggerButton = forwardRef<HTMLButtonElement, TriggerProps>(function Trigg
  * organizations, the selection and the switch callback; permissions and the effective change of
  * context are not handled here. Place it as the first child of `AdsAdminShell.Sidebar`; when it is
  * not rendered, the navigation keeps its place with no leftover space.
+ *
+ * Composes `AdsCombobox` with `presentation="popover"`: search, keyboard navigation and selection
+ * come from the primitive, while this wrapper owns the organization visuals, the asynchronous
+ * switch (pending, failure, no optimistic confirmation) and the `manage` action.
  */
 export function AdsOrganizationSwitcher({
 	className,
@@ -166,9 +164,6 @@ export function AdsOrganizationSwitcher({
 	const collapsed = collapsedProp ?? Boolean(shell?.collapsed && shell.isDesktop);
 	const [open, setOpen] = useOpenState(openProp, defaultOpen, onOpenChange);
 	const [uncontrolledValue, setUncontrolledValue] = useState(defaultValue);
-	const [query, setQuery] = useState('');
-	const triggerRef = useRef<HTMLButtonElement>(null);
-	const listId = useId();
 	const { failedId, pendingId, reset, run } = useGuardedAction();
 
 	const currentId = value ?? uncontrolledValue;
@@ -176,64 +171,89 @@ export function AdsOrganizationSwitcher({
 	const empty = organizations.length === 0;
 	const showSearch =
 		searchable === true || (searchable === 'auto' && organizations.length >= autoSearchThreshold);
-	const needle = normalize(query.trim());
-	const filtered = needle
-		? organizations.filter((organization) =>
-				normalize(`${organization.name} ${organization.description ?? ''}`).includes(needle),
-			)
-		: organizations;
+
+	const options = useMemo<AdsComboboxOption[]>(
+		() =>
+			organizations.map((organization) => ({
+				value: organization.id,
+				label: organization.name,
+				...(organization.description ? { description: organization.description } : {}),
+				// Durante uma troca pendente nenhuma outra opção pode ser acionada.
+				disabled: organization.disabled || (Boolean(pendingId) && pendingId !== organization.id),
+			})),
+		[organizations, pendingId],
+	);
+	const byId = useMemo(
+		() => new Map(organizations.map((organization) => [organization.id, organization])),
+		[organizations],
+	);
 
 	const openRef = useRef(open);
 	openRef.current = open;
 	const finish = () => {
 		reset();
-		setQuery('');
 		setOpen(false);
-		triggerRef.current?.focus();
 	};
-	const choose = (organization: AdsOrganization) => {
-		if (organization.id === currentId) {
-			finish();
-			return;
-		}
+	const choose = (id: string | null) => {
+		if (!id) return;
 		run(
-			organization.id,
-			() => onValueChange?.(organization.id),
+			id,
+			() => onValueChange?.(id),
 			() => {
-				if (value === undefined) setUncontrolledValue(organization.id);
-				// Só devolve o foco se o painel não foi dispensado enquanto a troca estava pendente.
+				// Confirmação só após o sucesso: aqui o estado não controlado é atualizado.
+				if (value === undefined) setUncontrolledValue(id);
+				// Só fecha se o painel não foi dispensado enquanto a troca estava pendente.
 				if (openRef.current) finish();
 			},
 		);
 	};
 
 	const name = current?.name ?? labels.none;
-	const triggerContent = (
-		<>
-			<span aria-hidden="true" className="ads-organization-switcher-logo">
-				<AdsAvatar
-					alt=""
-					fallback={getInitials(current?.name, current?.initials)}
-					size="sm"
-					src={current?.logoSrc}
-					tone={current?.avatarTone ?? 'neutral'}
-				/>
-			</span>
-			<span className="ads-organization-switcher-text">
-				<span className="ads-organization-switcher-name" title={name}>
-					{name}
-				</span>
-				{current?.description ? (
-					<span className="ads-organization-switcher-description" title={current.description}>
-						{current.description}
-					</span>
+	const accessibleName = `${labels.trigger}: ${name}${current?.description ? `, ${current.description}` : ''}`;
+
+	const retry = status === 'error' && onRetry;
+	const footer =
+		failedId || manage || retry ? (
+			<>
+				{retry ? (
+					<AdsButton onClick={onRetry} size="sm" variant="secondary">
+						{labels.retry}
+					</AdsButton>
 				) : null}
-			</span>
-			<span aria-hidden="true" className="ads-organization-switcher-chevron">
-				<AdsIcon name="chevronsUpDown" size="sm" />
-			</span>
-		</>
-	);
+				{failedId ? (
+					<p className="ads-organization-switcher-error" role="alert">
+						{labels.switchError}
+					</p>
+				) : null}
+				{manage ? (
+					<div className="ads-organization-switcher-footer">
+						{manage.href ? (
+							<a
+								className="ads-organization-switcher-manage"
+								href={manage.href}
+								onClick={() => {
+									manage.onSelect?.();
+									finish();
+								}}
+							>
+								{manage.label ?? labels.manage}
+							</a>
+						) : (
+							<button
+								className="ads-organization-switcher-manage"
+								onClick={() => {
+									manage.onSelect?.();
+									finish();
+								}}
+								type="button"
+							>
+								{manage.label ?? labels.manage}
+							</button>
+						)}
+					</div>
+				) : null}
+			</>
+		) : undefined;
 
 	return (
 		<div
@@ -241,178 +261,107 @@ export function AdsOrganizationSwitcher({
 			className={classNames('ads-organization-switcher', className)}
 			data-collapsed={collapsed ? 'true' : 'false'}
 		>
-			<AdsPopover
-				aria-label={labels.panel}
-				className="ads-organization-switcher-popover"
-				content={
-					<PanelContent className="ads-organization-switcher-panel" focusKey={status}>
-						<div
-							className="ads-organization-switcher-panel-inner"
-							onKeyDown={(event) => handlePanelKeyDown(event, { close: finish })}
-						>
-							{showSearch && status === 'ready' ? (
-								<AdsInput
-									aria-controls={listId}
-									aria-label={labels.search}
-									data-ads-initial-focus=""
-									onChange={(event) => setQuery(event.target.value)}
-									placeholder={labels.searchPlaceholder}
-									size="sm"
-									type="search"
-									value={query}
-								/>
-							) : null}
-							{status === 'loading' ? (
-								<p className="ads-organization-switcher-state">
-									<AdsLoadingIndicator aria-hidden="true" label={labels.loading} size="sm" />
-									{labels.loading}
-								</p>
-							) : status === 'error' ? (
-								<div className="ads-organization-switcher-state" role="alert">
-									<p>{labels.error}</p>
-									{onRetry ? (
-										<AdsButton onClick={onRetry} size="sm" variant="secondary">
-											{labels.retry}
-										</AdsButton>
-									) : null}
-								</div>
-							) : filtered.length === 0 ? (
-								<p className="ads-organization-switcher-state">{labels.noResults}</p>
-							) : (
-								<ul aria-label={labels.list} className="ads-organization-switcher-list" id={listId}>
-									{filtered.map((organization) => {
-										const isCurrent = organization.id === currentId;
-										const pending = pendingId === organization.id;
-										return (
-											<li key={organization.id}>
-												<button
-													aria-busy={pending || undefined}
-													aria-current={isCurrent ? 'true' : undefined}
-													className="ads-organization-switcher-option"
-													data-ads-initial-focus={isCurrent && !showSearch ? '' : undefined}
-													data-ads-panel-item=""
-													disabled={organization.disabled || (Boolean(pendingId) && !pending)}
-													onClick={() => choose(organization)}
-													type="button"
-												>
-													<span aria-hidden="true" className="ads-organization-switcher-logo">
-														<AdsAvatar
-															alt=""
-															fallback={getInitials(organization.name, organization.initials)}
-															size="sm"
-															src={organization.logoSrc}
-															tone={organization.avatarTone ?? 'neutral'}
-														/>
-													</span>
-													<span className="ads-organization-switcher-option-text">
-														<span
-															className="ads-organization-switcher-option-name"
-															title={organization.name}
-														>
-															{organization.name}
-														</span>
-														{organization.description ? (
-															<span className="ads-organization-switcher-option-description">
-																{organization.description}
-															</span>
-														) : null}
-													</span>
-													{pending ? (
-														<AdsLoadingIndicator
-															aria-hidden="true"
-															label={labels.switching}
-															size="sm"
-														/>
-													) : null}
-													{isCurrent ? (
-														<>
-															<AdsIcon
-																className="ads-organization-switcher-check"
-																name="check"
-																size="sm"
-															/>
-															<span className="ads-organization-switcher-visually-hidden">
-																({labels.current})
-															</span>
-														</>
-													) : null}
-												</button>
-											</li>
-										);
-									})}
-								</ul>
-							)}
-							{failedId ? (
-								<p className="ads-organization-switcher-error" role="alert">
-									{labels.switchError}
-								</p>
-							) : null}
-							{/* Região viva única e persistente: só o texto muda. */}
-							<span className="ads-organization-switcher-visually-hidden" role="status">
-								{pendingId
-									? labels.switching
-									: status === 'loading'
-										? labels.loading
-										: status === 'ready' && filtered.length === 0
-											? labels.noResults
-											: ''}
-							</span>
-							{manage ? (
-								<div className="ads-organization-switcher-footer">
-									{manage.href ? (
-										<a
-											className="ads-organization-switcher-manage"
-											data-ads-panel-item=""
-											href={manage.href}
-											onClick={() => {
-												manage.onSelect?.();
-												finish();
-											}}
-										>
-											{manage.label ?? labels.manage}
-										</a>
-									) : (
-										<button
-											className="ads-organization-switcher-manage"
-											data-ads-panel-item=""
-											onClick={() => {
-												manage.onSelect?.();
-												finish();
-											}}
-											type="button"
-										>
-											{manage.label ?? labels.manage}
-										</button>
-									)}
-								</div>
-							) : null}
-						</div>
-					</PanelContent>
-				}
+			<AdsCombobox
+				align="center"
+				aria-label={accessibleName}
+				closeOnSelect={false}
+				disabled={empty}
+				emptyText={labels.noResults}
+				error={status === 'error' ? labels.error : undefined}
+				filterOption={(option, query) => {
+					const needle = normalize(query);
+					return normalize(`${option.label} ${option.description ?? ''}`).includes(needle);
+				}}
+				footer={footer}
+				listLabel={labels.list}
+				loading={status === 'loading'}
+				loadingText={labels.loading}
 				onOpenChange={(next) => {
 					reset();
-					if (!next) {
-						setQuery('');
-						const active = document.activeElement;
-						if (active === document.body || active?.closest('.ads-organization-switcher-popover'))
-							triggerRef.current?.focus();
-					}
 					setOpen(next);
 				}}
+				onValueChange={(id) => choose(id)}
 				open={open}
+				options={options}
+				panelClassName="ads-organization-switcher-popover"
+				panelLabel={labels.panel}
 				placement={placement}
-			>
-				<TriggerButton
-					aria-haspopup="dialog"
-					aria-label={`${labels.trigger}: ${name}${current?.description ? `, ${current.description}` : ''}`}
-					className="ads-organization-switcher-trigger"
-					disabled={empty}
-					ref={triggerRef}
-					tooltip={collapsed && !empty ? name : undefined}
-				>
-					{triggerContent}
-				</TriggerButton>
-			</AdsPopover>
+				presentation="popover"
+				renderOption={(option) => {
+					const organization = byId.get(option.value);
+					if (!organization) return option.label;
+					const isCurrent = organization.id === currentId;
+					return (
+						<>
+							<OrganizationLogo organization={organization} />
+							<span className="ads-organization-switcher-option-text">
+								<span className="ads-organization-switcher-option-name" title={organization.name}>
+									{organization.name}
+								</span>
+								{organization.description ? (
+									<span className="ads-organization-switcher-option-description">
+										{organization.description}
+									</span>
+								) : null}
+							</span>
+							{pendingId === organization.id ? (
+								<AdsLoadingIndicator aria-hidden="true" label={labels.switching} size="sm" />
+							) : null}
+							{isCurrent ? (
+								<>
+									<AdsIcon className="ads-organization-switcher-check" name="check" size="sm" />
+									<span className="ads-organization-switcher-visually-hidden">
+										({labels.current})
+									</span>
+								</>
+							) : null}
+						</>
+					);
+				}}
+				renderTrigger={({ triggerProps }) => (
+					<TriggerButton
+						{...triggerProps}
+						className="ads-organization-switcher-trigger"
+						tooltip={collapsed && !empty ? name : undefined}
+					>
+						{current ? <OrganizationLogo organization={current} /> : <OrganizationLogo />}
+						<span className="ads-organization-switcher-text">
+							<span className="ads-organization-switcher-name" title={name}>
+								{name}
+							</span>
+							{current?.description ? (
+								<span className="ads-organization-switcher-description" title={current.description}>
+									{current.description}
+								</span>
+							) : null}
+						</span>
+						<span aria-hidden="true" className="ads-organization-switcher-chevron">
+							<AdsIcon name="chevronsUpDown" size="sm" />
+						</span>
+					</TriggerButton>
+				)}
+				searchLabel={labels.search}
+				searchPlaceholder={labels.searchPlaceholder}
+				searchable={showSearch && status === 'ready'}
+				showOptionVisuals={false}
+				statusMessage={pendingId ? labels.switching : undefined}
+				value={currentId ?? null}
+			/>
 		</div>
+	);
+}
+
+/** Logo with the configured tone; falls back to initials. Decorative: the name is in the text. */
+function OrganizationLogo({ organization }: { organization?: AdsOrganization | undefined }) {
+	return (
+		<span aria-hidden="true" className="ads-organization-switcher-logo">
+			<AdsAvatar
+				alt=""
+				fallback={getInitials(organization?.name, organization?.initials)}
+				size="sm"
+				src={organization?.logoSrc}
+				tone={organization?.avatarTone ?? 'neutral'}
+			/>
+		</span>
 	);
 }

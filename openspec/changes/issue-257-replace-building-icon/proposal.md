@@ -10,6 +10,7 @@ Perfil **Standard**, agora ampliado por decisão do responsável em 29/10/2026: 
 - **1 Lucide Icons (ISC):** `chevronsUpDown`.
 - **1 Hugeicons Free (MIT):** `building`.
 - Manter `AdsIcon` e `AdsIconName`, cor herdada, acessibilidade, tamanhos e imports públicos existentes; nenhum pacote de ícones como dependência.
+- Modularizar internamente o conjunto em `packages/components/src/icons/` (`paths.tsx`, `types.ts`, `icon.tsx` e `index.ts`), com `src/icon.tsx` como reexport de compatibilidade. **Não criar** `@admin-ds/icons` nesta etapa; deixar a separação preparada para extração futura.
 - Registrar arquivo-fonte e licença para cada nome em `docs/icons-license-audit.md`, textos integrais das licenças em `THIRD_PARTY_NOTICES.md` e regra de distribuição em `docs/licensing.md`.
 - Garantir que `@admin-ds/components` publique `LICENSE.md` e `THIRD_PARTY_NOTICES.md` em `dist/`, com verificação automatizada.
 - Atualizar testes, Storybook, changelog, validação visual e limites de bundle se necessário, com medições reais.

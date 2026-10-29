@@ -81,6 +81,32 @@ test('composição IME não perde caracteres e aplica a máscara ao confirmar', 
 	await expect(input).toHaveValue('123-456');
 });
 
+test('CPF, CNPJ e documento único (só formatam) informam bruto e completude', async ({ page }) => {
+	await openDemo(page);
+	const cpf = page.getByRole('textbox', { name: 'CPF (máscara fixa)' });
+	await cpf.click();
+	await cpf.pressSequentially('11122233344');
+	await expect(cpf).toHaveValue('111.222.333-44');
+	await expect(
+		page.getByText('Formatado: 111.222.333-44 · Bruto: 11122233344 · Completo: sim'),
+	).toBeVisible();
+	const cnpj = page.getByRole('textbox', { name: 'CNPJ (máscara fixa)' });
+	await cnpj.click();
+	await cnpj.pressSequentially('11222333000144');
+	await expect(cnpj).toHaveValue('11.222.333/0001-44');
+	await expect(
+		page.getByText('Formatado: 11.222.333/0001-44 · Bruto: 11222333000144 · Completo: sim'),
+	).toBeVisible();
+	const document = page.getByRole('textbox', { name: 'Documento (CPF ou CNPJ)' });
+	await document.click();
+	await document.pressSequentially('11122233344');
+	await expect(document).toHaveValue('111.222.333-44');
+	await expect(page.getByText('Bruto: 11122233344 · Completo: sim').last()).toBeVisible();
+	await document.pressSequentially('555');
+	await expect(document).toHaveValue('11.122.233/3445-55');
+	await expect(document).toHaveAccessibleDescription(/00\.000\.000\/0000-00/);
+});
+
 test('máscara dinâmica e numérica informam valor bruto e tipado', async ({ page }) => {
 	await openDemo(page);
 	const phone = page.getByRole('textbox', { name: 'Telefone (máscara dinâmica)' });

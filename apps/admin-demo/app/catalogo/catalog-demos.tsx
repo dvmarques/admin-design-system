@@ -295,6 +295,9 @@ export function PasswordInputDemo() {
 export function MaskedInputDemo() {
 	const [fixed, setFixed] = useState<AdsMaskedInputValues>();
 	const [phone, setPhone] = useState<AdsMaskedInputValues>();
+	const [cpf, setCpf] = useState<AdsMaskedInputValues>();
+	const [cnpj, setCnpj] = useState<AdsMaskedInputValues>();
+	const [doc, setDoc] = useState<AdsMaskedInputValues>();
 	const [amount, setAmount] = useState<AdsMaskedInputValues>();
 	const [free, setFree] = useState<AdsMaskedInputValues>();
 	const [controlled, setControlled] = useState('123-4');
@@ -329,6 +332,51 @@ export function MaskedInputDemo() {
 			</AdsField>
 			<p>
 				Formatado: {phone?.maskedValue ?? '—'} · Bruto: {phone?.unmaskedValue ?? '—'}
+			</p>
+			<AdsField
+				description="Formato 000.000.000-00; só formata, não valida dígito verificador."
+				label="CPF (máscara fixa)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000.000.000-00"
+					onValueChange={setCpf}
+					placeholder="000.000.000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {cpf?.maskedValue ?? '—'} · Bruto: {cpf?.unmaskedValue ?? '—'} · Completo:{' '}
+				{cpf ? (cpf.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Formato 00.000.000/0000-00; só formata, não valida dígito verificador."
+				label="CNPJ (máscara fixa)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="00.000.000/0000-00"
+					onValueChange={setCnpj}
+					placeholder="00.000.000/0000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {cnpj?.maskedValue ?? '—'} · Bruto: {cnpj?.unmaskedValue ?? '—'} · Completo:{' '}
+				{cnpj ? (cnpj.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Formato 000.000.000-00 (11 dígitos) ou 00.000.000/0000-00 (14); só formata."
+				label="Documento (CPF ou CNPJ)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask={['000.000.000-00', '00.000.000/0000-00']}
+					onValueChange={setDoc}
+					placeholder="000.000.000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {doc?.maskedValue ?? '—'} · Bruto: {doc?.unmaskedValue ?? '—'} · Completo:{' '}
+				{doc ? (doc.complete ? 'sim' : 'não') : '—'}
 			</p>
 			<AdsField
 				description="typedValue é um número; o valor bruto continua sendo texto."

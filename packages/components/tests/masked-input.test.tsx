@@ -169,6 +169,128 @@ describe('AdsMaskedInput with a static mask', () => {
 	});
 });
 
+describe('AdsMaskedInput with CPF and CNPJ formats (fictitious values, format only)', () => {
+	const cpf = '000.000.000-00';
+	const cnpj = '00.000.000/0000-00';
+
+	it('formats CPF typing and pastes with and without formatting', () => {
+		const onValueChange = vi.fn();
+		render(
+			<AdsMaskedInput
+				aria-label="Campo"
+				inputMode="numeric"
+				mask={cpf}
+				onValueChange={onValueChange}
+			/>,
+		);
+		const input = field();
+		expect(input).toHaveAttribute('inputmode', 'numeric');
+		typeText(input, '1112223334');
+		expect(input).toHaveValue('111.222.333-4');
+		expect(lastValues(onValueChange)).toMatchObject({
+			unmaskedValue: '1112223334',
+			complete: false,
+		});
+		typeText(input, '4');
+		expect(lastValues(onValueChange)).toMatchObject({
+			maskedValue: '111.222.333-44',
+			unmaskedValue: '11122233344',
+			complete: true,
+		});
+		typeText(input, '99.888.777-66 extra', 0, input.value.length);
+		expect(input).toHaveValue('998.887.776-6');
+		typeText(input, '99988877766', 0, input.value.length);
+		expect(input).toHaveValue('999.888.777-66');
+		typeText(input, '999.888.777-66', 0, input.value.length);
+		expect(lastValues(onValueChange)).toMatchObject({
+			unmaskedValue: '99988877766',
+			complete: true,
+		});
+	});
+
+	it('formats CNPJ typing and pastes', () => {
+		const onValueChange = vi.fn();
+		render(
+			<AdsMaskedInput
+				aria-label="Campo"
+				inputMode="numeric"
+				mask={cnpj}
+				onValueChange={onValueChange}
+			/>,
+		);
+		const input = field();
+		typeText(input, '11222333000144');
+		expect(input).toHaveValue('11.222.333/0001-44');
+		expect(lastValues(onValueChange)).toMatchObject({
+			unmaskedValue: '11222333000144',
+			complete: true,
+		});
+		typeText(input, '11.222.333/0001', 0, input.value.length);
+		expect(lastValues(onValueChange)).toMatchObject({
+			maskedValue: '11.222.333/0001',
+			complete: false,
+		});
+	});
+
+	it('switches a CPF-or-CNPJ field from 11 to 14 digits and back', () => {
+		const onValueChange = vi.fn();
+		render(
+			<AdsMaskedInput
+				aria-label="Campo"
+				inputMode="numeric"
+				mask={[cpf, cnpj]}
+				onValueChange={onValueChange}
+			/>,
+		);
+		const input = field();
+		typeText(input, '11122233344');
+		expect(input).toHaveValue('111.222.333-44');
+		expect(lastValues(onValueChange).complete).toBe(true);
+		typeText(input, '5');
+		expect(input).toHaveValue('11.122.233/3445');
+		expect(lastValues(onValueChange)).toMatchObject({
+			unmaskedValue: '111222333445',
+			complete: false,
+		});
+		typeText(input, '66');
+		expect(input).toHaveValue('11.122.233/3445-66');
+		expect(lastValues(onValueChange)).toMatchObject({
+			unmaskedValue: '11122233344566',
+			complete: true,
+		});
+		while (input.value.replace(/\D/g, '').length > 11) backspace(input);
+		expect(input).toHaveValue('111.222.333-44');
+		expect(lastValues(onValueChange).complete).toBe(true);
+	});
+
+	it('submits the formatted text by name; digits only come from unmaskedValue', () => {
+		const submitted: Record<string, FormDataEntryValue> = {};
+		let digits = '';
+		render(
+			<form
+				onSubmit={(event) => {
+					event.preventDefault();
+					Object.assign(submitted, Object.fromEntries(new FormData(event.currentTarget)));
+				}}
+			>
+				<AdsMaskedInput
+					aria-label="Campo"
+					mask={cpf}
+					name="cpf"
+					onValueChange={(values) => {
+						digits = values.unmaskedValue;
+					}}
+				/>
+			</form>,
+		);
+		const input = field();
+		typeText(input, '11122233344');
+		fireEvent.submit(input.form!);
+		expect(submitted).toEqual({ cpf: '111.222.333-44' });
+		expect(digits).toBe('11122233344');
+	});
+});
+
 describe('AdsMaskedInput option filtering', () => {
 	it('drops engine options outside the public contract, such as unmask and blocks', () => {
 		const onValueChange = vi.fn();

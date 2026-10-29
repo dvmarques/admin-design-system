@@ -86,6 +86,67 @@ export const DynamicMask: Story = {
 	},
 };
 
+function DocumentExample({
+	description,
+	label,
+	mask,
+	placeholder,
+}: {
+	description: string;
+	label: string;
+	mask: Parameters<typeof AdsMaskedInput>[0]['mask'];
+	placeholder: string;
+}) {
+	const [values, setValues] = useState<AdsMaskedInputValues>();
+	return (
+		<div className="flex max-w-sm flex-col gap-3">
+			<AdsField description={description} label={label}>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask={mask}
+					onValueChange={setValues}
+					placeholder={placeholder}
+				/>
+			</AdsField>
+			<Values values={values} />
+		</div>
+	);
+}
+
+/** Apenas formata: não valida dígito verificador (regra de negócio, fora do componente). Valores fictícios. */
+export const Cpf: Story = {
+	render: () => (
+		<DocumentExample
+			description="Formato 000.000.000-00; só formata, não valida dígito verificador."
+			label="CPF"
+			mask="000.000.000-00"
+			placeholder="000.000.000-00"
+		/>
+	),
+};
+
+export const Cnpj: Story = {
+	render: () => (
+		<DocumentExample
+			description="Formato 00.000.000/0000-00; só formata, não valida dígito verificador."
+			label="CNPJ"
+			mask="00.000.000/0000-00"
+			placeholder="00.000.000/0000-00"
+		/>
+	),
+};
+
+export const CpfOrCnpj: Story = {
+	render: () => (
+		<DocumentExample
+			description="Formato 000.000.000-00 (11 dígitos) ou 00.000.000/0000-00 (14); só formata."
+			label="Documento (CPF ou CNPJ)"
+			mask={['000.000.000-00', '00.000.000/0000-00']}
+			placeholder="000.000.000-00"
+		/>
+	),
+};
+
 export const NumericMask: Story = {
 	render: () => {
 		function Example() {

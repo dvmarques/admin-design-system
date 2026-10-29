@@ -941,6 +941,35 @@ divergência, inclusive em StrictMode.
   precisa de `moduleResolution` `Bundler`, `Node16` ou `NodeNext` (o `node10` não resolve
   `@admin-ds/components/masked-input`). O Next.js App Router já usa `Bundler`.
 
+### Receita: CPF, CNPJ ou documento único
+
+Exemplos com valores fictícios. A máscara **só formata**: ela **não valida o dígito verificador**
+(regra de negócio, fora do componente). O `name` envia o texto formatado; para enviar só dígitos,
+use `unmaskedValue`.
+
+```tsx
+<AdsField label="CPF" description="Formato 000.000.000-00">
+	<AdsMaskedInput inputMode="numeric" mask="000.000.000-00" name="cpf" onValueChange={setCpf} />
+</AdsField>
+
+<AdsField label="CNPJ" description="Formato 00.000.000/0000-00">
+	<AdsMaskedInput inputMode="numeric" mask="00.000.000/0000-00" onValueChange={setCnpj} />
+</AdsField>
+
+{/* CPF (11 dígitos) ou CNPJ (14): a máscara troca ao passar do 11º dígito. */}
+<AdsField label="Documento" description="CPF 000.000.000-00 ou CNPJ 00.000.000/0000-00">
+	<AdsMaskedInput
+		inputMode="numeric"
+		mask={['000.000.000-00', '00.000.000/0000-00']}
+		onValueChange={({ unmaskedValue, complete }) => setDigits(complete ? unmaskedValue : '')}
+	/>
+</AdsField>
+```
+
+Valide o dígito verificador no formulário ou no servidor (por exemplo, quando `complete` for
+`true`) e informe o resultado em `error` e `validationState`. Num campo único, 11 dígitos já são um
+`complete` válido para o CPF; o CNPJ só fica completo com 14.
+
 ### Máscaras suportadas
 
 `mask` aceita um padrão (`'000-000'`; `0` dígito, `a` letra, `*` qualquer), uma `RegExp`, `Number`,

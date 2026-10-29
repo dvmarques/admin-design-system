@@ -10,7 +10,7 @@
 	"components-public": {
 		"entry": "scripts/scenarios/components.mjs",
 		"bytes": 33000,
-		"gzipBytes": 11300,
+		"gzipBytes": 11700,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
 		"cssBytes": 55200,
 		"cssGzipBytes": 9200

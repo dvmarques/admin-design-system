@@ -5,10 +5,10 @@
 ## Contrato de API proposto para revisão
 
 - `placeholder?: string`, sem efeito quando omitido; não cria placeholder automático em chamadas antigas.
-- Para select simples com placeholder, `value={null}` / `defaultValue={null}` indicam **sem seleção**; `value=""` / `defaultValue=""` selecionam a opção legítima de valor vazio, sem ambiguidade. `undefined` mantém semântica de estado não controlado do HTML. Sem alterar a identidade nem o conteúdo de `children`.
-- A opção visual de placeholder será interna, desabilitada e com sentinela distinta dos valores reais. A sentinela nunca deve aparecer no callback de mudança nem na submissão. Antes de fechar a implementação, medir e documentar explicitamente reset de formulário, atribuição externa e ausência inicial em navegador real.
-- O `required` do HTML deve considerar **ausência** inválida, mas permitir uma opção legítima de valor `""` quando o consumidor assim a definir. O algoritmo não pode depender apenas da cor ou do valor bruto `select.value`. Uma validação controlada mínima (`setCustomValidity` e atualização nos ciclos relevantes, se necessária) poderá complementar a constraint validation nativa, sem impedir `reportValidity` e `FormData`. Uma opção de `""` não se confunde com a sentinela.
-- O contrato com `onChange` permanece nativo para escolhas reais; propagação de `name`, `form`, `disabled` e atributos ARIA permanece. Confirmar casos de `multiple` / `size`: placeholder opt-in é exclusivo de select simples; não alterar sua renderização ou semântica.
+- Para select simples com placeholder, `value={null}` / `defaultValue={null}` indicam **sem seleção**; `value=""` / `defaultValue=""` selecionam a opção legítima de valor vazio. Redeclarar tipos `value`/`defaultValue` de modo compatível após omiti-los da interface nativa; traduzir `null` internamente, **nunca** passá-lo ao `<select>` React. `undefined` mantém estado não controlado e `children` conserva sua identidade.
+- **Gate técnico obrigatório antes do Apply:** comparar (A) primeira opção nativa de placeholder `value=""` com seleção por identidade/`selectedIndex` para distinguir outra opção legítima `""` e (B) opção interna desabilitada com sentinela não vazia. A estratégia B **não é por si só um placeholder label option nativo** conforme HTML Standard; não presumir conformidade com `required` mesmo que se use `setCustomValidity`. Testar React controlado/não controlado, reset, hidratação, Chromium/Firefox/WebKit, `checkValidity()`, `reportValidity()`, `FormData` e callbacks antes de aprovar solução. Nenhuma sentinela pode ser exposta na submissão ou callback.
+- O `required` deve considerar **ausência** inválida e outra opção legítima `""` válida. A definição HTML depende da identidade da *placeholder label option*, não somente do valor de `select.value`; `setCustomValidity` não substitui automaticamente essa semântica. Se necessário, demonstrar que validade, reset e submissão não divergem sequer transitoriamente após alterações externas.
+- O `onChange` continua nativo para opções reais; preservar `name`, `form`, `disabled` e ARIA. Não afetar CSS/semântica de `[multiple]` ou `[size]`; a prop pública `size` de `AdsSelect` hoje é `sm|md|lg`, **não** o atributo HTML numérico de tamanho da lista. Não ampliar esse contrato nesta change.
 - Colisões entre sentinela e valores de opções são inaceitáveis: resolver identidade interna estável por instância (SSR-safe) ou negar sentinela inadequada em tempo de desenvolvimento. Não converter valores válidos em ausência.
 
 ## Aparência e acessibilidade
@@ -20,10 +20,10 @@
 
 ## Alternativas e trade-offs
 
-- `<option value="">` como placeholder: rejeitado, pois conflita com a opção `""` válida e com `required`.
+- Primeira opção nativa com `value=""` é preferida por conformidade HTML, mas depende de prova de seleção por identidade para diferenciar a opção legítima `""` em React.
 - Trocar por combobox customizado: rejeitado por comportamento nativo e compatibilidade.
 - Apenas placeholder CSS/pseudo-elemento: rejeitado, pois não representa ausência de seleção nativa.
-- Sentinela interna: exige testes rigorosos de constraint validation e serialização; a implementação deve demonstrar viabilidade sem alterar significado de `value` legado.
+- Sentinela não vazia não qualifica automaticamente como placeholder nativo e não está aprovada como solução final. Se nenhuma estratégia preservar o contrato, interromper Apply e revisar o design em vez de alterar silenciosamente os critérios aprovados.
 
 ## Limites e rollback
 

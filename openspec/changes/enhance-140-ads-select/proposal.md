@@ -6,7 +6,7 @@ A issue #140 permanece aberta após a seta/RTL/forced-colors da #142 (PRs #238 e
 
 - Adicionar API **opt-in** `placeholder?: string` para ausência de escolha, com semântica distinta de uma opção de negócio de valor `""`.
 - Definir explicitamente `value={null}` / `defaultValue={null}` como ausência de seleção quando `placeholder` é fornecido; `value=""` / `defaultValue=""` continua sendo seleção legítima da opção de valor vazio, quando presente.
-- Tratar `required`, `disabled`, reset, `onChange` e submissão nativa sem serializar valor sintético de placeholder. Preservar selects existentes sem placeholder, inclusive `multiple` e `size`.
+- **Gate de viabilidade antes do Apply:** comparar placeholder nativo e representação interna de ausência em React, provando `required`, opção legítima `""`, `FormData`, reset e SSR/hidratação, sem serializar valor sintético. A representação `null` pertence à API React e não será passada ao elemento HTML. Preservar `disabled` e `onChange`. Preservar selects existentes sem placeholder, inclusive `multiple` e `size`.
 - Conter/truncar texto longo sem sobrepor seta nem causar scroll horizontal; preservar valor completo na API de acessibilidade; conferir `AdsField`, estados e tamanhos.
 - Acrescentar demonstrações, stories, regressões cross-control e E2E (390px/zoom 200%/RTL/forced-colors).
 

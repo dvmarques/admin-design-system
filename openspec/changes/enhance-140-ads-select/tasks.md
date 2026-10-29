@@ -1,7 +1,7 @@
 ## 1. Contrato de placeholder opt-in
 
-- [ ] 1.1 Especificar e testar `placeholder`, `null` como ausência e `""` como opção válida, sem mudar `AdsSelect` legado e sem substituir `children`.
-- [ ] 1.2 Implementar controle/descontrole, `required`, `form`, `name`, `disabled`, reset, `onChange` nativo, valor externo e sentinela privada não serializada; documentar edge cases e colisões.
+- [ ] 1.1 **Antes de Apply:** validar spike técnico das estratégias nativa (`value=""` por identidade/índice) e sentinela interna, em Chromium/Firefox/WebKit, React controlado/não controlado, reset, `required`, `checkValidity`, `FormData` e SSR/hidratação; revisar design se não houver solução conforme.
+- [ ] 1.2 Implementar somente a estratégia validada no spike; tipar e traduzir `null` internamente sem passá-lo a `<select>`, preservar controle/descontrole, `required`, `form`, `name`, `disabled`, reset, `onChange` nativo e não expor sentinela.
 - [ ] 1.3 Confirmar constraint validation e `FormData` em navegadores suportados, incluindo opção vazia válida; revisar o design antes de avançar se a semântica não puder ser preservada.
 
 ## 2. Visual e acessibilidade

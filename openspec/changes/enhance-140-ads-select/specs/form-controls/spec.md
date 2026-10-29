@@ -19,9 +19,9 @@ O `AdsSelect` MUST aceitar `placeholder` opcional em seleção simples, sem alte
 #### Scenario: Validação nativa e envio
 
 - **WHEN** um `AdsSelect` com placeholder está sem escolha e é `required`
-- **THEN** a constraint validation considera o campo inválido, o placeholder não é submetido como valor do formulário e nenhuma sentinela interna é exposta
+- **THEN** `checkValidity()` e `reportValidity()` consideram o campo inválido, o placeholder não é submetido e nenhum identificador interno aparece em eventos ou `FormData`
 - **WHEN** uma opção real de valor `""` é selecionada, se permitida pelo formulário
-- **THEN** ela mantém o significado de escolha legítima na validação e na serialização, sem ser confundida com placeholder
+- **THEN** ela continua sendo opção válida para `required` e é serializada corretamente em `FormData`, sem ser confundida com placeholder
 
 #### Scenario: Valores externos, reset e desabilitado
 

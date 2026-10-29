@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `add-ads-combobox-autocomplete` (issue #142) - Novos `AdsCombobox` e `AdsAutocomplete` com ícones e avatares opcionais por opção, exibição configurável e seleção única acessível, valor separado do texto, busca local e remota, debounce, descarte de respostas obsoletas, portal compatível com diálogos e temas, controles de limpar e abrir integrados ao campo e seta do AdsSelect com recuo e espaço para texto (parte da issue #140), exemplos no catálogo com orientação de uso de cada componente e itens da sidebar ordenados alfabeticamente por grupo, stories, testes e guia de migração sem `react-select`. Mudanças observáveis: Home/End preservam a edição de texto (não navegam mais pelas opções), o popup passa a ser uma `section` rotulada com o `ul[role=listbox]` interno (visível apenas com resultados), glifos de limpar/abrir viram `AdsIcon`, todo `AdsSelect` simples emite `ads-select` com seta desenhada por CSS, e o `AdsAutocomplete` remoto exibe "Digite para buscar" abaixo de `minQueryLength`. Orçamentos elevados pelo custo medido: JS/CSS publicado de `@admin-ds/components` 197.500 → 226.000 bytes (medido 221.905; gzip 62.700 → 68.500, medido 67.110), baseline do dist 428.028 → 457.000 e CSS dos cenários `components-public` gzip 9.000 → 9.150 e `admin-public` 93.000 → 94.800 / gzip 14.100 → 14.300, sem dependência nova.
+
 - `feat-145-ads-alert-callout` (issue #145) - Novo componente `AdsAlert` inline persistente com variantes semânticas, apresentação compacta ou destacada, ações e fechamento opcional controlado/não controlado; exemplos no catálogo e Storybook, ícone padrão distinto por severidade e fallback de `forced-colors` por borda e preservação do foco ao fechar (`returnFocusRef`). Orçamentos elevados pelo custo medido do componente: JS/CSS publicado de `@admin-ds/components` 191.250 → 197.500 bytes (medido 197.216) e CSS gzip do cenário `admin-public` 13.900 → 14.100 bytes (medido 13.915), sem dependência nova. `AdsIcon` ganha `alertTriangle` e `alertCircle` (a união `AdsIconName` fica mais larga; consumidores com `switch` exaustivo precisam tratar os novos nomes).
 
 - `feat-226-loading-text` (issue #226) - Novo atom `AdsLoadingText` com texto sempre visível, efeito shimmer opcional e velocidades configuráveis, temas, reduced motion e forced-colors, exemplos no Storybook e catálogo, testes e documentação.
@@ -83,6 +85,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 #### Fixed
 
 - `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
+
+- `fix-142-combobox-controlled-sources` (issue #142, revisão da PR #238) - `AdsCombobox` deixa de enviar o `value` antigo quando `inputValue` controlado diverge externamente do rótulo selecionado; `AdsAutocomplete` ganha `requestKey` opcional para invalidar consulta pendente e resultados ao trocar a origem de dados, sem refazer a busca pela mera mudança de identidade de `loadOptions`.
 
 - `fix-pages-customers-filter-flaky-test` - Estabiliza o teste E2E do site publicado `filtros da URL funcionam em /clientes sem servidor`: a contagem era lida logo após o HTML estático (ainda sem filtro, antes da hidratação), o que fazia a CI do GitHub Pages falhar de forma intermitente. O teste agora usa a página sem filtro como referência e espera, com nova tentativa, a contagem exata de clientes inativos. Sem mudança em código publicado.
 

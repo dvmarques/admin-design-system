@@ -403,3 +403,49 @@
 		outline-color: Highlight;
 	}
 }
+
+select.ads-select:not([multiple]):not([size]) {
+	appearance: none;
+	padding-inline-end: 2.25rem;
+	background-image:
+		linear-gradient(45deg, transparent 50%, currentColor 50%),
+		linear-gradient(135deg, currentColor 50%, transparent 50%);
+	background-repeat: no-repeat;
+	background-position:
+		right 17px center,
+		right 12px center;
+	background-size: 5px 5px;
+}
+select.ads-select:not([multiple]):not([size]):dir(rtl) {
+	background-position:
+		left 12px center,
+		left 17px center;
+}
+@media (forced-colors: active) {
+	select.ads-select:not([multiple]):not([size]) {
+		appearance: auto;
+		background-image: none;
+	}
+}
+.ads-combobox__input--visual {
+	padding-inline-start: 2.25rem;
+}
+.ads-combobox__selected-visual {
+	position: absolute;
+	inset-inline-start: 0.5rem;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+}
+.ads-combobox__visual {
+	display: inline-flex;
+	flex: none;
+}
+.ads-combobox__visual .ads-avatar,
+.ads-combobox__selected-visual .ads-avatar {
+	width: 1.25rem;
+	height: 1.25rem;
+	font-size: 0.625rem;
+}

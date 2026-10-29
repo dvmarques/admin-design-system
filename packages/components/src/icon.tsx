@@ -2,11 +2,32 @@ import type { SVGAttributes } from 'react';
 import { classNames } from './class-names.js';
 
 const iconPaths = {
-	alertCircle: <path d="M21 12a9 9 0 1 1-18 0 9 9 0 0 1 18 0ZM12 8v4m0 4h.01" />,
-	alertTriangle: (
-		<path d="m10.3 4.2-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.7-2.8l-8-14a2 2 0 0 0-3.4 0ZM12 9v4m0 4h.01" />
+	// Feather Icons (MIT): icons/alert-circle.svg.
+	alertCircle: (
+		<>
+			<circle cx="12" cy="12" r="10" strokeWidth="2" />
+			<line x1="12" y1="8" x2="12" y2="12" strokeWidth="2" />
+			<line x1="12" y1="16" x2="12.01" y2="16" strokeWidth="2" />
+		</>
 	),
-	bell: <path d="M6 9a6 6 0 1 1 12 0c0 6 2 7 2 7H4s2-1 2-7Zm4.3 10a2 2 0 0 0 3.4 0" />,
+	// Feather Icons (MIT): icons/alert-triangle.svg.
+	alertTriangle: (
+		<>
+			<path
+				d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"
+				strokeWidth="2"
+			/>
+			<line x1="12" y1="9" x2="12" y2="13" strokeWidth="2" />
+			<line x1="12" y1="17" x2="12.01" y2="17" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/bell.svg.
+	bell: (
+		<>
+			<path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" strokeWidth="2" />
+			<path d="M13.73 21a2 2 0 0 1-3.46 0" strokeWidth="2" />
+		</>
+	),
 	// Hugeicons Free Building06Icon (MIT); original paths and license in THIRD_PARTY_NOTICES.md.
 	building: (
 		<>
@@ -32,10 +53,21 @@ const iconPaths = {
 			/>
 		</>
 	),
+	// Feather Icons (MIT): icons/calendar.svg.
 	calendar: (
-		<path d="M8 3v3m8-3v3M4 9h16M6 5h12a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2Z" />
+		<>
+			<rect x="3" y="4" width="18" height="18" rx="2" ry="2" strokeWidth="2" />
+			<line x1="16" y1="2" x2="16" y2="6" strokeWidth="2" />
+			<line x1="8" y1="2" x2="8" y2="6" strokeWidth="2" />
+			<line x1="3" y1="10" x2="21" y2="10" strokeWidth="2" />
+		</>
 	),
-	check: <path d="m5 12 4 4L19 6" />,
+	// Feather Icons (MIT): icons/check.svg.
+	check: (
+		<>
+			<polyline points="20 6 9 17 4 12" strokeWidth="2" />
+		</>
+	),
 	chevronDown: <path d="m6 9 6 6 6-6" />,
 	chevronLeft: <path d="m15 6-6 6 6 6" />,
 	chevronRight: <path d="m9 6 6 6-6 6" />,

@@ -12,7 +12,7 @@ test('snippet opcional possui página própria e continua vinculado ao exemplo a
 	await preview.getByLabel('Linguagem').selectOption('json');
 	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText('Admin DS');
 	await preview.getByLabel('Linguagem').selectOption('unknown');
-	await expect(preview.getByRole('code')).toContainText('sem destaque');
+	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText('sem destaque');
 	await preview.getByRole('link', { name: 'Ver demonstração avançada de código destacado' }).click();
 	await expect(page.getByRole('heading', { name: 'Código destacado', level: 1 })).toBeVisible();
 	await page.getByRole('link', { name: 'Ver a página oficial do componente no catálogo' }).click();

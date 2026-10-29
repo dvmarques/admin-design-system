@@ -508,7 +508,9 @@ export function calculateAnchoredPosition(
 
 function getTriggerElements(anchor: HTMLElement) {
 	const items = anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
-		? Array.from(anchor.children as HTMLCollectionOf<HTMLElement>).filter((el) => !el.hidden)
+		? Array.from(anchor.children as HTMLCollectionOf<HTMLElement>).filter(
+				(el) => getComputedStyle(el).display !== 'none',
+			)
 		: [];
 	return items.length ? items : [anchor];
 }
@@ -613,14 +615,14 @@ export function useAnchoredPosition(
 		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
 		const observeTargets = () => {
 			observer?.disconnect();
-			for (const el of [anchor, ...getTriggerElements(anchor), panel]) observer?.observe(el);
+			for (const el of [anchor, ...anchor.children, panel]) observer?.observe(el);
 		};
 		observeTargets();
 		const mutations = new MutationObserver(() => {
 			observeTargets();
 			schedule();
 		});
-		mutations.observe(anchor, { childList: true, subtree: true, attributeFilter: ['hidden'] });
+		mutations.observe(anchor, { childList: true });
 		return () => {
 			disposed = true;
 			mutations.disconnect();

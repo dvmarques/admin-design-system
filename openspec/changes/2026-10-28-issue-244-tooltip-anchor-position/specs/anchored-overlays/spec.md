@@ -35,3 +35,8 @@ AdsTooltip MUST posicionar o painel em relação à geometria visível do seu ga
 
 - **WHEN** o tooltip é aberto por foco ou hover, associado a descrição ARIA pré-existente, em claro ou escuro ou dentro de modal
 - **THEN** continua acessível, dispensável por Escape e com descrição restaurada ao fechar, preservando fonte, cores e foco existentes
+
+#### Scenario: Clique na área esticada do wrapper do Popover
+
+- **WHEN** o wrapper do AdsPopover é maior que o gatilho e o usuário clica na área vazia dele
+- **THEN** o popover não alterna por esse clique e, se estiver aberto, é fechado como clique externo

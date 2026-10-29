@@ -144,7 +144,10 @@ export function AdsPopover({
 
 	useEscapeKey(open, () => onOpenChange(false));
 	useClickOutside(open, contentRef, (event) => {
-		if (!(event.target instanceof Node) || !anchorRef.current?.contains(event.target)) {
+		if (
+			!(event.target instanceof Node) ||
+			!anchorRef.current?.firstElementChild?.contains(event.target)
+		) {
 			onOpenChange(false);
 		}
 	});

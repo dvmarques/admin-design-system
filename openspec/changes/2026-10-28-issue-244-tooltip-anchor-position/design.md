@@ -23,3 +23,7 @@ A alteração recai no pacote @admin-ds/components; classes compiladas devem fun
 ## Risco, revisão e rollback
 
 Uma estratégia shrink-to-fit pode alterar casos com gatilho width:100%; validar gatilho largo e inline em contêiner flex. Um wrapper que passe a mediar eventos incorretamente pode mudar hover ou foco; testar perda e recuperação. Medições E2E relativas a retângulos tornam o defeito verificável. Revisar CSS publicado, screenshots light/dark, posicionamento junto às bordas e consumo Next.js. Rollback pontual sem alterações globais em overlay-utils.
+
+## Decisão implementada
+
+Optou-se por medir o primeiro elemento filho do wrapper (`.ads-tooltip-anchor` e `.ads-popover-anchor`) em `useAnchoredPosition`, mantendo o wrapper como está (inclusive o `self-stretch` do `AdsDatePicker`). O hook passa a conhecer esses dois seletores internos; o rollback inclui, portanto, `overlay-utils.tsx`. Gatilhos com mais de um elemento raiz usam o primeiro. Em área esticada vazia, foco e hover do Tooltip continuam no wrapper (comportamento anterior preservado); no Popover, clique nessa área não alterna nem conta como clique interno.

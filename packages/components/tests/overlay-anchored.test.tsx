@@ -152,6 +152,32 @@ describe('anchored overlays', () => {
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 	});
 
+	it('anchors a tooltip to the real trigger, not to a stretched wrapper', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		const rect = (left: number, width: number) => ({
+			top: 100,
+			bottom: 120,
+			left,
+			right: left + width,
+			width,
+			height: 20,
+			x: left,
+			y: 100,
+			toJSON() {},
+		});
+		vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue(rect(100, 40));
+		vi.spyOn(trigger.parentElement!, 'getBoundingClientRect').mockReturnValue(rect(0, 400));
+		act(() => trigger.focus());
+		const tooltip = await screen.findByRole('tooltip');
+		// O painel mede 0 x 0 no JSDOM; o centro do botão é 120, o do wrapper seria 200.
+		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
+	});
+
 	it('shows a tooltip while the pointer hovers the trigger', async () => {
 		render(
 			<AdsTooltip content="Ajuda por hover">
@@ -405,6 +431,14 @@ describe('anchored overlays', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
 		await screen.findByRole('dialog', { name: 'Ações rápidas' });
 		fireEvent.mouseDown(document.body);
+		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+	});
+
+	it('closes a popover when pressing the empty area of a stretched anchor', async () => {
+		const { container } = render(<PopoverFixture />);
+		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
+		await screen.findByRole('dialog', { name: 'Ações rápidas' });
+		fireEvent.mouseDown(container.querySelector('.ads-popover-anchor')!);
 		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
 	});
 

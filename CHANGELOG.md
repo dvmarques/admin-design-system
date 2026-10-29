@@ -84,7 +84,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
-- `issue-244-tooltip-anchor-position` (#244) - Tooltip e Popover passam a medir o gatilho visual real em layouts flex/grid que esticam o wrapper da âncora, mantendo o posicionamento, a seta e a lógica de colisões existentes.
+- `issue-244-tooltip-anchor-position` (#244) - Tooltip e Popover passam a medir o gatilho visual real em layouts flex/grid que esticam o wrapper da âncora, mantendo o posicionamento, a seta e a lógica de colisões existentes. `AdsPopover` só alterna por clique no gatilho real; clique na área vazia do wrapper esticado não alterna e conta como clique externo.
 
 - `fix-142-combobox-controlled-sources` (issue #142, revisão da PR #238) - `AdsCombobox` deixa de enviar o `value` antigo quando `inputValue` controlado diverge externamente do rótulo selecionado; `AdsAutocomplete` ganha `requestKey` opcional para invalidar consulta pendente e resultados ao trocar a origem de dados, sem refazer a busca pela mera mudança de identidade de `loadOptions`.
 

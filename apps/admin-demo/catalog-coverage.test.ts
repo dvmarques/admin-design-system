@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 import ts from 'typescript';
 import { describe, expect, it } from 'vitest';
 import { catalogEntries } from './app/catalogo/catalog-data';
+import { catalogFamilies, catalogMemberAnchor, catalogMemberHref, catalogSearchEntries } from './app/catalogo/catalog-families';
 import { catalogDemos } from './app/catalogo/catalog-demos';
 import snippets from './app/catalogo/catalog-snippets.json';
 import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';
@@ -49,6 +50,24 @@ describe('rastreabilidade do catálogo', () => {
 			expect(snippets[entry.demo]).toMatch(new RegExp(`<${entry.name}(?:\\s|[.><])`));
 		}
 	});
+	it('cobre todas as partes compostas com busca e âncoras canônicas', () => {
+		for (const family of catalogFamilies) {
+			const root = catalogEntries.find((entry) => entry.name === family.root);
+			expect(root, family.title).toBeDefined();
+			for (const member of family.members) {
+				const found = catalogSearchEntries.find((entry) => entry.name === member);
+				expect(found, member).toBeDefined();
+				const destination = catalogMemberHref(member);
+				expect(destination).toContain(root!.href);
+				if (member !== family.root) expect(destination).toContain('#' + catalogMemberAnchor(member));
+			}
+			for (const alias of family.aliases) {
+				expect(catalogSearchEntries.some((entry) => entry.name === alias)).toBe(true);
+				expect(catalogMemberHref(alias)).toContain(root!.href);
+			}
+		}
+	});
+
 	it('mantém snippets idênticos às funções TSX executadas e tipadas', () => {
 		expect(snippets).toEqual(catalogSnippets());
 		expect(snippets.Breadcrumb).toContain("import Link from 'next/link';");

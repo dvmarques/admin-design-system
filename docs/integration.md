@@ -876,8 +876,10 @@ Ao fechar, o estado anterior é restaurado. Com modais aninhados só o mais rece
   do ciclo: se o controle focado ficou inelegível na ponta, o foco volta ao outro extremo em vez de
   escapar para o navegador. Sem nenhum controle elegível, o foco fica no próprio painel. Controles
   intermediários mantêm a navegação nativa e um popover aberto a partir do modal segue o fluxo dele.
-  Efeito colateral no foco inicial: um controle com `tabindex="-1"` deixa de ser escolhido, como já
-  acontecia com elementos que só tinham o atributo.
+  Conteúdo recolhido (`content-visibility: hidden`, como o de um `<details>` fechado) também fica
+  fora. Efeito colateral intencional no foco inicial: controles nativos (`button`, `input` etc.) com
+  `tabindex` negativo, inclusive `-2` ou menor, deixam de receber o foco inicial; antes só o seletor
+  genérico `[tabindex]` era filtrado.
 - A rolagem do fundo não é bloqueada.
 - Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O
   atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da

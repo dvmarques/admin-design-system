@@ -74,8 +74,9 @@ das validações automatizadas.
 - O ciclo de Tab trata cada `input type="radio"` como uma parada própria. Navegadores tratam um grupo
   de rádio como uma parada única (a opção marcada ou, sem marcada, a primeira em Tab e a última em
   Shift+Tab); com um grupo na ponta do ciclo, um Tab pode sair brevemente da camada e o seguinte
-  volta a ela. Corrigir exigiria elevar o orçamento do cenário `components-public`; fica como
-  melhoria futura. Um `iframe` na ponta também transfere o foco para dentro dele, onde o ciclo não alcança.
+  volta a ela. Normalizar o grupo custaria cerca de +226 B minificados e +95 B gzip e excederia o
+  orçamento do cenário `components-public` (não o do `dist`, já elevado nesta change); acompanhamento
+  a registrar. Um `iframe` na ponta também transfere o foco para dentro dele, onde o ciclo não alcança.
 
 ## AdsDatePicker
 

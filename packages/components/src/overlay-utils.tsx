@@ -32,6 +32,8 @@ const focusableSelector = [
 function isFocusEligible(element: HTMLElement, container: HTMLElement) {
 	if (element.matches(':disabled') || element.closest('[inert]')) return false;
 	if (element.hasAttribute('tabindex') && element.tabIndex < 0) return false;
+	// Cobre também `content-visibility: hidden` (conteúdo de `<details>` fechado), onde o foco não entra.
+	if (element.checkVisibility?.({ visibilityProperty: true }) === false) return false;
 	if (getComputedStyle(element).visibility !== 'visible') return false;
 	for (
 		let node: HTMLElement | null = element;
@@ -359,7 +361,8 @@ export function useOverlayFocus(
 				container.focus();
 				return;
 			}
-			const [first, last] = [elements[0]!, elements[elements.length - 1]!];
+			const first = elements[0]!;
+			const last = elements[elements.length - 1]!;
 			const direction = event.shiftKey
 				? Node.DOCUMENT_POSITION_PRECEDING
 				: Node.DOCUMENT_POSITION_FOLLOWING;
@@ -369,7 +372,7 @@ export function useOverlayFocus(
 				!active ||
 				!container.contains(active) ||
 				active === (event.shiftKey ? first : last) ||
-				(!elements.includes(active as HTMLElement) &&
+				(!(active instanceof HTMLElement && elements.includes(active)) &&
 					!elements.some((element) => active.compareDocumentPosition(element) & direction))
 			) {
 				event.preventDefault();

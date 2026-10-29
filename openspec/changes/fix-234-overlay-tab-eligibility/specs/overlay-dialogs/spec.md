@@ -2,7 +2,7 @@
 
 ### Requirement: Armadilha de Tab usa elegibilidade consistente com o foco inicial
 
-Em `AdsDialog` e `AdsDrawer`, incluindo o `AdsConfirmDialog` que os compõe, o sistema MUST determinar o primeiro e o último destino da navegação por Tab usando o mesmo critério de elegibilidade de foco inicial. Controles desabilitados, incluindo por `fieldset disabled`, ocultos e inertes MUST NOT atuar como pontos de virada do ciclo.
+Em `AdsDialog` e `AdsDrawer`, incluindo o `AdsConfirmDialog` que os compõe, o sistema MUST determinar o primeiro e o último destino da navegação por Tab usando o mesmo critério de elegibilidade de foco inicial. Controles desabilitados, incluindo por `fieldset disabled`, ocultos, inertes e com `tabindex` negativo MUST NOT atuar como pontos de virada do ciclo, e o sistema MUST reavaliar a elegibilidade a cada Tab ou Shift+Tab, de modo que mudanças com o modal aberto sejam respeitadas.
 
 #### Scenario: Tab avança com controle inelegível no início
 

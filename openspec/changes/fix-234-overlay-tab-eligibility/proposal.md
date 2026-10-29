@@ -1,6 +1,6 @@
 ## Why
 
-Issue #234: o foco inicial de `AdsDialog`, `AdsDrawer` e `AdsConfirmDialog` já ignora candidatos inelegíveis, mas o ciclo de Tab/Shift+Tab em `useOverlayFocus` usa a lista bruta de `focusableSelector`. Se o primeiro ou último candidato estiver desabilitado por `fieldset`, oculto ou sob `inert`, o foco pode estacionar ou não completar o ciclo. A falha ainda é uma **hipótese não reproduzida**; a primeira entrega é um teste capaz de confirmá-la ou descartá-la.
+Issue #234: o foco inicial de `AdsDialog`, `AdsDrawer` e `AdsConfirmDialog` já ignora candidatos inelegíveis, mas o ciclo de Tab/Shift+Tab em `useOverlayFocus` usa a lista bruta de `focusableSelector`. Se o primeiro ou último candidato estiver desabilitado por `fieldset`, oculto ou sob `inert`, o foco pode estacionar ou não completar o ciclo. A falha **foi reproduzida** (JSDOM e Chromium real, ver "Resultado da reprodução"); a primeira entrega foi o teste que a confirmou, antes de qualquer mudança no runtime.
 
 ## What Changes
 

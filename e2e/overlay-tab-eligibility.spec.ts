@@ -53,8 +53,7 @@ for (const [slug, label, title] of [
 			await layer.getByRole('button', { name: 'Liberar campos finais' }).click();
 			await notes.focus();
 			await layer
-				.locator('fieldset')
-				.last()
+				.getByRole('group', { name: 'Campos finais' })
 				.evaluate((fieldset: HTMLFieldSetElement) => {
 					fieldset.disabled = true;
 				});
@@ -90,5 +89,68 @@ test.describe('ConfirmDialog: Tab com controles inelegíveis no início', () => 
 		await page.keyboard.press('Escape');
 		await expect(layer).toHaveCount(0);
 		await expect(trigger).toBeFocused();
+	});
+});
+
+test.describe('Dialog: elegibilidade dinâmica e conteúdo recolhido', () => {
+	for (const [kind, apply] of [
+		['inert', (el: HTMLElement) => el.setAttribute('inert', '')],
+		['visibility: hidden', (el: HTMLElement) => (el.style.visibility = 'hidden')],
+	] as const) {
+		test(`o ativo que fica inelegível por ${kind} volta ao ciclo`, async ({ page }) => {
+			await page.goto('/catalogo/dialog');
+			await page.getByRole('button', { name: 'Abrir Dialog', exact: true }).click();
+			const layer = page.getByRole('dialog', { name: 'Exemplo de Dialog' });
+			const close = layer.getByRole('button', { name: 'Fechar', exact: true });
+			await expect(close).toBeFocused();
+			await layer.getByRole('textbox', { name: 'Observação' }).focus();
+			await layer
+				.getByRole('group', { name: 'Campos finais' })
+				.evaluate(apply as (el: HTMLElement) => void);
+			await page.keyboard.press('Tab');
+			await expectFocusInside(page, 'dialog', 'Exemplo de Dialog');
+			await expect(close).toBeFocused();
+		});
+	}
+
+	test('controles dentro de <details> fechado não prendem nem deixam escapar o Tab', async ({
+		page,
+	}) => {
+		await page.goto('/catalogo/dialog');
+		await page.getByRole('button', { name: 'Abrir Dialog', exact: true }).click();
+		const layer = page.getByRole('dialog', { name: 'Exemplo de Dialog' });
+		const close = layer.getByRole('button', { name: 'Fechar', exact: true });
+		await expect(close).toBeFocused();
+		await layer.evaluate((panel) => {
+			panel.insertAdjacentHTML(
+				'beforeend',
+				'<details><summary>Mais opções</summary><button type="button">Dentro</button></details>',
+			);
+		});
+		// Percorre o ciclo inteiro: o foco nunca sai do diálogo.
+		for (let step = 0; step < 6; step++) {
+			await page.keyboard.press('Tab');
+			await expectFocusInside(page, 'dialog', 'Exemplo de Dialog');
+		}
+		await page.keyboard.press('Shift+Tab');
+		await expectFocusInside(page, 'dialog', 'Exemplo de Dialog');
+	});
+});
+
+test.describe('Popover em portal dentro do modal', () => {
+	test('o ciclo do modal não fecha nem interrompe o popover descendente', async ({ page }) => {
+		await page.goto('/componentes');
+		await page.getByRole('button', { name: 'Abrir diálogo' }).first().click();
+		const dialog = page.getByRole('dialog', { name: 'Exemplo de diálogo' });
+		await dialog.getByRole('button', { name: 'Detalhes' }).click();
+		const popover = page.getByRole('dialog', { name: 'Detalhes internos' });
+		await expect(popover).toBeVisible();
+		await popover.getByRole('button', { name: 'Entendi' }).focus();
+		await page.keyboard.press('Tab');
+		await expect(popover).toBeVisible();
+		await expect(dialog).toBeVisible();
+		await page.keyboard.press('Escape');
+		await page.keyboard.press('Escape');
+		await expect(dialog).toHaveCount(0);
 	});
 });

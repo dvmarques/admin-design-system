@@ -74,67 +74,67 @@ export interface AdsComboboxTriggerContext {
 export interface AdsComboboxPopoverProps extends AdsFormControlBase {
 	presentation: 'popover';
 	options: readonly AdsComboboxOption[];
-	value?: string | null;
-	defaultValue?: string | null;
+	value?: string | null | undefined;
+	defaultValue?: string | null | undefined;
 	/** Emitido ao solicitar outra opção. Não é emitido ao escolher a opção já confirmada. */
-	onValueChange?: (value: string | null, option: AdsComboboxOption | null) => void;
-	selectedOption?: AdsComboboxOption | null;
+	onValueChange?: ((value: string | null, option: AdsComboboxOption | null) => void) | undefined;
+	selectedOption?: AdsComboboxOption | null | undefined;
 	/** Consulta de pesquisa (não o valor selecionado). */
-	inputValue?: string;
-	defaultInputValue?: string;
-	onInputValueChange?: (query: string, reason: AdsComboboxQueryReason) => void;
-	open?: boolean;
-	defaultOpen?: boolean;
-	onOpenChange?: (open: boolean) => void;
+	inputValue?: string | undefined;
+	defaultInputValue?: string | undefined;
+	onInputValueChange?: ((query: string, reason: AdsComboboxQueryReason) => void) | undefined;
+	open?: boolean | undefined;
+	defaultOpen?: boolean | undefined;
+	onOpenChange?: ((open: boolean) => void) | undefined;
 	/**
 	 * Com `false`, pedir outra opção emite `onValueChange` sem fechar o painel; use `value`
 	 * controlado para confirmar. Escolher a opção já confirmada sempre fecha.
 	 */
-	closeOnSelect?: boolean;
+	closeOnSelect?: boolean | undefined;
 	/** Campo de pesquisa separado (padrão `true`). Sem ele, a lista recebe o foco. */
-	searchable?: boolean;
+	searchable?: boolean | undefined;
 	/** Filtro por opção; por padrão, rótulo ou valor contêm a consulta. */
-	filterOption?: (option: AdsComboboxOption, query: string) => boolean;
+	filterOption?: ((option: AdsComboboxOption, query: string) => boolean) | undefined;
 	/** Com `false`, `options` já chegam filtradas (por exemplo, por busca remota). */
-	filterOptions?: boolean;
-	renderOption?: (option: AdsComboboxOption) => ReactNode;
-	showOptionVisuals?: boolean;
+	filterOptions?: boolean | undefined;
+	renderOption?: ((option: AdsComboboxOption) => ReactNode) | undefined;
+	showOptionVisuals?: boolean | undefined;
 	/** Substitui o botão padrão. Deve devolver um único elemento com `triggerProps` espalhadas. */
-	renderTrigger?: (context: AdsComboboxTriggerContext) => ReactElement;
+	renderTrigger?: ((context: AdsComboboxTriggerContext) => ReactElement) | undefined;
 	/** Conteúdo do painel fora da `listbox` (ações, links). */
-	footer?: ReactNode;
-	triggerRef?: Ref<HTMLButtonElement>;
-	searchInputRef?: Ref<HTMLInputElement>;
-	loading?: boolean;
-	error?: ReactNode;
-	emptyText?: string;
-	loadingText?: string;
-	retryLabel?: string;
-	onRetry?: () => void;
+	footer?: ReactNode | undefined;
+	triggerRef?: Ref<HTMLButtonElement> | undefined;
+	searchInputRef?: Ref<HTMLInputElement> | undefined;
+	loading?: boolean | undefined;
+	error?: ReactNode | undefined;
+	emptyText?: string | undefined;
+	loadingText?: string | undefined;
+	retryLabel?: string | undefined;
+	onRetry?: (() => void) | undefined;
 	/** Mensagem adicional anunciada na região viva do painel (por exemplo, operação pendente). */
-	statusMessage?: string;
+	statusMessage?: string | undefined;
 	/** Rótulo acessível do painel (diálogo). */
-	panelLabel?: string;
+	panelLabel?: string | undefined;
 	/** Rótulo acessível do campo de pesquisa. */
-	searchLabel?: string;
-	searchPlaceholder?: string;
+	searchLabel?: string | undefined;
+	searchPlaceholder?: string | undefined;
 	/** Rótulo acessível da lista de opções. */
-	listLabel?: string;
+	listLabel?: string | undefined;
 	/** Texto do botão padrão sem seleção. */
-	placeholder?: string;
-	panelClassName?: string;
-	placement?: 'top' | 'right' | 'bottom' | 'left';
+	placeholder?: string | undefined;
+	panelClassName?: string | undefined;
+	placement?: 'top' | 'right' | 'bottom' | 'left' | undefined;
 	/** Alinhamento do painel ao gatilho (padrão `start`). */
-	align?: 'start' | 'center';
-	size?: AdsFormSize;
-	disabled?: boolean;
-	readOnly?: boolean;
-	required?: boolean;
-	name?: string;
-	form?: string;
-	id?: string;
-	'aria-label'?: string;
-	'aria-labelledby'?: string;
-	'aria-describedby'?: string;
-	'aria-invalid'?: boolean | 'false' | 'true';
+	align?: 'start' | 'center' | undefined;
+	size?: AdsFormSize | undefined;
+	disabled?: boolean | undefined;
+	readOnly?: boolean | undefined;
+	required?: boolean | undefined;
+	name?: string | undefined;
+	form?: string | undefined;
+	id?: string | undefined;
+	'aria-label'?: string | undefined;
+	'aria-labelledby'?: string | undefined;
+	'aria-describedby'?: string | undefined;
+	'aria-invalid'?: boolean | 'false' | 'true' | undefined;
 }

@@ -14,6 +14,9 @@
 - [x] 2.6 Incluir os arquivos `LICENSE.md` e `THIRD_PARTY_NOTICES.md` no `dist` distribuído, verificando seu conteúdo.
 - [x] 2.7 Ampliar testes de geometria, largura de traço, tipagem e acessibilidade para os 20 nomes.
 - [x] 2.8 Atualizar `CHANGELOG.md` incluindo toda a migração e a publicação dos avisos.
+- [x] 2.9 Separar paths, tipos, componente e exports em `src/icons/`, mantendo `src/icon.tsx` como shim de compatibilidade e sem adicionar pacote.
+- [x] 2.10 Criar testes de contrato para exports públicos, 20 nomes e renderização pela arquitetura modular.
+- [ ] 2.11 Documentar a arquitetura e atualizar o changelog para futura extração opcional.
 
 ## 3. Validação e conclusão
 

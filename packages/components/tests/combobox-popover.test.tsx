@@ -490,6 +490,20 @@ describe('AdsCombobox popover overlays and accessibility', () => {
 		expect(trigger()).toHaveTextContent('Bahia');
 	});
 
+	it('renders the panel in a portal outside overflow-clipping ancestors', async () => {
+		const events = userEvent.setup();
+		render(
+			<div data-testid="clip" style={{ overflow: 'hidden', height: 20 }}>
+				<Basic />
+			</div>,
+		);
+		await events.click(trigger());
+		const panel = await screen.findByRole('dialog');
+		expect(screen.getByTestId('clip')).not.toContainElement(panel);
+		expect(panel.closest('[data-ads-overlay-root]')?.parentElement).toBe(document.body);
+		expect(panel).toHaveClass('ads-combobox__panel');
+	});
+
 	it('has no detectable axe violations closed, open with search and open without search', async () => {
 		const events = userEvent.setup();
 		const rules = { rules: { 'color-contrast': { enabled: false }, region: { enabled: false } } };

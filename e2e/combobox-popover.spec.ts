@@ -169,3 +169,31 @@ for (const theme of ['light', 'dark'] as const) {
 		await expectNoAxeViolations(page);
 	});
 }
+
+test('popover: cores forçadas mantêm a seleção perceptível por contorno', async ({ page }) => {
+	await page.emulateMedia({ forcedColors: 'active' });
+	const trigger = owner(page);
+	await trigger.click();
+	const selected = page.getByRole('option', { name: /Bia Lima/ });
+	await expect(selected).toHaveAttribute('aria-selected', 'true');
+	await expect(selected).toHaveCSS('outline-style', 'solid');
+	await expect(selected).toHaveCSS('outline-width', '2px');
+});
+
+test('seletor de organização: falha simulada mantém a organização e o painel', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 900 });
+	await page.goto('/catalogo/organization-switcher');
+	await waitForHydration(page.getByLabel('Resultado da troca'));
+	await page.getByLabel('Resultado da troca').selectOption('failure');
+	const trigger = page
+		.getByRole('main')
+		.getByRole('button', { name: /^Organização atual: Acme Brasil/ })
+		.first();
+	await trigger.click();
+	const panel = page.getByRole('dialog', { name: 'Trocar de organização' });
+	await panel.getByRole('searchbox').fill('globex');
+	await panel.getByRole('option', { name: /^Globex/ }).click();
+	await expect(panel.getByRole('alert')).toHaveText(/Não foi possível trocar/);
+	await expect(panel).toBeVisible();
+	await expect(trigger).toContainText('Acme Brasil');
+});

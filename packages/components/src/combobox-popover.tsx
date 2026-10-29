@@ -327,9 +327,10 @@ export function ComboboxPopover({
 		[attachContent],
 	);
 
+	// A largura mínima do painel acompanha a do gatilho; só é medida com o painel aberto.
 	const panelStyle = {
 		...position.style,
-		'--ads-combobox-anchor-width': `${rootRef.current?.getBoundingClientRect().width ?? 0}px`,
+		'--ads-combobox-anchor-width': `${open ? (rootRef.current?.getBoundingClientRect().width ?? 0) : 0}px`,
 	} as CSSProperties;
 	const liveText = statusMessage ?? (open && stateShown ? stateNode : null);
 	const requiredMessage = 'Selecione uma opção';

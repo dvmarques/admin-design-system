@@ -1,79 +1,63 @@
-# Auditoria de procedência de ícones do Admin DS
+# Auditoria de procedência e licenciamento dos ícones — Admin DS
 
-**Data da investigação:** 2026-10-29  
-**Escopo:** 20 nomes públicos do objeto `iconPaths` em `packages/components/src/icon.tsx` (branch `develop`).  
-**Issue:** [#257](https://github.com/dvmarques/admin-design-system/issues/257).  
-**Estado:** `building` substituído por SVG com fonte/licença MIT comprovadas na PR #258; **proveniência dos demais desenhos não comprovada individualmente**.
+**Data:** 2026-10-29  
+**Issue:** [#257](https://github.com/dvmarques/admin-design-system/issues/257)  
+**PR:** [#258](https://github.com/dvmarques/admin-design-system/pull/258)  
+**Escopo:** os 20 identificadores públicos de `packages/components/src/icon.tsx`.  
+**Estado na branch da PR:** **todos os 20 SVGs atuais têm código-fonte oficial identificado e licença permissiva MIT ou ISC**. A revisão visual e testes/CI do projeto ainda são gates pendentes.
 
-## Método e limites
+## Critério de regularização
 
-Foram inspecionados o JSX com seus comandos SVG (`path`, `circle`, `rect`), os SVGs oficiais selecionados de Feather, Lucide, Tabler e Heroicons, e os commits Git que acrescentaram nomes ao `AdsIcon`. Esta comparação é de geometria e topologia, não uma prova documental do processo criativo. Diferenças pequenas podem indicar adaptação, mas também podem resultar de desenho independente. A inexistência de uma correspondência nas referências consultadas **não prova originalidade**.
+Antes desta mudança, os traçados do Admin DS tinham semelhanças com bibliotecas conhecidas, mas sua procedência individual não podia ser comprovada. Não foi assumida autoria própria: **os 19 desenhos antigos restantes foram substituídos por traçados oficiais identificados**, assim como já havia sido feito com `building`.
 
-Não foi feita uma busca exaustiva por todos os acervos existentes, nem análise jurídica de titularidade.
+Cada SVG agora corresponde à geometria de uma fonte oficial; o nome público `AdsIconName` foi preservado. A transcrição para JSX altera apenas a sintaxe dos atributos e declara a largura de traço nativa no elemento (Feather/Lucide: `2`; Hugeicons: `1.5`), para não herdar `1.75` do wrapper `AdsIcon`. `building` também preserva as pontas dos traços. Não se adicionou dependência npm.
 
-## Resultado por ícone
+## Inventário das 20 fontes atuais
 
-| Ícone | Fonte comparada | Evidência geométrica | Classificação |
-| --- | --- | --- | --- |
-| `alertCircle` | Feather `alert-circle` | Mesmo conceito; círculo/traços com medidas diferentes | Sem proveniência demonstrada |
-| `alertTriangle` | Feather `alert-triangle` | Triângulo e exclamação; contorno e coordenadas diferentes | Sem proveniência demonstrada |
-| `bell` | Feather `bell` | Sino com composição distinta | Sem proveniência demonstrada |
-| `building` | **Hugeicons Free `Building06Icon`** | Quatro paths oficiais incorporados, origem e licença MIT rastreáveis; substitui SVG antigo de origem desconhecida | **Origem do SVG atual comprovada — MIT (Hugeicons)** |
-| `calendar` | Feather `calendar` | Composição semelhante; medidas e forma do corpo diferem | Sem proveniência demonstrada |
-| `check` | Feather `check` | Marca genérica; vértices diferentes | Geometria simples |
-| `chevronDown` | Feather `chevron-down` | Segmentos e vértices equivalentes | Equivalência geométrica; autoria não provada |
-| `chevronLeft` | Feather `chevron-left` | Segmentos e vértices equivalentes | Equivalência geométrica; autoria não provada |
-| `chevronRight` | Feather `chevron-right` | Segmentos e vértices equivalentes | Equivalência geométrica; autoria não provada |
-| `chevronsUpDown` | Lucide `chevrons-up-down` | Conceito similar; vértices e coordenadas diferentes | Sem proveniência demonstrada |
-| `close` | Feather `x` | Diagonais e extremidades equivalentes | Equivalência geométrica; autoria não provada |
-| `logOut` | Feather `log-out` | Caminho da porta e seta com geometria muito próxima | Possível adaptação; autoria não provada |
-| `monitor` | Feather `monitor` | Mesma categoria; retângulo e suporte diferentes | Sem proveniência demonstrada |
-| `moon` | Feather `moon` | Caminho da lua extremamente próximo, com arredondamento numérico | Possível adaptação; autoria não provada |
-| `info` | Feather `info` | Círculo e letra i; raio e posições diferentes | Sem proveniência demonstrada |
-| `plus` | Feather `plus` | Segmentos e extremidades equivalentes | Equivalência geométrica; autoria não provada |
-| `sun` | Feather `sun` | Sol com raios; medidas e raios diferentes | Sem proveniência demonstrada |
-| `settings` | Feather `settings`; Tabler `settings`; Lucide `settings` | Contorno de engrenagem estruturalmente muito próximo do Feather, com números/comandos modificados; diferente de Tabler/Lucide atuais | Possível adaptação Feather; autoria não provada |
-| `search` | Feather `search` | Lupa com centro/raio diferentes | Sem proveniência demonstrada |
-| `user` | Feather `user` | Figura humana com silhueta inferior diferente | Sem proveniência demonstrada |
+| Nome público | Fonte | Arquivo oficial | Licença | Blob SHA fonte (prefixo) |
+| --- | --- | --- | --- | --- |
+| `alertCircle` | Feather | [`alert-circle`](https://github.com/feathericons/feather/blob/main/icons/alert-circle.svg) | MIT | `9d8e884e003e` |
+| `alertTriangle` | Feather | [`alert-triangle`](https://github.com/feathericons/feather/blob/main/icons/alert-triangle.svg) | MIT | `077dd0ea8d67` |
+| `bell` | Feather | [`bell`](https://github.com/feathericons/feather/blob/main/icons/bell.svg) | MIT | `1d2f1b72d4bf` |
+| `building` | Hugeicons Free | [`Building06Icon`](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/src/Building06Icon.ts) | MIT | `d4fea3215dce` |
+| `calendar` | Feather | [`calendar`](https://github.com/feathericons/feather/blob/main/icons/calendar.svg) | MIT | `f76e83340f1f` |
+| `check` | Feather | [`check`](https://github.com/feathericons/feather/blob/main/icons/check.svg) | MIT | `d5a1c9259c15` |
+| `chevronDown` | Feather | [`chevron-down`](https://github.com/feathericons/feather/blob/main/icons/chevron-down.svg) | MIT | `ae614b7c34da` |
+| `chevronLeft` | Feather | [`chevron-left`](https://github.com/feathericons/feather/blob/main/icons/chevron-left.svg) | MIT | `590ba33fa5dd` |
+| `chevronRight` | Feather | [`chevron-right`](https://github.com/feathericons/feather/blob/main/icons/chevron-right.svg) | MIT | `aac0b825a65f` |
+| `chevronsUpDown` | Lucide | [`chevrons-up-down`](https://github.com/lucide-icons/lucide/blob/main/icons/chevrons-up-down.svg) | ISC | `bd8833d32381` |
+| `close` | Feather | [`x`](https://github.com/feathericons/feather/blob/main/icons/x.svg) | MIT | `d9213159926b` |
+| `logOut` | Feather | [`log-out`](https://github.com/feathericons/feather/blob/main/icons/log-out.svg) | MIT | `f19790d566a9` |
+| `monitor` | Feather | [`monitor`](https://github.com/feathericons/feather/blob/main/icons/monitor.svg) | MIT | `74d56790b199` |
+| `moon` | Feather | [`moon`](https://github.com/feathericons/feather/blob/main/icons/moon.svg) | MIT | `3249152828bd` |
+| `info` | Feather | [`info`](https://github.com/feathericons/feather/blob/main/icons/info.svg) | MIT | `4d99c59b92e4` |
+| `plus` | Feather | [`plus`](https://github.com/feathericons/feather/blob/main/icons/plus.svg) | MIT | `9b0b994cc208` |
+| `sun` | Feather | [`sun`](https://github.com/feathericons/feather/blob/main/icons/sun.svg) | MIT | `3589337892c4` |
+| `settings` | Feather | [`settings`](https://github.com/feathericons/feather/blob/main/icons/settings.svg) | MIT | `aa787125b889` |
+| `search` | Feather | [`search`](https://github.com/feathericons/feather/blob/main/icons/search.svg) | MIT | `97881568bf9f` |
+| `user` | Feather | [`user`](https://github.com/feathericons/feather/blob/main/icons/user.svg) | MIT | `3e96571ed035` |
 
-### Caso prioritário: `settings`
+As URLs de origem apontam para o projeto oficial. Os prefixos SHA registram os arquivos examinados, não comprovam autoria do desenho antigo nem substituem avisos legais.
 
-- Desenho do Admin DS: [arquivo e commit de inclusão de `settings`](https://github.com/dvmarques/admin-design-system/commit/21aba2e7bcde3a0259aee7ef5ac3597a38040f5d).
-- Referência externa: [Feather `settings.svg`](https://github.com/feathericons/feather/blob/main/icons/settings.svg).
-- Há uma sequência distintiva de curvas e entalhes muito próxima da fonte Feather; os valores (por exemplo, parâmetros de `1.65` arredondados em `1.7`) e comandos diferem. **Possível desenho adaptado**, mas o commit não informa origem nem há atribuição autoral documental.
-- Tratamento: preservar **preventivamente** o aviso MIT Feather em [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). Não declarar desenho original nem derivação provada. Não é necessária mudança na API ou no SVG para documentar essa ressalva.
+## Licenças e avisos
 
-### Caso prioritário: `building` — regularizado por substituição
+| Biblioteca | Ícones usados | Copyright e licença | Arquivo oficial |
+| --- | ---: | --- | --- |
+| Feather Icons | 18 | MIT — Cole Bemis (2013–2023) | [LICENSE](https://github.com/feathericons/feather/blob/main/LICENSE) |
+| Lucide Icons | 1 | ISC — Lucide Icons and Contributors (2026) | [LICENSE](https://github.com/lucide-icons/lucide/blob/main/LICENSE) |
+| Hugeicons Free | 1 | MIT — Hugeicons (2025) | [LICENSE.md](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md) |
 
-- **Anterior:** o [desenho introduzido neste commit](https://github.com/dvmarques/admin-design-system/commit/21aba2e7bcde3a0259aee7ef5ac3597a38040f5d) não tinha origem comprovada. Foram comparados [Tabler `building`](https://github.com/tabler/tabler-icons/blob/main/icons/outline/building.svg), [Lucide `building`](https://github.com/lucide-icons/lucide/blob/main/icons/building.svg) e [Heroicons `building-office`](https://github.com/tailwindlabs/heroicons/blob/master/optimized/24/outline/building-office.svg), sem correspondência exata.
-- **Atual (PR #258):** o conteúdo de `iconPaths.building` foi substituído pelos quatro paths do [`Building06Icon` de Hugeicons Free](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/src/Building06Icon.ts) ([arquivo-fonte identificado por blob SHA `d4fea3215dce64febad36b610b3834fd4eaaf222`](https://github.com/hugeicons/hugeicons/blob/d4fea3215dce64febad36b610b3834fd4eaaf222/packages/core-free-icons/src/Building06Icon.ts)). O pacote [`@hugeicons/core-free-icons`](https://github.com/hugeicons/hugeicons/tree/main/packages/core-free-icons) fornece licença [MIT](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md), copyright (c) 2025 Hugeicons.
-- **Licença:** aviso MIT integral preservado no [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md); os comandos `d` e `strokeWidth="1.5"` são os oficiais, com pontas preservadas explicitamente para neutralizar herança do componente.
-- **Compatibilidade:** `AdsIcon name="building"` e `AdsIconName` permanecem públicos, sem dependência runtime; há mudança visual deliberada (porta no desenho, contorno do prédio diferente).
-- **Limite:** isto confirma a fonte/licença do **SVG substituto**, não certifica que o SVG antigo tenha sido criado independentemente.
+**Avisos integrais** preservados em [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). O arquivo de licença do Lucide também incorpora avisos MIT relativos a seu subconjunto Feather, conforme sua distribuição oficial; o SVG `chevrons-up-down` usado aqui não está listado nesse subconjunto.
 
-## Evidência de histórico
+## Histórico de `building` e `settings`
 
-- [Commit de `building`, `settings`, `bell`, `logOut` e outros](https://github.com/dvmarques/admin-design-system/commit/21aba2e7bcde3a0259aee7ef5ac3597a38040f5d).
-- [Commit dos modos de tema (`moon`, `sun`, `monitor`)](https://github.com/dvmarques/admin-design-system/commit/0c47fc8acd68f41d4b568fddc76c56860393d99d).
-- [Commit dos alertas (`alertCircle`, `alertTriangle`)](https://github.com/dvmarques/admin-design-system/commit/b7c1019e0818b7b64b44da18e63642584d9d5c32).
-- [Commit de ícones de calendário e navegação](https://github.com/dvmarques/admin-design-system/commit/df3f1d38410d8f1f5022ace7c2665ba5bc42e9fd).
+- `building`: substituído pelo `Building06Icon` oficial de Hugeicons Free (MIT), com quatro paths e parâmetros de espessura originais. Mantém `AdsIcon name="building"`; muda somente o desenho visível.
+- `settings`: o desenho antigo lembrava o Feather, mas a derivação não era comprovada. Agora o desenho **é** o `settings.svg` oficial do Feather (MIT), com o respectivo aviso de copyright. Não é necessária declaração de que o antigo SVG fosse originalmente Feather.
+- [Commit histórico de introdução dos desenhos antigos](https://github.com/dvmarques/admin-design-system/commit/21aba2e7bcde3a0259aee7ef5ac3597a38040f5d). Os commits antigos não são alterados; a regularização diz respeito ao **código atual** após a PR #258.
 
-Os commits registram incorporação ao repositório; não certificam quem criou o traçado original.
+## Limites e verificações exigidas
 
-## Licenças verificadas
-
-| Origem examinada | Licença oficial | Tratamento nesta revisão |
-| --- | --- | --- |
-| [Admin DS](../LICENSE.md) | MIT, Daniel Marques (2026) | Aplicável ao código próprio; não apaga direitos de terceiros |
-| [Feather](https://github.com/feathericons/feather/blob/main/LICENSE) | MIT, Cole Bemis (2013–2023) | Aviso integral preservado preventivamente em [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) |
-| [Lucide](https://github.com/lucide-icons/lucide/blob/main/LICENSE) | ISC, com parte de seu catálogo derivada de Feather MIT | Referência comparativa; nenhuma derivação Lucide-específica comprovada |
-| [Tabler](https://github.com/tabler/tabler-icons) | MIT | Referência comparativa; uso não comprovado |
-| [Heroicons](https://heroicons.com/) | MIT | Referência comparativa; uso não comprovado |
-| [Hugeicons Free](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md) | MIT, copyright (c) 2025 Hugeicons | **Fonte comprovada do novo `building`**, aviso integral preservado no `THIRD_PARTY_NOTICES.md` |
-
-## Decisão e próximos passos
-
-- **Não foi encontrada incompatibilidade de licença nas fontes consultadas.** Isso não equivale à prova de que todos os SVGs têm origem nelas ou são originalmente do Admin DS.
-- Manter o projeto MIT e o aviso Feather MIT preventivo; **atribuir exclusivamente o novo `building` à Hugeicons Free (MIT)**. Não atribuir fornecedores não comprovados aos demais desenhos.
-- A procedência do **novo `building` foi documentada**. A certificação de autoria independente dos outros 19 ícones continua não comprovada; para publicação independente, confirmar essas origens ou substituir traçados incertos por fontes licenciadas.
-- O desenho de `building` foi alterado intencionalmente (quatro paths oficiais Hugeicons Free). Nenhuma dependência runtime ou assinatura pública foi alterada; os demais desenhos permanecem idênticos.
+- A origem e a licença dos **desenhos substitutos** são verificáveis; não é uma certificação de autoria independente nem um parecer jurídico sobre os históricos.
+- As alterações são visuais nos 20 desenhos. Validar os três tamanhos, ambos os temas, as composições administrativas, snapshots visuais e acessibilidade antes do merge.
+- Verificar que o conteúdo completo das licenças e avisos siga junto da distribuição de `@admin-ds/components`.
+- O projeto continua licenciado MIT para o código próprio, respeitando a ISC/MIT dos desenhos externos.

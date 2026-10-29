@@ -68,11 +68,38 @@ const iconPaths = {
 			<polyline points="20 6 9 17 4 12" strokeWidth="2" />
 		</>
 	),
-	chevronDown: <path d="m6 9 6 6 6-6" />,
-	chevronLeft: <path d="m15 6-6 6 6 6" />,
-	chevronRight: <path d="m9 6 6 6-6 6" />,
-	chevronsUpDown: <path d="m8 9 4-4 4 4m0 6-4 4-4-4" />,
-	close: <path d="m6 6 12 12M18 6 6 18" />,
+	// Feather Icons (MIT): icons/chevron-down.svg.
+	chevronDown: (
+		<>
+			<polyline points="6 9 12 15 18 9" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/chevron-left.svg.
+	chevronLeft: (
+		<>
+			<polyline points="15 18 9 12 15 6" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/chevron-right.svg.
+	chevronRight: (
+		<>
+			<polyline points="9 18 15 12 9 6" strokeWidth="2" />
+		</>
+	),
+	// Lucide Icons (ISC): icons/chevrons-up-down.svg.
+	chevronsUpDown: (
+		<>
+			<path d="m7 15 5 5 5-5" strokeWidth="2" />
+			<path d="m7 9 5-5 5 5" strokeWidth="2" />
+		</>
+	),
+	// Feather Icons (MIT): icons/x.svg.
+	close: (
+		<>
+			<line x1="18" y1="6" x2="6" y2="18" strokeWidth="2" />
+			<line x1="6" y1="6" x2="18" y2="18" strokeWidth="2" />
+		</>
+	),
 	logOut: <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4m7 14 5-5-5-5m5 5H9" />,
 	monitor: (
 		<>

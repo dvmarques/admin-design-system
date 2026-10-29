@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Locator } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
@@ -151,8 +151,8 @@ for (const width of [390, 1280] as const) {
 		// Não exigir centralização quando o painel precisa ser deslocado para caber na viewport.
 		// O esperado é centralizar no botão visível e aplicar o limite de colisão de 8px.
 		const horizontalError = async (
-			trigger: import('@playwright/test').Locator,
-			panel: import('@playwright/test').Locator,
+			trigger: Locator,
+			panel: Locator,
 		) => {
 			const anchor = (await trigger.boundingBox())!;
 			const overlay = (await panel.boundingBox())!;

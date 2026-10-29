@@ -8,10 +8,6 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
-#### Changed
-
-- `private-consumer-reference-cleanup` (29/10/2026) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec e dos exemplos do AdminShell; mantidos os requisitos técnicos genéricos sem alterar APIs públicas.
-
 #### Added
 
 - `issue-241-highlighted-code-catalog` (#241) - O componente opcional AdsHighlightedCodeSnippet passa a integrar a busca, a categoria Dados e a documentação interativa do catálogo, com Storybook e link ao exemplo avançado, sem mover Shiki para os pacotes principais.
@@ -63,6 +59,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 - `add-visual-identity` (issue #118) - Etapa inicial da identidade visual. No tema escuro, `--ads-color-surface-muted` e `--ads-color-surface-hover` deixam de valer o mesmo que `--ads-color-surface-raised`. Novos `--ads-spacing-5`, `-10`, `-12` e `-16`, tokens de gráfico `--ads-color-chart1` a `--ads-color-chart8` (contraste mínimo de 3:1 nos dois temas) e `--ads-typography-font-family-heading` e `-mono`. A escala `brand50`…`brand900` passa a ser a referência de `primary`, foco e seleção, sem mudar a aparência. Novo `docs/visual-identity.md` e story Foundation/Visual identity. **A fonte padrão mudou**: `--ads-typography-font-family` passa de Aptos/Segoe UI para uma pilha que começa em `Inter`; a biblioteca não distribui a fonte, então a aplicação deve carregá-la (por exemplo com `next/font`, veja `docs/visual-identity.md`) ou sobrescrever o token, e sem isso o texto usa a fonte de sistema da pilha (impacto visual para consumidores). O demo e o Storybook carregam a Inter com `@fontsource/inter` (dependência só dessas aplicações).
 
 #### Changed
+
+- `docs-sanitize-private-consumer-references` (PR #251) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec arquivado e dos exemplos e testes do AdminShell (título neutro `Admin Demo`); mantidos os requisitos técnicos genéricos, sem alterar APIs públicas, comportamento ou estilos. Sem change OpenSpec própria: mudança exclusivamente documental.
 
 - `issue-240-catalog-families` (#240) - Sidebar do catálogo apresenta famílias compostas em uma entrada por família; a busca mantém nomes individuais e aliases, levando a seções com API e exemplo. URLs legadas por export continuam acessíveis no site estático.
 

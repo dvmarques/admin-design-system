@@ -525,3 +525,126 @@ it('keeps retry Tab navigation inside a dialog', async () => {
 	fireEvent.keyDown(retry, { key: 'Tab' });
 	expect(save).toHaveFocus();
 });
+
+describe('revisão da #142: origens e texto controlado externos', () => {
+	it('não envia o value antigo quando inputValue controlado diverge externamente', () => {
+		const field = (inputValue: string) => (
+			<form>
+				<AdsCombobox
+					aria-label="Estado"
+					inputValue={inputValue}
+					name="uf"
+					options={states}
+					value="SP"
+				/>
+			</form>
+		);
+		const { container, rerender } = render(field('São Paulo'));
+		const form = () => container.querySelector('form')!;
+		expect(new FormData(form()).get('uf')).toBe('SP');
+		rerender(field('Rio'));
+		expect(screen.getByRole('combobox', { name: 'Estado' })).toHaveValue('Rio');
+		expect(new FormData(form()).get('uf')).toBe('');
+		rerender(field('São Paulo'));
+		expect(new FormData(form()).get('uf')).toBe('SP');
+	});
+
+	it('refaz a busca e descarta resultados da origem anterior quando requestKey muda', async () => {
+		const origin = (name: string) =>
+			vi.fn(async () => [{ value: name, label: `Opção ${name}` }] as const);
+		const first = origin('A');
+		const second = origin('B');
+		const { rerender } = render(
+			<AdsAutocomplete
+				aria-label="Busca"
+				debounceMs={0}
+				inputValue="op"
+				loadOptions={first}
+				requestKey="a"
+			/>,
+		);
+		const input = screen.getByRole('combobox', { name: 'Busca' });
+		fireEvent.focus(input);
+		expect(await screen.findByRole('option', { name: 'Opção A' })).toBeInTheDocument();
+		rerender(
+			<AdsAutocomplete
+				aria-label="Busca"
+				debounceMs={0}
+				inputValue="op"
+				loadOptions={second}
+				requestKey="b"
+			/>,
+		);
+		expect(await screen.findByRole('option', { name: 'Opção B' })).toBeInTheDocument();
+		expect(screen.queryByRole('option', { name: 'Opção A' })).toBeNull();
+		expect(second).toHaveBeenCalledTimes(1);
+	});
+
+	it('não refaz a busca ao trocar apenas a identidade de loadOptions', async () => {
+		const loader = vi.fn(async () => states);
+		const { rerender } = render(
+			<AdsAutocomplete aria-label="Busca" debounceMs={0} inputValue="op" loadOptions={loader} />,
+		);
+		fireEvent.focus(screen.getByRole('combobox', { name: 'Busca' }));
+		await waitFor(() => expect(loader).toHaveBeenCalledTimes(1));
+		rerender(
+			<AdsAutocomplete
+				aria-label="Busca"
+				debounceMs={0}
+				inputValue="op"
+				loadOptions={async () => states}
+			/>,
+		);
+		await act(async () => {
+			await new Promise((resolve) => setTimeout(resolve, 20));
+		});
+		expect(loader).toHaveBeenCalledTimes(1);
+	});
+	it('não renderiza resultados da origem anterior no primeiro render da nova requestKey', async () => {
+		const seen: string[] = [];
+		const field = (
+			key: string,
+			loadOptions: () => Promise<readonly { value: string; label: string }[]>,
+		) => (
+			<AdsAutocomplete
+				aria-label="Busca"
+				debounceMs={0}
+				inputValue="op"
+				loadOptions={loadOptions}
+				renderOption={(option) => {
+					seen.push(option.label);
+					return option.label;
+				}}
+				requestKey={key}
+			/>
+		);
+		const { rerender } = render(field('a', async () => [{ value: 'A', label: 'Opção A' }]));
+		fireEvent.focus(screen.getByRole('combobox', { name: 'Busca' }));
+		await screen.findByRole('option', { name: 'Opção A' });
+		seen.length = 0;
+		rerender(field('b', () => new Promise(() => {})));
+		expect(seen).not.toContain('Opção A');
+		expect(screen.queryByRole('option', { name: 'Opção A' })).toBeNull();
+	});
+
+	it('restaura o value ao devolver externamente o rótulo após uma edição', () => {
+		const field = (inputValue: string) => (
+			<form>
+				<AdsCombobox
+					aria-label="Estado"
+					inputValue={inputValue}
+					name="uf"
+					options={states}
+					value="SP"
+				/>
+			</form>
+		);
+		const { container, rerender } = render(field('São Paulo'));
+		const input = screen.getByRole('combobox', { name: 'Estado' });
+		fireEvent.change(input, { target: { value: 'Rio' } });
+		rerender(field('Rio'));
+		expect(new FormData(container.querySelector('form')!).get('uf')).toBe('');
+		rerender(field('São Paulo'));
+		expect(new FormData(container.querySelector('form')!).get('uf')).toBe('SP');
+	});
+});

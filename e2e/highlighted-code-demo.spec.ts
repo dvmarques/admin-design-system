@@ -3,17 +3,27 @@ import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 import { chooseTheme, themeTrigger } from './theme-control';
 
-test('snippet opcional possui página própria e continua vinculado ao exemplo antigo', async ({ page }) => {
+test('snippet opcional possui página própria e continua vinculado ao exemplo antigo', async ({
+	page,
+}) => {
 	await page.goto('/catalogo');
 	await page.getByRole('searchbox', { name: 'Buscar componente' }).fill('HighlightedCodeSnippet');
 	await page.getByRole('link', { name: 'AdsHighlightedCodeSnippet' }).click();
-	await expect(page.getByRole('heading', { name: 'AdsHighlightedCodeSnippet', level: 1 })).toBeVisible();
+	await expect(
+		page.getByRole('heading', { name: 'AdsHighlightedCodeSnippet', level: 1 }),
+	).toBeVisible();
 	const preview = page.getByRole('region', { name: 'Demonstração interativa' });
 	await preview.getByLabel('Linguagem').selectOption('json');
-	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText('Admin DS');
+	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText(
+		'Admin DS',
+	);
 	await preview.getByLabel('Linguagem').selectOption('unknown');
-	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText('sem destaque');
-	await preview.getByRole('link', { name: 'Ver demonstração avançada de código destacado' }).click();
+	await expect(preview.locator('.ads-highlighted-code-snippet').getByRole('code')).toContainText(
+		'sem destaque',
+	);
+	await preview
+		.getByRole('link', { name: 'Ver demonstração avançada de código destacado' })
+		.click();
 	await expect(page.getByRole('heading', { name: 'Código destacado', level: 1 })).toBeVisible();
 	await page.getByRole('link', { name: 'Ver a página oficial do componente no catálogo' }).click();
 	await expect(page).toHaveURL(/\/catalogo\/highlighted-code-snippet$/);

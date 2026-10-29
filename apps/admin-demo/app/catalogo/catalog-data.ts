@@ -385,7 +385,8 @@ export const catalogEntries = [
 		group: 'Dados',
 		slug: 'highlighted-code-snippet',
 		demo: 'HighlightedCodeSnippet',
-		description: 'Código com Shiki em pacote opcional: TSX, Java, SQL, JSON, temas, cópia e fallback; código destacado, CodeSnippet.',
+		description:
+			'Código com Shiki em pacote opcional: TSX, Java, SQL, JSON, temas, cópia e fallback; código destacado, CodeSnippet.',
 		href: '/catalogo/highlighted-code-snippet',
 	},
 	{

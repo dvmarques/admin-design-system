@@ -36,9 +36,13 @@ function runtimeExports(path: string) {
 describe('rastreabilidade do catálogo', () => {
 	it('cobre todo export público de UI com rota própria, sem duplicatas', () => {
 		const exports = [
-			...['packages/components/src/index.ts', 'packages/admin/src/index.ts'].flatMap(runtimeExports),
+			...['packages/components/src/index.ts', 'packages/admin/src/index.ts'].flatMap(
+				runtimeExports,
+			),
 			// O pacote opcional possui também utilitários sem UI, que não pertencem ao catálogo visual.
-			...runtimeExports('packages/highlighted-code/src/index.ts').filter((name) => name === 'AdsHighlightedCodeSnippet'),
+			...runtimeExports('packages/highlighted-code/src/index.ts').filter(
+				(name) => name === 'AdsHighlightedCodeSnippet',
+			),
 		];
 		expect(catalogEntries.map((entry) => entry.name).sort()).toEqual(
 			exports.filter((name) => !exclusions.includes(name)).sort(),

@@ -30,7 +30,9 @@ for (const theme of ['light', 'dark'] as const) {
 						.locator(':scope > *')
 						.count(),
 				).toBeGreaterThan(0);
-				await expect(page.locator('.demo-catalog-code').getByRole('code')).toContainText(entry.name);
+				await expect(page.locator('.demo-catalog-code').getByRole('code')).toContainText(
+					entry.name,
+				);
 				expect(
 					await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
 					entry.name,

@@ -9,7 +9,8 @@ const meta = {
 	parameters: {
 		docs: {
 			description: {
-				component: 'Componente público do pacote opcional @admin-ds/highlighted-code, com carregamento assíncrono de Shiki, cópia do texto original e fallback plain. Não faz parte de @admin-ds/components.',
+				component:
+					'Componente público do pacote opcional @admin-ds/highlighted-code, com carregamento assíncrono de Shiki, cópia do texto original e fallback plain. Não faz parte de @admin-ds/components.',
 			},
 		},
 	},
@@ -19,7 +20,7 @@ type Story = StoryObj<typeof meta>;
 
 export const TypeScript: Story = {
 	args: {
-		code: "export function ola(nome: string) { return `Olá, ${nome}!`; }",
+		code: 'export function ola(nome: string) { return `Olá, ${nome}!`; }',
 		language: 'ts',
 		theme: 'auto',
 		showLineNumbers: true,

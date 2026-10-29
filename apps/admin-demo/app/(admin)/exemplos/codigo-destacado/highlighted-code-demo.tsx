@@ -63,7 +63,11 @@ export function HighlightedCodeDemo() {
 				Demonstração do pacote opcional <code>@admin-ds/highlighted-code</code> com Shiki carregado
 				sob demanda. O texto plain aparece imediatamente; o destaque é aplicado de forma assíncrona.
 			</p>
-			<p><Link href="/catalogo/highlighted-code-snippet">Ver a página oficial do componente no catálogo</Link></p>
+			<p>
+				<Link href="/catalogo/highlighted-code-snippet">
+					Ver a página oficial do componente no catálogo
+				</Link>
+			</p>
 			<div className="demo-highlighted-code-controls">
 				<AdsField label="Exemplo">
 					<AdsSelect

@@ -1614,16 +1614,19 @@ export function HighlightedCodeSnippetDemo() {
 	const [showLineNumbers, setShowLineNumbers] = useState(true);
 	const [wrapLines, setWrapLines] = useState(false);
 	const samples = {
-		tsx: "export function Saudacao() { return <strong>Olá!</strong>; }",
-		java: "public class Exemplo { public static void main(String[] args) {} }",
-		sql: "SELECT id, titulo FROM receitas ORDER BY titulo;",
+		tsx: 'export function Saudacao() { return <strong>Olá!</strong>; }',
+		java: 'public class Exemplo { public static void main(String[] args) {} }',
+		sql: 'SELECT id, titulo FROM receitas ORDER BY titulo;',
 		json: '{ "nome": "Admin DS", "ativo": true }',
 		unknown: 'Este código permanece sem destaque e continua copiável.',
 	};
 	return (
 		<div className="flex flex-col gap-3">
 			<AdsField label="Linguagem">
-				<AdsSelect value={language} onChange={(event) => setLanguage(event.target.value as typeof language)}>
+				<AdsSelect
+					value={language}
+					onChange={(event) => setLanguage(event.target.value as typeof language)}
+				>
 					<option value="tsx">TSX</option>
 					<option value="java">Java</option>
 					<option value="sql">SQL</option>
@@ -1638,10 +1641,29 @@ export function HighlightedCodeSnippetDemo() {
 					<option value="dark">Escuro</option>
 				</AdsSelect>
 			</AdsField>
-			<AdsSwitch label="Exibir números de linha" checked={showLineNumbers} onChange={(event) => setShowLineNumbers(event.target.checked)} />
-			<AdsSwitch label="Quebrar linhas longas" checked={wrapLines} onChange={(event) => setWrapLines(event.target.checked)} />
-			<AdsHighlightedCodeSnippet code={samples[language]} language={language} theme={theme} showLineNumbers={showLineNumbers} wrapLines={wrapLines} codeLabel="Prévia do código destacado" />
-			<p>Instalação no monorepo: importar de <code>@admin-ds/highlighted-code</code> e carregar os estilos do pacote opcional. O código original permanece copiável durante o carregamento e em fallback.</p>
+			<AdsSwitch
+				label="Exibir números de linha"
+				checked={showLineNumbers}
+				onChange={(event) => setShowLineNumbers(event.target.checked)}
+			/>
+			<AdsSwitch
+				label="Quebrar linhas longas"
+				checked={wrapLines}
+				onChange={(event) => setWrapLines(event.target.checked)}
+			/>
+			<AdsHighlightedCodeSnippet
+				code={samples[language]}
+				language={language}
+				theme={theme}
+				showLineNumbers={showLineNumbers}
+				wrapLines={wrapLines}
+				codeLabel="Prévia do código destacado"
+			/>
+			<p>
+				Instalação no monorepo: importar de <code>@admin-ds/highlighted-code</code> e carregar os
+				estilos do pacote opcional. O código original permanece copiável durante o carregamento e em
+				fallback.
+			</p>
 			<Link href="/exemplos/codigo-destacado">Ver demonstração avançada de código destacado</Link>
 		</div>
 	);

@@ -19,76 +19,27 @@ type Story = StoryObj<typeof meta>;
 export const Set: Story = {
 	args: { name: 'check' },
 	render: () => (
-		<div className="flex items-center gap-4">
-			<AdsIcon name="check" />
-			<AdsIcon name="close" />
-			<AdsIcon name="info" label="Informações" />
-			<AdsIcon name="alertTriangle" />
+		<div className="flex flex-wrap items-center gap-4">
 			<AdsIcon name="alertCircle" />
+			<AdsIcon name="alertTriangle" />
+			<AdsIcon name="bell" />
+			<AdsIcon name="building" />
+			<AdsIcon name="calendar" />
+			<AdsIcon name="check" />
+			<AdsIcon name="chevronDown" />
+			<AdsIcon name="chevronLeft" />
+			<AdsIcon name="chevronRight" />
+			<AdsIcon name="chevronsUpDown" />
+			<AdsIcon name="close" />
+			<AdsIcon name="logOut" />
+			<AdsIcon name="monitor" />
+			<AdsIcon name="moon" />
+			<AdsIcon name="info" />
 			<AdsIcon name="plus" />
-			<AdsIcon name="search" size="lg" />
-		</div>
-	),
-};
-
-export const BuildingMIT: Story = {
-	args: { name: 'building' },
-	parameters: {
-		docs: {
-			description: {
-			story: 'Building06Icon (MIT). Licença integral em THIRD_PARTY_NOTICES.md.',
-		},
-		},
-	},
-	render: () => (
-		<div className="flex items-center gap-6">
-			<AdsIcon name="building" size="sm" />
-			<AdsIcon name="building" size="md" />
-			<AdsIcon name="building" size="lg" label="Edifício" />
-		</div>
-	),
-};
-
-const allLicensedNames = [
-	'alertCircle',
-	'alertTriangle',
-	'bell',
-	'building',
-	'calendar',
-	'check',
-	'chevronDown',
-	'chevronLeft',
-	'chevronRight',
-	'chevronsUpDown',
-	'close',
-	'logOut',
-	'monitor',
-	'moon',
-	'info',
-	'plus',
-	'sun',
-	'settings',
-	'search',
-	'user',
-] as const;
-
-export const LicensedCatalog: Story = {
-	args: { name: 'check' },
-	parameters: {
-		docs: {
-			description: {
-				story: '20 SVGs licenciados: 18 Feather (MIT), 1 Lucide (ISC), 1 Hugeicons Free (MIT).',
-			},
-		},
-	},
-	render: () => (
-		<div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-			{allLicensedNames.map((name) => (
-				<div className="flex items-center gap-2" key={name}>
-					<AdsIcon name={name} size="md" />
-					<code>{name}</code>
-				</div>
-			))}
+			<AdsIcon name="sun" />
+			<AdsIcon name="settings" />
+			<AdsIcon name="search" />
+			<AdsIcon name="user" />
 		</div>
 	),
 };

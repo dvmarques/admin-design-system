@@ -42,8 +42,9 @@ origem, licença e atribuição nesta página antes de serem incorporados.
 O componente `AdsIcon` contém **20 desenhos SVG** embutidos em
 `packages/components/src/icon.tsx`. A
 [auditoria de procedência de 2026-10-29](icons-license-audit.md)
-compara os 20 desenhos com Feather, Lucide, Tabler e Heroicons, inclusive
-`building` e `settings`, e distingue similaridade de comprovação de origem.
+compara desenhos com Feather, Lucide, Tabler e Heroicons, inclusive o antigo
+`building` e `settings`, além de identificar a fonte Hugeicons Free do SVG
+substituto. O inventário distingue similaridade de comprovação de origem.
 
 Algumas geometrias coincidem com Feather e o ícone `settings` se aproxima
 fortemente dessa biblioteca, mas os commits do Admin DS não identificam a

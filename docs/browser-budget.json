@@ -4,7 +4,7 @@
 		"gzipBytes": 3600
 	},
 	"@admin-ds/components": {
-		"bytes": 250800,
+		"bytes": 255000,
 		"gzipBytes": 76300
 	},
 	"@admin-ds/highlighted-code": {

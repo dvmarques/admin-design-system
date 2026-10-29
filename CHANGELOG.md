@@ -8,6 +8,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.1] - Em andamento
 
+#### Changed
+
+- `private-consumer-reference-cleanup` (29/10/2026) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec e dos exemplos do AdminShell; mantidos os requisitos técnicos genéricos sem alterar APIs públicas.
+
 #### Added
 
 - `issue-241-highlighted-code-catalog` (#241) - O componente opcional AdsHighlightedCodeSnippet passa a integrar a busca, a categoria Dados e a documentação interativa do catálogo, com Storybook e link ao exemplo avançado, sem mover Shiki para os pacotes principais.

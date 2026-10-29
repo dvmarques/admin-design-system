@@ -105,3 +105,11 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `StyleFixture`            | Básicos     | `/catalogo/style-fixture`         | `foundation.stories.tsx`                                      |
 
 O showcase de AdsAdminShell demonstra também `layout="sidebar-header"`, marca oficial e toggle no topo, sem organização obrigatória (#187). A navegação principal preserva ícones e abreviações.
+
+## Evolução #240 — documentação por famílias (planejada/implementada nesta branch)
+
+A sidebar agora mostra uma entrada por família de composição: Tabs, Accordion, Field, Table, Card, List, Dropdown e AdminShell; Dashboard reúne Grid, Panel e MetricCard como componentes independentes, não como partes obrigatórias. Input, InputGroup, PasswordInput, Radio, SelectionGroup, Table/SmartTable e Dialog/ConfirmDialog permanecem independentes.
+
+A busca continua indexando **cada export visual** e também os nomes de propriedades reais da API composta. Selecionar um subcomponente abre a página canônica e a sua seção identificada por âncora estável. Cada página lista os nomes exatos com papéis, API e exemplos; o código TSX interativo continua derivado do exemplo real.
+
+As rotas anteriores por export não são removidas da geração estática: funcionam como aliases navegáveis, inclusive em GitHub Pages. Novos links devem usar `/catalogo/<familia>#<secao>` para abrir diretamente a parte. A verificação de cobertura permanece por **export**, independentemente da quantidade de links na sidebar; novos componentes continuam exigindo demos e stories correspondentes.

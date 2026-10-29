@@ -66,13 +66,13 @@
 	},
 	"AdsTable": {
 		"description": "Tabela semântica para exibição de dados.",
-		"props": "children, className, atributos nativos de table",
+		"props": "density, containerClassName, containerProps, children, className",
 		"usage": "<AdsTable>…</AdsTable>"
 	},
 	"AdsTableHead": {
-		"description": "Célula de cabeçalho semântica.",
-		"props": "children, className, atributos de th",
-		"usage": "<AdsTableHead scope=\"col\">Nome</AdsTableHead>"
+		"description": "Agrupador semântico das linhas de cabeçalho da tabela (renderiza <thead>).",
+		"props": "children, className, atributos de thead",
+		"usage": "<AdsTableHead><AdsTableRow>…</AdsTableRow></AdsTableHead>"
 	},
 	"AdsTableBody": {
 		"description": "Agrupador semântico do corpo da tabela.",
@@ -80,9 +80,9 @@
 		"usage": "<AdsTableBody>…</AdsTableBody>"
 	},
 	"AdsTableHeader": {
-		"description": "Agrupador de linhas de cabeçalho.",
-		"props": "children, className, atributos de thead",
-		"usage": "<AdsTableHeader>…</AdsTableHeader>"
+		"description": "Célula individual de cabeçalho (renderiza <th>), com alinhamento e escopo.",
+		"props": "align, scope, children, className e atributos de th",
+		"usage": "<AdsTableHeader scope=\"col\">Nome</AdsTableHeader>"
 	},
 	"AdsTableRow": {
 		"description": "Linha da tabela.",
@@ -131,7 +131,7 @@
 	},
 	"AdsDropdown": {
 		"description": "Componente composto para um menu de ações.",
-		"props": "children e partes Trigger, Content, Item",
+		"props": "open, defaultOpen, onOpenChange, children; partes Root, Trigger, Content e Item",
 		"usage": "<AdsDropdown>…</AdsDropdown>"
 	},
 	"AdsDropdown.Trigger": {
@@ -223,5 +223,10 @@
 		"description": "Item semântico para links da navegação.",
 		"props": "children, className",
 		"usage": "<AdsAdminShell.NavigationItem>…</AdsAdminShell.NavigationItem>"
+	},
+	"AdsDropdown.Root": {
+		"description": "Alias público do componente raiz AdsDropdown; gerencia a abertura do menu.",
+		"props": "open, defaultOpen, onOpenChange, children",
+		"usage": "<AdsDropdown.Root>…</AdsDropdown.Root>"
 	}
 }

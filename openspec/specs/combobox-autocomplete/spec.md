@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change add-ads-combobox-autocomplete. Update Purpose after archive.
+Definir o comportamento observável de AdsCombobox e AdsAutocomplete: seleção única acessível e pesquisável, com valor separado do texto digitado, busca local ou assíncrona com debounce e descarte de respostas obsoletas, e opções com ícone ou avatar opcionais.
 
 ## Requirements
 

@@ -12,6 +12,8 @@ export interface AdsAutocompleteProps extends Omit<
 	debounceMs?: number;
 	minQueryLength?: number;
 	onLoadError?: (error: unknown) => void;
+	/** Identifica a origem dos dados; ao mudar, a consulta pendente é abortada e a busca é refeita. */
+	requestKey?: string | number;
 }
 
 /** Searchable single selection with either a local list or an optional async provider. */
@@ -23,6 +25,7 @@ export function AdsAutocomplete({
 	onInputValueChange,
 	onValueChange,
 	onLoadError,
+	requestKey,
 	inputValue,
 	defaultInputValue,
 	disabled,
@@ -99,7 +102,7 @@ export function AdsAutocomplete({
 			clearTimeout(timeout);
 			controller.abort();
 		};
-	}, [debounceMs, disabled, minQueryLength, query, retryKey, remote, suppressRemote]);
+	}, [debounceMs, disabled, minQueryLength, query, requestKey, retryKey, remote, suppressRemote]);
 	const ready = !disabled && !suppressRemote && query.trim().length >= minQueryLength;
 	const visibleOptions = remoteResult?.query === query ? remoteResult.options : [];
 	const visibleError = requestError?.query === query ? requestError.message : null;

@@ -1592,7 +1592,7 @@ Veja as stories `Primitives/LoadingText` e o catálogo `/catalogo/loading-text`.
 
 ## AdsCombobox e AdsAutocomplete — migração de react-select (#142)
 
-AdsCombobox pesquisa e seleciona entre opções fornecidas pela aplicação, que pode atualizá-las dinamicamente. AdsAutocomplete usa a mesma base e também aceita opções locais, mas oferece loadOptions(query, signal) para gerenciar buscas assíncronas, debounce e descarte de respostas obsoletas. Ambos aceitam defaultValue ou value/onValueChange; inputValue/onInputValueChange controla o texto separadamente. O callback onInputValueChange recebe também o motivo (input, select ou clear). renderOption personaliza cada item. Os papéis ARIA, o popover em portal, o foco e os IDs estáveis são responsabilidade da biblioteca.
+AdsCombobox pesquisa e seleciona entre opções fornecidas pela aplicação, que pode atualizá-las dinamicamente. AdsAutocomplete usa a mesma base e também aceita opções locais, mas oferece loadOptions(query, signal) para gerenciar buscas assíncronas, debounce e descarte de respostas obsoletas. Ambos aceitam defaultValue ou value/onValueChange; inputValue/onInputValueChange controla o texto separadamente. Se inputValue controlado divergir do rótulo da opção selecionada, o texto é livre e o value antigo não é enviado por name. Use requestKey em AdsAutocomplete para identificar a origem dos dados: ao mudar, a consulta pendente é abortada e a busca refeita (trocar apenas a identidade de loadOptions não refaz a busca). O callback onInputValueChange recebe também o motivo (input, select ou clear). renderOption personaliza cada item. Os papéis ARIA, o popover em portal, o foco e os IDs estáveis são responsabilidade da biblioteca.
 
 ### Exemplo local
 

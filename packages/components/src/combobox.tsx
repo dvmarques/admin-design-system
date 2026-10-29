@@ -112,8 +112,6 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 	const open = !disabled && !readOnly && (controlledOpen ?? uncontrolledOpen);
 	const [draftInput, setDraftInput] = useState(defaultInputValue ?? '');
 	const [editing, setEditing] = useState(defaultInputValue !== undefined && selectedValue === null);
-	// Valores antigos não podem ser enviados enquanto o input exibe texto livre.
-	const committedValue = editing ? null : selectedValue;
 	const [cachedOption, setCachedOption] = useState<AdsComboboxOption | null>(
 		selectedOption ?? null,
 	);
@@ -131,8 +129,14 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 		options.find((option) => option.value === selectedValue) ??
 		(selectedOption?.value === selectedValue ? selectedOption : null) ??
 		(cachedOption?.value === selectedValue ? cachedOption : null);
+	// Valores antigos não podem ser enviados enquanto o input exibe texto livre, inclusive quando
+	// o texto controlado diverge externamente do rótulo da opção selecionada.
+	const textDiverges =
+		inputValue !== undefined && selected !== null && inputValue !== selected.label;
+	const freeText = editing || textDiverges;
+	const committedValue = freeText ? null : selectedValue;
 	const selectedVisual =
-		showOptionVisuals && !editing && selected && (selected.avatar || selected.icon);
+		showOptionVisuals && !freeText && selected && (selected.avatar || selected.icon);
 	const text =
 		inputValue ??
 		(editing
@@ -140,7 +144,7 @@ export const AdsCombobox = forwardRef<HTMLInputElement, AdsComboboxProps>(functi
 			: selectedValue !== null
 				? (selected?.label ?? defaultInputValue ?? '')
 				: '');
-	const query = (editing || (inputValue !== undefined && selectedValue === null) ? text : '')
+	const query = (freeText || (inputValue !== undefined && selectedValue === null) ? text : '')
 		.trim()
 		.toLocaleLowerCase();
 	const matches = filterOptions

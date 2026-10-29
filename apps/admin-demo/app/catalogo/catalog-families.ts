@@ -127,7 +127,8 @@ export function catalogMemberHref(name: string) {
 	// Propriedades compostas sem export nomeado (Dropdown.Trigger, AdminShell.Main)
 	// usam o nome público exato como âncora; normalizar pontos e PascalCase resulta
 	// no mesmo slug, sem pressupor um export inexistente.
-	const isRootAlias = name.endsWith('.Root') && (family.aliases as readonly string[]).includes(name);
+	const isRootAlias =
+		name.endsWith('.Root') && (family.aliases as readonly string[]).includes(name);
 	const resolved = isRootAlias ? root.name : name;
 	return resolved === root.name ? root.href : `${root.href}#${catalogMemberAnchor(resolved)}`;
 }

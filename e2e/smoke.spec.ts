@@ -84,7 +84,7 @@ test('mantém seleção proporcional, recuo lateral e seletor de largura estáve
 		await organization.click();
 		await page
 			.getByRole('dialog', { name: 'Trocar de organização' })
-			.getByRole('button', { name: new RegExp('^' + name) })
+			.getByRole('option', { name: new RegExp('^' + name) })
 			.click();
 		await expect(organization).toHaveAccessibleName(new RegExp('Organização atual: ' + name));
 		await expect(page.getByRole('dialog', { name: 'Trocar de organização' })).toBeHidden();

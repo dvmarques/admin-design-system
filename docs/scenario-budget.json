@@ -9,11 +9,11 @@
 	},
 	"components-public": {
 		"entry": "scripts/scenarios/components.mjs",
-		"bytes": 30400,
-		"gzipBytes": 11300,
+		"bytes": 30500,
+		"gzipBytes": 11330,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 55200,
-		"cssGzipBytes": 9200
+		"cssBytes": 58000,
+		"cssGzipBytes": 9650
 	},
 	"masked-input-public": {
 		"entry": "scripts/scenarios/masked-input.mjs",
@@ -40,7 +40,7 @@
 			"packages/components/dist/styles.css",
 			"packages/admin/dist/styles.css"
 		],
-		"cssBytes": 94800,
-		"cssGzipBytes": 14300
+		"cssBytes": 97800,
+		"cssGzipBytes": 14800
 	}
 }

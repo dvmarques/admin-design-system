@@ -851,6 +851,7 @@ export function PaginationDemo() {
 
 export function DialogDemo() {
 	const [open, setOpen] = useState(false);
+	const [locked, setLocked] = useState(false);
 	return (
 		<>
 			<AdsButton onClick={() => setOpen(true)}>Abrir Dialog</AdsButton>
@@ -860,7 +861,28 @@ export function DialogDemo() {
 				open={open}
 				onOpenChange={setOpen}
 			>
-				<p>Conteúdo do painel.</p>
+				<div style={{ display: 'grid', gap: '0.75rem' }}>
+					<p>Conteúdo do painel.</p>
+					{/* Controles desabilitados ou inertes nas pontas não participam do ciclo de Tab. */}
+					<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Dados bloqueados</legend>
+						<AdsField label="Código interno">
+							<AdsInput defaultValue="A-102" />
+						</AdsField>
+					</fieldset>
+					<AdsField label="Nome do registro">
+						<AdsInput />
+					</AdsField>
+					<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+						{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+					</AdsButton>
+					<fieldset disabled={locked} style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Campos finais</legend>
+						<AdsField label="Observação">
+							<AdsInput />
+						</AdsField>
+					</fieldset>
+				</div>
 			</AdsDialog>
 		</>
 	);
@@ -868,6 +890,7 @@ export function DialogDemo() {
 
 export function DrawerDemo() {
 	const [open, setOpen] = useState(false);
+	const [locked, setLocked] = useState(false);
 	return (
 		<>
 			<AdsButton onClick={() => setOpen(true)}>Abrir Drawer</AdsButton>
@@ -877,7 +900,28 @@ export function DrawerDemo() {
 				open={open}
 				onOpenChange={setOpen}
 			>
-				<p>Conteúdo do painel.</p>
+				<div style={{ display: 'grid', gap: '0.75rem' }}>
+					<p>Conteúdo do painel.</p>
+					{/* Controles desabilitados ou inertes nas pontas não participam do ciclo de Tab. */}
+					<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Dados bloqueados</legend>
+						<AdsField label="Código interno">
+							<AdsInput defaultValue="A-102" />
+						</AdsField>
+					</fieldset>
+					<AdsField label="Nome do registro">
+						<AdsInput />
+					</AdsField>
+					<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+						{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+					</AdsButton>
+					<fieldset disabled={locked} style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Campos finais</legend>
+						<AdsField label="Observação">
+							<AdsInput />
+						</AdsField>
+					</fieldset>
+				</div>
 			</AdsDrawer>
 		</>
 	);
@@ -900,6 +944,12 @@ export function ConfirmDialogDemo() {
 				}}
 			>
 				{/* Conteúdo interativo: o foco inicial vai ao primeiro controle elegível, antes de "Cancelar". */}
+				<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+					<legend>Dados bloqueados</legend>
+					<AdsField label="Código interno">
+						<AdsInput defaultValue="A-102" />
+					</AdsField>
+				</fieldset>
 				<AdsField label="Motivo (opcional)">
 					<AdsInput />
 				</AdsField>
@@ -1760,6 +1810,25 @@ export function ComboboxDemo() {
 	const [uf, setUf] = useState<string | null>('SP');
 	const [dialogOpen, setDialogOpen] = useState(false);
 	const [showVisuals, setShowVisuals] = useState(true);
+	const teamOptions = [
+		{
+			value: 'ana',
+			label: 'Ana Souza',
+			description: 'Produto',
+			avatar: { fallback: 'AS' },
+		},
+		{ value: 'bia', label: 'Bia Lima', description: 'Design', avatar: { fallback: 'BL' } },
+		{ value: 'caio', label: 'Caio Prado', description: 'Engenharia', avatar: { fallback: 'CP' } },
+		{
+			value: 'duda',
+			label: 'Duda Reis',
+			description: 'Suporte',
+			avatar: { fallback: 'DR' },
+			disabled: true,
+		},
+	];
+	const [owner, setOwner] = useState<string | null>('bia');
+	const [submitted, setSubmitted] = useState<string | null>(null);
 	return (
 		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
 			<AdsSwitch
@@ -1800,7 +1869,129 @@ export function ComboboxDemo() {
 				<AdsField label="Estado em diálogo">
 					<AdsCombobox options={stateOptions} />
 				</AdsField>
+				<AdsField label="Responsável em diálogo (popover)">
+					<AdsCombobox
+						options={teamOptions}
+						panelLabel="Escolher responsável no diálogo"
+						presentation="popover"
+					/>
+				</AdsField>
 			</AdsDialog>
+			<AdsTypography as="h3" variant="heading4">
+				Apresentação popover
+			</AdsTypography>
+			<AdsTypography as="p" variant="muted">
+				Um botão abre um painel com pesquisa separada, lista de seleção única e rodapé. O gatilho
+				não é um combobox editável: use Enter, Espaço ou seta para baixo para abrir.
+			</AdsTypography>
+			<AdsField label="Responsável (popover não controlado)">
+				<AdsCombobox
+					defaultValue="ana"
+					options={teamOptions}
+					panelLabel="Escolher responsável"
+					presentation="popover"
+					searchLabel="Pesquisar responsável"
+					searchPlaceholder="Pesquisar responsável"
+				/>
+			</AdsField>
+			<AdsField label="Responsável (popover controlado)">
+				<AdsCombobox
+					onValueChange={setOwner}
+					options={teamOptions}
+					panelLabel="Escolher responsável controlado"
+					presentation="popover"
+					renderTrigger={({ selectedOption, triggerProps }) => (
+						<button
+							{...triggerProps}
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: '0.75rem',
+								width: '100%',
+								padding: '0.5rem 0.75rem',
+								border: '1px solid var(--ads-color-border-control)',
+								borderRadius: 'var(--ads-radius-md)',
+								background: 'var(--ads-color-form-background)',
+								color: 'var(--ads-color-text)',
+								font: 'inherit',
+								textAlign: 'start',
+								cursor: 'pointer',
+							}}
+						>
+							{selectedOption?.avatar ? (
+								<AdsAvatar alt="" fallback={selectedOption.avatar.fallback} size="sm" />
+							) : null}
+							<span style={{ display: 'grid', flex: 1 }}>
+								<strong>{selectedOption?.label ?? 'Sem responsável'}</strong>
+								<small>{selectedOption?.description ?? 'Escolha uma pessoa'}</small>
+							</span>
+							<AdsIcon name="chevronsUpDown" size="sm" />
+						</button>
+					)}
+					footer={
+						<AdsButton onClick={() => setOwner(null)} size="sm" type="button" variant="ghost">
+							Remover responsável
+						</AdsButton>
+					}
+					value={owner}
+				/>
+			</AdsField>
+			<output aria-label="Responsável selecionado">{owner ?? 'Nenhum'}</output>
+			<AdsField label="Apenas lista, sem pesquisa">
+				<AdsCombobox
+					defaultValue="bia"
+					options={teamOptions}
+					panelLabel="Escolher sem pesquisa"
+					presentation="popover"
+					searchable={false}
+				/>
+			</AdsField>
+			<AdsField label="Lista vazia">
+				<AdsCombobox options={[]} panelLabel="Lista vazia" presentation="popover" />
+			</AdsField>
+			<AdsField label="Carregando">
+				<AdsCombobox loading options={teamOptions} panelLabel="Carregando" presentation="popover" />
+			</AdsField>
+			<AdsField label="Com erro">
+				<AdsCombobox
+					error="Não foi possível carregar a equipe."
+					onRetry={() => undefined}
+					options={teamOptions}
+					panelLabel="Erro de carregamento"
+					presentation="popover"
+				/>
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsCombobox
+					defaultValue="caio"
+					disabled
+					options={teamOptions}
+					panelLabel="Desabilitado"
+					presentation="popover"
+				/>
+			</AdsField>
+			<form
+				onSubmit={(event) => {
+					event.preventDefault();
+					setSubmitted(String(new FormData(event.currentTarget).get('responsavel') ?? ''));
+				}}
+				style={{ display: 'grid', gap: '0.75rem' }}
+			>
+				<AdsField
+					description="Obrigatório. Apenas o valor confirmado é enviado."
+					label="Responsável (formulário)"
+				>
+					<AdsCombobox
+						name="responsavel"
+						options={teamOptions}
+						panelLabel="Escolher responsável do formulário"
+						presentation="popover"
+						required
+					/>
+				</AdsField>
+				<AdsButton type="submit">Enviar formulário</AdsButton>
+				<output aria-label="Valor enviado">{submitted ?? 'Nada enviado'}</output>
+			</form>
 		</div>
 	);
 }

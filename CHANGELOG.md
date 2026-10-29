@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `docs/257-ads-icon-license-audit` (issue #257) - Auditoria documental dos 20 SVGs de `AdsIcon`, com investigação de `building` e `settings`, registro de evidências e incertezas de autoria, aviso MIT preventivo do Feather em `THIRD_PARTY_NOTICES.md` e referências em `docs/licensing.md`; sem alterações de SVG, API ou dependências.
+
 - `enhance-140-ads-select` (issue #140) - `AdsSelect` ganha o `placeholder` opcional (opt-in) para ausência de escolha: `value`/`defaultValue` `null` é ausência e `""` continua sendo a opção real de valor vazio, com `required`, `FormData`, reset e hidratação nativos e sem sentinela (a ausência é a _placeholder label option_ do HTML, não enviada no formulário), stories `Forms/Select`, exemplos no catálogo e guia em `docs/integration.md`. Novos tipo `AdsSelectValue` e módulo cliente `select-placeholder`: `AdsSelect` continua sem hooks e renderizável em Server Components, e o módulo cliente só executa e hidrata quando `placeholder` é usado, mas é importado estaticamente e entra no grafo de módulos do consumidor. Orçamentos elevados pelo custo medido: baseline do dist de `@admin-ds/components` 457.600 → 466.700 bytes (medido 513.348), JS/CSS publicado 226.000 → 228.000 (medido 227.930; gzip 68.500 → 69.150, medido 69.109) e CSS gzip do cenário `components-public` 9.150 → 9.200 (medido 9.167), sem dependência nova.
 
 - `issue-241-highlighted-code-catalog` (#241) - O componente opcional AdsHighlightedCodeSnippet passa a integrar a busca, a categoria Dados e a documentação interativa do catálogo, com Storybook e link ao exemplo avançado, sem mover Shiki para os pacotes principais.

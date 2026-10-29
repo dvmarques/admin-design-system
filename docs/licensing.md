@@ -39,32 +39,34 @@ origem, licença e atribuição nesta página antes de serem incorporados.
 
 ## Ícones SVG incorporados
 
-O componente `AdsIcon` contém **20 desenhos SVG** embutidos em
-`packages/components/src/icon.tsx`. A
-[auditoria de procedência de 2026-10-29](icons-license-audit.md)
-compara desenhos com Feather, Lucide, Tabler e Heroicons, inclusive o antigo
-`building` e `settings`, além de identificar a fonte Hugeicons Free do SVG
-substituto. O inventário distingue similaridade de comprovação de origem.
+`@admin-ds/components` incorpora 20 desenhos SVG cujas fontes externas atuais são
+identificadas individualmente no
+[inventário de procedência](icons-license-audit.md), com links diretos para
+os arquivos oficiais e licenças. Os antigos desenhos de origem não comprovada
+foram substituídos nesta mudança; isso não comprova a autoria dos traçados
+históricos.
 
-Algumas geometrias coincidem com Feather e o ícone `settings` se aproxima
-fortemente dessa biblioteca, mas os commits do Admin DS não identificam a
-origem individual dos desenhos. Por cautela, o aviso integral da licença MIT
-do Feather foi preservado em
-[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md).
-Isso **não certifica** que os outros ícones sejam cópias do Feather, nem
-que sejam criações originais. Na PR #258, o desenho antigo de `building`,
-cuja origem era desconhecida, foi **substituído** pelo
-[`Building06Icon` oficial da Hugeicons Free](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/src/Building06Icon.ts),
-licenciado sob [MIT](https://github.com/hugeicons/hugeicons/blob/main/packages/core-free-icons/LICENSE.md),
-copyright (c) 2025 Hugeicons. Os quatro paths e a espessura original foram
-preservados, com atribuição e aviso MIT integral em
-[`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md). `AdsIcon name="building"`
-permanece compatível com a API anterior; apenas o desenho foi alterado.
+- **18 ícones Feather**: licença MIT, Cole Bemis (2013–2023).
+- **1 ícone Lucide** (`chevronsUpDown`): licença ISC, Lucide Icons and
+  Contributors (2026).
+- **1 ícone Hugeicons Free** (`building`): licença MIT, Hugeicons (2025).
 
-Licenças de bibliotecas usadas somente como *referência comparativa* não
-são automaticamente atribuições de autoria. Caso uma procedência de outro
-ícone seja demonstrada posteriormente, atualize os avisos e a auditoria
-antes de publicar um pacote de ícones independente.
+A nomenclatura pública `AdsIcon`/`AdsIconName` foi preservada, assim como
+o uso de `currentColor` e os tamanhos `sm`, `md` e `lg`. Os desenhos
+passaram a representar a geometria original das fontes, de forma que há
+mudanças visuais intencionais. Não foi adicionada biblioteca de runtime.
+
+O [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) preserva os textos
+integrais das licenças externas aplicáveis, com os respectivos copyrights.
+O build de `@admin-ds/components` copia esse arquivo e o `LICENSE.md`
+do Admin DS para `packages/components/dist/`. O verificador
+`verify:package` exige que ambos sejam cópias exatas; o `package.json`
+publica apenas `dist/`, garantindo que esses avisos acompanhem os artefatos
+distribuídos.
+
+Novos SVGs externos devem ter arquivo oficial, licença e copyright
+identificados antes da incorporação; mudanças subsequentes exigem atualização
+da auditoria, dos avisos e dos testes.
 
 ## Fontes
 

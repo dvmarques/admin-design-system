@@ -79,3 +79,12 @@ A navegação SHALL diferenciar títulos de seção não interativos, grupos exp
 
 - **WHEN** a pessoa explora as seções com tecnologia assistiva ou recolhe a sidebar no desktop
 - **THEN** cada seção associa seu nome ao conteúdo e cada destino visível no modo recolhido possui ícone ou iniciais distintos, preservando seu nome acessível completo
+
+### Requirement: Ordem alfabética dentro dos grupos da navegação
+
+A sidebar do catálogo SHALL ordenar alfabeticamente os nomes dos itens de cada grupo de componentes e composições administrativas, preservando a ordem dos grupos.
+
+#### Scenario: Navegação por categoria
+
+- **WHEN** uma pessoa expande um grupo da sidebar
+- **THEN** encontra os itens em ordem alfabética pelo nome exibido e os grupos permanecem na ordem definida

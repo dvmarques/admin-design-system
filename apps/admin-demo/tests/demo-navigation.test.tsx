@@ -1,6 +1,6 @@
 import { fireEvent, render as renderReact, screen } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { DemoNavigation, demoNavigationItems } from '../app/demo-navigation';
+import { DemoNavigation, demoNavigationGroups, demoNavigationItems } from '../app/demo-navigation';
 
 import { AdsAdminShell } from '@admin-ds/admin';
 import type { ReactNode } from 'react';
@@ -30,6 +30,23 @@ describe('DemoNavigation', () => {
 		expect(new Set(symbols).size).toBe(symbols.length);
 	});
 
+	it('ordena os itens dentro de cada grupo sem alterar a ordem dos grupos', () => {
+		expect(demoNavigationGroups.map((group) => group.label)).toEqual([
+			'Básicos',
+			'Formulários',
+			'Navegação',
+			'Feedback',
+			'Dados',
+			'Layout e dashboard',
+			'Tabelas e filtros',
+			'Fluxos',
+			'Conta e contexto',
+		]);
+		for (const group of demoNavigationGroups) {
+			const labels = group.items.map((item) => item.label);
+			expect(labels).toEqual([...labels].sort((a, b) => a.localeCompare(b, 'pt-BR')));
+		}
+	});
 	it('lists one link per route with the application-provided hrefs', () => {
 		render(<DemoNavigation />);
 

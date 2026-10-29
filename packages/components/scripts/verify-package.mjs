@@ -14,8 +14,15 @@ for (const path of [
 
 // Modules with state or effects must keep the directive; the server ones must stay usable from a
 // Server Component, so a stray directive would force every consumer page to become a client one.
-const clientModules = ['theme-toggle', 'tabs', 'accordion', 'breadcrumb-collapse', 'masked-input'];
-const serverModules = ['navigation'];
+const clientModules = [
+	'theme-toggle',
+	'tabs',
+	'accordion',
+	'breadcrumb-collapse',
+	'select-placeholder',
+	'masked-input',
+];
+const serverModules = ['navigation', 'select'];
 for (const name of clientModules) {
 	const source = await readFile(new URL(`../dist/${name}.js`, import.meta.url), 'utf8');
 	if (!source.startsWith("'use client'"))

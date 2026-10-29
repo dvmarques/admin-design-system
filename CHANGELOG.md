@@ -82,6 +82,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
+
 - `fix-pages-customers-filter-flaky-test` - Estabiliza o teste E2E do site publicado `filtros da URL funcionam em /clientes sem servidor`: a contagem era lida logo após o HTML estático (ainda sem filtro, antes da hidratação), o que fazia a CI do GitHub Pages falhar de forma intermitente. O teste agora usa a página sem filtro como referência e espera, com nova tentativa, a contagem exata de clientes inativos. Sem mudança em código publicado.
 
 - `fix-228-loading-text-shimmer` (issue #228) - Melhora a visibilidade do shimmer de `AdsLoadingText` nos temas claro e escuro com duas camadas explícitas de gradiente e base derivada de tokens (contraste base/pico de ~4,2:1), preservando velocidades, acessibilidade e contratos públicos.

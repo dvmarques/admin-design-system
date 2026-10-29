@@ -1,0 +1,227 @@
+{
+	"AdsTabs": {
+		"description": "Raiz das abas; controla qual painel está ativo.",
+		"props": "value, defaultValue, onValueChange, orientation, activationMode, keepMounted",
+		"usage": "<AdsTabs defaultValue=\"geral\">…</AdsTabs>"
+	},
+	"AdsTabsList": {
+		"description": "Agrupa semanticamente os gatilhos das abas.",
+		"props": "children, aria-label, className",
+		"usage": "<AdsTabsList aria-label=\"Seções\">…</AdsTabsList>"
+	},
+	"AdsTabsTrigger": {
+		"description": "Seleciona uma aba por seu valor.",
+		"props": "value, disabled, children",
+		"usage": "<AdsTabsTrigger value=\"geral\">Geral</AdsTabsTrigger>"
+	},
+	"AdsTabsPanel": {
+		"description": "Exibe o conteúdo vinculado ao gatilho ativo.",
+		"props": "value, children, className",
+		"usage": "<AdsTabsPanel value=\"geral\">Conteúdo</AdsTabsPanel>"
+	},
+	"AdsAccordion": {
+		"description": "Raiz do conjunto expansível, com estado single/multiple.",
+		"props": "type, collapsible, value, defaultValue, onValueChange, unmountOnCollapse",
+		"usage": "<AdsAccordion type=\"single\">…</AdsAccordion>"
+	},
+	"AdsAccordionHeader": {
+		"description": "Cabeçalho semântico de uma seção expansível.",
+		"props": "level, children, className",
+		"usage": "<AdsAccordionHeader>…</AdsAccordionHeader>"
+	},
+	"AdsAccordionItem": {
+		"description": "Unidade expansível com identificador e estado próprio.",
+		"props": "value, disabled, children",
+		"usage": "<AdsAccordionItem value=\"detalhes\">…</AdsAccordionItem>"
+	},
+	"AdsAccordionTrigger": {
+		"description": "Aciona expansão e recolhimento com suporte a teclado.",
+		"props": "children, className",
+		"usage": "<AdsAccordionTrigger>Detalhes</AdsAccordionTrigger>"
+	},
+	"AdsAccordionPanel": {
+		"description": "Área de conteúdo de um item expansível.",
+		"props": "children, className",
+		"usage": "<AdsAccordionPanel>Conteúdo</AdsAccordionPanel>"
+	},
+	"AdsField": {
+		"description": "Associa rótulo, mensagem e ajuda ao controle.",
+		"props": "label, description, error, validationState, children",
+		"usage": "<AdsField label=\"Nome\"><AdsInput /></AdsField>"
+	},
+	"AdsFieldLabel": {
+		"description": "Rótulo reutilizável associado ao campo.",
+		"props": "htmlFor, id, children",
+		"usage": "<AdsFieldLabel htmlFor=\"nome\">Nome</AdsFieldLabel>"
+	},
+	"AdsFieldDescription": {
+		"description": "Texto de ajuda sem margens nativas extras.",
+		"props": "id, children, className",
+		"usage": "<AdsFieldDescription id=\"ajuda\">Orientação</AdsFieldDescription>"
+	},
+	"AdsFieldMessage": {
+		"description": "Mensagem de validação com semântica acessível.",
+		"props": "id, children, className",
+		"usage": "<AdsFieldMessage id=\"erro\">Valor inválido</AdsFieldMessage>"
+	},
+	"AdsTable": {
+		"description": "Tabela semântica para exibição de dados.",
+		"props": "children, className, atributos nativos de table",
+		"usage": "<AdsTable>…</AdsTable>"
+	},
+	"AdsTableHead": {
+		"description": "Célula de cabeçalho semântica.",
+		"props": "children, className, atributos de th",
+		"usage": "<AdsTableHead scope=\"col\">Nome</AdsTableHead>"
+	},
+	"AdsTableBody": {
+		"description": "Agrupador semântico do corpo da tabela.",
+		"props": "children, className, atributos de tbody",
+		"usage": "<AdsTableBody>…</AdsTableBody>"
+	},
+	"AdsTableHeader": {
+		"description": "Agrupador de linhas de cabeçalho.",
+		"props": "children, className, atributos de thead",
+		"usage": "<AdsTableHeader>…</AdsTableHeader>"
+	},
+	"AdsTableRow": {
+		"description": "Linha da tabela.",
+		"props": "children, className, atributos de tr",
+		"usage": "<AdsTableRow>…</AdsTableRow>"
+	},
+	"AdsTableCell": {
+		"description": "Célula de dados.",
+		"props": "children, className, atributos de td",
+		"usage": "<AdsTableCell>Valor</AdsTableCell>"
+	},
+	"AdsTableCaption": {
+		"description": "Legenda acessível da tabela.",
+		"props": "children, className",
+		"usage": "<AdsTableCaption>Relatório</AdsTableCaption>"
+	},
+	"AdsCard": {
+		"description": "Superfície composta para agrupar conteúdo.",
+		"props": "children, className",
+		"usage": "<AdsCard>…</AdsCard>"
+	},
+	"AdsCardHeader": {
+		"description": "Cabeçalho de um card.",
+		"props": "children, className",
+		"usage": "<AdsCardHeader>Título</AdsCardHeader>"
+	},
+	"AdsCardContent": {
+		"description": "Área principal de conteúdo do card.",
+		"props": "children, className",
+		"usage": "<AdsCardContent>Detalhes</AdsCardContent>"
+	},
+	"AdsCardActions": {
+		"description": "Área de ações do card.",
+		"props": "children, className",
+		"usage": "<AdsCardActions>…</AdsCardActions>"
+	},
+	"AdsList": {
+		"description": "Lista semântica com itens organizados.",
+		"props": "children, className",
+		"usage": "<AdsList>…</AdsList>"
+	},
+	"AdsListItem": {
+		"description": "Item individual de uma lista.",
+		"props": "children, className",
+		"usage": "<AdsListItem>Primeiro</AdsListItem>"
+	},
+	"AdsDropdown": {
+		"description": "Componente composto para um menu de ações.",
+		"props": "children e partes Trigger, Content, Item",
+		"usage": "<AdsDropdown>…</AdsDropdown>"
+	},
+	"AdsDropdown.Trigger": {
+		"description": "Botão que abre o menu, inclusive por teclado.",
+		"props": "children, variant, size",
+		"usage": "<AdsDropdown.Trigger>Abrir</AdsDropdown.Trigger>"
+	},
+	"AdsDropdown.Content": {
+		"description": "Conteúdo do menu de ações.",
+		"props": "children, className",
+		"usage": "<AdsDropdown.Content>…</AdsDropdown.Content>"
+	},
+	"AdsDropdown.Item": {
+		"description": "Opção de menu selecionável.",
+		"props": "children, disabled, onSelect, role",
+		"usage": "<AdsDropdown.Item>Exportar</AdsDropdown.Item>"
+	},
+	"AdsDashboardGrid": {
+		"description": "Grade responsiva que organiza painéis e métricas.",
+		"props": "children, className",
+		"usage": "<AdsDashboardGrid>…</AdsDashboardGrid>"
+	},
+	"AdsDashboardPanel": {
+		"description": "Painel reutilizável em dashboards.",
+		"props": "title, children, span e props de estado",
+		"usage": "<AdsDashboardPanel title=\"Resumo\">…</AdsDashboardPanel>"
+	},
+	"AdsMetricCard": {
+		"description": "Métrica reutilizável com valor e tendência.",
+		"props": "title, value, sentiment, sparkline",
+		"usage": "<AdsMetricCard title=\"Total\" value=\"120\" />"
+	},
+	"AdsAdminShell": {
+		"description": "Raiz do layout administrativo responsivo.",
+		"props": "layout, collapsed, onCollapsedChange, mobileOpen, children",
+		"usage": "<AdsAdminShell>…</AdsAdminShell>"
+	},
+	"AdsAdminShell.Root": {
+		"description": "Alias da raiz do shell administrativo.",
+		"props": "mesmas props de AdsAdminShell",
+		"usage": "<AdsAdminShell.Root>…</AdsAdminShell.Root>"
+	},
+	"AdsAdminShell.Header": {
+		"description": "Região de cabeçalho do layout.",
+		"props": "children, className",
+		"usage": "<AdsAdminShell.Header>…</AdsAdminShell.Header>"
+	},
+	"AdsAdminShell.Body": {
+		"description": "Contêiner de conteúdo e navegação.",
+		"props": "children, className",
+		"usage": "<AdsAdminShell.Body>…</AdsAdminShell.Body>"
+	},
+	"AdsAdminShell.Main": {
+		"description": "Região main rolável com suporte a teclado.",
+		"props": "children, tabIndex, className",
+		"usage": "<AdsAdminShell.Main>…</AdsAdminShell.Main>"
+	},
+	"AdsAdminShell.Sidebar": {
+		"description": "Barra lateral com navegação.",
+		"props": "header, children, className",
+		"usage": "<AdsAdminShell.Sidebar>…</AdsAdminShell.Sidebar>"
+	},
+	"AdsAdminShell.SidebarToggle": {
+		"description": "Alterna o estado recolhido da sidebar.",
+		"props": "atributos nativos de button",
+		"usage": "<AdsAdminShell.SidebarToggle />"
+	},
+	"AdsAdminShell.NavigationTrigger": {
+		"description": "Abre a navegação em dispositivos móveis.",
+		"props": "atributos nativos de button",
+		"usage": "<AdsAdminShell.NavigationTrigger />"
+	},
+	"AdsAdminShell.Navigation": {
+		"description": "Navegação sem dependência do roteador.",
+		"props": "children, className",
+		"usage": "<AdsAdminShell.Navigation>…</AdsAdminShell.Navigation>"
+	},
+	"AdsAdminShell.NavigationSection": {
+		"description": "Agrupa a navegação em uma seção nomeada.",
+		"props": "label, children",
+		"usage": "<AdsAdminShell.NavigationSection label=\"Componentes\">…</AdsAdminShell.NavigationSection>"
+	},
+	"AdsAdminShell.NavigationGroup": {
+		"description": "Grupo expansível de links.",
+		"props": "label, icon, open, onToggle, children",
+		"usage": "<AdsAdminShell.NavigationGroup label=\"Dados\">…</AdsAdminShell.NavigationGroup>"
+	},
+	"AdsAdminShell.NavigationItem": {
+		"description": "Item semântico para links da navegação.",
+		"props": "children, className",
+		"usage": "<AdsAdminShell.NavigationItem>…</AdsAdminShell.NavigationItem>"
+	}
+}

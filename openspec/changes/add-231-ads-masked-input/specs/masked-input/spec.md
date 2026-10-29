@@ -28,6 +28,11 @@ O sistema MUST disponibilizar `AdsMaskedInput` e tipos no subpath público opcio
 - **WHEN** o campo usa `defaultValue` ou a aplicação altera `value` externamente
 - **THEN** o texto exibido e a posição do caret são atualizados de maneira previsível sem gerar mudanças sintéticas repetidas nem loops de callbacks
 
+#### Scenario: Tecla rejeitada e redefinição de formulário
+
+- **WHEN** a pessoa digita um caractere que a máscara rejeita, ou o formulário que contém o campo é redefinido
+- **THEN** a tecla rejeitada não notifica `onValueChange`, e a redefinição restaura o `defaultValue` formatado (campo não controlado, notificando se o texto mudou) ou reaplica `value` sem notificar (campo controlado)
+
 #### Scenario: Formulário nativo
 
 - **WHEN** um formulário com `name` é submetido

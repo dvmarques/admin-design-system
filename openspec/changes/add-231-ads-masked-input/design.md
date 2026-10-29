@@ -36,3 +36,19 @@ Preservar caret e seleção ao inserir/excluir no meio, selecionar/substituir, c
 ## Migração sem alterar o aplicação consumidora
 
 Documentar map de `campo mascarado existente` para `AdsMaskedInput`, sem assumir equivalência de `onChange`/`onAccept`, `size`, `value`, `inputRef` ou CSS do bibliotecas visuais de terceiros. A substituição no consumidor terá sua própria revisão e testes; não entra nesta PR.
+
+## Registro da implementação (Apply)
+
+Refinamentos verificados na implementação; nenhuma decisão de API aprovada foi alterada.
+
+- **Adaptador**: `AdsMaskedInput` usa `IMaskInput` de `react-imask` 7.6.1 em `packages/components/src/masked-input.tsx`, com `unmask` fixo em `false`. O valor do DOM é sempre administrado pelo motor; o DS sincroniza `value`/`defaultValue` por `maskRef.value` sob uma guarda interna, de modo que o `onAccept` produzido por sincronização externa, montagem ou reaplicação do valor controlado nunca chega a `onValueChange`.
+- **Emissão**: `onValueChange` só é chamado quando o texto visível muda (teclas rejeitadas, que o motor ainda reporta, são descartadas). `typedValue` repassa `mask.typedValue`: `number` (`Number`), `Date` (`Date`) e, nos padrões de texto, o valor bruto. Em máscaras `Date` o valor bruto inclui os separadores (comportamento do motor, documentado).
+- **Controlado**: se o consumidor não atualizar `value` após a notificação, uma microtarefa reaplica `value` (sem notificar). O texto bruto passado de volta é reformatado pelo motor.
+- **Reset de formulário**: o evento `reset` restaura o atributo `defaultValue` por trás do motor; um listener no `form` ressincroniza o motor e, em campos não controlados, notifica `onValueChange` se o texto mudou. Em campos controlados reaplica `value` sem notificar.
+- **Refs**: `ref` e `inputRef` são atribuídos ao `HTMLInputElement` em `useLayoutEffect` (inclui `null` ao desmontar); a instância do componente do motor não é exposta.
+- **API pública de máscara**: `AdsMask`, `AdsMaskOptions`, `AdsMaskPattern` e `AdsDynamicMaskState` são tipos próprios, sem importar tipos de `react-imask`, para que o `.d.ts` do subpath resolva sem o peer; `blocks`, instâncias do motor e `unmask` ficam fora do contrato público.
+- **Classe pública**: o input recebe `ads-masked-input` além de `ads-form-control`; não há CSS novo (o bundle de CSS não cresce).
+- **Peer opcional e distribuição**: `react-imask` é `peerDependencies` com `peerDependenciesMeta.optional`, `devDependency` de `@admin-ds/components` e dependência de `apps/admin-demo` e `apps/docs`. `verify-package` falha se o grafo de imports do `dist` raiz alcançar o peer ou o subpath; `npm run verify:optional-peer` empacota o pacote (`npm pack`) e, num consumidor temporário, comprova instalação sem conflito de peer, tipos, bundle (esbuild) e execução em Node do entrypoint raiz sem `react-imask`, a falha explícita do subpath sem o peer e, com o peer instalado, tipos, bundle e SSR do subpath.
+- **Orçamentos**: o novo arquivo publicado eleva a distribuição de `@admin-ds/components` (baseline 457.600 → 477.000; medido 523.633) e o JS/CSS publicado (226.000 → 231.500 B, medido 230.691; gzip 68.500 → 70.100, medido 69.611). Novo cenário `masked-input-public` (67.350 B; gzip 18.922 B, motor embutido). `components-public` segue em 30.175 B (gzip 11.142 B) sem `imask` e o CSS não muda. Medições em Linux, Node 22.22.0, npm 10.9.4 e `npm@11.19.1` apenas para o lockfile.
+- **Dependências transitivas do peer**: `imask`, `@babel/runtime-corejs3`, `core-js-pure` (declara script de instalação informativo; ignorável com `--ignore-scripts`), `prop-types` e utilitários, todas MIT. Registradas em `docs/licensing.md`.
+- **IME**: cobertura jsdom (eventos de composição) e E2E no Chromium via protocolo (`Input.imeSetComposition`); IMEs reais e teclados móveis não foram exercitados nesta PR.

@@ -30,6 +30,11 @@ e no `package-lock.json`, evitando duplicar esse inventário nesta página:
 | Playwright                                   | Apache-2.0 |
 | axe-core                                     | MPL-2.0    |
 | Testing Library, Storybook, JSDOM e Prettier | MIT        |
+| react-imask e imask (peer opcional)          | MIT        |
+
+`react-imask` e `imask` só são exigidos por quem importa o subpath opcional
+`@admin-ds/components/masked-input`; suas dependências transitivas (`@babel/runtime-corejs3`,
+`core-js-pure`, `prop-types`) também são MIT.
 
 As dependências transitivas continuam sujeitas às licenças declaradas por
 seus próprios distribuidores. Antes de uma publicação, a lista deve ser

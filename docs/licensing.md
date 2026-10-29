@@ -64,6 +64,11 @@ do Admin DS para `packages/components/dist/`. O verificador
 publica apenas `dist/`, garantindo que esses avisos acompanhem os artefatos
 distribuídos.
 
+A implementação está organizada internamente em `packages/components/src/icons/`,
+com desenhos, tipos e componente separados. A API pública de `AdsIcon` permanece
+em `@admin-ds/components`; a extração para um pacote futuro é opcional e
+requer mudança própria. Veja a [arquitetura dos ícones](icon-architecture.md).
+
 Novos SVGs externos devem ter arquivo oficial, licença e copyright
 identificados antes da incorporação; mudanças subsequentes exigem atualização
 da auditoria, dos avisos e dos testes.

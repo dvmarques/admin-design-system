@@ -3,15 +3,22 @@
 import Link from 'next/link';
 import { useState } from 'react';
 import { AdsField, AdsInput, AdsEmptyState } from '@admin-ds/components';
-import { catalogSearchEntries } from '../../catalogo/catalog-families';
+import { catalogSearchEntries, catalogFamilyForName } from '../../catalogo/catalog-families';
 
 export default function CatalogPage() {
 	const [query, setQuery] = useState('');
-	const matches = catalogSearchEntries.filter((entry) =>
-		`${entry.name} ${entry.group} ${entry.description} ${entry.family ?? ''}`
+	const normalizedQuery = query.trim().toLocaleLowerCase('pt-BR');
+	const matches = catalogSearchEntries.filter((entry) => {
+		// Na listagem inicial, mostrar apenas famílias e controles independentes.
+		// A busca continua indexando individualmente exports e partes compostas.
+		if (!normalizedQuery) {
+			const family = catalogFamilyForName(entry.name);
+			return !family || entry.name === family.root;
+		}
+		return `${entry.name} ${entry.group} ${entry.description} ${entry.family ?? ''}`
 			.toLocaleLowerCase('pt-BR')
-			.includes(query.trim().toLocaleLowerCase('pt-BR')),
-	);
+			.includes(normalizedQuery);
+	});
 	return (
 		<div className="demo-page demo-shell demo-catalog-page">
 			<h1>Catálogo de componentes</h1>

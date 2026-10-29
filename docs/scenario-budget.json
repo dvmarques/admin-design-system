@@ -20,8 +20,8 @@
 		"bytes": 74100,
 		"gzipBytes": 20900,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 55200,
-		"cssGzipBytes": 9200
+		"cssBytes": 57800,
+		"cssGzipBytes": 9600
 	},
 	"highlighted-code-public": {
 		"entry": "scripts/scenarios/highlighted-code.mjs",

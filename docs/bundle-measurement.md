@@ -11,7 +11,7 @@ Essas métricas **não representam tamanho minificado de uma aplicação nem byt
 
 ## Peer opcional e rede
 
-`npm run verify:optional-peer` (parte de `npm run validate` e da CI) empacota `@admin-ds/components` e instala um consumidor temporário a partir do registro npm: **`npm run validate` agora exige acesso à rede** por esse passo. A resolução é determinística: dependências diretas e o fecho transitivo de React, `@types/*` e `react-imask` são fixados em versões exatas do `package-lock.json` do workspace (`overrides`), com `--ignore-scripts` e sem credenciais. Os valores de bundle medidos na CI (Node 24, npm 11.19.1) coincidiram byte a byte com a medição local em Node 22 no SHA `c54ff7c` (verificado nos logs da CI). Sobre a base combinada com a `develop` (#252): dist 534414 B, JS/CSS 235246 B, gzip 71278 B.
+`npm run verify:optional-peer` (parte de `npm run validate` e da CI) empacota `@admin-ds/components` e instala um consumidor temporário a partir do registro npm: **`npm run validate` agora exige acesso à rede** por esse passo. A resolução é determinística: dependências diretas e o fecho transitivo de React, `@types/*` e `react-imask` são fixados em versões exatas do `package-lock.json` do workspace (`overrides`), com `--ignore-scripts` e sem credenciais. Os valores de bundle medidos na CI (Node 24, npm 11.19.1) coincidiram byte a byte com a medição local em Node 22 no SHA `c54ff7c` (verificado nos logs da CI). Sobre a base combinada com a `develop` (#252): dist 589318 B, JS/CSS 258461 B, gzip 78337 B (base com #252, #254 e #253).
 
 ## Atualização de limites
 

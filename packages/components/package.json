@@ -15,12 +15,17 @@
 			"types": "./dist/index.d.ts",
 			"import": "./dist/index.js"
 		},
+		"./masked-input": {
+			"types": "./dist/masked-input.d.ts",
+			"import": "./dist/masked-input.js"
+		},
 		"./styles.css": "./dist/styles.css"
 	},
 	"types": "./dist/index.d.ts",
 	"peerDependencies": {
 		"react": ">=18.2.0",
-		"react-dom": ">=18.2.0"
+		"react-dom": ">=18.2.0",
+		"react-imask": "^7.6.1"
 	},
 	"scripts": {
 		"build:css": "tailwindcss -i ./src/styles.css -o ./dist/styles.css --minify",
@@ -30,5 +35,13 @@
 		"test": "npm run build:css && vitest run --root ../.. --config vitest.config.ts packages/components",
 		"test:quiet": "npm run build:css && vitest run --root ../.. --config vitest.config.ts --silent=passed-only packages/components",
 		"build": "npm run build:css && tsc -p tsconfig.build.json && npm run inspect:css && npm run verify:package"
+	},
+	"peerDependenciesMeta": {
+		"react-imask": {
+			"optional": true
+		}
+	},
+	"devDependencies": {
+		"react-imask": "^7.6.1"
 	}
 }

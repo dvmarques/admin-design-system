@@ -29,6 +29,6 @@
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"test": "npm run build:css && vitest run --root ../.. --config vitest.config.ts packages/components",
 		"test:quiet": "npm run build:css && vitest run --root ../.. --config vitest.config.ts --silent=passed-only packages/components",
-		"build": "npm run build:css && tsc -p tsconfig.build.json && npm run inspect:css && npm run verify:package"
+		"build": "npm run build:css && tsc -p tsconfig.build.json && node ./scripts/copy-license-notices.mjs && npm run inspect:css && npm run verify:package"
 	}
 }

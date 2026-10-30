@@ -73,6 +73,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `issue-265-update-dependencies` (issue #265, lote 1) - Atualizadas dependências externas compatíveis com Node 24 no monorepo (React/React DOM 19.3.1, Next 16.4.3, tipos React, Testing Library, axe-core, esbuild, ESLint, Prettier e typescript-eslint), com manifests sincronizados e lockfile regenerado por npm 11.19.1. Mantidos `engines.node >=24.0.0` sem teto, `@types/node` da linha 24, APIs públicas, tokens e contratos CSS; verificação completa de CI/E2E ainda pendente nesta PR Draft.
+
 - `issue-133-smart-table-columns-escape` (issue #133) - O Escape do painel de colunas do `AdsSmartTable` continua tratado localmente (sem API pública nova de camada de Escape, decisão registrada na change) e passa a ser marcado como tratado (`preventDefault`, além de `stopPropagation`), o marcador que a pilha de camadas respeita; assim o painel não fecha junto com um `AdsDialog`/`AdsDrawer` ao redor mesmo que a propagação chegue ao `document`. Novos testes de regressão cobrem o contrato e o Escape com o painel fechado. Sem mudança de API pública, CSS, Storybook ou demo.
 
 - `docs-sanitize-private-consumer-references` (PR #251) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec arquivado e dos exemplos e testes do AdminShell (título neutro `Admin Demo`); mantidos os requisitos técnicos genéricos, sem alterar APIs públicas, comportamento ou estilos. Sem change OpenSpec própria: mudança exclusivamente documental.

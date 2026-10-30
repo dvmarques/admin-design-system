@@ -4,7 +4,7 @@ A #265 identificou atualizações para dependências externas do monorepo. As ve
 
 ## What Changes
 
-- Atualizar o primeiro lote de versões estáveis compatíveis: React/React DOM, Next.js (somente demo), typings React, Testing Library, axe, esbuild, ESLint, prettier e typescript-eslint.
+- Atualizar o primeiro lote de versões estáveis compatíveis: React/React DOM, Next.js (somente demo), typings React, Testing Library, esbuild, ESLint, prettier e typescript-eslint.
 - Alinhar declarações repetidas na raiz e nos workspaces e regenerar o package-lock.json usando npm 11.19.1 sobre Node 24.
 - Preservar engines.node >=24.0.0 sem limite superior; não atualizar @types/node para a linha 26.
 - Manter intactas as APIs, exports, tokens e classes CSS públicas; testar builds, tipos, testes e consumo externo dos pacotes.
@@ -12,6 +12,7 @@ A #265 identificou atualizações para dependências externas do monorepo. As ve
 
 ## Out of Scope
 
+- `axe-core` 4.14.0: adiada para lote específico de remediação de acessibilidade. A nova regra detectou `label-content-name-mismatch` em elementos do shell; manter 4.12.1 exato neste lote para não mascarar uma quebra de CI.
 - Migração para Node 26 ou adição de limite superior em engines.node.
 - Atualizações de Playwright/Storybook e migrations TypeScript 6/Vitest 5/jsdom 30/lint-staged 17 (lotes posteriores da #265).
 - Mudanças de comportamento, design, API pública, versões de release ou publicação npm.

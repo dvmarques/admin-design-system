@@ -18,5 +18,6 @@
 ## 4. Gates
 
 - [x] 4.1 `npx.cmd prettier --write` nos arquivos alterados e `npm run format`.
-- [ ] 4.2 Lint, build, typecheck, `npm run test:quality`, E2E pertinente e `openspec.cmd validate --all --strict`.
+- [x] 4.2 Lint, build, typecheck, `npm run test:quality`, E2E pertinente e `openspec.cmd validate --all --strict`.
+      Evidência: CI run 41136394372 no SHA 8b8eb8a com Qualidade rápida, Chromium, Firefox, WebKit, Artefatos e Política de develop em success (Publicar e Validação de release skipped, não contam como aprovação); local: format, lint, typecheck, 1496 testes unitários, build, test:quality e openspec validate --all --strict (62). Codex review sem achados no mesmo SHA.
 - [x] 4.3 Revisão de acessibilidade e de API pública sem bloqueantes.

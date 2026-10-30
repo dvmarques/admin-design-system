@@ -77,6 +77,7 @@ async function main() {
       assert.equal(manifest.publishConfig?.access, 'public', name + ' must use public access');
       assert.equal(manifest.license, 'MIT');
       await command(npm, ['run', 'build', '--workspace', name], root);
+      await command(npm, ['pack', '--dry-run', '--workspace', name, '--ignore-scripts'], root);
       const packed = await command(npm, ['pack', '--workspace', name, '--json', '--pack-destination', packDir, '--ignore-scripts'], root);
       const result = JSON.parse(packed.stdout);
       assert.equal(result.length, 1, 'one tarball per workspace');

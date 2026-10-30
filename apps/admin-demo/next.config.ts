@@ -7,7 +7,7 @@ const pagesBasePath = '/admin-design-system';
 const nextConfig: NextConfig = {
 	allowedDevOrigins: ['127.0.0.1'],
 	devIndicators: false,
-	transpilePackages: ['@admin-ds/admin', '@admin-ds/components', '@admin-ds/tokens'],
+	transpilePackages: ['@dvmarques/admin-ds-admin', '@dvmarques/admin-ds-components', '@dvmarques/admin-ds-tokens'],
 	...(isPages
 		? {
 				output: 'export' as const,

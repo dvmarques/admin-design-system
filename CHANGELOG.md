@@ -73,6 +73,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- `issue-133-smart-table-columns-escape` (issue #133) - O Escape do painel de colunas do `AdsSmartTable` continua tratado localmente (sem API pública nova de camada de Escape, decisão registrada na change) e passa a ser marcado como tratado (`preventDefault`, além de `stopPropagation`), o marcador que a pilha de camadas respeita; assim o painel não fecha junto com um `AdsDialog`/`AdsDrawer` ao redor mesmo que a propagação chegue ao `document`. Novos testes de regressão cobrem o contrato e o Escape com o painel fechado. Sem mudança de API pública, CSS, Storybook ou demo.
+
 - `docs-sanitize-private-consumer-references` (PR #251) - Removidas referências identificáveis a aplicações consumidoras privadas da documentação, do histórico OpenSpec arquivado e dos exemplos e testes do AdminShell (título neutro `Admin Demo`); mantidos os requisitos técnicos genéricos, sem alterar APIs públicas, comportamento ou estilos. Sem change OpenSpec própria: mudança exclusivamente documental.
 
 - `enhance-140-ads-select` (issue #140) - Texto longo de **todo** `AdsSelect` simples (com ou sem `placeholder`; não `multiple`) fica contido e truncado com reticências antes da seta (sem estourar o contêiner em 390 px nem com zoom de 200%), preservando RTL, `forced-colors` e os demais controles que usam `formControlClasses()`. Se `placeholder` já era passado a `AdsSelect`, o atributo ignorado pelo navegador passa a criar a opção de ausência.

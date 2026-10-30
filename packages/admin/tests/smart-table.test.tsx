@@ -254,6 +254,41 @@ describe('AdsSmartTable', () => {
 		},
 	);
 
+	it('handles the panel Escape locally: marked as handled and never seen by the document', () => {
+		const calls: boolean[] = [];
+		const listener = (event: KeyboardEvent) => calls.push(event.defaultPrevented);
+		document.addEventListener('keydown', listener);
+		try {
+			render(<Controlled />);
+			const button = screen.getByRole('button', { name: 'Colunas' });
+			fireEvent.click(button);
+			// Retorno false: `preventDefault` chamado (marcador respeitado pela pilha de Escape).
+			expect(
+				fireEvent.keyDown(screen.getByRole('checkbox', { name: 'Nome' }), { key: 'Escape' }),
+			).toBe(false);
+			// Sem chamadas: `stopPropagation` impediu que o evento chegasse ao `document`.
+			expect(calls).toEqual([]);
+			expect(button).toHaveAttribute('aria-expanded', 'false');
+		} finally {
+			document.removeEventListener('keydown', listener);
+		}
+	});
+
+	it('does not absorb Escape while the column panel is closed', () => {
+		const calls: boolean[] = [];
+		const listener = (event: KeyboardEvent) => calls.push(event.defaultPrevented);
+		document.addEventListener('keydown', listener);
+		try {
+			render(<Controlled />);
+			expect(
+				fireEvent.keyDown(screen.getByRole('button', { name: 'Colunas' }), { key: 'Escape' }),
+			).toBe(true);
+			expect(calls).toEqual([false]);
+		} finally {
+			document.removeEventListener('keydown', listener);
+		}
+	});
+
 	it('passes the density to the table and keeps the default markup without it', () => {
 		const { rerender } = render(<Controlled density="compact" />);
 		expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact');

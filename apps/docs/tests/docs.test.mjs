@@ -1,28 +1,20 @@
-import test from 'node:test';
+import test, { before } from 'node:test';
 import assert from 'node:assert/strict';
+import { execFileSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
 
-const indexUrl = new URL('../storybook-static/index.json', import.meta.url);
 const matrixUrl = new URL('../../../docs/admin-demo-catalog.md', import.meta.url);
 const generatedUrl = new URL('../src/api-reference/', import.meta.url);
+const generatorPath = fileURLToPath(
+	new URL('../../../scripts/generate-storybook-api.mjs', import.meta.url),
+);
 const tick = String.fromCharCode(96);
 
-function entries() {
-	let index;
-	try {
-		index = JSON.parse(readFileSync(indexUrl, 'utf8'));
-	} catch (cause) {
-		throw new Error(
-			'Build do Storybook ausente. Execute npm run build --workspace @admin-ds/docs antes deste teste.',
-			{ cause },
-		);
-	}
-	assert.ok(
-		index.entries && typeof index.entries === 'object',
-		'index.json precisa listar páginas publicadas',
-	);
-	return Object.values(index.entries);
-}
+// As páginas MDX são geradas e ignoradas pelo Git: gera-as aqui para o teste não depender de build prévio.
+before(() => {
+	execFileSync(process.execPath, [generatorPath], { stdio: 'pipe' });
+});
 
 function exportsFromMatrix() {
 	return readFileSync(matrixUrl, 'utf8')
@@ -36,45 +28,15 @@ function exportsFromMatrix() {
 		.map((line) => line.split('|')[1].trim().replaceAll(tick, ''));
 }
 
-test('build publica uma referência navegável para todo export da matriz #151', () => {
-	const published = entries();
+test('gerador cria uma ficha de API completa para todo export da matriz #151', () => {
 	const names = exportsFromMatrix();
 	assert.ok(names.length >= 70, 'Matriz #151 parece incompleta');
 	assert.equal(new Set(names).size, names.length, 'Matriz contém exports duplicados');
-	const docs = published.filter((entry) => entry.type === 'docs');
-	const stories = published.filter((entry) => entry.type === 'story');
-	assert.ok(stories.length >= 40, 'Exemplos executáveis pré-existentes ausentes');
-	const apiDocs = docs.filter((entry) => entry.title.startsWith('API/'));
-	assert.equal(
-		apiDocs.length,
-		names.length,
-		'Páginas geradas da API devem cobrir a matriz sem duplicações',
-	);
 	for (const name of names) {
-		const page = apiDocs.find((entry) => entry.title === 'API/' + name);
-		assert.ok(page, 'Falta referência pública para ' + name);
-		assert.ok(page.id && page.importPath, 'Referência sem navegação: ' + name);
-		assert.ok(
-			page.importPath.includes(name + '.mdx'),
-			'Referência não foi indexada do MDX de ' + name,
-		);
 		const mdx = readFileSync(new URL(name + '.mdx', generatedUrl), 'utf8');
 		assert.ok(mdx.includes('# ' + name), 'Documento sem título da API: ' + name);
 		assert.ok(mdx.includes('## Propriedades e tipos'), 'Documento sem seção de tipos: ' + name);
 		assert.ok(mdx.includes('<Canvas of={ExampleStories.'), 'Documento sem exemplo real: ' + name);
-	}
-});
-
-test('Autodocs original e novas páginas não possuem IDs duplicados', () => {
-	const published = entries();
-	assert.equal(new Set(published.map((item) => item.id)).size, published.length);
-	for (const entry of published.filter(
-		(item) => item.type === 'docs' && !item.title.startsWith('API/'),
-	)) {
-		assert.ok(
-			published.some((s) => s.type === 'story' && s.title === entry.title),
-			'Autodocs perdeu as stories da família ' + entry.title,
-		);
 	}
 });
 

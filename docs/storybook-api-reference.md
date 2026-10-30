@@ -25,7 +25,8 @@ Exclusões intencionais (sem UI independente): `fixtureVariants`, `getAdsPaginat
 ## Validação exigida
 
 - `npm run build --workspace @admin-ds/docs` — gera páginas e a saída real em `apps/docs/storybook-static/index.json`.
-- `npm run test:node --workspace @admin-ds/docs` — compara a saída **gerada** com os exports da matriz e confere documentos e histórias, sem aceitar apenas `autodocs` no código.
+- `npm run test:node --workspace @admin-ds/docs` — gera as páginas MDX por conta própria (não exige build) e confere, para todo export da matriz, título, tabela, variantes e exemplo real. Roda em `test:quality`.
+- `npm run test:output --workspace @admin-ds/docs` — após o build, confere o `storybook-static/index.json` **publicado**: uma página `API/<Export>` indexada por export da matriz, sem IDs duplicados. Roda no job de build da CI e em `npm run validate`.
 - `npm run build:pages` e `npm run test:e2e:pages` — exercitam a navegação em `/admin-design-system/storybook/`, páginas de Docs, tabelas, exemplos, temas e assets reais no Pages.
 - `npm run validate` e `openspec.cmd validate --all --strict` — gates obrigatórios do repositório.
 

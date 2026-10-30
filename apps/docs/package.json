@@ -23,6 +23,7 @@
 		"test:quiet": "npm run test:node:quiet",
 		"test:node": "node --test ./tests/**/*.test.mjs",
 		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs",
-		"prebuild": "node ../../scripts/generate-storybook-api.mjs"
+		"prebuild": "node ../../scripts/generate-storybook-api.mjs",
+		"test:output": "node --test ./tests/storybook-output.check.mjs"
 	}
 }

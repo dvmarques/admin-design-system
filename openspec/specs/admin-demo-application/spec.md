@@ -232,7 +232,7 @@ A visão geral da demo MUST exibir, nos indicadores, a variação com `sentiment
 
 ### Requirement: Página de exibição de dados mostra o sparkline avulso
 
-A página `/data-display` da demo MUST exibir uma seção "Sparkline" com `AdsSparkline` importado do export público de `@admin-ds/components`, cobrindo os tons, uma série com lacunas e rótulos e um ponto único, cada um com nome acessível.
+A página `/data-display` da demo MUST exibir uma seção "Sparkline" com `AdsSparkline` importado do export público de `@dvmarques/admin-ds-components`, cobrindo os tons, uma série com lacunas e rótulos e um ponto único, cada um com nome acessível.
 
 #### Scenario: Seção de sparkline
 

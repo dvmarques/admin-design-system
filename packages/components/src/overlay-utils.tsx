@@ -52,10 +52,30 @@ function isFocusEligible(element: HTMLElement, container: HTMLElement) {
 	return true;
 }
 
-/** Candidatos elegíveis dentro de `container`, em ordem de documento. */
-function getEligibleFocusableElements(container: HTMLElement) {
-	return Array.from(container.querySelectorAll<HTMLElement>(focusableSelector)).filter((element) =>
-		isFocusEligible(element, container),
+const isNamedRadio = (element: HTMLElement): element is HTMLInputElement =>
+	element instanceof HTMLInputElement && element.type === 'radio' && element.name !== '';
+
+// Grupo de rádio: mesmo `name` e mesmo formulário.
+const radioGroup = (radio: HTMLInputElement) =>
+	`${radio.name}\0${radio.form ? Array.from(document.forms).indexOf(radio.form) : -1}`;
+
+/**
+ * Candidatos elegíveis dentro de `container`, na ordem real de tabulação: `tabindex` positivo em ordem
+ * crescente e depois os demais em ordem de documento. Cada grupo de rádio é uma parada só, como no
+ * navegador: o marcado ou, sem marcado, o primeiro (o último com `reverse`, para Shift+Tab).
+ */
+function getEligibleFocusableElements(container: HTMLElement, reverse = false) {
+	const elements = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector))
+		.filter((element) => isFocusEligible(element, container))
+		.sort((a, b) => (Math.max(a.tabIndex, 0) || 32768) - (Math.max(b.tabIndex, 0) || 32768));
+	const radios = elements.filter(isNamedRadio);
+	const stops = new Map<string, HTMLInputElement>();
+	for (const radio of reverse ? radios.reverse() : radios) {
+		const stop = stops.get(radioGroup(radio));
+		if (!stop || (radio.checked && !stop.checked)) stops.set(radioGroup(radio), radio);
+	}
+	return elements.filter(
+		(element) => !isNamedRadio(element) || stops.get(radioGroup(element)) === element,
 	);
 }
 
@@ -323,7 +343,7 @@ export function useOverlayFocus(
 	const previousOpen = useRef(false);
 
 	useLayoutEffect(() => {
-		if (!open || previousOpen.current) return;
+		if (!open) return;
 		const focus = () => {
 			const container = containerRef.current;
 			if (!container) return;
@@ -362,7 +382,7 @@ export function useOverlayFocus(
 			)
 				return;
 			// Reavaliada a cada Tab: a elegibilidade pode mudar com o modal aberto.
-			const elements = getEligibleFocusableElements(container);
+			const elements = getEligibleFocusableElements(container, event.shiftKey);
 			if (elements.length === 0) {
 				event.preventDefault();
 				container.focus();

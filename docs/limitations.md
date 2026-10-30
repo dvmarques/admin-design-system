@@ -71,16 +71,8 @@ das validações automatizadas.
   sem suporte (anteriores a Chromium 102, Firefox 112 e Safari 15.5) ele continua alcançável por
   clique. Overlays de terceiros em `<body>` e o anunciante de rotas do Next.js também ficam inertes
   enquanto há modal aberto; uma navegação nesse intervalo não é anunciada. O bloqueio de rolagem depende da implementação atual e deve ser validado em navegador real. A validação em navegador real cobre o Chromium.
-- O ciclo de Tab trata cada `input type="radio"` como uma parada própria. Navegadores tratam um grupo
-  de rádio como uma parada única (a opção marcada ou, sem marcada, a primeira em Tab e a última em
-  Shift+Tab); com um grupo na ponta do ciclo, um Tab pode sair brevemente da camada e o seguinte
-  volta a ela. Normalizar o grupo custaria cerca de +226 B minificados e +95 B gzip e excederia o
-  orçamento do cenário `components-public` (não o do `dist`, já elevado nesta change); acompanhamento: [#259](https://github.com/dvmarques/admin-design-system/issues/259).
-  a registrar.
-- `tabindex` positivo reordena a tabulação nativa, mas o ciclo de Tab de `AdsDialog` e `AdsDrawer` decide
-  as pontas pela ordem do documento; com `tabindex` positivo dentro do modal o ciclo pode não
-  coincidir com a ordem real (limitação anterior à #234; acompanhamento: [#259](https://github.com/dvmarques/admin-design-system/issues/259)).
-- Um `iframe` na ponta do ciclo transfere o foco para dentro dele, onde o ciclo não alcança.
+- O agrupamento de rádios considera só os rádios elegíveis dentro do modal (um rádio marcado, mas desabilitado ou oculto, não conta; o navegador considera o grupo inteiro do documento) e ignora shadow DOM; com `tabindex` positivo diferente dentro de um mesmo grupo, a parada segue a ordem de tabulação, não a do documento. Se o foco está num controle que perdeu a elegibilidade e há `tabindex` positivo no modal, a decisão de dar a volta usa a ordem do documento, e o Tab pode seguir o fluxo nativo.
+- Um `iframe` na ponta do ciclo transfere o foco para dentro dele, onde o ciclo não alcança; o `iframe` não é excluído do ciclo, para continuar alcançável por teclado (limitação permanente; rádios, `tabindex` positivo e StrictMode passaram a ser tratados, #259).
 
 ## AdsDatePicker
 

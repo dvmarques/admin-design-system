@@ -1131,7 +1131,11 @@ Ao fechar, o estado anterior é restaurado. Com modais aninhados só o mais rece
   Conteúdo recolhido (`content-visibility: hidden`, como o de um `<details>` fechado) também fica
   fora, e o `summary` do `details` é uma parada de Tab (Enter expande e os controles internos entram no ciclo). Efeito colateral intencional no foco inicial: controles nativos (`button`, `input` etc.) com
   `tabindex` negativo, inclusive `-2` ou menor, deixam de receber o foco inicial; antes só o seletor
-  genérico `[tabindex]` era filtrado.
+  genérico `[tabindex]` era filtrado. As pontas seguem a ordem real de tabulação do navegador (`tabindex`
+  positivo em ordem crescente, depois os demais em ordem de documento) e cada grupo de rádio (mesmo
+  `name` e formulário) é uma parada só: o marcado ou, sem marcado, o primeiro no Tab e o último no
+  Shift+Tab. Um modal montado já aberto (`open` inicial verdadeiro), inclusive em StrictMode, recebe o
+  foco inicial. Um `iframe` na ponta continua fora do alcance do ciclo (veja `docs/limitations.md`).
 - A rolagem do fundo não é bloqueada.
 - Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O
   atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da

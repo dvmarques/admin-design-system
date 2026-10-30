@@ -21,7 +21,10 @@ const meta = {
 		},
 		type: {
 			description: 'Tipo HTML do botão; o padrão evita submissão acidental de formulários.',
-			table: { type: { summary: "'button' | 'submit' | 'reset'" }, defaultValue: { summary: 'button' } },
+			table: {
+				type: { summary: "'button' | 'submit' | 'reset'" },
+				defaultValue: { summary: 'button' },
+			},
 		},
 		disabled: {
 			description: 'Desabilita a interação nativa, inclusive por teclado.',

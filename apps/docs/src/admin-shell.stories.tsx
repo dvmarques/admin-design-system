@@ -16,13 +16,18 @@ const meta = {
 	tags: ['autodocs'],
 	argTypes: {
 		layout: {
-			description: 'standard preserva o layout normal; sidebar-header alinha o topo da Sidebar ao Header.',
+			description:
+				'standard preserva o layout normal; sidebar-header alinha o topo da Sidebar ao Header.',
 			options: ['standard', 'sidebar-header'],
 			control: 'select',
-			table: { type: { summary: "'standard' | 'sidebar-header'" }, defaultValue: { summary: 'standard' } },
+			table: {
+				type: { summary: "'standard' | 'sidebar-header'" },
+				defaultValue: { summary: 'standard' },
+			},
 		},
 		collapsed: {
-			description: 'Estado controlado de recolhimento da navegação desktop; não abre nem fecha o drawer móvel.',
+			description:
+				'Estado controlado de recolhimento da navegação desktop; não abre nem fecha o drawer móvel.',
 			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'uncontrolled' } },
 		},
 		defaultCollapsed: {

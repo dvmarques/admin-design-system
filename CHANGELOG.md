@@ -10,7 +10,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
-- `issue-193-storybook-api-reference` (issue #193, em desenvolvimento) - Configuração inicial do addon de documentação Storybook 10.5.5 e docgen de props TypeScript; metadados explícitos de API/defaults para Button, composição Admin Shell e tipo genérico SmartTable; testes para detectar páginas Docs e stories na saída estática e para testar documentação e temas no subcaminho Pages. A cobertura integral da matriz de exports e a validação dos artefatos gerados estão pendentes.
+- `issue-193-storybook-api-reference` (issue #193, em desenvolvimento) - Storybook Docs 10.5.5 e docgen de TypeScript habilitados. Um gerador determinístico cria uma página MDX de API por export visual registrado na matriz da #151 (77 exports na matriz examinada), cruza os índices públicos, reutiliza stories executáveis e extrai tipos, obrigatoriedade e defaults literais não ambíguos; 13 APIs complexas possuem observações explícitas em JSON. Novos testes conferem a saída efetivamente gerada e o subcaminho Pages, com guia de manutenção em `docs/storybook-api-reference.md`. **Ainda requer validação de npm ci, build, renderização e gates completos**; não muda API/runtime do design system nem substitui o catálogo do demo.
 
 - `issue-257-replace-building-icon` (issue #257) - Snapshots de contrato detectam alterações posteriores na geometria e nos atributos dos 20 desenhos de ícones revisados.
 

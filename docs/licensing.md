@@ -33,7 +33,7 @@ e no `package-lock.json`, evitando duplicar esse inventário nesta página:
 | react-imask e imask (peer opcional)          | MIT        |
 
 `react-imask` e `imask` só são exigidos por quem importa o subpath opcional
-`@admin-ds/components/masked-input`; suas dependências transitivas (`@babel/runtime-corejs3`,
+`@dvmarques/admin-ds-components/masked-input`; suas dependências transitivas (`@babel/runtime-corejs3`,
 `core-js-pure`, `prop-types`) também são MIT. O `core-js-pure` declara um script de instalação apenas informativo (mensagem de
 apoio/funding), ignorável com `--ignore-scripts`, que é como a CI e o consumidor de verificação
 instalam.
@@ -46,7 +46,7 @@ origem, licença e atribuição nesta página antes de serem incorporados.
 
 ## Ícones SVG incorporados
 
-`@admin-ds/components` incorpora 20 desenhos SVG cujas fontes externas atuais são
+`@dvmarques/admin-ds-components` incorpora 20 desenhos SVG cujas fontes externas atuais são
 identificadas individualmente no
 [inventário de procedência](icons-license-audit.md), com links diretos para
 os arquivos oficiais e licenças. Os antigos desenhos de origem não comprovada
@@ -65,7 +65,7 @@ mudanças visuais intencionais. Não foi adicionada biblioteca de runtime.
 
 O [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) preserva os textos
 integrais das licenças externas aplicáveis, com os respectivos copyrights.
-O build de `@admin-ds/components` copia esse arquivo e o `LICENSE.md`
+O build de `@dvmarques/admin-ds-components` copia esse arquivo e o `LICENSE.md`
 do Admin DS para `packages/components/dist/`. O verificador
 `verify:package` exige que ambos sejam cópias exatas; o `package.json`
 publica apenas `dist/`, garantindo que esses avisos acompanhem os artefatos
@@ -73,7 +73,7 @@ distribuídos.
 
 A implementação está organizada internamente em `packages/components/src/icons/`,
 com desenhos, tipos e componente separados. A API pública de `AdsIcon` permanece
-em `@admin-ds/components`; a extração para um pacote futuro é opcional e
+em `@dvmarques/admin-ds-components`; a extração para um pacote futuro é opcional e
 requer mudança própria. Veja a [arquitetura dos ícones](icon-architecture.md).
 
 Novos SVGs externos devem ter arquivo oficial, licença e copyright

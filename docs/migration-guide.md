@@ -2,7 +2,7 @@
 
 ## Integração inicial
 
-Consulte [Integração](integration.md) para os imports públicos e o CSS compilado. Use exclusivamente os exports dos pacotes `@admin-ds/tokens`, `@admin-ds/components` e `@admin-ds/admin`; não importe arquivos internos de `src/`.
+Consulte [Integração](integration.md) para os imports públicos e o CSS compilado. Use exclusivamente os exports dos pacotes `@dvmarques/admin-ds-tokens`, `@dvmarques/admin-ds-components` e `@dvmarques/admin-ds-admin`; não importe arquivos internos de `src/`.
 
 ## Atualizações
 

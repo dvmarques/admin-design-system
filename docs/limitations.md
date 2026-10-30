@@ -10,7 +10,7 @@ das validações automatizadas.
 - `packages/admin` contém o `AdsAdminShell` e seus estilos próprios, e os padrões de
   dashboard (`AdsMetricCard`, `AdsDashboardGrid`, `AdsDashboardPanel`), mas não
   contém gráficos completos (eixos, legendas, tooltips) nem regras de negócio. O
-  único gráfico é o `AdsSparkline`, de `@admin-ds/components`, sem interatividade.
+  único gráfico é o `AdsSparkline`, de `@dvmarques/admin-ds-components`, sem interatividade.
 
 ## Temas
 
@@ -93,7 +93,7 @@ das validações automatizadas.
 
 ## AdsMaskedInput
 
-- O `AdsMaskedInput` está no subpath opcional `@admin-ds/components/masked-input` e exige o
+- O `AdsMaskedInput` está no subpath opcional `@dvmarques/admin-ds-components/masked-input` e exige o
   peer opcional `react-imask` (`^7.6.1`). Ele não traz máscaras de regras de negócio nem validação
   semântica; `required` não valida a máscara completa (use `complete`). `onChange` é o evento
   nativo e não é sintetizado a cada alteração aceita: use `onValueChange`. Só o subconjunto

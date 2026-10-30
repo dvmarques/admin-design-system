@@ -1,6 +1,6 @@
 {
-	"@admin-ds/tokens": 36342,
-	"@admin-ds/components": 554600,
-	"@admin-ds/highlighted-code": 33580,
-	"@admin-ds/admin": 332978
+	"@dvmarques/admin-ds-tokens": 36342,
+	"@dvmarques/admin-ds-components": 554600,
+	"@dvmarques/admin-ds-highlighted-code": 33580,
+	"@dvmarques/admin-ds-admin": 332978
 }

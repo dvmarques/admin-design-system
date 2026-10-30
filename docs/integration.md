@@ -5,10 +5,10 @@
 Uma aplicação consumidora importa as APIs e folhas de estilo públicas:
 
 ```ts
-import { AdsThemeControl } from '@admin-ds/components';
-import { tokenValues } from '@admin-ds/tokens';
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/components/styles.css';
+import { AdsThemeControl } from '@dvmarques/admin-ds-components';
+import { tokenValues } from '@dvmarques/admin-ds-tokens';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
 ```
 
 O CSS distribuído já contém as classes necessárias. A aplicação consumidora
@@ -21,7 +21,7 @@ Use `AdsAlert` para mensagens **inline**, sem timeout e sem portal, como erros d
 ```tsx
 'use client';
 import { useState } from 'react';
-import { AdsAlert, AdsButton } from '@admin-ds/components';
+import { AdsAlert, AdsButton } from '@dvmarques/admin-ds-components';
 
 export function Feedback() {
 	const [open, setOpen] = useState(true);
@@ -59,7 +59,7 @@ Dentro de `AdsAdminShell.Sidebar`, use `AdsAdminShell.Navigation` como raiz,
 `NavigationGroup label="Básicos" icon={...}` como categoria expansível e
 `NavigationItem` envolvendo um link nativo ou do roteador. As partes e os tipos
 `AdsAdminShellNavigation*Props` são públicos no pacote admin; os estilos já são
-distribuídos em `@admin-ds/admin/styles.css`.
+distribuídos em `@dvmarques/admin-ds-admin/styles.css`.
 
 As seções usam `role="group"` com `aria-labelledby` vinculado ao título por um id único, inclusive entre instâncias e durante hidratação.
 
@@ -92,7 +92,7 @@ roteador nem acesso ao DOM global. A aplicação guarda a preferência, resolve
 
 ```tsx
 'use client';
-import { AdsThemeControl, type AdsThemePreference } from '@admin-ds/components';
+import { AdsThemeControl, type AdsThemePreference } from '@dvmarques/admin-ds-components';
 
 export function HeaderThemeControl({ preference, onChange }: Props) {
 	return <AdsThemeControl value={preference} onValueChange={onChange} />;
@@ -188,16 +188,16 @@ resize, scroll e zoom usando apenas o CSS compilado dos pacotes.
 
 ## Admin Shell
 
-O `AdsAdminShell`, de `@admin-ds/admin`, organiza header, navegação e conteúdo sem
+O `AdsAdminShell`, de `@dvmarques/admin-ds-admin`, organiza header, navegação e conteúdo sem
 assumir autenticação, autorização ou roteamento. Os links pertencem à aplicação
 consumidora, que pode usar `a`, `next/link` ou sua própria abstração de navegação
 dentro da sidebar.
 
 ```tsx
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/components/styles.css';
-import '@admin-ds/admin/styles.css';
-import { AdsAdminShell } from '@admin-ds/admin';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import '@dvmarques/admin-ds-admin/styles.css';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 
 export default function AdminPage() {
 	return (
@@ -220,10 +220,10 @@ export default function AdminPage() {
 
 ### Estilos e dependências
 
-Os estilos do shell ficam em `@admin-ds/admin/styles.css`, que deve ser importado
-junto com `@admin-ds/tokens/styles.css` e `@admin-ds/components/styles.css`. Eles
+Os estilos do shell ficam em `@dvmarques/admin-ds-admin/styles.css`, que deve ser importado
+junto com `@dvmarques/admin-ds-tokens/styles.css` e `@dvmarques/admin-ds-components/styles.css`. Eles
 usam apenas os tokens públicos `--ads-*`, portanto não exigem Tailwind no
-consumidor. `@admin-ds/admin` declara `@admin-ds/components` como peer
+consumidor. `@dvmarques/admin-ds-admin` declara `@dvmarques/admin-ds-components` como peer
 dependency, pois reutiliza `AdsDrawer` na navegação móvel. A largura da sidebar
 pode ser ajustada por `--ads-admin-shell-sidebar-width` e
 `--ads-admin-shell-sidebar-width-collapsed`.
@@ -309,12 +309,12 @@ qualquer estrutura de navegação fornecida pela aplicação, como uma lista de 
 
 ## Conta, notificações e organização no shell
 
-Três composições de `@admin-ds/admin`, independentes entre si, completam o cabeçalho e a
+Três composições de `@dvmarques/admin-ds-admin`, independentes entre si, completam o cabeçalho e a
 sidebar do `AdsAdminShell`: `AdsAccountMenu`, `AdsNotificationCenter` e
 `AdsOrganizationSwitcher`. Nenhuma implementa autenticação, sessão, autorização,
 multitenancy, backend, persistência ou transporte de notificações: a aplicação fornece os dados
 e executa as ações. Todas são Client Components, não exigem provider, roteador ou o próprio shell,
-e o servidor renderiza apenas os gatilhos fechados. O CSS vem de `@admin-ds/admin/styles.css`.
+e o servidor renderiza apenas os gatilhos fechados. O CSS vem de `@dvmarques/admin-ds-admin/styles.css`.
 
 ```tsx
 <AdsAdminShell.Header>
@@ -495,8 +495,8 @@ própria; consumidores do seletor não precisam migrar. Outros popovers com busc
 
 ## Padrões de dashboard
 
-`@admin-ds/admin` também exporta `AdsMetricCard`, `AdsDashboardGrid` e
-`AdsDashboardPanel`, com os mesmos estilos de `@admin-ds/admin/styles.css` (sem
+`@dvmarques/admin-ds-admin` também exporta `AdsMetricCard`, `AdsDashboardGrid` e
+`AdsDashboardPanel`, com os mesmos estilos de `@dvmarques/admin-ds-admin/styles.css` (sem
 Tailwind no consumidor). Eles não buscam dados nem conhecem rotas: a aplicação
 decide quando exibir cada estado.
 
@@ -528,7 +528,7 @@ decide quando exibir cada estado.
 
 ### Sparkline
 
-`AdsSparkline` (`@admin-ds/components`) desenha a evolução de uma série em SVG, sem
+`AdsSparkline` (`@dvmarques/admin-ds-components`) desenha a evolução de uma série em SVG, sem
 eixos, sem animação e sem dependência de runtime. Funciona em Server Components.
 
 ```tsx
@@ -627,7 +627,7 @@ efeito que fecha o drawer na montagem o fecharia ao abri-lo.
 ```tsx
 'use client';
 
-import { useAdsAdminShell } from '@admin-ds/admin';
+import { useAdsAdminShell } from '@dvmarques/admin-ds-admin';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -821,7 +821,7 @@ numérico ou menor que 1 vale 1; valores acima do total valem a última página;
 ### Sobrescrita de tokens
 
 Sobrescreva variáveis `--ads-*` no CSS da aplicação, **depois** de importar
-`@admin-ds/tokens/styles.css`, com seletores `[data-theme='light']` e
+`@dvmarques/admin-ds-tokens/styles.css`, com seletores `[data-theme='light']` e
 `[data-theme='dark']` (sem `:root`), e sem recompilar os componentes:
 
 ```css
@@ -916,7 +916,7 @@ cresce para 34, 38 ou 42px.
 
 ## Campo de senha (`AdsPasswordInput`)
 
-`AdsPasswordInput` (em `@admin-ds/components`) é um `AdsInput` mascarado com um botão de
+`AdsPasswordInput` (em `@dvmarques/admin-ds-components`) é um `AdsInput` mascarado com um botão de
 visibilidade. Funciona dentro de `AdsField`, controlado (`value`) ou não (`defaultValue`), e
 aceita as props nativas de `input`, exceto `type`.
 
@@ -946,8 +946,8 @@ aceita as props nativas de `input`, exceto `type`.
 ## Campo com máscara (`AdsMaskedInput`)
 
 `AdsMaskedInput` formata o texto durante a digitação, a colagem e a remoção, preservando caret,
-seleção e composição IME. Ele é **opt-in**: fica no subpath `@admin-ds/components/masked-input` e usa
-o peer opcional `react-imask` (`^7.6.1`). O entrypoint `@admin-ds/components` não o reexporta nem o
+seleção e composição IME. Ele é **opt-in**: fica no subpath `@dvmarques/admin-ds-components/masked-input` e usa
+o peer opcional `react-imask` (`^7.6.1`). O entrypoint `@dvmarques/admin-ds-components` não o reexporta nem o
 carrega, então quem não importa o subpath não instala nem empacota nada de máscara.
 
 ```bash
@@ -955,8 +955,8 @@ npm install react-imask
 ```
 
 ```tsx
-import { AdsField } from '@admin-ds/components';
-import { AdsMaskedInput } from '@admin-ds/components/masked-input';
+import { AdsField } from '@dvmarques/admin-ds-components';
+import { AdsMaskedInput } from '@dvmarques/admin-ds-components/masked-input';
 
 <AdsField label="Código" description="Seis dígitos.">
 	<AdsMaskedInput
@@ -1030,7 +1030,7 @@ divergência, inclusive em StrictMode.
   `validationState="error"` de `complete` (e do servidor) e leve o foco ao campo inválido ao enviar.
 - Resolução de módulos: o subpath usa o mapa `exports` do pacote, então o TypeScript do consumidor
   precisa de `moduleResolution` `Bundler`, `Node16` ou `NodeNext` (o `node10` não resolve
-  `@admin-ds/components/masked-input`). O Next.js App Router já usa `Bundler`.
+  `@dvmarques/admin-ds-components/masked-input`). O Next.js App Router já usa `Bundler`.
 
 ### Receita: CPF, CNPJ ou documento único
 
@@ -1156,7 +1156,7 @@ hidratação; a data atual só é lida ao abrir o calendário.
 
 ## Barra de filtros
 
-O `AdsFilterBar`, de `@admin-ds/admin`, compõe filtros de texto, seleção
+O `AdsFilterBar`, de `@dvmarques/admin-ds-admin`, compõe filtros de texto, seleção
 (`select`), seleção múltipla (`multiselect`), data (`date`) e intervalo
 (`date-range`), com os filtros ativos como chips removíveis e a ação "Limpar
 filtros". É um Client Component e o estado é do consumidor: `value` é um objeto
@@ -1198,7 +1198,7 @@ export default async function Page({
 // app/usuarios/usuarios-filtros.tsx
 'use client';
 
-import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@admin-ds/admin';
+import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@dvmarques/admin-ds-admin';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
@@ -1293,7 +1293,7 @@ export function UsuariosFiltros({ params }: { params: Params }) {
 
 ## Tabela inteligente
 
-O `AdsSmartTable`, de `@admin-ds/admin`, compõe `AdsTable`, `AdsPagination`,
+O `AdsSmartTable`, de `@dvmarques/admin-ds-admin`, compõe `AdsTable`, `AdsPagination`,
 `AdsSkeleton` e `AdsEmptyState` com ordenação, seleção de linhas e visibilidade
 de colunas. É um Client Component e todo o estado é do consumidor: a tabela não
 busca, ordena nem pagina dados, e as `rows` já chegam processadas. Como `cell` e
@@ -1330,8 +1330,8 @@ abaixo).
 // app/usuarios/usuarios-tabela.tsx
 'use client';
 
-import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
-import { AdsButton } from '@admin-ds/components';
+import { AdsSmartTable, type AdsSmartTableSort } from '@dvmarques/admin-ds-admin';
+import { AdsButton } from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
@@ -1478,7 +1478,7 @@ quando o filtro muda.
 
 ## Fluxos administrativos
 
-`@admin-ds/admin` compõe os componentes públicos em fluxos recorrentes. Todo o
+`@dvmarques/admin-ds-admin` compõe os componentes públicos em fluxos recorrentes. Todo o
 estado (seleção, filtros, etapa ativa, abertura do diálogo) é do consumidor: os
 fluxos não persistem nem enviam dados, não leem a URL e não usam o roteador do
 Next.js. São Client Components; funções como `validate` e `cell` não atravessam
@@ -1511,8 +1511,8 @@ import {
 	type AdsFilterDefinition,
 	type AdsFilterValues,
 	type AdsSmartTableColumn,
-} from '@admin-ds/admin';
-import { AdsButton, type AdsPaginationProps } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-admin';
+import { AdsButton, type AdsPaginationProps } from '@dvmarques/admin-ds-components';
 import { useState } from 'react';
 
 interface Usuario {
@@ -1850,14 +1850,14 @@ Na composição desktop `sidebar-header`, os ícones de `NavigationItem` (envolv
 Use `AdsLoadingText` quando o conteúdo textual permanecer conhecido mas puder ser atualizado durante processamento ou polling. Não inicia requisições e não substitui `AdsLoadingIndicator` (status acessível) ou `AdsSkeleton` (conteúdo ainda indisponível).
 
 ```tsx
-import { AdsLoadingText } from '@admin-ds/components';
+import { AdsLoadingText } from '@dvmarques/admin-ds-components';
 
 <AdsLoadingText loading={emProcessamento} speed="normal">
 	Processando registros...
 </AdsLoadingText>;
 ```
 
-A API inclui `loading` (falso por padrão), `speed` (`slow`, `normal`, `fast`), `as` (elemento semântico, padrão `span`) e `className`/atributos HTML. O ciclo normal dura 2,5 segundos. Estilos vêm do CSS público `@admin-ds/components/styles.css` com tokens semânticos; o efeito respeita temas claro/escuro e fica estático com `prefers-reduced-motion` ou cores forçadas. Não há anúncio automático por leitor de tela: para progresso importante, forneça uma região de status acessível separada, evitando anúncios repetidos a cada polling.
+A API inclui `loading` (falso por padrão), `speed` (`slow`, `normal`, `fast`), `as` (elemento semântico, padrão `span`) e `className`/atributos HTML. O ciclo normal dura 2,5 segundos. Estilos vêm do CSS público `@dvmarques/admin-ds-components/styles.css` com tokens semânticos; o efeito respeita temas claro/escuro e fica estático com `prefers-reduced-motion` ou cores forçadas. Não há anúncio automático por leitor de tela: para progresso importante, forneça uma região de status acessível separada, evitando anúncios repetidos a cada polling.
 
 Veja as stories `Primitives/LoadingText` e o catálogo `/catalogo/loading-text`.
 
@@ -1869,7 +1869,7 @@ AdsCombobox pesquisa e seleciona entre opções fornecidas pela aplicação, que
 
 ```tsx
 'use client';
-import { AdsCombobox, AdsAutocomplete, AdsField } from '@admin-ds/components';
+import { AdsCombobox, AdsAutocomplete, AdsField } from '@dvmarques/admin-ds-components';
 
 const options = [
 	{ value: 'SP', label: 'São Paulo' },
@@ -1888,7 +1888,7 @@ export function Estado() {
 
 ```tsx
 'use client';
-import { AdsAutocomplete, AdsField } from '@admin-ds/components';
+import { AdsAutocomplete, AdsField } from '@dvmarques/admin-ds-components';
 
 export function EstadoRemoto() {
 	return (
@@ -1922,7 +1922,7 @@ Opções de `AdsCombobox` e `AdsAutocomplete` podem incluir `icon` (nome de `Ads
 ```tsx
 'use client';
 import { useState } from 'react';
-import { AdsField, AdsSelect } from '@admin-ds/components';
+import { AdsField, AdsSelect } from '@dvmarques/admin-ds-components';
 
 export function Equipe() {
 	const [team, setTeam] = useState<string | null>(null);

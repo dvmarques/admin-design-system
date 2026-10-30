@@ -26,7 +26,7 @@ O catálogo SHALL demonstrar todos os exports públicos visuais existentes, incl
 
 ### Requirement: Exemplos interativos
 
-Cada demonstração SHALL fornecer descrição, exemplos funcionais e variações pertinentes, incluindo código TSX copiável quando viável. O bloco de código do preview MUST usar `AdsHighlightedCodeSnippet` do pacote `@admin-ds/highlighted-code`, preservando a geração automática de snippets e a ação de copiar o código original.
+Cada demonstração SHALL fornecer descrição, exemplos funcionais e variações pertinentes, incluindo código TSX copiável quando viável. O bloco de código do preview MUST usar `AdsHighlightedCodeSnippet` do pacote `@dvmarques/admin-ds-highlighted-code`, preservando a geração automática de snippets e a ação de copiar o código original.
 
 #### Scenario: Interação
 
@@ -100,8 +100,8 @@ O catálogo MUST incluir componentes públicos visuais distribuídos em pacotes 
 
 #### Scenario: Pacote opcional não entra no bundle principal
 
-- **WHEN** uma aplicação consome apenas @admin-ds/components e seu CSS público
-- **THEN** Shiki e @admin-ds/highlighted-code não são carregados em decorrência do registro no catálogo
+- **WHEN** uma aplicação consome apenas @dvmarques/admin-ds-components e seu CSS público
+- **THEN** Shiki e @dvmarques/admin-ds-highlighted-code não são carregados em decorrência do registro no catálogo
 
 #### Scenario: Export opcional fica sem exemplo
 

@@ -122,7 +122,7 @@ O pacote de tokens MUST distribuir sobrescritas dos papéis de cor para `prefers
 
 #### Scenario: Consumidor importa os estilos de tokens
 
-- **WHEN** a aplicação importa `@admin-ds/tokens/styles.css` e o usuário prefere maior contraste
+- **WHEN** a aplicação importa `@dvmarques/admin-ds-tokens/styles.css` e o usuário prefere maior contraste
 - **THEN** os papéis de borda, texto secundário e foco assumem valores de maior contraste no tema ativo
 
 ### Requirement: Borda de controle e borda decorativa são papéis distintos
@@ -152,7 +152,7 @@ Os tokens públicos de elevação (`--ads-elevation-sm`, `-md` e `-lg`) MUST man
 
 #### Scenario: Tema escuro usa sombra própria
 
-- **WHEN** a aplicação importa `@admin-ds/tokens/styles.css` e o tema escuro está ativo, explícito ou pelo sistema
+- **WHEN** a aplicação importa `@dvmarques/admin-ds-tokens/styles.css` e o tema escuro está ativo, explícito ou pelo sistema
 - **THEN** cada token de elevação assume o valor do tema escuro e, no tema claro, o valor anterior
 
 #### Scenario: Aplicação personaliza a elevação
@@ -208,7 +208,7 @@ O sistema MUST disponibilizar os tokens `--ads-spacing-5`, `--ads-spacing-10`, `
 
 #### Scenario: Aplicação usa um espaçamento novo
 
-- **WHEN** a aplicação importa `@admin-ds/tokens/styles.css` e usa `--ads-spacing-16`
+- **WHEN** a aplicação importa `@dvmarques/admin-ds-tokens/styles.css` e usa `--ads-spacing-16`
 - **THEN** a variável vale `4rem` nos dois temas e os espaçamentos anteriores mantêm seus valores
 
 ### Requirement: Cores categóricas para gráficos
@@ -236,7 +236,7 @@ O sistema MUST disponibilizar uma escala de marca de dez degraus (`brand50` a `b
 
 #### Scenario: Aparência preservada
 
-- **WHEN** a aplicação importa `@admin-ds/tokens/styles.css` após a introdução da escala de marca
+- **WHEN** a aplicação importa `@dvmarques/admin-ds-tokens/styles.css` após a introdução da escala de marca
 - **THEN** os valores renderizados desses papéis são os mesmos de antes, nos dois temas e com `prefers-contrast: more`
 
 #### Scenario: Troca da cor de marca

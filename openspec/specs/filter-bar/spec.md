@@ -8,7 +8,7 @@ Permite compor filtros de listagens administrativas (texto, seleção, seleção
 
 ### Requirement: Composição de filtros controlada
 
-O sistema MUST fornecer `AdsFilterBar` em `@admin-ds/admin`, que renderize os filtros declarados em `filters` dos tipos `text`, `select`, `multiselect`, `date` e `date-range`, reutilizando os campos do design system. O valor MUST ser controlado por `value` (objeto por `id` de filtro) e `onChange`, e `onChange` MUST receber o objeto completo sem chaves de filtros vazios. A barra MUST NOT ler nem gravar a URL, nem acessar o roteador do Next.js.
+O sistema MUST fornecer `AdsFilterBar` em `@dvmarques/admin-ds-admin`, que renderize os filtros declarados em `filters` dos tipos `text`, `select`, `multiselect`, `date` e `date-range`, reutilizando os campos do design system. O valor MUST ser controlado por `value` (objeto por `id` de filtro) e `onChange`, e `onChange` MUST receber o objeto completo sem chaves de filtros vazios. A barra MUST NOT ler nem gravar a URL, nem acessar o roteador do Next.js.
 
 #### Scenario: Alterar um filtro de texto
 
@@ -144,7 +144,7 @@ Em telas estreitas, `AdsFilterBar` MUST recolher os campos atrás de um botão d
 
 ### Requirement: Temas, tokens e distribuição
 
-`AdsFilterBar` MUST usar classes `ads-filter-bar*` e variáveis `--ads-*`, funcionar nos temas claro e escuro, ser personalizável por sobrescrita de tokens e MUST NOT exigir Tailwind das aplicações consumidoras nem adicionar dependências de runtime. O CSS MUST ser distribuído em `@admin-ds/admin/styles.css`.
+`AdsFilterBar` MUST usar classes `ads-filter-bar*` e variáveis `--ads-*`, funcionar nos temas claro e escuro, ser personalizável por sobrescrita de tokens e MUST NOT exigir Tailwind das aplicações consumidoras nem adicionar dependências de runtime. O CSS MUST ser distribuído em `@dvmarques/admin-ds-admin/styles.css`.
 
 #### Scenario: Tema escuro
 
@@ -153,5 +153,5 @@ Em telas estreitas, `AdsFilterBar` MUST recolher os campos atrás de um botão d
 
 #### Scenario: Consumo em Next.js
 
-- **WHEN** uma aplicação Next.js importa `@admin-ds/admin` e `@admin-ds/admin/styles.css`
+- **WHEN** uma aplicação Next.js importa `@dvmarques/admin-ds-admin` e `@dvmarques/admin-ds-admin/styles.css`
 - **THEN** a barra é estilizada sem configurar Tailwind e sem importar caminhos internos dos pacotes

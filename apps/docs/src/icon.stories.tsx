@@ -19,14 +19,27 @@ type Story = StoryObj<typeof meta>;
 export const Set: Story = {
 	args: { name: 'check' },
 	render: () => (
-		<div className="flex items-center gap-4">
-			<AdsIcon name="check" />
-			<AdsIcon name="close" />
-			<AdsIcon name="info" label="Informações" />
-			<AdsIcon name="alertTriangle" />
+		<div className="flex flex-wrap items-center gap-4">
 			<AdsIcon name="alertCircle" />
+			<AdsIcon name="alertTriangle" />
+			<AdsIcon name="bell" />
+			<AdsIcon name="building" />
+			<AdsIcon name="calendar" />
+			<AdsIcon name="check" />
+			<AdsIcon name="chevronDown" />
+			<AdsIcon name="chevronLeft" />
+			<AdsIcon name="chevronRight" />
+			<AdsIcon name="chevronsUpDown" />
+			<AdsIcon name="close" />
+			<AdsIcon name="logOut" />
+			<AdsIcon name="monitor" />
+			<AdsIcon name="moon" />
+			<AdsIcon name="info" />
 			<AdsIcon name="plus" />
-			<AdsIcon name="search" size="lg" />
+			<AdsIcon name="sun" />
+			<AdsIcon name="settings" />
+			<AdsIcon name="search" />
+			<AdsIcon name="user" />
 		</div>
 	),
 };

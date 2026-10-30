@@ -44,6 +44,42 @@ regenerada a partir do lockfile e revisada com o processo de compliance do
 projeto. Novos ícones, fontes, imagens ou snippets externos devem registrar
 origem, licença e atribuição nesta página antes de serem incorporados.
 
+## Ícones SVG incorporados
+
+`@admin-ds/components` incorpora 20 desenhos SVG cujas fontes externas atuais são
+identificadas individualmente no
+[inventário de procedência](icons-license-audit.md), com links diretos para
+os arquivos oficiais e licenças. Os antigos desenhos de origem não comprovada
+foram substituídos nesta mudança; isso não comprova a autoria dos traçados
+históricos.
+
+- **18 ícones Feather**: licença MIT, Cole Bemis (2013–2023).
+- **1 ícone Lucide** (`chevronsUpDown`): licença ISC, Lucide Icons and
+  Contributors (2026).
+- **1 ícone Hugeicons Free** (`building`): licença MIT, Hugeicons (2025).
+
+A nomenclatura pública `AdsIcon`/`AdsIconName` foi preservada, assim como
+o uso de `currentColor` e os tamanhos `sm`, `md` e `lg`. Os desenhos
+passaram a representar a geometria original das fontes, de forma que há
+mudanças visuais intencionais. Não foi adicionada biblioteca de runtime.
+
+O [`THIRD_PARTY_NOTICES.md`](../THIRD_PARTY_NOTICES.md) preserva os textos
+integrais das licenças externas aplicáveis, com os respectivos copyrights.
+O build de `@admin-ds/components` copia esse arquivo e o `LICENSE.md`
+do Admin DS para `packages/components/dist/`. O verificador
+`verify:package` exige que ambos sejam cópias exatas; o `package.json`
+publica apenas `dist/`, garantindo que esses avisos acompanhem os artefatos
+distribuídos.
+
+A implementação está organizada internamente em `packages/components/src/icons/`,
+com desenhos, tipos e componente separados. A API pública de `AdsIcon` permanece
+em `@admin-ds/components`; a extração para um pacote futuro é opcional e
+requer mudança própria. Veja a [arquitetura dos ícones](icon-architecture.md).
+
+Novos SVGs externos devem ter arquivo oficial, licença e copyright
+identificados antes da incorporação; mudanças subsequentes exigem atualização
+da auditoria, dos avisos e dos testes.
+
 ## Fontes
 
 A pilha tipográfica pública começa em `Inter` e termina em fontes de sistema

@@ -10,8 +10,8 @@
 		"@admin-ds/highlighted-code": "0.1.0",
 		"@admin-ds/tokens": "0.1.0",
 		"@fontsource/inter": "^5.3.0",
-		"react": "^19.2.8",
-		"react-dom": "^19.2.8",
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1",
 		"react-imask": "^7.6.1"
 	},
 	"scripts": {

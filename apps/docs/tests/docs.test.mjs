@@ -67,7 +67,7 @@ test('referência explícita informa defaults verificáveis e APIs genéricas/co
   assert.match(button, /<table>/, 'Tabela MDX deve gerar sem depender de plugin GFM');
   assert.match(button, /Ações com variantes, tamanhos, carregamento e bloqueio/, 'Descrição real do catálogo deve estar presente');
   assert.match(button, /<code>variant<\/code>/);
-  assert.match(button, /<code>primary<\/code>/);
+  assert.match(button, /<code>'primary'<\/code>/, 'Default real de variant deve permanecer citado como string');
   const smartTable = readFileSync(new URL('AdsSmartTable.mdx', generatedUrl), 'utf8');
   assert.match(smartTable, /AdsSmartTableProps/);
   const shell = readFileSync(new URL('AdsAdminShell.mdx', generatedUrl), 'utf8');

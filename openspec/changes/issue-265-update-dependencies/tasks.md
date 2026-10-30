@@ -13,9 +13,9 @@
 
 ## 3. Verificações
 
-- [ ] 3.1 Executar format, lint e typecheck.
-- [ ] 3.2 Executar build completo, incluindo Storybook e Next Demo; checar distribuição/exports.
-- [ ] 3.3 Executar test:quality, cobertura e validações da distribuição.
+- [x] 3.1 Executar format, lint e typecheck.
+- [x] 3.2 Executar build completo, incluindo Storybook e Next Demo; checar distribuição/exports.
+- [x] 3.3 Executar test:quality, cobertura e validações da distribuição.
 - [ ] 3.4 Executar E2E principal e Pages em Chromium, Firefox e WebKit na CI; não atualizar snapshots sem revisão.
 - [ ] 3.5 Rodar npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive.
 

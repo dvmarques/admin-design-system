@@ -21,21 +21,21 @@ const workspace = (dir, name, extra = {}) => ({ dir, manifest: { name, ...extra 
 const fixture = () => [
 	workspace('apps/admin-demo', '@admin-ds/admin-demo', {
 		dependencies: {
-			'@admin-ds/admin': '*',
-			'@admin-ds/components': '*',
-			'@admin-ds/highlighted-code': '*',
-			'@admin-ds/tokens': '*',
+			'@dvmarques/admin-ds-admin': '*',
+			'@dvmarques/admin-ds-components': '*',
+			'@dvmarques/admin-ds-highlighted-code': '*',
+			'@dvmarques/admin-ds-tokens': '*',
 		},
 	}),
 	workspace('apps/docs', '@admin-ds/docs', {
-		dependencies: { '@admin-ds/admin': '*', '@admin-ds/components': '*', '@admin-ds/tokens': '*' },
+		dependencies: { '@dvmarques/admin-ds-admin': '*', '@dvmarques/admin-ds-components': '*', '@dvmarques/admin-ds-tokens': '*' },
 	}),
-	workspace('packages/admin', '@admin-ds/admin', { dependencies: { '@admin-ds/components': '*' } }),
-	workspace('packages/components', '@admin-ds/components', { peerDependencies: { react: '*' } }),
-	workspace('packages/highlighted-code', '@admin-ds/highlighted-code', {
+	workspace('packages/admin', '@dvmarques/admin-ds-admin', { dependencies: { '@dvmarques/admin-ds-components': '*' } }),
+	workspace('packages/components', '@dvmarques/admin-ds-components', { peerDependencies: { react: '*' } }),
+	workspace('packages/highlighted-code', '@dvmarques/admin-ds-highlighted-code', {
 		peerDependencies: { react: '*' },
 	}),
-	workspace('packages/tokens', '@admin-ds/tokens'),
+	workspace('packages/tokens', '@dvmarques/admin-ds-tokens'),
 ];
 const impact = (files, workspaces = fixture()) => classifyImpact(files, workspaces);
 const everything = [
@@ -56,7 +56,7 @@ test('token changes reach every consumer, including the implicit components depe
 	const result = impact(['packages/tokens/src/index.ts']);
 	assert.equal(result.mode, 'scoped');
 	assert.deepEqual(result.affected.toSorted(), everything.toSorted());
-	assert.ok(implicitDependencies['@admin-ds/components'].includes('@admin-ds/tokens'));
+	assert.ok(implicitDependencies['@dvmarques/admin-ds-components'].includes('@dvmarques/admin-ds-tokens'));
 });
 
 test('affected workspaces are listed with dependencies first', () => {
@@ -198,7 +198,7 @@ test('invalid manifests fail closed', () => {
 		[{ dir: 'packages/x', manifest: null }, ...base],
 		[workspace('packages/x', ''), ...base],
 		[workspace('packages/x', 7), ...base],
-		[workspace('packages/x', '@admin-ds/tokens'), ...base],
+		[workspace('packages/x', '@dvmarques/admin-ds-tokens'), ...base],
 		[workspace('packages/tokens', 'other'), ...base],
 		[workspace('packages/x', 'x', { dependencies: 'invalid' }), ...base],
 	];

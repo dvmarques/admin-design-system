@@ -8,10 +8,10 @@ import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const packageNames = [
-	'@admin-ds/tokens',
-	'@admin-ds/components',
-	'@admin-ds/highlighted-code',
-	'@admin-ds/admin',
+	'@dvmarques/admin-ds-tokens',
+	'@dvmarques/admin-ds-components',
+	'@dvmarques/admin-ds-highlighted-code',
+	'@dvmarques/admin-ds-admin',
 ];
 // INSPECT_BUDGET_DIR permite aos testes de integração usar orçamentos reduzidos em fixtures.
 const budgetDirectory = process.env.INSPECT_BUDGET_DIR
@@ -51,7 +51,7 @@ for (const packageName of packageNames) {
 		await stat(resolve(directory, target));
 	}
 
-	if (packageName !== '@admin-ds/tokens') {
+	if (packageName !== '@dvmarques/admin-ds-tokens') {
 		for (const dependency of ['react', 'react-dom']) {
 			if (!manifest.peerDependencies?.[dependency])
 				throw new Error(`${packageName} must declare ${dependency} as a peer dependency`);

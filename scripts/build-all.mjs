@@ -8,13 +8,13 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 
 // Os pacotes dependem do `dist` uns dos outros, então seguem em série, nesta ordem.
 const packages = [
-	'@admin-ds/tokens',
-	'@admin-ds/components',
-	'@admin-ds/highlighted-code',
-	'@admin-ds/admin',
+	'@dvmarques/admin-ds-tokens',
+	'@dvmarques/admin-ds-components',
+	'@dvmarques/admin-ds-highlighted-code',
+	'@dvmarques/admin-ds-admin',
 ];
 // As aplicações só consomem os pacotes já construídos e são independentes entre si.
-const apps = ['@admin-ds/docs', '@admin-ds/admin-demo'];
+const apps = ['@admin-ds/docs', '@dvmarques/admin-ds-admin-demo'];
 
 /** Nomes dos workspaces com script `build`, a partir dos padrões `workspaces` da raiz. */
 function workspacesWithBuild() {

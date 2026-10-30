@@ -1,2 +1,2 @@
-import { AdsButton, AdsDialog, AdsDatePicker } from '@admin-ds/components';
+import { AdsButton, AdsDialog, AdsDatePicker } from '@dvmarques/admin-ds-components';
 export { AdsButton, AdsDialog, AdsDatePicker };

@@ -13,7 +13,7 @@ import '@dvmarques/admin-ds-tokens/styles.css';
 import '@dvmarques/admin-ds-highlighted-code/styles.css';
 
 export function Example() {
-  return <AdsHighlightedCodeSnippet code={'SELECT 1;'} language="sql" theme="auto" />;
+	return <AdsHighlightedCodeSnippet code={'SELECT 1;'} language="sql" theme="auto" />;
 }
 ```
 

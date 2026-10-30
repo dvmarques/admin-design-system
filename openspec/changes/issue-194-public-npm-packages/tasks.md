@@ -36,7 +36,7 @@
 - Arquivos LICENSE.md idênticos ao canônico nos quatro pacotes; nomes novos e links do lockfile conferidos por leitura/parse JSON.
 - Migração antiga → nova registrada para quatro pacotes e smoke adicionado à CI Chromium, sem npm publish.
 - O script novo foi verificado apenas sintaticamente por inspeção JS (não executado como smoke).
-- A develop avançou pela #259 após o início e altera arquivos coincidentes, exigindo reconciliação.
+- A develop avançou pela #259; reconciliação concluída por merge sem descartar código da #259 (commit `1d4836bd`).
 
 ## Gates ainda não executados
 

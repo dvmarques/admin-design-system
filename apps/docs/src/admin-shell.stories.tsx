@@ -10,7 +10,7 @@ import {
 } from '@admin-ds/components';
 import { useState, type CSSProperties } from 'react';
 
-const meta = {
+const meta: Meta<typeof AdsAdminShell> = {
 	title: 'Layout/Admin Shell',
 	component: AdsAdminShell,
 	tags: ['autodocs'],
@@ -52,7 +52,7 @@ const meta = {
 			},
 		},
 	},
-} satisfies Meta;
+};
 export default meta;
 type Story = StoryObj<typeof meta>;
 

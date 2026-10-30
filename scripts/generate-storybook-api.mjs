@@ -476,6 +476,16 @@ function render(entry) {
 		'',
 		'**Importação pública:** ' + bt + pkg + bt + '. **Grupo:** ' + esc(entry.group) + '.',
 		'',
+		'## Exemplo executável',
+		'',
+		'<Canvas of={ExampleStories.' + story.name + '} />',
+		'',
+		'Outros exemplos: ' +
+			bt +
+			story.file +
+			bt +
+			'. Partes compostas podem compartilhar exemplos do componente pai.',
+		'',
 		'## Propriedades e tipos',
 		'',
 		'**Contrato:** ' + api.typeNames.map((n) => bt + n + bt).join(', ') + '.',
@@ -508,7 +518,7 @@ function render(entry) {
 					'</td></tr>',
 			);
 		a.push('</tbody></table>');
-	} else a.push('API composta ou genérica: confira os tipos públicos e os exemplos abaixo.');
+	} else a.push('API composta ou genérica: confira os tipos públicos e o exemplo acima.');
 	if (notes[entry.name]) a.push('', '## Observações específicas', '', esc(notes[entry.name]));
 	a.push(
 		'',
@@ -520,16 +530,6 @@ function render(entry) {
 		'## Variantes, estados e acessibilidade',
 		'',
 		...derivedSections(api.props),
-		'## Exemplo executável',
-		'',
-		'<Canvas of={ExampleStories.' + story.name + '} />',
-		'',
-		'Outros exemplos: ' +
-			bt +
-			story.file +
-			bt +
-			'. Partes compostas podem compartilhar exemplos do componente pai.',
-		'',
 	);
 	return a.join('\n');
 }

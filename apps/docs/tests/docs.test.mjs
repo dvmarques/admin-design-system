@@ -68,4 +68,13 @@ test('referência explícita informa defaults verificáveis e APIs genéricas/co
   assert.match(smartTable, /AdsSmartTableProps/);
   const shell = readFileSync(new URL('AdsAdminShell.mdx', generatedUrl), 'utf8');
   assert.match(shell, /AdsAdminShellProps/);
+  const icon = readFileSync(new URL('AdsIcon.mdx', generatedUrl), 'utf8');
+  assert.match(icon, /AdsIconProps/);
+  assert.match(icon, /AdsIconName/);
+  const checkbox = readFileSync(new URL('AdsCheckbox.mdx', generatedUrl), 'utf8');
+  assert.match(checkbox, /AdsSelectionControlProps/);
+  const combobox = readFileSync(new URL('AdsCombobox.mdx', generatedUrl), 'utf8');
+  assert.match(combobox, /AdsComboboxProps/);
+  assert.match(combobox, /AdsComboboxPopoverProps/);
+  assert.match(combobox, /closeOnSelect/);
 });

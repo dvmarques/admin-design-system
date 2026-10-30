@@ -39,6 +39,8 @@ Cada SVG agora corresponde à geometria de uma fonte oficial; o nome público `A
 
 As URLs de origem apontam para o projeto oficial. Os prefixos SHA registram os arquivos examinados, não comprovam autoria do desenho antigo nem substituem avisos legais.
 
+Os snapshots de `packages/components/tests/icon-modules.test.tsx` registram a geometria e os atributos dos 20 desenhos revisados para detectar alterações posteriores. Eles não substituem a comparação com as fontes oficiais nem comprovam procedência por si só.
+
 ## Licenças e avisos
 
 | Biblioteca     | Ícones usados | Copyright e licença                        | Arquivo oficial                                                                                    |

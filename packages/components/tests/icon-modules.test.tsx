@@ -45,4 +45,8 @@ describe('AdsIcon modular architecture', () => {
 			renderToStaticMarkup(<PublicAdsIcon {...props} />),
 		);
 	});
+
+	it.each(names)('preserves the reviewed artwork for %s', (name) => {
+		expect(renderToStaticMarkup(<>{iconPaths[name]}</>)).toMatchSnapshot();
+	});
 });

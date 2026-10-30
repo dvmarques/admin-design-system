@@ -1,0 +1,97 @@
+name: "Issue 265 - refresh npm dependencies (temporary)"
+on:
+  push:
+    branches:
+      - issue-265-deps-batch1
+permissions:
+  contents: write
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: issue-265-deps-batch1
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Use repository npm version
+        run: npm install --global npm@11.19.1
+      - name: Refresh direct dependency declarations in all workspaces
+        shell: bash
+        run: |
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+          const targets = new Map([
+            ['@testing-library/jest-dom', '7.0.1'],
+            ['@testing-library/react', '16.3.3'],
+            ['@types/react', '19.3.0'],
+            ['@types/react-dom', '19.3.0'],
+            ['axe-core', '4.14.0'],
+            ['esbuild', '0.28.2'],
+            ['eslint', '10.13.0'],
+            ['next', '16.4.3'],
+            ['prettier', '3.9.10'],
+            ['react', '19.3.1'],
+            ['react-dom', '19.3.1'],
+            ['typescript-eslint', '8.72.1']
+          ]);
+          const paths = [
+            'package.json',
+            'apps/docs/package.json',
+            'apps/admin-demo/package.json',
+            'packages/admin/package.json',
+            'packages/components/package.json',
+            'packages/tokens/package.json',
+            'packages/highlighted-code/package.json'
+          ];
+          for (const path of paths) {
+            const original = fs.readFileSync(path, 'utf8');
+            const data = JSON.parse(original);
+            let source = original;
+            for (const field of ['dependencies', 'devDependencies']) {
+              for (const [name, version] of targets) {
+                const old = data[field]?.[name];
+                if (old === undefined) continue;
+                const next = (old.startsWith('^') ? '^' : old.startsWith('~') ? '~' : '') + version;
+                if (next === old) continue;
+                const needle = JSON.stringify(name) + ': ' + JSON.stringify(old);
+                if (!source.includes(needle)) throw new Error('Failed to locate ' + name + ' in ' + path);
+                source = source.replace(needle, JSON.stringify(name) + ': ' + JSON.stringify(next));
+                console.log(path, name, old, '=>', next);
+              }
+            }
+            if (path === 'package.json') {
+              if (!source.includes('"esbuild@0.28.1": true')) throw new Error('esbuild allowScripts entry not found');
+              source = source.replace('"esbuild@0.28.1": true','"esbuild@0.28.2": true');
+            }
+            if (source !== original) fs.writeFileSync(path, source);
+          }
+          NODE
+      - name: Resolve lockfile reproducibly with Node 24 and npm 11
+        run: |
+          node --version
+          npm --version
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ls --depth=0
+      - name: Commit the version changes and remove temporary workflow
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/issue-265-deps-batch1-bootstrap.yml
+          git add package.json package-lock.json apps/docs/package.json apps/admin-demo/package.json packages/admin/package.json packages/components/package.json packages/tokens/package.json packages/highlighted-code/package.json
+          git diff --cached --check
+          git diff --cached --quiet && { echo "No version changes generated" >&2; exit 1; }
+          git commit -m "chore(deps): update compatible libraries for issue #265 (batch 1)"
+          git push origin HEAD:refs/heads/issue-265-deps-batch1
+      - name: Quick verification after commit
+        run: |
+          npm run format
+          npm run lint
+          npm run typecheck
+          npm run build
+          npm run test:quality

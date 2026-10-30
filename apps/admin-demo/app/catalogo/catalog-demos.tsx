@@ -1,5 +1,6 @@
 'use client';
 import { useState } from 'react';
+import { AdsMaskedInput, type AdsMaskedInputValues } from '@admin-ds/components/masked-input';
 import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
 import Link from 'next/link';
 import { DemoBrand } from '../demo-brand';
@@ -286,6 +287,189 @@ export function PasswordInputDemo() {
 			</AdsField>
 			<AdsField label="Senha sem alternância de visibilidade">
 				<AdsPasswordInput showVisibilityToggle={false} />
+			</AdsField>
+		</>
+	);
+}
+
+export function MaskedInputDemo() {
+	const [fixed, setFixed] = useState<AdsMaskedInputValues>();
+	const [phone, setPhone] = useState<AdsMaskedInputValues>();
+	const [cpf, setCpf] = useState<AdsMaskedInputValues>();
+	const [cnpj, setCnpj] = useState<AdsMaskedInputValues>();
+	const [doc, setDoc] = useState<AdsMaskedInputValues>();
+	const [amount, setAmount] = useState<AdsMaskedInputValues>();
+	const [free, setFree] = useState<AdsMaskedInputValues>();
+	const [controlled, setControlled] = useState('123-4');
+	const [formComplete, setFormComplete] = useState(false);
+	const [formTouched, setFormTouched] = useState(false);
+	const [sent, setSent] = useState<string>();
+	const formInvalid = formTouched && !formComplete;
+	return (
+		<>
+			<AdsField description="Máscara fixa 000-000; dados fictícios." label="Código (máscara fixa)">
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000-000"
+					onValueChange={setFixed}
+					placeholder="000-000"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {fixed?.maskedValue ?? '—'} · Bruto: {fixed?.unmaskedValue ?? '—'} · Completo:{' '}
+				{fixed ? (fixed.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Alterna entre 8 e 9 dígitos conforme o texto cresce."
+				label="Telefone (máscara dinâmica)"
+			>
+				<AdsMaskedInput
+					inputMode="tel"
+					mask={['(00) 0000-0000', '(00) 00000-0000']}
+					onValueChange={setPhone}
+					placeholder="(00) 00000-0000"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {phone?.maskedValue ?? '—'} · Bruto: {phone?.unmaskedValue ?? '—'}
+			</p>
+			<AdsField
+				description="Formato 000.000.000-00; só formata, não valida dígito verificador."
+				label="CPF (máscara fixa)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000.000.000-00"
+					onValueChange={setCpf}
+					placeholder="000.000.000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {cpf?.maskedValue ?? '—'} · Bruto: {cpf?.unmaskedValue ?? '—'} · Completo:{' '}
+				{cpf ? (cpf.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Formato 00.000.000/0000-00; só formata, não valida dígito verificador."
+				label="CNPJ (máscara fixa)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="00.000.000/0000-00"
+					onValueChange={setCnpj}
+					placeholder="00.000.000/0000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {cnpj?.maskedValue ?? '—'} · Bruto: {cnpj?.unmaskedValue ?? '—'} · Completo:{' '}
+				{cnpj ? (cnpj.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Formato 000.000.000-00 (11 dígitos) ou 00.000.000/0000-00 (14); só formata."
+				label="Documento (CPF ou CNPJ)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask={['000.000.000-00', '00.000.000/0000-00']}
+					onValueChange={setDoc}
+					placeholder="000.000.000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {doc?.maskedValue ?? '—'} · Bruto: {doc?.unmaskedValue ?? '—'} · Completo:{' '}
+				{doc ? (doc.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="typedValue é um número; o valor bruto continua sendo texto."
+				label="Quantia (máscara numérica)"
+			>
+				<AdsMaskedInput
+					inputMode="decimal"
+					mask={{ mask: Number, scale: 2, radix: ',', thousandsSeparator: '.', mapToRadix: ['.'] }}
+					onValueChange={setAmount}
+				/>
+			</AdsField>
+			<p>
+				Formatado: {amount?.maskedValue ?? '—'} · Bruto: {amount?.unmaskedValue ?? '—'} · Número:{' '}
+				{typeof amount?.typedValue === 'number' ? String(amount.typedValue) : '—'}
+			</p>
+			<AdsField
+				description="Sem mask, o campo é um input de texto comum."
+				label="Observação (sem máscara)"
+			>
+				<AdsMaskedInput onValueChange={setFree} placeholder="Texto livre" />
+			</AdsField>
+			<p aria-label="Valores da observação">Bruto: {free?.unmaskedValue ?? '—'}</p>
+			<AdsField description="O estado é do consumidor." label="Protocolo (controlado)">
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000-000"
+					onValueChange={(values) => setControlled(values.maskedValue)}
+					value={controlled}
+				/>
+			</AdsField>
+			<div style={{ display: 'flex', gap: '0.5rem' }}>
+				<AdsButton onClick={() => setControlled('987654')} type="button" variant="secondary">
+					Definir 987-654
+				</AdsButton>
+				<AdsButton onClick={() => setControlled('')} type="button" variant="secondary">
+					Limpar protocolo
+				</AdsButton>
+			</div>
+			<AdsField
+				description="O texto inicial é formatado na montagem."
+				label="Referência (não controlado)"
+			>
+				<AdsMaskedInput defaultValue="123456" inputMode="numeric" mask="000-000" />
+			</AdsField>
+			<form
+				aria-label="Formulário de exemplo"
+				noValidate
+				onReset={() => {
+					setFormTouched(false);
+					setFormComplete(false);
+					setSent(undefined);
+				}}
+				onSubmit={(event) => {
+					event.preventDefault();
+					setFormTouched(true);
+					if (formComplete) {
+						setSent(String(new FormData(event.currentTarget).get('codigo') ?? ''));
+						return;
+					}
+					// Leva o foco ao campo inválido, como em um formulário real.
+					const field = event.currentTarget.elements.namedItem('codigo');
+					if (field instanceof HTMLInputElement) field.focus();
+				}}
+				style={{ display: 'grid', gap: '0.75rem' }}
+			>
+				<AdsField
+					description="required é nativo; a completude vem de onValueChange."
+					error={formInvalid ? 'Preencha os seis dígitos.' : undefined}
+					label="Código do formulário"
+					validationState={formInvalid ? 'error' : 'default'}
+				>
+					<AdsMaskedInput
+						inputMode="numeric"
+						mask="000-000"
+						name="codigo"
+						onBlur={() => setFormTouched(true)}
+						onValueChange={(values) => setFormComplete(values.complete)}
+						required
+					/>
+				</AdsField>
+				<div style={{ display: 'flex', gap: '0.5rem' }}>
+					<AdsButton type="submit">Enviar formulário</AdsButton>
+					<AdsButton type="reset" variant="secondary">
+						Redefinir formulário
+					</AdsButton>
+				</div>
+				<p aria-live="polite">{sent ? `Enviado o texto formatado: ${sent}` : 'Nada enviado.'}</p>
+			</form>
+			<AdsField label="Desabilitado">
+				<AdsMaskedInput defaultValue="123456" disabled mask="000-000" />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsMaskedInput defaultValue="123456" mask="000-000" readOnly />
 			</AdsField>
 		</>
 	);
@@ -1968,6 +2152,7 @@ export const catalogDemos = {
 	Sparkline: SparklineDemo,
 	Input: InputDemo,
 	PasswordInput: PasswordInputDemo,
+	MaskedInput: MaskedInputDemo,
 	Textarea: TextareaDemo,
 	Select: SelectDemo,
 	Combobox: ComboboxDemo,

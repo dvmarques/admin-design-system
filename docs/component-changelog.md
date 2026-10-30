@@ -4,6 +4,7 @@
 
 | Componente              | Alteração                                                                         | Referência |
 | ----------------------- | --------------------------------------------------------------------------------- | ---------- |
+| AdsMaskedInput          | Novo, em subpath opcional com peer opcional `react-imask`                         | #231       |
 | AdsPasswordInput        | Novo; AdsInput agora usa forwardRef (JSX inalterado)                              | #147       |
 | AdsSmartTable           | Virtualização, redimensionamento e exportação opcionais                           | #93        |
 | AdsConfirmDialog        | Papel alertdialog em confirmação destrutiva                                       | #92        |

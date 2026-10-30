@@ -91,6 +91,18 @@ das validações automatizadas.
   Sem snapshot visual para ele, o comportamento é coberto por testes
   de componente e `axe`.
 
+## AdsMaskedInput
+
+- O `AdsMaskedInput` está no subpath opcional `@admin-ds/components/masked-input` e exige o
+  peer opcional `react-imask` (`^7.6.1`). Ele não traz máscaras de regras de negócio nem validação
+  semântica; `required` não valida a máscara completa (use `complete`). `onChange` é o evento
+  nativo e não é sintetizado a cada alteração aceita: use `onValueChange`. Só o subconjunto
+  documentado de opções do motor é público (sem `blocks`, `unmask` nem instâncias do motor).
+  Caret, colagem, edição no meio e IME são cobertos por testes de componente (jsdom) e E2E em
+  Chromium; Firefox e WebKit não executam o spec dedicado, e a composição IME foi validada apenas
+  em Chromium desktop, simulada pelo protocolo (CDP); IMEs reais e teclados móveis (Gboard, iOS) não
+  foram testados.
+
 ## AdsFilterBar
 
 - O `AdsFilterBar` só emite o estado do filtro: não consulta nem filtra dados,

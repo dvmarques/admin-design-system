@@ -31,11 +31,12 @@
 		"validate:impact:lint": "node scripts/validate-impact.mjs lint",
 		"validate:impact:types": "node scripts/validate-impact.mjs typecheck",
 		"validate:impact:test": "node scripts/validate-impact.mjs test",
-		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs ./scripts/ci-impact.test.mjs ./scripts/ci-scope.test.mjs ./scripts/validate-impact.test.mjs ./scripts/ci-metrics.test.mjs ./scripts/ci-workflow.test.mjs ./scripts/quality-budget.test.mjs ./scripts/eslint-config.test.mjs ./scripts/codex-hooks.test.mjs",
+		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs ./scripts/ci-impact.test.mjs ./scripts/ci-scope.test.mjs ./scripts/validate-impact.test.mjs ./scripts/ci-metrics.test.mjs ./scripts/ci-workflow.test.mjs ./scripts/quality-budget.test.mjs ./scripts/masked-input-distribution.test.mjs ./scripts/eslint-config.test.mjs ./scripts/codex-hooks.test.mjs",
 		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run test:release && npm run test:ci && npm run check:agent-skills && npm run check:generated --workspace @admin-ds/tokens",
 		"sync:agent-skills": "node ./scripts/sync-agent-skills.mjs",
 		"check:agent-skills": "node ./scripts/sync-agent-skills.mjs --check",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
+		"verify:optional-peer": "node ./scripts/verify-optional-peer.mjs",
 		"build": "node ./scripts/build-all.mjs",
 		"build:pages": "node ./scripts/build-pages-site.mjs --build",
 		"test:e2e:pages": "playwright test --config playwright.pages.config.ts --reporter=dot",
@@ -44,7 +45,7 @@
 		"release:prepare": "node ./scripts/prepare-release.mjs",
 		"release:validate": "node ./scripts/validate-release.mjs",
 		"release:notes": "node ./scripts/extract-release-notes.mjs",
-		"validate": "npm run format && npm run lint && npm run build && npm run typecheck && npm run test:quality && npm run test:e2e"
+		"validate": "npm run format && npm run lint && npm run build && npm run verify:optional-peer && npm run typecheck && npm run test:quality && npm run test:e2e"
 	},
 	"lint-staged": {
 		"*.{js,mjs,cjs,ts,tsx}": [

@@ -74,7 +74,27 @@ const typeOverrides={
   AdsCombobox:{path:'packages/components/src/combobox-types.ts',types:['AdsComboboxProps','AdsComboboxPopoverProps'],defaults:'packages/components/src/combobox.tsx'},
   AdsCheckbox:{types:['AdsSelectionControlProps']},
   AdsRadio:{types:['AdsSelectionControlProps']},
-  AdsSwitch:{types:['AdsSelectionControlProps']}
+  AdsSwitch:{types:['AdsSelectionControlProps']},
+  AdsDropdown:{types:['AdsDropdownProps','AdsDropdownTriggerProps','AdsDropdownContentProps','AdsDropdownItemProps']},
+  AdsAccordion:{types:['AdsAccordionProps','AdsAccordionSingleProps','AdsAccordionMultipleProps','AdsAccordionItemProps','AdsAccordionHeaderProps','AdsAccordionTriggerProps','AdsAccordionPanelProps']},
+  AdsSmartTable:{types:['AdsSmartTableProps','AdsSmartTableColumn','AdsSmartTableSort','AdsSmartTableLabels']},
+  AdsAdminShell:{
+    types:[
+      'AdsAdminShellProps','AdsAdminShellHeaderProps','AdsAdminShellBodyProps','AdsAdminShellMainProps',
+      'AdsAdminShellSidebarProps','AdsAdminShellNavigationTriggerProps','AdsAdminShellSidebarToggleProps',
+      'AdsAdminShellNavigationProps','AdsAdminShellNavigationSectionProps',
+      'AdsAdminShellNavigationGroupProps','AdsAdminShellNavigationItemProps'
+    ],
+    typeSources:{
+      AdsAdminShellSidebarProps:'packages/admin/src/admin-shell-navigation.tsx',
+      AdsAdminShellNavigationTriggerProps:'packages/admin/src/admin-shell-navigation.tsx',
+      AdsAdminShellSidebarToggleProps:'packages/admin/src/admin-shell-navigation.tsx',
+      AdsAdminShellNavigationProps:'packages/admin/src/sidebar-navigation.tsx',
+      AdsAdminShellNavigationSectionProps:'packages/admin/src/sidebar-navigation.tsx',
+      AdsAdminShellNavigationGroupProps:'packages/admin/src/sidebar-navigation.tsx',
+      AdsAdminShellNavigationItemProps:'packages/admin/src/sidebar-navigation.tsx'
+    }
+  }
 };
 function typeInfo(name){
   const override=typeOverrides[name];
@@ -85,21 +105,24 @@ function typeInfo(name){
   const typeNames=override?.types||[name+'Props'];
   const props=[],heritage=[];
   for(const typeName of typeNames){
-    const decl=file.statements.find(n=>(ts.isInterfaceDeclaration(n)||ts.isTypeAliasDeclaration(n))&&n.name.text===typeName);
-    if(!decl)throw Error('Contrato de props ausente: '+typeName+' em '+path);
+    const source=override?.typeSources?.[typeName];
+    const typePath=source?join(root,source):path;
+    const typeFile=source?ts.createSourceFile(typePath,readFileSync(typePath,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX):file;
+    const decl=typeFile.statements.find(n=>(ts.isInterfaceDeclaration(n)||ts.isTypeAliasDeclaration(n))&&n.name.text===typeName);
+    if(!decl)throw Error('Contrato de props ausente: '+typeName+' em '+typePath);
     if(ts.isInterfaceDeclaration(decl)){
-      const inherited=(decl.heritageClauses||[]).map(n=>n.getText(file)).join('; ');
+      const inherited=(decl.heritageClauses||[]).map(n=>n.getText(typeFile)).join('; ');
       if(inherited)heritage.push(typeName+': '+inherited);
       for(const p of decl.members.filter(ts.isPropertySignature)){
-        const key=p.name.getText(file).replaceAll("'",'').replaceAll('"','');
+        const key=p.name.getText(typeFile).replaceAll("'",'').replaceAll('"','');
         props.push({
           name:typeNames.length>1?typeName+'.'+key:key,sourceName:key,owner:typeName,
-          type:p.type?.getText(file).replace(/\s+/g,' ')||'desconhecido',
+          type:p.type?.getText(typeFile).replace(/\s+/g,' ')||'desconhecido',
           required:!p.questionToken,
           desc:ts.getJSDocCommentsAndTags(p).map(j=>typeof j.comment==='string'?j.comment:'').filter(Boolean).join(' ')
         });
       }
-    }else heritage.push(typeName+': '+decl.type.getText(file));
+    }else heritage.push(typeName+': '+decl.type.getText(typeFile));
   }
   function defaultsIn(sourcePath, acceptedTypes){
     const found=new Map();

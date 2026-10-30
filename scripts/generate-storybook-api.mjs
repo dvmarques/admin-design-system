@@ -27,6 +27,8 @@ const expected=[
   ...exportsOf('packages/components/src/masked-input.tsx')
 ].filter(n=>!excluded.has(n));
 const matrix=read('docs/admin-demo-catalog.md');
+const notes=JSON.parse(read('apps/docs/api-reference-notes.json'));
+
 const entries=matrix.split('\n').filter(l=>l.startsWith('| '+bt+'Ads')||l.startsWith('| '+bt+'ThemeToggle')||l.startsWith('| '+bt+'StyleFixture'))
   .map(l=>{
     const p=l.split('|').slice(1);
@@ -134,6 +136,7 @@ function render(entry){
     for(const p of api.props)a.push('| '+bt+esc(p.name)+bt+' | '+bt+esc(p.type)+bt+' | '+(p.required?'Sim':'Não')+
       ' | '+bt+esc(p.def)+bt+' | '+esc(p.desc)+' |');
   }else a.push('API composta ou genérica: confira os tipos públicos e os exemplos abaixo.');
+  if(notes[entry.name])a.push('','## Observações específicas','',esc(notes[entry.name]));
   a.push('','**Origem TypeScript:** '+bt+api.path+bt+'.','',
     'Padrões são mostrados apenas quando encontrados de forma inequívoca na desestruturação da implementação. '+
     'O travessão não prova a existência de um padrão. Props HTML/React herdadas podem não aparecer nesta tabela.','',

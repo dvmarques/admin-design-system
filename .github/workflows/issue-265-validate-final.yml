@@ -1,0 +1,46 @@
+name: "Issue 265 - validate npm upgrade (temporary)"
+on:
+  push:
+    branches:
+      - issue-265-deps-batch1
+permissions:
+  contents: write
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: issue-265-deps-batch1
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Remove validation bootstrap before format check
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/issue-265-validate-final.yml
+          git commit -m "ci: remove temporary Node 24 validation workflow"
+          git push origin HEAD:refs/heads/issue-265-deps-batch1
+      - name: Format, lint, typecheck
+        run: |
+          npm run format
+          npm run lint
+          npm run typecheck
+      - name: Build and docs output
+        run: |
+          npm run build
+          npm run test:output --workspace @admin-ds/docs
+      - name: Quality and coverage
+        run: |
+          npm run test:quality
+          npm run test:coverage
+      - name: Package integrity and OpenSpec
+        run: |
+          npm run inspect:packages
+          npm run verify:optional-peer
+          npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive

@@ -44,8 +44,10 @@ const descriptions=new Map();
 for(const node of catalog.statements){
   if(!ts.isVariableStatement(node))continue;
   for(const d of node.declarationList.declarations){
-    if(!ts.isIdentifier(d.name)||d.name.text!=='catalogEntries'||!d.initializer||!ts.isArrayLiteralExpression(d.initializer))continue;
-    for(const item of d.initializer.elements){
+    if(!ts.isIdentifier(d.name)||d.name.text!=='catalogEntries'||!d.initializer)continue;
+    const initial=ts.isAsExpression(d.initializer)?d.initializer.expression:d.initializer;
+    if(!ts.isArrayLiteralExpression(initial))throw Error('catalogEntries deve ser array estático');
+    for(const item of initial.elements){
       if(!ts.isObjectLiteralExpression(item))continue;
       const value=name=>{
         const p=item.properties.find(x=>ts.isPropertyAssignment(x)&&x.name.getText(catalog)===name);
@@ -55,6 +57,7 @@ for(const node of catalog.statements){
     }
   }
 }
+if(descriptions.size!==entries.length)throw Error('Descrição ausente no catálogo: '+entries.filter(e=>!descriptions.has(e.name)).map(e=>e.name).join(','));
 const modules=new Map();
 for(const index of ['packages/components/src/index.ts','packages/admin/src/index.ts','packages/highlighted-code/src/index.ts']){
   const file=parse(index);
@@ -159,10 +162,12 @@ function render(entry){
     '**Composição/herança:** '+bt+esc(api.heritage).replaceAll(bt,"'")+bt+'.',''
   ];
   if(api.props.length){
-    a.push('| Propriedade | Tipo | Obrigatória | Padrão verificado | Descrição |',
-      '| --- | --- | --- | --- | --- |');
-    for(const p of api.props)a.push('| '+bt+esc(p.name)+bt+' | '+bt+esc(p.type)+bt+' | '+(p.required?'Sim':'Não')+
-      ' | '+bt+esc(p.def)+bt+' | '+esc(p.desc)+' |');
+    a.push('<table>', '<thead><tr><th>Propriedade</th><th>Tipo</th><th>Obrigatória</th><th>Padrão verificado</th><th>Descrição</th></tr></thead>', '<tbody>');
+    for(const p of api.props)a.push(
+      '<tr><td><code>'+esc(p.name)+'</code></td><td><code>'+esc(p.type)+'</code></td><td>'+
+      (p.required?'Sim':'Não')+'</td><td><code>'+esc(p.def)+'</code></td><td>'+esc(p.desc)+'</td></tr>'
+    );
+    a.push('</tbody></table>');
   }else a.push('API composta ou genérica: confira os tipos públicos e os exemplos abaixo.');
   if(notes[entry.name])a.push('','## Observações específicas','',esc(notes[entry.name]));
   a.push('','**Origem TypeScript:** '+bt+api.path+bt+'.','',

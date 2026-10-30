@@ -66,7 +66,7 @@ O valor local inclui a modularização, os avisos de licença e as mudanças mai
 
 ## Sincronização posterior com #231
 
-Após integrar `develop` em `c46359f` (AdsMaskedInput), o build local Windows com Node 24.21.0 e npm 12.2.1 mediu `@admin-ds/components` em 610.014 B de distribuição, 263.282 B de JS/CSS e 79.417 B gzip. Os limites de `develop` eram, respectivamente, 589.380 B, 258.500 B e 78.400 B; foram ajustados para 610.060 B (baseline 554.600 B), 263.300 B e 79.500 B. A inspeção passou, inclusive para o novo cenário `masked-input-public` (67.490 B e 18.971 B gzip). Os cenários públicos já ajustados para os ícones não exigiram novos aumentos. A confirmação Linux da combinação atual permanece pendente na CI.
+Após integrar `develop` em `c46359f` (AdsMaskedInput), o build local Windows com Node 24.21.0 e npm 12.2.1 mediu `@admin-ds/components` em 610.014 B de distribuição, 263.282 B de JS/CSS e 79.417 B gzip. Os limites de `develop` eram, respectivamente, 589.380 B, 258.500 B e 78.400 B; foram ajustados para 610.060 B (baseline 554.600 B), 263.300 B e 79.500 B. A inspeção passou, inclusive para o novo cenário `masked-input-public` (67.490 B e 18.971 B gzip). Os cenários públicos já ajustados para os ícones não exigiram novos aumentos. A [CI Linux #40979835315](https://github.com/dvmarques/admin-design-system/actions/runs/40979835315) confirmou as mesmas medições e aprovou a inspeção na base combinada.
 
 ## Registro de decisões e resultados passados
 

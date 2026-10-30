@@ -6,7 +6,7 @@ import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 
 // Os cenários de layout usam apenas o CSS distribuído, como uma aplicação consumidora sem Tailwind.
-const css = ['@admin-ds/tokens/styles.css', '@admin-ds/components/styles.css']
+const css = ['@dvmarques/admin-ds-tokens/styles.css', '@dvmarques/admin-ds-components/styles.css']
 	.map((path) => readFileSync(require.resolve(path), 'utf8'))
 	.join('\n');
 
@@ -81,7 +81,7 @@ test.describe('AdsSelect com placeholder no Admin Demo', () => {
 });
 
 async function renderMarkup(dir: 'ltr' | 'rtl' = 'ltr') {
-	const { AdsField, AdsInput, AdsSelect, AdsTextarea } = await import('@admin-ds/components');
+	const { AdsField, AdsInput, AdsSelect, AdsTextarea } = await import('@dvmarques/admin-ds-components');
 	const option = (value: string, label: string) => createElement('option', { value }, label);
 	return renderToStaticMarkup(
 		createElement(

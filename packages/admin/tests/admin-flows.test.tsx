@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useRef, useState, type ReactNode } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { AdsButton, AdsPopover } from '@admin-ds/components';
+import { AdsButton, AdsPopover } from '@dvmarques/admin-ds-components';
 import {
 	AdsBulkActionBar,
 	AdsConfirmDialog,

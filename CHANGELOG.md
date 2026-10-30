@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- `issue-193-storybook-api-reference` (issue #193, em desenvolvimento) - Configuração inicial do addon de documentação Storybook 10.5.5 e docgen de props TypeScript; metadados explícitos de API/defaults para Button, composição Admin Shell e tipo genérico SmartTable; testes para detectar páginas Docs e stories na saída estática e para testar documentação e temas no subcaminho Pages. A cobertura integral da matriz de exports e a validação dos artefatos gerados estão pendentes.
+
 - `issue-257-replace-building-icon` (issue #257) - Snapshots de contrato detectam alterações posteriores na geometria e nos atributos dos 20 desenhos de ícones revisados.
 
 - `issue-257-replace-building-icon` (issue #257, escopo ampliado) - Os 20 SVGs de `AdsIcon` passam a corresponder a fontes oficiais licenciadas: 18 Feather (MIT), um Lucide `chevronsUpDown` (ISC) e um Hugeicons Free `building` (MIT). Fontes e copyrights individuais em `docs/icons-license-audit.md`, textos completos em `THIRD_PARTY_NOTICES.md`, copiados com `LICENSE.md` para o `dist` de `@admin-ds/components` e verificados no build. Novos testes cobrem os 20 ícones e o Storybook apresenta catálogo completo. Nomes públicos, acessibilidade e dependências preservados; a geometria visual dos 20 ícones muda intencionalmente. O conjunto foi modularizado em `packages/components/src/icons/` (desenhos, tipos, componente e exports), mantendo `src/icon.tsx` como reexport compatível; futura extração para pacote independente fica fora do escopo (detalhes em `docs/icon-architecture.md`).

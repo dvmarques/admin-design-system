@@ -17,6 +17,7 @@ O workspace usa npm 11.19.1, Node 24 em .nvmrc/CI e engines.node >=24.0.0. O pac
 
 ### Compatibilidade e rollback
 
+- `axe-core` fica fixado em 4.12.1 neste lote. Com 4.14.0, o E2E Firefox e WebKit detecta `label-content-name-mismatch` nos gatilhos visuais de conta e organização; a correção funcional de nome acessível exige testes e especificação próprios, antes de reativar o upgrade.
 - React e react-dom avançam juntos, e seus @types seguem a mesma linha major; peers genéricos >=18.2.0 continuam.
 - Next só é executado em apps/admin-demo, sem importação de Next em bibliotecas.
 - Contratos, CSS público, temas, acessibilidade e snapshots devem permanecer estáveis.

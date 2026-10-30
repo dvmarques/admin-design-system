@@ -14,7 +14,7 @@ const packages = [
 	'@dvmarques/admin-ds-admin',
 ];
 // As aplicações só consomem os pacotes já construídos e são independentes entre si.
-const apps = ['@admin-ds/docs', '@dvmarques/admin-ds-admin-demo'];
+const apps = ['@admin-ds/docs', '@admin-ds/admin-demo'];
 
 /** Nomes dos workspaces com script `build`, a partir dos padrões `workspaces` da raiz. */
 function workspacesWithBuild() {

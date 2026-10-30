@@ -41,7 +41,7 @@ function exportTargets(value) {
 }
 
 for (const packageName of packageNames) {
-	const directory = resolve(root, 'packages', packageName.split('/').at(-1));
+	const directory = resolve(root, 'packages', packageName.replace('@dvmarques/admin-ds-', ''));
 	const manifest = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
 	if (!manifest.files?.includes('dist')) throw new Error(`${packageName} must publish dist`);
 

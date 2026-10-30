@@ -9,7 +9,7 @@
 - [x] 2.1 Aplicar versões do lote 1 em todos os manifests atingidos.
 - [x] 2.2 Regenerar package-lock.json via npm 11.19.1 em Node 24, sem lockfile manual.
 - [x] 2.3 Verificar npm ci, npm ls e peers; anotar conflitos reais.
-- [ ] 2.4 Registrar mudança na seção [0.1.1] - Em andamento do CHANGELOG.
+- [x] 2.4 Registrar mudança na seção [0.1.1] - Em andamento do CHANGELOG.
 
 ## 3. Verificações
 

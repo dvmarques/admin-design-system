@@ -113,7 +113,7 @@ A documentação pública de sobrescrita de tokens MUST indicar seletores que al
 
 #### Scenario: Orientação consistente entre documentos
 
-- **WHEN** o README de `@admin-ds/tokens` e `docs/integration.md` descrevem a sobrescrita de tokens
+- **WHEN** o README de `@dvmarques/admin-ds-tokens` e `docs/integration.md` descrevem a sobrescrita de tokens
 - **THEN** ambos indicam `[data-theme='light']` e `[data-theme='dark']` e nenhum recomenda `:root[data-theme=…]`
 
 ### Requirement: Movimento reduzido

@@ -8,7 +8,7 @@ Permite listar dados administrativos com ordenação por coluna, seleção de li
 
 ### Requirement: Composição controlada sobre AdsTable
 
-O sistema MUST fornecer `AdsSmartTable` em `@admin-ds/admin`, que renderize `columns` e `rows` com `AdsTable`, exija uma legenda (`caption`) e um `getRowId`, e aceite `className`. A tabela MUST NOT buscar, ordenar, filtrar nem paginar dados, MUST NOT guardar estado de ordenação, seleção ou colunas e MUST NOT ler a URL nem importar o roteador do Next.js. Os componentes e tipos públicos MUST usar o prefixo `Ads`, sem expor Tailwind.
+O sistema MUST fornecer `AdsSmartTable` em `@dvmarques/admin-ds-admin`, que renderize `columns` e `rows` com `AdsTable`, exija uma legenda (`caption`) e um `getRowId`, e aceite `className`. A tabela MUST NOT buscar, ordenar, filtrar nem paginar dados, MUST NOT guardar estado de ordenação, seleção ou colunas e MUST NOT ler a URL nem importar o roteador do Next.js. Os componentes e tipos públicos MUST usar o prefixo `Ads`, sem expor Tailwind.
 
 #### Scenario: Renderizar linhas e colunas
 
@@ -175,7 +175,7 @@ Com `onHiddenColumnsChange`, `AdsSmartTable` MUST exibir um botão "Colunas" com
 
 ### Requirement: Textos, temas e distribuição
 
-Os textos MUST ser configuráveis por `labels`, com padrão em pt-BR. `AdsSmartTable` MUST usar classes `ads-smart-table*` e variáveis `--ads-*`, funcionar nos temas claro e escuro, ser personalizável por sobrescrita de tokens e MUST NOT exigir Tailwind das aplicações consumidoras nem adicionar dependências de runtime. O CSS MUST ser distribuído em `@admin-ds/admin/styles.css`. A renderização inicial MUST ser igual no servidor e no cliente.
+Os textos MUST ser configuráveis por `labels`, com padrão em pt-BR. `AdsSmartTable` MUST usar classes `ads-smart-table*` e variáveis `--ads-*`, funcionar nos temas claro e escuro, ser personalizável por sobrescrita de tokens e MUST NOT exigir Tailwind das aplicações consumidoras nem adicionar dependências de runtime. O CSS MUST ser distribuído em `@dvmarques/admin-ds-admin/styles.css`. A renderização inicial MUST ser igual no servidor e no cliente.
 
 #### Scenario: Tema escuro
 
@@ -189,7 +189,7 @@ Os textos MUST ser configuráveis por `labels`, com padrão em pt-BR. `AdsSmartT
 
 #### Scenario: Consumo em Next.js
 
-- **WHEN** uma aplicação Next.js importa `@admin-ds/admin` e `@admin-ds/admin/styles.css` em um Client Component
+- **WHEN** uma aplicação Next.js importa `@dvmarques/admin-ds-admin` e `@dvmarques/admin-ds-admin/styles.css` em um Client Component
 - **THEN** a tabela é estilizada sem configurar Tailwind, sem importar caminhos internos e sem erro de hidratação
 
 #### Scenario: Acessibilidade
@@ -356,7 +356,7 @@ Virtualização, redimensionamento e exportação MUST ser independentes, opcion
 
 #### Scenario: Consumo em Next.js
 
-- **WHEN** uma página Next.js usa os recursos com `@admin-ds/admin` e `@admin-ds/admin/styles.css`
+- **WHEN** uma página Next.js usa os recursos com `@dvmarques/admin-ds-admin` e `@dvmarques/admin-ds-admin/styles.css`
 - **THEN** a página hidrata sem erros, sem configurar Tailwind e sem rolagem horizontal da página
 
 ### Requirement: Semântica, foco e seleção com virtualização

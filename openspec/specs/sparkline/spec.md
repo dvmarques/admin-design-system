@@ -8,7 +8,7 @@ Fornece o `AdsSparkline`, um gráfico de linha minúsculo e acessível em SVG, s
 
 ### Requirement: Sparkline desenha a evolução de uma série
 
-O sistema MUST fornecer `AdsSparkline` em `@admin-ds/components`, um gráfico de linha minúsculo em SVG, sem eixos, sem regras de negócio e sem dependência de runtime nova, que recebe uma lista de valores numéricos e desenha uma linha na largura do contêiner. Valores não finitos MUST ser ignorados sem alterar a posição horizontal dos demais, e o componente MUST aceitar `className` e atributos do elemento `svg`.
+O sistema MUST fornecer `AdsSparkline` em `@dvmarques/admin-ds-components`, um gráfico de linha minúsculo em SVG, sem eixos, sem regras de negócio e sem dependência de runtime nova, que recebe uma lista de valores numéricos e desenha uma linha na largura do contêiner. Valores não finitos MUST ser ignorados sem alterar a posição horizontal dos demais, e o componente MUST aceitar `className` e atributos do elemento `svg`.
 
 #### Scenario: Série com vários pontos
 

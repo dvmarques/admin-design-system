@@ -2,8 +2,8 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { AdsPagination, type AdsPaginationLinkProps } from '@admin-ds/components';
-import { AdsSmartTable } from '@admin-ds/admin';
+import { AdsPagination, type AdsPaginationLinkProps } from '@dvmarques/admin-ds-components';
+import { AdsSmartTable } from '@dvmarques/admin-ds-admin';
 
 export default function PaginationPage() {
 	const [page, setPage] = useState(25);

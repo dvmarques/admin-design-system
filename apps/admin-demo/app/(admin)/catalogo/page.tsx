@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { AdsField, AdsInput, AdsEmptyState } from '@admin-ds/components';
+import { AdsField, AdsInput, AdsEmptyState } from '@dvmarques/admin-ds-components';
 import { catalogSearchEntries, catalogFamilyForName } from '../../catalogo/catalog-families';
 
 export default function CatalogPage() {

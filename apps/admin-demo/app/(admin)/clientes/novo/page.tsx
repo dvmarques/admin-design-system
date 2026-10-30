@@ -1,4 +1,4 @@
-import { AdsTypography } from '@admin-ds/components';
+import { AdsTypography } from '@dvmarques/admin-ds-components';
 import { NewCustomerForm } from './new-customer-form';
 
 export default function NewCustomerPage() {

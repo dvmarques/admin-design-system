@@ -2,7 +2,7 @@
 
 Tokens e props para o polimento visual: sombras por tema, densidade de tabelas
 e padrão único de skeleton e estado vazio. Tudo vem de
-`@admin-ds/tokens/styles.css` e do CSS compilado dos pacotes; nenhuma
+`@dvmarques/admin-ds-tokens/styles.css` e do CSS compilado dos pacotes; nenhuma
 configuração de Tailwind é necessária.
 
 ## Elevação
@@ -43,7 +43,7 @@ ou, sem prop, por atributo em qualquer ancestral (por exemplo `<html>`):
 ```
 
 `data-density="comfortable"` aninhado restaura o padrão. Para ajustar os valores
-sem recompilar, sobrescreva os tokens depois de importar `@admin-ds/tokens/styles.css`, por exemplo em
+sem recompilar, sobrescreva os tokens depois de importar `@dvmarques/admin-ds-tokens/styles.css`, por exemplo em
 `[data-density='compact']`. A densidade afeta só o padding das células;
 controles e formulários não mudam.
 

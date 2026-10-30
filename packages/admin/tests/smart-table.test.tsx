@@ -254,6 +254,30 @@ describe('AdsSmartTable', () => {
 		},
 	);
 
+	it('marks the panel Escape as handled so no outer Escape layer observes it', () => {
+		const seen: boolean[] = [];
+		const listener = (event: KeyboardEvent) => seen.push(event.defaultPrevented);
+		document.addEventListener('keydown', listener);
+		try {
+			render(<Controlled />);
+			const button = screen.getByRole('button', { name: 'Colunas' });
+			fireEvent.click(button);
+			const checkbox = screen.getByRole('checkbox', { name: 'Nome' });
+			// A propagação interrompida impede que o document a observe; se chegasse, já estaria tratada.
+			expect(fireEvent.keyDown(checkbox, { key: 'Escape' })).toBe(false);
+			expect(seen.every(Boolean)).toBe(true);
+			expect(button).toHaveAttribute('aria-expanded', 'false');
+		} finally {
+			document.removeEventListener('keydown', listener);
+		}
+	});
+
+	it('does not absorb Escape while the column panel is closed', () => {
+		render(<Controlled />);
+		const button = screen.getByRole('button', { name: 'Colunas' });
+		expect(fireEvent.keyDown(button, { key: 'Escape' })).toBe(true);
+	});
+
 	it('passes the density to the table and keeps the default markup without it', () => {
 		const { rerender } = render(<Controlled density="compact" />);
 		expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact');

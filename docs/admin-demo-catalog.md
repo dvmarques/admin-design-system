@@ -77,6 +77,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsDrawer`                 | Feedback    | `/catalogo/drawer`                   | `overlay.stories.tsx`                                               |
 | `AdsPopover`                | Feedback    | `/catalogo/popover`                  | `overlay.stories.tsx`                                               |
 | `AdsTooltip`                | Feedback    | `/catalogo/tooltip`                  | `overlay.stories.tsx`                                               |
+| `AdsAlert`                  | Feedback    | `/catalogo/alert`                  | `alert.stories.tsx`                                                 |
 | `AdsToast`                  | Feedback    | `/catalogo/toast`                    | `overlay.stories.tsx`                                               |
 | `AdsEmptyState`             | Feedback    | `/catalogo/empty-state`              | `dashboard.stories.tsx`, `data-display.stories.tsx`                 |
 | `AdsProgress`               | Feedback    | `/catalogo/progress`                 | `data-display.stories.tsx`                                          |

@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAlert, AdsButton } from '@admin-ds/components';
+import { AdsAlert, AdsButton } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Feedback/Alert',

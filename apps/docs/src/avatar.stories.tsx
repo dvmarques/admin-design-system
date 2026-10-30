@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAvatar } from '@admin-ds/components';
+import { AdsAvatar } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/Avatar',

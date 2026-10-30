@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAutocomplete, AdsField } from '@admin-ds/components';
+import { AdsAutocomplete, AdsField } from '@dvmarques/admin-ds-components';
 
 const options = [
 	{ value: 'SP', label: 'São Paulo' },

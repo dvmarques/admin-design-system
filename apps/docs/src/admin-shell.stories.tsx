@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAdminShell, AdsOrganizationSwitcher, useAdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell, AdsOrganizationSwitcher, useAdsAdminShell } from '@dvmarques/admin-ds-admin';
 import {
 	AdsBadge,
 	AdsButton,
@@ -7,7 +7,7 @@ import {
 	AdsIcon,
 	AdsTypography,
 	ThemeToggle,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useState, type CSSProperties } from 'react';
 
 const meta: Meta<typeof AdsAdminShell> = {

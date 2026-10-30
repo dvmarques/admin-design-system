@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@admin-ds/admin';
-import { AdsButton, AdsEmptyState } from '@admin-ds/components';
+import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@dvmarques/admin-ds-admin';
+import { AdsButton, AdsEmptyState } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Layout/Dashboard',

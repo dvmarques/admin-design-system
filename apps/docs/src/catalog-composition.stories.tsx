@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { AdsBulkActionBar } from '@admin-ds/admin';
+import { AdsBulkActionBar } from '@dvmarques/admin-ds-admin';
 import {
 	AdsButton,
 	AdsFieldLabel,
@@ -15,7 +15,7 @@ import {
 	AdsTableHeader,
 	AdsTableBody,
 	AdsTableCell,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const meta = { title: 'Catalog/Explicit compositions', tags: ['autodocs'] } satisfies Meta;
 export default meta;

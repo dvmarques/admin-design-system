@@ -7,8 +7,8 @@ import {
 	type AdsFilterValues,
 	type AdsSmartTableColumn,
 	type AdsStepDefinition,
-} from '@admin-ds/admin';
-import { AdsBadge, AdsButton, AdsField, AdsInput, AdsSelect } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-admin';
+import { AdsBadge, AdsButton, AdsField, AdsInput, AdsSelect } from '@dvmarques/admin-ds-components';
 
 interface User {
 	id: string;

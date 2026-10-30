@@ -90,7 +90,7 @@ function typeInfo(name){
       for(const p of decl.members.filter(ts.isPropertySignature)){
         const key=p.name.getText(file).replaceAll("'",'').replaceAll('"','');
         props.push({
-          name:typeNames.length>1?typeName+'.'+key:key,sourceName:key,
+          name:typeNames.length>1?typeName+'.'+key:key,sourceName:key,owner:typeName,
           type:p.type?.getText(file).replace(/\s+/g,' ')||'desconhecido',
           required:!p.questionToken,
           desc:ts.getJSDocCommentsAndTags(p).map(j=>typeof j.comment==='string'?j.comment:'').filter(Boolean).join(' ')
@@ -98,21 +98,28 @@ function typeInfo(name){
       }
     }else heritage.push(typeName+': '+decl.type.getText(file));
   }
-  const defaults=new Map();
-  const implementationPath=override?.defaults?join(root,override.defaults):path;
-  const impl=ts.createSourceFile(implementationPath,readFileSync(implementationPath,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
-  function visit(n){
-    if(ts.isParameter(n)&&ts.isObjectBindingPattern(n.name))for(const e of n.name.elements){
-      if(!e.initializer||!ts.isIdentifier(e.name))continue;
-      const key=e.name.text;
-      if(!defaults.has(key))defaults.set(key,new Set());
-      defaults.get(key).add(e.initializer.getText(impl));
+  function defaultsIn(sourcePath){
+    const found=new Map();
+    const sf=ts.createSourceFile(sourcePath,readFileSync(sourcePath,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
+    function visit(n){
+      if(ts.isParameter(n)&&ts.isObjectBindingPattern(n.name))for(const e of n.name.elements){
+        if(!e.initializer||!ts.isIdentifier(e.name))continue;
+        const key=e.name.text;
+        if(!found.has(key))found.set(key,new Set());
+        found.get(key).add(e.initializer.getText(sf));
+      }
+      ts.forEachChild(n,visit);
     }
-    ts.forEachChild(n,visit);
+    visit(sf);
+    return found;
   }
-  visit(impl);
+  const implementationPath=override?.defaults?join(root,override.defaults):path;
+  const defaults=defaultsIn(implementationPath);
+  const popoverDefaults=name==='AdsCombobox'?
+    defaultsIn(join(root,'packages/components/src/combobox-popover.tsx')):null;
   for(const p of props){
-    const values=defaults.get(p.sourceName);
+    const source=p.owner==='AdsComboboxPopoverProps'?popoverDefaults:defaults;
+    const values=source?.get(p.sourceName);
     p.def=values?.size===1?[...values][0]:'—';
   }
   return {props,heritage:heritage.join(' ; '),typeNames,

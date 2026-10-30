@@ -7,9 +7,9 @@
 
 ## 2. Nomes, artefatos e contratos
 
-- [ ] 2.1 Renomear quatro manifests com acesso público; root e apps continuam privados e protegidos.
+- [x] 2.1 Renomear quatro manifests com acesso público; root e apps continuam privados e protegidos.
 - [ ] 2.2 Corrigir peers/dependências internas, imports, CSS, caminhos e subpaths em bibliotecas, apps, stories e exemplos; regenerar `package-lock.json` com npm fixado.
-- [ ] 2.3 Atualizar scripts de build, testes, CI, detecção de impacto, budgets e geração de API, sem renomear registros históricos indiscriminadamente.
+- [x] 2.3 Atualizar scripts de build, testes, CI, detecção de impacto, budgets e geração de API, sem renomear registros históricos indiscriminadamente.
 - [ ] 2.4 Auditar `exports`, tipos, `'use client'`, `sideEffects`, `files`, CSS compilado, manifests e metadados em cada pacote.
 - [ ] 2.5 Incluir a licença MIT aprovada e avisos de terceiros aplicáveis nos tarballs; conferir origem, copyrights e não vazamento de arquivos.
 - [ ] 2.6 Preservar `react-imask` como peer opcional do subpath e `highlighted-code` como dependência opcional independente, sem Shiki no bundle principal.
@@ -20,7 +20,7 @@
 - [ ] 3.2 Instalar os quatro tarballs por `file:` em Next.js App Router fora dos workspaces, com peers resolvidos sem nomes não publicados no registry.
 - [ ] 3.3 Comprovar `exports`, `.d.ts`, CSS sem Tailwind no consumidor, Server/Client Components e hidratação em navegador real.
 - [ ] 3.4 Comprovar integração opcional de `highlighted-code`, isolamento de Shiki e subpath masked-input; medir budgets e regressões.
-- [ ] 3.5 Adicionar instrução mínima para migração dos quatro nomes e atualizar o changelog `[0.1.1] - Em andamento`; sem antecipar a documentação abrangente da #198.
+- [x] 3.5 Adicionar instrução mínima para migração dos quatro nomes e atualizar o changelog `[0.1.1] - Em andamento`; sem antecipar a documentação abrangente da #198.
 
 ## 4. Validação, revisão e PR
 
@@ -29,6 +29,14 @@
 - [ ] 4.3 Formatar arquivos alterados com Prettier e comprovar `npm run format` sem erros; não aceitar snapshots sem diferenças intencionais revisadas.
 - [ ] 4.4 Preparar PR Draft para `develop` com evidências, riscos, issue e change; usar Ready só após validações locais completas.
 - [ ] 4.5 Solicitar revisão independente, conferir CI no SHA final, completar tasks e OpenSpec antes de archive; não efetuar merge sem aprovação humana.
+
+## Evidências estáticas da implementação (sem testes executados)
+
+- GitHub na PR #264: quatro manifests com `private: false`, `publishConfig.access: public`, MIT e copyright de Daniel Marques; raiz/apps verificados com `private: true`.
+- Arquivos LICENSE.md idênticos ao canônico nos quatro pacotes; nomes novos e links do lockfile conferidos por leitura/parse JSON.
+- Migração antiga → nova registrada para quatro pacotes e smoke adicionado à CI Chromium, sem npm publish.
+- O script novo foi verificado apenas sintaticamente por inspeção JS (não executado como smoke).
+- A develop avançou pela #259 após o início e altera arquivos coincidentes, exigindo reconciliação.
 
 ## Gates ainda não executados
 

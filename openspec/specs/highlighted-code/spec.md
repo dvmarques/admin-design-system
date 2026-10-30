@@ -2,22 +2,22 @@
 
 ## Purpose
 
-Definir o pacote opcional `@admin-ds/highlighted-code` e o componente `AdsHighlightedCodeSnippet` para syntax highlighting assíncrono com Shiki, isolado do bundle principal do design system.
+Definir o pacote opcional `@dvmarques/admin-ds-highlighted-code` e o componente `AdsHighlightedCodeSnippet` para syntax highlighting assíncrono com Shiki, isolado do bundle principal do design system.
 
 ## Requirements
 
 ### Requirement: Pacote opcional independente
 
-O design system MUST publicar `AdsHighlightedCodeSnippet` somente no pacote `@admin-ds/highlighted-code`, com export explícito e sem reexport pelo entrypoint de `@admin-ds/components` ou `@admin-ds/admin`.
+O design system MUST publicar `AdsHighlightedCodeSnippet` somente no pacote `@dvmarques/admin-ds-highlighted-code`, com export explícito e sem reexport pelo entrypoint de `@dvmarques/admin-ds-components` ou `@dvmarques/admin-ds-admin`.
 
 #### Scenario: Consumidor importa o componente avançado
 
-- **WHEN** uma aplicação importa `AdsHighlightedCodeSnippet` de `@admin-ds/highlighted-code`
+- **WHEN** uma aplicação importa `AdsHighlightedCodeSnippet` de `@dvmarques/admin-ds-highlighted-code`
 - **THEN** o módulo resolve sem exigir import do pacote principal de componentes
 
 #### Scenario: Bundle principal permanece sem Shiki
 
-- **WHEN** uma aplicação importa apenas `@admin-ds/components`
+- **WHEN** uma aplicação importa apenas `@dvmarques/admin-ds-components`
 - **THEN** o cenário de bundle público de componentes não inclui dependências de Shiki
 
 ### Requirement: Highlighting assíncrono com plain imediato

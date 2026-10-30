@@ -4,7 +4,7 @@ A auditoria da issue #257 identificou desenhos SVG locais cuja origem individual
 
 ## What Changes
 
-Perfil **Standard**, agora ampliado por decisão do responsável em 29/10/2026: substituir a geometria visual dos **20 ícones** por SVGs oficiais com licença conhecida, preservando nomes e APIs.
+Perfil **Critical**, devido ao licenciamento, à arquitetura e à compatibilidade da API pública: substituir a geometria visual dos **20 ícones** por SVGs oficiais com licença conhecida, preservando nomes e APIs.
 
 - **18 Feather Icons (MIT):** `alertCircle`, `alertTriangle`, `bell`, `calendar`, `check`, `chevronDown`, `chevronLeft`, `chevronRight`, `close`, `logOut`, `monitor`, `moon`, `info`, `plus`, `sun`, `settings`, `search`, `user`.
 - **1 Lucide Icons (ISC):** `chevronsUpDown`.

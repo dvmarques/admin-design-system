@@ -98,6 +98,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Fixed
 
+- `fix-234-overlay-tab-eligibility` (#234) - A armadilha de Tab de `AdsDialog`, `AdsDrawer` e `AdsConfirmDialog` passa a usar o mesmo critério de elegibilidade do foco inicial: controles desabilitados (inclusive por `fieldset disabled`), `inert`, ocultos, em `<details>` fechado ou com `tabindex` negativo deixam de ser pontos de virada, a lista é reavaliada a cada Tab e o `summary` do `details` é parada de Tab. Efeito colateral intencional: controles nativos com `tabindex` negativo deixam de receber o foco inicial. Sem mudança de API. Limitações: grupos de rádio, `iframe` e `tabindex` positivo (`docs/limitations.md`). Baseline de distribuição de `@admin-ds/components` elevado ao mínimo medido sobre a base combinada com a #252, com os limites JS/CSS publicado e do cenário `components-public` (autorizado pelo mantenedor; valores no `design.md`); medições em `design.md`.
+
 - `issue-243-input-group-nowrap` (#243) - Adendos e botões do AdsInputGroup preservam rótulos sem quebra, com espaço flexível para o campo e rolagem local em larguras insuficientes; exemplo próprio com ações Limpar e Restaurar.
 
 - `issue-242-textarea-typography` (#242) - Os controles textuais nativos Input, Textarea e Select (e os campos de AdsCombobox/AdsAutocomplete, que compartilham a mesma classe) passam a usar explicitamente a fonte do token público do design system sem depender de preflight CSS do consumidor, preservando a personalização do token.

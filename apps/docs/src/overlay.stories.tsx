@@ -144,6 +144,53 @@ export const NestedLayers: Story = {
 	},
 };
 
+export const TabWithIneligibleControls: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Tab e Shift+Tab circulam só pelos controles elegíveis, os mesmos do foco inicial: campos em `fieldset disabled`, `inert`, `hidden`, `display: none`, `visibility: hidden` ou com `tabindex` negativo não são pontos de virada. Use "Bloquear campos finais" para ver o ciclo se ajustar com o modal aberto: o botão passa a ser o último destino e Tab volta ao primeiro controle em vez de escapar para o navegador.',
+			},
+		},
+	},
+	render: () => {
+		const [open, setOpen] = useState(false);
+		const [locked, setLocked] = useState(false);
+		return (
+			<>
+				<AdsButton onClick={() => setOpen(true)}>Abrir diálogo com campos bloqueados</AdsButton>
+				<AdsDialog
+					description="Percorra com Tab e Shift+Tab: os campos bloqueados ficam fora do ciclo."
+					onOpenChange={setOpen}
+					open={open}
+					title="Campos condicionais"
+				>
+					<div style={{ display: 'grid', gap: '0.75rem' }}>
+						<fieldset style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }} disabled>
+							<legend>Dados bloqueados</legend>
+							<AdsField label="Código interno">
+								<AdsInput defaultValue="A-102" />
+							</AdsField>
+						</fieldset>
+						<AdsField label="Nome do registro">
+							<AdsInput />
+						</AdsField>
+						<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+							{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+						</AdsButton>
+						<fieldset style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }} disabled={locked}>
+							<legend>Campos finais</legend>
+							<AdsField label="Observação">
+								<AdsInput />
+							</AdsField>
+						</fieldset>
+					</div>
+				</AdsDialog>
+			</>
+		);
+	},
+};
+
 export const InertBackground: Story = {
 	parameters: {
 		docs: {

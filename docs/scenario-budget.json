@@ -9,8 +9,8 @@
 	},
 	"components-public": {
 		"entry": "scripts/scenarios/components.mjs",
-		"bytes": 33000,
-		"gzipBytes": 11700,
+		"bytes": 33100,
+		"gzipBytes": 11800,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
 		"cssBytes": 58000,
 		"cssGzipBytes": 9650
@@ -25,7 +25,7 @@
 	},
 	"admin-public": {
 		"entry": "scripts/scenarios/admin.mjs",
-		"bytes": 71000,
+		"bytes": 71100,
 		"gzipBytes": 23900,
 		"cssFiles": [
 			"packages/tokens/dist/tokens.css",

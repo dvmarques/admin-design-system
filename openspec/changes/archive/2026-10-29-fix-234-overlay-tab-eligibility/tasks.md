@@ -1,0 +1,24 @@
+## 1. Reprodução e decisão de escopo
+
+- [x] 1.1 Construir teste que demonstre (ou descarte documentadamente) o problema de Tab e Shift+Tab nos dois extremos, para `AdsDialog`, `AdsDrawer` e `AdsConfirmDialog`.
+- [x] 1.2 Confirmar a navegação real com Playwright e registrar antes/depois; se não reproduzir, revisar issue, proposal, specs e tasks antes de alterar runtime.
+
+## 2. Implementação condicionada à reprodução
+
+- [x] 2.1 Reutilizar um único helper interno de seleção elegível no foco inicial e no trap de Tab, sem mudar props ou exports.
+- [x] 2.2 Regressões: `fieldset disabled`, `hidden`, `display:none`, `visibility:hidden`, `inert`, `tabindex` negativo, lista vazia e mudanças de elegibilidade enquanto aberto, verificando reentrada quando o elemento ativo foi desabilitado.
+- [x] 2.3 Testar modais sobrepostos, popup portalled, `pending`, Escape hierárquico, retorno do foco e SSR/StrictMode.
+
+## 3. Evidências e documentação
+
+- [x] 3.1 Alinhar spec e `docs/integration.md` se o comportamento observável mudar; atualizar exemplos Storybook/Admin Demo quando necessário e registrar decisão de não alterar caso não haja delta.
+- [x] 3.2 Registrar CHANGELOG [0.1.1] descrevendo somente alteração efetivamente entregue, ou justificar ausência de delta na PR.
+- [x] 3.3 Medir pacote JS/CSS (incluindo gzip), registrar diferenças e não elevar orçamento sem justificativa e revisão.
+
+## 4. Gates antes de propor conclusão
+
+- [x] 4.1 Formatar arquivos alterados com `npx.cmd prettier --write`; executar e aprovar `npm run format`.
+- [x] 4.2 Executar `npm run validate` (format, lint, build, typecheck, quality e E2E), `openspec.cmd validate fix-234-overlay-tab-eligibility --strict` e `openspec.cmd validate --all --strict`, registrando logs, falhas e skipped.
+      Evidência: CI run 40955539989 no SHA 3bdc4dd com Qualidade rápida, Chromium, Firefox, WebKit, Artefatos e Política de develop em success (Publicar e Validação de release skipped, não contam como aprovação); local: format, lint, typecheck, 1376 testes unitários e `openspec validate --all --strict` (61). `npm run validate` completo local não rodou por falhas ambientais conhecidas (snapshots e Firefox/WebKit ausentes), cobertas pela CI.
+- [x] 4.3 Revisar impacto em consumidores, snapshots visuais apenas quando intencional e evidências de acessibilidade em navegadores suportados; manter tasks pendentes até validação real.
+      Evidência: revisões independentes de a11y e API pública sem bloqueantes; review do mantenedor incorporado (summary/details); impacto em consumidores (tabindex negativo no foco inicial) documentado em docs/integration.md; limitações em docs/limitations.md e issue #259; nenhum snapshot atualizado.

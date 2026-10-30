@@ -1202,7 +1202,11 @@ export default async function Page({
 // app/usuarios/usuarios-filtros.tsx
 'use client';
 
-import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@dvmarques/admin-ds-admin';
+import {
+	AdsFilterBar,
+	type AdsFilterDefinition,
+	type AdsFilterValues,
+} from '@dvmarques/admin-ds-admin';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
 

@@ -10,7 +10,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
-- `issue-194-public-npm-packages` (issue #194) - Preparação dos quatro pacotes para distribuição pública sob `@dvmarques/admin-ds-*`, incluindo o `highlighted-code` opcional, com licença MIT e copyright Daniel Marques confirmados. Renomeação de manifests, imports, lockfile, scripts, contratos atuais e consumidores do monorepo; inclusão de READMEs/licenças e smoke de `npm pack`/Next.js externo a ser executado e validado. Raiz e apps permanecem privados; nenhuma publicação no npm, tag ou release foi efetuada.
+- `issue-194-public-npm-packages` (issue #194) - Preparação dos quatro pacotes para distribuição pública sob `@dvmarques/admin-ds-*`, incluindo o `highlighted-code` opcional, com licença MIT e copyright Daniel Marques confirmados. Renomeação de manifests, imports, lockfile, scripts, contratos atuais e consumidores do monorepo; inclusão de READMEs/licenças e smoke de `npm pack`/Next.js externo, com peer opcional e isolamento de Shiki verificados. Raiz e apps permanecem privados; nenhuma publicação no npm, tag ou release foi efetuada.
 
 - `docs/openspec-commands.md` e `AGENTS.md` (issue #193) - Documentam a validação OpenSpec em ambientes sem CLI global via `npx --yes @fission-ai/openspec@1.15.0`, versão fixada igual à CI.
 

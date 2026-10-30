@@ -60,8 +60,9 @@ export function HighlightedCodeDemo() {
 		<article className="demo-highlighted-code-page">
 			<h1>Código destacado</h1>
 			<p>
-				Demonstração do pacote opcional <code>@dvmarques/admin-ds-highlighted-code</code> com Shiki carregado
-				sob demanda. O texto plain aparece imediatamente; o destaque é aplicado de forma assíncrona.
+				Demonstração do pacote opcional <code>@dvmarques/admin-ds-highlighted-code</code> com Shiki
+				carregado sob demanda. O texto plain aparece imediatamente; o destaque é aplicado de forma
+				assíncrona.
 			</p>
 			<p>
 				<Link href="/catalogo/highlighted-code-snippet">

@@ -58,7 +58,7 @@ test('cenários públicos usam somente exports públicos e têm limites coerente
 		for (const [, specifier] of source.matchAll(/from '([^']+)'/g)) {
 			assert.match(
 				specifier,
-				/^@admin-ds\/(tokens|components|components\/masked-input|admin|highlighted-code)$/,
+				/^@dvmarques\/admin-ds-(tokens|components|components\/masked-input|admin|highlighted-code)$/,
 				`${name}: ${specifier}`,
 			);
 		}
@@ -96,7 +96,12 @@ function inspectWith(change) {
 }
 
 const cases = [
-	['bundle-baseline', '@dvmarques/admin-ds-tokens', 'distribuição', (c) => (c['@dvmarques/admin-ds-tokens'] = 1)],
+	[
+		'bundle-baseline',
+		'@dvmarques/admin-ds-tokens',
+		'distribuição',
+		(c) => (c['@dvmarques/admin-ds-tokens'] = 1),
+	],
 	...['bytes', 'gzipBytes'].map((key) => [
 		'browser-budget',
 		'@dvmarques/admin-ds-components',

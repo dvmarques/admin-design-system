@@ -62,8 +62,13 @@ const tsc = resolve(root, 'node_modules/typescript/bin/tsc');
 
 const work = mkdtempSync(join(tmpdir(), 'ads-optional-peer-'));
 const log = (message) => console.log(`[peer opcional] ${message}`);
+const env = { ...process.env, npm_config_userconfig: join(work, '.npmrc') };
+for (const key of Object.keys(env)) {
+	if (key.toLowerCase() === 'npm_config_allow_scripts') delete env[key];
+}
+writeFileSync(join(work, '.npmrc'), '');
 const run = (command, args, cwd) =>
-	execFileSync(command, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+	execFileSync(command, args, { cwd, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const failure = (error) => `${error.stdout ?? ''}${error.stderr ?? ''}`.trim() || String(error);
 
 try {
@@ -73,7 +78,15 @@ try {
 	const packed = JSON.parse(
 		run(
 			process.execPath,
-			[npm, 'pack', '--workspace', '@dvmarques/admin-ds-components', '--pack-destination', packDir, '--json'],
+			[
+				npm,
+				'pack',
+				'--workspace',
+				'@dvmarques/admin-ds-components',
+				'--pack-destination',
+				packDir,
+				'--json',
+			],
 			root,
 		),
 	)[0];

@@ -98,11 +98,20 @@ for (const [name, scenario] of Object.entries(scenarioBudget)) {
 		bundle: true,
 		minify: true,
 		write: false,
+		metafile: true,
 		platform: 'browser',
 		format: 'esm',
 		external: ['react', 'react-dom', 'react/*', 'react-dom/*'],
 		logLevel: 'silent',
 	});
+	if (
+		name === 'components-public' &&
+		Object.keys(result.metafile.inputs).some((input) => /(?:shiki|highlighted-code)/i.test(input))
+	) {
+		throw new Error(
+			'O cenário principal de componentes não deve incluir Shiki ou highlighted-code',
+		);
+	}
 	const bytes = result.outputFiles.reduce((sum, file) => sum + file.contents.length, 0);
 	const gzipBytes = result.outputFiles.reduce(
 		(sum, file) => sum + gzipSync(file.contents, { level: 9 }).length,

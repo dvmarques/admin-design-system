@@ -22,7 +22,7 @@ identidade precisa fazer parte do escopo solicitado e seguir o processo OpenSpec
 ## Composição
 
 - Parta da tarefa do usuário e organize títulos, ações e conteúdo por importância.
-- Use exports públicos de `@admin-ds/components` e `@admin-ds/admin`.
+- Use exports públicos de `@dvmarques/admin-ds-components` e `@dvmarques/admin-ds-admin`.
 - Reutilize variantes existentes antes de criar novos estilos ou componentes.
 - Use os tokens semânticos `--ads-*`; não substitua a escala do projeto por
   paletas, fontes ou medidas arbitrárias.

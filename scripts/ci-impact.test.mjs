@@ -28,10 +28,18 @@ const fixture = () => [
 		},
 	}),
 	workspace('apps/docs', '@admin-ds/docs', {
-		dependencies: { '@dvmarques/admin-ds-admin': '*', '@dvmarques/admin-ds-components': '*', '@dvmarques/admin-ds-tokens': '*' },
+		dependencies: {
+			'@dvmarques/admin-ds-admin': '*',
+			'@dvmarques/admin-ds-components': '*',
+			'@dvmarques/admin-ds-tokens': '*',
+		},
 	}),
-	workspace('packages/admin', '@dvmarques/admin-ds-admin', { dependencies: { '@dvmarques/admin-ds-components': '*' } }),
-	workspace('packages/components', '@dvmarques/admin-ds-components', { peerDependencies: { react: '*' } }),
+	workspace('packages/admin', '@dvmarques/admin-ds-admin', {
+		dependencies: { '@dvmarques/admin-ds-components': '*' },
+	}),
+	workspace('packages/components', '@dvmarques/admin-ds-components', {
+		peerDependencies: { react: '*' },
+	}),
 	workspace('packages/highlighted-code', '@dvmarques/admin-ds-highlighted-code', {
 		peerDependencies: { react: '*' },
 	}),
@@ -56,7 +64,9 @@ test('token changes reach every consumer, including the implicit components depe
 	const result = impact(['packages/tokens/src/index.ts']);
 	assert.equal(result.mode, 'scoped');
 	assert.deepEqual(result.affected.toSorted(), everything.toSorted());
-	assert.ok(implicitDependencies['@dvmarques/admin-ds-components'].includes('@dvmarques/admin-ds-tokens'));
+	assert.ok(
+		implicitDependencies['@dvmarques/admin-ds-components'].includes('@dvmarques/admin-ds-tokens'),
+	);
 });
 
 test('affected workspaces are listed with dependencies first', () => {

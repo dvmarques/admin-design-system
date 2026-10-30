@@ -81,7 +81,8 @@ test.describe('AdsSelect com placeholder no Admin Demo', () => {
 });
 
 async function renderMarkup(dir: 'ltr' | 'rtl' = 'ltr') {
-	const { AdsField, AdsInput, AdsSelect, AdsTextarea } = await import('@dvmarques/admin-ds-components');
+	const { AdsField, AdsInput, AdsSelect, AdsTextarea } =
+		await import('@dvmarques/admin-ds-components');
 	const option = (value: string, label: string) => createElement('option', { value }, label);
 	return renderToStaticMarkup(
 		createElement(

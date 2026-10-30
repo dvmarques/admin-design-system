@@ -141,8 +141,7 @@ function assignRef<T>(ref: Ref<T> | undefined, node: T | null) {
 }
 
 /**
- * Text input with an optional mask. It lives in the `@dvmarques/admin-ds-components/masked-input` entry point
- * and needs the optional peer dependency `react-imask`; the main entry point never loads it.
+ * Masked input from the optional `masked-input` subpath; requires the `react-imask` peer.
  */
 export const AdsMaskedInput = forwardRef<HTMLInputElement, AdsMaskedInputProps>(
 	function AdsMaskedInput(

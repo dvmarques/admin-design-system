@@ -54,7 +54,10 @@ describe('findUndeclaredDependencies', () => {
 
 	it('flags packages that only resolve through workspace hoisting', () => {
 		expect(
-			findUndeclaredDependencies(['clsx', '@scope/other/sub', '@dvmarques/admin-ds-components'], declared),
+			findUndeclaredDependencies(
+				['clsx', '@scope/other/sub', '@dvmarques/admin-ds-components'],
+				declared,
+			),
 		).toEqual(['clsx', '@scope/other/sub']);
 	});
 

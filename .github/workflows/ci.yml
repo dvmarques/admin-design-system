@@ -185,7 +185,7 @@ jobs:
       - run: npm run build --workspace @admin-ds/admin-demo
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
       - name: Smoke de tarballs em Next.js externo
-        if: matrix.browser == 'chromium' && steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false' && matrix.browser == 'chromium'
         run: npm run verify:distribution
       - run: npx playwright test --project=${{ matrix.browser }}
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'

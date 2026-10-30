@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsDialog, AdsThemeControl, type AdsThemePreference } from '@dvmarques/admin-ds-components';
+import {
+	AdsDialog,
+	AdsThemeControl,
+	type AdsThemePreference,
+} from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Foundation/AdsThemeControl',

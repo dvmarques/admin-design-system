@@ -1,5 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAdminShell, AdsOrganizationSwitcher, useAdsAdminShell } from '@dvmarques/admin-ds-admin';
+import {
+	AdsAdminShell,
+	AdsOrganizationSwitcher,
+	useAdsAdminShell,
+} from '@dvmarques/admin-ds-admin';
 import {
 	AdsBadge,
 	AdsButton,

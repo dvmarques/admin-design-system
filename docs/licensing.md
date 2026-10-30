@@ -5,7 +5,7 @@
 O código próprio do Admin Design System é disponibilizado sob a
 [licença MIT](../LICENSE.md), com copyright de 2026 de Daniel Marques.
 Os manifests da raiz e dos workspaces declaram o identificador SPDX `MIT`.
-O campo `private: true` permanece como proteção contra publicação acidental no npm.
+A raiz e os aplicativos permanecem privados; os quatro pacotes de biblioteca estão preparados para publicação pública.
 
 A licença MIT do projeto não substitui as licenças nem os avisos de copyright
 dos materiais de terceiros, que devem ser preservados.

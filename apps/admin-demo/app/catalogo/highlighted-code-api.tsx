@@ -35,10 +35,10 @@ export function HighlightedCodeApi() {
 			<h2>Instalação e API</h2>
 			<p>
 				<code>AdsHighlightedCodeSnippet</code> pertence ao pacote opcional{' '}
-				<code>@dvmarques/admin-ds-highlighted-code</code>, que ainda é privado: no monorepo ele já é um
-				workspace e, após a publicação, será instalado com <code>npm install</code>. Ele não é
-				reexportado por <code>@dvmarques/admin-ds-components</code>, portanto Shiki só entra no bundle de quem
-				o importa explicitamente.
+				<code>@dvmarques/admin-ds-highlighted-code</code>, que ainda é privado: no monorepo ele já é
+				um workspace e, após a publicação, será instalado com <code>npm install</code>. Ele não é
+				reexportado por <code>@dvmarques/admin-ds-components</code>, portanto Shiki só entra no
+				bundle de quem o importa explicitamente.
 			</p>
 			<AdsHighlightedCodeSnippet code={importCode} language="ts" codeLabel="Importação do pacote" />
 			<AdsTable

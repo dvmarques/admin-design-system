@@ -1,6 +1,9 @@
 'use client';
 import { useState } from 'react';
-import { AdsMaskedInput, type AdsMaskedInputValues } from '@dvmarques/admin-ds-components/masked-input';
+import {
+	AdsMaskedInput,
+	type AdsMaskedInputValues,
+} from '@dvmarques/admin-ds-components/masked-input';
 import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 import Link from 'next/link';
 import { DemoBrand } from '../demo-brand';
@@ -2130,9 +2133,9 @@ export function HighlightedCodeSnippetDemo() {
 				codeLabel="Prévia do código destacado"
 			/>
 			<p>
-				Instalação no monorepo: importar de <code>@dvmarques/admin-ds-highlighted-code</code> e carregar os
-				estilos do pacote opcional. O código original permanece copiável durante o carregamento e em
-				fallback.
+				Instalação no monorepo: importar de <code>@dvmarques/admin-ds-highlighted-code</code> e
+				carregar os estilos do pacote opcional. O código original permanece copiável durante o
+				carregamento e em fallback.
 			</p>
 			<Link href="/exemplos/codigo-destacado">Ver demonstração avançada de código destacado</Link>
 		</div>

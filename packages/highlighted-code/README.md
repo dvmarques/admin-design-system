@@ -1,6 +1,6 @@
 # @dvmarques/admin-ds-highlighted-code
 
-Pacote **opcional e independente** com `AdsHighlightedCodeSnippet` e Shiki sob demanda. Não é reexportado por `@dvmarques/admin-ds-components`, preservando o bundle principal sem Shiki. **Ainda não publicado no npm**: a primeira publicação pertence à #195.
+Pacote **opcional e independente** com `AdsHighlightedCodeSnippet` e Shiki sob demanda. Não é reexportado pelo pacote principal de componentes, preservando o bundle principal sem Shiki. **Ainda não publicado no npm**: a primeira publicação pertence à #195.
 
 ```bash
 npm install @dvmarques/admin-ds-tokens @dvmarques/admin-ds-highlighted-code

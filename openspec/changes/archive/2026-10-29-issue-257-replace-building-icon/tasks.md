@@ -21,7 +21,7 @@
 ## 3. Validação e conclusão
 
 - [x] 3.1 Verificar mecanicamente cada SVG transcrito contra os 20 arquivos originais (shape, atributo, ordem, largura de traço); conferidos os 19 Feather/Lucide e os quatro paths Hugeicons.
-- [ ] 3.2 Executar build, verificador de pacote, testes, lint, tipos, `npm run format`, `npm run validate` e `npm run test:e2e`; registrar resultados reais.
+- [x] 3.2 Executar build, verificador de pacote, testes, lint, tipos, `npm run format`, `npm run validate` e `npm run test:e2e`; validação integral Linux #40985032021 e CI #40985032023 aprovadas. A execução Windows anterior falhou por ausência de baselines win32.
 - [x] 3.3 Conferir Storybook/demo, temas claro/escuro e todos os tamanhos; aprovação visual do responsável, snapshots revisados e atualizados pelo workflow Linux #40978493860.
 - [x] 3.4 Medir os orçamentos de distribuição/browser na base atual e só ajustá-los com evidências. CI Linux #40979835315 passou; medições em docs/bundle-baseline.md e no comentário da PR #258.
-- [ ] 3.5 Executar `openspec validate --all --strict` e revisar diff final/CI. Não fazer merge ou archive sem os gates previstos.
+- [x] 3.5 Executar `openspec validate --all --strict` e revisar diff final/CI. OpenSpec validou 62 itens; CI #40985032023 aprovada e diff revisado. Não fazer merge ou archive sem os gates previstos.

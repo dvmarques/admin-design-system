@@ -14,7 +14,7 @@ import {
 	AdsToast,
 	AdsTypography,
 	type AdsToastVariant,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const feedbackCopy: Record<AdsToastVariant, string> = {
 	info: 'As alterações estão sendo processadas.',

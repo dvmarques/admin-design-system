@@ -9,7 +9,7 @@ import {
 	AdsNav,
 	AdsPagination,
 	AdsTabs,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 export function NavigationShowcase() {
 	const [page, setPage] = useState(2);

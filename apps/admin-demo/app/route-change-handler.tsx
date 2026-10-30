@@ -1,6 +1,6 @@
 'use client';
 
-import { useAdsAdminShell } from '@admin-ds/admin';
+import { useAdsAdminShell } from '@dvmarques/admin-ds-admin';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 

@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsThemeControl } from '@admin-ds/components';
+import { AdsThemeControl } from '@dvmarques/admin-ds-components';
 import { applyThemePreference, type ThemePreference } from '../lib/theme';
 import { useThemePreference } from './use-theme';
 

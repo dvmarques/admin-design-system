@@ -1,9 +1,9 @@
 'use client';
 
 import { useState } from 'react';
-import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
-import '@admin-ds/highlighted-code/styles.css';
-import { AdsField, AdsSelect } from '@admin-ds/components';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
+import '@dvmarques/admin-ds-highlighted-code/styles.css';
+import { AdsField, AdsSelect } from '@dvmarques/admin-ds-components';
 import { applyThemePreference, resolvePreference } from '../../lib/theme';
 import { useTheme, useThemePreference } from '../use-theme';
 import { catalogDemos } from './catalog-demos';

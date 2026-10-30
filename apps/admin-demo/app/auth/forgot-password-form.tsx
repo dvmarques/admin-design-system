@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsButton, AdsField, AdsInput, AdsTypography } from '@admin-ds/components';
+import { AdsButton, AdsField, AdsInput, AdsTypography } from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {

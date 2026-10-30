@@ -6,7 +6,7 @@ import {
 	AdsPasswordInput,
 	AdsTypography,
 	type AdsPasswordRule,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import {

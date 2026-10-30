@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
-import { AdsMaskedInput, type AdsMaskedInputValues } from '@admin-ds/components/masked-input';
-import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
+import { AdsMaskedInput, type AdsMaskedInputValues } from '@dvmarques/admin-ds-components/masked-input';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 import Link from 'next/link';
 import { DemoBrand } from '../demo-brand';
 import {
@@ -69,7 +69,7 @@ import {
 	AdsThemeControl,
 	type AdsThemePreference,
 	StyleFixture,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import {
 	AdsAccountMenu,
 	AdsAdminShell,
@@ -87,7 +87,7 @@ import {
 	type AdsFilterValues,
 	type AdsNotification,
 	type AdsSmartTableSort,
-} from '@admin-ds/admin';
+} from '@dvmarques/admin-ds-admin';
 
 export function ButtonDemo() {
 	const [count, setCount] = useState(0);
@@ -2130,7 +2130,7 @@ export function HighlightedCodeSnippetDemo() {
 				codeLabel="Prévia do código destacado"
 			/>
 			<p>
-				Instalação no monorepo: importar de <code>@admin-ds/highlighted-code</code> e carregar os
+				Instalação no monorepo: importar de <code>@dvmarques/admin-ds-highlighted-code</code> e carregar os
 				estilos do pacote opcional. O código original permanece copiável durante o carregamento e em
 				fallback.
 			</p>

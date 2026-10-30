@@ -6,8 +6,8 @@ import {
 	AdsTableHead,
 	AdsTableHeader,
 	AdsTableRow,
-} from '@admin-ds/components';
-import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
+} from '@dvmarques/admin-ds-components';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 
 const props = [
 	['code', 'string', '—', 'Código exibido e copiado; renderizado sempre como texto.'],
@@ -24,9 +24,9 @@ const props = [
 	['codeLabel', 'string', '—', 'Nome acessível da região de código.'],
 ] as const;
 
-const importCode = `import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/highlighted-code/styles.css';`;
+const importCode = `import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-highlighted-code/styles.css';`;
 
 /** Instalação e API do pacote opcional, exibidas na página oficial do componente (#241). */
 export function HighlightedCodeApi() {
@@ -35,9 +35,9 @@ export function HighlightedCodeApi() {
 			<h2>Instalação e API</h2>
 			<p>
 				<code>AdsHighlightedCodeSnippet</code> pertence ao pacote opcional{' '}
-				<code>@admin-ds/highlighted-code</code>, que ainda é privado: no monorepo ele já é um
+				<code>@dvmarques/admin-ds-highlighted-code</code>, que ainda é privado: no monorepo ele já é um
 				workspace e, após a publicação, será instalado com <code>npm install</code>. Ele não é
-				reexportado por <code>@admin-ds/components</code>, portanto Shiki só entra no bundle de quem
+				reexportado por <code>@dvmarques/admin-ds-components</code>, portanto Shiki só entra no bundle de quem
 				o importa explicitamente.
 			</p>
 			<AdsHighlightedCodeSnippet code={importCode} language="ts" codeLabel="Importação do pacote" />

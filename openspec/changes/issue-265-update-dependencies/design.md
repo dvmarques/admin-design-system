@@ -23,3 +23,11 @@ O workspace usa npm 11.19.1, Node 24 em .nvmrc/CI e engines.node >=24.0.0. O pac
 - Contratos, CSS público, temas, acessibilidade e snapshots devem permanecer estáveis.
 - Se uma atualização causar incompatibilidade real, registrar evidência, reverter somente o pacote incompatível e deixar exceção explícita no issue/PR.
 - O rollback é a reversão do commit do lote; não alterar tags nem publicar pacotes nesta etapa.
+
+### Auditoria pontual de segurança da #265 (complemento 30/10/2026)
+
+- Baseline imutável: commit de `develop` no início da PR, `1251ad6f9f5aec7ddfc1c03c50d0fb850f89c516`; não alterar o checkout de desenvolvimento para obter o estado anterior.
+- Comparar `npm audit --json` sobre checkouts Git separados, preparados por `npm ci --ignore-scripts --no-audit --no-fund` com Node 24/npm 11.19.1. Registrar resultados completos e um recorte `--omit=dev`; diferenciar resposta de vulnerabilidade (exit 1) de erro de execução/rede.
+- Para high/critical: registrar advisory, versão de correção, `npm explain --json` e contexto (bibliotecas distribuíveis, admin-demo, docs ou tooling); distinguir exposição em produção e ferramentas de desenvolvimento sem presumir explorabilidade.
+- Aplicar somente correções compatíveis com contrato público e escopo do lote, preservando os testes. Para sem correção compatível, documentar risco residual, mitigação e reavaliação na #265 ou acompanhamento específico.
+- #267 implementará o controle contínuo (CodeQL, gate SCA, segredos, Dependabot). #268 trata SHA de actions, permissões e digest de imagens. Não modificar seus workflows nem regras de aprovação nesta change. Node 24 e `engines.node >=24.0.0` permanecem intactos.

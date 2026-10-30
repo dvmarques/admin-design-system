@@ -254,18 +254,20 @@ describe('AdsSmartTable', () => {
 		},
 	);
 
-	it('marks the panel Escape as handled so no outer Escape layer observes it', () => {
-		const seen: boolean[] = [];
-		const listener = (event: KeyboardEvent) => seen.push(event.defaultPrevented);
+	it('handles the panel Escape locally: marked as handled and never seen by the document', () => {
+		const calls: boolean[] = [];
+		const listener = (event: KeyboardEvent) => calls.push(event.defaultPrevented);
 		document.addEventListener('keydown', listener);
 		try {
 			render(<Controlled />);
 			const button = screen.getByRole('button', { name: 'Colunas' });
 			fireEvent.click(button);
-			const checkbox = screen.getByRole('checkbox', { name: 'Nome' });
-			// A propagação interrompida impede que o document a observe; se chegasse, já estaria tratada.
-			expect(fireEvent.keyDown(checkbox, { key: 'Escape' })).toBe(false);
-			expect(seen.every(Boolean)).toBe(true);
+			// Retorno false: `preventDefault` chamado (marcador respeitado pela pilha de Escape).
+			expect(
+				fireEvent.keyDown(screen.getByRole('checkbox', { name: 'Nome' }), { key: 'Escape' }),
+			).toBe(false);
+			// Sem chamadas: `stopPropagation` impediu que o evento chegasse ao `document`.
+			expect(calls).toEqual([]);
 			expect(button).toHaveAttribute('aria-expanded', 'false');
 		} finally {
 			document.removeEventListener('keydown', listener);
@@ -273,9 +275,18 @@ describe('AdsSmartTable', () => {
 	});
 
 	it('does not absorb Escape while the column panel is closed', () => {
-		render(<Controlled />);
-		const button = screen.getByRole('button', { name: 'Colunas' });
-		expect(fireEvent.keyDown(button, { key: 'Escape' })).toBe(true);
+		const calls: boolean[] = [];
+		const listener = (event: KeyboardEvent) => calls.push(event.defaultPrevented);
+		document.addEventListener('keydown', listener);
+		try {
+			render(<Controlled />);
+			expect(
+				fireEvent.keyDown(screen.getByRole('button', { name: 'Colunas' }), { key: 'Escape' }),
+			).toBe(true);
+			expect(calls).toEqual([false]);
+		} finally {
+			document.removeEventListener('keydown', listener);
+		}
 	});
 
 	it('passes the density to the table and keeps the default markup without it', () => {

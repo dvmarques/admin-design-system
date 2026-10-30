@@ -1,6 +1,6 @@
 ## 1. Teste de regressão primeiro
 
-- [x] 1.1 Adicionar testes em `packages/admin/tests/smart-table.test.tsx`: Escape do painel não chega a listener de `document`; evento chega marcado como `defaultPrevented`; Escape com painel fechado não é tratado pelo painel. Confirmar que o primeiro falha antes da correção.
+- [x] 1.1 Adicionar testes em `packages/admin/tests/smart-table.test.tsx`: Escape do painel é marcado como tratado e não chega a listener de `document`; Escape com painel fechado chega ao `document` sem ser marcado. Confirmar que o primeiro falha antes da correção.
       Evidência: o teste novo falhou (`keyDown` retornava `true`) antes da correção e passa depois; 40/40 em `smart-table.test.tsx`.
 
 ## 2. Implementação
@@ -13,5 +13,5 @@
 
 ## 4. Validação
 
-- [ ] 4.1 Executar `npx prettier --write` nos arquivos alterados e `npm run format`, `npm run lint`, `npm run typecheck`, `npm run build` e os testes do `@admin-ds/admin`; registrar o que não puder ser executado.
+- [x] 4.1 Executar `npx prettier --write` nos arquivos alterados e `npm run format`, `npm run lint`, `npm run typecheck`, `npm run build` e os testes do `@admin-ds/admin`; registrar o que não puder ser executado.
 - [ ] 4.2 Validar com `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` e `npm run test:e2e`/CI, registrando evidência e jobs pulados.

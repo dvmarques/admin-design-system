@@ -9,6 +9,16 @@ Claude Code e Cursor e as duas validações em `.github/workflows/ci.yml`
 devem usar essa versão. O CLI é instalado globalmente; não é uma dependência
 de runtime dos pacotes.
 
+Em ambientes sem o CLI global (Linux, sessões de agente na nuvem), não declare
+a validação como impossível: execute a versão fixada com `npx`, igual à CI.
+
+```bash
+npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
+```
+
+Use sempre `@1.15.0`; `@latest` ou versão sem fixar pode ser bloqueado pelo
+ambiente e divergir da CI.
+
 ### Inicialização e atualização
 
 ```powershell

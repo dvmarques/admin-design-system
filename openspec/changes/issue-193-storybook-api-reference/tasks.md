@@ -1,7 +1,7 @@
 ## 1. Preparação e contrato
 
 - [x] 1.1 Revisar #193, #196, #151, AGENTS.md, specs e a matriz de cobertura; verificar a versão do Storybook.
-- [ ] 1.2 Validar a change com OpenSpec estrito em checkout/worktree isolada. A branch remota foi criada, mas não substitui worktree.
+- [x] 1.2 Validar a change com OpenSpec estrito em checkout/worktree isolada. A branch remota foi criada, mas não substitui worktree.
 - [x] 1.3 Comparar os exports atuais à matriz da #151, com exceções justificadas: 78/78 exports públicos de UI após corrigir a omissão de `AdsAlert`.
 
 ## 2. Geração de documentação
@@ -51,5 +51,6 @@
 
 - Passaram: `npm ci`, `npm run build`, `npm run lint`, `npm run format`, `npm run typecheck`, `npm run verify:optional-peer`, `npm run test:quality`, testes Node do docs (6/6), E2E Pages (30/30) e varredura das 78 páginas em light/dark sem erros de console/rede.
 - Corrigido na revisão: exemplo errado de `AdsButton`, entidades em código inline, `AdsDatePicker`/`AdsCard` sem props, heading dos testes, variantes/estados/acessibilidade derivados dos tipos.
-- Pendentes: 1.2 e 4.2 (`openspec validate --all --strict` não executado: CLI indisponível), resultado do E2E principal e Firefox/WebKit, 4.4 (Ready for review/CI/revisão humana).
+- `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` (mesmo comando da CI): 62 itens, 0 falhas, incluindo esta change.
+- Pendentes: 4.2 (`npm run validate` completo: o E2E principal teve 25 falhas ambientais neste container — headless shell ausente e snapshots — e Firefox/WebKit não rodaram; a CI valida) e 4.4 (Ready for review/CI/revisão humana).
 - Limitação do tema: o decorator aplica o tema aos exemplos (Canvas), não ao corpo MDX.

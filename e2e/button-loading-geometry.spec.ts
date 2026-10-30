@@ -2,10 +2,10 @@ import { readFileSync } from 'node:fs';
 import { createElement, type ReactNode } from 'react';
 import { renderToStaticMarkup } from 'react-dom/server';
 import { expect, test, type Page } from '@playwright/test';
-import type * as AdsComponents from '@admin-ds/components';
+import type * as AdsComponents from '@dvmarques/admin-ds-components';
 
 // Apenas o CSS distribuído, como em uma aplicação consumidora sem Tailwind.
-const css = ['@admin-ds/tokens/styles.css', '@admin-ds/components/styles.css']
+const css = ['@dvmarques/admin-ds-tokens/styles.css', '@dvmarques/admin-ds-components/styles.css']
 	.map((path) => readFileSync(require.resolve(path), 'utf8'))
 	.join('\n');
 
@@ -37,7 +37,7 @@ const cases: Case[] = [
 
 // Os pacotes só exportam ESM; o import dinâmico funciona também com o carregador CJS do Playwright.
 async function renderMarkup(isLoading: boolean, dir: 'ltr' | 'rtl') {
-	const components = await import('@admin-ds/components');
+	const components = await import('@dvmarques/admin-ds-components');
 	return renderToStaticMarkup(
 		createElement(
 			'div',
@@ -117,7 +117,7 @@ for (const position of ['absolute', 'fixed'] as const) {
 		test(`className do consumidor com ${position} não é sobrescrito (isLoading=${isLoading})`, async ({
 			page,
 		}) => {
-			const { AdsButton } = await import('@admin-ds/components');
+			const { AdsButton } = await import('@dvmarques/admin-ds-components');
 			const markup = renderToStaticMarkup(
 				createElement(AdsButton, { className: `${position} right-2 top-2`, isLoading }, 'Fechar'),
 			);

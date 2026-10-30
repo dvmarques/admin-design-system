@@ -4,6 +4,11 @@
 
 Cada componente público MUST possuir referência navegável no catálogo, incluindo propósito, propriedades e tipos, obrigatoriedade, valores padrão reais, variantes, estados suportados, requisitos de acessibilidade e exemplos executáveis. Informações não inferíveis automaticamente MUST ser complementadas explicitamente; tipos genéricos e partes compostas MUST preservar suas restrições de uso.
 
+#### Scenario: Desenvolvedor consulta um componente
+
+- **WHEN** o desenvolvedor abre a documentação do componente
+- **THEN** ele encontra a API pública e as orientações necessárias para o uso básico
+
 #### Scenario: Desenvolvedor consulta referência de componente simples
 
 - **WHEN** o desenvolvedor abre a página de referência de um export público de UI
@@ -18,6 +23,8 @@ Cada componente público MUST possuir referência navegável no catálogo, inclu
 
 - **WHEN** um export público de UI é acrescentado aos pacotes antes de publicar o catálogo
 - **THEN** a validação exige sua referência de API ou uma exceção explícita, justificada e verificável, sem exigir componentes ainda planejados
+
+## ADDED Requirements
 
 ### Requirement: Catálogo publicado com referência de API verificada
 

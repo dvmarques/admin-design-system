@@ -1,38 +1,48 @@
 ## 1. Preparação e contrato
 
 - [x] 1.1 Revisar #193, #196, #151, AGENTS.md, specs e a matriz de cobertura; verificar a versão do Storybook.
-- [ ] 1.2 Validar esta change com OpenSpec em checkout isolado, em branch criada de develop.
-- [x] 1.3 Comparar exports atuais com matriz da #151, identificando APIs simples, genéricas e compostas, com exceções justificadas.
+- [ ] 1.2 Validar a change com OpenSpec estrito em checkout/worktree isolada. A branch remota foi criada, mas não substitui worktree.
+- [x] 1.3 Comparar os exports atuais à matriz da #151, com exceções justificadas: 78/78 exports públicos de UI após corrigir a omissão de `AdsAlert`.
 
 ## 2. Geração de documentação
 
-- [ ] 2.1 Configurar `@storybook/addon-docs` compatível e dependências dev/lockfile reproduzíveis, preservando o build.
-- [ ] 2.2 Garantir página de API por export público de UI sem remover ou substituir stories.
-- [ ] 2.3 Revisar props/tipos, obrigatoriedade, defaults reais, variantes, estados, acessibilidade e exemplos; complementar genéricos e partes compostas explicitamente.
-- [x] 2.4 Atualizar matriz/guia de referência de API e CHANGELOG na versão em andamento.
+- [x] 2.1a Configurar `@storybook/addon-docs` 10.5.5, `react-docgen-typescript`, geração MDX e dependências exclusivamente de desenvolvimento no manifest/lockfile.
+- [ ] 2.1b Executar `npm ci` com o lockfile, confirmar compatibilidade e build reproduzível; regenerar o lockfile com npm oficial se necessário.
+- [x] 2.2a Implementar gerador por export visual da matriz, utilizando as stories existentes, sem substituir exemplos do catálogo.
+- [ ] 2.2b Confirmar que a geração cria as 78 páginas reais e que cada uma é indexada, navegável e carregada no Storybook.
+- [x] 2.3a Implementar extração conservadora de tipos/obrigatoriedade/defaults literais, fontes explícitas e notas especiais; incluir partes públicas de Shell, Dropdown, Accordion e SmartTable.
+- [ ] 2.3b Conferir visualmente e corrigir, componente a componente, a fidelidade dos valores padrão, variantes, estados, acessibilidade, tabelas e exemplos **no build executado**.
+- [x] 2.4 Atualizar matriz da #151, guia `docs/storybook-api-reference.md` e `CHANGELOG.md`.
 
 ## 3. Testes de saída e publicação
 
-- [ ] 3.1 Substituir teste vazio por validação de documentação efetivamente gerada em `index.json`, confrontando inventário real.
-- [ ] 3.2 Adicionar/verificar smoke de páginas de docs reais com tabelas e exemplos, light/dark e teclado.
-- [ ] 3.3 Validar os URLs, assets, tema e navegação em `/admin-design-system/storybook/`, preservando o link do demo.
-- [x] 3.4 Conferir que novos exports já integrados em develop constam da referência, sem adicionar componentes futuros.
+- [x] 3.1 Substituir teste vazio por asserções do `storybook-static/index.json`, matriz, páginas MDX, tabelas e exemplos, detectando ausência de exports.
+- [x] 3.2a Implementar smoke Playwright para páginas de documentação de Button, SmartTable, AdminShell e InputGroup e troca light/dark.
+- [ ] 3.2b Executar e ajustar o smoke no navegador real, validar teclado, foco, tabelas e exemplos carregados.
+- [x] 3.3a Preservar o link do demo para o Storybook (#189) e criar verificações do subcaminho `/admin-design-system/storybook/`.
+- [ ] 3.3b Executar os testes do site Pages para confirmar assets, navegação, temas e rotas reais.
+- [x] 3.4 Incluir novos exports integrados em `develop` no inventário e na geração sem implementar componentes futuros: `AdsAlert` corrigido na matriz.
 
 ## 4. Validação e PR
 
 - [ ] 4.1 Executar `npm run build`, `npm run typecheck`, testes focalizados e o Storybook real; inspecionar exemplos e diferenças intencionais.
-- [ ] 4.2 Executar `npm run validate` e `openspec.cmd validate --all --strict`; registrar resultados, falhas e checks dispensados. Não atualizar snapshots sem mudança visual intencional revisada.
-- [ ] 4.3 Formatar arquivos alterados com Prettier, executar `npm run format`, revisar diff e abrir PR para `develop`.
-- [ ] 4.4 Após validação comprovada, marcar PR Ready, inspecionar CI do SHA atual, corrigir findings e solicitar revisão humana; não efetuar merge ou archive sem autorização.
+- [ ] 4.2 Executar `npm run validate` e `openspec.cmd validate --all --strict`; registrar resultados, falhas e checks dispensados. Snapshots só com diff intencional revisado.
+- [x] 4.3a Criar branch `feat/193-storybook-api-reference`, registrar a change e abrir a PR #261 para `develop`, em Draft.
+- [ ] 4.3b Executar Prettier nos arquivos alterados, `npm run format` e revisar o diff já formatado.
+- [ ] 4.4 Após validação comprovada, marcar PR Ready, inspecionar CI do SHA atual, corrigir findings e solicitar revisão humana; não efetuar merge nem archive sem autorização.
 
-## Evidência estática desta sessão
+## Evidências verificadas e correções da revisão
 
-- Consulta GitHub de `develop` e da PR #261: base alinhada no início do trabalho, sem commits novos da `develop` neste levantamento.
-- Confronto direto de índices runtime e matriz documental: **78 exports públicos de UI e 78 linhas**, sem ausentes ou extras; a matriz foi corrigida para incluir `AdsAlert`.
-- Todos os exports da matriz têm arquivo de story existente e caminho de módulo válido no tree de `develop`; tipos especiais `AdsIconProps`, `AdsSelectionControlProps` e contratos de input/popover do `AdsCombobox` foram identificados nas fontes reais.
-- Código do gerador, notas técnicas, testes do índice gerado, smoke de Pages, atualização de config, guia e changelog enviados para a branch. **A existência dos arquivos não comprova geração, build ou execução**.
+- Confronto estático dos índices runtime e da matriz: 78 exports visuais/78 linhas, zero ausentes ou extras, incluindo `AdsAlert`.
+- Foram inspecionados os 32 arquivos `*.stories.tsx` existentes: todos exportam stories declaradas; esses arquivos permanecem inalterados, exceto os metadados de Button, AdminShell e SmartTable.
+- Corrigido o uso de `as const` no AST de `catalogEntries`, que antes descartava as descrições reais. A geração falha quando falta uma descrição.
+- Tabelas de propriedades passaram de pipes Markdown (GFM não garantido) para `<table>` MDX, compatível com o Storybook; testes reforçados com descrição real, tabela e defaults de Button.
+- Defaults agora são coletados apenas de parâmetros tipados do componente e seus contratos, não de qualquer função do módulo. Tipos das partes compostas foram incluídos.
+- Os testes foram **escritos e enviados**, mas **não executados**. Nenhum resultado de CI, build, formato, OpenSpec ou Playwright foi inferido a partir de inspeção estática.
+- `git ls-remote` da sessão não conseguiu resolver `github.com` no container; acesso remoto ao código aconteceu via GitHub conectado. Não foi possível realizar checkout/worktree nem instalar dependências.
 
-## Evidência e limites
+## Limites ainda bloqueantes
 
-- Branch GitHub criada nesta sessão; não equivale a worktree local.
-- A ausência de checkout executável impede afirmar quaisquer testes ou builds aprovados. Só 1.1 foi concluída por inspeção dos arquivos e issues via GitHub.
+- Executar instalação e regeneração oficial do lockfile, build Storybook, testes, lint/tipos/formato, OpenSpec estrito e E2E do Pages.
+- Verificar os exemplos, tema e as tabelas das 78 páginas no navegador e ajustar falhas detectadas.
+- PR permanece Draft; archive, merge e fechamento da issue ficam pendentes.

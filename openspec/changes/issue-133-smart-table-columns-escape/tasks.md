@@ -14,4 +14,5 @@
 ## 4. Validação
 
 - [x] 4.1 Executar `npx prettier --write` nos arquivos alterados e `npm run format`, `npm run lint`, `npm run typecheck`, `npm run build` e os testes do `@admin-ds/admin`; registrar o que não puder ser executado.
-- [ ] 4.2 Validar com `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` e `npm run test:e2e`/CI, registrando evidência e jobs pulados.
+- [x] 4.2 Validar com `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` e `npm run test:e2e`/CI, registrando evidência e jobs pulados.
+      Evidência: `openspec validate --all --strict` 62/62; CI da PR #262 verde (Qualidade rápida, Artefatos, Site, E2E Chromium/Firefox/WebKit, Política de develop); Publicar e Validação de release pulados por design.

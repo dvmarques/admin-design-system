@@ -3,7 +3,8 @@ import { spawn } from 'node:child_process';
 import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
-import { join, resolve } from 'node:path';
+import { join } from 'node:path';
+import { pathToFileURL } from 'node:url';
 import { fileURLToPath } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -110,7 +111,7 @@ async function main() {
 			const license = await readFile(join(root, 'packages', item, 'LICENSE.md'), 'utf8');
 			assert.match(license, /MIT License/);
 			assert.match(license, /Daniel Marques/);
-			dependencies[name] = 'file:' + join(packDir, result[0].filename);
+			dependencies[name] = pathToFileURL(join(packDir, result[0].filename)).href;
 			console.log('PACK OK', name, result[0].filename, entries.length, 'files');
 		}
 		const privatePackages = [

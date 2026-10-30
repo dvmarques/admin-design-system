@@ -211,6 +211,40 @@ const typeOverrides = {
 		},
 	},
 };
+
+// Props declaradas e herdadas de interfaces do projeto; `Omit<Base, 'a' | 'b'>` descarta as chaves omitidas.
+function membersOf(decl, sf, seen = new Set(), omitted = new Set(), visiting = new Set()) {
+	if (visiting.has(decl)) return [];
+	visiting.add(decl);
+	const out = [];
+	for (const p of decl.members.filter(ts.isPropertySignature)) {
+		const key = p.name.getText(sf).replaceAll("'", '').replaceAll('"', '');
+		if (omitted.has(key) || seen.has(key)) continue;
+		seen.add(key);
+		out.push({ p, sf, key, owner: decl.name.text });
+	}
+	for (const clause of decl.heritageClauses || []) {
+		for (const ref of clause.types) {
+			let target = ref.expression.getText(sf);
+			let skip = new Set(omitted);
+			if (
+				target === 'Omit' &&
+				ref.typeArguments?.length === 2 &&
+				ts.isTypeReferenceNode(ref.typeArguments[0])
+			) {
+				target = ref.typeArguments[0].typeName.getText(sf);
+				for (const m of ref.typeArguments[1].getText(sf).matchAll(/'([^']+)'/g)) skip.add(m[1]);
+			}
+			const local = sf.statements.find(
+				(n) => ts.isInterfaceDeclaration(n) && n.name.text === target,
+			);
+			const base = local ? { sf, decl: local } : interfaceIndex.get(target);
+			if (base) out.push(...membersOf(base.decl, base.sf, seen, skip, visiting));
+		}
+	}
+	return out;
+}
+
 function typeInfo(name) {
 	const override = typeOverrides[name];
 	const path = override?.path ? join(root, override.path) : modules.get(name);
@@ -240,19 +274,21 @@ function typeInfo(name) {
 		if (ts.isInterfaceDeclaration(decl)) {
 			const inherited = (decl.heritageClauses || []).map((n) => n.getText(typeFile)).join('; ');
 			if (inherited) heritage.push(typeName + ': ' + inherited);
-			for (const p of decl.members.filter(ts.isPropertySignature)) {
-				const key = p.name.getText(typeFile).replaceAll("'", '').replaceAll('"', '');
+			for (const { p, sf, key, owner } of membersOf(decl, typeFile)) {
+				// Base já listada como contrato próprio: não repete suas props em cada filho.
+				if (owner !== typeName && typeNames.includes(owner)) continue;
+				const own = ts
+					.getJSDocCommentsAndTags(p)
+					.map((j) => (typeof j.comment === 'string' ? j.comment : ''))
+					.filter(Boolean)
+					.join(' ');
 				props.push({
 					name: typeNames.length > 1 ? typeName + '.' + key : key,
 					sourceName: key,
 					owner: typeName,
-					type: p.type?.getText(typeFile).replace(/\s+/g, ' ') || 'desconhecido',
+					type: p.type?.getText(sf).replace(/\s+/g, ' ') || 'desconhecido',
 					required: !p.questionToken,
-					desc: ts
-						.getJSDocCommentsAndTags(p)
-						.map((j) => (typeof j.comment === 'string' ? j.comment : ''))
-						.filter(Boolean)
-						.join(' '),
+					desc: owner === typeName ? own : (own + ' (herdada de ' + owner + ')').trim(),
 				});
 			}
 		} else heritage.push(typeName + ': ' + decl.type.getText(typeFile));
@@ -330,6 +366,8 @@ function keyofObject(sf, type) {
 	}
 	return null;
 }
+// Interfaces do próprio projeto, para resolver props herdadas (as de HTML/React ficam de fora).
+const interfaceIndex = new Map();
 function collectUnions(dir) {
 	for (const entry of readdirSync(join(root, dir), { withFileTypes: true })) {
 		const rel = dir + '/' + entry.name;
@@ -337,6 +375,8 @@ function collectUnions(dir) {
 		else if (/\.tsx?$/.test(entry.name) && !entry.name.endsWith('.d.ts')) {
 			const sf = parse(rel);
 			for (const n of sf.statements) {
+				if (ts.isInterfaceDeclaration(n) && !interfaceIndex.has(n.name.text))
+					interfaceIndex.set(n.name.text, { sf, decl: n });
 				if (ts.isTypeAliasDeclaration(n) && keyofObject(sf, n.type)) {
 					literalUnions.set(n.name.text, keyofObject(sf, n.type));
 					continue;
@@ -378,8 +418,18 @@ function variantsAndStates(props) {
 	return { unions, states: [...new Set(states)], a11y: [...new Set(a11y)] };
 }
 
+// Padrões de uso comprovado: `<AdsTabsList`, `<AdsTabs.List` (sintaxe Componente.Parte) ou `component: AdsX` no meta.
+function usagePatterns(name) {
+	const words = name.match(/[A-Z][a-z0-9]*/g) || [name];
+	const names = [name];
+	for (let i = words.length - 1; i >= 2; i--)
+		names.push(words.slice(0, i).join('') + '.' + words.slice(i).join(''));
+	return names.map((n) => new RegExp('<' + n.replaceAll('.', '\\.') + '(?![A-Za-z0-9_])'));
+}
 function storyFor(entry) {
 	const conventional = entry.route.split('/').pop() + '.stories.tsx';
+	const patterns = usagePatterns(entry.name);
+	const asMeta = new RegExp('component:\\s*' + entry.name + '\\b');
 	const candidates = [...new Set([...entry.stories, conventional])]
 		.filter((n) => existsSync(join(root, 'apps/docs/src', n)))
 		.map((n) => {
@@ -387,7 +437,7 @@ function storyFor(entry) {
 			return {
 				name: n,
 				content,
-				score: (n === conventional ? 10 : 0) + (content.includes('<' + entry.name) ? 4 : 0),
+				score: (n === conventional ? 10 : 0) + (patterns.some((r) => r.test(content)) ? 4 : 0),
 			};
 		})
 		.sort((a, b) => b.score - a.score);
@@ -404,11 +454,38 @@ function storyFor(entry) {
 			.filter((n) => n.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword))
 			.flatMap((n) => n.declarationList.declarations)
 			.filter((n) => ts.isIdentifier(n.name));
-		const picked =
-			vars.find((d) => d.initializer?.getText(file).includes('<' + entry.name)) || vars[0];
+		// Componentes auxiliares locais (ex.: AccordionItem) contam quando a story os renderiza.
+		const helpers = new Map();
+		for (const n of file.statements) {
+			if (ts.isFunctionDeclaration(n) && n.name) helpers.set(n.name.text, n.getText(file));
+			if (
+				ts.isVariableStatement(n) &&
+				!n.modifiers?.some((m) => m.kind === ts.SyntaxKind.ExportKeyword)
+			)
+				for (const d of n.declarationList.declarations)
+					if (ts.isIdentifier(d.name) && d.initializer)
+						helpers.set(d.name.text, d.initializer.getText(file));
+		}
+		const exercises = (text, seen = new Set()) =>
+			patterns.some((r) => r.test(text)) ||
+			[...helpers].some(
+				([helper, body]) =>
+					!seen.has(helper) &&
+					new RegExp('<' + helper + '(?![A-Za-z0-9_])').test(text) &&
+					exercises(body, new Set([...seen, helper])),
+			);
+		const used = vars.find((d) => exercises(d.initializer?.getText(file) || ''));
+		// Story só com `args` é válida quando o meta aponta para o componente (component: AdsX).
+		const picked = used || (asMeta.test(c.content) ? vars[0] : undefined);
 		if (picked) return { file: c.name, name: picked.name.text };
 	}
-	throw Error('Exemplo Storybook ausente para ' + entry.name);
+	throw Error(
+		'Nenhuma story comprova o uso de ' +
+			entry.name +
+			'; adicione uma story que o exercite ou ajuste a matriz (candidatas: ' +
+			candidates.map((c) => c.name).join(', ') +
+			')',
+	);
 }
 const esc = (x) =>
 	String(x || '—')

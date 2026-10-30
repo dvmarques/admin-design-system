@@ -103,3 +103,33 @@ test('variantes, estados e acessibilidade são derivados dos tipos públicos', (
 	);
 	assert.match(button, /<code>isLoading<\/code>/);
 });
+
+test('partes compostas usam a story que as exercita, não a primeira exportada', () => {
+	const exampleOf = (name) =>
+		readFileSync(new URL(name + '.mdx', generatedUrl), 'utf8').match(
+			/Canvas of=\{ExampleStories\.(\w+)\}/,
+		)?.[1];
+	for (const name of ['AdsTabs', 'AdsTabsList', 'AdsTabsTrigger', 'AdsTabsPanel'])
+		assert.equal(exampleOf(name), 'Tabs', name + ' deve usar a story Tabs');
+	for (const name of [
+		'AdsAccordion',
+		'AdsAccordionItem',
+		'AdsAccordionHeader',
+		'AdsAccordionTrigger',
+		'AdsAccordionPanel',
+	])
+		assert.equal(exampleOf(name), 'AccordionSingle', name + ' deve usar a story AccordionSingle');
+});
+
+test('props herdadas de interfaces do projeto entram na tabela', () => {
+	const input = readFileSync(new URL('AdsInput.mdx', generatedUrl), 'utf8');
+	assert.match(input, /<code>validationState<\/code>/, 'AdsInput herda AdsFormControlBase');
+	assert.match(input, /herdada de AdsFormControlBase/);
+	const accordion = readFileSync(new URL('AdsAccordion.mdx', generatedUrl), 'utf8');
+	assert.match(accordion, /unmountOnCollapse/, 'raiz do Accordion herda AdsAccordionBaseProps');
+	const datePicker = readFileSync(new URL('AdsDatePicker.mdx', generatedUrl), 'utf8');
+	const baseRows = datePicker.match(/<code>AdsDatePickerBaseProps\.disabled<\/code>/g) || [];
+	const inheritedCopies = datePicker.match(/herdada de AdsDatePickerBaseProps/g) || [];
+	assert.equal(baseRows.length, 1, 'props da base listadas uma vez');
+	assert.equal(inheritedCopies.length, 0, 'base listada como contrato não é repetida nos filhos');
+});

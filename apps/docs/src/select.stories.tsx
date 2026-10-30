@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsButton, AdsField, AdsSelect } from '@admin-ds/components';
+import { AdsButton, AdsField, AdsSelect } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Forms/Select',

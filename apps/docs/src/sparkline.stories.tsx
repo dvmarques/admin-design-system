@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsSparkline } from '@admin-ds/components';
+import { AdsSparkline } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Data display/Sparkline',

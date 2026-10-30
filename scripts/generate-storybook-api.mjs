@@ -66,36 +66,57 @@ for(const index of ['packages/components/src/index.ts','packages/admin/src/index
   }
 }
 modules.set('AdsMaskedInput',join(root,'packages/components/src/masked-input.tsx'));
+const typeOverrides={
+  AdsIcon:{path:'packages/components/src/icons/types.ts',types:['AdsIconProps'],defaults:'packages/components/src/icons/icon.tsx'},
+  AdsCombobox:{path:'packages/components/src/combobox-types.ts',types:['AdsComboboxProps','AdsComboboxPopoverProps'],defaults:'packages/components/src/combobox.tsx'},
+  AdsCheckbox:{types:['AdsSelectionControlProps']},
+  AdsRadio:{types:['AdsSelectionControlProps']},
+  AdsSwitch:{types:['AdsSelectionControlProps']}
+};
 function typeInfo(name){
-  const path=modules.get(name);
+  const override=typeOverrides[name];
+  const path=override?.path?join(root,override.path):modules.get(name);
   if(!path)throw Error('Sem módulo público para '+name);
   const code=readFileSync(path,'utf8');
   const file=ts.createSourceFile(path,code,ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
-  const decl=file.statements.find(n=>(ts.isInterfaceDeclaration(n)||ts.isTypeAliasDeclaration(n))&&n.name.text===name+'Props');
-  const props=decl&&ts.isInterfaceDeclaration(decl)?decl.members.filter(ts.isPropertySignature).map(p=>({
-    name:p.name.getText(file).replaceAll("'",'').replaceAll('"',''),
-    type:p.type?.getText(file).replace(/\s+/g,' ')||'desconhecido',
-    required:!p.questionToken,
-    desc:ts.getJSDocCommentsAndTags(p).map(j=>typeof j.comment==='string'?j.comment:'').filter(Boolean).join(' ')
-  })):[];
-  const heritage=decl&&ts.isInterfaceDeclaration(decl)?(decl.heritageClauses||[]).map(n=>n.getText(file)).join('; '):
-    decl&&ts.isTypeAliasDeclaration(decl)?decl.type.getText(file):'Tipo de props composto ou declarado em outro módulo.';
+  const typeNames=override?.types||[name+'Props'];
+  const props=[],heritage=[];
+  for(const typeName of typeNames){
+    const decl=file.statements.find(n=>(ts.isInterfaceDeclaration(n)||ts.isTypeAliasDeclaration(n))&&n.name.text===typeName);
+    if(!decl)throw Error('Contrato de props ausente: '+typeName+' em '+path);
+    if(ts.isInterfaceDeclaration(decl)){
+      const inherited=(decl.heritageClauses||[]).map(n=>n.getText(file)).join('; ');
+      if(inherited)heritage.push(typeName+': '+inherited);
+      for(const p of decl.members.filter(ts.isPropertySignature)){
+        const key=p.name.getText(file).replaceAll("'",'').replaceAll('"','');
+        props.push({
+          name:typeNames.length>1?typeName+'.'+key:key,sourceName:key,
+          type:p.type?.getText(file).replace(/\s+/g,' ')||'desconhecido',
+          required:!p.questionToken,
+          desc:ts.getJSDocCommentsAndTags(p).map(j=>typeof j.comment==='string'?j.comment:'').filter(Boolean).join(' ')
+        });
+      }
+    }else heritage.push(typeName+': '+decl.type.getText(file));
+  }
   const defaults=new Map();
+  const implementationPath=override?.defaults?join(root,override.defaults):path;
+  const impl=ts.createSourceFile(implementationPath,readFileSync(implementationPath,'utf8'),ts.ScriptTarget.Latest,true,ts.ScriptKind.TSX);
   function visit(n){
     if(ts.isParameter(n)&&ts.isObjectBindingPattern(n.name))for(const e of n.name.elements){
       if(!e.initializer||!ts.isIdentifier(e.name))continue;
       const key=e.name.text;
       if(!defaults.has(key))defaults.set(key,new Set());
-      defaults.get(key).add(e.initializer.getText(file));
+      defaults.get(key).add(e.initializer.getText(impl));
     }
     ts.forEachChild(n,visit);
   }
-  visit(file);
+  visit(impl);
   for(const p of props){
-    const values=defaults.get(p.name);
+    const values=defaults.get(p.sourceName);
     p.def=values?.size===1?[...values][0]:'—';
   }
-  return {props,heritage,path:path.slice(root.length+1).replaceAll('\\','/')};
+  return {props,heritage:heritage.join(' ; '),typeNames,
+    path:path.slice(root.length+1).replaceAll('\\','/')};
 }
 function storyFor(entry){
   const candidates=entry.stories.filter(n=>existsSync(join(root,'apps/docs/src',n))).map(n=>{
@@ -127,7 +148,7 @@ function render(entry){
     esc(descriptions.get(entry.name)||'Componente público do design system.'),'',
     '**Importação pública:** '+bt+pkg+bt+'. **Grupo:** '+esc(entry.group)+'.','',
     '## Propriedades e tipos','',
-    '**Contrato:** '+bt+entry.name+'Props'+bt+'.','',
+    '**Contrato:** '+api.typeNames.map(n=>bt+n+bt).join(', ')+'.','',
     '**Composição/herança:** '+bt+esc(api.heritage).replaceAll(bt,"'")+bt+'.',''
   ];
   if(api.props.length){

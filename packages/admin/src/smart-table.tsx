@@ -352,6 +352,9 @@ export function AdsSmartTable<Row>({
 
 	const closeColumns = (event: KeyboardEvent<HTMLElement>) => {
 		if (event.key !== 'Escape' || !columnsOpen) return;
+		// Tratado localmente: `defaultPrevented` é o marcador que a pilha de Escape respeita, e
+		// `stopPropagation` evita que o evento chegue ao `document`. Nenhum fecha o overlay ao redor.
+		event.preventDefault();
 		event.stopPropagation();
 		setColumnsOpen(false);
 		columnsButtonRef.current?.focus();

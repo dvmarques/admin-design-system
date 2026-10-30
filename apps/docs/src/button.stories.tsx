@@ -6,10 +6,41 @@ const meta = {
 	title: 'Primitives/Button',
 	component: AdsButton,
 	tags: ['autodocs'],
+	argTypes: {
+		variant: {
+			description: 'Tratamento visual da ação; preserve contraste e intenção semântica.',
+			control: 'select',
+			options: ['primary', 'secondary', 'danger', 'ghost'],
+			table: { type: { summary: 'AdsButtonVariant' }, defaultValue: { summary: 'primary' } },
+		},
+		size: {
+			description: 'Altura e espaçamento conforme os tokens de controle.',
+			control: 'select',
+			options: ['sm', 'md', 'lg'],
+			table: { type: { summary: 'AdsButtonSize' }, defaultValue: { summary: 'md' } },
+		},
+		type: {
+			description: 'Tipo HTML do botão; o padrão evita submissão acidental de formulários.',
+			table: { type: { summary: "'button' | 'submit' | 'reset'" }, defaultValue: { summary: 'button' } },
+		},
+		disabled: {
+			description: 'Desabilita a interação nativa, inclusive por teclado.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		isLoading: {
+			description: 'Anuncia aria-busy, exibe indicador e desabilita o botão durante a operação.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		loadingLabel: {
+			description: 'Nome acessível do indicador de progresso.',
+			table: { type: { summary: 'string' }, defaultValue: { summary: 'Carregando' } },
+		},
+	},
 	parameters: {
 		docs: {
 			description: {
-				component: 'Ação nativa acessível com variantes, tamanhos e estado de carregamento.',
+				component:
+					'Ação nativa acessível com variantes, tamanhos e estado de carregamento. Aceita as propriedades do elemento HTML button e encaminha ref ao botão. Navegação por Tab e ativação por Enter/Espaço seguem a semântica nativa. Durante isLoading, aria-busy sinaliza a operação e o botão fica desabilitado. Valores padrão conferidos em packages/components/src/button.tsx.',
 			},
 		},
 	},

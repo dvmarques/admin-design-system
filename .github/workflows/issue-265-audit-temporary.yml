@@ -1,0 +1,111 @@
+name: "Issue 265 - auditoria comparativa temporaria"
+on:
+  push:
+    branches:
+      - issue-265-deps-batch1
+permissions:
+  contents: read
+jobs:
+  audit:
+    name: Comparar npm audit baseline vs lote 1
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - name: Fix npm version and recover immutable Git baseline
+        shell: bash
+        run: |
+          npm install --global npm@11.19.1
+          git worktree add --detach "$RUNNER_TEMP/issue265-baseline" 1251ad6f9f5aec7ddfc1c03c50d0fb850f89c516
+          mkdir -p "$RUNNER_TEMP/issue265-audits"
+          echo "Baseline: $(git -C "$RUNNER_TEMP/issue265-baseline" rev-parse HEAD)"
+          echo "Updated: $(git rev-parse HEAD)"
+          echo "Node: $(node --version)"
+          echo "npm: $(npm --version)"
+          echo "UTC: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git status --porcelain=v1
+      - name: Install each locked graph and run complete plus production audits
+        shell: bash
+        run: |
+          set -u
+          mkdir -p "$RUNNER_TEMP/issue265-audits"
+          for revision in before after; do
+            if [ "$revision" = before ]; then
+              dir="$RUNNER_TEMP/issue265-baseline"
+            else
+              dir="$GITHUB_WORKSPACE"
+            fi
+            echo "::group::$revision npm ci and npm audit"
+            (cd "$dir" && npm ci --ignore-scripts --no-audit --no-fund)
+            for scope in all production; do
+              file="$RUNNER_TEMP/issue265-audits/$revision-$scope.json"
+              err="$RUNNER_TEMP/issue265-audits/$revision-$scope.stderr"
+              exitcode=0
+              if [ "$scope" = all ]; then
+                (cd "$dir" && npm audit --json > "$file" 2> "$err") || exitcode=$?
+              else
+                (cd "$dir" && npm audit --json --omit=dev > "$file" 2> "$err") || exitcode=$?
+              fi
+              echo "$exitcode" > "$RUNNER_TEMP/issue265-audits/$revision-$scope.exit"
+              node -e "const fs=require('fs');const x=JSON.parse(fs.readFileSync(process.argv[1],'utf8'));if(!x.vulnerabilities||!x.metadata)throw Error('Invalid npm audit JSON')" "$file"
+              echo "$revision / $scope : npm audit exit $exitcode"
+            done
+            echo "::endgroup::"
+          done
+      - name: Generate machine-readable vulnerability inventory with dependency chains
+        shell: bash
+        run: |
+          node <<'NODE'
+          const fs=require('fs'),cp=require('child_process'),os=require('os'),path=require('path');
+          const root=path.join(process.env.RUNNER_TEMP,'issue265-audits');
+          const targets={before:path.join(process.env.RUNNER_TEMP,'issue265-baseline'),after:process.env.GITHUB_WORKSPACE};
+          const output={recordedAt:new Date().toISOString(),node:process.version,npm:cp.execFileSync('npm',['--version'],{encoding:'utf8'}).trim(),baselineCommit:'1251ad6f9f5aec7ddfc1c03c50d0fb850f89c516',updatedCommit:cp.execFileSync('git',['rev-parse','HEAD'],{encoding:'utf8'}).trim(),revisions:{}};
+          for(const rev of ['before','after']){
+            let obj={};
+            for(const scope of ['all','production']){
+              let raw=JSON.parse(fs.readFileSync(path.join(root,rev+'-'+scope+'.json')));
+              let vulnerabilities=Object.entries(raw.vulnerabilities||{}).map(([name,v])=>({
+                name,severity:v.severity,isDirect:v.isDirect,range:v.range,
+                via:(v.via||[]).map(x=>typeof x==='string'?{dependent:x}:{source:x.source,name:x.name,dependency:x.dependency,title:x.title,url:x.url,severity:x.severity,range:x.range}),
+                effects:v.effects||[],nodes:v.nodes||[],fixAvailable:v.fixAvailable
+              }));
+              obj[scope]={exitCode:Number(fs.readFileSync(path.join(root,rev+'-'+scope+'.exit'),'utf8')),counts:raw.metadata?.vulnerabilities,dependencies:raw.metadata?.dependencies,vulnerabilities};
+            }
+            const high=obj.all.vulnerabilities.filter(v=>['high','critical'].includes(v.severity));
+            obj.highCriticalExplanations={};
+            for(const v of high){
+              const res=cp.spawnSync('npm',['explain','--json',v.name],{cwd:targets[rev],encoding:'utf8',maxBuffer:15*1024*1024});
+              let payload;
+              try {payload=JSON.parse(res.stdout);} catch(e) {payload={error:res.stderr?.slice(0,500),exitCode:res.status};}
+              obj.highCriticalExplanations[v.name]=payload;
+            }
+            output.revisions[rev]=obj;
+          }
+          fs.writeFileSync(path.join(root,'summary.json'),JSON.stringify(output,null,2)+'\n');
+          const short={recordedAt:output.recordedAt,node:output.node,npm:output.npm,baselineCommit:output.baselineCommit,updatedCommit:output.updatedCommit,revisions:{}};
+          for(const [rev,info] of Object.entries(output.revisions)){
+            short.revisions[rev]={};
+            for(const scope of ['all','production']){
+              short.revisions[rev][scope]={exitCode:info[scope].exitCode,counts:info[scope].counts,
+                vulnerabilities:info[scope].vulnerabilities.map(x=>({name:x.name,severity:x.severity,isDirect:x.isDirect,fixAvailable:x.fixAvailable,via:x.via,effects:x.effects}))};
+            }
+            for(const [name,exp] of Object.entries(info.highCriticalExplanations)){
+              short.revisions[rev].all.vulnerabilities.find(x=>x.name===name).explain=exp;
+            }
+          }
+          console.log('ISSUE265_AUDIT_SUMMARY_START');
+          console.log(JSON.stringify(short));
+          console.log('ISSUE265_AUDIT_SUMMARY_END');
+          NODE
+      - name: Upload original raw JSON and report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: issue-265-before-after-npm-audit
+          path: ${{ runner.temp }}/issue265-audits/
+          retention-days: 30

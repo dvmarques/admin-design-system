@@ -28,8 +28,8 @@ Medição local (Windows, `node scripts/inspect-packages.mjs`) sobre `develop` b
 | JS/CSS gzip por arquivo                | 79.417  | 79.786  | 79.500            | 79.790            |
 | `components-public` minificado         | 33.027  | 33.417  | 33.100            | 33.420            |
 | `components-public` gzip               | 11.707  | 11.877  | 11.800            | 11.880            |
-| `admin-public` minificado              | —       | 71.420  | 71.100            | 71.430            |
-| `admin-public` gzip                    | —       | 24.047  | 23.900            | 24.050            |
+| `admin-public` minificado              | —       | 71.439  | 71.100            | 71.440            |
+| `admin-public` gzip                    | —       | 24.050  | 23.900            | 24.050            |
 
 O custo (+390 B minificados e +170 B gzip em `components-public`) supera a estimativa da #234 (+226 B/+95 B só para rádios) porque inclui a ordenação por `tabindex`.
 

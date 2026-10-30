@@ -110,12 +110,13 @@ Consulte o passo a passo, regras de recuperação e configuração de branch pro
 - `@dvmarques/admin-ds-tokens`: design tokens semânticos, temas claro e escuro e CSS público.
 - `@dvmarques/admin-ds-components`: primitivas, formulários, calendário, overlays,
   navegação (tabs, breadcrumb e accordion), apresentação de dados e o gráfico compacto `AdsSparkline`.
+- `@dvmarques/admin-ds-highlighted-code`: pacote opcional e independente de código destacado com Shiki sob demanda, sem reexport pelo pacote de componentes.
 - `@dvmarques/admin-ds-admin`: shell administrativo, painéis de dashboard com sparkline opcional, filtros,
   tabela inteligente e fluxos de listagem, formulário em etapas e confirmação.
 - `apps/admin-demo`: integração dos pacotes em uma aplicação Next.js.
 - `apps/docs`: APIs, variantes e estados documentados no Storybook.
 
-Os pacotes não são publicados no npm. Consulte a [integração](docs/integration.md)
+Os quatro pacotes estão preparados para a distribuição, mas ainda não foram publicados no npm. A validação externa por tarballs é executada com `npm run verify:distribution` (após instalar dependências). Consulte a [integração](docs/integration.md)
 e as [limitações conhecidas](docs/limitations.md) para os requisitos de consumo e
 os limites de suporte. O histórico está no [changelog](CHANGELOG.md) e em
 `openspec/changes/archive/`; o trabalho é acompanhado pelas issues no GitHub.

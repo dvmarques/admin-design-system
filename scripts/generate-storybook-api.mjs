@@ -139,7 +139,7 @@ function storyFor(entry){
   }
   throw Error('Exemplo Storybook ausente para '+entry.name);
 }
-const esc=x=>String(x||'—').replaceAll('|','\\|').replaceAll('\n',' ').replaceAll('<','&lt;').replaceAll('>','&gt;');
+const esc=x=>String(x||'—').replaceAll('&','&amp;').replaceAll('|','\\|').replaceAll('\n',' ').replaceAll('{','&#123;').replaceAll('}','&#125;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll(bt,'&#96;');
 function render(entry){
   const api=typeInfo(entry.name),story=storyFor(entry);
   const pkg=entry.name==='AdsMaskedInput'?'@admin-ds/components/masked-input':

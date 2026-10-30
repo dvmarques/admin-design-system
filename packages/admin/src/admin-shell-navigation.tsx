@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsDrawer } from '@admin-ds/components';
+import { AdsDrawer } from '@dvmarques/admin-ds-components';
 import {
 	useEffect,
 	useRef,

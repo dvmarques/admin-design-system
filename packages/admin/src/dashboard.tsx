@@ -6,7 +6,7 @@ import {
 	AdsSparkline,
 	type AdsProgressProps,
 	type AdsSparklineProps,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { hasDashboardEmpty } from './dashboard-empty.js';

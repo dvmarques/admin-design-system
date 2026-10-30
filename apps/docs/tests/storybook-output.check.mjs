@@ -6,7 +6,6 @@ import { readFileSync } from 'node:fs';
 // Não roda em `test:node`: exige `npm run build --workspace @admin-ds/docs` antes (job de build da CI e `npm run validate`).
 const indexUrl = new URL('../storybook-static/index.json', import.meta.url);
 const matrixUrl = new URL('../../../docs/admin-demo-catalog.md', import.meta.url);
-const generatedUrl = new URL('../src/api-reference/', import.meta.url);
 const tick = String.fromCharCode(96);
 
 function entries() {

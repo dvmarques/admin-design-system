@@ -21,13 +21,15 @@
 
 ## 4. Segurança pontual — complemento de 30/10/2026
 
-- [ ] 4.1 Registrar auditoria npm JSON do lockfile original e do lockfile final (Node/npm, data, comandos e resultado, incluindo produção vs desenvolvimento).
-- [ ] 4.2 Documentar advisory, severidade, cadeia e exposição dos achados altos/críticos; separar bibliotecas, demo, Storybook e tooling.
-- [ ] 4.3 Corrigir achados high/critical com solução compatível; registrar risco residual, mitigação, responsável e acompanhamento dos não corrigíveis.
-- [ ] 4.4 Preservar responsabilidades das issues #267 (gate recorrente) e #268 (hardening workflows e imagens Playwright).
+- [x] 4.1 Registrar auditoria npm JSON do lockfile original e do lockfile final (Node/npm, data, comandos e resultado, incluindo produção vs desenvolvimento).
+- [x] 4.2 Documentar advisory, severidade, cadeia e exposição dos achados altos/críticos; separar bibliotecas, demo, Storybook e tooling.
+- [x] 4.3 Corrigir achados high/critical com solução compatível; registrar risco residual, mitigação, responsável e acompanhamento dos não corrigíveis.
+- [x] 4.4 Preservar responsabilidades das issues #267 (gate recorrente) e #268 (hardening workflows e imagens Playwright).
 - [ ] 4.5 Reexecutar validação apropriada após qualquer ajuste de segurança; registrar evidência no relatório e na PR.
 
 ## 5. Revisão e integração
 
 - [x] 5.1 Abrir PR vinculada à #265 com versões antes/depois, evidências, riscos e limitações.
 - [ ] 5.2 Confirmar CI no SHA final e revisão antes de considerar merge (não autorizado nesta tarefa).
+
+Evidência da auditoria: `docs/security/issue-265-audit-2026-10-30.md` e artefato da execução Actions 41145513851. Os quatro relatórios npm audit retornaram zero advisories; não houve correções high/critical aplicáveis nesta etapa.

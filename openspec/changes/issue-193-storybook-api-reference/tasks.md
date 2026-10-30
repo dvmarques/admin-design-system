@@ -26,10 +26,10 @@
 ## 4. Validação e PR
 
 - [x] 4.1 Executar `npm run build`, `npm run typecheck`, testes focalizados e o Storybook real; inspecionar exemplos e diferenças intencionais.
-- [ ] 4.2 Executar `npm run validate` e `openspec.cmd validate --all --strict`; registrar resultados, falhas e checks dispensados. Snapshots só com diff intencional revisado.
+- [x] 4.2 Executar `npm run validate` e `openspec.cmd validate --all --strict`; registrar resultados, falhas e checks dispensados. Snapshots só com diff intencional revisado.
 - [x] 4.3a Criar branch `feat/193-storybook-api-reference`, registrar a change e abrir a PR #261 para `develop`, em Draft.
 - [x] 4.3b Executar Prettier nos arquivos alterados, `npm run format` e revisar o diff já formatado.
-- [ ] 4.4 Após validação comprovada, marcar PR Ready, inspecionar CI do SHA atual, corrigir findings e solicitar revisão humana; não efetuar merge nem archive sem autorização.
+- [x] 4.4 Após validação comprovada, marcar PR Ready, inspecionar CI do SHA atual, corrigir findings e solicitar revisão humana; não efetuar merge nem archive sem autorização.
 
 ## Evidências verificadas e correções da revisão
 
@@ -52,5 +52,6 @@
 - Passaram: `npm ci`, `npm run build`, `npm run lint`, `npm run format`, `npm run typecheck`, `npm run verify:optional-peer`, `npm run test:quality`, testes Node do docs (6/6), E2E Pages (30/30) e varredura das 78 páginas em light/dark sem erros de console/rede.
 - Corrigido na revisão: exemplo errado de `AdsButton`, entidades em código inline, `AdsDatePicker`/`AdsCard` sem props, heading dos testes, variantes/estados/acessibilidade derivados dos tipos.
 - `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` (mesmo comando da CI): 62 itens, 0 falhas, incluindo esta change.
-- Pendentes: 4.2 (`npm run validate` completo: o E2E principal teve 25 falhas ambientais neste container — headless shell ausente e snapshots — e Firefox/WebKit não rodaram; a CI valida) e 4.4 (Ready for review/CI/revisão humana).
+- 4.2: o `npm run validate` completo não roda neste container (E2E principal com 25 falhas ambientais: headless shell ausente e snapshots). Evidência: cada etapa do `validate` e o OpenSpec estrito passaram na CI do SHA `ae5c8f6` (Qualidade rápida, Artefatos de distribuição, Política de develop, Fluxos no navegador em Chromium, Firefox e WebKit). O Chromium falhou uma vez em `admin-demo.spec.ts:204` (alinhamento do logo, arquivo fora desta change) e passou no re-run único do job.
+- 4.4: PR Ready, CI verde no SHA `ae5c8f6` e revisão humana concluída pelo responsável.
 - Limitação do tema: o decorator aplica o tema aos exemplos (Canvas), não ao corpo MDX.

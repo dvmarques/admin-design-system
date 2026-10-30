@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAdminShell, AdsOrganizationSwitcher, type AdsOrganization } from '@admin-ds/admin';
+import { AdsAdminShell, AdsOrganizationSwitcher, type AdsOrganization } from '@dvmarques/admin-ds-admin';
 
 // Imagem corrompida embutida: falha ao decodificar sem requisição de rede (sem erro 404 no console).
 const brokenImage = 'data:image/png;base64,AAAA';

@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { AdsButton, AdsField } from '@admin-ds/components';
+import { AdsButton, AdsField } from '@dvmarques/admin-ds-components';
 import {
 	AdsMaskedInput,
 	type AdsMask,
 	type AdsMaskedInputValues,
-} from '@admin-ds/components/masked-input';
+} from '@dvmarques/admin-ds-components/masked-input';
 
 const meta = {
 	title: 'Forms/Masked input',
@@ -14,7 +14,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'AdsMaskedInput formata o texto durante a digitação, a colagem e a remoção, preservando caret, seleção e composição IME. Fica no subpath opcional `@admin-ds/components/masked-input` e exige o peer opcional `react-imask`; o entrypoint principal nunca o carrega. `value` e `defaultValue` representam o texto formatado exibido; `onValueChange` informa `maskedValue`, `unmaskedValue` (sempre string, com zeros à esquerda), `typedValue` e `complete`. `onChange` continua sendo o evento nativo do input e não é sintetizado a cada alteração aceita. Todos os dados desta página são fictícios.',
+					'AdsMaskedInput formata o texto durante a digitação, a colagem e a remoção, preservando caret, seleção e composição IME. Fica no subpath opcional `@dvmarques/admin-ds-components/masked-input` e exige o peer opcional `react-imask`; o entrypoint principal nunca o carrega. `value` e `defaultValue` representam o texto formatado exibido; `onValueChange` informa `maskedValue`, `unmaskedValue` (sempre string, com zeros à esquerda), `typedValue` e `complete`. `onChange` continua sendo o evento nativo do input e não é sintetizado a cada alteração aceita. Todos os dados desta página são fictícios.',
 			},
 		},
 	},

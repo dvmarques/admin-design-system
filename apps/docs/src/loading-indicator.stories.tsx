@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsLoadingIndicator } from '@admin-ds/components';
+import { AdsLoadingIndicator } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/LoadingIndicator',

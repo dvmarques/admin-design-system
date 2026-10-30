@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
-import '@admin-ds/highlighted-code/styles.css';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
+import '@dvmarques/admin-ds-highlighted-code/styles.css';
 
 const meta = {
 	title: 'Data/HighlightedCodeSnippet',
@@ -10,7 +10,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Componente público do pacote opcional @admin-ds/highlighted-code, com carregamento assíncrono de Shiki, cópia do texto original e fallback plain. Não faz parte de @admin-ds/components.',
+					'Componente público do pacote opcional @dvmarques/admin-ds-highlighted-code, com carregamento assíncrono de Shiki, cópia do texto original e fallback plain. Não faz parte de @dvmarques/admin-ds-components.',
 			},
 		},
 	},

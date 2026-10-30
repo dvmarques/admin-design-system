@@ -1,4 +1,4 @@
-# @admin-ds/tokens
+# @dvmarques/admin-ds-tokens
 
 Os design tokens possuem uma única fonte em `source/tokens.mjs`. A partir
 dela, `npm run generate` produz:
@@ -19,7 +19,7 @@ Overlays portados preservam o tema explícito do escopo que os abriu. Os tokens
 de dialogs, drawers e toasts nos dois temas.
 
 Para sobrescrever tokens, declare as variáveis **depois** de importar
-`@admin-ds/tokens/styles.css`, com `[data-theme='light']` e
+`@dvmarques/admin-ds-tokens/styles.css`, com `[data-theme='light']` e
 `[data-theme='dark']` (sem `:root`). Overlays em portal (dialog, drawer e
 toast) são renderizados em um `div` com `data-theme` próprio, fora do `<html>`;
 `:root[data-theme=…]` não os alcança.

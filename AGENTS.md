@@ -82,6 +82,10 @@ Antes de concluir uma change, execute:
 openspec.cmd validate --all --strict
 ```
 
+Sem `openspec.cmd` no ambiente (Linux/nuvem), use o equivalente da CI:
+`npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`.
+Não relate o CLI como indisponível sem tentar esse comando; nunca use `@latest`.
+
 ## Compatibilidade entre agentes
 
 O repositório é usado com Claude Code, Cursor e Codex.

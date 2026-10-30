@@ -28,3 +28,6 @@ desktop.ini
 
 # Preferências pessoais do Claude Code
 .claude/settings.local.json
+
+# Referências de API MDX geradas antes do build/dev do Storybook
+apps/docs/src/api-reference/

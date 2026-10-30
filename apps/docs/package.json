@@ -15,12 +15,15 @@
 		"react-imask": "^7.6.1"
 	},
 	"scripts": {
+		"predev": "node ../../scripts/generate-storybook-api.mjs",
 		"dev": "storybook dev -p 6006",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"build": "storybook build",
 		"test": "npm run test:node",
 		"test:quiet": "npm run test:node:quiet",
 		"test:node": "node --test ./tests/**/*.test.mjs",
-		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs"
+		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs",
+		"prebuild": "node ../../scripts/generate-storybook-api.mjs",
+		"test:output": "node --test ./tests/storybook-output.check.mjs"
 	}
 }

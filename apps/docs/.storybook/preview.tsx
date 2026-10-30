@@ -23,7 +23,8 @@ const preview: Preview = {
 					background: 'var(--ads-color-background)',
 					color: 'var(--ads-color-text)',
 					fontFamily: 'var(--ads-typography-font-family)',
-					minHeight: '100vh',
+					// Em Docs cada exemplo é embutido na página: altura da viewport deixaria um vazio abaixo dele.
+					minHeight: context.viewMode === 'docs' ? undefined : '100vh',
 					padding: '2rem',
 				}}
 			>

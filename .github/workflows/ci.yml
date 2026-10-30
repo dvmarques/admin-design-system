@@ -103,6 +103,8 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/docs
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_docs != 'false'
+      - run: npm run test:output --workspace @admin-ds/docs
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_docs != 'false'
       - run: npm run build --workspace @admin-ds/admin-demo
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_demo != 'false'
       - run: npm run inspect:packages

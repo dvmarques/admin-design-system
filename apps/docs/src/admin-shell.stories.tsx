@@ -12,13 +12,38 @@ import { useState, type CSSProperties } from 'react';
 
 const meta = {
 	title: 'Layout/Admin Shell',
+	component: AdsAdminShell,
 	tags: ['autodocs'],
+	argTypes: {
+		layout: {
+			description: 'standard preserva o layout normal; sidebar-header alinha o topo da Sidebar ao Header.',
+			options: ['standard', 'sidebar-header'],
+			control: 'select',
+			table: { type: { summary: "'standard' | 'sidebar-header'" }, defaultValue: { summary: 'standard' } },
+		},
+		collapsed: {
+			description: 'Estado controlado de recolhimento da navegação desktop; não abre nem fecha o drawer móvel.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'uncontrolled' } },
+		},
+		defaultCollapsed: {
+			description: 'Valor inicial de recolhimento desktop na variante não controlada.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		mobileOpen: {
+			description: 'Estado controlado de abertura do drawer no mobile, independente de collapsed.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'uncontrolled' } },
+		},
+		defaultMobileOpen: {
+			description: 'Valor inicial da abertura do drawer móvel na variante não controlada.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+	},
 	parameters: {
 		layout: 'fullscreen',
 		docs: {
 			description: {
 				component:
-					'Estrutura administrativa com header, sidebar e conteúdo principal. A sidebar persistente (desktop) e o drawer (mobile) nunca são montados ao mesmo tempo. `collapsed` afeta somente a sidebar desktop; `mobileOpen` é um estado separado. Ambos aceitam modo controlado e não controlado. A persistência de preferências pertence à aplicação consumidora.',
+					'Estrutura administrativa com header, sidebar e conteúdo principal. A sidebar persistente (desktop) e o drawer (mobile) nunca são montados ao mesmo tempo. `collapsed` afeta somente a sidebar desktop; `mobileOpen` é um estado separado. Ambos aceitam modo controlado e não controlado. A persistência de preferências pertence à aplicação consumidora. **Composição pública:** AdsAdminShell.Header e .Body definem a estrutura; .Sidebar e .Main definem as regiões; .NavigationTrigger controla o drawer mobile; .SidebarToggle alterna a largura desktop. .Navigation, .NavigationSection, .NavigationGroup e .NavigationItem compõem o menu acessível com contexto do shell. A propriedade opcional Sidebar.header permite o branding alinhado em layout=sidebar-header. O hook useAdsAdminShell lê o contexto, e não deve ser usado fora de AdsAdminShell. As partes aninhadas não são inferidas individualmente pelo docgen: consulte as stories de navegação hierárquica, menu móvel e rolagem independente e os contratos de types em packages/admin/src/admin-shell.tsx e sidebar-navigation.tsx. As ações por teclado mantêm foco e rótulos ARIA.',
 			},
 		},
 	},

@@ -11,6 +11,15 @@
 7. O arquivo workflow exato é `.github/workflows/release.yml` (configuração npm usa apenas `release.yml`), conta/namespace `dvmarques`, repositório `admin-design-system` e ação permitida `npm publish`. Configurar publisher para cada pacote após a disponibilidade inicial no npm; se for necessário bootstrap por publicação autenticada, o mantenedor a executará manualmente **com os tarballs aprovados da mesma release** e 2FA, nunca com versão provisória.
 8. GitHub Release e tag refletem exclusivamente o commit de merge da release em master; uma eventual master posterior não muda a identidade do pacote publicado.
 
+## Consolidação do changelog antes de fechar a versão
+
+- O comando `npm run release:changelog -- X.Y.Z` produz uma **proposta não destrutiva** para a seção `Em andamento`: lista os itens, sugere títulos resumidos a partir das primeiras frases, identifica referências de issues repetidas e itens muito longos. É heurístico: **não pode decidir sozinho** que duas alterações são semanticamente equivalentes, eliminar breaking changes nem mudar o changelog.
+- O mantenedor consolida manualmente as entradas da versão em andamento, organiza `Added / Changed / Fixed / Security / Removed` conforme necessário, mantém os números de issues e garante que incompatibilidades e migrações continuem explícitas. O histórico de versões fechadas não é reescrito.
+- `npm run release:changelog -- X.Y.Z --approve` exige branch `release/X.Y.Z`, entradas não duplicadas e textos breves, e grava um comentário de aprovação `release-changelog-approved sha256` ligado ao corpo exato (excluída a própria marca). É confirmação editorial explícita por quem prepara a release, seguida da revisão da PR para master. Commitar o changelog aprovado antes de chamar `release:prepare` (que exige working tree limpa).
+- `release:prepare` falha antes de escrever quando o texto não foi aprovado ou foi modificado após a aprovação; `release:validate` verifica a mesma integridade na seção fechada. A CI para master executa essa validação; o back-merge preserva o bloco exato.
+- A marca invisível documenta o review no changelog versionado, mas **não** aparece nas GitHub Release Notes nem nas notas npm. Entradas breves e sem duplicidade são verificáveis objetivamente; a qualidade semântica depende da revisão humana. Nenhum modelo generativo publica texto automaticamente.
+- Versões fechadas anteriores à adoção não exigem retroativamente novas marcas; o gate vale para o alvo preparado e fechado daqui para frente.
+
 ## Falhas/recuperação
 
 - Registry indisponível, OIDC faltante, pacote privado, versão divergente, artifact inesperado: falhar fechado sem publicar ou continuar.

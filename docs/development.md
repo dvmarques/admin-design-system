@@ -33,26 +33,26 @@ npm run build
 
 Após o build, execute cada aplicação em seu **próprio terminal**, sempre a partir da raiz:
 
-| Aplicação | Comando | Endereço |
-| --- | --- | --- |
-| **Storybook** — catálogo visual e referência da API | `npm run dev --workspace @admin-ds/docs` | [http://localhost:6006](http://localhost:6006) |
+| Aplicação                                                   | Comando                                        | Endereço                                       |
+| ----------------------------------------------------------- | ---------------------------------------------- | ---------------------------------------------- |
+| **Storybook** — catálogo visual e referência da API         | `npm run dev --workspace @admin-ds/docs`       | [http://localhost:6006](http://localhost:6006) |
 | **Admin Demo** — aplicação Next.js App Router de referência | `npm run dev --workspace @admin-ds/admin-demo` | [http://localhost:3000](http://localhost:3000) |
 
 Encerre cada servidor com `Ctrl+C`. O Storybook gera a referência de API em `predev`. A Demo usa dados e autenticação demonstrativos, não fornece backend de produção. Consulte o [catálogo da Demo](admin-demo-catalog.md) e o [fluxo de autenticação ilustrativo](demo-auth-flow.md).
 
 ## Como o repositório é organizado
 
-| Caminho | Responsabilidade |
-| --- | --- |
-| `packages/tokens` | Tokens, temas e CSS base |
-| `packages/components` | Componentes React e estilos reutilizáveis |
-| `packages/admin` | Shell, dashboard e fluxos administrativos |
-| `packages/highlighted-code` | Código destacado opcional, isolado de components |
-| `apps/admin-demo` | Integração Next.js dos pacotes |
-| `apps/docs` | Storybook, stories e API |
-| `e2e` | Testes Playwright e baselines visuais |
-| `openspec` | Propostas, requisitos, tarefas e histórico de changes |
-| `scripts`, `.github/workflows` | Build, validações, CI e release |
+| Caminho                        | Responsabilidade                                      |
+| ------------------------------ | ----------------------------------------------------- |
+| `packages/tokens`              | Tokens, temas e CSS base                              |
+| `packages/components`          | Componentes React e estilos reutilizáveis             |
+| `packages/admin`               | Shell, dashboard e fluxos administrativos             |
+| `packages/highlighted-code`    | Código destacado opcional, isolado de components      |
+| `apps/admin-demo`              | Integração Next.js dos pacotes                        |
+| `apps/docs`                    | Storybook, stories e API                              |
+| `e2e`                          | Testes Playwright e baselines visuais                 |
+| `openspec`                     | Propostas, requisitos, tarefas e histórico de changes |
+| `scripts`, `.github/workflows` | Build, validações, CI e release                       |
 
 A [arquitetura](architecture.md) detalha os limites entre pacotes e aplicações. Componentes públicos usam nomes `Ads*`, classes `ads-*`, tokens `--ads-*` e imports declarados em `package.json#exports`; nunca dependa de `src/` de outro pacote. Confira [identidade visual](visual-identity.md), [acessibilidade e qualidade](quality.md) e [limitações conhecidas](limitations.md).
 

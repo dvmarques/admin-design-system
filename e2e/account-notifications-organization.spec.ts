@@ -3,7 +3,7 @@ import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 
 const accountTrigger = (page: Page) =>
-	page.getByRole('banner').getByRole('button', { name: 'Menu da conta: Ana Souza' });
+	page.getByRole('banner').getByRole('button', { name: 'Menu da conta: AS Ana Souza' });
 const bell = (page: Page) =>
 	page.getByRole('banner').getByRole('button', { name: /^Notificações(, \d+ não lidas?)?$/ });
 const organizationTrigger = (page: Page) =>
@@ -27,6 +27,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await openDemo(page);
 			const trigger = accountTrigger(page);
 			await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+			await expect(trigger).toHaveAccessibleName('Menu da conta: AS Ana Souza');
 
 			await trigger.click();
 
@@ -122,6 +123,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await openDemo(page);
 			const trigger = organizationTrigger(page);
 			await expect(trigger).toContainText('Acme Brasil');
+			await expect(trigger).toHaveAccessibleName(/Organização atual: AB Acme Brasil/);
 			await expect(
 				page.getByRole('navigation', { name: 'Navegação do demo' }).locator('> *').first(),
 			).toHaveClass(/ads-organization-switcher/);

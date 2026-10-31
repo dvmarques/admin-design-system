@@ -123,7 +123,10 @@ export async function verifyPlan(plan, version, releaseSha, directory) {
 	assert.equal(plan.version, version, 'Versão do artifact diverge da release.');
 	assert.equal(plan.releaseSha, releaseSha, 'Artifact de outro commit de release.');
 	assert.equal(plan.packages?.length, 4);
-	assert.deepEqual(plan.packages.map((item) => item.name), PACKAGE_ORDER.map(NAME));
+	assert.deepEqual(
+		plan.packages.map((item) => item.name),
+		PACKAGE_ORDER.map(NAME),
+	);
 	const tarballs = (await readdir(directory)).filter((name) => name.endsWith('.tgz')).sort();
 	assert.deepEqual(tarballs, plan.packages.map((item) => item.file).sort());
 	for (const item of plan.packages) {
@@ -195,7 +198,7 @@ export async function publishPlan(plan, { getVersion, publishTarball, sleep = de
 
 export async function registryVersion(name, version) {
 	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
-	const response = await fetch(url, { headers: { accept: 'application/json' }, cache: 'no-store' });
+	const response = await globalThis.fetch(url, { headers: { accept: 'application/json' }, cache: 'no-store' });
 	if (response.status === 404) return null;
 	if (!response.ok) throw new Error('Falha ao consultar registry npm: HTTP ' + response.status);
 	return response.json();

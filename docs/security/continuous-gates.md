@@ -48,3 +48,7 @@ O arquivo .github/dependabot.yml solicita atualizações semanais de versão par
 Para cada run, registrar data UTC, evento (PR Ready, push ou schedule), SHA, URL, resultado, duração de CodeQL/SCA/Gitleaks, duração da CI anterior e latência total até os checks concluírem. O tempo de jobs paralelos não deve ser somado para estimar o atraso real até merge. Quando disponível, registrar minutos de runner; custo financeiro depende do plano e não deve ser inventado.
 
 Comparar no mínimo três runs antes e depois, mesmo evento e carga semelhante, mediana, cache e diferenças de fila, usando o workflow manual Métricas de CI / scripts/ci-metrics.mjs como referência. Publicar medições progressivamente em comentários datados na #267 e consolidar após a amostra. Se não houver histórico comparável, explicar limitação expressamente.
+
+## Bloqueio de CodeQL high/critical
+
+Após upload do CodeQL ao GitHub, o próprio workflow valida o SARIF gerado e falha quando houver resultado com score de segurança maior ou igual a 7.0 sem exceção específica. O arquivo .github/security/codeql-exceptions.json admite somente regra + arquivo, com justificativa, responsável e data de revisão; scores menores são registrados pelo Code Scanning. A ausência de SARIF ou um formato inválido falha de forma explícita. O teste sintético executa com `node --test scripts/codeql-gate.test.mjs`.

@@ -36,7 +36,9 @@ test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => 
 	assert.match(release, /prepare-npm:[\s\S]*?npm-publication\.mjs plan/);
 	assert.match(release, /publish-npm:[\s\S]*?id-token: write/);
 	assert.match(release, /publish-npm:[\s\S]*?npm-publication\.mjs publish/);
-	assert.match(release, /publish-github:[\s\S]*?needs: \[resolve-validate, publish-npm\]/);
+	assert.match(release, /verify-registry:[\s\S]*?PUBLIC_REGISTRY_VERSION/);
+	assert.match(release, /verify-registry:[\s\S]*?verify:distribution/);
+	assert.match(release, /publish-github:[\s\S]*?needs: \[resolve-validate, verify-registry\]/);
 	const npmJob = release.split('  publish-npm:')[1].split('  publish-github:')[0];
 	assert.doesNotMatch(npmJob, /contents: write/);
 	assert.doesNotMatch(release, /cancel-in-progress: true/);

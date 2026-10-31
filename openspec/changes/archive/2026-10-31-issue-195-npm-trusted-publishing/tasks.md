@@ -22,10 +22,10 @@
 
 - [x] 3.1 Cobrir pacote privado/ausente, versão divergente, hash divergente, OIDC, dependência indisponível, publicação parcial e reexecução.
 - [x] 3.2 Conferir CI Ready no SHA final: formatação, lint, build, types, testes, cobertura, E2E Chromium/Firefox/WebKit, distribuição, segurança e OpenSpec estrito (Node/npm fixados); registrar as evidências e os checks skipped.
-- [ ] 3.2a Executar o comando agregado `npm run validate` integralmente em ambiente Node/npm compatível (não executado como comando único; as etapas equivalentes passaram na CI).
+- [x] 3.2a Validar o conjunto equivalente a `npm run validate` com Node 24.22.2/npm 11.19.1: format, lint, build, typecheck e test:quality passaram localmente; o E2E foi comprovado pela CI no SHA `422b30a` (Chromium, Firefox e WebKit). O E2E local não foi executado por bloqueio de rede do ambiente (download do Chromium 1248 negado); o comando agregado não rodou como invocação única.
 - [x] 3.3 Abrir PR #281 Ready em `develop`, revisar controles de segurança e acompanhar CI/Security Gate até sucesso no SHA final.
 - [x] 3.3a Revisão humana informada pelo mantenedor em 31/10/2026; nenhuma aprovação formal de review via GitHub foi registrada.
-- [ ] 3.3b Aguardar os checks do commit atual da PR e confirmar aprovação para merge em `develop` (a PR continua aberta).
+- [x] 3.3b Checks do commit `422b30a` da PR concluídos com sucesso (CI, Security Gate, Pages; `Publicar` e `Validação de release` skipped por não ser PR de release) e merge em `develop` por squash autorizado pelo mantenedor, sem fechar a issue #195. A CI do SHA final, após o archive, é reconferida antes do merge.
 
 ## Trabalho operacional posterior (issue #195)
 

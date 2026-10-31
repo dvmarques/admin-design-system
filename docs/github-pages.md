@@ -6,8 +6,7 @@ site estático:
 - demo: `https://dvmarques.github.io/admin-design-system/`
 - Storybook: `https://dvmarques.github.io/admin-design-system/storybook/`
 
-Os pacotes `@admin-ds/*` **não** são publicados no npm. A publicação do site distribui somente
-a demonstração e o catálogo Storybook.
+Os quatro pacotes `@dvmarques/admin-ds-*` ainda não foram publicados no npm; a primeira publicação pertence à [#195](https://github.com/dvmarques/admin-design-system/issues/195). A publicação no Pages distribui somente a demonstração e o catálogo Storybook.
 
 ## Como funciona
 

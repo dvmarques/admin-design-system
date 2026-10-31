@@ -36,8 +36,9 @@ publicados no npm.
 ```text
 packages/
 ├── tokens/      # design tokens e temas
-├── components/  # componentes React reutilizáveis
-└── admin/       # composições de layout administrativo
+├── components/      # componentes React reutilizáveis
+├── admin/           # composições de layout administrativo
+└── highlighted-code/ # realce de código opcional
 ```
 
 - `tokens/` define cores, tipografia, espaçamentos, raios, sombras e
@@ -45,6 +46,7 @@ packages/
 - `components/` contém componentes React genéricos, como `AdsButton`,
   `AdsInput`, `AdsCard`, `AdsDialog`, `AdsTable` e `AdsSparkline`. Os componentes usam os tokens e
   distribuem CSS compilado.
+- `highlighted-code/` oferece `AdsHighlightedCodeSnippet` com realce Shiki sob demanda; é independente do pacote básico de componentes.
 - `admin/` contém o layout administrativo `AdsAdminShell` e os padrões de dashboard (`AdsMetricCard`,
   `AdsDashboardGrid` e `AdsDashboardPanel`), a barra de filtros
   (`AdsFilterBar`), a tabela inteligente (`AdsSmartTable`) e os fluxos
@@ -64,11 +66,14 @@ packages/admin
 apps/admin-demo e apps/docs
 ```
 
+`packages/highlighted-code` é opcional e pode ser consumido de forma independente, com tokens e CSS próprios. Não é dependência de `packages/components` nem de `packages/admin`.
+
 ## Limites de responsabilidade
 
 - `packages/tokens` mantém a fonte, geração e distribuição dos design tokens.
 - `packages/components` contém componentes React reutilizáveis e seus estilos.
 - `packages/admin` contém composições administrativas sem dependência de roteamento ou regras de negócio.
+- `packages/highlighted-code` contém realce de código independente e opcional.
 - `apps/docs` documenta e demonstra as APIs públicas dos pacotes.
 - `apps/admin-demo` valida o consumo dos pacotes por uma aplicação Next.js App Router.
 

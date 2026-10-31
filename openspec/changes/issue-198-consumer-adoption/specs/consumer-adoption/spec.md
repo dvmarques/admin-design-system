@@ -43,7 +43,7 @@ A documentação MUST distinguir pacotes preparados e validados por tarballs de 
 
 ### Requirement: Primeira adoção, identidade visual e desenvolvimento local
 
-O README raiz MUST preservar o logo original com imagens para temas claro e escuro e apontar para um guia de desenvolvimento separado. O guia MUST cobrir ambiente, instalação, build, execução da Demo/Storybook, organização do monorepo, testes, OpenSpec, CI e contribuição. Como não houve lançamento público anterior, a documentação MUST NOT exigir migração de nomes históricos de workspaces ou de `ThemeToggle`; o histórico por componente MUST permanecer fiel às issues, versões verificadas e APIs atuais.
+O README raiz MUST preservar o logo para temas claro/escuro e indicar um guia separado de desenvolvimento. Esse guia MUST cobrir instalação, build, Demo/Storybook, testes e contribuição. Sem versão pública anterior, a documentação MUST NOT exigir migração de pacotes ou temas; o histórico MUST corresponder às APIs atuais e às issues verificadas.
 
 #### Scenario: Colaborador prepara o ambiente
 

@@ -4,14 +4,14 @@ Referência: [issue #268](https://github.com/dvmarques/admin-design-system/issue
 
 ## Inventário em 31/10/2026
 
-| Workflow | Eventos / código executado | Actions externas e contêiner | Permissões e riscos |
-| --- | --- | --- | --- |
-| `ci.yml` | PR Ready e push develop/master; npm ci, build, testes e OpenSpec 1.15.0 | checkout v6, setup-node v6, upload-artifact v4; Playwright 1.64.1 Noble | `contents: read`; `develop-policy` e `release-check` incluem `pull-requests: read` |
-| `pages.yml` | PR Ready develop, push develop, dispatch; build/E2E Pages, deploy develop | checkout v6, setup-node v6, configure-pages v5, upload-pages-artifact v4, deploy-pages v4; Playwright 1.64.1 Noble | build com `contents: read`; deploy isolado com `pages: write` e `id-token: write` |
-| `release.yml` | `workflow_dispatch` em develop; validar SHAs, depois publicar | checkout v6, setup-node v6 | validar `contents: read` + `pull-requests: read`; publicar `contents: write` + `pull-requests: read` |
-| `security.yml` | PR Ready/push/schedule/dispatch; CodeQL, npm audit, Gitleaks | checkout v6, setup-node v6, upload-artifact v4, CodeQL v4, Gitleaks v3, já fixadas por SHA | `contents: read`; `security-events: write` só CodeQL; `pull-requests: read` só Gitleaks |
-| `ci-metrics.yml` | `workflow_dispatch`; consulta API de runs | checkout v6, setup-node v6 | `actions: read` + `contents: read` |
-| `update-visual-baselines.yml` | `workflow_dispatch` em branch de feature; build/testes/PNG | checkout v6, setup-node v6, upload/download-artifact v4; Playwright 1.64.1 Noble | antes `contents: write` durante npm/build; depois geração com `contents: read` e commit isolado com `contents: write` |
+| Workflow                      | Eventos / código executado                                                | Actions externas e contêiner                                                                                       | Permissões e riscos                                                                                                   |
+| ----------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------- |
+| `ci.yml`                      | PR Ready e push develop/master; npm ci, build, testes e OpenSpec 1.15.0   | checkout v6, setup-node v6, upload-artifact v4; Playwright 1.64.1 Noble                                            | `contents: read`; `develop-policy` e `release-check` incluem `pull-requests: read`                                    |
+| `pages.yml`                   | PR Ready develop, push develop, dispatch; build/E2E Pages, deploy develop | checkout v6, setup-node v6, configure-pages v5, upload-pages-artifact v4, deploy-pages v4; Playwright 1.64.1 Noble | build com `contents: read`; deploy isolado com `pages: write` e `id-token: write`                                     |
+| `release.yml`                 | `workflow_dispatch` em develop; validar SHAs, depois publicar             | checkout v6, setup-node v6                                                                                         | validar `contents: read` + `pull-requests: read`; publicar `contents: write` + `pull-requests: read`                  |
+| `security.yml`                | PR Ready/push/schedule/dispatch; CodeQL, npm audit, Gitleaks              | checkout v6, setup-node v6, upload-artifact v4, CodeQL v4, Gitleaks v3, já fixadas por SHA                         | `contents: read`; `security-events: write` só CodeQL; `pull-requests: read` só Gitleaks                               |
+| `ci-metrics.yml`              | `workflow_dispatch`; consulta API de runs                                 | checkout v6, setup-node v6                                                                                         | `actions: read` + `contents: read`                                                                                    |
+| `update-visual-baselines.yml` | `workflow_dispatch` em branch de feature; build/testes/PNG                | checkout v6, setup-node v6, upload/download-artifact v4; Playwright 1.64.1 Noble                                   | antes `contents: write` durante npm/build; depois geração com `contents: read` e commit isolado com `contents: write` |
 
 Total: seis workflows; nenhum utiliza `pull_request_target`. Nenhum novo job altera a matriz de três browsers da CI. O teste `scripts/verify-workflow-supply-chain.mjs`, chamado por `scripts/ci-workflow.test.mjs` via `npm run test:ci`, bloqueia regressão de action não pinada, digest/versão, persistência de checkout e permissões privilegiadas dos jobs. Esta checagem **não é** um scanner independente de vulnerabilidades.
 
@@ -31,13 +31,13 @@ O fluxo requer revisão visual dos PNGs na PR. Um artifact não constitui fonte 
 
 ## Permissões antes/depois e risco residual
 
-| Contexto | Antes | Depois |
-| --- | --- | --- |
-| Job de teste com código de PR | token `contents: read` disponível e credenciais de checkout persistidas | token `contents: read` e `persist-credentials: false` |
-| Job manual de baselines | `contents: write` disponível durante `npm ci`, build e testes | geração `contents: read`; token de escrita só no job de cópia/commit |
-| Pages deploy | `pages: write`, `id-token: write` | preservado exclusivamente no deploy |
-| Release publish | `contents: write`, `pull-requests: read` | preservado no job separado; resolução/verificação permanece read-only |
-| CodeQL | `security-events: write` junto com `contents: read` | preservado somente no SAST |
+| Contexto                      | Antes                                                                   | Depois                                                                |
+| ----------------------------- | ----------------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Job de teste com código de PR | token `contents: read` disponível e credenciais de checkout persistidas | token `contents: read` e `persist-credentials: false`                 |
+| Job manual de baselines       | `contents: write` disponível durante `npm ci`, build e testes           | geração `contents: read`; token de escrita só no job de cópia/commit  |
+| Pages deploy                  | `pages: write`, `id-token: write`                                       | preservado exclusivamente no deploy                                   |
+| Release publish               | `contents: write`, `pull-requests: read`                                | preservado no job separado; resolução/verificação permanece read-only |
+| CodeQL                        | `security-events: write` junto com `contents: read`                     | preservado somente no SAST                                            |
 
 Limitações: `npx --yes @fission-ai/openspec@1.15.0` usa uma versão exata, mas é resolvido remotamente fora do lockfile do monorepo; os MCPs de agentes também podem buscar pacotes fixados fora do lockfile, sem serem executados na CI. Não foi realizado upgrade nem alteração do fluxo de agentes por esta issue. `npm ci --ignore-scripts` limita scripts de instalação, mas comandos de teste/build continuam executando código da PR sob token read-only; redes e artefatos continuam superfícies a proteger. O workflow manual tem permissão de escrita no job de commit; branch protections, revisão humana e confiança em quem pode editar workflows ainda são condições fundamentais.
 

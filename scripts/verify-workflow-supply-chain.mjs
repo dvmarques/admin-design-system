@@ -4,10 +4,13 @@ import { fileURLToPath } from 'node:url';
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), 'utf8');
-const names = readdirSync(new URL('.github/workflows/', root)).filter((name) => name.endsWith('.yml') || name.endsWith('.yaml'));
+const names = readdirSync(new URL('.github/workflows/', root)).filter(
+	(name) => name.endsWith('.yml') || name.endsWith('.yaml'),
+);
 const playwrightVersion = '1.64.1';
 const playwrightDigest = 'sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea';
-const playwrightImage = 'mcr.microsoft.com/playwright:v' + playwrightVersion + '-noble@' + playwrightDigest;
+const playwrightImage =
+	'mcr.microsoft.com/playwright:v' + playwrightVersion + '-noble@' + playwrightDigest;
 
 const block = (workflow, jobName) => {
 	const start = workflow.indexOf('\n  ' + jobName + ':\n');
@@ -32,19 +35,40 @@ export function verifyWorkflowSupplyChain() {
 		assert.doesNotMatch(workflow, /pull_request_target/, file + ' usa evento privilegiado');
 		assert.doesNotMatch(workflow, /npx[^\n]*(?:@latest|@fission-ai\/openspec(?!@1\.15\.0))/, file);
 		assert.doesNotMatch(workflow, /uses:\s*[^\n]*@v\d+(?:\s|$)/, file + ': action por tag mutável');
-		for (const match of workflow.matchAll(/^\s+(?:-\s+)?uses:\s+([^\s#]+)(?:[ \t]+#[ \t]*([^\r\n]+))?/gm)) {
+		for (const match of workflow.matchAll(
+			/^\s+(?:-\s+)?uses:\s+([^\s#]+)(?:[ \t]+#[ \t]*([^\r\n]+))?/gm,
+		)) {
 			const action = match[1];
 			if (action.startsWith('./')) continue;
 			assert.match(action, /^[\w.-]+\/[\w./-]+@[a-f0-9]{40}$/, file + ': ' + action);
-			assert.match(match[2] ?? '', /^v\d+(?:\.\d+)*\b/, file + ': comentário de versão em ' + action);
+			assert.match(
+				match[2] ?? '',
+				/^v\d+(?:\.\d+)*\b/,
+				file + ': comentário de versão em ' + action,
+			);
 			if (action.startsWith('actions/checkout@')) {
-				const snippet = workflow.slice(match.index, workflow.indexOf('\n      - ', match.index + 1) === -1 ? undefined : workflow.indexOf('\n      - ', match.index + 1));
-				assert.match(snippet, /persist-credentials:\s*false/, file + ': checkout deve remover token persistido');
+				const snippet = workflow.slice(
+					match.index,
+					workflow.indexOf('\n      - ', match.index + 1) === -1
+						? undefined
+						: workflow.indexOf('\n      - ', match.index + 1),
+				);
+				assert.match(
+					snippet,
+					/persist-credentials:\s*false/,
+					file + ': checkout deve remover token persistido',
+				);
 			}
 		}
-		const references = [...workflow.matchAll(/^\s+image:\s+(mcr\.microsoft\.com\/playwright:[^\s#]+)/gm)].map((x) => x[1]);
+		const references = [
+			...workflow.matchAll(/^\s+image:\s+(mcr\.microsoft\.com\/playwright:[^\s#]+)/gm),
+		].map((x) => x[1]);
 		if (expectedImages.includes(file)) {
-			assert.deepEqual(references, [playwrightImage], file + ': imagem/versionamento inconsistentes');
+			assert.deepEqual(
+				references,
+				[playwrightImage],
+				file + ': imagem/versionamento inconsistentes',
+			);
 		} else {
 			assert.deepEqual(references, [], file + ': imagem não inventariada');
 		}
@@ -58,7 +82,10 @@ export function verifyWorkflowSupplyChain() {
 	assert.match(pages, /^permissions:\n  contents: read/m);
 	assert.match(security, /^permissions:\n  contents: read/m);
 	assert.match(block(pages, 'deploy'), /permissions:\n\s+pages: write\n\s+id-token: write/);
-	assert.match(block(security, 'sast'), /permissions:\n\s+contents: read\n\s+security-events: write/);
+	assert.match(
+		block(security, 'sast'),
+		/permissions:\n\s+contents: read\n\s+security-events: write/,
+	);
 	assert.doesNotMatch(block(release, 'resolve-validate'), /contents: write/);
 	assert.match(block(release, 'publish'), /contents: write/);
 	assert.match(baseline, /^permissions:\n  contents: read/m);

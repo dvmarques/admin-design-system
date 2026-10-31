@@ -9,18 +9,18 @@
 
 ## Matriz de permissões (planejamento)
 
-| Workflow/job | Antes | Depois |
-| --- | --- | --- |
-| CI quality/build/e2e | contents: read (global), checkout com credenciais persistentes | contents: read, checkout sem persistência |
-| CI develop-policy/release-check | contents: read + pull-requests: read | iguais, checkout sem persistência |
-| Pages build | contents: read (global) | igual, checkout sem persistência |
-| Pages deploy | pages: write + id-token: write | igual, isolado |
-| Security Gate SAST | contents: read + security-events: write | igual, checkout sem persistência |
-| Security Gate SCA/Gitleaks | contents: read; Gitleaks pull-requests: read | iguais, checkout sem persistência |
-| Release resolve-validate | contents: read + pull-requests: read | igual, checkout sem persistência |
-| Release publish | contents: write + pull-requests: read | igual, código confiável, checkout sem persistência |
-| Métricas | actions: read + contents: read | igual, checkout sem persistência |
-| Baselines update | contents: write para install/build/test/push | gerar: contents: read; gravar: contents: write, sem testes/instalação |
+| Workflow/job                    | Antes                                                          | Depois                                                                |
+| ------------------------------- | -------------------------------------------------------------- | --------------------------------------------------------------------- |
+| CI quality/build/e2e            | contents: read (global), checkout com credenciais persistentes | contents: read, checkout sem persistência                             |
+| CI develop-policy/release-check | contents: read + pull-requests: read                           | iguais, checkout sem persistência                                     |
+| Pages build                     | contents: read (global)                                        | igual, checkout sem persistência                                      |
+| Pages deploy                    | pages: write + id-token: write                                 | igual, isolado                                                        |
+| Security Gate SAST              | contents: read + security-events: write                        | igual, checkout sem persistência                                      |
+| Security Gate SCA/Gitleaks      | contents: read; Gitleaks pull-requests: read                   | iguais, checkout sem persistência                                     |
+| Release resolve-validate        | contents: read + pull-requests: read                           | igual, checkout sem persistência                                      |
+| Release publish                 | contents: write + pull-requests: read                          | igual, código confiável, checkout sem persistência                    |
+| Métricas                        | actions: read + contents: read                                 | igual, checkout sem persistência                                      |
+| Baselines update                | contents: write para install/build/test/push                   | gerar: contents: read; gravar: contents: write, sem testes/instalação |
 
 ## Revisão, evidência e riscos
 

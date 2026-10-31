@@ -44,7 +44,7 @@ export interface AdsOrganizationSwitcherManage {
 }
 
 export interface AdsOrganizationSwitcherLabels {
-	/** Prefix of the accessible name of the trigger: "<trigger>: <organization>". */
+	/** Prefix of the accessible name: "<trigger>: <initials> <organization>". */
 	trigger: string;
 	panel: string;
 	search: string;

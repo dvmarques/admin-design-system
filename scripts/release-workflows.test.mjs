@@ -15,6 +15,22 @@ const publishRelease = await fs.readFile(
 	'utf8',
 );
 const prepareRelease = await fs.readFile(new URL('./prepare-release.mjs', import.meta.url), 'utf8');
+const validateRelease = await fs.readFile(
+	new URL('./validate-release.mjs', import.meta.url),
+	'utf8',
+);
+const changelogReview = await fs.readFile(
+	new URL('./release-changelog.mjs', import.meta.url),
+	'utf8',
+);
+
+test('fechamento exige revisão editorial aprovada e não inclui marcador nas notas', () => {
+	assert.match(prepareRelease, /validateChangelogReview\(changelog, target, 'ongoing'\)/);
+	assert.match(validateRelease, /validateChangelogReview\(changelog, version, 'closed'\)/);
+	assert.match(changelogReview, /branch !== 'release\/' \+ version/);
+	assert.match(changelogReview, /reviewDigest\(cleaned\)/);
+	assert.match(changelogReview, /editorialWarnings/);
+});
 
 test('publication workflow is manually dispatched only from develop and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);

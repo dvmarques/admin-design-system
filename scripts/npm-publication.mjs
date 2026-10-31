@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
-import { spawn } from 'node:child_process';
+import { spawn, spawnSync } from 'node:child_process';
 import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
@@ -73,6 +73,40 @@ export async function makePlan(version, releaseSha, directory, root = ROOT) {
 	return { schemaVersion: 1, version, releaseSha, packages };
 }
 
+function inspectArchive(item, directory) {
+	const file = join(directory, item.file);
+	const result = spawnSync('tar', ['-xzOf', file, 'package/package.json'], {
+		encoding: 'utf8',
+		maxBuffer: 256 * 1024,
+	});
+	if (result.status !== 0 || !result.stdout) {
+		throw new Error('Tarball inválido ou sem package.json: ' + item.name);
+	}
+	let manifest;
+	try {
+		manifest = JSON.parse(result.stdout);
+	} catch {
+		throw new Error('Manifest inválido no tarball: ' + item.name);
+	}
+	assert.equal(manifest.name, item.name, 'Nome no tarball diverge da publicação.');
+	assert.equal(manifest.version, item.version, 'Versão no tarball diverge da publicação.');
+	assert.equal(manifest.private, false, 'Tarball privado bloqueado.');
+	assert.equal(manifest.publishConfig?.access, 'public', 'Tarball sem acesso público.');
+	assert.equal(manifest.license, 'MIT', 'Licença inesperada.');
+	assert.equal(
+		manifest.repository?.url,
+		'git+https://github.com/dvmarques/admin-design-system.git',
+		'Repositório de origem inesperado.',
+	);
+	if (item.name === NAME('admin')) {
+		assert.equal(
+			manifest.peerDependencies?.[NAME('components')],
+			item.version,
+			'Dependência components divergente.',
+		);
+	}
+}
+
 export async function verifyPlan(plan, version, releaseSha, directory) {
 	verifyVersion(version);
 	assert.equal(plan.schemaVersion, 1);
@@ -96,6 +130,7 @@ export async function verifyPlan(plan, version, releaseSha, directory) {
 			item.name,
 		);
 		verifyIntegrity(createHash('sha256').update(bytes).digest('hex'), item.sha256, item.name);
+		inspectArchive(item, directory);
 	}
 	return plan;
 }

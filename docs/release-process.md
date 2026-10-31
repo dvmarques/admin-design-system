@@ -119,12 +119,13 @@ O comportamento foi verificado em 2026-10-16 com a exclusão automática de head
 
 O identificador da publicação é **sempre a versão coordenada do commit de merge da release em master**, não o HEAD mais recente de master, nem a evolução posterior de develop. Exemplo: `release/0.1.1` aprovada publica exclusivamente `@dvmarques/admin-ds-*@0.1.1`, tag `v0.1.1` e GitHub Release `v0.1.1`. Essa versão é ilustrativa; a primeira ainda será escolhida pelo mantenedor.
 
-O workflow separa quatro jobs:
+O workflow separa cinco jobs:
 
 1. `resolve-validate` (leitura): identifica os dois merges exatos, compara changelog e versões, verifica predecessora, regras de reachability e integridade do estado remoto. Preserva a lógica atual de release.
 2. `prepare-npm` (leitura): checkout do commit **aprovado em master**, Node 24, npm 11.19.1, smoke externo `npm run verify:distribution` de Next.js com os quatro tarballs, tipos, CSS e hidratação; mantém esses **mesmos arquivos** no artifact do workflow e registra nomes/versões e hashes SHA-512/SHA-256 em `publication-plan.json`.
 3. `publish-npm` (OIDC, sem `contents: write`): verifica hash e identidade de cada artifact, consulta o registry, usa `npm publish <tarball> --access public --provenance` apenas quando a versão não existe, espera confirmação de cada pacote e verifica os quatro novamente. Ordem: **tokens → components → highlighted-code → admin**. Versão existente com `dist.integrity` diferente é erro fatal; não sobrescrever ou apagar. `components` precisa estar confirmado antes de `admin`.
-4. `publish-github` (`contents: write`, sem OIDC): só após sucesso do npm, revalida estado remoto com lógica confiável, cria/recupera tag anotada `vX.Y.Z` no merge commit **exato** da PR para master, e GitHub Release com notas do changelog fechado. Nunca move tag, altera release divergente ou executa código arbitrário do commit com token de escrita.
+4. `verify-registry` (somente leitura): instala os quatro pacotes **por nome e versão diretamente do npm**, executa `npm audit signatures` e repete o smoke Next.js externo de tipos, CSS e hidratação; falhas bloqueiam a tag.
+5. `publish-github` (`contents: write`, sem OIDC): só após sucesso do npm **e do smoke no registry**, revalida estado remoto com lógica confiável, cria/recupera tag anotada `vX.Y.Z` no merge commit **exato** da PR para master, e GitHub Release com notas do changelog fechado. Nunca move tag, altera release divergente ou executa código arbitrário do commit com token de escrita.
 
 `apps/*` e raiz nunca são publicados; somente os quatro pacotes com `private: false` e `publishConfig.access: public`. `highlighted-code` continua opcional e independente, sem contaminar o bundle principal com Shiki. Para a publicação npm são usados `npm@11.19.1` e Node 24 (OIDC suportado), `id-token: write` apenas no job npm e nenhuma credencial npm de longa duração.
 
@@ -153,7 +154,7 @@ Documentação oficial: [npm Trusted Publishing](https://docs.npmjs.com/trusted-
 - **Tag ausente e estado válido:** cria tag anotada e GitHub Release. Tag correta + release ausente: preserva tag e cria só a release. Tag lightweight/divergente ou GitHub Release incompatível: falha sem mutações.
 - **Indisponibilidade/propagação do registry:** há releituras limitadas; se não confirmar os hashes, falha e exige reconciliação/reexecução, nunca assume sucesso pelo exit code do `npm publish`.
 
-Após publicar, validar `npm view @dvmarques/admin-ds-tokens@X.Y.Z dist.integrity` e os demais, verificar os dados de provenance e executar instalação externa **por nomes do registry** em Next.js (tipos, CSS, React Server/Client e hidratação). A execução de `verify:distribution` com tarballs locais **não substitui** esse último teste. Somente depois de confirmar as quatro versões reais, remover os avisos `RELEASE TODO (#195)` e “antes da primeira publicação” no README/READMEs e `docs/integration.md` em uma PR apropriada; manter Demo/Storybook em workspaces locais sem exigir publicações npm a cada alteração.
+Após publicar, validar `npm view @dvmarques/admin-ds-tokens@X.Y.Z dist.integrity` e os demais, verificar os dados de provenance e executar instalação externa **por nomes do registry** em Next.js (tipos, CSS, React Server/Client e hidratação), já automatizada no job `verify-registry`. A execução de `verify:distribution` com tarballs locais **não substitui** esse último teste. Somente depois de confirmar as quatro versões reais, remover os avisos `RELEASE TODO (#195)` e “antes da primeira publicação” no README/READMEs e `docs/integration.md` em uma PR apropriada; manter Demo/Storybook em workspaces locais sem exigir publicações npm a cada alteração.
 
 Depois de back-merge, npm completo, tag e GitHub Release consistentes e validação externa, a branch `release/X.Y.Z` pode ser removida pelo mantenedor, respeitando o ruleset.
 

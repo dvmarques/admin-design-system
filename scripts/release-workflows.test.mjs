@@ -15,6 +15,22 @@ const publishRelease = await fs.readFile(
 	'utf8',
 );
 const prepareRelease = await fs.readFile(new URL('./prepare-release.mjs', import.meta.url), 'utf8');
+const validateRelease = await fs.readFile(
+	new URL('./validate-release.mjs', import.meta.url),
+	'utf8',
+);
+const changelogReview = await fs.readFile(
+	new URL('./release-changelog.mjs', import.meta.url),
+	'utf8',
+);
+
+test('fechamento exige revisão editorial aprovada e não inclui marcador nas notas', () => {
+	assert.match(prepareRelease, /validateChangelogReview\(changelog, target, 'ongoing'\)/);
+	assert.match(validateRelease, /validateChangelogReview\(changelog, version, 'closed'\)/);
+	assert.match(changelogReview, /branch !== 'release\/' \+ version/);
+	assert.match(changelogReview, /reviewDigest\(cleaned\)/);
+	assert.match(changelogReview, /editorialWarnings/);
+});
 
 test('publication workflow is manually dispatched only from develop and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);
@@ -26,9 +42,28 @@ test('publication workflow is manually dispatched only from develop and serializ
 
 test('publication separates read-only validation from privileged publication', () => {
 	assert.match(release, /resolve-validate:[\s\S]*?permissions:[\s\S]*?contents: read/);
-	assert.match(release, /publish:[\s\S]*?permissions:[\s\S]*?contents: write/);
-	assert.match(release, /publish:[\s\S]*?publish-release\.mjs/);
-	assert.doesNotMatch(release, /publish:[\s\S]*?npm run release:/);
+	assert.match(release, /publish-github:[\s\S]*?permissions:[\s\S]*?contents: write/);
+	assert.match(release, /publish-github:[\s\S]*?publish-release\.mjs/);
+	assert.doesNotMatch(release, /publish-github:[\s\S]*?npm run release:/);
+});
+
+test('registry smoke retries install only in registry mode', async () => {
+	const script = await fs.readFile('scripts/verify-public-tarballs.mjs', 'utf8');
+	assert.match(script, /registryVersion \? REGISTRY_RETRY_ATTEMPTS : 1/);
+	assert.match(script, /audit', 'signatures'/);
+});
+
+test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => {
+	assert.match(release, /prepare-npm:[\s\S]*?verify:distribution/);
+	assert.match(release, /prepare-npm:[\s\S]*?npm-publication\.mjs plan/);
+	assert.match(release, /publish-npm:[\s\S]*?id-token: write/);
+	assert.match(release, /publish-npm:[\s\S]*?npm-publication\.mjs publish/);
+	assert.match(release, /verify-registry:[\s\S]*?PUBLIC_REGISTRY_VERSION/);
+	assert.match(release, /verify-registry:[\s\S]*?verify:distribution/);
+	assert.match(release, /publish-github:[\s\S]*?needs: \[resolve-validate, verify-registry\]/);
+	const npmJob = release.split('  publish-npm:')[1].split('  publish-github:')[0];
+	assert.doesNotMatch(npmJob, /contents: write/);
+	assert.doesNotMatch(release, /cancel-in-progress: true/);
 });
 
 test('CI keeps checks visible while draft PR jobs are skipped and Ready reruns them', () => {

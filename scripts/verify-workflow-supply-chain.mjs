@@ -86,7 +86,12 @@ export function verifyWorkflowSupplyChain() {
 		/permissions:\n\s+contents: read\n\s+security-events: write/,
 	);
 	assert.doesNotMatch(block(release, 'resolve-validate'), /contents: write/);
-	assert.match(block(release, 'publish'), /contents: write/);
+	assert.match(block(release, 'publish-github'), /contents: write/);
+	assert.doesNotMatch(block(release, 'publish-github'), /id-token: write/);
+	assert.match(block(release, 'publish-npm'), /id-token: write/);
+	assert.doesNotMatch(block(release, 'publish-npm'), /contents: write/);
+	assert.doesNotMatch(block(release, 'prepare-npm'), /contents: write|id-token: write/);
+	assert.doesNotMatch(block(release, 'verify-registry'), /contents: write|id-token: write/);
 	assert.match(baseline, /^permissions:\n {2}contents: read/m);
 	assert.doesNotMatch(block(baseline, 'generate'), /contents: write/);
 	assert.match(block(baseline, 'commit'), /permissions:\n\s+contents: write/);

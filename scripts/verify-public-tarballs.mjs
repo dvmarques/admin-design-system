@@ -4,13 +4,15 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { setTimeout as delay } from 'node:timers/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const npm = process.env.npm_execpath;
 assert.ok(npm, 'Run this script through npm so npm_execpath is available');
 const packageOrder = ['tokens', 'components', 'highlighted-code', 'admin'];
+const REGISTRY_RETRY_ATTEMPTS = 8;
+const REGISTRY_RETRY_DELAY_MS = 15_000;
 const nameFor = (name) => '@dvmarques/admin-ds-' + name;
 
 async function command(exe, args, cwd, extraEnv = {}) {
@@ -85,10 +87,19 @@ async function ready(url, server) {
 }
 
 async function main() {
+	const registryVersion = process.env.PUBLIC_REGISTRY_VERSION;
+	if (
+		registryVersion &&
+		!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(registryVersion)
+	) {
+		throw new Error('PUBLIC_REGISTRY_VERSION deve ser SemVer estável.');
+	}
 	const temp = await mkdtemp(join(tmpdir(), 'admin-ds-public-pack-'));
-	const packDir = join(temp, 'tarballs');
+	const packDir = process.env.PUBLIC_PACK_DIR
+		? resolve(process.env.PUBLIC_PACK_DIR)
+		: join(temp, 'tarballs');
 	const consumer = join(temp, 'next-consumer');
-	await mkdir(packDir);
+	await mkdir(packDir, { recursive: true });
 	await mkdir(consumer);
 	let server;
 	let browser;
@@ -96,6 +107,11 @@ async function main() {
 		const dependencies = {};
 		for (const item of packageOrder) {
 			const name = nameFor(item);
+			if (registryVersion) {
+				dependencies[name] = registryVersion;
+				console.log('REGISTRY CONSUMER:', name + '@' + registryVersion);
+				continue;
+			}
 			const manifest = JSON.parse(
 				await readFile(join(root, 'packages', item, 'package.json'), 'utf8'),
 			);
@@ -261,9 +277,29 @@ async function main() {
 			].join('\n'),
 		);
 		await write(consumer, '.npmrc', '');
-		await command(npm, ['install', '--ignore-scripts', '--no-audit', '--no-fund'], consumer, {
-			npm_config_userconfig: join(consumer, '.npmrc'),
-		});
+		// Após publicar, o registry/CDN pode demorar a propagar: só no modo registry há retry.
+		const install = () =>
+			command(npm, ['install', '--ignore-scripts', '--no-audit', '--no-fund'], consumer, {
+				npm_config_userconfig: join(consumer, '.npmrc'),
+			});
+		const attempts = registryVersion ? REGISTRY_RETRY_ATTEMPTS : 1;
+		for (let attempt = 1; ; attempt += 1) {
+			try {
+				await install();
+				break;
+			} catch (error) {
+				if (attempt >= attempts) throw error;
+				console.log(
+					'Registry ainda sem os pacotes (tentativa ' + attempt + '/' + attempts + '); aguardando.',
+				);
+				await delay(REGISTRY_RETRY_DELAY_MS);
+			}
+		}
+		if (registryVersion) {
+			await command(npm, ['audit', 'signatures'], consumer, {
+				npm_config_userconfig: join(consumer, '.npmrc'),
+			});
+		}
 		await command(npm, ['run', 'build'], consumer, { NEXT_TELEMETRY_DISABLED: '1' });
 		await command(npm, ['run', 'typecheck'], consumer);
 		const port = await getPort();

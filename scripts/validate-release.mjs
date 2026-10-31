@@ -8,6 +8,7 @@ import {
 	readJson,
 	validateCoordinatedManifests,
 } from './release-utils.mjs';
+import { validateChangelogReview } from './release-changelog.mjs';
 
 const version = process.argv[2];
 if (!version) throw new Error('Uso: node scripts/validate-release.mjs X.Y.Z');
@@ -51,12 +52,14 @@ for (const { rel } of manifests.filter(({ rel }) => rel !== 'package.json')) {
 	}
 }
 
-const parsed = parseChangelog(await fs.readFile('CHANGELOG.md', 'utf8'));
+const changelog = await fs.readFile('CHANGELOG.md', 'utf8');
+const parsed = parseChangelog(changelog);
 if (!parsed.closed.some((section) => section.version === version)) {
 	throw new Error(`CHANGELOG não possui seção fechada ${version}.`);
 }
 if (parsed.ongoing.length !== 1) {
 	throw new Error('CHANGELOG deve possuir exatamente uma seção Em andamento.');
 }
+validateChangelogReview(changelog, version, 'closed');
 
 console.log(`Release ${version} consistente.`);

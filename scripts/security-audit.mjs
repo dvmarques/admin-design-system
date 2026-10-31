@@ -112,8 +112,24 @@ export function summarizeAudits(all, production, policy, today) {
 	};
 }
 
+export function npmAuditInvocation(
+	args = [],
+	platform = process.platform,
+	commandProcessor = process.env.ComSpec,
+) {
+	const auditArgs = ['audit', '--audit-level=high', '--json', ...args];
+	if (platform === 'win32') {
+		return {
+			command: commandProcessor || 'cmd.exe',
+			args: ['/d', '/s', '/c', `npm ${auditArgs.join(' ')}`],
+		};
+	}
+	return { command: 'npm', args: auditArgs };
+}
+
 function runNpmAudit(args) {
-	const result = spawnSync('npm', ['audit', '--audit-level=high', '--json', ...args], {
+	const invocation = npmAuditInvocation(args);
+	const result = spawnSync(invocation.command, invocation.args, {
 		encoding: 'utf8',
 		maxBuffer: 40 * 1024 * 1024,
 		timeout: 180000,

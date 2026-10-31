@@ -53,6 +53,28 @@ test('CodeQL exceptions are limited to rule and file and expire', () => {
 	assert.equal(evaluateSarif(sarif(), accepted, '2026-11-01').blockers.length, 1);
 });
 
+test('CodeQL resolves extension rules and fails closed for an unresolved result rule', () => {
+	const extensionSarif = sarif();
+	const run = extensionSarif.runs[0];
+	run.tool.driver.rules = [];
+	run.tool.extensions = [
+		{
+			guid: '11111111-1111-4111-8111-111111111111',
+			rules: [{ id: 'js/unsafe-test', properties: { 'security-severity': '7.5' } }],
+		},
+	];
+	run.results[0].rule = {
+		id: 'js/unsafe-test',
+		index: 0,
+		toolComponent: { index: 0, guid: '11111111-1111-4111-8111-111111111111' },
+	};
+	assert.equal(evaluateSarif(extensionSarif, policy).blockers.length, 1);
+
+	const unresolved = sarif();
+	unresolved.runs[0].results[0].ruleId = 'js/missing-rule';
+	assert.throws(() => evaluateSarif(unresolved, policy), /Regra SARIF de resultado não encontrada/);
+});
+
 test('invalid SARIF and invalid exceptions are rejected', () => {
 	assert.throws(() => evaluateSarif({}, policy));
 	assert.throws(() => evaluateSarif({ version: '2.1.0', runs: [] }, policy));

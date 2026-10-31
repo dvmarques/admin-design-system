@@ -37,13 +37,49 @@ export function evaluateSarif(sarif, policy, today = new Date().toISOString().sl
 	}
 	const findings = [];
 	for (const run of sarif.runs) {
-		if (!Array.isArray(run.results) || !run.tool?.driver?.rules) {
+		const driver = run.tool?.driver;
+		const extensions = run.tool?.extensions ?? [];
+		if (
+			!Array.isArray(run.results) ||
+			!driver ||
+			!Array.isArray(driver.rules) ||
+			!Array.isArray(extensions)
+		) {
 			throw new Error('SARIF CodeQL sem regras ou resultados');
 		}
-		const rules = new Map(run.tool.driver.rules.map((rule) => [rule.id, rule]));
+		const components = [driver, ...extensions];
+		if (!components.some((component) => Array.isArray(component?.rules))) {
+			throw new Error('SARIF CodeQL sem regras ou resultados');
+		}
 		for (const result of run.results) {
-			const ruleId = result.ruleId ?? run.tool.driver.rules[result.ruleIndex]?.id;
-			const rule = rules.get(ruleId);
+			const reference = result.rule ?? {};
+			const componentReference = reference.toolComponent;
+			let component = driver;
+			if (componentReference?.index !== undefined) {
+				if (
+					!Number.isInteger(componentReference.index) ||
+					componentReference.index < 0 ||
+					componentReference.index >= extensions.length
+				) {
+					throw new Error('Referência de componente SARIF inválida');
+				}
+				component = extensions[componentReference.index];
+			} else if (componentReference?.guid !== undefined) {
+				component = components.find((entry) => entry?.guid === componentReference.guid);
+				if (!component) throw new Error('Componente SARIF não encontrado');
+			}
+			const rules = component?.rules;
+			const ruleId = reference.id ?? result.ruleId;
+			const ruleIndex = reference.index ?? result.ruleIndex;
+			const ruleById =
+				ruleId && Array.isArray(rules) ? rules.find((entry) => entry.id === ruleId) : null;
+			const ruleByIndex =
+				Number.isInteger(ruleIndex) && Array.isArray(rules) ? rules[ruleIndex] : null;
+			const rule = ruleById ?? ruleByIndex;
+			if (!rule || typeof rule.id !== 'string') {
+				throw new Error('Regra SARIF de resultado não encontrada');
+			}
+			const resolvedRuleId = result.ruleId ?? reference.id ?? rule.id;
 			const rawSeverity =
 				result.properties?.['security-severity'] ?? rule?.properties?.['security-severity'];
 			if (rawSeverity === undefined) continue;
@@ -55,9 +91,16 @@ export function evaluateSarif(sarif, policy, today = new Date().toISOString().sl
 			const file = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri ?? '';
 			const accepted = exceptions.some(
 				(exception) =>
-					exception.ruleId === ruleId && exception.file === file && exception.reviewBy >= today,
+					exception.ruleId === resolvedRuleId &&
+					exception.file === file &&
+					exception.reviewBy >= today,
 			);
-			findings.push({ ruleId, file, severity: score >= 9 ? 'critical' : 'high', accepted });
+			findings.push({
+				ruleId: resolvedRuleId,
+				file,
+				severity: score >= 9 ? 'critical' : 'high',
+				accepted,
+			});
 		}
 	}
 	return { findings, blockers: findings.filter((finding) => !finding.accepted) };

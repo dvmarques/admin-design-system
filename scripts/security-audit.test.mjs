@@ -1,7 +1,12 @@
 import assert from 'node:assert/strict';
 import { readFileSync } from 'node:fs';
 import test from 'node:test';
-import { evaluateAudit, summarizeAudits, validateExceptions } from './security-audit.mjs';
+import {
+	evaluateAudit,
+	npmAuditInvocation,
+	summarizeAudits,
+	validateExceptions,
+} from './security-audit.mjs';
 
 const advisoryUrl = 'https://github.com/advisories/GHSA-abcd-1234-efgh';
 const policy = { schemaVersion: 1, exceptions: [] };
@@ -63,6 +68,17 @@ test('invalid exceptions and operational errors cannot pass', () => {
 	assert.throws(() => validateExceptions({ schemaVersion: 1, exceptions: [{ package: 'x' }] }));
 	assert.throws(() => evaluateAudit({ error: { code: 'ENOTFOUND' } }, policy));
 	assert.throws(() => evaluateAudit({ vulnerabilities: {} }, policy));
+});
+
+test('npm audit uses a Windows command processor and direct npm invocation elsewhere', () => {
+	assert.deepEqual(npmAuditInvocation([], 'win32', 'cmd.exe'), {
+		command: 'cmd.exe',
+		args: ['/d', '/s', '/c', 'npm audit --audit-level=high --json'],
+	});
+	assert.deepEqual(npmAuditInvocation(['--omit=dev'], 'linux'), {
+		command: 'npm',
+		args: ['audit', '--audit-level=high', '--json', '--omit=dev'],
+	});
 });
 
 test('production exposure is inferred from omit=dev audit', () => {

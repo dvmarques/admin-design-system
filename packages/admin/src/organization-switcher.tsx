@@ -210,7 +210,7 @@ export function AdsOrganizationSwitcher({
 
 	const name = current?.name ?? labels.none;
 	const logoInitials = getInitials(current?.name, current?.initials);
-	const accessibleName = `${labels.trigger}: ${logoInitials ? `${logoInitials} ` : ''}${name}${current?.description ? `, ${current.description}` : ''}`;
+	const accessibleName = `${labels.trigger}: ${logoInitials ? `${logoInitials} ` : ''}${name}${current?.description ? ` ${current.description}` : ''}`;
 
 	const retry = status === 'error' && onRetry;
 	const footer =

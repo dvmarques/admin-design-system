@@ -26,18 +26,19 @@ test('publication workflow is manually dispatched only from develop and serializ
 
 test('publication separates read-only validation from privileged publication', () => {
 	assert.match(release, /resolve-validate:[\s\S]*?permissions:[\s\S]*?contents: read/);
-	assert.match(release, /publish:[\s\S]*?permissions:[\s\S]*?contents: write/);
-	assert.match(release, /publish:[\s\S]*?publish-release\.mjs/);
-	assert.doesNotMatch(release, /publish:[\s\S]*?npm run release:/);
+	assert.match(release, /publish-github:[\s\S]*?permissions:[\s\S]*?contents: write/);
+	assert.match(release, /publish-github:[\s\S]*?publish-release\.mjs/);
+	assert.doesNotMatch(release, /publish-github:[\s\S]*?npm run release:/);
 });
 
 test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => {
-	assert.match(release, /prepare-npm:[\\s\\S]*?verify:distribution/);
-	assert.match(release, /prepare-npm:[\\s\\S]*?npm-publication\\.mjs plan/);
-	assert.match(release, /publish-npm:[\\s\\S]*?id-token: write/);
-	assert.match(release, /publish-npm:[\\s\\S]*?npm-publication\\.mjs publish/);
-	assert.match(release, /publish-github:[\\s\\S]*?needs: \\[resolve-validate, publish-npm\\]/);
-	assert.doesNotMatch(release, /publish-npm:[\\s\\S]*?contents: write/);
+	assert.match(release, /prepare-npm:[\s\S]*?verify:distribution/);
+	assert.match(release, /prepare-npm:[\s\S]*?npm-publication\.mjs plan/);
+	assert.match(release, /publish-npm:[\s\S]*?id-token: write/);
+	assert.match(release, /publish-npm:[\s\S]*?npm-publication\.mjs publish/);
+	assert.match(release, /publish-github:[\s\S]*?needs: \[resolve-validate, publish-npm\]/);
+	const npmJob = release.split('  publish-npm:')[1].split('  publish-github:')[0];
+	assert.doesNotMatch(npmJob, /contents: write/);
 	assert.doesNotMatch(release, /cancel-in-progress: true/);
 });
 

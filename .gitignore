@@ -33,4 +33,4 @@ desktop.ini
 apps/docs/src/api-reference/
 
 # Artefato efêmero do workflow manual de baselines
-.baseline-transfer/
+baseline-transfer/

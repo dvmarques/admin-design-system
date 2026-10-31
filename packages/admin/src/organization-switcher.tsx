@@ -44,7 +44,7 @@ export interface AdsOrganizationSwitcherManage {
 }
 
 export interface AdsOrganizationSwitcherLabels {
-	/** Prefix of the accessible name of the trigger: "<trigger>: <organization>". */
+	/** Prefix of the accessible name: "<trigger>: <initials> <organization>, <description>". */
 	trigger: string;
 	panel: string;
 	search: string;
@@ -209,7 +209,8 @@ export function AdsOrganizationSwitcher({
 	};
 
 	const name = current?.name ?? labels.none;
-	const accessibleName = `${labels.trigger}: ${name}${current?.description ? `, ${current.description}` : ''}`;
+	const logoInitials = getInitials(current?.name, current?.initials);
+	const accessibleName = `${labels.trigger}: ${logoInitials ? `${logoInitials} ` : ''}${name}${current?.description ? `, ${current.description}` : ''}`;
 
 	const retry = status === 'error' && onRetry;
 	const footer =
@@ -327,10 +328,12 @@ export function AdsOrganizationSwitcher({
 						{current ? <OrganizationLogo organization={current} /> : <OrganizationLogo />}
 						<span className="ads-organization-switcher-text">
 							<span className="ads-organization-switcher-name" title={name}>
+								{' '}
 								{name}
 							</span>
 							{current?.description ? (
 								<span className="ads-organization-switcher-description" title={current.description}>
+									{' '}
 									{current.description}
 								</span>
 							) : null}

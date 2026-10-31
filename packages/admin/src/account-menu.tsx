@@ -55,7 +55,7 @@ export interface AdsAccountMenuGroup {
 }
 
 export interface AdsAccountMenuLabels {
-	/** Accessible name of the avatar button; the user name is appended when known. */
+	/** Prefix of the accessible name; the avatar initials and the user name are always appended, with or without a photo. */
 	trigger: string;
 	/** Accessible name of the panel. */
 	panel: string;
@@ -287,7 +287,7 @@ export function AdsAccountMenu({
 			>
 				<button
 					aria-haspopup="dialog"
-					aria-label={user.name ? `${labels.trigger}: ${user.name}` : labels.trigger}
+					aria-label={`${labels.trigger}${initials ? `: ${initials}` : ''}${user.name ? ` ${user.name}` : ''}`}
 					className="ads-account-menu-trigger"
 					ref={triggerRef}
 					type="button"

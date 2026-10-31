@@ -33,7 +33,7 @@ describe('account menu, notification center and organization switcher SSR', () =
 			const html = renderToString(<Page />);
 
 			expect(matchMedia).not.toHaveBeenCalled();
-			expect(html).toContain('Menu da conta: Ana Souza');
+			expect(html).toContain('Menu da conta: AS Ana Souza');
 			expect(html).toContain('Notificações, 1 não lida');
 			expect(html).toContain('Organização atual');
 			expect(html).not.toContain('role="dialog"');

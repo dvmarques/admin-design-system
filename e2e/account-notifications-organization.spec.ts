@@ -3,7 +3,7 @@ import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 
 const accountTrigger = (page: Page) =>
-	page.getByRole('banner').getByRole('button', { name: 'Menu da conta: Ana Souza' });
+	page.getByRole('banner').getByRole('button', { name: 'Menu da conta: AS Ana Souza' });
 const bell = (page: Page) =>
 	page.getByRole('banner').getByRole('button', { name: /^Notificações(, \d+ não lidas?)?$/ });
 const organizationTrigger = (page: Page) =>
@@ -27,6 +27,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await openDemo(page);
 			const trigger = accountTrigger(page);
 			await expect(trigger).toHaveAttribute('aria-expanded', 'false');
+			await expect(trigger).toHaveAccessibleName('Menu da conta: AS Ana Souza');
 
 			await trigger.click();
 
@@ -122,6 +123,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await openDemo(page);
 			const trigger = organizationTrigger(page);
 			await expect(trigger).toContainText('Acme Brasil');
+			await expect(trigger).toHaveAccessibleName(/Organização atual: AB Acme Brasil/);
 			await expect(
 				page.getByRole('navigation', { name: 'Navegação do demo' }).locator('> *').first(),
 			).toHaveClass(/ads-organization-switcher/);
@@ -273,15 +275,17 @@ test('os showcases do catálogo carregam sem erros de hidratação', async ({ pa
 test('o showcase de conta demonstra foto, iniciais e falha de imagem', async ({ page }) => {
 	await page.goto('/catalogo/account-menu');
 	const demo = page.getByRole('region', { name: 'Demonstração interativa' });
-	await waitForHydration(demo.getByRole('button', { name: 'Menu da conta: Ana Souza' }));
+	await waitForHydration(demo.getByRole('button', { name: /^Menu da conta: .*Ana Souza$/ }));
 	await expect(
-		demo.getByRole('button', { name: 'Menu da conta: Ana Souza' }).locator('img'),
+		demo.getByRole('button', { name: /^Menu da conta: .*Ana Souza$/ }).locator('img'),
 	).toBeVisible();
-	await expect(demo.getByRole('button', { name: 'Menu da conta: Bruno Lima' })).toContainText('BL');
-	const failed = demo.getByRole('button', { name: 'Menu da conta: Carla Dias' });
+	await expect(demo.getByRole('button', { name: /^Menu da conta: .*Bruno Lima$/ })).toContainText(
+		'BL',
+	);
+	const failed = demo.getByRole('button', { name: /^Menu da conta: .*Carla Dias$/ });
 	await expect(failed).toContainText('CD');
 	await expect(failed.locator('img')).toHaveCount(0);
 
-	await demo.getByRole('button', { name: 'Menu da conta: Bruno Lima' }).click();
+	await demo.getByRole('button', { name: /^Menu da conta: .*Bruno Lima$/ }).click();
 	await expect(page.getByText('Trocar conta')).toBeVisible();
 });

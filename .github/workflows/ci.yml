@@ -117,7 +117,7 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.62.0-noble
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
       options: --ipc=host
       env:
         HOME: /root
@@ -150,7 +150,7 @@ jobs:
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
         shell: bash
         run: |
-          EXPECTED=1.62.0
+          EXPECTED=1.64.1
           node --version
           npm --version
           test "$(node -p 'process.versions.node.split(".")[0]')" = 24
@@ -158,7 +158,7 @@ jobs:
           node - <<'NODE'
           const fs = require('node:fs');
           const lock = require('./package-lock.json');
-          const expected = '1.62.0';
+          const expected = '1.64.1';
           for (const name of ['@playwright/test', 'playwright', 'playwright-core']) {
             const locked = lock.packages['node_modules/' + name]?.version;
             const installed = require(name + '/package.json').version;

@@ -4,14 +4,14 @@ O workflow Security Gate faz SAST (CodeQL), SCA (npm audit) e busca de segredos 
 
 ## Eventos, escopo e evidências
 
-| Evento | Comportamento |
-| --- | --- |
-| PR Draft para develop/master (inclusive novos commits) | CodeQL, SCA e Gitleaks skipped |
-| PR Ready for Review (ou novo commit em Ready) | Três scanners em paralelo |
-| Push para develop/master | Três scanners em paralelo |
-| Segunda-feira 04:17 UTC ou workflow_dispatch | Três scanners, branch padrão develop |
+| Evento                                                 | Comportamento                        |
+| ------------------------------------------------------ | ------------------------------------ |
+| PR Draft para develop/master (inclusive novos commits) | CodeQL, SCA e Gitleaks skipped       |
+| PR Ready for Review (ou novo commit em Ready)          | Três scanners em paralelo            |
+| Push para develop/master                               | Três scanners em paralelo            |
+| Segunda-feira 04:17 UTC ou workflow_dispatch           | Três scanners, branch padrão develop |
 
-Consulte **Actions > Security Gate** para status, duração e logs dos jobs. Para CodeQL, consulte também **Security > Code scanning**, se o recurso de upload SARIF estiver disponível e habilitado. Para npm audit, o job publica resumo Markdown e artefato *npm-audit-summary* sanitizado, com retenção de 14 dias. Para Gitleaks, o job não comenta na PR nem faz upload de valores detectados.
+Consulte **Actions > Security Gate** para status, duração e logs dos jobs. Para CodeQL, consulte também **Security > Code scanning**, se o recurso de upload SARIF estiver disponível e habilitado. Para npm audit, o job publica resumo Markdown e artefato _npm-audit-summary_ sanitizado, com retenção de 14 dias. Para Gitleaks, o job não comenta na PR nem faz upload de valores detectados.
 
 Os checks de qualidade, E2E e Pages existentes continuam independentes. Os gates usam checkout somente leitura, não usam pull_request_target nem expõem secrets do repositório a PRs de forks. A action CodeQL precisa de security-events: write para upload da análise; se o GitHub impedir upload em alguma classe de PR, registrar o erro e estudar um caminho de menor privilégio, nunca mascarar falha com continue-on-error.
 
@@ -19,13 +19,13 @@ Os checks de qualidade, E2E e Pages existentes continuam independentes. Os gates
 
 Node.js 24 e npm 11.19.1, raiz do monorepo:
 
-~~~sh
+```sh
 npm ci --ignore-scripts --no-audit --no-fund
 npm audit --audit-level=high --json
 npm audit --audit-level=high --omit=dev --json
 node scripts/security-audit.mjs --output reports/security/npm-audit-summary.json
 node --test scripts/security-audit.test.mjs
-~~~
+```
 
 A política de SCA bloqueia riscos high/critical não aceitos e registra todos os níveis, usando o package-lock.json e a análise separada com --omit=dev. O relatório de produção serve de indicador de possível exposição, não de prova de execução do pacote vulnerável. Identifique dependências transitivas com npm explain PACOTE e analise o caminho afetado. Erros de rede, permissão ou JSON inválido falham: não significam zero riscos.
 

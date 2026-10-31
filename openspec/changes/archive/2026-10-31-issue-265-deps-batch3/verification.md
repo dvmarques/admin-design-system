@@ -32,4 +32,11 @@ Comparação do lockfile `develop` versus lote 3: **644 → 592 entradas**; alte
 
 ## Limites de conclusão
 
-A execução `npm run validate` está comprovada no run auxiliar; os três gates oficiais ainda precisam estar verdes no último SHA da PR após as atualizações de documentação. O OpenSpec não foi arquivado/sincronizado, a PR não foi integrada, e nenhum pacote foi publicado. Seguir `docs/openspec-lifecycle.md` para archive na própria branch, validação após archive e revisão/autorização antes do squash.
+O `npm run validate` está comprovado no run auxiliar. A CI pré-archive, Pages e Security Gate estão verdes no SHA `737056d`; permanece como gate administrativo a revalidação do diff após sincronização e archive. A PR ainda não foi integrada e nenhum pacote foi publicado.
+
+## Gates pré-archive confirmados (31/10/2026)
+
+- [CI #41213543277](https://github.com/dvmarques/admin-design-system/actions/runs/41213543277): **success** no commit `737056d`, com qualidade, distribuição, E2E Chromium/Firefox/WebKit aprovados; validação de release pulada corretamente para PR comum.
+- [Pages #41213543174](https://github.com/dvmarques/admin-design-system/actions/runs/41213543174): **success**, incluindo build e testes de Pages.
+- [Security Gate #41213543287](https://github.com/dvmarques/admin-design-system/actions/runs/41213543287): **success**.
+- OpenSpec: **21 de 21 tarefas** concluídas com evidência antes do archive. A sincronização do requisito em `openspec/specs/quality-assurance/spec.md` e a transferência da change para `openspec/changes/archive/2026-10-31-issue-265-deps-batch3` acontecem nesta mesma mudança, sem `--skip-specs`. Nova CI deve validar o SHA resultante antes de qualquer integração.

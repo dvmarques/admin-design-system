@@ -28,7 +28,7 @@
 ## 4. PR e CI
 
 - [x] 4.1 Abrir PR parcial para `develop`, vinculando #265 sem fechamento automático.
-- [ ] 4.2 Conferir CI, Pages, Security Gate e seus jobs realmente executados no SHA final, corrigindo falhas. A falha de format no SHA `7c44739` era causada exclusivamente pelo workflow temporário (CI #41201129106); arquivo removido em `b0b612d`, aguardando checks da PR no último SHA.
+- [x] 4.2 Conferir CI, Pages, Security Gate e seus jobs executados no SHA pré-archive `737056d`; os três workflows passaram (CI #41213543277, Pages #41213543174, Security Gate #41213543287). A falha de Prettier causada pelo YAML temporário foi corrigida com sua remoção em `b0b612d`. Os checks do commit de archive são um gate administrativo posterior, conforme docs/openspec-lifecycle.md.
 - [x] 4.3 Documentar evidências e pendências, revisar diffs e marcar apenas tarefas comprovadamente concluídas.
 
 O archive/sync, merge e fechamento da #265 são gates administrativos fora deste checklist; exigem seus próprios critérios e autorização.

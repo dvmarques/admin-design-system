@@ -4,9 +4,9 @@ import {
 	AdsHighlightedCodeSnippet,
 	type AdsHighlightedCodeLanguage,
 	type AdsHighlightedCodeTheme,
-} from '@admin-ds/highlighted-code';
-import '@admin-ds/highlighted-code/styles.css';
-import { AdsField, AdsSelect, AdsSwitch } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-highlighted-code';
+import '@dvmarques/admin-ds-highlighted-code/styles.css';
+import { AdsField, AdsSelect, AdsSwitch } from '@dvmarques/admin-ds-components';
 import { useState } from 'react';
 import Link from 'next/link';
 
@@ -37,7 +37,7 @@ ORDER BY itens DESC;`,
 	tsx: {
 		language: 'tsx',
 		code: `'use client';
-import { AdsButton } from '@admin-ds/components';
+import { AdsButton } from '@dvmarques/admin-ds-components';
 
 export function SalvarPedido({ onSave }: { onSave: () => void }) {
   return (
@@ -60,8 +60,9 @@ export function HighlightedCodeDemo() {
 		<article className="demo-highlighted-code-page">
 			<h1>Código destacado</h1>
 			<p>
-				Demonstração do pacote opcional <code>@admin-ds/highlighted-code</code> com Shiki carregado
-				sob demanda. O texto plain aparece imediatamente; o destaque é aplicado de forma assíncrona.
+				Demonstração do pacote opcional <code>@dvmarques/admin-ds-highlighted-code</code> com Shiki
+				carregado sob demanda. O texto plain aparece imediatamente; o destaque é aplicado de forma
+				assíncrona.
 			</p>
 			<p>
 				<Link href="/catalogo/highlighted-code-snippet">

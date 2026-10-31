@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { StyleFixture, ThemeToggle } from '@admin-ds/components';
-import { tokenValues } from '@admin-ds/tokens';
+import { StyleFixture, ThemeToggle } from '@dvmarques/admin-ds-components';
+import { tokenValues } from '@dvmarques/admin-ds-tokens';
 import { Fragment } from 'react';
 
 const meta = {

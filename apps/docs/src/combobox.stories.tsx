@@ -7,7 +7,7 @@ import {
 	AdsDialog,
 	AdsField,
 	AdsIcon,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const options = [
 	{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },

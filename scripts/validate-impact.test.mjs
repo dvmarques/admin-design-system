@@ -8,10 +8,10 @@ const workspaces = loadWorkspaces();
 const plan = (command, files) =>
 	planValidation(command, classifyImpact(files, workspaces), workspaces);
 const buildLabels = [
-	'build @admin-ds/admin',
-	'build @admin-ds/components',
-	'build @admin-ds/highlighted-code',
-	'build @admin-ds/tokens',
+	'build @dvmarques/admin-ds-admin',
+	'build @dvmarques/admin-ds-components',
+	'build @dvmarques/admin-ds-highlighted-code',
+	'build @dvmarques/admin-ds-tokens',
 ];
 
 test('lint is scoped to the affected directories', () => {
@@ -40,13 +40,22 @@ test('typecheck and tests build the packages first and then target the affected 
 		);
 		assert.deepEqual(
 			steps.slice(0, 4).map((step) => step.args[3]),
-			['@admin-ds/tokens', '@admin-ds/components', '@admin-ds/admin', '@admin-ds/highlighted-code'],
+			[
+				'@dvmarques/admin-ds-tokens',
+				'@dvmarques/admin-ds-components',
+				'@dvmarques/admin-ds-admin',
+				'@dvmarques/admin-ds-highlighted-code',
+			],
 			'packages build in dependency order',
 		);
 		const last = steps.at(-1).args;
 		assert.deepEqual(
-			last.filter((arg) => arg !== '--workspace' && arg.startsWith('@admin-ds/')),
-			['@admin-ds/admin', '@admin-ds/admin-demo', '@admin-ds/docs'],
+			last.filter(
+				(arg) =>
+					arg !== '--workspace' &&
+					(arg.startsWith('@admin-ds/') || arg.startsWith('@dvmarques/admin-ds-')),
+			),
+			['@dvmarques/admin-ds-admin', '@admin-ds/admin-demo', '@admin-ds/docs'],
 		);
 	}
 	assert.deepEqual(plan('typecheck', ['apps/docs/src/a.ts']).steps.at(-1).args, [

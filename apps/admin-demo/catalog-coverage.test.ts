@@ -13,8 +13,8 @@ import {
 } from './app/catalogo/catalog-families';
 import { catalogMemberReference } from './app/catalogo/catalog-member-reference';
 import referenceData from './app/catalogo/catalog-member-reference.json';
-import * as adminComponents from '@admin-ds/admin';
-import * as uiComponents from '@admin-ds/components';
+import * as adminComponents from '@dvmarques/admin-ds-admin';
+import * as uiComponents from '@dvmarques/admin-ds-components';
 import { catalogDemos } from './app/catalogo/catalog-demos';
 import snippets from './app/catalogo/catalog-snippets.json';
 import { catalogSnippets } from '../../scripts/catalog-snippets.mjs';

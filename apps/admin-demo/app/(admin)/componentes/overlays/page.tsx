@@ -8,7 +8,7 @@ import {
 	AdsPopover,
 	AdsTooltip,
 	type AdsOverlayPlacement,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 export default function OverlayEdgesPage() {
 	const [kind, setKind] = useState('Tooltip');

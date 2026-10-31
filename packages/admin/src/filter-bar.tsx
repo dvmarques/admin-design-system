@@ -12,7 +12,7 @@ import {
 	AdsSelect,
 	AdsSelectionGroup,
 	type AdsDateRange,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import {
 	useId,
 	useLayoutEffect,

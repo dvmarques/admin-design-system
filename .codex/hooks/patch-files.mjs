@@ -71,9 +71,9 @@ export function generatedReason(root, file) {
 		[/^package-lock\.json$/, 'Use npm install para atualizar o lockfile.'],
 		[
 			/^packages\/tokens\/src\/generated\.ts$/,
-			'Edite packages/tokens/source e execute npm run generate --workspace @admin-ds/tokens.',
+			'Edite packages/tokens/source e execute npm run generate --workspace @dvmarques/admin-ds-tokens.',
 		],
-		[/^packages\/tokens\/dist\//, 'Execute o build de @admin-ds/tokens.'],
+		[/^packages\/tokens\/dist\//, 'Execute o build de @dvmarques/admin-ds-tokens.'],
 		[
 			/^e2e\/[^/]+-snapshots\//,
 			'Atualize baselines pelo workflow update-visual-baselines após revisar o diff visual.',

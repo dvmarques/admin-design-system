@@ -7,7 +7,7 @@ import {
 	AdsInput,
 	AdsPasswordInput,
 	AdsTypography,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useRef, useState, type FormEvent } from 'react';

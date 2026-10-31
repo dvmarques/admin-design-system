@@ -5,8 +5,8 @@ import {
 	AdsNotificationCenter,
 	AdsOrganizationSwitcher,
 	type AdsNotification,
-} from '@admin-ds/admin';
-import { AdsToast } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-admin';
+import { AdsToast } from '@dvmarques/admin-ds-components';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 

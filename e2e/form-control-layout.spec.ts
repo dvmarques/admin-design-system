@@ -5,13 +5,13 @@ import { expect, test } from '@playwright/test';
 
 // A página usa apenas o CSS distribuído, sem o reset de `box-sizing` do admin demo, como uma
 // aplicação consumidora que não define esse reset.
-const css = ['@admin-ds/tokens/styles.css', '@admin-ds/components/styles.css']
+const css = ['@dvmarques/admin-ds-tokens/styles.css', '@dvmarques/admin-ds-components/styles.css']
 	.map((path) => readFileSync(require.resolve(path), 'utf8'))
 	.join('\n');
 
 // Os pacotes só exportam ESM; o import dinâmico funciona também com o carregador CJS do Playwright.
 async function renderMarkup() {
-	const { AdsInput, AdsSelect, AdsTextarea } = await import('@admin-ds/components');
+	const { AdsInput, AdsSelect, AdsTextarea } = await import('@dvmarques/admin-ds-components');
 	return renderToStaticMarkup(
 		createElement(
 			'div',
@@ -101,7 +101,7 @@ for (const theme of ['light', 'dark'] as const) {
 }
 
 async function renderDatePickerMarkup(size: 'sm' | 'md' | 'lg') {
-	const { AdsDatePicker, AdsInput } = await import('@admin-ds/components');
+	const { AdsDatePicker, AdsInput } = await import('@dvmarques/admin-ds-components');
 	return renderToStaticMarkup(
 		createElement(
 			'div',
@@ -155,7 +155,7 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 }
 
 async function renderSizesMarkup(size: 'sm' | 'md' | 'lg') {
-	const { AdsInput, AdsSelect } = await import('@admin-ds/components');
+	const { AdsInput, AdsSelect } = await import('@dvmarques/admin-ds-components');
 	return renderToStaticMarkup(
 		createElement(
 			'div',
@@ -205,7 +205,7 @@ for (const size of ['sm', 'md', 'lg'] as const) {
 }
 
 async function renderInputGroupMarkup(size: 'sm' | 'md' | 'lg') {
-	const { AdsButton, AdsInput, AdsInputGroup } = await import('@admin-ds/components');
+	const { AdsButton, AdsInput, AdsInputGroup } = await import('@dvmarques/admin-ds-components');
 	const group = (id: string, props: Record<string, unknown>) =>
 		createElement(
 			'div',
@@ -328,7 +328,7 @@ for (const theme of ['light', 'dark'] as const) {
 			page,
 		}) => {
 			const { AdsField, AdsInput, AdsSelect, AdsTextarea, AdsFieldDescription, AdsFieldMessage } =
-				await import('@admin-ds/components');
+				await import('@dvmarques/admin-ds-components');
 			const controls = [
 				createElement(AdsInput),
 				createElement(AdsTextarea),

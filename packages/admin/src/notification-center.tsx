@@ -8,7 +8,7 @@ import {
 	AdsLoadingIndicator,
 	AdsSkeleton,
 	type AdsIconName,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useEffect, useId, useRef, useState, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { useGuardedAction, useOpenState } from './panel-utils.js';

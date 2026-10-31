@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsButton } from '@admin-ds/components';
+import { AdsButton } from '@dvmarques/admin-ds-components';
 import { useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { isFocusLost } from './selection-focus.js';

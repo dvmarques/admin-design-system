@@ -1,2 +1,2 @@
-import { tokenValues } from '@admin-ds/tokens';
+import { tokenValues } from '@dvmarques/admin-ds-tokens';
 export { tokenValues };

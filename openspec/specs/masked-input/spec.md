@@ -8,7 +8,7 @@ Disponibilizar um campo de texto com máscara, em subpath opcional e com motor d
 
 ### Requirement: AdsMaskedInput público com máscara opt-in
 
-O sistema MUST disponibilizar `AdsMaskedInput` e tipos no subpath público opcional `@admin-ds/components/masked-input`, aceitando máscaras estáticas e dinâmicas configuráveis, sem regras de negócio fixas. Com `mask` ausente, MUST comportar-se como entrada textual convencional.
+O sistema MUST disponibilizar `AdsMaskedInput` e tipos no subpath público opcional `@dvmarques/admin-ds-components/masked-input`, aceitando máscaras estáticas e dinâmicas configuráveis, sem regras de negócio fixas. Com `mask` ausente, MUST comportar-se como entrada textual convencional.
 
 #### Scenario: Máscara estática e dinâmica
 
@@ -65,7 +65,7 @@ O componente MUST preservar referência ao input nativo (`ref` e `inputRef`), as
 
 ### Requirement: Subpath opcional preserva distribuição principal
 
-O sistema MUST manter `react-imask` fora do runtime e do entrypoint raiz de `@admin-ds/components`. Uma aplicação que não importa o subpath MUST continuar instalando e construindo componentes existentes sem depender de IMask.
+O sistema MUST manter `react-imask` fora do runtime e do entrypoint raiz de `@dvmarques/admin-ds-components`. Uma aplicação que não importa o subpath MUST continuar instalando e construindo componentes existentes sem depender de IMask.
 
 #### Scenario: Consumidor importa apenas o pacote raiz
 
@@ -74,7 +74,7 @@ O sistema MUST manter `react-imask` fora do runtime e do entrypoint raiz de `@ad
 
 #### Scenario: Consumidor importa subpath
 
-- **WHEN** a aplicação instala a dependência opcional compatível e importa `@admin-ds/components/masked-input`
+- **WHEN** a aplicação instala a dependência opcional compatível e importa `@dvmarques/admin-ds-components/masked-input`
 - **THEN** JavaScript, tipos e CSS distribuído resolvem sem caminhos privados e sem exigir Tailwind no consumidor
 
 #### Scenario: Hidratação e StrictMode

@@ -13,9 +13,9 @@ const root = fileURLToPath(new URL('..', import.meta.url));
  * garantem que nenhuma outra referência entre workspaces fique fora do grafo.
  */
 export const implicitDependencies = {
-	'@admin-ds/components': ['@admin-ds/tokens'],
-	'@admin-ds/highlighted-code': ['@admin-ds/tokens'],
-	'@admin-ds/admin': ['@admin-ds/tokens'],
+	'@dvmarques/admin-ds-components': ['@dvmarques/admin-ds-tokens'],
+	'@dvmarques/admin-ds-highlighted-code': ['@dvmarques/admin-ds-tokens'],
+	'@dvmarques/admin-ds-admin': ['@dvmarques/admin-ds-tokens'],
 };
 
 const dependencyFields = [

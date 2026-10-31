@@ -1,4 +1,4 @@
-import { AdsEmptyState } from '@admin-ds/components';
+import { AdsEmptyState } from '@dvmarques/admin-ds-components';
 import { render, screen, within } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it } from 'vitest';

@@ -1,2 +1,2 @@
-import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 export { AdsHighlightedCodeSnippet };

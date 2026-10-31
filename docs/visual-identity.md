@@ -1,7 +1,7 @@
 # Identidade visual
 
 Superfícies, espaçamento e cores de gráfico dos tokens. Tudo vem de
-`@admin-ds/tokens/styles.css`; nenhuma configuração de Tailwind é necessária.
+`@dvmarques/admin-ds-tokens/styles.css`; nenhuma configuração de Tailwind é necessária.
 Os valores estão em `packages/tokens/source/tokens.mjs` e a story
 **Foundation/Visual identity** (`apps/docs`) mostra tudo nos dois temas.
 
@@ -15,7 +15,7 @@ marca. A escala usa a família azul do projeto: `primary`, `primary-hover`, `foc
 
 Para usar outra cor de marca, troque os valores `brand*` em
 `packages/tokens/source/tokens.mjs` e confirme os pares de contraste
-(`npm run test:node --workspace @admin-ds/tokens`), ou sobrescreva as variáveis
+(`npm run test:node --workspace @dvmarques/admin-ds-tokens`), ou sobrescreva as variáveis
 semânticas (`--ads-color-primary` etc.) na aplicação. A escala de referência não é
 emitida como variável CSS.
 
@@ -144,7 +144,7 @@ legendas, tooltips ou interatividade.
 
 ## Personalização
 
-Sobrescreva os tokens depois de importar `@admin-ds/tokens/styles.css`, com
+Sobrescreva os tokens depois de importar `@dvmarques/admin-ds-tokens/styles.css`, com
 `[data-theme='light']` e `[data-theme='dark']`, como descrito em
 `packages/tokens/README.md`. Se trocar as cores de gráfico, valide o contraste e
 a distinção sob simulação com os mesmos testes.

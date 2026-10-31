@@ -24,9 +24,9 @@ import {
 	AdsTabsPanel,
 	AdsTabsTrigger,
 	AdsTextarea,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
-import { tokenValues } from '@admin-ds/tokens';
+import { tokenValues } from '@dvmarques/admin-ds-tokens';
 import { OverlayShowcase } from '../../overlay-showcase';
 import { NavigationShowcase } from '../../navigation-showcase';
 import { EvaluationShowcase } from '../../evaluation-showcase';

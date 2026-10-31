@@ -116,7 +116,7 @@ bloqueados (antes da hidratação).
 
 ## Componentes usados
 
-De `@admin-ds/components`: `AdsField`, `AdsInput`, `AdsPasswordInput`,
+De `@dvmarques/admin-ds-components`: `AdsField`, `AdsInput`, `AdsPasswordInput`,
 `AdsCheckbox`, `AdsButton`, `AdsTypography` e `AdsThemeControl` (por meio do
 controle de tema do demo). O layout, o painel e os espaçamentos usam as classes
 `demo-auth-*` de `apps/admin-demo/app/globals.css`, apenas com variáveis

@@ -1,4 +1,4 @@
-import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 import type { ReactNode } from 'react';
 import { DemoBrand } from '../demo-brand';
 import { readServerPreference } from '../../lib/server-theme';

@@ -12,7 +12,7 @@ import {
 	readDemoFiles,
 	readDemoPackageJson,
 } from './support/demo-contract';
-import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 import {
 	AdsAccordion,
 	AdsAccordionHeader,
@@ -61,7 +61,7 @@ import {
 	AdsToast,
 	AdsTooltip,
 	AdsTypography,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const repoRoot = resolve(import.meta.dirname, '../../..');
 
@@ -153,8 +153,8 @@ describe('public component consumption', () => {
 		const files = await readDemoFiles(['app', 'lib'], /\.(ts|tsx)$/);
 		const sources = files.map((file) => file.content).join('\n');
 
-		expect(sources).toContain("from '@admin-ds/components'");
-		expect(sources).toContain("from '@admin-ds/admin'");
+		expect(sources).toContain("from '@dvmarques/admin-ds-components'");
+		expect(sources).toContain("from '@dvmarques/admin-ds-admin'");
 		for (const file of files) {
 			expect(findInternalPackageImports(importSpecifiers(file.content)), file.path).toEqual([]);
 		}

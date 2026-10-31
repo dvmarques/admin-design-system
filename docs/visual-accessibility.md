@@ -2,7 +2,7 @@
 
 Os estilos respeitam três preferências do sistema operacional: movimento
 reduzido, cores forçadas e maior contraste. Nenhuma exige configuração na
-aplicação consumidora nem do Tailwind: tudo vem de `@admin-ds/tokens/styles.css`
+aplicação consumidora nem do Tailwind: tudo vem de `@dvmarques/admin-ds-tokens/styles.css`
 e do CSS compilado dos pacotes.
 
 ## Movimento reduzido

@@ -10,7 +10,7 @@ import {
 	AdsPopover,
 	AdsToast,
 	AdsTooltip,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Overlays/Components',

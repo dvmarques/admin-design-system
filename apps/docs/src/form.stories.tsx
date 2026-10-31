@@ -11,7 +11,7 @@ import {
 	AdsSelectionGroup,
 	AdsSwitch,
 	AdsTextarea,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Forms/Form controls',

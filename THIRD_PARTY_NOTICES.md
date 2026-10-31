@@ -1,6 +1,6 @@
 # Avisos e atribuições de terceiros
 
-Este arquivo preserva as licenças e os avisos de direitos autorais dos **20 ícones atualmente incorporados** ao componente `AdsIcon` em `@admin-ds/components`.
+Este arquivo preserva as licenças e os avisos de direitos autorais dos **20 ícones atualmente incorporados** ao componente `AdsIcon` em `@dvmarques/admin-ds-components`.
 
 Os 20 SVGs têm fonte oficialmente identificada e estão sujeitos às permissões e condições da licença da respectiva fonte. O projeto Admin DS mantém licença MIT para o código próprio; a licença do código próprio não substitui as licenças abaixo.
 
@@ -135,4 +135,4 @@ SOFTWARE.
 
 ## Distribuição
 
-Este aviso deve acompanhar o artefato distribuído de `@admin-ds/components` junto da licença MIT do código próprio. Uma mudança futura de desenhos exige revisar o inventário, os respectivos avisos e o build de distribuição.
+Este aviso deve acompanhar o artefato distribuído de `@dvmarques/admin-ds-components` junto da licença MIT do código próprio. Uma mudança futura de desenhos exige revisar o inventário, os respectivos avisos e o build de distribuição.

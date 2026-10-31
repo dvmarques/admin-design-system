@@ -535,12 +535,12 @@ function render(entry) {
 		story = storyFor(entry);
 	const pkg =
 		entry.name === 'AdsMaskedInput'
-			? '@admin-ds/components/masked-input'
+			? '@dvmarques/admin-ds-components/masked-input'
 			: entry.name === 'AdsHighlightedCodeSnippet'
-				? '@admin-ds/highlighted-code'
+				? '@dvmarques/admin-ds-highlighted-code'
 				: api.path.startsWith('packages/admin/')
-					? '@admin-ds/admin'
-					: '@admin-ds/components';
+					? '@dvmarques/admin-ds-admin'
+					: '@dvmarques/admin-ds-components';
 	const a = [
 		"import { Meta, Canvas } from '@storybook/addon-docs/blocks';",
 		"import * as ExampleStories from '../" + story.file.replace('.tsx', '') + "';",

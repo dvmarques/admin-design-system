@@ -9,7 +9,7 @@ test('admin package exposes only its public entry points', () => {
 });
 
 test('admin package declares its runtime peers explicitly', () => {
-	for (const peer of ['@admin-ds/components', 'react', 'react-dom']) {
+	for (const peer of ['@dvmarques/admin-ds-components', 'react', 'react-dom']) {
 		assert.ok(manifest.peerDependencies[peer], `missing peer dependency: ${peer}`);
 	}
 });

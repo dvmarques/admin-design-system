@@ -5,7 +5,7 @@ import {
 	AdsDialog,
 	AdsLoadingIndicator,
 	type AdsDialogProps,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
 import { isFocusLost } from './selection-focus.js';
 

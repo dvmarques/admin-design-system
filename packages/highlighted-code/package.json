@@ -1,14 +1,15 @@
 {
-	"name": "@admin-ds/highlighted-code",
+	"name": "@dvmarques/admin-ds-highlighted-code",
 	"version": "0.1.0",
-	"private": true,
+	"private": false,
 	"license": "MIT",
 	"type": "module",
 	"sideEffects": [
 		"./dist/styles.css"
 	],
 	"files": [
-		"dist"
+		"dist",
+		"LICENSE.md"
 	],
 	"exports": {
 		".": {
@@ -36,5 +37,15 @@
 		"test:node": "node --test ./tests/**/*.test.mjs",
 		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs",
 		"build": "tsc -p tsconfig.build.json && npm run build:css && npm run verify:package"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"author": "Daniel Marques",
+	"description": "Syntax highlighting opcional do Admin Design System",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/dvmarques/admin-design-system.git",
+		"directory": "packages/highlighted-code"
 	}
 }

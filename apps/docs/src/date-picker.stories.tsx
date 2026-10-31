@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsDatePicker, AdsField, type AdsDateRange } from '@admin-ds/components';
+import { AdsDatePicker, AdsField, type AdsDateRange } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Forms/DatePicker',

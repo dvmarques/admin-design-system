@@ -2,7 +2,7 @@ import { fireEvent, render as renderReact, screen } from '@testing-library/react
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { DemoNavigation, demoNavigationGroups, demoNavigationItems } from '../app/demo-navigation';
 
-import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 import type { ReactNode } from 'react';
 
 function render(node: ReactNode) {

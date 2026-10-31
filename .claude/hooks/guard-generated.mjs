@@ -3,8 +3,8 @@ import { readFileSync } from 'node:fs';
 
 const rules = [
 	[/(^|\/)package-lock\.json$/, 'Use npm install para atualizar o lockfile.'],
-	[/(^|\/)packages\/tokens\/src\/generated\.ts$/, 'Edite packages/tokens/source e rode npm run generate --workspace @admin-ds/tokens.'],
-	[/(^|\/)packages\/tokens\/dist\//, 'Gerado pelo build de @admin-ds/tokens.'],
+	[/(^|\/)packages\/tokens\/src\/generated\.ts$/, 'Edite packages/tokens/source e rode npm run generate --workspace @dvmarques/admin-ds-tokens.'],
+	[/(^|\/)packages\/tokens\/dist\//, 'Gerado pelo build de @dvmarques/admin-ds-tokens.'],
 	[/(^|\/)e2e\/[^/]+-snapshots\//, 'Atualize baselines pelo workflow update-visual-baselines, após revisar o diff visual.'],
 ];
 

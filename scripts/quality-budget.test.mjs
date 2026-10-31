@@ -24,10 +24,10 @@ test('rejeita orçamentos inválidos', () => {
 
 const readJson = (path) => JSON.parse(readFileSync(new URL(`../${path}`, import.meta.url), 'utf8'));
 const packages = [
-	'@admin-ds/tokens',
-	'@admin-ds/components',
-	'@admin-ds/highlighted-code',
-	'@admin-ds/admin',
+	'@dvmarques/admin-ds-tokens',
+	'@dvmarques/admin-ds-components',
+	'@dvmarques/admin-ds-highlighted-code',
+	'@dvmarques/admin-ds-admin',
 ];
 
 test('todo pacote tem orçamento de distribuição e de navegador válidos', () => {
@@ -58,7 +58,7 @@ test('cenários públicos usam somente exports públicos e têm limites coerente
 		for (const [, specifier] of source.matchAll(/from '([^']+)'/g)) {
 			assert.match(
 				specifier,
-				/^@admin-ds\/(tokens|components|components\/masked-input|admin|highlighted-code)$/,
+				/^@dvmarques\/admin-ds-(tokens|components|components\/masked-input|admin|highlighted-code)$/,
 				`${name}: ${specifier}`,
 			);
 		}
@@ -96,12 +96,17 @@ function inspectWith(change) {
 }
 
 const cases = [
-	['bundle-baseline', '@admin-ds/tokens', 'distribuição', (c) => (c['@admin-ds/tokens'] = 1)],
+	[
+		'bundle-baseline',
+		'@dvmarques/admin-ds-tokens',
+		'distribuição',
+		(c) => (c['@dvmarques/admin-ds-tokens'] = 1),
+	],
 	...['bytes', 'gzipBytes'].map((key) => [
 		'browser-budget',
-		'@admin-ds/components',
+		'@dvmarques/admin-ds-components',
 		key === 'bytes' ? 'JS/CSS publicados' : 'JS/CSS gzip',
-		(c) => (c['@admin-ds/components'][key] = 1),
+		(c) => (c['@dvmarques/admin-ds-components'][key] = 1),
 	]),
 	...['tokens-public', 'components-public', 'admin-public'].flatMap((scenario) =>
 		[

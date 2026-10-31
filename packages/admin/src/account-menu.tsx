@@ -8,7 +8,7 @@ import {
 	type AdsAvatarTone,
 	type AdsIconName,
 	type AdsOverlayPlacement,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useId, useRef, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import {

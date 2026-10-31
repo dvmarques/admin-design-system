@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsButton, AdsLoadingIndicator, AdsProgress } from '@admin-ds/components';
+import { AdsButton, AdsLoadingIndicator, AdsProgress } from '@dvmarques/admin-ds-components';
 import {
 	useEffect,
 	useId,

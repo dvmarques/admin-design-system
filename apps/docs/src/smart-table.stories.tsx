@@ -7,8 +7,8 @@ import {
 	type AdsSmartTableColumn,
 	type AdsSmartTableProps,
 	type AdsSmartTableSort,
-} from '@admin-ds/admin';
-import { AdsBadge } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-admin';
+import { AdsBadge } from '@dvmarques/admin-ds-components';
 
 interface User {
 	id: string;
@@ -48,7 +48,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'Tabela administrativa controlada pelo consumidor, composta sobre `AdsTable` e `AdsPagination`. Ordenação (`sort`), seleção (`selectedIds`) e colunas (`hiddenColumnIds`) são estado do consumidor; a biblioteca não busca, ordena nem pagina dados. O consumidor fornece as linhas já processadas. **API genérica:** AdsSmartTable<Row> recebe rows: Row[], columns: AdsSmartTableColumn<Row>[] e getRowId: (row: Row) => string. O tipo Row precisa ser consistente entre rows, columns e funções renderizadoras; a story usa User como exemplo. A extração automática de props não substitui os contratos AdsSmartTableProps<Row>, AdsSmartTableColumn<Row> e AdsSmartTableVirtualization; consulte os tipos públicos no entrypoint @admin-ds/admin. Estados loading, empty e error podem ser observados nas stories específicas. Interações de seleção, redimensionamento e ordenação exigem controle do consumidor, com foco, rótulos de linha e operação por teclado.',
+					'Tabela administrativa controlada pelo consumidor, composta sobre `AdsTable` e `AdsPagination`. Ordenação (`sort`), seleção (`selectedIds`) e colunas (`hiddenColumnIds`) são estado do consumidor; a biblioteca não busca, ordena nem pagina dados. O consumidor fornece as linhas já processadas. **API genérica:** AdsSmartTable<Row> recebe rows: Row[], columns: AdsSmartTableColumn<Row>[] e getRowId: (row: Row) => string. O tipo Row precisa ser consistente entre rows, columns e funções renderizadoras; a story usa User como exemplo. A extração automática de props não substitui os contratos AdsSmartTableProps<Row>, AdsSmartTableColumn<Row> e AdsSmartTableVirtualization; consulte os tipos públicos no entrypoint @dvmarques/admin-ds-admin. Estados loading, empty e error podem ser observados nas stories específicas. Interações de seleção, redimensionamento e ordenação exigem controle do consumidor, com foco, rótulos de linha e operação por teclado.',
 			},
 		},
 	},

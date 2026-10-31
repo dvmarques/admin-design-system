@@ -30,8 +30,8 @@ describe('importSpecifiers', () => {
 
 describe('findInternalPackageImports', () => {
 	it.each([
-		'@admin-ds/components/src/button',
-		'@admin-ds/admin/dist/styles.css',
+		'@dvmarques/admin-ds-components/src/button',
+		'@dvmarques/admin-ds-admin/dist/styles.css',
 		'../../packages/components/src/index',
 		'../packages/admin',
 	])('flags %s', (specifier) => {
@@ -39,9 +39,9 @@ describe('findInternalPackageImports', () => {
 	});
 
 	it.each([
-		'@admin-ds/components',
-		'@admin-ds/components/styles.css',
-		'@admin-ds/tokens',
+		'@dvmarques/admin-ds-components',
+		'@dvmarques/admin-ds-components/styles.css',
+		'@dvmarques/admin-ds-tokens',
 		'next/link',
 		'./local',
 	])('accepts %s', (specifier) => {
@@ -50,11 +50,14 @@ describe('findInternalPackageImports', () => {
 });
 
 describe('findUndeclaredDependencies', () => {
-	const declared = ['@admin-ds/components', '@admin-ds/admin'];
+	const declared = ['@dvmarques/admin-ds-components', '@dvmarques/admin-ds-admin'];
 
 	it('flags packages that only resolve through workspace hoisting', () => {
 		expect(
-			findUndeclaredDependencies(['clsx', '@scope/other/sub', '@admin-ds/components'], declared),
+			findUndeclaredDependencies(
+				['clsx', '@scope/other/sub', '@dvmarques/admin-ds-components'],
+				declared,
+			),
 		).toEqual(['clsx', '@scope/other/sub']);
 	});
 

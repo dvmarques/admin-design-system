@@ -6,10 +6,10 @@ import {
 	AdsTableHead,
 	AdsTableHeader,
 	AdsTableRow,
-} from '@admin-ds/components';
-import { AdsHighlightedCodeSnippet } from '@admin-ds/highlighted-code';
+} from '@dvmarques/admin-ds-components';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 
-const importCode = `import { AdsMaskedInput } from '@admin-ds/components/masked-input';`;
+const importCode = `import { AdsMaskedInput } from '@dvmarques/admin-ds-components/masked-input';`;
 
 const props = [
 	[
@@ -74,10 +74,10 @@ export function MaskedInputApi() {
 			<h2>Instalação e API</h2>
 			<p>
 				<code>AdsMaskedInput</code> fica no subpath opcional{' '}
-				<code>@admin-ds/components/masked-input</code> e usa o peer opcional{' '}
-				<code>react-imask</code>. O entrypoint <code>@admin-ds/components</code> não o reexporta nem
-				o carrega: só quem importa o subpath precisa instalar <code>react-imask</code> (versão{' '}
-				<code>^7.6.1</code>).
+				<code>@dvmarques/admin-ds-components/masked-input</code> e usa o peer opcional{' '}
+				<code>react-imask</code>. O entrypoint <code>@dvmarques/admin-ds-components</code> não o
+				reexporta nem o carrega: só quem importa o subpath precisa instalar <code>react-imask</code>{' '}
+				(versão <code>^7.6.1</code>).
 			</p>
 			<AdsHighlightedCodeSnippet
 				code="npm install react-imask"

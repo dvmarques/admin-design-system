@@ -61,5 +61,5 @@ Os snapshots de `packages/components/tests/icon-modules.test.tsx` registram a ge
 
 - A origem e a licença dos **desenhos substitutos** são verificáveis; não é uma certificação de autoria independente nem um parecer jurídico sobre os históricos.
 - As alterações são visuais nos 20 desenhos. Validar os três tamanhos, ambos os temas, as composições administrativas, snapshots visuais e acessibilidade antes do merge.
-- Verificar que o conteúdo completo das licenças e avisos siga junto da distribuição de `@admin-ds/components`.
+- Verificar que o conteúdo completo das licenças e avisos siga junto da distribuição de `@dvmarques/admin-ds-components`.
 - O projeto continua licenciado MIT para o código próprio, respeitando a ISC/MIT dos desenhos externos.

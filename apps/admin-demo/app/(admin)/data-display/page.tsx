@@ -20,7 +20,7 @@ import {
 	AdsTableHeader,
 	AdsTableRow,
 	AdsTypography,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 export default function DataDisplayPage() {
 	return (
@@ -32,7 +32,7 @@ export default function DataDisplayPage() {
 						Apresentação de dados administrativos
 					</AdsTypography>
 					<AdsTypography variant="muted">
-						Exemplo consumindo somente APIs públicas de @admin-ds/components.
+						Exemplo consumindo somente APIs públicas de @dvmarques/admin-ds-components.
 					</AdsTypography>
 				</header>
 

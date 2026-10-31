@@ -148,9 +148,32 @@ jobs:
       - name: Conferir hashes e publicar os quatro pacotes
         run: node ./scripts/npm-publication.mjs publish "$VERSION" "$RELEASE_SHA" "$PUBLIC_PACK_DIR"
 
+  verify-registry:
+    name: Validar consumo real do npm
+    needs: [resolve-validate, publish-npm]
+    permissions:
+      contents: read
+    runs-on: ubuntu-latest
+    env:
+      PUBLIC_REGISTRY_VERSION: ${{ inputs.version }}
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ needs.resolve-validate.outputs.release_sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts
+      - run: npx playwright install --with-deps chromium
+      - name: Instalar pacotes do registro, auditar assinaturas e testar Next.js
+        run: npm run verify:distribution
+
   publish-github:
     name: Publicar tag e GitHub Release
-    needs: [resolve-validate, publish-npm]
+    needs: [resolve-validate, verify-registry]
     permissions:
       contents: write
       pull-requests: read

@@ -96,13 +96,14 @@ test('marcadores ausentes, múltiplos ou malformados são recusados', () => {
 		/Marcadores de aprovação duplicados/,
 	);
 	assert.throws(
-		() => validateChangelogReview(approved.replace(marker, '<!-- release-changelog-approved nope -->'), '1.0.1'),
+		() =>
+			validateChangelogReview(
+				approved.replace(marker, '<!-- release-changelog-approved nope -->'),
+				'1.0.1',
+			),
 		/sem aprovação editorial/,
 	);
-	assert.equal(
-		stripReleaseReviewMarker('Antes\n' + marker + '\nDepois'),
-		'Antes\nDepois',
-	);
+	assert.equal(stripReleaseReviewMarker('Antes\n' + marker + '\nDepois'), 'Antes\nDepois');
 });
 
 test('mudanças de versão não contaminam seções fechadas e notas excluem apenas marcador', () => {

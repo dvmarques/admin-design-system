@@ -1,6 +1,6 @@
 # Como contribuir com o Admin Design System
 
-O Admin DS distribui bibliotecas React reutilizáveis e mantém uma demo Next.js e um catálogo Storybook. Antes de contribuir, leia [AGENTS.md](AGENTS.md) (políticas obrigatórias), [README.md](README.md), [mapa de contexto](docs/agent-context-map.md) e [processo com IA](docs/ai-development-workflow.md).
+O Admin DS distribui bibliotecas React reutilizáveis e mantém uma demo Next.js e um catálogo Storybook. Para preparar o ambiente e executar as aplicações, siga o [Guia de desenvolvimento](docs/development.md). Antes de contribuir, leia [AGENTS.md](AGENTS.md) (políticas obrigatórias), [README.md](README.md), [mapa de contexto](docs/agent-context-map.md) e [processo com IA](docs/ai-development-workflow.md).
 
 ## Preparar o ambiente
 

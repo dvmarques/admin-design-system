@@ -26,12 +26,12 @@ npm install react-imask
 
 O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
 
-| Pacote | CSS público | Responsabilidade |
-| --- | --- | --- |
-| `@dvmarques/admin-ds-tokens` | `@dvmarques/admin-ds-tokens/styles.css` | Tokens/temas |
-| `@dvmarques/admin-ds-components` | `@dvmarques/admin-ds-components/styles.css` | Primitivas, formulários e UI |
-| `@dvmarques/admin-ds-admin` | `@dvmarques/admin-ds-admin/styles.css` | Shell e fluxos administrativos |
-| `@dvmarques/admin-ds-highlighted-code` | `@dvmarques/admin-ds-highlighted-code/styles.css` | Realce opcional de código |
+| Pacote                                 | CSS público                                       | Responsabilidade               |
+| -------------------------------------- | ------------------------------------------------- | ------------------------------ |
+| `@dvmarques/admin-ds-tokens`           | `@dvmarques/admin-ds-tokens/styles.css`           | Tokens/temas                   |
+| `@dvmarques/admin-ds-components`       | `@dvmarques/admin-ds-components/styles.css`       | Primitivas, formulários e UI   |
+| `@dvmarques/admin-ds-admin`            | `@dvmarques/admin-ds-admin/styles.css`            | Shell e fluxos administrativos |
+| `@dvmarques/admin-ds-highlighted-code` | `@dvmarques/admin-ds-highlighted-code/styles.css` | Realce opcional de código      |
 
 ### Exemplo mínimo — App Router sem imports internos
 
@@ -43,11 +43,11 @@ import '@dvmarques/admin-ds-components/styles.css';
 import type { ReactNode } from 'react';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="pt-BR" data-theme="light">
-      <body>{children}</body>
-    </html>
-  );
+	return (
+		<html lang="pt-BR" data-theme="light">
+			<body>{children}</body>
+		</html>
+	);
 }
 ```
 
@@ -60,14 +60,14 @@ import { useState } from 'react';
 import { AdsButton } from '@dvmarques/admin-ds-components';
 
 export default function Page() {
-  const [count, setCount] = useState(0);
-  return (
-    <main>
-      <AdsButton onClick={() => setCount((n) => n + 1)}>
-        Total: {count}
-      </AdsButton>
-    </main>
-  );
+	const [count, setCount] = useState(0);
+	return (
+		<main>
+			<AdsButton onClick={() => setCount((n) => n + 1)}>
+				Total: {count}
+			</AdsButton>
+		</main>
+	);
 }
 ```
 

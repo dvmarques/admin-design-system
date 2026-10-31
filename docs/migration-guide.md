@@ -6,11 +6,11 @@ Este guia cobre a mudança de nomes de pacotes e a evolução da preferência de
 
 ## 1. Migrar nomes de pacotes
 
-| Workspace anterior | Pacote de distribuição |
-| --- | --- |
-| `@admin-ds/tokens` | `@dvmarques/admin-ds-tokens` |
-| `@admin-ds/components` | `@dvmarques/admin-ds-components` |
-| `@admin-ds/admin` | `@dvmarques/admin-ds-admin` |
+| Workspace anterior           | Pacote de distribuição                                |
+| ---------------------------- | ----------------------------------------------------- |
+| `@admin-ds/tokens`           | `@dvmarques/admin-ds-tokens`                          |
+| `@admin-ds/components`       | `@dvmarques/admin-ds-components`                      |
+| `@admin-ds/admin`            | `@dvmarques/admin-ds-admin`                           |
 | `@admin-ds/highlighted-code` | `@dvmarques/admin-ds-highlighted-code` (**opcional**) |
 
 Os nomes antigos são **nomes de workspaces históricos**, **não aliases publicados no npm**. Atualize imports JS/TS e folhas `styles.css`, respeitando a ordem tokens → components → admin (quando usado). Não faça imports diretos de `src/` nem configure aliases privados. Somente consumidores que usam o realce precisam instalar `highlighted-code`; Shiki permanece isolado.
@@ -23,12 +23,12 @@ Se usar entrada mascarada, atualize também `@admin-ds/components/masked-input` 
 
 `ThemeToggle` permanece exportado, funcional e **não está formalmente depreciado**. Ele é binário (`light`/`dark`), recebe `initialTheme` e emite `onThemeChange`. Troque-o apenas se precisar da terceira preferência, **Sistema**, ou de controle externo sincronizado sem remount.
 
-| Antes | Com AdsThemeControl |
-| --- | --- |
-| `ThemeToggle initialTheme` | `AdsThemeControl defaultValue` ou `value` |
-| `ThemeToggle onThemeChange` | `AdsThemeControl onValueChange` |
-| Alternar claro/escuro | Escolher `light`, `dark` ou `system` diretamente |
-| Estado binário local | Preferência controlada (`value`) ou não controlada (`defaultValue="system"`) |
+| Antes                       | Com AdsThemeControl                                                          |
+| --------------------------- | ---------------------------------------------------------------------------- |
+| `ThemeToggle initialTheme`  | `AdsThemeControl defaultValue` ou `value`                                    |
+| `ThemeToggle onThemeChange` | `AdsThemeControl onValueChange`                                              |
+| Alternar claro/escuro       | Escolher `light`, `dark` ou `system` diretamente                             |
+| Estado binário local        | Preferência controlada (`value`) ou não controlada (`defaultValue="system"`) |
 
 ```tsx
 'use client';
@@ -36,13 +36,13 @@ Se usar entrada mascarada, atualize também `@admin-ds/components/masked-input` 
 import { AdsThemeControl, type AdsThemePreference } from '@dvmarques/admin-ds-components';
 
 export function ThemeChoice({
-  preference,
-  setPreference,
+	preference,
+	setPreference,
 }: {
-  preference: AdsThemePreference;
-  setPreference: (next: AdsThemePreference) => void;
+	preference: AdsThemePreference;
+	setPreference: (next: AdsThemePreference) => void;
 }) {
-  return <AdsThemeControl value={preference} onValueChange={setPreference} />;
+	return <AdsThemeControl value={preference} onValueChange={setPreference} />;
 }
 ```
 

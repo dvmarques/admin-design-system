@@ -12,6 +12,9 @@ componentes React e contratos públicos de pacotes.
 
 - `vitest.config.ts` configura o ambiente de testes. O projeto usa `jsdom`
   para simular um navegador e localizar testes TypeScript e TSX nos pacotes.
+  O `jsdom` 30 exige Node 24.15 ou superior na linha 24: para desenvolver e executar
+  os testes use Node `>=24.15`, que é o que `.nvmrc` resolve. O requisito público dos
+  pacotes continua `engines.node >=24.0.0`.
 - `vitest.setup.ts` prepara cada teste e inclui os matchers do Testing Library,
   permitindo asserções legíveis como `toHaveAttribute` e `toBeVisible`.
 

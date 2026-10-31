@@ -81,7 +81,7 @@ jobs:
             echo "Stale Playwright image/check in workflow" >&2
             exit 1
           fi
-          npm exec -- prettier --write packages/admin/src/account-menu.tsx packages/admin/src/organization-switcher.tsx e2e/account-notifications-organization.spec.ts CHANGELOG.md openspec/changes/issue-265-deps-batch2/*.md
+          npm exec -- prettier --write .github/workflows/issue-265-batch2-bootstrap.yml packages/admin/src/account-menu.tsx packages/admin/src/organization-switcher.tsx e2e/account-notifications-organization.spec.ts CHANGELOG.md openspec/changes/issue-265-deps-batch2/*.md
           npm run format
           npm run lint
       - name: Commit resolved lockfile and remove temporary workflow without changing the base

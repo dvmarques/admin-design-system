@@ -18,4 +18,4 @@
 - [x] 3.2 Abrir PR Draft; evidenciar que scanners não executam, sem checks exigidos pendentes.
 - [x] 3.3 Marcar Ready, comprovar execução e revisar logs/resultados, corrigindo falhas encontradas.
 - [x] 3.4 Comparar jobs e latência com baseline real, registrar medições progressivas na issue #267 e indicar amostra insuficiente quando couber.
-- [ ] 3.5 Revisar diff final, CI/Pages completos e riscos pendentes; não marcar como concluído se não verificado.
+- [x] 3.5 Revisar diff final, CI/Pages completos e riscos pendentes; não marcar como concluído se não verificado.

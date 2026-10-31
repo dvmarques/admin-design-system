@@ -1,4 +1,10 @@
-## ADDED Requirements
+# Security Gates Specification
+
+## Purpose
+
+Define controles recorrentes e rastreáveis de SAST, SCA e detecção de segredos, com bloqueio de achados graves sem exigir aprovação de terceiros.
+
+## Requirements
 
 ### Requirement: Validação recorrente e verificável de segurança
 
@@ -35,7 +41,7 @@ Os jobs de segurança MUST NOT executar para Pull Requests Draft e MUST executar
 
 #### Scenario: Branch integrada ou agenda semanal
 
-- **WHEN** ocorre push em develop/master ou chega a agenda semanal
+- **WHEN** ocorre push em develop/master ou chega à agenda semanal
 - **THEN** os gates executam sem depender de uma PR
 
 ### Requirement: Isolamento de privilégios e triagem

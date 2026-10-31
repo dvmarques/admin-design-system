@@ -85,6 +85,10 @@ async function ready(url, server) {
 }
 
 async function main() {
+	const registryVersion = process.env.PUBLIC_REGISTRY_VERSION;
+	if (registryVersion && !/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(registryVersion)) {
+		throw new Error('PUBLIC_REGISTRY_VERSION deve ser SemVer estável.');
+	}
 	const temp = await mkdtemp(join(tmpdir(), 'admin-ds-public-pack-'));
 	const packDir = process.env.PUBLIC_PACK_DIR
 		? resolve(process.env.PUBLIC_PACK_DIR)
@@ -98,6 +102,11 @@ async function main() {
 		const dependencies = {};
 		for (const item of packageOrder) {
 			const name = nameFor(item);
+			if (registryVersion) {
+				dependencies[name] = registryVersion;
+				console.log('REGISTRY CONSUMER:', name + '@' + registryVersion);
+				continue;
+			}
 			const manifest = JSON.parse(
 				await readFile(join(root, 'packages', item, 'package.json'), 'utf8'),
 			);
@@ -266,6 +275,11 @@ async function main() {
 		await command(npm, ['install', '--ignore-scripts', '--no-audit', '--no-fund'], consumer, {
 			npm_config_userconfig: join(consumer, '.npmrc'),
 		});
+		if (registryVersion) {
+			await command(npm, ['audit', 'signatures'], consumer, {
+				npm_config_userconfig: join(consumer, '.npmrc'),
+			});
+		}
 		await command(npm, ['run', 'build'], consumer, { NEXT_TELEMETRY_DISABLED: '1' });
 		await command(npm, ['run', 'typecheck'], consumer);
 		const port = await getPort();

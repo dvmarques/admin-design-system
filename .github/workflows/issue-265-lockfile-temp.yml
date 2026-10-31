@@ -30,3 +30,51 @@ jobs:
           npm --version
           npm install --package-lock-only --ignore-scripts --no-audit --no-fund
           node -e "const fs=require('node:fs'); const j=JSON.parse(fs.readFileSync('package-lock.json','utf8')); console.log('RESOLVED_VERSIONS:'+JSON.stringify(Object.fromEntries(['typescript','vitest','@vitest/coverage-v8','jsdom','lint-staged'].map(x=>[x,j.packages['node_modules/'+x]?.version])))); const s=JSON.stringify(j); for(let i=0;i<s.length;i+=2000) console.log('LOCK_CHUNK_'+(i/2000)+':'+s.slice(i,i+2000)); console.log('LOCK_CHUNK_END:'+Math.ceil(s.length/2000))"
+
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Install Node 24 and npm 11 tooling
+        run: |
+          npm install --global npm@11.19.1
+          node --version
+          npm --version
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ls --depth=0
+      - name: Format lint build types tests and coverage
+        run: |
+          npm run format
+          npm run lint
+          npm run build
+          npm run typecheck
+          npm run test:quality
+          npm run test:coverage
+      - name: Distribution Storybook Next and Pages
+        run: |
+          npm run inspect:packages
+          npm run verify:optional-peer
+          npm run build --workspace @admin-ds/docs
+          npm run test:output --workspace @admin-ds/docs
+          npm run build --workspace @admin-ds/admin-demo
+          npm run build:pages
+      - name: Validate OpenSpec 1.15 strict
+        run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
+      - name: Verify Husky lint-staged on a staged file
+        run: |
+          printf '### lint staged smoke\n' > issue-265-lint-staged-smoke.md
+          git add issue-265-lint-staged-smoke.md
+          npx --no-install lint-staged
+          test -f issue-265-lint-staged-smoke.md
+          git reset -- issue-265-lint-staged-smoke.md
+          rm issue-265-lint-staged-smoke.md
+      - name: Audit production and full graph
+        run: |
+          npm audit --json > /tmp/audit-full.json || true
+          npm audit --omit=dev --json > /tmp/audit-prod.json || true
+          node -e "for(const [name,file] of [['full','/tmp/audit-full.json'],['prod','/tmp/audit-prod.json']]){const a=require(file); console.log('AUDIT_'+name+':'+JSON.stringify(a.metadata?.vulnerabilities??{}))}"

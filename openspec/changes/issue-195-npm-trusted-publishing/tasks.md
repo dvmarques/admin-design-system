@@ -24,7 +24,8 @@
 - [x] 3.2 Conferir CI Ready no SHA final: formatação, lint, build, types, testes, cobertura, E2E Chromium/Firefox/WebKit, distribuição, segurança e OpenSpec estrito (Node/npm fixados); registrar as evidências e os checks skipped.
 - [ ] 3.2a Executar o comando agregado `npm run validate` integralmente em ambiente Node/npm compatível (não executado como comando único; as etapas equivalentes passaram na CI).
 - [x] 3.3 Abrir PR #281 Ready em `develop`, revisar controles de segurança e acompanhar CI/Security Gate até sucesso no SHA final.
-- [ ] 3.3a Obter revisão/aprovação final da PR antes do merge (a PR permanece aberta e ainda não foi integrada).
+- [x] 3.3a Revisão humana informada pelo mantenedor em 31/10/2026; nenhuma aprovação formal de review via GitHub foi registrada.
+- [ ] 3.3b Aguardar os checks do commit atual da PR e confirmar aprovação para merge em `develop` (a PR continua aberta).
 - [ ] 3.4 **Após** aprovação explícita da primeira release (fora desta PR): configurar trusted publishers, publicar os quatro pacotes e testar Next.js externo pelo registry. Atualizar avisos pré-publicação somente depois.
 
 ## Não executado nesta change
@@ -38,3 +39,5 @@
 - [Security Gate #41244167645](https://github.com/dvmarques/admin-design-system/actions/runs/41244167645): sucesso (CodeQL, npm audit, Gitleaks).
 - [Pages #41244167679](https://github.com/dvmarques/admin-design-system/actions/runs/41244167679): sucesso.
 - Nenhum `npm publish`, release/tag ou teste de registry executado; `npm run validate` não foi chamado como comando integrado nesta sessão.
+
+- Em 31/10/2026, o mantenedor confirmou a revisão; o commit mais recente da PR passou a ser `d0e598484852b6b2e76cb6d4d00409c4a47c18bd` (`fix(release): retry do smoke no registry e changelog da #195 mais curto`). Nova CI/Security Gate/Pages desse SHA ainda estavam em andamento na consulta; não confundir com os checks verdes do SHA anterior.

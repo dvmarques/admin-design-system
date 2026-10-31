@@ -10,7 +10,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
-- `issue-267-security-gates` (issue #267) - Novo workflow CodeQL (SAST JS/TS), npm audit (SCA dev/prod) e Gitleaks, com execução apenas para PR Ready, push e agenda semanal; políticas de exceções específicas/expiráveis para SCA e alertas CodeQL high/critical via SARIF, Dependabot semanal agrupado, testes de gate e guia de triagem/métricas. Hardening adicional resolve regras SARIF em driver/extensions e falha fechado quando uma regra não é encontrada; npm audit local funciona no Windows.
+- `issue-267-security-gates` (issue #267) - Novo workflow CodeQL (SAST JS/TS), npm audit (SCA dev/prod) e Gitleaks, com execução apenas para PR Ready, push e agenda semanal; políticas de exceções específicas/expiráveis para SCA e alertas CodeQL high/critical via SARIF, Dependabot semanal agrupado, testes de gate e guia de triagem/métricas. Hardening adicional resolve regras SARIF em driver/extensions, falha fechado quando uma regra não é encontrada, corrige a condição de corrida de arquivos identificada pelo CodeQL no gerador e permite npm audit local no Windows.
 
 - `issue-194-public-npm-packages` (issue #194) - Preparação dos quatro pacotes para distribuição pública sob `@dvmarques/admin-ds-*`, incluindo o `highlighted-code` opcional, com licença MIT e copyright Daniel Marques confirmados. Renomeação de manifests, imports, lockfile, scripts, contratos atuais e consumidores do monorepo; inclusão de READMEs/licenças e smoke de `npm pack`/Next.js externo, com peer opcional e isolamento de Shiki verificados. Raiz e apps permanecem privados; nenhuma publicação no npm, tag ou release foi efetuada.
 

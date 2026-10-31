@@ -10,7 +10,7 @@ import {
 	type AdsAvatarTone,
 	type AdsComboboxOption,
 	type AdsOverlayPlacement,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import {
 	forwardRef,
 	useMemo,

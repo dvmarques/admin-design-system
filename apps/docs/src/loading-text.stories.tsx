@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsLoadingText } from '@admin-ds/components';
+import { AdsLoadingText } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/LoadingText',

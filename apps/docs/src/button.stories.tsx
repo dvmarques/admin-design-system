@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import { useState } from 'react';
-import { AdsButton } from '@admin-ds/components';
+import { AdsButton } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/Button',

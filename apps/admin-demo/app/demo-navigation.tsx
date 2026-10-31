@@ -3,8 +3,8 @@
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useEffect, useState } from 'react';
-import { AdsAdminShell } from '@admin-ds/admin';
-import { AdsIcon, type AdsIconName } from '@admin-ds/components';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
+import { AdsIcon, type AdsIconName } from '@dvmarques/admin-ds-components';
 import { catalogEntries } from './catalogo/catalog-data';
 import { canonicalCatalogPath, catalogFamilyForName } from './catalogo/catalog-families';
 import { StorybookLink } from './storybook-link';

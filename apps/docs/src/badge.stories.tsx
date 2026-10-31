@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsBadge } from '@admin-ds/components';
+import { AdsBadge } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/Badge',

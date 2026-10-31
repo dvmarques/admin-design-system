@@ -17,7 +17,7 @@ import {
 	AdsTableHead,
 	AdsTableHeader,
 	AdsTableRow,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const meta = { title: 'Data display/Components', tags: ['autodocs'] } satisfies Meta;
 export default meta;

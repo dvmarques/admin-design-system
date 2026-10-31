@@ -8,7 +8,7 @@ Compõe os componentes públicos em fluxos administrativos recorrentes (listagem
 
 ### Requirement: Composição sem regras de negócio
 
-O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsConfirmDialog` em `@admin-ds/admin`, compostos apenas por APIs públicas existentes. Os componentes e tipos públicos MUST usar o prefixo `Ads`, as classes públicas `ads-` e as variáveis `--ads-`, sem expor Tailwind. Eles MUST NOT persistir nem enviar dados, MUST NOT guardar a seleção nem a etapa ativa e MUST NOT importar o roteador do Next.js nem ler a URL.
+O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsConfirmDialog` em `@dvmarques/admin-ds-admin`, compostos apenas por APIs públicas existentes. Os componentes e tipos públicos MUST usar o prefixo `Ads`, as classes públicas `ads-` e as variáveis `--ads-`, sem expor Tailwind. Eles MUST NOT persistir nem enviar dados, MUST NOT guardar a seleção nem a etapa ativa e MUST NOT importar o roteador do Next.js nem ler a URL.
 
 #### Scenario: Estado não aplicado pelo consumidor
 

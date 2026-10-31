@@ -1,4 +1,4 @@
-import { AdsDatePicker, AdsField, AdsSurface, AdsTypography } from '@admin-ds/components';
+import { AdsDatePicker, AdsField, AdsSurface, AdsTypography } from '@dvmarques/admin-ds-components';
 
 export default function DatesPage() {
 	return (

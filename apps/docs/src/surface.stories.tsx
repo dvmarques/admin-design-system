@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsSurface } from '@admin-ds/components';
+import { AdsSurface } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/Surface',

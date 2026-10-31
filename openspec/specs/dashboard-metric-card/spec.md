@@ -8,7 +8,7 @@ Fornece o card de métrica (KPI) reutilizável de dashboards administrativos, se
 
 ### Requirement: Card de métrica apresenta título, valor e variação
 
-O sistema MUST fornecer `AdsMetricCard` em `@admin-ds/admin` com título, valor, variação opcional, descrição opcional e progresso opcional, aceitando `className` e atributos HTML do elemento raiz.
+O sistema MUST fornecer `AdsMetricCard` em `@dvmarques/admin-ds-admin` com título, valor, variação opcional, descrição opcional e progresso opcional, aceitando `className` e atributos HTML do elemento raiz.
 
 #### Scenario: Consumidor exibe uma métrica
 

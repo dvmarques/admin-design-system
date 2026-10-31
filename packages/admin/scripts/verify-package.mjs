@@ -17,7 +17,7 @@ if (!clientModule.startsWith("'use client'"))
 	throw new Error('Client directive was not preserved in the distributed module');
 if (clientModule.includes('react.development'))
 	throw new Error('React must not be bundled into the package artifact');
-if (!clientModule.includes("from '@admin-ds/components'"))
+if (!clientModule.includes("from '@dvmarques/admin-ds-components'"))
 	throw new Error('Shared components must be consumed through the public package entry');
 
 const css = await readFile(new URL('../dist/styles.css', import.meta.url), 'utf8');

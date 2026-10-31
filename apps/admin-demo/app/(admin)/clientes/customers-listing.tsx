@@ -7,14 +7,14 @@ import {
 	type AdsFilterValues,
 	type AdsSmartTableColumn,
 	type AdsSmartTableSort,
-} from '@admin-ds/admin';
+} from '@dvmarques/admin-ds-admin';
 import {
 	AdsBadge,
 	AdsButton,
 	AdsEmptyState,
 	AdsToast,
 	type AdsBadgeVariant,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useEffect, useLayoutEffect, useRef, useState, useTransition } from 'react';

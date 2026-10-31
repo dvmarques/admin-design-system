@@ -1,5 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsTypography } from '@admin-ds/components';
+import { AdsTypography } from '@dvmarques/admin-ds-components';
 
 const meta = {
 	title: 'Primitives/Typography',

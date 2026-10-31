@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
 import { describe, expect, it, vi } from 'vitest';
-import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 import { DemoNavigation, demoNavigationItems } from '../app/demo-navigation';
 
 vi.mock('next/navigation', () => ({ usePathname: () => '/' }));

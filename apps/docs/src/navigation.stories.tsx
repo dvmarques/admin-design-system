@@ -9,7 +9,7 @@ import {
 	AdsPagination,
 	AdsSurface,
 	AdsTabs,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const meta = { title: 'Navigation/Components', tags: ['autodocs'] } satisfies Meta;
 export default meta;

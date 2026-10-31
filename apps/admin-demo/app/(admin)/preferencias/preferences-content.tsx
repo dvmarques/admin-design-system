@@ -1,7 +1,7 @@
 'use client';
 
-import { AdsSwitch, AdsThemeControl, AdsTypography } from '@admin-ds/components';
-import { useAdsAdminShell } from '@admin-ds/admin';
+import { AdsSwitch, AdsThemeControl, AdsTypography } from '@dvmarques/admin-ds-components';
+import { useAdsAdminShell } from '@dvmarques/admin-ds-admin';
 import { applyThemePreference, type ThemePreference } from '../../../lib/theme';
 import { useThemePreference } from '../../use-theme';
 

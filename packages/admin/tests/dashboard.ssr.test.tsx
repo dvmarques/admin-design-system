@@ -1,4 +1,4 @@
-import { AdsEmptyState } from '@admin-ds/components';
+import { AdsEmptyState } from '@dvmarques/admin-ds-components';
 import { act } from '@testing-library/react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';

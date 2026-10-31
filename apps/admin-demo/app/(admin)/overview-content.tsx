@@ -1,5 +1,5 @@
-import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@admin-ds/admin';
-import { AdsList, AdsListItem, AdsProgress, AdsTypography } from '@admin-ds/components';
+import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@dvmarques/admin-ds-admin';
+import { AdsList, AdsListItem, AdsProgress, AdsTypography } from '@dvmarques/admin-ds-components';
 import type {
 	OverviewActivity,
 	OverviewIndicator,

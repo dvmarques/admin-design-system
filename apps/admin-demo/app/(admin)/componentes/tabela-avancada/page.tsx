@@ -2,14 +2,14 @@
 
 import { useMemo, useState } from 'react';
 import Link from 'next/link';
-import { AdsBadge } from '@admin-ds/components';
+import { AdsBadge } from '@dvmarques/admin-ds-components';
 import {
 	AdsSmartTable,
 	getAdsSmartTableCsv,
 	type AdsSmartTableColumn,
 	type AdsSmartTableExport,
 	type AdsSmartTableSort,
-} from '@admin-ds/admin';
+} from '@dvmarques/admin-ds-admin';
 
 interface Person {
 	id: string;

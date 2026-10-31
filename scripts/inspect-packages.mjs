@@ -8,10 +8,10 @@ import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const packageNames = [
-	'@admin-ds/tokens',
-	'@admin-ds/components',
-	'@admin-ds/highlighted-code',
-	'@admin-ds/admin',
+	'@dvmarques/admin-ds-tokens',
+	'@dvmarques/admin-ds-components',
+	'@dvmarques/admin-ds-highlighted-code',
+	'@dvmarques/admin-ds-admin',
 ];
 // INSPECT_BUDGET_DIR permite aos testes de integração usar orçamentos reduzidos em fixtures.
 const budgetDirectory = process.env.INSPECT_BUDGET_DIR
@@ -41,7 +41,7 @@ function exportTargets(value) {
 }
 
 for (const packageName of packageNames) {
-	const directory = resolve(root, 'packages', packageName.split('/').at(-1));
+	const directory = resolve(root, 'packages', packageName.replace('@dvmarques/admin-ds-', ''));
 	const manifest = JSON.parse(await readFile(resolve(directory, 'package.json'), 'utf8'));
 	if (!manifest.files?.includes('dist')) throw new Error(`${packageName} must publish dist`);
 
@@ -51,7 +51,7 @@ for (const packageName of packageNames) {
 		await stat(resolve(directory, target));
 	}
 
-	if (packageName !== '@admin-ds/tokens') {
+	if (packageName !== '@dvmarques/admin-ds-tokens') {
 		for (const dependency of ['react', 'react-dom']) {
 			if (!manifest.peerDependencies?.[dependency])
 				throw new Error(`${packageName} must declare ${dependency} as a peer dependency`);
@@ -98,11 +98,20 @@ for (const [name, scenario] of Object.entries(scenarioBudget)) {
 		bundle: true,
 		minify: true,
 		write: false,
+		metafile: true,
 		platform: 'browser',
 		format: 'esm',
 		external: ['react', 'react-dom', 'react/*', 'react-dom/*'],
 		logLevel: 'silent',
 	});
+	if (
+		name === 'components-public' &&
+		Object.keys(result.metafile.inputs).some((input) => /(?:shiki|highlighted-code)/i.test(input))
+	) {
+		throw new Error(
+			'O cenário principal de componentes não deve incluir Shiki ou highlighted-code',
+		);
+	}
 	const bytes = result.outputFiles.reduce((sum, file) => sum + file.contents.length, 0);
 	const gzipBytes = result.outputFiles.reduce(
 		(sum, file) => sum + gzipSync(file.contents, { level: 9 }).length,

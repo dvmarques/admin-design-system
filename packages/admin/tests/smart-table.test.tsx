@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
-import { AdsDialog, AdsDrawer } from '@admin-ds/components';
+import { AdsDialog, AdsDrawer } from '@dvmarques/admin-ds-components';
 import {
 	AdsSmartTable,
 	type AdsSmartTableColumn,

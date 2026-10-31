@@ -1,4 +1,4 @@
-import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 
 /** Optional external catalog destination, styled like the other sidebar items. */
 export function StorybookLink() {

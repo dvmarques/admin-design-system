@@ -12,7 +12,7 @@ import {
 	type ThemePreference,
 } from '../lib/theme';
 
-vi.mock('@admin-ds/admin', () => ({
+vi.mock('@dvmarques/admin-ds-admin', () => ({
 	useAdsAdminShell: () => ({ collapsed: false, isDesktop: true, setCollapsed: () => {} }),
 }));
 

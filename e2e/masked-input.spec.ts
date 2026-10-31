@@ -262,11 +262,11 @@ test('forced-colors mantém borda e foco visíveis, também no estado de erro', 
 test('consumidor sem Tailwind: só o CSS distribuído estiliza o campo como AdsInput', async ({
 	page,
 }) => {
-	const css = ['@admin-ds/tokens/styles.css', '@admin-ds/components/styles.css']
+	const css = ['@dvmarques/admin-ds-tokens/styles.css', '@dvmarques/admin-ds-components/styles.css']
 		.map((path) => readFileSync(require.resolve(path), 'utf8'))
 		.join('\n');
-	const { AdsInput } = await import('@admin-ds/components');
-	const { AdsMaskedInput } = await import('@admin-ds/components/masked-input');
+	const { AdsInput } = await import('@dvmarques/admin-ds-components');
+	const { AdsMaskedInput } = await import('@dvmarques/admin-ds-components/masked-input');
 	const markup = renderToStaticMarkup(
 		createElement(
 			'div',

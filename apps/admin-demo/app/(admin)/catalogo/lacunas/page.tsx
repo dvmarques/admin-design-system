@@ -15,7 +15,7 @@ import {
 	AdsTableHead,
 	AdsTableHeader,
 	AdsTableRow,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 export default function MissingExamplesPage() {
 	const [amount, setAmount] = useState('120');

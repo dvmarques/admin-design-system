@@ -1,6 +1,6 @@
 import { copyFile, mkdir } from 'node:fs/promises';
 
-// @admin-ds/components only publishes dist/. Ship licenses alongside the SVG implementation.
+// @dvmarques/admin-ds-components only publishes dist/. Ship licenses alongside the SVG implementation.
 const destination = new URL('../dist/', import.meta.url);
 await mkdir(destination, { recursive: true });
 

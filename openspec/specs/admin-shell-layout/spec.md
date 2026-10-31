@@ -8,7 +8,7 @@ Fornece a composição estrutural reutilizável de aplicações administrativas 
 
 ### Requirement: Shell fornece regiões estruturais explícitas
 
-O sistema MUST fornecer `AdsAdminShell` em `@admin-ds/admin` com regiões públicas para header, sidebar e conteúdo principal. A API MUST permitir composição React arbitrária dentro de cada região e MUST NOT exigir conhecimento de rotas, autenticação, autorização, dados ou domínio da aplicação consumidora.
+O sistema MUST fornecer `AdsAdminShell` em `@dvmarques/admin-ds-admin` com regiões públicas para header, sidebar e conteúdo principal. A API MUST permitir composição React arbitrária dentro de cada região e MUST NOT exigir conhecimento de rotas, autenticação, autorização, dados ou domínio da aplicação consumidora.
 
 #### Scenario: Aplicação compõe uma página administrativa
 
@@ -17,7 +17,7 @@ O sistema MUST fornecer `AdsAdminShell` em `@admin-ds/admin` com regiões públi
 
 #### Scenario: Conteúdo usa componentes públicos existentes
 
-- **WHEN** o consumidor usa componentes de `@admin-ds/components` dentro das regiões do shell
+- **WHEN** o consumidor usa componentes de `@dvmarques/admin-ds-components` dentro das regiões do shell
 - **THEN** a composição funciona apenas por APIs públicas, sem imports internos entre pacotes consumidos pela aplicação
 
 ### Requirement: Shell expõe landmarks acessíveis

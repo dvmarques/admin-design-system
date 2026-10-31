@@ -73,12 +73,12 @@ test('every E2E step after the scope step honors both the docs and the E2E decis
 test('package builds and inspection always run in the build job; only app builds are conditional', () => {
 	const text = section('build');
 	for (const step of [
-		'generate --workspace @admin-ds/tokens',
+		'generate --workspace @dvmarques/admin-ds-tokens',
 		'check:generated',
-		'build --workspace @admin-ds/tokens',
-		'build --workspace @admin-ds/components',
-		'build --workspace @admin-ds/highlighted-code',
-		'build --workspace @admin-ds/admin',
+		'build --workspace @dvmarques/admin-ds-tokens',
+		'build --workspace @dvmarques/admin-ds-components',
+		'build --workspace @dvmarques/admin-ds-highlighted-code',
+		'build --workspace @dvmarques/admin-ds-admin',
 		'inspect:packages',
 	]) {
 		const line = text.split('\n').findIndex((entry) => entry.includes(step));

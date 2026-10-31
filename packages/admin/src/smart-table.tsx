@@ -18,7 +18,7 @@ import {
 	AdsTableRow,
 	type AdsPaginationProps,
 	type AdsTableAlignment,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import {
 	useEffect,
 	useId,

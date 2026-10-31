@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsNotificationCenter, type AdsNotification } from '@admin-ds/admin';
+import { AdsNotificationCenter, type AdsNotification } from '@dvmarques/admin-ds-admin';
 
 const meta = {
 	title: 'Layout/Notification Center',

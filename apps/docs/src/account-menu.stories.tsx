@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAccountMenu, AdsAdminShell, type AdsAccountMenuGroup } from '@admin-ds/admin';
-import { AdsAvatar, AdsThemeControl } from '@admin-ds/components';
+import { AdsAccountMenu, AdsAdminShell, type AdsAccountMenuGroup } from '@dvmarques/admin-ds-admin';
+import { AdsAvatar, AdsThemeControl } from '@dvmarques/admin-ds-components';
 
 // Imagem corrompida embutida: falha ao decodificar sem requisição de rede (sem erro 404 no console).
 const brokenImage = 'data:image/png;base64,AAAA';

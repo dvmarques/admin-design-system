@@ -44,7 +44,7 @@ export function importSpecifiers(source: string): string[] {
 export function findInternalPackageImports(specifiers: string[]): string[] {
 	return specifiers.filter(
 		(specifier) =>
-			/^@admin-ds\/[^/]+\/(src|dist)(\/|$)/.test(specifier) ||
+			/^@dvmarques\/admin-ds-[^/]+\/(src|dist)(\/|$)/.test(specifier) ||
 			/(^|\/)packages\/[^/]+(\/|$)/.test(specifier),
 	);
 }

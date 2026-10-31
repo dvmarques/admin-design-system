@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import type { ReactNode } from 'react';
-import { AdsTypography } from '@admin-ds/components';
+import { AdsTypography } from '@dvmarques/admin-ds-components';
 import type { ThemePreference } from '../../lib/theme';
 import { ThemeControl } from '../theme-control';
 import { AuthPanel } from './auth-panel';

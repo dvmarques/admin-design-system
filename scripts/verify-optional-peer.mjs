@@ -62,8 +62,13 @@ const tsc = resolve(root, 'node_modules/typescript/bin/tsc');
 
 const work = mkdtempSync(join(tmpdir(), 'ads-optional-peer-'));
 const log = (message) => console.log(`[peer opcional] ${message}`);
+const env = { ...process.env, npm_config_userconfig: join(work, '.npmrc') };
+for (const key of Object.keys(env)) {
+	if (key.toLowerCase() === 'npm_config_allow_scripts') delete env[key];
+}
+writeFileSync(join(work, '.npmrc'), '');
 const run = (command, args, cwd) =>
-	execFileSync(command, args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
+	execFileSync(command, args, { cwd, env, encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] });
 const failure = (error) => `${error.stdout ?? ''}${error.stderr ?? ''}`.trim() || String(error);
 
 try {
@@ -73,7 +78,15 @@ try {
 	const packed = JSON.parse(
 		run(
 			process.execPath,
-			[npm, 'pack', '--workspace', '@admin-ds/components', '--pack-destination', packDir, '--json'],
+			[
+				npm,
+				'pack',
+				'--workspace',
+				'@dvmarques/admin-ds-components',
+				'--pack-destination',
+				packDir,
+				'--json',
+			],
 			root,
 		),
 	)[0];
@@ -94,7 +107,7 @@ try {
 			private: true,
 			type: 'module',
 			dependencies: {
-				'@admin-ds/components': `file:${tarball}`,
+				'@dvmarques/admin-ds-components': `file:${tarball}`,
 				react: locked('react'),
 				'react-dom': locked('react-dom'),
 				'@types/react': locked('@types/react'),
@@ -125,7 +138,7 @@ try {
 
 	writeFileSync(
 		join(app, 'src/root.tsx'),
-		`import { AdsField, AdsInput } from '@admin-ds/components';
+		`import { AdsField, AdsInput } from '@dvmarques/admin-ds-components';
 export const Page = () => (
 	<AdsField label="Nome"><AdsInput /></AdsField>
 );
@@ -169,7 +182,7 @@ export const Page = () => (
 		join(app, 'ssr-root.mjs'),
 		`import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
-import { AdsInput } from '@admin-ds/components';
+import { AdsInput } from '@dvmarques/admin-ds-components';
 const html = renderToString(createElement(AdsInput, { 'aria-label': 'Nome', defaultValue: 'Ana' }));
 if (!html.includes('value="Ana"')) throw new Error('SSR do entrypoint raiz falhou');
 `,
@@ -182,7 +195,7 @@ if (!html.includes('value="Ana"')) throw new Error('SSR do entrypoint raiz falho
 		await build({
 			stdin: {
 				contents:
-					"import { AdsMaskedInput } from '@admin-ds/components/masked-input'; console.log(AdsMaskedInput);",
+					"import { AdsMaskedInput } from '@dvmarques/admin-ds-components/masked-input'; console.log(AdsMaskedInput);",
 				resolveDir: app,
 			},
 			bundle: true,
@@ -223,12 +236,12 @@ if (!html.includes('value="Ana"')) throw new Error('SSR do entrypoint raiz falho
 	log('B: versões instaladas idênticas às do package-lock.json do workspace.');
 	writeFileSync(
 		join(app, 'src/masked.tsx'),
-		`import { AdsField } from '@admin-ds/components';
+		`import { AdsField } from '@dvmarques/admin-ds-components';
 import {
 	AdsMaskedInput,
 	type AdsMaskedInputProps,
 	type AdsMaskedInputValues,
-} from '@admin-ds/components/masked-input';
+} from '@dvmarques/admin-ds-components/masked-input';
 const onValueChange = (values: AdsMaskedInputValues) => values.maskedValue.concat(values.unmaskedValue);
 const props: AdsMaskedInputProps = { mask: '000.000', onValueChange };
 export const Page = () => (
@@ -263,7 +276,7 @@ export const Page = () => (
 		join(app, 'ssr-masked.mjs'),
 		`import { createElement } from 'react';
 import { renderToString } from 'react-dom/server';
-import { AdsMaskedInput } from '@admin-ds/components/masked-input';
+import { AdsMaskedInput } from '@dvmarques/admin-ds-components/masked-input';
 const html = renderToString(createElement(AdsMaskedInput, { 'aria-label': 'Código', defaultValue: '123.456', mask: '000.000' }));
 if (!html.includes('value="123.456"')) throw new Error('SSR do subpath falhou');
 `,

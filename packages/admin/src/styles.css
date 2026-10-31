@@ -1,6 +1,6 @@
 /*
  * Estilos do Admin Shell. CSS simples, sem Tailwind, que depende apenas dos
- * tokens públicos --ads-* publicados por @admin-ds/tokens/styles.css.
+ * tokens públicos --ads-* publicados por @dvmarques/admin-ds-tokens/styles.css.
  */
 @layer components {
 	.ads-sidebar-navigation {
@@ -521,7 +521,7 @@
 	/*
 	 * Barra de filtros. A própria barra é o container: o recolhimento segue a largura disponível
 	 * (por exemplo, ao lado da sidebar), não a viewport. Os controles internos usam as classes de
-	 * @admin-ds/components.
+	 * @dvmarques/admin-ds-components.
 	 */
 	.ads-filter-bar {
 		container: ads-filter-bar / inline-size;
@@ -717,7 +717,7 @@
 
 @layer components {
 	/*
-	 * Tabela inteligente. Compõe AdsTable (classes de @admin-ds/components); aqui ficam apenas a
+	 * Tabela inteligente. Compõe AdsTable (classes de @dvmarques/admin-ds-components); aqui ficam apenas a
 	 * barra de ferramentas, a região rolável, o botão de ordenação e a linha selecionada.
 	 */
 	.ads-smart-table {

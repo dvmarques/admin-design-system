@@ -8,7 +8,7 @@ Fornece o grid responsivo de painéis de dashboard com painéis de largura vari�
 
 ### Requirement: Grid organiza painéis de largura variável
 
-O sistema MUST fornecer `AdsDashboardGrid` e `AdsDashboardPanel` em `@admin-ds/admin`. O painel MUST aceitar `span` de 1 a 4 colunas e MUST renderizar uma `section` nomeada pelo seu título, com nível de heading configurável.
+O sistema MUST fornecer `AdsDashboardGrid` e `AdsDashboardPanel` em `@dvmarques/admin-ds-admin`. O painel MUST aceitar `span` de 1 a 4 colunas e MUST renderizar uma `section` nomeada pelo seu título, com nível de heading configurável.
 
 #### Scenario: Painel ocupa várias colunas
 
@@ -36,7 +36,7 @@ O grid MUST adaptar o número de colunas à largura disponível do próprio grid
 
 #### Scenario: Consumo sem Tailwind
 
-- **WHEN** a aplicação importa `@admin-ds/admin/styles.css`
+- **WHEN** a aplicação importa `@dvmarques/admin-ds-admin/styles.css`
 - **THEN** o CSS distribuído não contém diretivas Tailwind e define as classes do grid e do painel
 
 ### Requirement: Padrões de dashboard funcionam com renderização no servidor

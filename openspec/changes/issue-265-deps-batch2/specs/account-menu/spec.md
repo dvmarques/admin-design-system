@@ -2,7 +2,7 @@
 
 ### Requirement: Nome acessível do avatar contém iniciais visíveis
 
-O botão do `AdsAccountMenu` MUST incluir em seu nome acessível as iniciais visíveis do avatar quando exibidas, além do rótulo de conta e do nome informado, sem criar texto visual redundante nem alterar as propriedades públicas.
+O botão do `AdsAccountMenu` MUST incluir em seu nome acessível as iniciais do avatar, além do rótulo de conta e do nome informado, sem criar texto visual redundante nem alterar as propriedades públicas. As iniciais compõem o nome mesmo quando há foto, pois a falha de carregamento da imagem (inclusive antes da hidratação) passa a exibi-las, e o nome não deve depender desse estado.
 
 #### Scenario: Avatar sem foto
 
@@ -13,3 +13,8 @@ O botão do `AdsAccountMenu` MUST incluir em seu nome acessível as iniciais vis
 
 - **WHEN** o consumidor define `user.initials`
 - **THEN** o texto escolhido aparece no avatar e compõe o nome acessível do gatilho
+
+#### Scenario: Avatar com foto
+
+- **WHEN** o consumidor informa `user.avatarSrc` e o nome `Ana Souza`
+- **THEN** o nome acessível do gatilho continua sendo `Menu da conta: AS Ana Souza`, independentemente de a imagem carregar ou falhar

@@ -33,7 +33,7 @@ describe('AdsOrganizationSwitcher trigger', () => {
 		expect(button).toHaveTextContent('Acme Brasil');
 		expect(button).toHaveTextContent('Plano Enterprise');
 		expect(button).toHaveTextContent('AB');
-		expect(button).toHaveAccessibleName('Organização atual: AB Acme Brasil Plano Enterprise');
+		expect(button).toHaveAccessibleName('Organização atual: AB Acme Brasil, Plano Enterprise');
 	});
 
 	it('truncates long names keeping the full text available', () => {

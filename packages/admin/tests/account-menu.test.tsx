@@ -282,9 +282,11 @@ describe('AdsAccountMenu', () => {
 		const image = trigger().querySelector('img');
 		expect(image).toHaveAttribute('src', '/ana.png');
 		expect(image).toHaveAttribute('alt', '');
+		expect(trigger()).toHaveAccessibleName('Menu da conta: AS Ana Souza');
 		fireEvent.error(image!);
 		expect(trigger().querySelector('img')).toBeNull();
 		expect(trigger()).toHaveTextContent('AS');
+		expect(trigger()).toHaveAccessibleName('Menu da conta: AS Ana Souza');
 
 		rerender(<AdsAccountMenu groups={groups()} user={{ ...user, initials: 'XY' }} />);
 		expect(trigger()).toHaveTextContent('XY');

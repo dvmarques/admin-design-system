@@ -55,7 +55,7 @@ export interface AdsAccountMenuGroup {
 }
 
 export interface AdsAccountMenuLabels {
-	/** Prefix of the accessible name; visible avatar initials and user name are appended. */
+	/** Prefix of the accessible name; the avatar initials and the user name are always appended, with or without a photo. */
 	trigger: string;
 	/** Accessible name of the panel. */
 	panel: string;

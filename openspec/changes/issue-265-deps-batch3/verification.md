@@ -22,8 +22,14 @@ Em 31/10/2026, `npm audit --json` no grafo completo: **14 moderate, 0 high, 0 cr
 
 Comparação do lockfile `develop` versus lote 3: **644 → 592 entradas**; alterações transitivas concentradas em Vitest e jsdom. A regressão de TypeScript foi corrigida apenas em `apps/docs`; contrato público dos quatro pacotes, CSS, tokens, React/Next/Storybook e regras de branch preservados.
 
-## Pendências e limites
+## Validação complementar e limpeza de workflow — 31/10/2026
 
-- `npm outdated` ainda não foi executado como comando; diferenciar elegíveis de exceções intencionais (`@types/node` na linha 24 e TypeScript 7 incompatível com typescript-eslint 8.72.1).
-- `npm run validate` ainda não foi executado literalmente em um único ambiente; seus componentes obrigatórios foram verificados em preflight e CI separadamente, incluindo E2E, sem substituir a evidência exigida para a tarefa específica.
-- CI no commit documental final deve ser confirmada depois deste registro; checks pulados não são equivalentes aos checks completos anteriores. Não fazer merge, publicar, arquivar a change nem fechar a #265 sem gates e autorização.
+- [Actions #41201037642](https://github.com/dvmarques/admin-design-system/actions/runs/41201037642): `npm outdated --json` com Node 24/npm 11. Resultado: somente `@types/node` (24.19.2 na linha Node 24; última geral 26.6.6) e `typescript` (6.0.3; última geral 7.0.2 ainda incompatível com o suporte oficial de `typescript-eslint@8.72.1`). Nenhuma outra dependência direta elegível pendente.
+- [Actions #41201124440](https://github.com/dvmarques/admin-design-system/actions/runs/41201124440): job `integrated` **success**, com execução literal de `npm run validate` depois de `npm ci --ignore-scripts`. O runner formatou localmente o próprio YAML temporário para evitar interferência do Prettier durante a validação; a edição não foi persistida na branch.
+- [CI #41201129106](https://github.com/dvmarques/admin-design-system/actions/runs/41201129106), commit `7c44739`: `Qualidade rápida` falhou em `npm run format` **somente** porque `.github/workflows/issue-265-final-validate-temp.yml` estava fora do padrão de formatação. `Fluxos no navegador` (Chromium, Firefox, WebKit), `Artefatos de distribuição` e política de develop foram aprovados; `Validação de release` foi pulada, não contabilizada como sucesso.
+- O workflow auxiliar `issue-265-final-validate-temp.yml` foi **removido da branch** no commit `b0b612d`, conforme previsto. Não foram alterados os workflows permanentes nem as regras da branch.
+- As evidências acima sustentam a conclusão das tarefas OpenSpec 2.5b e 3.6b. A tarefa 4.2 permanece aberta até a confirmação de **CI, Pages e Security Gate no SHA final**, com revisão do diff completo.
+
+## Limites de conclusão
+
+A execução `npm run validate` está comprovada no run auxiliar; os três gates oficiais ainda precisam estar verdes no último SHA da PR após as atualizações de documentação. O OpenSpec não foi arquivado/sincronizado, a PR não foi integrada, e nenhum pacote foi publicado. Seguir `docs/openspec-lifecycle.md` para archive na própria branch, validação após archive e revisão/autorização antes do squash.

@@ -27,9 +27,17 @@
 - [x] 4.4 Preservar responsabilidades das issues #267 (gate recorrente) e #268 (hardening workflows e imagens Playwright).
 - [ ] 4.5 Reexecutar validação apropriada após qualquer ajuste de segurança; registrar evidência no relatório e na PR.
 
-## 5. Revisão e integração
+## 5. Sincronização com a develop e revisão de segurança
 
-- [x] 5.1 Abrir PR vinculada à #265 com versões antes/depois, evidências, riscos e limitações.
-- [ ] 5.2 Confirmar CI no SHA final e revisão antes de considerar merge (não autorizado nesta tarefa).
+- [x] 5.1 Integrar a develop no histórico existente por merge, preservando a mudança #194 dos workspaces públicos `@dvmarques/admin-ds-*` e os commits anteriores.
+- [x] 5.2 Regenerar o lockfile com npm 11.19.1 em Node 24 e validar `npm ci`/`npm ls` no grafo combinado.
+- [x] 5.3 Reauditar baseline original, develop atual e branch mesclada (completo e `--omit=dev`); comparar evidências e documentar advisories moderados herdados.
+- [x] 5.4 Registrar decisões sobre riscos de `glob`/`minimatch`, sem `npm audit fix --force`, preservando as responsabilidades #267/#268.
+- [ ] 5.5 Confirmar a CI oficial no SHA final depois da atualização de documentação; não concluir sem evidência de qualidade, E2E e Pages.
 
-Evidência da auditoria: `docs/security/issue-265-audit-2026-10-30.md` e artefato da execução Actions 41145513851. Os quatro relatórios npm audit retornaram zero advisories; não houve correções high/critical aplicáveis nesta etapa.
+## 6. Revisão e integração
+
+- [x] 6.1 Abrir PR vinculada à #265 com versões antes/depois, evidências, riscos e limitações.
+- [ ] 6.2 Confirmar CI no SHA final e revisão antes de considerar merge (não autorizado nesta tarefa).
+
+Evidência da auditoria: `docs/security/issue-265-audit-2026-10-30.md` e artefato da execução Actions 41145513851. A auditoria histórica de 30/10 retornou zero advisories. A reauditoria de 31/10 (Actions 41151568595) identificou 14 avisos moderados idênticos no baseline original, na develop e na branch sincronizada, 0 em produção e nenhum high/critical. Não foram aplicados downgrades ou correções incompatíveis. Ver o adendo do relatório.

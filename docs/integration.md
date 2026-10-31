@@ -24,7 +24,17 @@ npm install @dvmarques/admin-ds-highlighted-code
 npm install react-imask
 ```
 
-O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
+**Versões e reprodução:** os manifests na branch de desenvolvimento indicam atualmente `0.1.0`, mas essa versão **não foi publicada** e pode ser alterada pela #195. Depois de verificar a primeira publicação, fixe a mesma versão coordenada nos pacotes de que precisa, substituindo `X.Y.Z` pela versão **confirmada no registry**:
+
+```bash
+npm install @dvmarques/admin-ds-tokens@X.Y.Z @dvmarques/admin-ds-components@X.Y.Z
+# Se precisar de composições:
+npm install @dvmarques/admin-ds-admin@X.Y.Z
+# Se precisar de realce:
+npm install @dvmarques/admin-ds-highlighted-code@X.Y.Z
+```
+
+Os comandos fixados são modelos **para depois** da publicação, não provas de que `X.Y.Z` exista hoje. O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
 
 | Pacote                                 | CSS público                                       | Responsabilidade               |
 | -------------------------------------- | ------------------------------------------------- | ------------------------------ |

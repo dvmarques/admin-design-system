@@ -52,7 +52,7 @@ jobs:
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: visual-baselines-${{ github.run_id }}
-          path: .baseline-transfer/
+          path: baseline-transfer/
           if-no-files-found: error
           retention-days: 2
       - name: Anexar o relatório em caso de falha
@@ -80,7 +80,7 @@ jobs:
       - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
         with:
           name: visual-baselines-${{ github.run_id }}
-          path: .baseline-transfer
+          path: baseline-transfer
       - name: Verificar manifesto, integridade e ref antes de aplicar PNGs
         shell: bash
         run: |
@@ -89,7 +89,7 @@ jobs:
           const path = require('node:path');
           const crypto = require('node:crypto');
           const cp = require('node:child_process');
-          const root = '.baseline-transfer';
+          const root = 'baseline-transfer';
           const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
           const branch = process.env.GITHUB_REF_NAME;
           const sha = process.env.GITHUB_SHA;
@@ -118,7 +118,7 @@ jobs:
             throw new Error('Manifesto vazio, excessivo ou inválido.');
           }
           const seen = new Set();
-          const expected = new Set(['.baseline-transfer/manifest.json']);
+          const expected = new Set(['baseline-transfer/manifest.json']);
           for (const item of manifest.changes) {
             if (typeof item.path !== 'string' || !allowed.test(item.path) || seen.has(item.path) ||
                 !['write', 'delete'].includes(item.type)) throw new Error('Entrada proibida no manifesto.');

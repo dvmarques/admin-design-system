@@ -1,0 +1,46 @@
+# Hardening de GitHub Actions e baselines — issue #268
+
+Referência: [issue #268](https://github.com/dvmarques/admin-design-system/issues/268). Change: `openspec/changes/issue-268-github-actions-hardening`.
+
+## Inventário em 31/10/2026
+
+| Workflow | Eventos / código executado | Actions externas e contêiner | Permissões e riscos |
+| --- | --- | --- | --- |
+| `ci.yml` | PR Ready e push develop/master; npm ci, build, testes e OpenSpec 1.15.0 | checkout v6, setup-node v6, upload-artifact v4; Playwright 1.64.1 Noble | `contents: read`; `develop-policy` e `release-check` incluem `pull-requests: read` |
+| `pages.yml` | PR Ready develop, push develop, dispatch; build/E2E Pages, deploy develop | checkout v6, setup-node v6, configure-pages v5, upload-pages-artifact v4, deploy-pages v4; Playwright 1.64.1 Noble | build com `contents: read`; deploy isolado com `pages: write` e `id-token: write` |
+| `release.yml` | `workflow_dispatch` em develop; validar SHAs, depois publicar | checkout v6, setup-node v6 | validar `contents: read` + `pull-requests: read`; publicar `contents: write` + `pull-requests: read` |
+| `security.yml` | PR Ready/push/schedule/dispatch; CodeQL, npm audit, Gitleaks | checkout v6, setup-node v6, upload-artifact v4, CodeQL v4, Gitleaks v3, já fixadas por SHA | `contents: read`; `security-events: write` só CodeQL; `pull-requests: read` só Gitleaks |
+| `ci-metrics.yml` | `workflow_dispatch`; consulta API de runs | checkout v6, setup-node v6 | `actions: read` + `contents: read` |
+| `update-visual-baselines.yml` | `workflow_dispatch` em branch de feature; build/testes/PNG | checkout v6, setup-node v6, upload/download-artifact v4; Playwright 1.64.1 Noble | antes `contents: write` durante npm/build; depois geração com `contents: read` e commit isolado com `contents: write` |
+
+Total: seis workflows; nenhum utiliza `pull_request_target`. Nenhum novo job altera a matriz de três browsers da CI. O teste `scripts/verify-workflow-supply-chain.mjs`, chamado por `scripts/ci-workflow.test.mjs` via `npm run test:ci`, bloqueia regressão de action não pinada, digest/versão, persistência de checkout e permissões privilegiadas dos jobs. Esta checagem **não é** um scanner independente de vulnerabilidades.
+
+## Referências e atualização controlada
+
+As actions devem usar `uses: owner/repo@<SHA de 40 caracteres> # vMajor`. Os SHAs oficiais abaixo foram confirmados por refs públicas da API do GitHub em 31/10/2026: `actions/checkout@v6` `d23441a48e516b6c34aea4fa41551a30e30af803`; `actions/setup-node@v6` `249970729cb0ef3589644e2896645e5dc5ba9c38`; `actions/upload-artifact@v4` `ea165f8d65b6e75b540449e92b4886f43607fa02`; `actions/download-artifact@v4` `d3f86a106a0bac45b974a628896c90dbdf5c8093`; `actions/configure-pages@v5` `983d7736d9b0ae728b81ab479565c72886d7745b`; `actions/upload-pages-artifact@v4` `7b1f4a764d45c48632c6b24a0339c27f5614fb0b`; `actions/deploy-pages@v4` `d6db90164ac5ed86f2b6aed7e0febac5b3c0c03e`. CodeQL/Gitleaks permanecem nos pins já existentes do gate #267.
+
+A imagem `mcr.microsoft.com/playwright:v1.64.1-noble` corresponde ao índice OCI `sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea`, publicado em 23/10/2026 no [Microsoft Artifact Registry](https://mcr.microsoft.com/product/playwright). O [manual do Playwright](https://playwright.dev/docs/docker) esclarece que imagens incluem os browsers mas não instalam o pacote npm. Portanto `@playwright/test` deve continuar compatível com `playwright`, `playwright-core`, lockfile e executáveis reais da imagem. O job E2E já confere os executáveis; o novo teste estático verifica as três referências de digest e as versões do lockfile.
+
+**Atualização:** o Dependabot já está configurado semanalmente para `github-actions`, na branch develop, com limite de duas PRs e agrupamento minor/patch. Antes de aceitar um update: (1) consultar changelog e origem oficial do fornecedor, (2) comparar ref SHA com tag da versão pretendida, (3) revisar permissões introduzidas e scripts de build das actions, (4) para Playwright atualizar manifest/lockfile + **três** digests no mesmo PR e confirmar a origem do novo digest no MCR, (5) executar `npm run test:ci`, OpenSpec estrito, CI/Pages/Security e E2E. A atualização de dependências é de responsabilidade da #265; esta issue aplica a política de imutabilidade, não upgrades independentes. Atualizações de actions por SHA requerem revisão humana mesmo com Dependabot.
+
+## Separação dos baselines
+
+O workflow manual só pode ser disparado na branch de feature do mesmo repositório, nunca `develop`, `master` ou `release/*`. O job `generate` não dispõe de `contents: write`, realiza npm/build e atualiza/valida Chromium, e produz somente PNGs de snapshots e manifesto com hashes SHA256. O artefato expira em dois dias. O job `commit` não instala pacotes nem executa código do repositório: verifica SHA e branch original, compara a branch remota para evitar sobrescrever outro commit, valida caminho/extensão, assinatura PNG, tamanho e SHA256 de cada arquivo, permite exclusões declaradas e impede arquivos extras. Somente depois aplica o diff e usa token de escrita por um passo de push não forçado.
+
+O fluxo requer revisão visual dos PNGs na PR. Um artifact não constitui fonte confiável de comandos. A assinatura PNG prova formato, não ausência de imagem maliciosa; a verificação aplica somente cópia dos bytes e nenhum parser de imagem é executado no job privilegiado. Ao avançar a branch entre a geração e o push, o workflow falha, exigindo nova execução. A branch não deve ser alterada manualmente durante esse processamento.
+
+## Permissões antes/depois e risco residual
+
+| Contexto | Antes | Depois |
+| --- | --- | --- |
+| Job de teste com código de PR | token `contents: read` disponível e credenciais de checkout persistidas | token `contents: read` e `persist-credentials: false` |
+| Job manual de baselines | `contents: write` disponível durante `npm ci`, build e testes | geração `contents: read`; token de escrita só no job de cópia/commit |
+| Pages deploy | `pages: write`, `id-token: write` | preservado exclusivamente no deploy |
+| Release publish | `contents: write`, `pull-requests: read` | preservado no job separado; resolução/verificação permanece read-only |
+| CodeQL | `security-events: write` junto com `contents: read` | preservado somente no SAST |
+
+Limitações: `npx --yes @fission-ai/openspec@1.15.0` usa uma versão exata, mas é resolvido remotamente fora do lockfile do monorepo; os MCPs de agentes também podem buscar pacotes fixados fora do lockfile, sem serem executados na CI. Não foi realizado upgrade nem alteração do fluxo de agentes por esta issue. `npm ci --ignore-scripts` limita scripts de instalação, mas comandos de teste/build continuam executando código da PR sob token read-only; redes e artefatos continuam superfícies a proteger. O workflow manual tem permissão de escrita no job de commit; branch protections, revisão humana e confiança em quem pode editar workflows ainda são condições fundamentais.
+
+## Verificação e rollback
+
+Executar `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quality`, `npm run validate` e `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`. Para teste manual de baselines, acionar numa branch de feature de teste, verificar artifact, commit somente de PNGs, diferença revisável e comportamento quando o HEAD avança; não rodar em branch protegida. A CI de PR Ready deve comprovar CI, Pages, Security e os três browsers, sem chamar checks skipped de aprovação. O rollback, se necessário, é reverter a PR de hardening após revisão (nunca trocar SHAs por tags mutáveis como solução provisória). Nenhum merge ou archive é parte da implementação atual.

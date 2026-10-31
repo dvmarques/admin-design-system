@@ -187,7 +187,7 @@ export async function publishPlan(plan, { getVersion, publishTarball, sleep = de
 }
 
 export async function registryVersion(name, version) {
-	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
+	const url = REGISTRY + '/' + name.replace('/', '%2f') + '/' + encodeURIComponent(version);
 	const response = await fetch(url, { headers: { accept: 'application/json' }, cache: 'no-store' });
 	if (response.status === 404) return null;
 	if (!response.ok) throw new Error('Falha ao consultar registry npm: HTTP ' + response.status);

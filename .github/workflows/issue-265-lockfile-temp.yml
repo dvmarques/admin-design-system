@@ -1,0 +1,32 @@
+# Temporário: somente para regenerar package-lock em Node 24/npm 11 (issue #265).
+# Este workflow não altera branches, não recebe secrets e será removido da PR.
+name: "Issue 265 batch 3 - temporary lockfile resolver"
+
+on:
+  push:
+    branches:
+      - issue-265-deps-batch3
+    paths:
+      - .github/workflows/issue-265-lockfile-temp.yml
+
+permissions:
+  contents: read
+
+jobs:
+  resolve-lockfile:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+      - name: Pin npm and regenerate lockfile (no lifecycle scripts)
+        shell: bash
+        run: |
+          npm install --global npm@11.19.1
+          node --version
+          npm --version
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          node -e "const fs=require('node:fs'); const j=JSON.parse(fs.readFileSync('package-lock.json','utf8')); console.log('RESOLVED_VERSIONS:'+JSON.stringify(Object.fromEntries(['typescript','vitest','@vitest/coverage-v8','jsdom','lint-staged'].map(x=>[x,j.packages['node_modules/'+x]?.version])))); const s=JSON.stringify(j); for(let i=0;i<s.length;i+=2000) console.log('LOCK_CHUNK_'+(i/2000)+':'+s.slice(i,i+2000)); console.log('LOCK_CHUNK_END:'+Math.ceil(s.length/2000))"

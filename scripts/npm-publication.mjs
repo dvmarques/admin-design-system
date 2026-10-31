@@ -198,7 +198,16 @@ function npmPublish(tarball) {
 	return new Promise((done, fail) => {
 		const child = spawn(
 			'npm',
-			['publish', tarball, '--access', 'public', '--provenance', '--ignore-scripts', '--registry', REGISTRY],
+			[
+				'publish',
+				tarball,
+				'--access',
+				'public',
+				'--provenance',
+				'--ignore-scripts',
+				'--registry',
+				REGISTRY,
+			],
 			{ stdio: 'inherit', env: process.env },
 		);
 		child.on('error', fail);

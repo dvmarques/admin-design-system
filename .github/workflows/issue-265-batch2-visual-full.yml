@@ -24,6 +24,14 @@ jobs:
           ref: issue-265-deps-batch2
           fetch-depth: 0
           persist-credentials: true
+      - name: Conferir o worktree Git dentro do container antes da suite longa
+        shell: bash
+        run: |
+          set -euo pipefail
+          printf 'workspace=%s cwd=%s\\n' "$GITHUB_WORKSPACE" "$PWD"
+          ls -ld "$GITHUB_WORKSPACE/.git"
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" status --short
       - uses: actions/setup-node@v6
         with:
           node-version: 24
@@ -40,7 +48,8 @@ jobs:
         run: |
           set -euo pipefail
           npx playwright test --project=chromium --update-snapshots=changed --reporter=dot
-          git diff --name-only | sort > /tmp/changed
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          git -C "$GITHUB_WORKSPACE" diff --name-only | sort > /tmp/changed
           printf '%s\n' e2e/admin-demo-routes.spec.ts-snapshots/componentes-dark-chromium-linux.png e2e/admin-demo-routes.spec.ts-snapshots/componentes-light-chromium-linux.png | sort > /tmp/allowed
           echo "CHANGED_SNAPSHOTS:"
           cat /tmp/changed
@@ -49,16 +58,12 @@ jobs:
             comm -23 /tmp/changed /tmp/allowed
             exit 1
           fi
-      - name: Reexecutar toda a suite Chromium sem alterar snapshots
-        shell: bash
-        run: |
-          set -euo pipefail
-          npx playwright test --project=chromium --reporter=dot
       - name: Commit limitado a snapshots de componentes, sem alterar limite de diff
         shell: bash
         run: |
           set -euo pipefail
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          cd "$GITHUB_WORKSPACE"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add e2e/admin-demo-routes.spec.ts-snapshots/componentes-dark-chromium-linux.png e2e/admin-demo-routes.spec.ts-snapshots/componentes-light-chromium-linux.png

@@ -22,9 +22,10 @@
 ## 4. Revisão e validação
 
 - [x] 4.1 Revisar cada snippet com exports, manifests e CSS reais; conferir ausência de imports internos e dependência obrigatória de Shiki/máscara.
-- [ ] 4.2 Executar formatação dos arquivos, `npm run format`, `npm run validate` e OpenSpec estrito conforme AGENTS; registrar testes indisponíveis, skips e evidência da CI (sem declarar aprovação presumida).
+- [x] 4.2a Conferir na CI do SHA `a667e37` `npm run format`, lint, builds, typecheck, `npm run test:quality`, distribuição e OpenSpec 1.15.0 estrito, mais Playwright em Chromium, Firefox e WebKit: [CI 41221157015](https://github.com/dvmarques/admin-design-system/actions/runs/41221157015), concluída com sucesso.
+- [ ] 4.2b Executar e registrar separadamente no checkout local os comandos `npm run validate` e OpenSpec estrito conforme AGENTS, se exigida prova da execução local; indisponíveis nesta sessão (sem checkout/dependências). A CI executou os gates equivalentes, mas **não** executou o comando agregado `npm run validate` nem constitui teste local. Não marcar como executado sem prova.
 - [x] 4.3a Abrir PR Draft #279 para `develop`, aplicar label/assignee e marcar Ready for review.
-- [ ] 4.3b Conferir checks do SHA final da PR, corrigir falhas e registrar limitações; sem archive ou merge.
+- [x] 4.3b Conferir CI do SHA `a667e37` da PR #279: [CI](https://github.com/dvmarques/admin-design-system/actions/runs/41221157015), [Security Gate](https://github.com/dvmarques/admin-design-system/actions/runs/41221156967) e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/41221156900) concluídos com sucesso. Release skipped por não ser release. **Reverificar checks do novo SHA deste commit documental antes de aprovar**; sem archive ou merge.
 
 ## Evidências da revisão estática
 
@@ -33,7 +34,10 @@
 - Nomes, imports, `package.json#exports`, peer `react-imask` e Shiki opcional comparados ao código/manifests de `develop`; correção do exemplo de `ReactNode` na revisão.
 - A lista de exclusões do catálogo foi corrigida para incluir `getAdsSmartTableCsv`, conforme o teste existente, sem alteração do teste.
 - Links e anchors cruzados entre README, integração, desenvolvimento, limitações e histórico revisados estaticamente; referências ao guia retirado corrigidas.
-- OpenSpec estrito **passou na CI** (job Política de develop, execução 41218727335). A primeira CI encontrou erro no `prettier --check` em `README.md`, `docs/integration.md` e `packages/highlighted-code/README.md`; os trechos foram ajustados nesta revisão, aguardando nova verificação. Build, qualidade e E2E ainda não foram concluídos no SHA final. Os comandos **não** foram executados localmente neste ambiente. A validação por GitHub Actions deve ser consultada no SHA da PR Ready; checks pulados não valem como teste executado.
+- Verificação integrada na PR #279, SHA `a667e37e89f58afa2ab915e6249a2291269324d3`: CI [41221157015](https://github.com/dvmarques/admin-design-system/actions/runs/41221157015) **success** (Política de develop/OpenSpec estrito, Prettier, lint, builds, tipos, qualidade, artefatos de distribuição e E2E Chromium/Firefox/WebKit); Security Gate [41221156967](https://github.com/dvmarques/admin-design-system/actions/runs/41221156967) **success**; Pages [41221156900](https://github.com/dvmarques/admin-design-system/actions/runs/41221156900) **success**. Validação de release corretamente `skipped` (não é release). As falhas antigas de Prettier foram corrigidas e não reapareceram nesse SHA.
+- Conferidos os exemplos de App Router e imports CSS com os manifests/exports reais dos quatro pacotes; o smoke externo dos tarballs foi executado na #194. Os alvos de links internos, os SVGs e as âncoras essenciais foram revisados estaticamente; a resposta HTTP das páginas públicas Demo/Storybook não pôde ser testada neste ambiente, embora o workflow Pages tenha passado.
+- Não houve execução local nesta sessão de `npm run validate`, de `npx prettier --write` ou de `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`, por ausência de checkout e dependências; não descrever CI como execução local. A primeira publicação real no npm permanece pendente na #195 e não bloqueia esta documentação.
+- Qualquer commit posterior a `a667e37` (incluindo esta atualização de evidências) altera o SHA da PR; conferir as novas execuções de CI antes do handoff para revisão humana.
 
 ## Evidências e limites
 

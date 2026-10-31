@@ -11,6 +11,13 @@
 - [ ] 2.3 Separar jobs: preflight/empacotamento (read-only), publicação npm (id-token), tag/release (contents write).
 - [ ] 2.4 Atualizar contrato OpenSpec e CHANGELOG; documentar npm Trusted Publisher, bootstrap e recuperação.
 
+## 2.1 Consolidação editorial de release
+
+- [ ] 2.5 Adicionar comando de prévia editorial sem escritas (grupos por issue, duplicidades e textos longos).
+- [ ] 2.6 Exigir confirmação humana vinculada ao hash do changelog corrente, com invalidação após edições e validação no preparo e CI da release.
+- [ ] 2.7 Excluir marca de revisão das GitHub Release Notes e preservar seções fechadas inalteradas; cobrir em testes.
+- [ ] 2.8 Atualizar documentação e processo de PR de release com passos de revisão e aprovação.
+
 ## 3. Testes e entrega
 
 - [ ] 3.1 Cobrir pacote privado/ausente, versão divergente, hash divergente, OIDC, dependência indisponível, publicação parcial e reexecução.

@@ -42,6 +42,7 @@
 		"test:e2e:pages": "playwright test --config playwright.pages.config.ts --reporter=dot",
 		"test:e2e": "playwright test --reporter=dot",
 		"test:e2e:verbose": "playwright test --reporter=list",
+		"release:changelog": "node ./scripts/release-changelog.mjs",
 		"release:prepare": "node ./scripts/prepare-release.mjs",
 		"release:validate": "node ./scripts/validate-release.mjs",
 		"release:notes": "node ./scripts/extract-release-notes.mjs",

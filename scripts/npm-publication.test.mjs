@@ -34,10 +34,29 @@ async function fixture(version = '0.2.0') {
 			join(workspace, 'package.json'),
 			JSON.stringify(manifest(packageName(part), version, false)),
 		);
+		const archive = join(path, 'archives', part);
+		await mkdir(join(archive, 'package'), { recursive: true });
 		await writeFile(
-			join(dir, 'dvmarques-admin-ds-' + part + '-' + version + '.tgz'),
-			Buffer.from('tarball:' + part + ':' + version),
+			join(archive, 'package', 'package.json'),
+			JSON.stringify({
+				...manifest(packageName(part), version, false),
+				repository: {
+					url: 'git+https://github.com/dvmarques/admin-design-system.git',
+				},
+			}),
 		);
+		const packed = spawnSync(
+			'tar',
+			[
+				'-czf',
+				join(dir, 'dvmarques-admin-ds-' + part + '-' + version + '.tgz'),
+				'-C',
+				archive,
+				'package',
+			],
+			{ encoding: 'utf8' },
+		);
+		assert.equal(packed.status, 0, packed.stderr);
 	}
 	await writeFile(join(root, 'package.json'), JSON.stringify({ version, private: true }));
 	for (const part of ['admin-demo', 'docs']) {

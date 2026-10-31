@@ -120,7 +120,7 @@ export function predecessorVersion(parsed, target) {
 
 export function stripReleaseReviewMarker(text) {
 	return text.replace(
-		/^[\\t ]*<!-- release-changelog-approved sha256:[a-f0-9]{64} -->[\\t ]*(?:\\r?\\n)?/gm,
+		/^[\t ]*<!-- release-changelog-approved sha256:[a-f0-9]{64} -->[\t ]*(?:\r?\n)?/gm,
 		'',
 	);
 }

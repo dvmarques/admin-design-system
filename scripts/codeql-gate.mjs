@@ -6,92 +6,94 @@ import { fileURLToPath } from 'node:url';
 const policyFile = new URL('../.github/security/codeql-exceptions.json', import.meta.url);
 
 export function validateCodeqlPolicy(policy) {
-  if (policy?.schemaVersion !== 1 || !Array.isArray(policy.exceptions)) {
-    throw new Error('Política CodeQL inválida');
-  }
-  for (const entry of policy.exceptions) {
-    if (
-      typeof entry.ruleId !== 'string' ||
-      !entry.ruleId.trim() ||
-      typeof entry.file !== 'string' ||
-      !entry.file.trim() ||
-      typeof entry.owner !== 'string' ||
-      !entry.owner.trim() ||
-      typeof entry.justification !== 'string' ||
-      entry.justification.trim().length < 20 ||
-      typeof entry.reviewBy !== 'string' ||
-      !/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewBy) ||
-      Number.isNaN(Date.parse(entry.reviewBy + 'T00:00:00Z')) ||
-      new Date(entry.reviewBy + 'T00:00:00Z').toISOString().slice(0, 10) !== entry.reviewBy
-    ) {
-      throw new Error('Exceção CodeQL exige ruleId, file, owner, justification e reviewBy válidos');
-    }
-  }
-  return policy.exceptions;
+	if (policy?.schemaVersion !== 1 || !Array.isArray(policy.exceptions)) {
+		throw new Error('Política CodeQL inválida');
+	}
+	for (const entry of policy.exceptions) {
+		if (
+			typeof entry.ruleId !== 'string' ||
+			!entry.ruleId.trim() ||
+			typeof entry.file !== 'string' ||
+			!entry.file.trim() ||
+			typeof entry.owner !== 'string' ||
+			!entry.owner.trim() ||
+			typeof entry.justification !== 'string' ||
+			entry.justification.trim().length < 20 ||
+			typeof entry.reviewBy !== 'string' ||
+			!/^\d{4}-\d{2}-\d{2}$/.test(entry.reviewBy) ||
+			Number.isNaN(Date.parse(entry.reviewBy + 'T00:00:00Z')) ||
+			new Date(entry.reviewBy + 'T00:00:00Z').toISOString().slice(0, 10) !== entry.reviewBy
+		) {
+			throw new Error('Exceção CodeQL exige ruleId, file, owner, justification e reviewBy válidos');
+		}
+	}
+	return policy.exceptions;
 }
 
 export function evaluateSarif(sarif, policy, today = new Date().toISOString().slice(0, 10)) {
-  const exceptions = validateCodeqlPolicy(policy);
-  if (sarif?.version !== '2.1.0' || !Array.isArray(sarif.runs) || !sarif.runs.length) {
-    throw new Error('SARIF CodeQL inválido ou vazio');
-  }
-  const findings = [];
-  for (const run of sarif.runs) {
-    if (!Array.isArray(run.results) || !run.tool?.driver?.rules) {
-      throw new Error('SARIF CodeQL sem regras ou resultados');
-    }
-    const rules = new Map(run.tool.driver.rules.map((rule) => [rule.id, rule]));
-    for (const result of run.results) {
-      const ruleId = result.ruleId ?? run.tool.driver.rules[result.ruleIndex]?.id;
-      const rule = rules.get(ruleId);
-      const rawSeverity = result.properties?.['security-severity'] ??
-        rule?.properties?.['security-severity'];
-      if (rawSeverity === undefined) continue;
-      const score = Number(rawSeverity);
-      if (!Number.isFinite(score) || score < 0 || score > 10) {
-        throw new Error('Score de segurança inválido no SARIF');
-      }
-      if (score < 7) continue;
-      const file = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri ?? '';
-      const accepted = exceptions.some((exception) =>
-        exception.ruleId === ruleId &&
-        exception.file === file &&
-        exception.reviewBy >= today
-      );
-      findings.push({ ruleId, file, severity: score >= 9 ? 'critical' : 'high', accepted });
-    }
-  }
-  return { findings, blockers: findings.filter((finding) => !finding.accepted) };
+	const exceptions = validateCodeqlPolicy(policy);
+	if (sarif?.version !== '2.1.0' || !Array.isArray(sarif.runs) || !sarif.runs.length) {
+		throw new Error('SARIF CodeQL inválido ou vazio');
+	}
+	const findings = [];
+	for (const run of sarif.runs) {
+		if (!Array.isArray(run.results) || !run.tool?.driver?.rules) {
+			throw new Error('SARIF CodeQL sem regras ou resultados');
+		}
+		const rules = new Map(run.tool.driver.rules.map((rule) => [rule.id, rule]));
+		for (const result of run.results) {
+			const ruleId = result.ruleId ?? run.tool.driver.rules[result.ruleIndex]?.id;
+			const rule = rules.get(ruleId);
+			const rawSeverity =
+				result.properties?.['security-severity'] ?? rule?.properties?.['security-severity'];
+			if (rawSeverity === undefined) continue;
+			const score = Number(rawSeverity);
+			if (!Number.isFinite(score) || score < 0 || score > 10) {
+				throw new Error('Score de segurança inválido no SARIF');
+			}
+			if (score < 7) continue;
+			const file = result.locations?.[0]?.physicalLocation?.artifactLocation?.uri ?? '';
+			const accepted = exceptions.some(
+				(exception) =>
+					exception.ruleId === ruleId && exception.file === file && exception.reviewBy >= today,
+			);
+			findings.push({ ruleId, file, severity: score >= 9 ? 'critical' : 'high', accepted });
+		}
+	}
+	return { findings, blockers: findings.filter((finding) => !finding.accepted) };
 }
 
 function main() {
-  const dir = process.env.CODEQL_SARIF_DIRECTORY;
-  if (!dir) throw new Error('Diretório SARIF CodeQL ausente');
-  const files = readdirSync(dir).filter((file) => /\.sarif(\.json)?$/.test(file)).sort();
-  if (!files.length) throw new Error('Nenhum arquivo SARIF CodeQL encontrado');
-  const policy = JSON.parse(readFileSync(policyFile, 'utf8'));
-  const results = files.map((file) =>
-    evaluateSarif(JSON.parse(readFileSync(resolve(dir, file), 'utf8')), policy)
-  );
-  const blockers = results.flatMap((entry) => entry.blockers);
-  const findings = results.flatMap((entry) => entry.findings);
-  const summary = [
-    '### CodeQL — issue #267',
-    '',
-    'Achados high/critical: ' + findings.length + '. Não aceitos: ' + blockers.length + '.',
-    ...blockers.map((entry) => '- ' + entry.severity + ': ' + entry.ruleId + ' — ' + entry.file),
-    '',
-  ].join('\n');
-  console.log(summary);
-  if (process.env.GITHUB_STEP_SUMMARY) appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
-  if (blockers.length) process.exitCode = 1;
+	const dir = process.env.CODEQL_SARIF_DIRECTORY;
+	if (!dir) throw new Error('Diretório SARIF CodeQL ausente');
+	const files = readdirSync(dir)
+		.filter((file) => /\.sarif(\.json)?$/.test(file))
+		.sort();
+	if (!files.length) throw new Error('Nenhum arquivo SARIF CodeQL encontrado');
+	const policy = JSON.parse(readFileSync(policyFile, 'utf8'));
+	const results = files.map((file) =>
+		evaluateSarif(JSON.parse(readFileSync(resolve(dir, file), 'utf8')), policy),
+	);
+	const blockers = results.flatMap((entry) => entry.blockers);
+	const findings = results.flatMap((entry) => entry.findings);
+	const summary = [
+		'### CodeQL — issue #267',
+		'',
+		'Achados high/critical: ' + findings.length + '. Não aceitos: ' + blockers.length + '.',
+		...blockers.map((entry) => '- ' + entry.severity + ': ' + entry.ruleId + ' — ' + entry.file),
+		'',
+	].join('\n');
+	console.log(summary);
+	if (process.env.GITHUB_STEP_SUMMARY)
+		appendFileSync(process.env.GITHUB_STEP_SUMMARY, summary + '\n');
+	if (blockers.length) process.exitCode = 1;
 }
 
 if (process.argv[1] && resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
-  try {
-    main();
-  } catch (error) {
-    console.error('Falha no gate CodeQL:', error.message);
-    process.exitCode = 1;
-  }
+	try {
+		main();
+	} catch (error) {
+		console.error('Falha no gate CodeQL:', error.message);
+		process.exitCode = 1;
+	}
 }

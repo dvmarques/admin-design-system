@@ -1,20 +1,30 @@
 // Geração determinística da referência de API; usa a matriz #151 e os tipos fonte.
 import {
 	readFileSync,
-	existsSync,
 	mkdirSync,
 	readdirSync,
 	unlinkSync,
 	writeFileSync,
+	renameSync,
+	rmSync,
 } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { randomUUID } from 'node:crypto';
 import ts from 'typescript';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const out = join(root, 'apps/docs/src/api-reference');
 const bt = String.fromCharCode(96);
 const read = (p) => readFileSync(join(root, p), 'utf8');
+function readOptional(path) {
+	try {
+		return readFileSync(path, 'utf8');
+	} catch (error) {
+		if (error.code === 'ENOENT') return null;
+		throw error;
+	}
+}
 const parse = (p) =>
 	ts.createSourceFile(p, read(p), ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 const excluded = new Set([
@@ -132,12 +142,19 @@ for (const index of [
 			dirname(join(root, index)),
 			node.moduleSpecifier.text.replace(/\.js$/, ''),
 		);
-		const path = [base + '.tsx', base + '.ts'].find(existsSync);
-		if (path)
-			for (const e of node.exportClause.elements) if (!e.isTypeOnly) modules.set(e.name.text, path);
+		const source = [base + '.tsx', base + '.ts']
+			.map((path) => ({ path, code: readOptional(path) }))
+			.find((candidate) => candidate.code !== null);
+		if (source)
+			for (const e of node.exportClause.elements)
+				if (!e.isTypeOnly) modules.set(e.name.text, source);
 	}
 }
-modules.set('AdsMaskedInput', join(root, 'packages/components/src/masked-input.tsx'));
+const maskedInputPath = join(root, 'packages/components/src/masked-input.tsx');
+modules.set('AdsMaskedInput', {
+	path: maskedInputPath,
+	code: readFileSync(maskedInputPath, 'utf8'),
+});
 const typeOverrides = {
 	AdsIcon: {
 		path: 'packages/components/src/icons/types.ts',
@@ -247,9 +264,10 @@ function membersOf(decl, sf, seen = new Set(), omitted = new Set(), visiting = n
 
 function typeInfo(name) {
 	const override = typeOverrides[name];
-	const path = override?.path ? join(root, override.path) : modules.get(name);
+	const source = modules.get(name);
+	const path = override?.path ? join(root, override.path) : source?.path;
 	if (!path) throw Error('Sem módulo público para ' + name);
-	const code = readFileSync(path, 'utf8');
+	const code = override?.path ? readFileSync(path, 'utf8') : source.code;
 	const file = ts.createSourceFile(path, code, ts.ScriptTarget.Latest, true, ts.ScriptKind.TSX);
 	const typeNames = override?.types || [name + 'Props'];
 	const props = [],
@@ -431,15 +449,16 @@ function storyFor(entry) {
 	const patterns = usagePatterns(entry.name);
 	const asMeta = new RegExp('component:\\s*' + entry.name + '\\b');
 	const candidates = [...new Set([...entry.stories, conventional])]
-		.filter((n) => existsSync(join(root, 'apps/docs/src', n)))
 		.map((n) => {
-			const content = read('apps/docs/src/' + n);
+			const content = readOptional(join(root, 'apps/docs/src', n));
+			if (content === null) return null;
 			return {
 				name: n,
 				content,
 				score: (n === conventional ? 10 : 0) + (patterns.some((r) => r.test(content)) ? 4 : 0),
 			};
 		})
+		.filter(Boolean)
 		.sort((a, b) => b.score - a.score);
 	for (const c of candidates) {
 		const file = ts.createSourceFile(
@@ -617,6 +636,14 @@ for (const file of readdirSync(out))
 for (const entry of entries) {
 	const file = join(out, entry.name + '.mdx'),
 		content = render(entry);
-	if (!existsSync(file) || readFileSync(file, 'utf8') !== content) writeFileSync(file, content);
+	if (readOptional(file) !== content) {
+		const temporary = join(out, '.' + entry.name + '.' + randomUUID() + '.tmp');
+		try {
+			writeFileSync(temporary, content, { flag: 'wx' });
+			renameSync(temporary, file);
+		} finally {
+			rmSync(temporary, { force: true });
+		}
+	}
 }
 console.log('Referências Storybook geradas: ' + entries.length + ' exports.');

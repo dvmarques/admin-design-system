@@ -1,0 +1,6 @@
+title = "Admin Design System - secrets scanning"
+
+[extend]
+useDefault = true
+
+# Sem allowlist global. Qualquer exceção deve ser específica e revisada.

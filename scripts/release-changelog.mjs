@@ -91,7 +91,8 @@ export function reviewDigest(body) {
 export function validateChangelogReview(text, version, status = 'ongoing') {
 	const { body } = changelogSection(text, version, status);
 	const markers = [...body.matchAll(MARKER)];
-	if (markers.length !== 1 || !MARKER_PREFIX.test(body)) {
+	if (markers.length > 1) throw new Error('Marcadores de aprovação duplicados.');
+	if (markers.length === 0 || !MARKER_PREFIX.test(body)) {
 		throw new Error('Changelog sem aprovação editorial válida para ' + version + '.');
 	}
 	const rest = body.replace(MARKER, '');

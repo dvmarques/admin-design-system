@@ -17,6 +17,8 @@ Biblioteca de componentes e composições administrativas para **React e Next.js
 
 A **Demo** mostra uma aplicação Next.js com dados fictícios; o **Storybook** contém componentes, variantes, estados e referência técnica. A biblioteca não fornece backend, autenticação ou regras de negócio.
 
+<!-- RELEASE TODO (#195): após confirmar no npm a publicação dos quatro pacotes, remover o aviso de indisponibilidade pré-publicação abaixo; atualizar também a introdução dos comandos npm install e conferir os links/avisos equivalentes nos READMEs dos pacotes e docs/integration.md. Só remover após verificação real no registry. -->
+
 > **Disponibilidade (antes da primeira publicação):** os quatro pacotes foram preparados e validados como tarballs na [#194](https://github.com/dvmarques/admin-design-system/issues/194), mas **ainda não estão publicados no npm**. Os comandos `npm install` abaixo são instruções para uso **após** a publicação, que será verificada na [#195](https://github.com/dvmarques/admin-design-system/issues/195). Não representam uma instalação realizada pelo registro. Para teste pré-publicação, consulte o [contrato de distribuição](docs/integration.md#antes-da-primeira-publicação-npm).
 
 ## Comece pelos componentes

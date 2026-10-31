@@ -30,8 +30,8 @@ import { useState } from 'react';
 import { AdsButton } from '@dvmarques/admin-ds-components';
 
 export function Example() {
-  const [count, setCount] = useState(0);
-  return <AdsButton onClick={() => setCount((n) => n + 1)}>Total: {count}</AdsButton>;
+	const [count, setCount] = useState(0);
+	return <AdsButton onClick={() => setCount((n) => n + 1)}>Total: {count}</AdsButton>;
 }
 ```
 

@@ -30,20 +30,20 @@ Composição mínima em `app/admin/page.tsx` (o consumidor controla os links e d
 import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 
 export default function AdminPage() {
-  return (
-    <AdsAdminShell>
-      <AdsAdminShell.Header>
-        <AdsAdminShell.SidebarToggle />
-        Minha aplicação
-      </AdsAdminShell.Header>
-      <AdsAdminShell.Body>
-        <AdsAdminShell.Sidebar>
-          <a href="/admin">Início</a>
-        </AdsAdminShell.Sidebar>
-        <AdsAdminShell.Main>Conteúdo administrativo</AdsAdminShell.Main>
-      </AdsAdminShell.Body>
-    </AdsAdminShell>
-  );
+	return (
+		<AdsAdminShell>
+			<AdsAdminShell.Header>
+				<AdsAdminShell.SidebarToggle />
+				Minha aplicação
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar>
+					<a href="/admin">Início</a>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>Conteúdo administrativo</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	);
 }
 ```
 

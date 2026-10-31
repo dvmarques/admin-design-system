@@ -30,11 +30,11 @@ import '@dvmarques/admin-ds-components/styles.css';
 import type { ReactNode } from 'react';
 
 export default function RootLayout({ children }: { children: ReactNode }) {
-  return (
-    <html lang="pt-BR" data-theme="light">
-      <body>{children}</body>
-    </html>
-  );
+	return (
+		<html lang="pt-BR" data-theme="light">
+			<body>{children}</body>
+		</html>
+	);
 }
 ```
 
@@ -47,14 +47,14 @@ import { useState } from 'react';
 import { AdsButton } from '@dvmarques/admin-ds-components';
 
 export default function Page() {
-  const [clicks, setClicks] = useState(0);
-  return (
-    <main>
-      <AdsButton onClick={() => setClicks((n) => n + 1)}>
-        Cliques: {clicks}
-      </AdsButton>
-    </main>
-  );
+	const [clicks, setClicks] = useState(0);
+	return (
+		<main>
+			<AdsButton onClick={() => setClicks((n) => n + 1)}>
+				Cliques: {clicks}
+			</AdsButton>
+		</main>
+	);
 }
 ```
 
@@ -62,12 +62,12 @@ O exemplo usa tema claro fixo para ser mínimo; veja [preferência Sistema, pers
 
 ## Escolha os pacotes
 
-| Pacote | O que oferece | Instale quando | Relação |
-| --- | --- | --- | --- |
-| [`@dvmarques/admin-ds-tokens`](packages/tokens/README.md) | Tokens e estilos de tema | Precisar de temas/variáveis CSS, mesmo sem componentes | Base visual independente |
-| [`@dvmarques/admin-ds-components`](packages/components/README.md) | Botões, campos, tabela, overlays, navegação e feedback | Criar interfaces com componentes básicos | Use com `tokens` e peers React/React DOM; máscara é opcional |
-| [`@dvmarques/admin-ds-admin`](packages/admin/README.md) | Shell, dashboard, filtros, tabela inteligente e fluxos | Construir composições administrativas | Use com `tokens` e `components` |
-| [`@dvmarques/admin-ds-highlighted-code`](packages/highlighted-code/README.md) | `AdsHighlightedCodeSnippet` com Shiki | Exibir código destacado | **Opcional e isolado**; não vem no `components` |
+| Pacote                                                                        | O que oferece                                          | Instale quando                                         | Relação                                                      |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
+| [`@dvmarques/admin-ds-tokens`](packages/tokens/README.md)                     | Tokens e estilos de tema                               | Precisar de temas/variáveis CSS, mesmo sem componentes | Base visual independente                                     |
+| [`@dvmarques/admin-ds-components`](packages/components/README.md)             | Botões, campos, tabela, overlays, navegação e feedback | Criar interfaces com componentes básicos               | Use com `tokens` e peers React/React DOM; máscara é opcional |
+| [`@dvmarques/admin-ds-admin`](packages/admin/README.md)                       | Shell, dashboard, filtros, tabela inteligente e fluxos | Construir composições administrativas                  | Use com `tokens` e `components`                              |
+| [`@dvmarques/admin-ds-highlighted-code`](packages/highlighted-code/README.md) | `AdsHighlightedCodeSnippet` com Shiki                  | Exibir código destacado                                | **Opcional e isolado**; não vem no `components`              |
 
 Não é necessário instalar os quatro. O `react-imask` só é necessário para o subpath opcional `components/masked-input`; Shiki acompanha exclusivamente o pacote `highlighted-code`. Os manifests declaram React/React DOM `>=18.2.0` e peers próprios; a Demo usa React 19 e Next.js 16, mas isso não constitui certificação de todas as versões de Next.js.
 

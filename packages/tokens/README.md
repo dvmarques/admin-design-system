@@ -16,17 +16,18 @@ Importe a folha de estilos uma vez no entrypoint global de sua aplicação (por 
 
 ```tsx
 import '@dvmarques/admin-ds-tokens/styles.css';
+import type { ReactNode } from 'react';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
-  return (
-    <html lang="pt-BR" data-theme="light">
-      <body>{children}</body>
-    </html>
-  );
+export default function RootLayout({ children }: { children: ReactNode }) {
+	return (
+		<html lang="pt-BR" data-theme="light">
+			<body>{children}</body>
+		</html>
+	);
 }
 ```
 
-Para TypeScript sem namespace global `React`, importe `type ReactNode` de `react`. O arquivo `styles.css` carrega o CSS compilado; não configure Tailwind nem importe `src/` no consumidor.
+O arquivo `styles.css` carrega o CSS compilado; não configure Tailwind nem importe `src/` no consumidor.
 
 ## Temas, personalização e fontes
 
@@ -36,11 +37,11 @@ Para TypeScript sem namespace global `React`, importe `type ReactNode` de `react
 
 ```css
 [data-theme='light'] {
-  --ads-color-primary: #2563eb;
+	--ads-color-primary: #2563eb;
 }
 
 [data-theme='dark'] {
-  --ads-color-primary: #0ea5e9;
+	--ads-color-primary: #0ea5e9;
 }
 ```
 

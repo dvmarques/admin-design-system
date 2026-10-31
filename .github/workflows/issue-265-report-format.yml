@@ -1,0 +1,32 @@
+name: "Issue 265 - format security report (temporary)"
+on:
+  push:
+    branches: [issue-265-deps-batch1]
+permissions:
+  contents: write
+jobs:
+  format:
+    if: github.ref == 'refs/heads/issue-265-deps-batch1'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: issue-265-deps-batch1
+          fetch-depth: 0
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Format only security evidence document and remove temporary workflow
+        run: |
+          npm exec -- prettier --write docs/security/issue-265-audit-2026-10-30.md
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/issue-265-report-format.yml
+          git add docs/security/issue-265-audit-2026-10-30.md
+          git diff --cached --check
+          HUSKY=0 git commit -m "style(security): format issue #265 re-audit report"
+          git push origin HEAD:refs/heads/issue-265-deps-batch1
+      - run: npm run format

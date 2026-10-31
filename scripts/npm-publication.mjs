@@ -1,8 +1,9 @@
 #!/usr/bin/env node
 import assert from 'node:assert/strict';
 import { createHash } from 'node:crypto';
+import { constants } from 'node:fs';
 import { spawn, spawnSync } from 'node:child_process';
-import { lstat, readFile, readdir, writeFile } from 'node:fs/promises';
+import { open, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
@@ -21,6 +22,17 @@ function verifyVersion(version) {
 export function verifyIntegrity(actual, expected, label) {
 	if (!actual || actual !== expected) {
 		throw new Error('Integridade divergente para ' + label + '; publicação bloqueada.');
+	}
+}
+
+async function readRegularFile(file) {
+	const handle = await open(file, constants.O_RDONLY | constants.O_NOFOLLOW);
+	try {
+		const stat = await handle.stat();
+		assert.ok(stat.isFile(), 'Arquivo regular esperado: ' + file);
+		return await handle.readFile();
+	} finally {
+		await handle.close();
 	}
 }
 
@@ -58,9 +70,7 @@ export async function makePlan(version, releaseSha, directory, root = ROOT) {
 			assert.equal(manifest.peerDependencies?.[NAME('components')], version);
 		}
 		const file = 'dvmarques-admin-ds-' + part + '-' + version + '.tgz';
-		const stat = await lstat(join(directory, file));
-		assert.ok(stat.isFile() && !stat.isSymbolicLink(), 'Tarball inválido: ' + file);
-		const bytes = await readFile(join(directory, file));
+		const bytes = await readRegularFile(join(directory, file));
 		assert.ok(bytes.length > 0, 'Tarball vazio: ' + file);
 		packages.push({
 			name,
@@ -73,9 +83,9 @@ export async function makePlan(version, releaseSha, directory, root = ROOT) {
 	return { schemaVersion: 1, version, releaseSha, packages };
 }
 
-function inspectArchive(item, directory) {
-	const file = join(directory, item.file);
-	const result = spawnSync('tar', ['-xzOf', file, 'package/package.json'], {
+function inspectArchive(item, bytes) {
+	const result = spawnSync('tar', ['-xzOf', '-', 'package/package.json'], {
+		input: bytes,
 		encoding: 'utf8',
 		maxBuffer: 256 * 1024,
 	});
@@ -120,17 +130,14 @@ export async function verifyPlan(plan, version, releaseSha, directory) {
 		assert.equal(item.version, version);
 		const expectedFile = item.name.slice(1).replace('/', '-') + '-' + version + '.tgz';
 		assert.equal(item.file, expectedFile, 'Caminho de tarball inesperado.');
-		const path = join(directory, item.file);
-		const stat = await lstat(path);
-		assert.ok(stat.isFile() && !stat.isSymbolicLink());
-		const bytes = await readFile(path);
+		const bytes = await readRegularFile(join(directory, item.file));
 		verifyIntegrity(
 			'sha512-' + createHash('sha512').update(bytes).digest('base64'),
 			item.integrity,
 			item.name,
 		);
 		verifyIntegrity(createHash('sha256').update(bytes).digest('hex'), item.sha256, item.name);
-		inspectArchive(item, directory);
+		inspectArchive(item, bytes);
 	}
 	return plan;
 }
@@ -187,7 +194,7 @@ export async function publishPlan(plan, { getVersion, publishTarball, sleep = de
 }
 
 export async function registryVersion(name, version) {
-	const url = REGISTRY + '/' + name.replace('/', '%2f') + '/' + encodeURIComponent(version);
+	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
 	const response = await fetch(url, { headers: { accept: 'application/json' }, cache: 'no-store' });
 	if (response.status === 404) return null;
 	if (!response.ok) throw new Error('Falha ao consultar registry npm: HTTP ' + response.status);

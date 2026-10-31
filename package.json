@@ -14,7 +14,7 @@
 	],
 	"scripts": {
 		"prepare": "husky",
-		"format": "prettier --write docs/release-process.md scripts/release-changelog.mjs scripts/release-changelog.test.mjs && git diff -- docs/release-process.md scripts/release-changelog.mjs scripts/release-changelog.test.mjs && prettier --check .",
+		"format": "prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",

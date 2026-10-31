@@ -188,7 +188,7 @@ test('seletor de organização: falha simulada mantém a organização e o paine
 	await page.getByLabel('Resultado da troca').selectOption('failure');
 	const trigger = page
 		.getByRole('main')
-		.getByRole('button', { name: /^Organização atual: Acme Brasil/ })
+		.getByRole('button', { name: /^Organização atual: .*Acme Brasil/ })
 		.first();
 	await trigger.click();
 	const panel = page.getByRole('dialog', { name: 'Trocar de organização' });

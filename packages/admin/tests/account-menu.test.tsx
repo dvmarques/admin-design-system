@@ -40,7 +40,7 @@ function setup(props: Partial<AdsAccountMenuProps> = {}) {
 	return render(<AdsAccountMenu groups={groups()} user={user} {...props} />);
 }
 
-const trigger = () => screen.getByRole('button', { name: 'Menu da conta: Ana Souza' });
+const trigger = () => screen.getByRole('button', { name: /^Menu da conta: .* Ana Souza$/ });
 
 describe('AdsAccountMenu', () => {
 	it('opens from the avatar button with the dialog semantics and moves focus to the first action', async () => {
@@ -329,7 +329,7 @@ describe('AdsAccountMenu', () => {
 		const name = 'Maria Aparecida de Albuquerque Montenegro Vasconcelos Figueiredo Neto';
 		const email = 'maria.aparecida.albuquerque.montenegro@empresa-com-nome-muito-longo.example.com';
 		render(<AdsAccountMenu groups={groups()} user={{ name, email }} />);
-		await events.click(screen.getByRole('button', { name: `Menu da conta: ${name}` }));
+		await events.click(screen.getByRole('button', { name: `Menu da conta: MN ${name}` }));
 
 		expect(await screen.findByTitle(name)).toHaveTextContent(name);
 		expect(screen.getByText(email)).toHaveAttribute('title', email);
@@ -338,7 +338,7 @@ describe('AdsAccountMenu', () => {
 	it('accepts custom labels', async () => {
 		const events = userEvent.setup();
 		setup({ labels: { panel: 'Account', trigger: 'Account menu' } });
-		await events.click(screen.getByRole('button', { name: 'Account menu: Ana Souza' }));
+		await events.click(screen.getByRole('button', { name: 'Account menu: AS Ana Souza' }));
 
 		expect(await screen.findByRole('dialog', { name: 'Account' })).toBeVisible();
 	});

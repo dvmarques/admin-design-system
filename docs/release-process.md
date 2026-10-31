@@ -37,27 +37,28 @@ Em PRs para `develop` cujos arquivos alterados são todos documentação (`opens
 3. Crie `release/X.Y.Z` a partir de `develop` no próprio repositório.
 4. Execute uma prévia **sem escrita** das alterações que entrarão nesta versão:
 
-```bash
-npm run release:changelog -- X.Y.Z
-```
+   ```bash
+   npm run release:changelog -- X.Y.Z
+   ```
 
 5. **Revisão editorial humana obrigatória:** revise a seção `Em andamento` de `CHANGELOG.md`, agrupe entradas do mesmo assunto (incluindo issues repetidas), torne cada item curto e direto (até **300 caracteres**), mantenha links/referências às issues e sinalize de forma explícita breaking changes, migrações e riscos relevantes. Distribua por `Added`, `Changed`, `Fixed`, `Security` e `Removed` conforme aplicável. O comando sugere grupos usando heurísticas e aponta duplicidades/itens longos; **não altera o changelog nem decide equivalências semânticas**. Não reescreva versões fechadas.
 6. Após conferir o diff e as fontes, confirme explicitamente a aprovação **na branch de release**:
 
-```bash
-npm run release:changelog -- X.Y.Z --approve
-npm run release:changelog -- X.Y.Z --check
-```
+   ```bash
+   npm run release:changelog -- X.Y.Z --approve
+   npm run release:changelog -- X.Y.Z --check
+   ```
 
    O `--approve` insere um comentário Markdown invisível com hash SHA-256 do **texto exato** da seção revisada; essa marca fica no commit, mas não entra nas GitHub Release Notes. O `--check` confirma a integridade; qualquer edição posterior invalida a aprovação e exige nova revisão e `--approve`. Duplicidade da mesma issue principal, entradas excessivamente longas, falta de entradas ou de aprovação impedem o fechamento. A revisão humana é responsável por não omitir mudanças.
+
 7. Faça **commit do `CHANGELOG.md` aprovado**, deixe working tree limpa e use npm `11.19.1`.
 8. Execute:
 
-```bash
-npm run release:prepare -- X.Y.Z
-```
+   ```bash
+   npm run release:prepare -- X.Y.Z
+   ```
 
-O comando exige também a aprovação editorial válida do changelog antes de escrever. O comando valida SemVer, changelog e versões coordenadas antes de escrever. Ele prepara manifests/changelog em staging, regenera o lockfile em diretório temporário com npm offline e só aplica o conjunto final após sucesso. Em falha de aplicação, restaura o estado anterior.
+O comando exige também a aprovação editorial válida do changelog antes de escrever. Ele valida SemVer, changelog e versões coordenadas antes de escrever. Ele prepara manifests/changelog em staging, regenera o lockfile em diretório temporário com npm offline e só aplica o conjunto final após sucesso. Em falha de aplicação, restaura o estado anterior.
 
 O changelog fecha a versão com a data civil de `America/Sao_Paulo` no formato `dd-mmm-aaaa` e abre um placeholder para o próximo patch. O placeholder não obriga que a próxima release seja patch; uma futura preparação pode renomeá-lo para minor ou major preservando o conteúdo acumulado.
 

@@ -13,15 +13,10 @@ Esta auditoria registra a atualização incremental de Storybook 10.6.5, Playwri
 
 `npm audit --json` e `npm audit --json --omit=dev` foram executados na raiz de dois checkouts Git independentes, usando o mesmo ambiente Node/npm.
 
-| Severidade | Antes (completo) | Antes (produção) | Depois (completo) | Depois (produção) |
-| --- | ---: | ---: | ---: | ---: |
-| Critical | 0 | 0 | 0 | 0 |
-| High | 0 | 0 | 0 | 0 |
-| Moderate | 14 | 0 | 14 | 0 |
-| Low | 0 | 0 | 0 | 0 |
-| Info | 0 | 0 | 0 | 0 |
-| Total | 14 | 0 | 14 | 0 |
-| Código de saída | 1 | 0 | 1 | 0 |
+- **Baseline completo:** 0 critical, 0 high, 14 moderate, 0 low, 0 info; código de saída 1.
+- **Baseline produção (`--omit=dev`):** zero achados; código de saída 0.
+- **Lote 2 completo:** 0 critical, 0 high, 14 moderate, 0 low, 0 info; código de saída 1.
+- **Lote 2 produção (`--omit=dev`):** zero achados; código de saída 0.
 
 Os **mesmos 14 pacotes** foram apontados no baseline e no lote 2. Não houve novos achados nem high/critical. A contagem inclui dependências que herdam os dois advisories principais, e não representa 14 vulnerabilidades independentes:
 

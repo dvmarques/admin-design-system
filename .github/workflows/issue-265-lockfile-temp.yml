@@ -49,6 +49,7 @@ jobs:
           npm ls --depth=0
       - name: Format lint build types tests and coverage
         run: |
+          npx --no-install prettier --write .github/workflows/issue-265-lockfile-temp.yml
           npm run format
           npm run lint
           npm run build

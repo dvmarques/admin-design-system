@@ -25,7 +25,7 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.62.0-noble
+      image: mcr.microsoft.com/playwright:v1.64.1-noble
       options: --ipc=host
       env:
         HOME: /root

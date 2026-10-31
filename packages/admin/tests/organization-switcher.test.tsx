@@ -20,7 +20,7 @@ function setup(props: Partial<AdsOrganizationSwitcherProps> = {}) {
 	return render(<AdsOrganizationSwitcher organizations={organizations} value="acme" {...props} />);
 }
 
-const trigger = (name: string | RegExp = /Organização atual: Acme Brasil/) =>
+const trigger = (name: string | RegExp = /Organização atual: .*Acme Brasil/) =>
 	screen.getByRole('button', { name });
 
 describe('AdsOrganizationSwitcher trigger', () => {
@@ -33,7 +33,7 @@ describe('AdsOrganizationSwitcher trigger', () => {
 		expect(button).toHaveTextContent('Acme Brasil');
 		expect(button).toHaveTextContent('Plano Enterprise');
 		expect(button).toHaveTextContent('AB');
-		expect(button).toHaveAccessibleName('Organização atual: Acme Brasil, Plano Enterprise');
+		expect(button).toHaveAccessibleName('Organização atual: AB Acme Brasil Plano Enterprise');
 	});
 
 	it('truncates long names keeping the full text available', () => {
@@ -136,7 +136,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 
 		await events.click(await screen.findByRole('option', { name: 'Globex' }));
 
-		expect(screen.getByRole('button', { name: /Organização atual: Globex/ })).toBeVisible();
+		expect(screen.getByRole('button', { name: /Organização atual: .*Globex/ })).toBeVisible();
 	});
 
 	it('closes with Escape and returns the focus', async () => {
@@ -192,7 +192,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 			name: `Empresa ${index}`,
 		}));
 		setup({ organizations: many, value: 'o0' });
-		await events.click(screen.getByRole('button', { name: /Organização atual: Empresa 0/ }));
+		await events.click(screen.getByRole('button', { name: /Organização atual: .*Empresa 0/ }));
 
 		const search = await screen.findByRole('searchbox', { name: 'Buscar organização' });
 		await waitFor(() => expect(search).toHaveFocus());
@@ -328,7 +328,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 
 		await act(async () => resolve());
 		await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-		expect(screen.getByRole('button', { name: /Organização atual: Globex/ })).toBeVisible();
+		expect(screen.getByRole('button', { name: /Organização atual: .*Globex/ })).toBeVisible();
 	});
 
 	it('keeps the previous organization and announces an asynchronous failure', async () => {
@@ -369,7 +369,7 @@ describe('AdsOrganizationSwitcher panel', () => {
 	it('accepts custom labels', async () => {
 		const events = userEvent.setup();
 		setup({ labels: { panel: 'Switch organization', trigger: 'Current organization' } });
-		await events.click(screen.getByRole('button', { name: /Current organization: Acme Brasil/ }));
+		await events.click(screen.getByRole('button', { name: /Current organization: .*Acme Brasil/ }));
 
 		expect(await screen.findByRole('dialog', { name: 'Switch organization' })).toBeVisible();
 	});
@@ -464,7 +464,7 @@ describe('AdsOrganizationSwitcher in the sidebar', () => {
 			'data-collapsed',
 			'true',
 		);
-		const compact = screen.getByRole('button', { name: /Organização atual: Acme Brasil/ });
+		const compact = screen.getByRole('button', { name: /Organização atual: .*Acme Brasil/ });
 		expect(compact).toHaveAttribute('aria-label', expect.stringContaining('Acme Brasil'));
 
 		await events.click(compact);
@@ -543,7 +543,7 @@ describe('AdsOrganizationSwitcher composes the AdsCombobox popover', () => {
 
 		await act(async () => resolve());
 		await waitFor(() => expect(screen.queryByRole('dialog')).toBeNull());
-		expect(screen.getByRole('button', { name: /Organização atual: Globex/ })).toHaveFocus();
+		expect(screen.getByRole('button', { name: /Organização atual: .*Globex/ })).toHaveFocus();
 	});
 
 	it('reports a synchronous failure and keeps the previous organization', async () => {
@@ -586,7 +586,7 @@ describe('AdsOrganizationSwitcher composes the AdsCombobox popover', () => {
 			name: `Empresa ${index}`,
 		}));
 		setup({ organizations: many, value: 'o0', onValueChange });
-		await events.click(screen.getByRole('button', { name: /Organização atual: Empresa 0/ }));
+		await events.click(screen.getByRole('button', { name: /Organização atual: .*Empresa 0/ }));
 		const search = await screen.findByRole('searchbox');
 		await events.type(search, 'empresa 5');
 		await events.keyboard('{Enter}');

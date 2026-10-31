@@ -14,7 +14,7 @@ import {
 import { dirname, join } from 'node:path';
 
 const allowed = /^e2e\/[a-zA-Z0-9._-]+\.spec\.ts-snapshots\/[a-zA-Z0-9._-]+\.png$/;
-const stage = '.baseline-transfer';
+const stage = 'baseline-transfer';
 const branch = process.env.GITHUB_REF_NAME;
 const sha = process.env.GITHUB_SHA;
 

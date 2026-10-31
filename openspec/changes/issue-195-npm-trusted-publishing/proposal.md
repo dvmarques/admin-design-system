@@ -12,6 +12,7 @@ A issue #195 precisa acrescentar a distribuição pública npm ao processo de re
 - Validar nomes, versões, acesso público, integridade SHA-512 e conteúdo validado dos tarballs; publicar somente os pacotes ausentes em ordem fixa.
 - Implementar idempotência: falhar em divergência, recuperar publicação parcial, conferir o estado final no registry antes de criar tag/release.
 - Documentar bootstrap inicial, configuração exata de publisher, operação, falhas e verificação externa. Nenhuma publicação npm nesta PR.
+- Incluir revisão editorial obrigatória do changelog antes de `release:prepare`: proposta de agrupamento/encurtamento, revisão humana, aprovação ligada ao conteúdo, verificação de duplicidades e proteção das versões já fechadas.
 
 ## Capabilities
 

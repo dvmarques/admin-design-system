@@ -1,6 +1,6 @@
 # @dvmarques/admin-ds-components
 
-Componentes React reutilizáveis do **Admin Design System**: botões, campos e seleção, navegação, tabelas, overlays, feedback, calendário e visualização compacta. Para fluxos e shell administrativos, combine com `@dvmarques/admin-ds-admin`. A [referência de API no Storybook](https://dvmarques.github.io/admin-design-system/storybook/) descreve os exports disponíveis, variantes e estados.
+Componentes React reutilizáveis do **Admin Design System**: botões, campos e seleção, navegação, tabelas, overlays, feedback, calendário e visualização compacta. Para fluxos e shell administrativos, existe um pacote independente de composições administrativas. A [referência de API no Storybook](https://dvmarques.github.io/admin-design-system/storybook/) descreve os exports disponíveis, variantes e estados.
 
 > **Pré-publicação:** validado como tarball externo na [#194](https://github.com/dvmarques/admin-design-system/issues/194), **ainda não publicado no npm**. Os comandos a seguir valem depois da [#195](https://github.com/dvmarques/admin-design-system/issues/195); a primeira versão publicada será confirmada naquele fluxo.
 
@@ -51,7 +51,7 @@ npm install react-imask
 import { AdsMaskedInput } from '@dvmarques/admin-ds-components/masked-input';
 ```
 
-O peer opcional `react-imask` usa a faixa `^7.6.1`. Máscara não implica validação de CPF/CNPJ ou de negócio; consulte o guia. Realce de código e Shiki pertencem exclusivamente ao **pacote opcional independente** [`@dvmarques/admin-ds-highlighted-code`](https://github.com/dvmarques/admin-design-system/blob/develop/packages/highlighted-code/README.md), não são reexportados aqui.
+O peer opcional `react-imask` usa a faixa `^7.6.1`. Máscara não implica validação de CPF/CNPJ ou de negócio; consulte o guia. Realce de código e Shiki pertencem exclusivamente ao **pacote opcional independente** [pacote opcional de realce de código](https://github.com/dvmarques/admin-design-system/blob/develop/packages/highlighted-code/README.md), não são reexportados aqui.
 
 ## Integração e limites
 

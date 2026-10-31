@@ -1,6 +1,6 @@
 # @dvmarques/admin-ds-highlighted-code
 
-**Pacote opcional e independente** de destaque de código do Admin Design System. Expõe `AdsHighlightedCodeSnippet`, com Shiki carregado sob demanda. Não é reexportado por `@dvmarques/admin-ds-components`, evitando levar Shiki para o bundle principal de interfaces.
+**Pacote opcional e independente** de destaque de código do Admin Design System. Expõe `AdsHighlightedCodeSnippet`, com Shiki carregado sob demanda. Não é reexportado pelo pacote básico de componentes, evitando levar Shiki para o bundle principal de interfaces.
 
 > **Pré-publicação:** tarball validado na [#194](https://github.com/dvmarques/admin-design-system/issues/194), **ainda não publicado no npm**. Os comandos de instalação só se aplicam depois da [#195](https://github.com/dvmarques/admin-design-system/issues/195), com a versão final confirmada.
 

@@ -1,0 +1,132 @@
+name: "Issue 265 - batch 2 dependency bootstrap (temporary)"
+on:
+  push:
+    branches: [issue-265-deps-batch2]
+permissions:
+  contents: write
+jobs:
+  bootstrap:
+    if: github.ref == 'refs/heads/issue-265-deps-batch2'
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          ref: issue-265-deps-batch2
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - name: Verify supported registry versions and modify versions without changing workflow hardening
+        shell: bash
+        run: |
+          set -euo pipefail
+          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
+          test "$(npm --version)" = 11.19.1
+          for package in 'storybook@10.6.5' '@storybook/addon-docs@10.6.5' '@storybook/react-vite@10.6.5' '@playwright/test@1.64.1' 'axe-core@4.14.0'; do
+            npm view "$package" version
+          done
+          node <<'NODE'
+          const fs=require('node:fs');
+          const file='package.json';
+          let text=fs.readFileSync(file,'utf8');
+          const json=JSON.parse(text);
+          const target={
+            'storybook':'10.6.5',
+            '@storybook/addon-docs':'10.6.5',
+            '@storybook/react-vite':'10.6.5',
+            '@playwright/test':'1.64.1',
+            'axe-core':'4.14.0'
+          };
+          for(const [name,value] of Object.entries(target)){
+            const before=json.devDependencies[name];
+            if(!before)throw Error('Dependency not found: '+name);
+            const needle=JSON.stringify(name)+': '+JSON.stringify(before);
+            if(!text.includes(needle))throw Error('Cannot replace dependency '+name);
+            text=text.replace(needle,JSON.stringify(name)+': '+JSON.stringify(value));
+          }
+          if(JSON.parse(text).engines?.node!=='>=24.0.0')throw Error('Node range altered');
+          fs.writeFileSync(file,text);
+          const workflowFiles=['.github/workflows/ci.yml','.github/workflows/pages.yml','.github/workflows/update-visual-baselines.yml'];
+          for(const path of workflowFiles){
+            let s=fs.readFileSync(path,'utf8');
+            if(!s.includes('v1.62.0-noble'))throw Error('Playwright image tag absent '+path);
+            s=s.replaceAll('v1.62.0-noble','v1.64.1-noble').replaceAll('EXPECTED=1.62.0','EXPECTED=1.64.1').replaceAll("expected = '1.62.0'","expected = '1.64.1'");
+            fs.writeFileSync(path,s);
+          }
+          NODE
+          npm install --package-lock-only --ignore-scripts --no-audit --no-fund
+          npm ci --ignore-scripts --no-audit --no-fund
+          npm ls --depth=0
+          node <<'NODE'
+          const lock=require('./package-lock.json');
+          for(const [name,version] of Object.entries({
+            'storybook':'10.6.5',
+            '@storybook/addon-docs':'10.6.5',
+            '@storybook/react-vite':'10.6.5',
+            '@playwright/test':'1.64.1',
+            'playwright':'1.64.1',
+            'playwright-core':'1.64.1',
+            'axe-core':'4.14.0'
+          })){
+            const actual=lock.packages['node_modules/'+name]?.version;
+            if(actual!==version)throw Error(name+' expected '+version+', got '+actual);
+          }
+          console.log('Locked versions verified; npm ci and npm ls passed.');
+          NODE
+          if git grep -n '1\.62\.0' -- .github/workflows; then
+            echo "Stale Playwright image/check in workflow" >&2
+            exit 1
+          fi
+          npm exec -- prettier --write packages/admin/src/account-menu.tsx packages/admin/src/organization-switcher.tsx e2e/account-notifications-organization.spec.ts CHANGELOG.md openspec/changes/issue-265-deps-batch2/*.md
+          npm run format
+          npm run lint
+      - name: Commit resolved lockfile and remove temporary workflow without changing the base
+        shell: bash
+        run: |
+          set -euo pipefail
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git rm .github/workflows/issue-265-batch2-bootstrap.yml
+          git add package.json package-lock.json .github/workflows/ci.yml .github/workflows/pages.yml .github/workflows/update-visual-baselines.yml packages/admin/src/account-menu.tsx packages/admin/src/organization-switcher.tsx e2e/account-notifications-organization.spec.ts CHANGELOG.md openspec/changes/issue-265-deps-batch2
+          git diff --cached --check
+          HUSKY=0 git commit -m "chore(deps): implement issue #265 batch 2 Storybook Playwright and axe"
+          git push origin HEAD:refs/heads/issue-265-deps-batch2
+      - name: Audit original vs batch 2 lockfile with JSON evidence
+        shell: bash
+        run: |
+          set -euo pipefail
+          mkdir -p issue-265-batch2-audit
+          git worktree add --detach "$RUNNER_TEMP/baseline-batch2" 9775ffe71581483b3ab77056d6a2eddb90dd980b
+          (cd "$RUNNER_TEMP/baseline-batch2"; npm ci --ignore-scripts --no-audit --no-fund)
+          echo "Date UTC $(date -u '+%Y-%m-%dT%H:%M:%SZ') Node $(node -v) npm $(npm -v)"
+          for stage in before after; do
+            if [ "$stage" = before ]; then dir="$RUNNER_TEMP/baseline-batch2"; else dir="$GITHUB_WORKSPACE"; fi
+            for scope in all production; do
+              set +e
+              if [ "$scope" = all ]; then (cd "$dir"; npm audit --json > "$GITHUB_WORKSPACE/issue-265-batch2-audit/$stage-$scope.json"); else (cd "$dir"; npm audit --json --omit=dev > "$GITHUB_WORKSPACE/issue-265-batch2-audit/$stage-$scope.json"); fi
+              exitcode=$?
+              set -e
+              echo "$exitcode" > "issue-265-batch2-audit/$stage-$scope.exit"
+            done
+          done
+          node <<'NODE'
+          const fs=require('node:fs');const summary={timestamp:new Date().toISOString(),node:process.version,npm:process.env.npm_config_user_agent,results:{}};
+          for(const stage of ['before','after']) for(const scope of ['all','production']){
+            const doc=JSON.parse(fs.readFileSync('issue-265-batch2-audit/'+stage+'-'+scope+'.json'));
+            if(!doc.metadata?.vulnerabilities)throw Error('Audit response missing metadata');
+            summary.results[stage+'-'+scope]={count:doc.metadata.vulnerabilities,packages:Object.keys(doc.vulnerabilities||{}),exit:Number(fs.readFileSync('issue-265-batch2-audit/'+stage+'-'+scope+'.exit'))};
+          }
+          fs.writeFileSync('issue-265-batch2-audit/summary.json',JSON.stringify(summary,null,2)+'\n');
+          console.log('AUDIT_BATCH2='+JSON.stringify(summary));
+          NODE
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: issue-265-batch2-npm-audit
+          path: issue-265-batch2-audit/
+          retention-days: 30
+          if-no-files-found: warn

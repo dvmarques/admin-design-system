@@ -280,7 +280,7 @@ test('o showcase de conta demonstra foto, iniciais e falha de imagem', async ({ 
 		demo.getByRole('button', { name: /^Menu da conta: .*Ana Souza$/ }).locator('img'),
 	).toBeVisible();
 	await expect(demo.getByRole('button', { name: /^Menu da conta: .*Bruno Lima$/ })).toContainText('BL');
-	const failed = demo.getByRole('button', { name: 'Menu da conta: Carla Dias' });
+	const failed = demo.getByRole('button', { name: /^Menu da conta: .*Carla Dias$/ });
 	await expect(failed).toContainText('CD');
 	await expect(failed.locator('img')).toHaveCount(0);
 

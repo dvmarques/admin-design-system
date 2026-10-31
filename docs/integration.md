@@ -4,7 +4,7 @@
 
 **Estado em 31/10/2026:** a [#194](https://github.com/dvmarques/admin-design-system/issues/194) validou os quatro pacotes com `npm pack` e uma aplicação Next.js externa usando tarballs locais (`file:`), incluindo tipos, CSS compilado sem Tailwind no consumidor e hidratação. **Os pacotes ainda não estão disponíveis no registro npm.** A [#195](https://github.com/dvmarques/admin-design-system/issues/195) executará a primeira publicação e confirmará sua instalação real pelo registry. O comando de instalação abaixo é **prospectivo**, não evidência de instalação pelo npm.
 
-O teste pré-publicação usa os tarballs gerados por `npm run verify:distribution` após instalar dependências e seguir o fluxo da #194; não tente obter nomes ainda inéditos pelo registro. Não substitua os tarballs validados por aliases de workspace nem trate `@admin-ds/*` como nome público existente.
+O teste pré-publicação usa os tarballs gerados por `npm run verify:distribution` após instalar dependências e seguir o fluxo da #194; não tente obter nomes ainda inéditos pelo registro. Não substitua os tarballs validados por aliases de workspace nem por imports internos do monorepo.
 
 ## Instalação externa — caminho mínimo (após a publicação)
 
@@ -87,7 +87,7 @@ Os tokens respeitam `data-theme="light"` e `data-theme="dark"`; sem atributo exp
 
 A pilha de fontes começa pela **Inter**, mas os pacotes não distribuem a fonte. O consumidor pode carregar a Inter via `next/font` ou definir a própria fonte por tokens, mantendo licenças de terceiros. Para sobrescritas de tema use `[data-theme='light']`/`[data-theme='dark']` também fora de `:root`, pois overlays portados recebem tema no próprio contêiner.
 
-Consulte [ThemeControl e Sistema](#controle-de-preferência-claro-escuro-e-sistema), [tokens/identidade](visual-identity.md), [migração](migration-guide.md), [API detalhada](https://dvmarques.github.io/admin-design-system/storybook/) e [limitações por componente](limitations.md). A [publicação npm](release-process.md) é separada do deploy Demo/Storybook via GitHub Pages.
+Consulte [ThemeControl e Sistema](#controle-de-preferência-claro-escuro-e-sistema), [tokens/identidade](visual-identity.md), [API detalhada](https://dvmarques.github.io/admin-design-system/storybook/) e [limitações por componente](limitations.md). A [publicação npm](release-process.md) é separada do deploy Demo/Storybook via GitHub Pages.
 
 ## Referência de API e exemplos
 
@@ -202,11 +202,11 @@ export function HeaderThemeControl({ preference, onChange }: Props) {
   `radiogroup` com `radio`; a opção ativa também recebe uma marca visual. Escape
   fecha o menu e devolve o foco ao gatilho; escolher uma opção também.
 
-**Migração de `ThemeToggle`.** `ThemeToggle` (alternância binária, `initialTheme`
-e `onThemeChange`) permanece exportado e inalterado; ele não vira ternário. Para
-incluir Sistema, troque `initialTheme`/`onThemeChange` por `defaultValue`/`onValueChange`
-de `AdsThemeControl` e resolva `system` na aplicação. Uma depreciação formal de
-`ThemeToggle` só ocorrerá em uma versão futura, com aviso prévio.
+**Escolha do controle de tema.** Para oferecer as preferências Claro, Escuro e Sistema,
+use `AdsThemeControl` (`defaultValue`/`value` e `onValueChange`) e resolva `system`
+na aplicação. Se precisar apenas de alternância binária entre claro e escuro,
+`ThemeToggle` permanece disponível com `initialTheme` e `onThemeChange`.
+Nenhum dos controles persiste a preferência sozinho.
 
 **Exemplo completo (admin demo).** O cabeçalho e as Preferências compartilham uma
 única fonte de verdade nos atributos de `<html>` (`data-theme-preference` guarda a

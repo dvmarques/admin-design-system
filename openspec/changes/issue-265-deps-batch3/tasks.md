@@ -12,7 +12,7 @@
 - [x] 2.3 Atualizar jsdom 30.1.3, confirmar Node 24.15+ efetivo nos testes, DOM/accessibility e engines da biblioteca preservadas.
 - [x] 2.4 Atualizar lint-staged 17.6.0, validar Husky e hook em arquivos staged com testes controlados.
 - [x] 2.5a Regenerar package-lock via Node 24/npm 11.19.1; `npm ci --ignore-scripts`, `npm ls`, peers/engines sem inconsistências (preflight #41199697708).
-- [ ] 2.5b Executar e registrar `npm outdated`, justificando exceções intencionais TypeScript 7 e `@types/node` fora de Node 24.
+- [x] 2.5b Executar e registrar `npm outdated --json` (Actions #41201037642): apenas as exceções intencionais `typescript@6.0.3` (TypeScript 7 sem suporte oficial do typescript-eslint) e `@types/node@24.19.2` (CI na linha Node 24).
 - [x] 2.6 Registrar changelog 0.1.1 com impacto e exceções; preservar contrato público, CSS/tokens e peers.
 
 ## 3. Verificação e revisão
@@ -23,12 +23,12 @@
 - [x] 3.4 Registrar `npm audit --json` e `--omit=dev` baseline/final; classificação high/critical, avisos herdados, exceções e risco residual.
 - [x] 3.5 Validar OpenSpec estrito; revisar diff final e corrigir problemas antes de concluir.
 - [x] 3.6a Confirmar Prettier e `npm run format` no preflight e na CI da PR.
-- [ ] 3.6b Executar o comando agregado `npm run validate` (as verificações equivalentes foram aprovadas em preflight/CI, mas não se deve reportar o comando literal como executado).
+- [x] 3.6b Executar o comando agregado `npm run validate`: execução integrada completa aprovada no job `integrated` do Actions #41201124440, com Node 24/npm 11.19.1.
 
 ## 4. PR e CI
 
 - [x] 4.1 Abrir PR parcial para `develop`, vinculando #265 sem fechamento automático.
-- [ ] 4.2 Conferir CI, Pages, Security Gate e seus jobs realmente executados no SHA final, corrigindo falhas.
+- [ ] 4.2 Conferir CI, Pages, Security Gate e seus jobs realmente executados no SHA final, corrigindo falhas. A falha de format no SHA `7c44739` era causada exclusivamente pelo workflow temporário (CI #41201129106); arquivo removido em `b0b612d`, aguardando checks da PR no último SHA.
 - [x] 4.3 Documentar evidências e pendências, revisar diffs e marcar apenas tarefas comprovadamente concluídas.
 
 O archive/sync, merge e fechamento da #265 são gates administrativos fora deste checklist; exigem seus próprios critérios e autorização.
@@ -39,4 +39,7 @@ O archive/sync, merge e fechamento da #265 são gates administrativos fora deste
 - CI oficial [#41200069724](https://github.com/dvmarques/admin-design-system/actions/runs/41200069724): 455 Chromium, Firefox/WebKit, quality, distribuição e smoke externo.
 - Pages [#41200069680](https://github.com/dvmarques/admin-design-system/actions/runs/41200069680): 30 E2E; publicação pulada corretamente para PR.
 - Security Gate [#41200069735](https://github.com/dvmarques/admin-design-system/actions/runs/41200069735): CodeQL, Gitleaks, npm audit aprovados.
-- Resultado e pendências em [verification.md](verification.md). A PR permanece aberta para revisão; merge/archive/encerramento da issue dependem de autorização e checklist completo.
+- [npm outdated #41201037642](https://github.com/dvmarques/admin-design-system/actions/runs/41201037642): duas exceções intencionais; nenhuma dependência direta elegível restante.
+- [npm run validate #41201124440](https://github.com/dvmarques/admin-design-system/actions/runs/41201124440): job `integrated` concluído com sucesso; execução literal do comando.
+- [CI #41201129106](https://github.com/dvmarques/admin-design-system/actions/runs/41201129106): falha de Prettier apenas no workflow auxiliar temporário, removido em `b0b612d`; checks finais ainda precisam passar.
+- Resultado e pendências em [verification.md](verification.md). A PR permanece aberta para revisão; archive/merge/encerramento da issue dependem dos gates e da autorização pertinente.

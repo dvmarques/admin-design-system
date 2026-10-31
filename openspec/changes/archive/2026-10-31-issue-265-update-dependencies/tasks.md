@@ -33,13 +33,13 @@
 - [x] 5.2 Regenerar o lockfile com npm 11.19.1 em Node 24 e validar `npm ci`/`npm ls` no grafo combinado.
 - [x] 5.3 Reauditar baseline original, develop atual e branch mesclada (completo e `--omit=dev`); comparar evidências e documentar advisories moderados herdados.
 - [x] 5.4 Registrar decisões sobre riscos de `glob`/`minimatch`, sem `npm audit fix --force`, preservando as responsabilidades #267/#268.
-- [ ] 5.5 Confirmar a CI oficial no SHA final depois da atualização de documentação; não concluir sem evidência de qualidade, E2E e Pages.
+- [x] 5.5 Confirmar a CI oficial no SHA final depois da atualização de documentação; não concluir sem evidência de qualidade, E2E e Pages.
 
 ## 6. Revisão e integração
 
 - [x] 6.1 Abrir PR vinculada à #265 com versões antes/depois, evidências, riscos e limitações.
-- [ ] 6.2 Confirmar CI no SHA final após os ajustes da revisão antes de considerar merge (não autorizado nesta tarefa).
+- [x] 6.2 Confirmar CI no SHA final após os ajustes da revisão antes de considerar merge (não autorizado nesta tarefa).
 
 Evidência da auditoria: `docs/security/issue-265-audit-2026-10-30.md` e artefato da execução Actions 41145513851. A auditoria histórica de 30/10 retornou zero advisories. A reauditoria de 31/10 (Actions 41151568595) identificou 14 avisos moderados idênticos no baseline original, na develop e na branch sincronizada, 0 em produção e nenhum high/critical. Não foram aplicados downgrades ou correções incompatíveis. Ver o adendo do relatório.
 
-Validação final do lote 1 (código e lockfile): commit `43387fceb6009480068877ed50737f8d64b22009`. [CI 41152064432](https://github.com/dvmarques/admin-design-system/actions/runs/41152064432) aprovada — qualidade, cobertura Vitest, distribuição, política OpenSpec, E2E Chromium/Firefox/WebKit — e [Pages 41152064512](https://github.com/dvmarques/admin-design-system/actions/runs/41152064512) aprovado. A atualização deste checklist é documental e posterior à execução; verificar os checks do novo SHA separadamente. Os commits posteriores a `43387fc` alteram apenas documentação e metadados; confirmar os checks do SHA final da PR (tarefas 5.5 e 6.2). A PR não fecha a issue #265. Esta conclusão refere-se somente ao lote 1 da issue #265; não autoriza merge nem encerra os lotes seguintes.
+Validação final do lote 1 (código e lockfile): commit `43387fceb6009480068877ed50737f8d64b22009`. [CI 41152064432](https://github.com/dvmarques/admin-design-system/actions/runs/41152064432) aprovada — qualidade, cobertura Vitest, distribuição, política OpenSpec, E2E Chromium/Firefox/WebKit — e [Pages 41152064512](https://github.com/dvmarques/admin-design-system/actions/runs/41152064512) aprovado. A atualização deste checklist é documental e posterior à execução; verificar os checks do novo SHA separadamente. Os commits posteriores a `43387fc` alteram apenas documentação e metadados; a CI do SHA `54fdc08535d48c347ca92f3987224657dc735fe4` foi aprovada e registrada em comentário da PR #266 (tarefas 5.5 e 6.2). A PR não fecha a issue #265. Esta conclusão refere-se somente ao lote 1 da issue #265; não autoriza merge nem encerra os lotes seguintes.

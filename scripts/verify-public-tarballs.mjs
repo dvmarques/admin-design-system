@@ -4,7 +4,7 @@ import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { createServer } from 'node:net';
 import { tmpdir } from 'node:os';
 import { setTimeout as delay } from 'node:timers/promises';
-import { join } from 'node:path';
+import { join, resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -86,9 +86,11 @@ async function ready(url, server) {
 
 async function main() {
 	const temp = await mkdtemp(join(tmpdir(), 'admin-ds-public-pack-'));
-	const packDir = join(temp, 'tarballs');
+	const packDir = process.env.PUBLIC_PACK_DIR
+		? resolve(process.env.PUBLIC_PACK_DIR)
+		: join(temp, 'tarballs');
 	const consumer = join(temp, 'next-consumer');
-	await mkdir(packDir);
+	await mkdir(packDir, { recursive: true });
 	await mkdir(consumer);
 	let server;
 	let browser;

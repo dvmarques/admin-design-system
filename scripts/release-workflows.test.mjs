@@ -31,6 +31,16 @@ test('publication separates read-only validation from privileged publication', (
 	assert.doesNotMatch(release, /publish:[\s\S]*?npm run release:/);
 });
 
+test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => {
+	assert.match(release, /prepare-npm:[\\s\\S]*?verify:distribution/);
+	assert.match(release, /prepare-npm:[\\s\\S]*?npm-publication\\.mjs plan/);
+	assert.match(release, /publish-npm:[\\s\\S]*?id-token: write/);
+	assert.match(release, /publish-npm:[\\s\\S]*?npm-publication\\.mjs publish/);
+	assert.match(release, /publish-github:[\\s\\S]*?needs: \\[resolve-validate, publish-npm\\]/);
+	assert.doesNotMatch(release, /publish-npm:[\\s\\S]*?contents: write/);
+	assert.doesNotMatch(release, /cancel-in-progress: true/);
+});
+
 test('CI keeps checks visible while draft PR jobs are skipped and Ready reruns them', () => {
 	assert.match(ci, /ready_for_review/);
 	assert.match(

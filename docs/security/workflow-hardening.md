@@ -1,6 +1,6 @@
 # Hardening de GitHub Actions e baselines — issue #268
 
-Referência: [issue #268](https://github.com/dvmarques/admin-design-system/issues/268). Change: `openspec/changes/issue-268-github-actions-hardening`.
+Referência: [issue #268](https://github.com/dvmarques/admin-design-system/issues/268). Change: `openspec/changes/archive/2026-10-31-issue-268-github-actions-hardening` (arquivada; spec em `openspec/specs/ci-supply-chain`).
 
 ## Inventário em 31/10/2026
 
@@ -43,4 +43,4 @@ Limitações: `npx --yes @fission-ai/openspec@1.15.0` usa uma versão exata, mas
 
 ## Verificação e rollback
 
-Executar `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quality`, `npm run validate` e `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`. Para teste manual de baselines, acionar numa branch de feature de teste, verificar artifact, commit somente de PNGs, diferença revisável e comportamento quando o HEAD avança; não rodar em branch protegida. A CI de PR Ready deve comprovar CI, Pages, Security e os três browsers, sem chamar checks skipped de aprovação. O rollback, se necessário, é reverter a PR de hardening após revisão (nunca trocar SHAs por tags mutáveis como solução provisória). Nenhum merge ou archive é parte da implementação atual.
+Executar `npm run format`, `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quality`, `npm run validate` e `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`. Para teste manual de baselines, acionar numa branch de feature de teste, verificar artifact, commit somente de PNGs, diferença revisável e comportamento quando o HEAD avança; não rodar em branch protegida. A CI de PR Ready deve comprovar CI, Pages, Security e os três browsers, sem chamar checks skipped de aprovação. O rollback, se necessário, é reverter a PR de hardening após revisão (nunca trocar SHAs por tags mutáveis como solução provisória). O archive e o merge foram feitos como gates da PR, após as tarefas e a CI.

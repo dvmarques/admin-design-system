@@ -79,3 +79,5 @@ jobs:
           npm audit --json > /tmp/audit-full.json || true
           npm audit --omit=dev --json > /tmp/audit-prod.json || true
           node -e "for(const [name,file] of [['full','/tmp/audit-full.json'],['prod','/tmp/audit-prod.json']]){const a=require(file); console.log('AUDIT_'+name+':'+JSON.stringify(a.metadata?.vulnerabilities??{}))}"
+
+# Preflight após correção do import CSS com TypeScript 6.

@@ -26,7 +26,7 @@
 		"test:unit": "npm run build:css --workspace @dvmarques/admin-ds-components && vitest run",
 		"test:coverage": "npm run build:css --workspace @dvmarques/admin-ds-components && vitest run --silent=passed-only --coverage --testTimeout=30000",
 		"test:unit:quiet": "npm run build:css --workspace @dvmarques/admin-ds-components && vitest run --silent=passed-only",
-		"test:release": "node --test ./scripts/*release*.test.mjs",
+		"test:release": "node --test ./scripts/*release*.test.mjs ./scripts/npm-publication.test.mjs",
 		"validate:impact": "npm run validate:impact:lint && npm run validate:impact:types && npm run validate:impact:test",
 		"validate:impact:lint": "node scripts/validate-impact.mjs lint",
 		"validate:impact:types": "node scripts/validate-impact.mjs typecheck",

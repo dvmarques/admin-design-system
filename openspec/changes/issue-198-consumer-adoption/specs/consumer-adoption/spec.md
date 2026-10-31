@@ -7,7 +7,7 @@ O README raiz MUST apresentar proposta de valor verificável, links públicos da
 #### Scenario: Visitante avalia a biblioteca
 
 - **WHEN** um visitante abre o README do projeto
-- **THEN** identifica os benefícios implementados, experimenta a Demo, consulta a referência de API no Storybook e localiza os guias de integração, migração, limitações, histórico, contribuição e licença
+- **THEN** identifica os benefícios implementados, experimenta a Demo, consulta a referência de API no Storybook e localiza os guias de integração, limitações, histórico, desenvolvimento, contribuição e licença
 
 ### Requirement: Pacotes com instruções autossuficientes
 
@@ -41,14 +41,19 @@ A documentação MUST distinguir pacotes preparados e validados por tarballs de 
 - **WHEN** os pacotes ainda não foram publicados no registry
 - **THEN** o leitor vê aviso inequívoco e entende que comandos npm remotos serão aplicáveis apenas após #195
 
-### Requirement: Migração e histórico verificáveis
+### Requirement: Primeira adoção, identidade visual e desenvolvimento local
 
-O guia MUST mapear os quatro nomes anteriores para os atuais sem tratar os anteriores como aliases npm, orientar a migração de `ThemeToggle` para `AdsThemeControl` sem depreciação inexistente, e manter histórico por componente coerente com issues, versões registradas e API efetiva.
+O README raiz MUST preservar o logo original com imagens para temas claro e escuro e apontar para um guia de desenvolvimento separado. O guia MUST cobrir ambiente, instalação, build, execução da Demo/Storybook, organização do monorepo, testes, OpenSpec, CI e contribuição. Como não houve lançamento público anterior, a documentação MUST NOT exigir migração de nomes históricos de workspaces ou de `ThemeToggle`; o histórico por componente MUST permanecer fiel às issues, versões verificadas e APIs atuais.
 
-#### Scenario: Consumidor migra do workspace anterior
+#### Scenario: Colaborador prepara o ambiente
 
-- **WHEN** o leitor atualiza imports e preferência de tema
-- **THEN** encontra nomes novos, CSS/subpaths, persistência de Sistema/fallback e os limites de compatibilidade, com referência aos históricos #182, #185 e #187
+- **WHEN** um desenvolvedor abre o README e precisa executar as aplicações
+- **THEN** encontra o logo, um guia de desenvolvimento com comandos existentes e as referências de contribuição e validação
+
+#### Scenario: Primeiro consumidor escolhe pacotes e tema
+
+- **WHEN** um visitante planeja adotar a primeira versão pública
+- **THEN** encontra somente os nomes públicos de pacotes atuais e as alternativas `AdsThemeControl` e `ThemeToggle`, sem guia de migração de uma release inexistente
 
 ### Requirement: Limites e cobertura do catálogo rastreáveis
 

@@ -28,7 +28,7 @@ O site é publicado pelo GitHub Pages a partir de `develop`; veja `docs/github-p
 
 ## Requisitos
 
-- Node.js 24 ou superior (veja `.nvmrc`; use `nvm use` ou equivalente);
+- Node.js 24 ou superior (veja `.nvmrc`; para desenvolver e testar, Node 24.15 ou superior; use `nvm use` ou equivalente);
 - npm `11.19.1`, fixado em `packageManager`.
 
 ## Executar as aplicações

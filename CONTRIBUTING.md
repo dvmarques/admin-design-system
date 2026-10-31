@@ -4,7 +4,7 @@ O Admin DS distribui bibliotecas React reutilizáveis e mantém uma demo Next.js
 
 ## Preparar o ambiente
 
-Use a versão de Node indicada em `.nvmrc` e o npm declarado em `packageManager`; instale dependências com `npm ci`. Consulte os scripts oficiais em `package.json`. Use `npm run validate` para a validação completa e `openspec.cmd validate --all --strict` para o OpenSpec (em Windows; em outras plataformas, `openspec` na mesma versão usada pela CI, em `.github/workflows/ci.yml`). Comandos úteis estão em [docs/openspec-commands.md](docs/openspec-commands.md). Não substitua verificações por aprovação presumida.
+Use a versão de Node indicada em `.nvmrc` (para desenvolvimento, Node 24.15 ou superior, exigido por `jsdom` 30) e o npm declarado em `packageManager`; instale dependências com `npm ci`. Consulte os scripts oficiais em `package.json`. Use `npm run validate` para a validação completa e `openspec.cmd validate --all --strict` para o OpenSpec (em Windows; em outras plataformas, `openspec` na mesma versão usada pela CI, em `.github/workflows/ci.yml`). Comandos úteis estão em [docs/openspec-commands.md](docs/openspec-commands.md). Não substitua verificações por aprovação presumida.
 
 ## Issue, branch e OpenSpec
 

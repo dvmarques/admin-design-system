@@ -287,7 +287,7 @@ export function AdsAccountMenu({
 			>
 				<button
 					aria-haspopup="dialog"
-					aria-label={user.name ? `${labels.trigger}: ${user.name}` : labels.trigger}
+					aria-label={`${labels.trigger}${initials ? `: ${initials}` : ''}${user.name ? ` ${user.name}` : ''}`}
 					className="ads-account-menu-trigger"
 					ref={triggerRef}
 					type="button"

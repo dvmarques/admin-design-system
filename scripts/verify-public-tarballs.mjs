@@ -86,7 +86,10 @@ async function ready(url, server) {
 
 async function main() {
 	const registryVersion = process.env.PUBLIC_REGISTRY_VERSION;
-	if (registryVersion && !/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(registryVersion)) {
+	if (
+		registryVersion &&
+		!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(registryVersion)
+	) {
 		throw new Error('PUBLIC_REGISTRY_VERSION deve ser SemVer estável.');
 	}
 	const temp = await mkdtemp(join(tmpdir(), 'admin-ds-public-pack-'));

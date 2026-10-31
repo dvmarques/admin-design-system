@@ -206,6 +206,53 @@ test('não publica admin quando components desaparece do registry', async () => 
 	}
 });
 
+test('falha no terceiro pacote pode ser recuperada sem republicar os anteriores', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const failThird = async (item) => {
+			if (item.name === packageName('highlighted-code')) {
+				throw new Error('Falha temporária npm');
+			}
+			return fake.publishTarball(item);
+		};
+		await assert.rejects(
+			publishPlan(plan, { ...fake, publishTarball: failThird }),
+			/Falha temporária npm/,
+		);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.slice(0, 2).map(packageName));
+		await publishPlan(plan, fake);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('confere manifesto dentro do tarball, mesmo com hashes válidos', async () => {
+	const fx = await fixture();
+	try {
+		const archive = join(fx.root, '..', 'archives', 'admin', 'package', 'package.json');
+		const manifestJson = JSON.parse(await readFile(archive, 'utf8'));
+		manifestJson.private = true;
+		await writeFile(archive, JSON.stringify(manifestJson));
+		const target = join(fx.dir, 'dvmarques-admin-ds-admin-0.2.0.tgz');
+		const packed = spawnSync(
+			'tar',
+			['-czf', target, '-C', join(fx.root, '..', 'archives', 'admin'), 'package'],
+			{ encoding: 'utf8' },
+		);
+		assert.equal(packed.status, 0, packed.stderr);
+		const plan = await fx.plan();
+		await assert.rejects(
+			verifyPlan(plan, '0.2.0', fx.releaseSha, fx.dir),
+			/Tarball privado bloqueado/,
+		);
+	} finally {
+		await fx.dispose();
+	}
+});
+
 test('sem OIDC nem identidade do workflow não inicia publicação', () => {
 	const command = spawnSync(
 		process.execPath,

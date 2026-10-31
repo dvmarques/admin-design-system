@@ -1,5 +1,10 @@
 # Admin Design System
 
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/admin-ds-logo-lockup-dark.svg">
+  <img alt="Admin Design System" src="assets/brand/admin-ds-logo-lockup.svg" height="64">
+</picture>
+
 Biblioteca de componentes e composições administrativas para **React e Next.js App Router**, com TypeScript, design tokens CSS, componentes de interface e um shell para dashboards, formulários e listagens.
 
 - **UI reutilizável:** formulários, tabelas, overlays, navegação, feedback e estados de interface.
@@ -79,10 +84,13 @@ Para overlays renderizados em portal, sobrescreva tokens usando seletores `[data
 
 1. [Instalação externa e CSS em App Router](docs/integration.md), incluindo limite Server/Client, tema, fonte, tipos e recursos opcionais.
 2. [Storybook / referência técnica de API](https://dvmarques.github.io/admin-design-system/storybook/) e [catálogo demonstrável da aplicação](docs/admin-demo-catalog.md).
-3. [Guia de migração](docs/migration-guide.md) dos nomes `@admin-ds/*` e de `ThemeToggle`.
-4. [Limitações e testes](docs/limitations.md), [histórico por componente](docs/component-changelog.md) e [CHANGELOG](CHANGELOG.md).
-5. [Licença MIT](LICENSE.md) e [atribuições de terceiros](docs/licensing.md).
+3. [Limitações e testes](docs/limitations.md), [histórico por componente](docs/component-changelog.md) e [CHANGELOG](CHANGELOG.md).
+4. [Licença MIT](LICENSE.md) e [atribuições de terceiros](docs/licensing.md).
 
-Para colaborar ou desenvolver no monorepo: [CONTRIBUTING.md](CONTRIBUTING.md), [arquitetura](docs/architecture.md), [AGENTS.md](AGENTS.md) e [OpenSpec](docs/openspec-commands.md). O fluxo interno de versões e publicação npm/GitHub é descrito em [processo de release](docs/release-process.md); **publicação npm e deploy da Demo/Storybook via GitHub Pages são processos distintos**.
+## Desenvolvimento e contribuição
+
+Quer **desenvolver o Admin Design System** ou executar as aplicações localmente? Comece pelo [Guia de desenvolvimento](docs/development.md): requisitos, instalação, build, comandos para subir a Demo e o Storybook, estrutura dos pacotes, testes, OpenSpec, branches, CI e solução de problemas.
+
+Consulte também [Como contribuir](CONTRIBUTING.md), [arquitetura](docs/architecture.md) e [AGENTS.md](AGENTS.md) para as regras obrigatórias. O [processo de release](docs/release-process.md) explica a publicação de versões; **publicação npm e deploy da Demo/Storybook via GitHub Pages são processos distintos**.
 
 O projeto próprio usa a [licença MIT](LICENSE.md), copyright Daniel Marques; componentes e dependências de terceiros preservam seus avisos e licenças próprios.

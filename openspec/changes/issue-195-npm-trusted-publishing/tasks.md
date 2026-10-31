@@ -2,14 +2,14 @@
 
 - [x] 1.1 Conferir #191, #192, #193, #194, #198, #267, #268, manifests e o workflow existente; preservar aprovação humana e publicação direta.
 - [x] 1.2 Criar branch própria e change OpenSpec antes da implementação.
-- [ ] 1.3 Validar a change com OpenSpec estrito e reconciliar qualquer regra divergente.
+- [x] 1.3 Validar a change com OpenSpec estrito e reconciliar qualquer regra divergente.
 
 ## 2. Implementação
 
-- [ ] 2.1 Persistir os mesmos quatro tarballs do smoke externo, validar inventário, manifests e hashes.
-- [ ] 2.2 Implementar registro npm, pré-verificação de identidade, publicação OIDC, reconsulta e recuperação idempotente.
-- [ ] 2.3 Separar jobs: preflight/empacotamento (read-only), publicação npm (id-token), tag/release (contents write).
-- [ ] 2.4 Atualizar contrato OpenSpec e CHANGELOG; documentar npm Trusted Publisher, bootstrap e recuperação.
+- [x] 2.1 Persistir os mesmos quatro tarballs do smoke externo, validar inventário, manifests e hashes.
+- [x] 2.2 Implementar registro npm, pré-verificação de identidade, publicação OIDC, reconsulta e recuperação idempotente.
+- [x] 2.3 Separar jobs: preflight/empacotamento (read-only), publicação npm (id-token), tag/release (contents write).
+- [x] 2.4 Atualizar contrato OpenSpec e CHANGELOG; documentar npm Trusted Publisher, bootstrap e recuperação.
 
 ## 2.1 Consolidação editorial de release
 
@@ -20,11 +20,21 @@
 
 ## 3. Testes e entrega
 
-- [ ] 3.1 Cobrir pacote privado/ausente, versão divergente, hash divergente, OIDC, dependência indisponível, publicação parcial e reexecução.
-- [ ] 3.2 Executar `npm run validate` e OpenSpec estrito com Node/npm compatíveis; registrar evidências e limitações.
-- [ ] 3.3 Rever segurança e abrir PR Draft em develop; aguardar validação CI, revisão e aprovação antes de merge.
+- [x] 3.1 Cobrir pacote privado/ausente, versão divergente, hash divergente, OIDC, dependência indisponível, publicação parcial e reexecução.
+- [x] 3.2 Conferir CI Ready no SHA final: formatação, lint, build, types, testes, cobertura, E2E Chromium/Firefox/WebKit, distribuição, segurança e OpenSpec estrito (Node/npm fixados); registrar as evidências e os checks skipped.
+- [ ] 3.2a Executar o comando agregado `npm run validate` integralmente em ambiente Node/npm compatível (não executado como comando único; as etapas equivalentes passaram na CI).
+- [x] 3.3 Abrir PR #281 Ready em `develop`, revisar controles de segurança e acompanhar CI/Security Gate até sucesso no SHA final.
+- [ ] 3.3a Obter revisão/aprovação final da PR antes do merge (a PR permanece aberta e ainda não foi integrada).
 - [ ] 3.4 **Após** aprovação explícita da primeira release (fora desta PR): configurar trusted publishers, publicar os quatro pacotes e testar Next.js externo pelo registry. Atualizar avisos pré-publicação somente depois.
 
 ## Não executado nesta change
 
 - Nenhum `npm publish`, tag, GitHub Release ou seleção de versão inicial.
+
+## Evidências de validação (31/10/2026)
+
+- PR [#281](https://github.com/dvmarques/admin-design-system/pull/281) em `develop`, commit `d75480e3186554887a5bb862e66d8b840f1626d5` (aberta, não integrada).
+- [CI #41244167665](https://github.com/dvmarques/admin-design-system/actions/runs/41244167665): sucesso, incluindo OpenSpec estrito, Node, testes, E2E Chromium/Firefox/WebKit e artefatos. `Validação de release` skipped porque esta PR não é `release/X.Y.Z -> master`.
+- [Security Gate #41244167645](https://github.com/dvmarques/admin-design-system/actions/runs/41244167645): sucesso (CodeQL, npm audit, Gitleaks).
+- [Pages #41244167679](https://github.com/dvmarques/admin-design-system/actions/runs/41244167679): sucesso.
+- Nenhum `npm publish`, release/tag ou teste de registry executado; `npm run validate` não foi chamado como comando integrado nesta sessão.

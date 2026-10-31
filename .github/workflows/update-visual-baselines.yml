@@ -4,25 +4,32 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 concurrency:
   group: update-visual-baselines-${{ github.ref }}
   cancel-in-progress: false
 
 jobs:
-  update:
+  generate:
     name: Gerar baselines Linux
-    if: github.ref_name != 'develop' && github.ref_name != 'master'
+    if: github.repository == 'dvmarques/admin-design-system' && startsWith(github.ref, 'refs/heads/') && github.ref_name != 'develop' && github.ref_name != 'master' && !startsWith(github.ref_name, 'release/')
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      changed: ${{ steps.stage.outputs.changed }}
     container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
       options: --ipc=host
       env:
         HOME: /root
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: npm
@@ -37,24 +44,129 @@ jobs:
         run: npx playwright test --project=chromium --update-snapshots=all --reporter=dot
       - name: Confirmar que os novos baselines passam sem atualização
         run: npx playwright test --project=chromium --reporter=dot
-      - name: Registrar os baselines na branch
+      - id: stage
+        name: Preparar somente PNGs alterados
         run: |
           git config --global --add safe.directory "$GITHUB_WORKSPACE"
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add e2e
-          if git diff --cached --quiet; then
-            echo "Nenhum baseline mudou."
-            exit 0
-          fi
-          git commit -m "test(e2e): atualiza baselines visuais Linux"
-          git push
+          node ./scripts/visual-baseline-transfer.mjs
+      - name: Transferir baselines para o job de escrita
+        if: steps.stage.outputs.changed == 'true'
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: visual-baselines-${{ github.run_id }}
+          path: baseline-transfer/
+          if-no-files-found: error
+          retention-days: 2
       - name: Anexar o relatório em caso de falha
         if: failure()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: playwright-report
           path: |
             playwright-report
             test-results
           if-no-files-found: ignore
+
+  commit:
+    name: Registrar baselines na branch
+    needs: generate
+    if: needs.generate.outputs.changed == 'true'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          name: visual-baselines-${{ github.run_id }}
+          path: baseline-transfer
+      - name: Verificar manifesto, integridade e ref antes de aplicar PNGs
+        shell: bash
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: |
+          node <<'NODE'
+          const fs = require('node:fs');
+          const path = require('node:path');
+          const crypto = require('node:crypto');
+          const cp = require('node:child_process');
+          const root = 'baseline-transfer';
+          const manifest = JSON.parse(fs.readFileSync(path.join(root, 'manifest.json'), 'utf8'));
+          const branch = process.env.GITHUB_REF_NAME;
+          const sha = process.env.GITHUB_SHA;
+          const allowed = /^e2e\/[a-zA-Z0-9._-]+\.spec\.ts-snapshots\/[a-zA-Z0-9._-]+\.png$/;
+          if (!branch || ['develop', 'master'].includes(branch) || branch.startsWith('release/') ||
+              process.env.GITHUB_REF !== 'refs/heads/' + branch ||
+              process.env.GITHUB_REPOSITORY !== 'dvmarques/admin-design-system' ||
+              manifest.branch !== branch || manifest.sha !== sha ||
+              cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim() !== sha) {
+            throw new Error('Origem ou SHA alterado; push bloqueado.');
+          }
+          const remote = cp.execFileSync('git', ['ls-remote', 'https://x-access-token:' + process.env.PUSH_TOKEN + '@github.com/' + process.env.GITHUB_REPOSITORY + '.git', 'refs/heads/' + branch], { encoding: 'utf8' }).trim().split(/\s+/)[0];
+          if (remote !== sha) throw new Error('A branch avançou desde a geração; push bloqueado.');
+          const allFiles = [];
+          const walk = (dir) => {
+            for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+              const loc = path.join(dir, entry.name);
+              if (entry.isSymbolicLink()) throw new Error('Symlink não permitido no artefato: ' + loc);
+              if (entry.isDirectory()) walk(loc);
+              else if (entry.isFile()) allFiles.push(loc.replaceAll(path.sep, '/'));
+              else throw new Error('Entrada inesperada no artefato: ' + loc);
+            }
+          };
+          walk(root);
+          if (!Array.isArray(manifest.changes) || manifest.changes.length < 1 || manifest.changes.length > 1000) {
+            throw new Error('Manifesto vazio, excessivo ou inválido.');
+          }
+          const seen = new Set();
+          const expected = new Set(['baseline-transfer/manifest.json']);
+          for (const item of manifest.changes) {
+            if (typeof item.path !== 'string' || !allowed.test(item.path) || seen.has(item.path) ||
+                !['write', 'delete'].includes(item.type)) throw new Error('Entrada proibida no manifesto.');
+            seen.add(item.path);
+            const source = path.join(root, item.path);
+            if (item.type === 'write') {
+              expected.add(source.replaceAll(path.sep, '/'));
+              const stat = fs.lstatSync(source);
+              if (!stat.isFile() || stat.size > 12 * 1024 * 1024) throw new Error('Arquivo inválido: ' + item.path);
+              const buf = fs.readFileSync(source);
+              const magic = Buffer.from('89504e470d0a1a0a', 'hex');
+              if (!buf.subarray(0, 8).equals(magic) ||
+                  crypto.createHash('sha256').update(buf).digest('hex') !== item.sha256) {
+                throw new Error('Integridade PNG inválida: ' + item.path);
+              }
+            } else if (item.sha256 !== undefined || !fs.existsSync(item.path)) {
+              throw new Error('Deleção inválida: ' + item.path);
+            }
+          }
+          if (allFiles.length !== expected.size || allFiles.some((file) => !expected.has(file))) {
+            throw new Error('Conteúdo extra ou ausente no artefato.');
+          }
+          for (const item of manifest.changes) {
+            if (item.type === 'delete') fs.unlinkSync(item.path);
+            else {
+              fs.mkdirSync(path.dirname(item.path), { recursive: true });
+              fs.copyFileSync(path.join(root, item.path), item.path);
+            }
+          }
+          cp.execFileSync('git', ['add', '-A', '--', ...manifest.changes.map((item) => item.path)]);
+          const staged = cp.execFileSync('git', ['diff', '--cached', '--name-only', '-z']).toString('utf8').split('\0').filter(Boolean);
+          if (staged.some((file) => !allowed.test(file))) throw new Error('Diff contém arquivo fora do escopo.');
+          console.log('Diff revisável de ' + staged.length + ' PNGs aplicado.');
+          NODE
+      - name: Commit e push sem force na revisão original
+        shell: bash
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          if git diff --cached --quiet; then
+            echo "Nenhum baseline mudou."
+            exit 0
+          fi
+          git commit -m "test(e2e): atualiza baselines visuais Linux"
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${GITHUB_REF_NAME}"

@@ -153,3 +153,8 @@ test('Pages verifies pull requests in Linux and publishes only develop outside p
 	assert.match(deploy, /needs: build/);
 	assert.match(pages, /group: pages-.*github.event.pull_request.number/);
 });
+
+test('workflows usam SHAs, digest Playwright e mínimo privilégio', async () => {
+	const { verifyWorkflowSupplyChain } = await import('./verify-workflow-supply-chain.mjs');
+	assert.ok(verifyWorkflowSupplyChain() >= 6);
+});

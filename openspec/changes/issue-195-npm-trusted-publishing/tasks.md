@@ -26,7 +26,10 @@
 - [x] 3.3 Abrir PR #281 Ready em `develop`, revisar controles de segurança e acompanhar CI/Security Gate até sucesso no SHA final.
 - [x] 3.3a Revisão humana informada pelo mantenedor em 31/10/2026; nenhuma aprovação formal de review via GitHub foi registrada.
 - [ ] 3.3b Aguardar os checks do commit atual da PR e confirmar aprovação para merge em `develop` (a PR continua aberta).
-- [ ] 3.4 **Após** aprovação explícita da primeira release (fora desta PR): configurar trusted publishers, publicar os quatro pacotes e testar Next.js externo pelo registry. Atualizar avisos pré-publicação somente depois.
+
+## Trabalho operacional posterior (issue #195)
+
+A antiga task 3.4 foi retirada deste checklist por depender da **primeira release real**, que ocorrerá somente após integração e autorização próprias. Permanece aberta na [issue #195](https://github.com/dvmarques/admin-design-system/issues/195), incluindo configurar e validar Trusted Publishers, publicar os quatro pacotes, confirmar provenance e instalação externa no Next.js, e atualizar os avisos pré-publicação **somente após a confirmação no registry**. A remoção do checklist não significa que essas ações foram concluídas.
 
 ## Não executado nesta change
 

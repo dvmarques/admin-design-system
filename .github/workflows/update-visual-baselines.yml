@@ -83,6 +83,8 @@ jobs:
           path: baseline-transfer
       - name: Verificar manifesto, integridade e ref antes de aplicar PNGs
         shell: bash
+        env:
+          PUSH_TOKEN: ${{ github.token }}
         run: |
           node <<'NODE'
           const fs = require('node:fs');
@@ -101,7 +103,7 @@ jobs:
               cp.execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim() !== sha) {
             throw new Error('Origem ou SHA alterado; push bloqueado.');
           }
-          const remote = cp.execFileSync('git', ['ls-remote', 'origin', 'refs/heads/' + branch], { encoding: 'utf8' }).trim().split(/\s+/)[0];
+          const remote = cp.execFileSync('git', ['ls-remote', 'https://x-access-token:' + process.env.PUSH_TOKEN + '@github.com/' + process.env.GITHUB_REPOSITORY + '.git', 'refs/heads/' + branch], { encoding: 'utf8' }).trim().split(/\s+/)[0];
           if (remote !== sha) throw new Error('A branch avançou desde a geração; push bloqueado.');
           const allFiles = [];
           const walk = (dir) => {

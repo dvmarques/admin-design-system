@@ -6,14 +6,15 @@
 
 ## 2. Documentação da entrada de adoção
 
-- [x] 2.1 Reestruturar README raiz: proposta de valor real, Demo/Storybook, instalação progressiva, exemplo Next.js, tabela dos quatro pacotes, temas, limitações, licenciamento e contribuição curta.
+- [x] 2.1 Reestruturar README raiz: preservar logo claro/escuro, proposta de valor real, Demo/Storybook, instalação progressiva, exemplo Next.js, tabela dos quatro pacotes, temas, limitações, licenciamento e contribuição curta.
 - [x] 2.2 Completar READMEs de tokens, components, admin e highlighted-code com requisitos, exemplos, CSS, peers, opt-in e links absolutos válidos no npm.
 - [x] 2.3 Documentar em integração exemplo externo reproduzível com CSS em ordem, limites Server/Client, fonte, tema e ausência de Tailwind no consumidor; conferir contra manifests/exports da #194.
 
-## 3. Migração e rastreabilidade
+## 3. Identidade, histórico e rastreabilidade
 
-- [x] 3.1 Completar guia de migração dos quatro nomes, subpath de máscara, ThemeToggle → AdsThemeControl e compatibilidade sem depreciação fictícia.
+- [x] 3.1 Retirar o guia de migração pré-lançamento e seus links; orientar diretamente nomes públicos dos pacotes e opções atuais de controle de tema.
 - [x] 3.2 Atualizar changelog por componente com ThemeControl, AccountMenu, NotificationCenter, OrganizationSwitcher, evolução do shell e referências #182, #185 e #187, sem inventar versões publicadas.
+- [x] 3.2a Criar `docs/development.md` com ambiente, instalação, build, execução da Demo/Storybook, estrutura, testes, OpenSpec, CI, release e troubleshooting; linkar no README/CONTRIBUTING.
 - [x] 3.3 Revisar limitações por componente, tema, acessibilidade e demonstração, preservando a diferença entre validação manual e automatizada.
 - [x] 3.4 Corrigir exclusões descritas em `docs/admin-demo-catalog.md` de acordo com o teste real, incluindo `getAdsSmartTableCsv`; não alterar o teste.
 - [x] 3.5 Registrar efeito em `CHANGELOG.md` e conferir links cruzados, disponibilidade pré-npm e fronteira documental da #195.
@@ -28,10 +29,10 @@
 ## Evidências da revisão estática
 
 - Branch e change registradas, com proposta, design, tasks e delta de spec.
-- README principal, quatro READMEs de pacote, integração externa, migração, histórico, limitações e catálogo revisados e commitados; CHANGELOG da versão em andamento atualizado.
+- README principal com imagem original, quatro READMEs de pacote, guia de desenvolvimento, integração externa, histórico, limitações e catálogo revisados e commitados; guia de migração pré-lançamento removido; CHANGELOG da versão em andamento atualizado.
 - Nomes, imports, `package.json#exports`, peer `react-imask` e Shiki opcional comparados ao código/manifests de `develop`; correção do exemplo de `ReactNode` na revisão.
 - A lista de exclusões do catálogo foi corrigida para incluir `getAdsSmartTableCsv`, conforme o teste existente, sem alteração do teste.
-- Links e anchors cruzados entre README, integração, migração, limitações e histórico conferidos estaticamente, sem erro nesse conjunto.
+- Links e anchors cruzados entre README, integração, desenvolvimento, limitações e histórico revisados estaticamente; referências ao guia retirado corrigidas.
 - OpenSpec estrito **passou na CI** (job Política de develop, execução 41218727335). A primeira CI encontrou erro no `prettier --check` em `README.md`, `docs/integration.md` e `packages/highlighted-code/README.md`; os trechos foram ajustados nesta revisão, aguardando nova verificação. Build, qualidade e E2E ainda não foram concluídos no SHA final. Os comandos **não** foram executados localmente neste ambiente. A validação por GitHub Actions deve ser consultada no SHA da PR Ready; checks pulados não valem como teste executado.
 
 ## Evidências e limites

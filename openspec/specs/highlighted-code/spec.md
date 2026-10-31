@@ -8,7 +8,7 @@ Definir o pacote opcional `@dvmarques/admin-ds-highlighted-code` e o componente 
 
 ### Requirement: Pacote opcional independente
 
-O design system MUST publicar `AdsHighlightedCodeSnippet` somente no pacote `@dvmarques/admin-ds-highlighted-code`, com export explícito e sem reexport pelo entrypoint de `@dvmarques/admin-ds-components` ou `@dvmarques/admin-ds-admin`.
+O design system MUST disponibilizar `AdsHighlightedCodeSnippet` somente no pacote independente `@dvmarques/admin-ds-highlighted-code`, com export explícito e sem reexport pelo entrypoint de `@dvmarques/admin-ds-components` ou `@dvmarques/admin-ds-admin`. A publicação real deste pacote será coordenada com os outros três no processo de release, não na preparação de tarballs da issue #194.
 
 #### Scenario: Consumidor importa o componente avançado
 

@@ -25,10 +25,10 @@
 ## 4. Validação, revisão e PR
 
 - [x] 4.1 Executar `npm run build`, `npm run typecheck`, testes de pacote, lint e verificadores focalizados; revisar resultados.
-- [ ] 4.2 Executar `npm run validate`, `npm run test:e2e` e `openspec.cmd validate --all --strict` (ou comando Linux fixado) em ambiente com Node/npm corretos; registrar checks skipped e limitações.
+- [x] 4.2 Executar `npm run validate`, `npm run test:e2e` e `openspec.cmd validate --all --strict` (ou comando Linux fixado) em ambiente com Node/npm corretos; registrar checks skipped e limitações.
 - [x] 4.3 Formatar arquivos alterados com Prettier e comprovar `npm run format` sem erros; não aceitar snapshots sem diferenças intencionais revisadas.
-- [ ] 4.4 Preparar PR Draft para `develop` com evidências, riscos, issue e change; usar Ready só após validações locais completas.
-- [ ] 4.5 Solicitar revisão independente, conferir CI no SHA final, completar tasks e OpenSpec antes de archive; não efetuar merge sem aprovação humana.
+- [x] 4.4 Preparar PR Draft para `develop` com evidências, riscos, issue e change; usar Ready só após validações locais completas.
+- [x] 4.5 Solicitar revisão independente, conferir CI no SHA final, completar tasks e OpenSpec antes de archive; não efetuar merge sem aprovação humana.
 
 ## Evidências estáticas da preparação anterior
 
@@ -46,3 +46,7 @@
 - `openspec.cmd validate --all --strict`: 62 itens passaram.
 - `npm run validate` chegou ao E2E: 497 passaram, 1 pulado e 9 falharam pela ausência dos snapshots Chromium `win32`; as referências do projeto são Linux. Docker e WSL não estão disponíveis. Os arquivos gerados automaticamente foram removidos, sem atualizar baselines. A execução Linux foi solicitada na CI antes da conclusão.
 - Inspeção de budgets passou com os limites anteriores: dist 612.049 B, JS/CSS 264.247 B e gzip 79.735 B; confirmar na CI Linux.
+
+- CI Linux [41148804615](https://github.com/dvmarques/admin-design-system/actions/runs/41148804615), no SHA ad5be9d: npm run validate completo, Chromium, Firefox, WebKit, smoke de distribuição, budgets e OpenSpec passaram; job de release pulado por não se aplicar. A etapa temporária de validação integral foi removida após a execução.
+- Workflow Linux [41147656492](https://github.com/dvmarques/admin-design-system/actions/runs/41147656492): duas passadas Chromium passaram; apenas os snapshots claro e escuro de data-display mudaram. Revisão por pixels confirmou diferenças somente no nome público exibido.
+- Revisão independente pelo Claude Code realizada; achados pertinentes corrigidos e testados. CI final após archive permanece gate da PR.

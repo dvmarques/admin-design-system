@@ -192,12 +192,6 @@ jobs:
         env:
           HOME: /root
 
-      - name: Validacao integral temporaria da issue 194
-        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false' && matrix.browser == 'chromium'
-        run: npm run validate
-        env:
-          HOME: /root
-
   develop-policy:
     name: Política de develop
     if: github.event_name == 'pull_request' && github.base_ref == 'develop' && github.event.pull_request.draft == false

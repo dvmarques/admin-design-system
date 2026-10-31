@@ -31,3 +31,6 @@ desktop.ini
 
 # Referências de API MDX geradas antes do build/dev do Storybook
 apps/docs/src/api-reference/
+
+# Artefato efêmero do workflow manual de baselines
+baseline-transfer/

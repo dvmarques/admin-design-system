@@ -5,11 +5,7 @@ import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-	assertStableSemver,
-	parseChangelog,
-	stripReleaseReviewMarker,
-} from './release-utils.mjs';
+import { assertStableSemver, parseChangelog, stripReleaseReviewMarker } from './release-utils.mjs';
 
 export const MAX_CHANGELOG_ENTRY = 300;
 const MARKER = /^<!-- release-changelog-approved sha256:([a-f0-9]{64}) -->$/gm;
@@ -74,9 +70,7 @@ export function editorialWarnings(body) {
 			seen.set(key, index + 1);
 		}
 		if ([...item.text].length > MAX_CHANGELOG_ENTRY) {
-			warnings.push(
-				'Item ' + (index + 1) + ': excede ' + MAX_CHANGELOG_ENTRY + ' caracteres',
-			);
+			warnings.push('Item ' + (index + 1) + ': excede ' + MAX_CHANGELOG_ENTRY + ' caracteres');
 		}
 	}
 	if (!items.length) warnings.push('Nenhuma alteração listada no changelog da versão.');
@@ -106,7 +100,8 @@ export function validateChangelogReview(text, version, status = 'ongoing') {
 export function approveChangelog(text, version) {
 	const { body, start, end } = changelogSection(text, version);
 	const warnings = editorialWarnings(body);
-	if (warnings.length) throw new Error('Corrija o changelog antes de aprovar:\n' + warnings.join('\n'));
+	if (warnings.length)
+		throw new Error('Corrija o changelog antes de aprovar:\n' + warnings.join('\n'));
 	const cleaned = stripReleaseReviewMarker(body).trim();
 	if (MARKER_PREFIX.test(cleaned)) throw new Error('Marcador de aprovação malformado.');
 	const newBody =
@@ -140,16 +135,26 @@ export function editorialReport(text, version) {
 	for (const [, group] of grouped) {
 		const category = group[0].category;
 		const issues = [...new Set(group.flatMap((entry) => entry.issues))];
-		const first = group[0].text.replace(/^\`[^\`]+\`\s*(?:\([^)]*\))?\s*-\s*/, '');
-		const summary = first.split(/[.;](?:\s|$)/)[0].slice(0, 180).trim();
+		const first = group[0].text.replace(/^`[^`]+`\s*(?:\([^)]*\))?\s*-\s*/, '');
+		const summary = first
+			.split(/[.;](?:\s|$)/)[0]
+			.slice(0, 180)
+			.trim();
 		output.push(
 			'',
 			'[' + category + '] ' + (group.length > 1 ? 'AGRUPAR ' + group.length + ' entradas: ' : ''),
-			'- ' + summary + (first.length > 180 ? '…' : '') + (issues.length ? ' (#' + issues.join(', #') + ')' : ''),
+			'- ' +
+				summary +
+				(first.length > 180 ? '…' : '') +
+				(issues.length ? ' (#' + issues.join(', #') + ')' : ''),
 		);
 	}
 	const warnings = editorialWarnings(body);
-	output.push('', '## Pontos de atenção (' + warnings.length + ')', ...warnings.map((w) => '- ' + w));
+	output.push(
+		'',
+		'## Pontos de atenção (' + warnings.length + ')',
+		...warnings.map((w) => '- ' + w),
+	);
 	output.push(
 		'',
 		'Edite manualmente apenas a seção em andamento; depois execute',

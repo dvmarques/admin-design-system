@@ -90,8 +90,8 @@ jobs:
           set -euo pipefail
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git rm -f .github/workflows/issue-265-batch2-bootstrap.yml
-          git add package.json package-lock.json .github/workflows/ci.yml .github/workflows/pages.yml .github/workflows/update-visual-baselines.yml packages/admin/src/account-menu.tsx packages/admin/src/organization-switcher.tsx e2e/account-notifications-organization.spec.ts CHANGELOG.md openspec/changes/issue-265-deps-batch2
+          # Workflow files must be updated separately via GitHub connector; runner token has no workflows permission.
+          git add package.json package-lock.json packages/admin/src/account-menu.tsx packages/admin/src/organization-switcher.tsx e2e/account-notifications-organization.spec.ts CHANGELOG.md openspec/changes/issue-265-deps-batch2
           git diff --cached --check
           HUSKY=0 git commit -m "chore(deps): implement issue #265 batch 2 Storybook Playwright and axe"
           git push origin HEAD:refs/heads/issue-265-deps-batch2

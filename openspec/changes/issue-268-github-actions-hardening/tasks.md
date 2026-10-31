@@ -19,7 +19,7 @@
 - [x] 3.2 Executar `npm run format`, lint, build, typecheck e test:quality/test:ci.
 - [x] 3.3 Executar `npm run test:e2e` (Chromium, Firefox e WebKit) e Pages; conferir o mecanismo de snapshots sem atualização não intencional.
 - [ ] 3.4 Executar `npm run validate` e OpenSpec strict, documentando qualquer limitação real.
-- [ ] 3.5 Abrir PR em Draft, tornar Ready para revisão e conferir CI/Pages/Security no HEAD, corrigindo falhas reais.
+- [x] 3.5 Abrir PR em Draft, tornar Ready para revisão e conferir CI/Pages/Security no HEAD, corrigindo falhas reais.
 - [ ] 3.6 Confirmar preservação dos gates release/Pages e revisar evidência do workflow manual; marcar somente etapas comprovadas.
 
 ## Evidências confirmadas em 31/10/2026
@@ -28,4 +28,4 @@
 - [Pages (build e E2E)](https://github.com/dvmarques/admin-design-system/actions/runs/41235121983) aprovado, deploy ignorado por se tratar de PR.
 - [Security Gate (CodeQL, npm audit, Gitleaks)](https://github.com/dvmarques/admin-design-system/actions/runs/41235121998) aprovado; CodeQL high de TOCTOU foi corrigido pela leitura de descritor único sem seguir links simbólicos.
 - `npm run validate` como comando literal não foi executado em checkout local; houve cobertura equivalente de qualidade, build e três browsers na CI. O fluxo `workflow_dispatch` de baselines com escrita não foi disparado e **não** está comprovado em integração. A change permanece ativa, sem archive ou merge.
-- As verificações finais precisam ser reconfirmadas no HEAD após este ajuste documental de checklist. Não confundir jobs skipped com execução.
+- Em 31/10/2026, o HEAD documental `4192ebf5ed47639e923ca1afddba6d82f53ff5a0` passou em [CI #41235657564](https://github.com/dvmarques/admin-design-system/actions/runs/41235657564) (qualidade, distribuição, política, Chromium, Firefox e WebKit), [Pages #41235657502](https://github.com/dvmarques/admin-design-system/actions/runs/41235657502) (build e E2E; deploy skipped em PR) e [Security Gate #41235657474](https://github.com/dvmarques/admin-design-system/actions/runs/41235657474) (CodeQL, npm audit, Gitleaks). A PR #280 foi criada em Draft, promovida a Ready e as falhas de formatação, ESLint e CodeQL corrigidas antes desses runs. A atualização deste checklist gera um novo SHA documental, cujos checks devem ser reavaliados sem presumir sucesso.

@@ -118,6 +118,13 @@ export function predecessorVersion(parsed, target) {
 	);
 }
 
+export function stripReleaseReviewMarker(text) {
+	return text.replace(
+		/^[\\t ]*<!-- release-changelog-approved sha256:[a-f0-9]{64} -->[\\t ]*(?:\\r?\\n)?/gm,
+		'',
+	);
+}
+
 export function extractReleaseNotes(text, version) {
 	assertStableSemver(version);
 	const parsed = parseChangelog(text);
@@ -125,7 +132,7 @@ export function extractReleaseNotes(text, version) {
 	if (!section) throw new Error(`Seção fechada ${version} não encontrada no changelog.`);
 	const start = section.index + section.heading.length;
 	const next = parsed.sections.find((candidate) => candidate.index > section.index);
-	return text.slice(start, next?.index ?? text.length).trim();
+	return stripReleaseReviewMarker(text.slice(start, next?.index ?? text.length)).trim();
 }
 
 export function normalizeReleaseBody(text) {

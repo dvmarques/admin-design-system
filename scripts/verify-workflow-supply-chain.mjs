@@ -91,6 +91,11 @@ export function verifyWorkflowSupplyChain() {
 	assert.doesNotMatch(block(baseline, 'generate'), /contents: write/);
 	assert.match(block(baseline, 'commit'), /permissions:\n\s+contents: write/);
 	assert.doesNotMatch(block(baseline, 'commit'), /npm (ci|install|run)|npx |node \.\/scripts\//);
+	assert.match(
+		block(baseline, 'generate'),
+		/safe\.directory "\$GITHUB_WORKSPACE"\n\s+node \.\/scripts\/visual-baseline-transfer\.mjs/,
+		'generate: git no contêiner exige safe.directory antes do transfer',
+	);
 	assert.match(block(baseline, 'generate'), /ref: \$\{\{ github\.sha \}\}/);
 	assert.match(block(baseline, 'commit'), /ref: \$\{\{ github\.sha \}\}/);
 	assert.match(block(baseline, 'commit'), /manifest\.sha !== sha/);

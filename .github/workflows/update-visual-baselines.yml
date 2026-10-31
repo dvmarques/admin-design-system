@@ -46,7 +46,9 @@ jobs:
         run: npx playwright test --project=chromium --reporter=dot
       - id: stage
         name: Preparar somente PNGs alterados
-        run: node ./scripts/visual-baseline-transfer.mjs
+        run: |
+          git config --global --add safe.directory "$GITHUB_WORKSPACE"
+          node ./scripts/visual-baseline-transfer.mjs
       - name: Transferir baselines para o job de escrita
         if: steps.stage.outputs.changed == 'true'
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4

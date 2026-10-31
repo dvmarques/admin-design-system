@@ -4,12 +4,7 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import {
-	PACKAGE_ORDER,
-	makePlan,
-	publishPlan,
-	verifyPlan,
-} from './npm-publication.mjs';
+import { PACKAGE_ORDER, makePlan, publishPlan, verifyPlan } from './npm-publication.mjs';
 
 const packageName = (part) => '@dvmarques/admin-ds-' + part;
 const manifest = (name, version, isPrivate) => ({
@@ -18,8 +13,7 @@ const manifest = (name, version, isPrivate) => ({
 	private: isPrivate,
 	license: 'MIT',
 	publishConfig: { access: 'public' },
-	peerDependencies:
-		name === packageName('admin') ? { [packageName('components')]: version } : {},
+	peerDependencies: name === packageName('admin') ? { [packageName('components')]: version } : {},
 });
 
 async function fixture(version = '0.2.0') {
@@ -102,7 +96,10 @@ test('plano contém quatro pacotes públicos, mesma versão, SHA e tarballs reai
 	const fx = await fixture();
 	try {
 		const plan = await fx.plan();
-		assert.deepEqual(plan.packages.map((item) => item.name), PACKAGE_ORDER.map(packageName));
+		assert.deepEqual(
+			plan.packages.map((item) => item.name),
+			PACKAGE_ORDER.map(packageName),
+		);
 		await verifyPlan(plan, plan.version, fx.releaseSha, fx.dir);
 		assert.ok(plan.packages.every((item) => item.integrity.startsWith('sha512-')));
 	} finally {
@@ -137,7 +134,10 @@ test('rejeita artifact adulterado ou associado a outro SHA/versão', async () =>
 		await assert.rejects(verifyPlan(plan, '0.2.1', fx.releaseSha, fx.dir), /Versão/);
 		await assert.rejects(verifyPlan(plan, '0.2.0', 'e'.repeat(40), fx.dir), /outro commit/);
 		await writeFile(join(fx.dir, plan.packages[0].file), 'artifact adulterado');
-		await assert.rejects(verifyPlan(plan, '0.2.0', fx.releaseSha, fx.dir), /Integridade divergente/);
+		await assert.rejects(
+			verifyPlan(plan, '0.2.0', fx.releaseSha, fx.dir),
+			/Integridade divergente/,
+		);
 	} finally {
 		await fx.dispose();
 	}

@@ -1,18 +1,89 @@
 # Integração do design system
 
-## Instalação e estilos
+## Antes da primeira publicação npm
 
-Uma aplicação consumidora importa as APIs e folhas de estilo públicas:
+**Estado em 31/10/2026:** a [#194](https://github.com/dvmarques/admin-design-system/issues/194) validou os quatro pacotes com `npm pack` e uma aplicação Next.js externa usando tarballs locais (`file:`), incluindo tipos, CSS compilado sem Tailwind no consumidor e hidratação. **Os pacotes ainda não estão disponíveis no registro npm.** A [#195](https://github.com/dvmarques/admin-design-system/issues/195) executará a primeira publicação e confirmará sua instalação real pelo registry. O comando de instalação abaixo é **prospectivo**, não evidência de instalação pelo npm.
 
-```ts
-import { AdsThemeControl } from '@dvmarques/admin-ds-components';
-import { tokenValues } from '@dvmarques/admin-ds-tokens';
-import '@dvmarques/admin-ds-tokens/styles.css';
-import '@dvmarques/admin-ds-components/styles.css';
+O teste pré-publicação usa os tarballs gerados por `npm run verify:distribution` após instalar dependências e seguir o fluxo da #194; não tente obter nomes ainda inéditos pelo registro. Não substitua os tarballs validados por aliases de workspace nem trate `@admin-ds/*` como nome público existente.
+
+## Instalação externa — caminho mínimo (após a publicação)
+
+Para um projeto React/Next.js App Router, escolha os pacotes necessários e os respectivos peers; os manifests pedem React e React DOM `>=18.2.0`. A aplicação de demonstração usa Next.js 16/React 19; **isso é uma combinação testada no projeto, não garantia de suporte para todas as versões de Next.js**.
+
+```bash
+# UI básica: tokens + components
+npm install @dvmarques/admin-ds-tokens @dvmarques/admin-ds-components
+
+# Apenas se precisar das composições administrativas
+npm install @dvmarques/admin-ds-admin
+
+# Apenas se precisar do realce de código (Shiki isolado)
+npm install @dvmarques/admin-ds-highlighted-code
+
+# Apenas se precisar de AdsMaskedInput no subpath components/masked-input
+npm install react-imask
 ```
 
-O CSS distribuído já contém as classes necessárias. A aplicação consumidora
-não precisa instalar ou configurar Tailwind CSS para usar os componentes.
+O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
+
+| Pacote | CSS público | Responsabilidade |
+| --- | --- | --- |
+| `@dvmarques/admin-ds-tokens` | `@dvmarques/admin-ds-tokens/styles.css` | Tokens/temas |
+| `@dvmarques/admin-ds-components` | `@dvmarques/admin-ds-components/styles.css` | Primitivas, formulários e UI |
+| `@dvmarques/admin-ds-admin` | `@dvmarques/admin-ds-admin/styles.css` | Shell e fluxos administrativos |
+| `@dvmarques/admin-ds-highlighted-code` | `@dvmarques/admin-ds-highlighted-code/styles.css` | Realce opcional de código |
+
+### Exemplo mínimo — App Router sem imports internos
+
+`app/layout.tsx` carrega CSS global **em ordem** (tokens, components e depois admin/realce se utilizados):
+
+```tsx
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import type { ReactNode } from 'react';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+  return (
+    <html lang="pt-BR" data-theme="light">
+      <body>{children}</body>
+    </html>
+  );
+}
+```
+
+`app/page.tsx` usa Client Component só onde existe interatividade:
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { AdsButton } from '@dvmarques/admin-ds-components';
+
+export default function Page() {
+  const [count, setCount] = useState(0);
+  return (
+    <main>
+      <AdsButton onClick={() => setCount((n) => n + 1)}>
+        Total: {count}
+      </AdsButton>
+    </main>
+  );
+}
+```
+
+Para compor `AdsAdminShell`, importe `@dvmarques/admin-ds-admin/styles.css` depois de `components/styles.css` no layout. Para realce, importe o CSS de `highlighted-code` depois de tokens e use `AdsHighlightedCodeSnippet` somente no cliente. Elementos sem eventos podem ficar em Server Components **quando a API o permitir**; callbacks, hooks, efeitos e renderizações de portal exigem fronteiras Client. O exemplo acima é um caso mínimo estático de tema claro; não implementa persistência.
+
+## Tema, fonte e hidratação
+
+Os tokens respeitam `data-theme="light"` e `data-theme="dark"`; sem atributo explícito, o CSS acompanha `prefers-color-scheme`. `AdsThemeControl` apresenta a preferência `light/dark/system`, mas a aplicação precisa persistir a escolha, resolver `system` contra o ambiente e aplicar o tema efetivo. Em SSR, o servidor não sabe necessariamente o esquema local do sistema; o admin demo usa fallback inicial claro e script antes da primeira pintura, com comportamento diferente na exportação estática. Copiar apenas o controle visual não copia esse gerenciamento. Revise a política CSP e teste hidratação em claro/escuro.
+
+A pilha de fontes começa pela **Inter**, mas os pacotes não distribuem a fonte. O consumidor pode carregar a Inter via `next/font` ou definir a própria fonte por tokens, mantendo licenças de terceiros. Para sobrescritas de tema use `[data-theme='light']`/`[data-theme='dark']` também fora de `:root`, pois overlays portados recebem tema no próprio contêiner.
+
+Consulte [ThemeControl e Sistema](#controle-de-preferência-claro-escuro-e-sistema), [tokens/identidade](visual-identity.md), [migração](migration-guide.md), [API detalhada](https://dvmarques.github.io/admin-design-system/storybook/) e [limitações por componente](limitations.md). A [publicação npm](release-process.md) é separada do deploy Demo/Storybook via GitHub Pages.
+
+## Referência de API e exemplos
+
+A [referência técnica no Storybook](https://dvmarques.github.io/admin-design-system/storybook/) documenta props, tipos e exemplos dos exports públicos; a [Demo](https://dvmarques.github.io/admin-design-system/) ilustra uma aplicação. Os contratos são os de `package.json#exports`, não o arranjo de arquivos do monorepo. Abaixo estão orientações aprofundadas por componente, sem substituir o Storybook.
 
 ## Feedback persistente: AdsAlert
 
@@ -93,6 +164,11 @@ roteador nem acesso ao DOM global. A aplicação guarda a preferência, resolve
 ```tsx
 'use client';
 import { AdsThemeControl, type AdsThemePreference } from '@dvmarques/admin-ds-components';
+
+type Props = {
+	preference: AdsThemePreference;
+	onChange: (value: AdsThemePreference) => void;
+};
 
 export function HeaderThemeControl({ preference, onChange }: Props) {
 	return <AdsThemeControl value={preference} onValueChange={onChange} />;

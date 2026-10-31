@@ -1,62 +1,53 @@
 # @dvmarques/admin-ds-tokens
 
-Os design tokens possuem uma única fonte em `source/tokens.mjs`. A partir
-dela, `npm run generate` produz:
+Tokens CSS semânticos e temas claro/escuro do **Admin Design System**. Use este pacote sozinho para aplicar as variáveis visuais ou como base para `components`, `admin` e `highlighted-code`.
 
-- `dist/tokens.css`, com variáveis CSS públicas;
-- `dist/tokens.meta.json`, com os metadados de referência;
-- `src/generated.ts`, com valores e tipos TypeScript.
+> **Pré-publicação:** artefato preparado e validado como tarball na [#194](https://github.com/dvmarques/admin-design-system/issues/194), **ainda indisponível no npm**. Os comandos de instalação se aplicam depois da [primeira publicação #195](https://github.com/dvmarques/admin-design-system/issues/195). A versão exibida no manifest do repositório é de desenvolvimento, não promessa da versão inicial no registro.
 
-## Temas
+## Instalar (após a publicação)
 
-Use `data-theme="light"` ou `data-theme="dark"` no elemento raiz da
-aplicação. Sem um atributo explícito, o CSS respeita
-`prefers-color-scheme`.
+```bash
+npm install @dvmarques/admin-ds-tokens
+```
 
-Overlays portados preservam o tema explícito do escopo que os abriu. Os tokens
-`--ads-color-overlay-close-background`, `--ads-color-overlay-close-content` e
-`--ads-color-overlay-close-background-hover` personalizam o controle de fechar
-de dialogs, drawers e toasts nos dois temas.
+## Usar
 
-Para sobrescrever tokens, declare as variáveis **depois** de importar
-`@dvmarques/admin-ds-tokens/styles.css`, com `[data-theme='light']` e
-`[data-theme='dark']` (sem `:root`). Overlays em portal (dialog, drawer e
-toast) são renderizados em um `div` com `data-theme` próprio, fora do `<html>`;
-`:root[data-theme=…]` não os alcança.
+Importe a folha de estilos uma vez no entrypoint global de sua aplicação (por exemplo, `app/layout.tsx` no Next.js):
 
-```css
-[data-theme='dark'] {
-	--ads-color-primary: #0ea5e9;
+```tsx
+import '@dvmarques/admin-ds-tokens/styles.css';
+
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <html lang="pt-BR" data-theme="light">
+      <body>{children}</body>
+    </html>
+  );
 }
 ```
 
-A aplicação consumidora é responsável por persistir a preferência do
-usuário e aplicar o atributo antes da hidratação, quando necessário.
+Para TypeScript sem namespace global `React`, importe `type ReactNode` de `react`. O arquivo `styles.css` carrega o CSS compilado; não configure Tailwind nem importe `src/` no consumidor.
 
-## Elevação, densidade e skeleton
+## Temas, personalização e fontes
 
-`--ads-elevation-*` tem valores distintos nos temas claro e escuro. A densidade
-de tabela usa `--ads-density-cell-padding-x|y`, com o valor compacto aplicado por
-`data-density="compact"` no elemento ou em um ancestral, e a altura dos
-placeholders usa `--ads-skeleton-height-text|value|block`. Detalhes em
-[Elevação, densidade e estados](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-polish.md).
+- `data-theme="light"` e `data-theme="dark"` no elemento raiz forçam um tema; sem atributo, a folha de estilos usa `prefers-color-scheme`.
+- A preferência e sua persistência pertencem à aplicação, inclusive o fallback antes da hidratação para a escolha Sistema.
+- Sobrescreva variáveis depois do CSS distribuído, em seletores que também alcancem overlays portados:
 
-## Tipografia
+```css
+[data-theme='light'] {
+  --ads-color-primary: #2563eb;
+}
 
-`--ads-typography-font-family` (corpo), `-font-family-heading` e
-`-font-family-mono` usam pilhas que começam por `Inter` (as duas primeiras) e
-terminam em fontes do sistema. O pacote não distribui arquivos de fonte: carregue
-a Inter na aplicação (por exemplo com `next/font`, veja
-[Identidade visual](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-identity.md)) ou sobrescreva o token. Se
-empacotar a fonte, preserve o aviso de licença (SIL OFL 1.1).
+[data-theme='dark'] {
+  --ads-color-primary: #0ea5e9;
+}
+```
 
-## Identidade visual
+- Tokens de elevação (`--ads-elevation-*`), densidade (`--ads-density-*`), skeleton e tipografia mantêm variantes semânticas. O pacote não inclui arquivos da fonte Inter: carregue-a com `next/font` ou outro recurso da aplicação, respeitando a licença da fonte.
 
-Superfícies do tema escuro, escala de espaçamento e cores de gráfico estão em
-[Identidade visual](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-identity.md).
+Este pacote não depende de `components`, `admin`, Shiki ou `react-imask`. Suas exportações de TypeScript e CSS estão definidas em `package.json#exports`. Consulte os nomes e metadados em [identidade visual](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-identity.md) e [elevação e densidade](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-polish.md).
 
-## Compatibilidade
+**Referências:** [guia de integração](https://github.com/dvmarques/admin-design-system/blob/develop/docs/integration.md) · [migração](https://github.com/dvmarques/admin-design-system/blob/develop/docs/migration-guide.md) · [limitações](https://github.com/dvmarques/admin-design-system/blob/develop/docs/limitations.md) · [Storybook](https://dvmarques.github.io/admin-design-system/storybook/) · [release](https://github.com/dvmarques/admin-design-system/blob/develop/docs/release-process.md) · [licença](https://github.com/dvmarques/admin-design-system/blob/develop/LICENSE.md).
 
-Nomes de tokens públicos são contratos semânticos. Remoções ou renomeações
-exigem orientação de migração e versionamento compatível com uma alteração
-de API pública.
+Licença do projeto: MIT, copyright Daniel Marques. Fontes e outros materiais de terceiros conservam as próprias licenças e atribuições.

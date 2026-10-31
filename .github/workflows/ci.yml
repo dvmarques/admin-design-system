@@ -28,12 +28,13 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       # Apenas informa o escopo; este job sempre executa a validação completa.
       - run: node ./scripts/ci-scope.mjs --summary
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: npm
@@ -55,7 +56,7 @@ jobs:
         run: npm run test:coverage
       - name: Publicar cobertura dos testes Vitest
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: cobertura-vitest
           path: coverage/vitest/
@@ -63,7 +64,7 @@ jobs:
           retention-days: 14
       - name: Publicar cobertura dos testes Node de CI
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
           name: cobertura-node-ci
           path: coverage/node-ci/
@@ -75,12 +76,13 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - id: scope
         run: node ./scripts/ci-scope.mjs
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: 24
@@ -117,7 +119,7 @@ jobs:
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
       options: --ipc=host
       env:
         HOME: /root
@@ -132,12 +134,13 @@ jobs:
           - browser: webkit
             check: Fluxos no navegador (WebKit)
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - id: scope
         run: node ./scripts/ci-scope.mjs
-      - uses: actions/setup-node@v6
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
         with:
           node-version: 24
@@ -205,9 +208,10 @@ jobs:
       GITHUB_HEAD_REF: ${{ github.head_ref }}
       PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - run: node ./scripts/develop-policy.mjs
       - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
 
@@ -221,10 +225,11 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v6
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: npm

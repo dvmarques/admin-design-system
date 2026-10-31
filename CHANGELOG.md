@@ -142,6 +142,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - Lint da raiz ignora worktrees aninhadas e resolve o caminho do tsconfig corretamente. (#128)
 
+<!-- release-changelog-approved sha256:dd32a81358830debe95c197e1fa70972074342b5e0865179045ce6bb69c68b8e -->
+
 ### [0.1.0] - 15-out-2026
 
 #### Added

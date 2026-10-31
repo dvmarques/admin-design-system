@@ -4,7 +4,14 @@ import { expect, type Page } from '@playwright/test';
 
 interface AxeViolation {
 	id: string;
-	nodes: { target: unknown[]; html?: string; failureSummary?: string; any?: unknown[]; all?: unknown[]; none?: unknown[] }[];
+	nodes: {
+		target: unknown[];
+		html?: string;
+		failureSummary?: string;
+		any?: unknown[];
+		all?: unknown[];
+		none?: unknown[];
+	}[];
 }
 
 const requireFromRoot = createRequire(join(process.cwd(), 'noop.js'));

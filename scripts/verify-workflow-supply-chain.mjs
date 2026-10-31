@@ -32,7 +32,7 @@ export function verifyWorkflowSupplyChain() {
 		assert.doesNotMatch(workflow, /pull_request_target/, file + ' usa evento privilegiado');
 		assert.doesNotMatch(workflow, /npx[^\n]*(?:@latest|@fission-ai\/openspec(?!@1\.15\.0))/, file);
 		assert.doesNotMatch(workflow, /uses:\s*[^\n]*@v\d+(?:\s|$)/, file + ': action por tag mutável');
-		for (const match of workflow.matchAll(/^\s+-\s+uses:\s+([^\s#]+)(?:[ \t]+#[ \t]*([^\r\n]+))?/gm)) {
+		for (const match of workflow.matchAll(/^\s+(?:-\s+)?uses:\s+([^\s#]+)(?:[ \t]+#[ \t]*([^\r\n]+))?/gm)) {
 			const action = match[1];
 			if (action.startsWith('./')) continue;
 			assert.match(action, /^[\w.-]+\/[\w./-]+@[a-f0-9]{40}$/, file + ': ' + action);

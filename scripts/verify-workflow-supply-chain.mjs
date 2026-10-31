@@ -1,6 +1,5 @@
 import assert from 'node:assert/strict';
 import { readFileSync, readdirSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 
 const root = new URL('../', import.meta.url);
 const read = (path) => readFileSync(new URL(path, root), 'utf8');
@@ -78,9 +77,9 @@ export function verifyWorkflowSupplyChain() {
 	const security = read('.github/workflows/security.yml');
 	const release = read('.github/workflows/release.yml');
 	const baseline = read('.github/workflows/update-visual-baselines.yml');
-	assert.match(ci, /^permissions:\n  contents: read/m);
-	assert.match(pages, /^permissions:\n  contents: read/m);
-	assert.match(security, /^permissions:\n  contents: read/m);
+	assert.match(ci, /^permissions:\n {2}contents: read/m);
+	assert.match(pages, /^permissions:\n {2}contents: read/m);
+	assert.match(security, /^permissions:\n {2}contents: read/m);
 	assert.match(block(pages, 'deploy'), /permissions:\n\s+pages: write\n\s+id-token: write/);
 	assert.match(
 		block(security, 'sast'),
@@ -88,7 +87,7 @@ export function verifyWorkflowSupplyChain() {
 	);
 	assert.doesNotMatch(block(release, 'resolve-validate'), /contents: write/);
 	assert.match(block(release, 'publish'), /contents: write/);
-	assert.match(baseline, /^permissions:\n  contents: read/m);
+	assert.match(baseline, /^permissions:\n {2}contents: read/m);
 	assert.doesNotMatch(block(baseline, 'generate'), /contents: write/);
 	assert.match(block(baseline, 'commit'), /permissions:\n\s+contents: write/);
 	assert.doesNotMatch(block(baseline, 'commit'), /npm (ci|install|run)|npx |node \.\/scripts\//);

@@ -1,6 +1,7 @@
 // Produz um artefato de dados (PNGs + manifesto), nunca comandos para o job de escrita.
 import { execFileSync } from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { Buffer } from 'node:buffer';
 import {
 	appendFileSync,
 	closeSync,

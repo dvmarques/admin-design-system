@@ -29,7 +29,7 @@ Em um arquivo Client Component:
 import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 
 export function SqlSnippet() {
-  return <AdsHighlightedCodeSnippet code={'SELECT 1;'} language="sql" theme="auto" />;
+	return <AdsHighlightedCodeSnippet code={'SELECT 1;'} language="sql" theme="auto" />;
 }
 ```
 

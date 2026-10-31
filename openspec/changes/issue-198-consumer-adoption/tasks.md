@@ -2,7 +2,7 @@
 
 - [x] 1.1 Conferir #198, dependências encerradas, contratos dos pacotes, skill adaptativa, configuração OpenSpec e guias existentes.
 - [x] 1.2 Criar branch `docs/issue-198-consumer-adoption` a partir de `develop` e a change spec-driven; revisar escopo e risco Fast.
-- [ ] 1.3 Validar a change em OpenSpec estrito e corrigir inconsistências encontradas.
+- [x] 1.3 Validar a change em OpenSpec estrito e corrigir inconsistências encontradas. Gate `Política de develop` da CI #279 no SHA `16886ae` passou com OpenSpec 1.15.0 estrito.
 
 ## 2. Documentação da entrada de adoção
 
@@ -22,7 +22,8 @@
 
 - [x] 4.1 Revisar cada snippet com exports, manifests e CSS reais; conferir ausência de imports internos e dependência obrigatória de Shiki/máscara.
 - [ ] 4.2 Executar formatação dos arquivos, `npm run format`, `npm run validate` e OpenSpec estrito conforme AGENTS; registrar testes indisponíveis, skips e evidência da CI (sem declarar aprovação presumida).
-- [ ] 4.3 Abrir PR Draft para `develop`, após revisão marcar Ready, verificar checks do SHA final e registrar achados/pendências. Não fazer archive nem merge.
+- [x] 4.3a Abrir PR Draft #279 para `develop`, aplicar label/assignee e marcar Ready for review.
+- [ ] 4.3b Conferir checks do SHA final da PR, corrigir falhas e registrar limitações; sem archive ou merge.
 
 ## Evidências da revisão estática
 
@@ -31,7 +32,7 @@
 - Nomes, imports, `package.json#exports`, peer `react-imask` e Shiki opcional comparados ao código/manifests de `develop`; correção do exemplo de `ReactNode` na revisão.
 - A lista de exclusões do catálogo foi corrigida para incluir `getAdsSmartTableCsv`, conforme o teste existente, sem alteração do teste.
 - Links e anchors cruzados entre README, integração, migração, limitações e histórico conferidos estaticamente, sem erro nesse conjunto.
-- Gates de formatação, OpenSpec, build, qualidade e E2E **não** executados localmente neste ambiente. A validação por GitHub Actions deve ser consultada no SHA da PR Ready; checks pulados não valem como teste executado.
+- OpenSpec estrito **passou na CI** (job Política de develop, execução 41218727335). A primeira CI encontrou erro no `prettier --check` em `README.md`, `docs/integration.md` e `packages/highlighted-code/README.md`; os trechos foram ajustados nesta revisão, aguardando nova verificação. Build, qualidade e E2E ainda não foram concluídos no SHA final. Os comandos **não** foram executados localmente neste ambiente. A validação por GitHub Actions deve ser consultada no SHA da PR Ready; checks pulados não valem como teste executado.
 
 ## Evidências e limites
 

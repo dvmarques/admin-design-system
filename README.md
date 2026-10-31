@@ -50,9 +50,7 @@ export default function Page() {
 	const [clicks, setClicks] = useState(0);
 	return (
 		<main>
-			<AdsButton onClick={() => setClicks((n) => n + 1)}>
-				Cliques: {clicks}
-			</AdsButton>
+			<AdsButton onClick={() => setClicks((n) => n + 1)}>Cliques: {clicks}</AdsButton>
 		</main>
 	);
 }

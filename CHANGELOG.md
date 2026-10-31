@@ -10,9 +10,9 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
-- `issue-195-npm-trusted-publishing` (issue #195, revisão editorial): etapa obrigatória antes de fechar releases, com prévia não destrutiva de tópicos repetidos/longos, consolidação humana, aprovação por hash do changelog e validação na preparação/CI; a marca interna não aparece nas notas públicas. Não altera releases já fechadas nem executa publicação.
+- `issue-195-npm-trusted-publishing` (issue #195, revisão editorial): etapa obrigatória antes de fechar releases, com prévia não destrutiva de itens repetidos/longos, aprovação humana por hash do changelog e validação em `release:prepare` e na CI. Não altera releases fechadas nem publica.
 
-- `issue-195-npm-trusted-publishing` (issue #195) - Preparação da publicação dos quatro pacotes públicos por GitHub Actions com Trusted Publishing/OIDC, hashes SHA-512 dos mesmos tarballs validados em Next.js externo, pré-verificação e recuperação idempotente de versões já existentes, separação de permissões npm/GitHub e bloqueio de tag/GitHub Release até confirmação do registry. Inclui testes de falha, documentação de bootstrap e operação; **nenhuma publicação, tag ou versão de release é executada ou selecionada nesta change**.
+- `issue-195-npm-trusted-publishing` (issue #195) - Prepara a publicação dos quatro pacotes por GitHub Actions com OIDC, reutilizando os tarballs validados em Next.js externo, com preflight, recuperação idempotente e tag/Release só após confirmação do registry. Nenhuma publicação é executada.
 
 - `issue-198-consumer-adoption` (issue #198) - Reorganiza o README como entrada para consumidores externos e completa READMEs dos quatro pacotes com dependências/peers, CSS, exemplos e links externos; consolida início rápido Next.js App Router, restaura o logo original com variações claro/escuro, cria guia de desenvolvimento local e remove migração pré-lançamento, mantendo documentação das APIs atuais de tema, histórico por componente (#182, #185, #187), limitações por área e exclusões reais do catálogo. Mantém explícito que os tarballs da #194 ainda não foram publicados no npm e que a publicação pertence à #195. Alteração apenas documental, sem runtime, workflow ou release.
 

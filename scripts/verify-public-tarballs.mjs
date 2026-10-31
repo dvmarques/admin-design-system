@@ -11,6 +11,8 @@ const root = fileURLToPath(new URL('..', import.meta.url));
 const npm = process.env.npm_execpath;
 assert.ok(npm, 'Run this script through npm so npm_execpath is available');
 const packageOrder = ['tokens', 'components', 'highlighted-code', 'admin'];
+const REGISTRY_RETRY_ATTEMPTS = 8;
+const REGISTRY_RETRY_DELAY_MS = 15_000;
 const nameFor = (name) => '@dvmarques/admin-ds-' + name;
 
 async function command(exe, args, cwd, extraEnv = {}) {
@@ -275,9 +277,24 @@ async function main() {
 			].join('\n'),
 		);
 		await write(consumer, '.npmrc', '');
-		await command(npm, ['install', '--ignore-scripts', '--no-audit', '--no-fund'], consumer, {
-			npm_config_userconfig: join(consumer, '.npmrc'),
-		});
+		// Após publicar, o registry/CDN pode demorar a propagar: só no modo registry há retry.
+		const install = () =>
+			command(npm, ['install', '--ignore-scripts', '--no-audit', '--no-fund'], consumer, {
+				npm_config_userconfig: join(consumer, '.npmrc'),
+			});
+		const attempts = registryVersion ? REGISTRY_RETRY_ATTEMPTS : 1;
+		for (let attempt = 1; ; attempt += 1) {
+			try {
+				await install();
+				break;
+			} catch (error) {
+				if (attempt >= attempts) throw error;
+				console.log(
+					'Registry ainda sem os pacotes (tentativa ' + attempt + '/' + attempts + '); aguardando.',
+				);
+				await delay(REGISTRY_RETRY_DELAY_MS);
+			}
+		}
 		if (registryVersion) {
 			await command(npm, ['audit', 'signatures'], consumer, {
 				npm_config_userconfig: join(consumer, '.npmrc'),

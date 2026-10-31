@@ -47,6 +47,12 @@ test('publication separates read-only validation from privileged publication', (
 	assert.doesNotMatch(release, /publish-github:[\s\S]*?npm run release:/);
 });
 
+test('registry smoke retries install only in registry mode', async () => {
+	const script = await fs.readFile('scripts/verify-public-tarballs.mjs', 'utf8');
+	assert.match(script, /registryVersion \? REGISTRY_RETRY_ATTEMPTS : 1/);
+	assert.match(script, /audit', 'signatures'/);
+});
+
 test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => {
 	assert.match(release, /prepare-npm:[\s\S]*?verify:distribution/);
 	assert.match(release, /prepare-npm:[\s\S]*?npm-publication\.mjs plan/);

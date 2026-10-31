@@ -13,10 +13,10 @@
 
 ## 2.1 Consolidação editorial de release
 
-- [ ] 2.5 Adicionar comando de prévia editorial sem escritas (grupos por issue, duplicidades e textos longos).
-- [ ] 2.6 Exigir confirmação humana vinculada ao hash do changelog corrente, com invalidação após edições e validação no preparo e CI da release.
-- [ ] 2.7 Excluir marca de revisão das GitHub Release Notes e preservar seções fechadas inalteradas; cobrir em testes.
-- [ ] 2.8 Atualizar documentação e processo de PR de release com passos de revisão e aprovação.
+- [x] 2.5 Adicionar comando de prévia editorial sem escritas (grupos por issue, duplicidades e textos longos).
+- [x] 2.6 Exigir confirmação humana vinculada ao hash do changelog corrente, com invalidação após edições e validação no preparo e CI da release.
+- [x] 2.7 Excluir marca de revisão das GitHub Release Notes e preservar seções fechadas inalteradas; cobrir em testes.
+- [x] 2.8 Atualizar documentação e processo de PR de release com passos de revisão e aprovação.
 
 ## 3. Testes e entrega
 

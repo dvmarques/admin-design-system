@@ -33,7 +33,7 @@ jobs:
         run: |
           [[ "$GITHUB_REF_NAME" == "develop" ]] || { echo "Dispare este workflow a partir de develop" >&2; exit 1; }
           [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || { echo "Versão inválida: $VERSION" >&2; exit 1; }
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: develop
           fetch-depth: 0
@@ -59,7 +59,7 @@ jobs:
           git merge-base --is-ancestor "$BACKMERGE_SHA" origin/develop || { echo "Back-merge não pertence ao histórico atual de develop" >&2; exit 1; }
           node ./scripts/release-github.mjs predecessor "$VERSION"
           node ./scripts/release-github.mjs state "$VERSION"
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ steps.resolve.outputs.release_sha }}
           fetch-depth: 0
@@ -68,7 +68,7 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run release:validate -- "$VERSION"
       - run: npm run --silent release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: develop
           fetch-depth: 0
@@ -97,7 +97,7 @@ jobs:
       RELEASE_SHA: ${{ needs.resolve-validate.outputs.release_sha }}
       PUBLIC_PACK_DIR: npm-release-artifacts
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve-validate.outputs.release_sha }}
           persist-credentials: false
@@ -133,7 +133,7 @@ jobs:
       PUBLIC_PACK_DIR: npm-release-artifacts
     steps:
       - name: Checkout da lógica confiável de publicação
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false
@@ -157,7 +157,7 @@ jobs:
     env:
       PUBLIC_REGISTRY_VERSION: ${{ inputs.version }}
     steps:
-      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ needs.resolve-validate.outputs.release_sha }}
           persist-credentials: false
@@ -187,7 +187,7 @@ jobs:
       READONLY_RELEASE_NOTES_SHA: ${{ needs.resolve-validate.outputs.release_notes_sha }}
     steps:
       - name: Checkout da lógica confiável do workflow
-        uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
           persist-credentials: false

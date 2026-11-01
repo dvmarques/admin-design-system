@@ -7,6 +7,10 @@ on:
         description: Versão estável X.Y.Z
         required: true
         type: string
+      artifact_id:
+        description: ID imutável do artifact da preparação aprovada (não run ID)
+        required: true
+        type: string
 
 concurrency:
   group: release-publication
@@ -35,7 +39,7 @@ jobs:
           [[ "$VERSION" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]] || { echo "Versão inválida: $VERSION" >&2; exit 1; }
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: develop
+          ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
@@ -70,7 +74,7 @@ jobs:
       - run: npm run --silent release:notes -- "$VERSION" > "$RUNNER_TEMP/release-notes.md"
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: develop
+          ref: ${{ github.sha }}
           fetch-depth: 0
           persist-credentials: false
       - run: npm install --global npm@11.19.1
@@ -86,46 +90,37 @@ jobs:
           echo "develop_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
           echo "release_notes_sha=$RELEASE_NOTES_SHA" >> "$GITHUB_OUTPUT"
 
-  prepare-npm:
-    name: Empacotar e validar npm
+  fetch-npm:
+    name: Validar artifact preparado
     needs: resolve-validate
     permissions:
       contents: read
+      actions: read
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ inputs.version }}
       RELEASE_SHA: ${{ needs.resolve-validate.outputs.release_sha }}
-      PUBLIC_PACK_DIR: npm-release-artifacts
+      ARTIFACT_ID: ${{ inputs.artifact_id }}
+      GITHUB_TOKEN: ${{ github.token }}
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
-          ref: ${{ needs.resolve-validate.outputs.release_sha }}
+          ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
-          cache: npm
-      - run: npm install --global npm@11.19.1
-      - run: npm ci --ignore-scripts
-      - name: Instalar navegador do smoke externo
-        run: npx playwright install --with-deps chromium
-      - name: Validar os tarballs definitivos em Next.js externo
-        run: npm run verify:distribution
-      - name: Gerar manifesto de hashes e identidade da release
-        run: node ./scripts/npm-publication.mjs plan "$VERSION" "$RELEASE_SHA" "$PUBLIC_PACK_DIR"
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
-        with:
-          name: npm-release-${{ inputs.version }}
-          path: npm-release-artifacts/
-          if-no-files-found: error
-          retention-days: 7
+      - name: Validar origem, expiração, digest e manifests sem reconstrução
+        run: node ./scripts/release-artifact.mjs fetch "$VERSION" "$RELEASE_SHA" "$ARTIFACT_ID"
 
   publish-npm:
     name: Publicar npm via OIDC
-    needs: [resolve-validate, prepare-npm]
+    needs: [resolve-validate, fetch-npm]
     permissions:
       contents: read
       id-token: write
+      actions: read
     runs-on: ubuntu-latest
     env:
       VERSION: ${{ inputs.version }}
@@ -136,15 +131,17 @@ jobs:
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.sha }}
+          fetch-depth: 0
           persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
       - run: npm install --global npm@11.19.1
-      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
-        with:
-          name: npm-release-${{ inputs.version }}
-          path: npm-release-artifacts/
+      - name: Recuperar o mesmo artifact e repetir todas as verificações
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          ARTIFACT_ID: ${{ inputs.artifact_id }}
+        run: node ./scripts/release-artifact.mjs fetch "$VERSION" "$RELEASE_SHA" "$ARTIFACT_ID"
       - name: Conferir hashes e publicar os quatro pacotes
         run: node ./scripts/npm-publication.mjs publish "$VERSION" "$RELEASE_SHA" "$PUBLIC_PACK_DIR"
 

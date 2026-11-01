@@ -1,0 +1,43 @@
+name: Measure bundles issue 232 (temporary)
+on:
+  pull_request:
+    types: [synchronize]
+permissions:
+  contents: read
+jobs:
+  measure-232:
+    if: github.event.pull_request.head.ref == 'feat/232-ads-file-upload'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
+      - name: Prepare read-only high-ceiling fixture for measurement
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync, mkdirSync, writeFileSync } from 'node:fs';
+          const dir = '/tmp/ads-measure-232';
+          mkdirSync(dir, { recursive: true });
+          const files = ['bundle-baseline.json', 'browser-budget.json', 'scenario-budget.json'];
+          for (const name of files) {
+            const value = JSON.parse(readFileSync('docs/' + name, 'utf8'));
+            if (name === 'bundle-baseline.json') {
+              for (const key of Object.keys(value)) value[key] = 999999999;
+            } else {
+              for (const item of Object.values(value))
+                for (const key of Object.keys(item))
+                  if (typeof item[key] === 'number') item[key] = 999999999;
+            }
+            writeFileSync(dir + '/' + name, JSON.stringify(value));
+          }
+          NODE
+      - name: Measure all package and scenario byte counts
+        run: INSPECT_BUDGET_DIR=/tmp/ads-measure-232 npm run inspect:packages

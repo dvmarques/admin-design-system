@@ -79,8 +79,8 @@ export function verifyArchiveDigest(bytes, digest) {
 	);
 }
 
-// The ZIP is untrusted input. Only flat, regular files are accepted, never executable content.
-export function extractArchive(archive, destination, version) {
+// The ZIP is untrusted input. Keep it in memory; only flat, regular files are extracted.
+export function extractArchive(bytes, destination, version) {
 	const expected = [
 		'publication-plan.json',
 		...PACKAGE_ORDER.map((part) => `dvmarques-admin-ds-${part}-${version}.tgz`),
@@ -91,9 +91,12 @@ export function extractArchive(archive, destination, version) {
 			'-I',
 			'-c',
 			`
-import json, os, pathlib, stat, sys, zipfile
-archive, destination, expected = sys.argv[1], pathlib.Path(sys.argv[2]), json.loads(sys.argv[3])
-with zipfile.ZipFile(archive) as z:
+import io, json, os, pathlib, stat, sys, zipfile
+destination, expected = pathlib.Path(sys.argv[1]), json.loads(sys.argv[2])
+archive_bytes = sys.stdin.buffer.read(100 * 1024 * 1024 + 1)
+if len(archive_bytes) > 100 * 1024 * 1024:
+    raise ValueError('ZIP excede limite de tamanho')
+with zipfile.ZipFile(io.BytesIO(archive_bytes)) as z:
     entries = z.infolist()
     if sorted(x.filename for x in entries) != sorted(expected):
         raise ValueError('Inventário ZIP inválido, duplicado ou caminho inesperado')
@@ -114,11 +117,10 @@ with zipfile.ZipFile(archive) as z:
                 while chunk := source.read(64 * 1024):
                     target.write(chunk)
 `,
-			archive,
 			destination,
 			JSON.stringify(expected),
 		],
-		{ stdio: 'pipe' },
+		{ input: bytes, maxBuffer: 1024 * 1024 },
 	);
 }
 
@@ -217,10 +219,8 @@ export async function fetchArtifact(id, version, sha, destination) {
 	verifyArchiveDigest(bytes, artifact.digest);
 	const temporary = await mkdtemp(join(dirname(destination), '.ads-artifact-'));
 	try {
-		const archive = join(temporary, 'artifact.zip');
 		const contents = join(temporary, 'contents');
-		await writeFile(archive, bytes);
-		extractArchive(archive, contents, version);
+		extractArchive(bytes, contents, version);
 		const plan = JSON.parse(await readFile(join(contents, 'publication-plan.json'), 'utf8'));
 		assert.deepEqual(plan.producer, producer, 'Origem do plano diverge do run validado.');
 		await verifyPlan(plan, version, sha, contents);

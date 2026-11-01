@@ -299,7 +299,7 @@ test('download pelo ID verifica ZIP, origem, plano e manifests do merge; reexecu
 test('extração recusa traversal, duplicatas, arquivos extra e links', async () => {
 	const fx = await fixture();
 	try {
-		extractArchive(fx.archive, join(fx.temporary, 'valid'), version);
+		extractArchive(fx.bytes, join(fx.temporary, 'valid'), version);
 		for (const mode of ['traversal', 'duplicate', 'extra', 'symlink']) {
 			const archive = join(fx.temporary, mode + '.zip');
 			execFileSync(PYTHON_COMMAND, [
@@ -319,7 +319,8 @@ with zipfile.ZipFile(sys.argv[1]) as source, zipfile.ZipFile(sys.argv[2], 'w') a
 				archive,
 				mode,
 			]);
-			assert.throws(() => extractArchive(archive, join(fx.temporary, mode), version));
+			const bytes = await readFile(archive);
+			assert.throws(() => extractArchive(bytes, join(fx.temporary, mode), version));
 		}
 	} finally {
 		await fx.dispose();

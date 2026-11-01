@@ -8,6 +8,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.2] - Em andamento
 
+#### Changed
+
+- Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)
+
 ### [0.1.1] - 31-out-2026
 
 #### Added

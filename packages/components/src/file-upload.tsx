@@ -196,7 +196,7 @@ export const AdsFileUpload = forwardRef<HTMLInputElement, AdsFileUploadProps>(
 								className="flex min-w-0 flex-wrap items-center justify-between gap-2 rounded-md border border-border bg-surface-muted p-2"
 								key={file.name + ':' + file.size + ':' + file.lastModified + ':' + index}
 							>
-								<span className="min-w-0 break-all text-sm">
+								<span className="min-w-0 break-words text-sm">
 									<strong>{file.name}</strong>
 									{' · '}
 									{formatBytes(file.size)}

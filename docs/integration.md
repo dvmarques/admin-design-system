@@ -2059,7 +2059,6 @@ O texto da opção selecionada é truncado com reticências dentro da caixa do c
 
 Limitações: a aparência da lista aberta é do navegador; as validações automatizadas do `placeholder` usam React 19.2; o mesmo cenário de prova (45 verificações em Chromium: required, FormData, reset, controlado/não controlado, SSR e hidratação) foi executado uma vez, fora do repositório, com React 18.3.1, sem falhas nem avisos (o intervalo de peer `>=18.2` não tem teste automatizado recorrente) e Firefox e WebKit são verificados pela CI do repositório. Veja as stories `Forms/Select` e o catálogo `/catalogo/select`.
 
-
 ## Seleção e validação de arquivos — AdsFileUpload (#232)
 
 O componente `AdsFileUpload` recebe `accept` (extensões, MIME e curinga como `image/*`), `maxSizeBytes`, `maxFiles`, `multiple`, `files`/`defaultFiles` e callbacks tipados `onFilesChange(files, reason)` e `onReject(rejections)`. Ele não executa upload HTTP. O `accept` do navegador e a validação adicional em JavaScript são apenas **filtros de experiência**; o backend deve validar conteúdo, tamanho e permissões antes de aceitar arquivos.
@@ -2073,22 +2072,27 @@ import { useState } from 'react';
 import { AdsFileUpload, AdsButton } from '@dvmarques/admin-ds-components';
 
 export function ImportarArquivo() {
-  const [files, setFiles] = useState<File[]>([]);
-  return (
-    <section>
-      <AdsFileUpload
-        label="Arquivo de dados"
-        accept=".csv,application/json"
-        maxSizeBytes={2_000_000}
-        files={files}
-        onFilesChange={setFiles}
-        onReject={(rejections) => console.warn('Arquivos rejeitados:', rejections.length)}
-      />
-      <AdsButton disabled={files.length !== 1} onClick={() => { /* Envio pelo consumidor */ }}>
-        Importar
-      </AdsButton>
-    </section>
-  );
+	const [files, setFiles] = useState<File[]>([]);
+	return (
+		<section>
+			<AdsFileUpload
+				label="Arquivo de dados"
+				accept=".csv,application/json"
+				maxSizeBytes={2_000_000}
+				files={files}
+				onFilesChange={setFiles}
+				onReject={(rejections) => console.warn('Arquivos rejeitados:', rejections.length)}
+			/>
+			<AdsButton
+				disabled={files.length !== 1}
+				onClick={() => {
+					/* Envio pelo consumidor */
+				}}
+			>
+				Importar
+			</AdsButton>
+		</section>
+	);
 }
 ```
 

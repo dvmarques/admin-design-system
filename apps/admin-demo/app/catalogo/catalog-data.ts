@@ -129,8 +129,7 @@ export const catalogEntries = [
 		group: 'Formulários',
 		slug: 'file-upload',
 		demo: 'FileUpload',
-		description:
-			'Seleção de arquivos com filtros e limites, estados acessíveis e sem envio HTTP.',
+		description: 'Seleção de arquivos com filtros e limites, estados acessíveis e sem envio HTTP.',
 		href: '/catalogo/file-upload',
 	},
 	{

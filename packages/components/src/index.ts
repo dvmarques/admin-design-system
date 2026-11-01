@@ -181,8 +181,8 @@ export type {
 
 export { AdsFileUpload } from './file-upload.js';
 export type {
-  AdsFileUploadProps,
-  AdsFileRejection,
-  AdsFileRejectionReason,
-  AdsFileChangeReason,
+	AdsFileUploadProps,
+	AdsFileRejection,
+	AdsFileRejectionReason,
+	AdsFileChangeReason,
 } from './file-upload.js';

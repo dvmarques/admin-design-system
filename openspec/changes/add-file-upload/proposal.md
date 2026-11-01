@@ -9,11 +9,13 @@ Perfil do fluxo adaptativo: **Critical**, pois adiciona API pública, CSS distri
 ## What Changes
 
 **Biblioteca reutilizável (`packages/components`)**
+
 - Novo `AdsFileUpload` e tipos públicos `AdsFileUploadProps`, `AdsFileRejection` e `AdsFileChangeReason`.
 - Seleção nativa por botão, controle por `files` ou `defaultFiles`, remoção e limpeza, múltiplos arquivos opcionais e limites configuráveis de quantidade/tamanho/tipo.
 - Estados de erro, vazio, selecionado, desabilitado e envio em andamento; rótulos e alertas acessíveis; nenhuma chamada HTTP.
 
 **Consumidores (`apps/admin-demo`, `apps/docs`)**
+
 - Importação de arquivo fictício com `AdsDialog` + `AdsButton`, sem backend, em uma rota própria da Demo.
 - Storybook e testes de uso e acessibilidade; documentação e CHANGELOG.
 
@@ -26,9 +28,11 @@ Fora do escopo: parser CSV/JSON na biblioteca, autenticação, envio HTTP, valid
 ## Capabilities
 
 ### New Capabilities
+
 - `file-upload`: seleção, validação e feedback de arquivos.
 
 ### Modified Capabilities
+
 - Nenhuma alteração em contratos preexistentes.
 
 ## Impact

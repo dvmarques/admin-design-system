@@ -108,9 +108,9 @@ export default function ComponentsPage() {
 						</AdsTypography>
 					</div>
 					<Link className="demo-action-link" href="/componentes/arquivos">
-            Testar importação de arquivos
-          </Link>
-          <AdsSurface className="demo-form-surface" variant="raised">
+						Testar importação de arquivos
+					</Link>
+					<AdsSurface className="demo-form-surface" variant="raised">
 						<div className="demo-form">
 							<AdsField description="Usado para notificações da conta" label="E-mail">
 								<AdsInput type="email" placeholder="nome@empresa.com" />

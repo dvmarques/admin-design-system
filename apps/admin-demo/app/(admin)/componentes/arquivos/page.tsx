@@ -45,7 +45,7 @@ export default function FileImportPage() {
 				<Link className="demo-action-link" href="/componentes">
 					Voltar ao catálogo
 				</Link>
-				<AdsSurface className="demo-panel mt-4" variant="raised">
+				<AdsSurface className="demo-panel" variant="raised">
 					<AdsButton
 						onClick={() => {
 							setNotice('');
@@ -55,7 +55,7 @@ export default function FileImportPage() {
 						Abrir importação
 					</AdsButton>
 					{notice ? (
-						<p className="mt-3 text-sm" role="status">
+						<p className="demo-panel__copy" role="status">
 							{notice}
 						</p>
 					) : null}
@@ -71,7 +71,7 @@ export default function FileImportPage() {
 					showCloseButton={!busy}
 					title="Importar arquivo de dados"
 				>
-					<div className="flex flex-col gap-4">
+					<div className="demo-file-upload-form">
 						<AdsFileUpload
 							accept=".csv,.json,application/json,text/csv"
 							files={files}
@@ -80,7 +80,7 @@ export default function FileImportPage() {
 							maxSizeBytes={2_000_000}
 							onFilesChange={setFiles}
 						/>
-						<div className="flex flex-wrap justify-end gap-2">
+						<div className="demo-actions demo-file-upload-actions">
 							<AdsButton disabled={busy} onClick={close} variant="secondary">
 								Cancelar
 							</AdsButton>

@@ -53,9 +53,8 @@ for (const theme of ['light', 'dark'] as const) {
 		await page.goto('/componentes/arquivos');
 		await page.getByRole('button', { name: 'Abrir importação' }).click();
 		await expect(page.getByRole('dialog')).toBeVisible();
-		expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
-			true,
-		);
+		const pageWidth = await page.evaluate(() => document.documentElement.scrollWidth);
+		expect(pageWidth).toBeLessThanOrEqual(320);
 		await expectNoAxeViolations(page);
 	});
 }

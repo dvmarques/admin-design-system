@@ -43,3 +43,19 @@ test('validação e teclado não dependem de drag-and-drop', async ({ page }) =>
 	await dialog.getByRole('button', { name: 'Cancelar' }).click();
 	await expect(dialog).toHaveCount(0);
 });
+
+for (const theme of ['light', 'dark'] as const) {
+	test(`não há overflow em 320px no tema ${theme}`, async ({ page }) => {
+		await page.setViewportSize({ width: 320, height: 720 });
+		await page.context().addCookies([
+			{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' },
+		]);
+		await page.goto('/componentes/arquivos');
+		await page.getByRole('button', { name: 'Abrir importação' }).click();
+		await expect(page.getByRole('dialog')).toBeVisible();
+		expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(
+			true,
+		);
+		await expectNoAxeViolations(page);
+	});
+}

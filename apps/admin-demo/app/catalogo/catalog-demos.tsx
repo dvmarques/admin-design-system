@@ -2157,6 +2157,7 @@ export function FileUploadDemo() {
 			<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
 				Limpar dados
 			</AdsButton>
+			<Link href="/componentes/arquivos">Testar importação simulada</Link>
 		</div>
 	);
 }

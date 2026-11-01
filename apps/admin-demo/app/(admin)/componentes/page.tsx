@@ -107,9 +107,6 @@ export default function ComponentsPage() {
 							Rótulos, ajuda contextual e seleção com espaço para leitura.
 						</AdsTypography>
 					</div>
-					<Link className="demo-action-link" href="/componentes/arquivos">
-						Testar importação de arquivos
-					</Link>
 					<AdsSurface className="demo-form-surface" variant="raised">
 						<div className="demo-form">
 							<AdsField description="Usado para notificações da conta" label="E-mail">

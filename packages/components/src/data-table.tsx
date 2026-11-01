@@ -6,7 +6,14 @@ import type {
 } from 'react';
 import { classNames } from './class-names.js';
 
+export type AdsTableDensity = 'comfortable' | 'compact';
+
 export interface AdsTableProps extends TableHTMLAttributes<HTMLTableElement> {
+	/**
+	 * Densidade das células. Só define `data-density`; sem a prop, vale a densidade herdada de um
+	 * ancestral ou a confortável (padrão).
+	 */
+	density?: AdsTableDensity;
 	containerClassName?: string;
 	/** HTML attributes for the scroll container, for example to make it a labelled, focusable region. */
 	containerProps?: Omit<
@@ -19,6 +26,7 @@ export function AdsTable({
 	className,
 	containerClassName,
 	containerProps,
+	density,
 	...props
 }: AdsTableProps) {
 	return (
@@ -28,6 +36,7 @@ export function AdsTable({
 		>
 			<table
 				{...props}
+				data-density={density}
 				className={classNames(
 					'ads-table w-full min-w-max border-collapse text-left text-sm text-text',
 					className,
@@ -90,7 +99,7 @@ export function AdsTableHeader({
 			{...props}
 			scope={scope}
 			className={classNames(
-				'ads-table-header border-b border-border px-4 py-3 font-semibold text-text-primary',
+				'ads-table-header border-b border-border px-[var(--ads-density-cell-padding-x)] py-[var(--ads-density-cell-padding-y)] font-semibold text-text-primary',
 				alignment[align],
 				className,
 			)}
@@ -106,7 +115,11 @@ export function AdsTableCell({ align = 'start', className, ...props }: AdsTableC
 	return (
 		<td
 			{...props}
-			className={classNames('ads-table-cell px-4 py-3 align-middle', alignment[align], className)}
+			className={classNames(
+				'ads-table-cell px-[var(--ads-density-cell-padding-x)] py-[var(--ads-density-cell-padding-y)] align-middle',
+				alignment[align],
+				className,
+			)}
 		/>
 	);
 }

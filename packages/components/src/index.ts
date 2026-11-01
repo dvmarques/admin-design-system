@@ -3,13 +3,17 @@ export type { AdsButtonProps, AdsButtonSize, AdsButtonVariant } from './button.j
 export { AdsBadge } from './badge.js';
 export type { AdsBadgeProps, AdsBadgeSize, AdsBadgeVariant } from './badge.js';
 export { AdsAvatar } from './avatar.js';
-export type { AdsAvatarProps, AdsAvatarSize } from './avatar.js';
+export type { AdsAvatarProps, AdsAvatarSize, AdsAvatarTone } from './avatar.js';
 export { AdsIcon } from './icon.js';
 export type { AdsIconName, AdsIconProps, AdsIconSize } from './icon.js';
 export { AdsLoadingIndicator } from './loading-indicator.js';
 export type { AdsLoadingIndicatorProps, AdsLoadingIndicatorSize } from './loading-indicator.js';
+export { AdsLoadingText } from './loading-text.js';
+export type { AdsLoadingTextProps, AdsLoadingTextSpeed } from './loading-text.js';
 export { AdsSkeleton } from './skeleton.js';
 export type { AdsSkeletonProps } from './skeleton.js';
+export { AdsSparkline } from './sparkline.js';
+export type { AdsSparklineProps, AdsSparklineTone } from './sparkline.js';
 export { AdsTypography } from './typography.js';
 export type {
 	AdsTypographyElement,
@@ -20,10 +24,28 @@ export { AdsSurface } from './surface.js';
 export type { AdsSurfaceProps, AdsSurfaceVariant } from './surface.js';
 export { AdsInput } from './input.js';
 export type { AdsInputProps } from './input.js';
+export { AdsPasswordInput } from './password-input.js';
+export type {
+	AdsPasswordInputProps,
+	AdsPasswordRule,
+	AdsPasswordStrength,
+} from './password-input.js';
 export { AdsTextarea } from './textarea.js';
 export type { AdsTextareaProps } from './textarea.js';
 export { AdsSelect } from './select.js';
-export type { AdsSelectProps } from './select.js';
+export { AdsCombobox } from './combobox.js';
+export type {
+	AdsComboboxComponent,
+	AdsComboboxOption,
+	AdsComboboxInputReason,
+	AdsComboboxPopoverProps,
+	AdsComboboxProps,
+	AdsComboboxQueryReason,
+	AdsComboboxTriggerContext,
+} from './combobox.js';
+export { AdsAutocomplete } from './autocomplete.js';
+export type { AdsAutocompleteProps } from './autocomplete.js';
+export type { AdsSelectProps, AdsSelectValue } from './select.js';
 export type { AdsFormSize, AdsValidationState } from './form-types.js';
 export { AdsCheckbox, AdsRadio, AdsSwitch } from './selection-control.js';
 export type { AdsSelectionControlProps } from './selection-control.js';
@@ -47,24 +69,55 @@ export { StyleFixture, fixtureVariants } from './style-fixture.js';
 export type { FixtureVariant, StyleFixtureProps } from './style-fixture.js';
 export { ThemeToggle } from './theme-toggle.js';
 export type { ThemeToggleProps } from './theme-toggle.js';
+export { AdsThemeControl } from './theme-control.js';
+export type {
+	AdsThemeControlLabels,
+	AdsThemeControlOptionDisplay,
+	AdsThemeControlProps,
+	AdsThemeControlVariant,
+	AdsThemePreference,
+} from './theme-control.js';
 export { AdsDialog, AdsDrawer } from './overlay-dialog.js';
 export type { AdsDialogProps, AdsDrawerProps } from './overlay-dialog.js';
 export { AdsPopover, AdsTooltip } from './overlay-anchored.js';
 export type { AdsOverlayPlacement, AdsPopoverProps, AdsTooltipProps } from './overlay-anchored.js';
+export { AdsAlert } from './alert.js';
+export type { AdsAlertProps, AdsAlertVariant, AdsAlertAppearance } from './alert.js';
 export { AdsToast } from './overlay-toast.js';
 export type { AdsToastProps, AdsToastVariant } from './overlay-toast.js';
-export { AdsBreadcrumb, AdsNav, AdsTabs } from './navigation.js';
+export { AdsBreadcrumb, AdsNav } from './navigation.js';
+export { AdsTabs, AdsTabsList, AdsTabsPanel, AdsTabsTrigger } from './tabs.js';
+export {
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
+} from './accordion.js';
 export type {
 	AdsBreadcrumbItem,
 	AdsBreadcrumbProps,
 	AdsLinkRenderProps,
 	AdsNavItem,
 	AdsNavProps,
+} from './navigation.js';
+export type {
+	AdsTabsActivationMode,
 	AdsTabsListProps,
+	AdsTabsOrientation,
 	AdsTabsPanelProps,
 	AdsTabsProps,
 	AdsTabsTriggerProps,
-} from './navigation.js';
+} from './tabs.js';
+export type {
+	AdsAccordionHeaderProps,
+	AdsAccordionItemProps,
+	AdsAccordionMultipleProps,
+	AdsAccordionPanelProps,
+	AdsAccordionProps,
+	AdsAccordionSingleProps,
+	AdsAccordionTriggerProps,
+} from './accordion.js';
 export { AdsDropdown } from './dropdown.js';
 export type {
 	AdsDropdownContentProps,
@@ -74,6 +127,7 @@ export type {
 } from './dropdown.js';
 export { AdsPagination, getAdsPaginationItems } from './pagination.js';
 export type {
+	AdsPaginationLabels,
 	AdsPaginationLinkProps,
 	AdsPaginationPage,
 	AdsPaginationProps,
@@ -92,6 +146,7 @@ export type {
 	AdsTableBodyProps,
 	AdsTableCaptionProps,
 	AdsTableCellProps,
+	AdsTableDensity,
 	AdsTableHeadProps,
 	AdsTableHeaderProps,
 	AdsTableProps,

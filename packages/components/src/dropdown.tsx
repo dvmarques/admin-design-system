@@ -4,7 +4,7 @@ import {
 	createContext,
 	createElement,
 	useContext,
-	useEffect,
+	useCallback,
 	useRef,
 	useState,
 	type ButtonHTMLAttributes,
@@ -18,13 +18,14 @@ import {
 	useEscapeKey,
 	useStableId,
 } from './overlay-utils.js';
-import { AdsButton } from './button.js';
+import { AdsButton, type AdsButtonSize, type AdsButtonVariant } from './button.js';
 
 interface DropdownContextValue {
 	open: boolean;
 	setOpen: (open: boolean) => void;
 	triggerRef: React.MutableRefObject<HTMLElement | null>;
 	menuId: string;
+	initialFocusRef: React.MutableRefObject<boolean>;
 }
 const DropdownContext = createContext<DropdownContextValue | null>(null);
 function useDropdown() {
@@ -54,8 +55,9 @@ function AdsDropdownRoot({
 	};
 	const triggerRef = useRef<HTMLElement | null>(null);
 	const menuId = useStableId('ads-dropdown-menu');
+	const initialFocusRef = useRef(false);
 	return (
-		<DropdownContext.Provider value={{ open, setOpen, triggerRef, menuId }}>
+		<DropdownContext.Provider value={{ open, setOpen, triggerRef, menuId, initialFocusRef }}>
 			<div {...props} className={classNames('ads-dropdown relative inline-flex', className)}>
 				{children}
 			</div>
@@ -63,28 +65,48 @@ function AdsDropdownRoot({
 	);
 }
 
-export type AdsDropdownTriggerProps = ButtonHTMLAttributes<HTMLButtonElement>;
-function AdsDropdownTrigger({ children, className, onKeyDown, ...props }: AdsDropdownTriggerProps) {
-	const { open, setOpen, triggerRef, menuId } = useDropdown();
+export interface AdsDropdownTriggerProps extends ButtonHTMLAttributes<HTMLButtonElement> {
+	size?: AdsButtonSize;
+	variant?: AdsButtonVariant;
+}
+function AdsDropdownTrigger({
+	children,
+	className,
+	onKeyDown,
+	onBlur,
+	size = 'md',
+	variant = 'secondary',
+	...props
+}: AdsDropdownTriggerProps) {
+	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
 	return (
 		<AdsButton
 			{...props}
 			aria-controls={open ? menuId : undefined}
 			aria-expanded={open}
 			className={classNames('ads-dropdown-trigger', className)}
-			onClick={() => setOpen(!open)}
+			onBlur={(event) => {
+				initialFocusRef.current = false;
+				onBlur?.(event);
+			}}
+			onClick={() => {
+				initialFocusRef.current = false;
+				setOpen(!open);
+			}}
 			onKeyDown={(event) => {
 				onKeyDown?.(event);
 				if (event.defaultPrevented) return;
 				if ((event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') && !open) {
 					event.preventDefault();
+					initialFocusRef.current = true;
 					setOpen(true);
 				}
 			}}
 			ref={(node: HTMLButtonElement | null) => {
 				triggerRef.current = node;
 			}}
-			variant="secondary"
+			size={size}
+			variant={variant}
 			type="button"
 		>
 			{children}
@@ -101,17 +123,24 @@ function AdsDropdownContent({
 	placement = 'bottom',
 	...props
 }: AdsDropdownContentProps) {
-	const { open, setOpen, triggerRef, menuId } = useDropdown();
+	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
 	const contentRef = useRef<HTMLDivElement>(null);
 	const position = useAnchoredPosition(open, triggerRef, contentRef, placement, 'start');
-	const openedByKeyboard = useRef(false);
-	useEffect(() => {
-		if (open) {
-			const active = document.activeElement;
-			openedByKeyboard.current =
-				active === triggerRef.current && (active?.matches(':focus-visible') ?? false);
-		}
-	}, [open, triggerRef]);
+	const setContentRef = useCallback(
+		(node: HTMLDivElement | null) => {
+			position.attachContent(node);
+			if (!node || !initialFocusRef.current) return;
+			// The portal mounts its children after the open render. Focus at attachment.
+			initialFocusRef.current = false;
+			if (node.ownerDocument.activeElement !== triggerRef.current) return;
+			(
+				node.querySelector<HTMLElement>(
+					'[role="menuitemradio"][aria-checked="true"]:not([aria-disabled="true"])',
+				) ?? node.querySelector<HTMLElement>('[role^="menuitem"]:not([aria-disabled="true"])')
+			)?.focus({ preventScroll: true });
+		},
+		[initialFocusRef, triggerRef, position.attachContent],
+	);
 	useEscapeKey(open, () => {
 		setOpen(false);
 		triggerRef.current?.focus();
@@ -120,13 +149,6 @@ function AdsDropdownContent({
 		if (!(event.target instanceof Node) || !triggerRef.current?.contains(event.target))
 			setOpen(false);
 	});
-	useEffect(() => {
-		if (!open || !openedByKeyboard.current) return;
-		const first = contentRef.current?.querySelector<HTMLElement>(
-			'[role="menuitem"]:not([aria-disabled="true"])',
-		);
-		first?.focus();
-	}, [open]);
 	return open ? (
 		<OverlayPortal>
 			<div
@@ -135,11 +157,12 @@ function AdsDropdownContent({
 					'ads-dropdown-content fixed z-[var(--ads-layer-dropdown)] min-w-48 rounded-lg border border-border bg-surface-raised p-1.5 font-sans text-text shadow-md',
 					className,
 				)}
+				data-placement={position.placement}
 				id={menuId}
 				onKeyDown={(event) => {
 					const items = Array.from(
 						event.currentTarget.querySelectorAll<HTMLElement>(
-							'[role="menuitem"]:not([aria-disabled="true"])',
+							'[role^="menuitem"]:not([aria-disabled="true"])',
 						),
 					);
 					const index = items.indexOf(document.activeElement as HTMLElement);
@@ -153,9 +176,9 @@ function AdsDropdownContent({
 						items[next]?.focus();
 					}
 				}}
-				ref={contentRef}
+				ref={setContentRef}
 				role="menu"
-				style={position}
+				style={position.style}
 			>
 				{children}
 			</div>
@@ -175,9 +198,12 @@ function AdsDropdownItem({
 	href,
 	onClick,
 	onSelect,
+	role,
 	...props
 }: AdsDropdownItemProps) {
-	const { setOpen } = useDropdown();
+	// Só `menuitemradio` é novo; qualquer outro valor mantém o papel `menuitem` de sempre.
+	const itemRole = role === 'menuitemradio' ? 'menuitemradio' : 'menuitem';
+	const { setOpen, triggerRef } = useDropdown();
 	const element = href ? 'a' : 'button';
 	return (
 		<>
@@ -203,8 +229,10 @@ function AdsDropdownItem({
 						onClick?.(event);
 						onSelect?.();
 						setOpen(false);
+						// Escolher uma opção de seleção exclusiva devolve o foco ao gatilho, como Escape.
+						if (itemRole === 'menuitemradio') triggerRef.current?.focus();
 					},
-					role: 'menuitem',
+					role: itemRole,
 					tabIndex: disabled ? -1 : -1,
 				},
 				children,

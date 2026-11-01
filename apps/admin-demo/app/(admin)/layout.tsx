@@ -1,32 +1,41 @@
-import { AdsTypography } from '@admin-ds/components';
-import { AdsAdminShell } from '@admin-ds/admin';
-import { cookies } from 'next/headers';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 import type { ReactNode } from 'react';
-import { resolveTheme, themeCookieName } from '../../lib/theme';
+import { DemoBrand } from '../demo-brand';
+import { readServerPreference } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
+import { DemoAccountMenu, DemoNotifications, DemoOrganizationSwitcher } from '../header-controls';
 import { RouteChangeHandler } from '../route-change-handler';
 import { ThemeControl } from '../theme-control';
 
 export default async function AdminLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const cookieStore = await cookies();
-	const theme = resolveTheme(cookieStore.get(themeCookieName)?.value);
+	const preference = await readServerPreference();
 
 	return (
-		<AdsAdminShell>
+		<AdsAdminShell className="demo-admin-shell" layout="sidebar-header">
 			<RouteChangeHandler />
 
 			<AdsAdminShell.Header>
 				<AdsAdminShell.NavigationTrigger />
-				<AdsAdminShell.SidebarToggle />
-				<AdsTypography as="strong" variant="heading4">
-					Admin Design System
-				</AdsTypography>
+				<div className="demo-mobile-brand">
+					<DemoBrand compact />
+				</div>
 				<div className="demo-header-tools">
-					<ThemeControl initialTheme={theme} />
+					<ThemeControl initialPreference={preference} />
+					<DemoNotifications />
+					<DemoAccountMenu />
 				</div>
 			</AdsAdminShell.Header>
 			<AdsAdminShell.Body>
-				<AdsAdminShell.Sidebar label="Navegação do demo" mobileTitle="Navegação do demo">
+				<AdsAdminShell.Sidebar
+					header={
+						<>
+							<DemoBrand />
+							<AdsAdminShell.SidebarToggle />
+						</>
+					}
+					label="Navegação do demo"
+				>
+					<DemoOrganizationSwitcher />
 					<DemoNavigation />
 				</AdsAdminShell.Sidebar>
 				<AdsAdminShell.Main>{children}</AdsAdminShell.Main>

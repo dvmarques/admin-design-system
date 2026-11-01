@@ -60,3 +60,60 @@ O `fieldset` e a `legend` de `AdsSelectionGroup` MUST NOT exibir a borda, a marg
 
 - **WHEN** um `AdsSelectionGroup` com legenda é renderizado no tema escuro
 - **THEN** nem o `fieldset` nem a `legend` mostram a moldura ou o recuo nativos do navegador
+
+### Requirement: Mensagens próximas ao controle sem reset externo
+
+AdsField MUST apresentar ajuda e erro com espaçamento compacto baseado nos tokens existentes e sem margens nativas adicionais de parágrafo. A distância até as mensagens MUST ser menor que a distância entre rótulo e controle. AdsFieldDescription e AdsFieldMessage MUST zerar margens nativas quando usados isoladamente, preservando o layout definido pelo consumidor.
+
+#### Scenario: Campo inválido em aplicação Next.js
+
+- **WHEN** uma aplicação Next.js usa AdsField com Input, Textarea ou Select e importa apenas o CSS compilado público, sem reset de parágrafos
+- **THEN** o erro permanece próximo ao controle, associado por aria-describedby e anunciado como alerta, preservando aria-invalid
+
+#### Scenario: Ajuda e erro simultâneos em telas estreitas
+
+- **WHEN** um campo apresenta descrição e erro longos nos temas claro e escuro em viewport estreita
+- **THEN** as mensagens quebram linhas sem sobreposição ou overflow e mantêm espaçamento compacto entre si e o controle
+
+#### Scenario: Personalização de espaçamento
+
+- **WHEN** o consumidor personaliza o token de espaçamento compacto
+- **THEN** o espaçamento entre controle e mensagens acompanha o token sem recompilar a biblioteca
+
+#### Scenario: Primitivas em composição manual
+
+- **WHEN** o consumidor compõe AdsFieldDescription e AdsFieldMessage sem AdsField
+- **THEN** os parágrafos não acrescentam margens nativas ao espaçamento definido pelo consumidor
+
+### Requirement: Adornos e ações do InputGroup não quebram indevidamente
+
+AdsInputGroup MUST preservar em uma linha o conteúdo de prefixos, sufixos e rótulos de botões curtos usados em startContent e endContent, permitindo que o controle textual dentro do grupo ocupe o espaço flexível restante. Esse comportamento MUST ser limitado ao grupo e MUST NOT impor proibição de quebra global aos botões independentes. A composição MUST manter semântica, foco e estados do campo.
+
+#### Scenario: Valor monetário com duas ações
+
+- **WHEN** uma aplicação mostra um AdsInputGroup com prefixo R$, valor editável e ações Limpar e Restaurar em largura suficiente
+- **THEN** R$, Limpar e Restaurar permanecem íntegros na mesma linha do campo, sem letras empilhadas nem quebra dentro dos botões
+
+#### Scenario: Campo reduz sem esmagar adornos
+
+- **WHEN** a largura do contêiner diminui, mas ainda comporta prefixo e ações
+- **THEN** o campo textual utiliza o espaço restante e adornos permanecem legíveis, sem expansão horizontal da página
+
+#### Scenario: Largura insuficiente e zoom
+
+- **WHEN** o conteúdo total excede a largura disponível em 320px ou zoom de 200%
+- **THEN** as ações e o prefixo continuam inteiros e alcançáveis por teclado por uma adaptação responsiva ou rolagem local, sem ocultar funcionalidade nem provocar overflow da página
+
+#### Scenario: Conteúdo variado e temas
+
+- **WHEN** o grupo usa só startContent, só endContent ou ambos, com texto e botões, nos tamanhos sm, md e lg em claro ou escuro
+- **THEN** adornos mantêm alinhamento, bordas e tamanhos adequados ao controle e não alteram os estilos de botões fora do grupo
+
+### Requirement: Demonstração funcional e específica de InputGroup
+
+O catálogo MUST demonstrar AdsInputGroup de forma independente da composição de AdsField e MUST preservar ações acessíveis e funcionais no exemplo Valor em reais.
+
+#### Scenario: Pessoa limpa e restaura
+
+- **WHEN** a pessoa escolhe Limpar no exemplo de valor
+- **THEN** o campo fica vazio, e ao escolher Restaurar o valor inicial é recolocado; os botões têm nomes acessíveis claros apesar dos rótulos visuais compactos

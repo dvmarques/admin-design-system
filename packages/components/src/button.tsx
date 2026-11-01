@@ -59,8 +59,24 @@ export const AdsButton = forwardRef<HTMLButtonElement, AdsButtonProps>(function 
 			ref={ref}
 			type={type}
 		>
-			{isLoading ? <AdsLoadingIndicator aria-hidden="true" label={loadingLabel} size="sm" /> : null}
-			{children}
+			<span className="grid">
+				<span
+					className={classNames(
+						'inline-flex items-center gap-2 [grid-area:1/1]',
+						isLoading && 'opacity-0',
+					)}
+				>
+					{children}
+				</span>
+				{isLoading ? (
+					<AdsLoadingIndicator
+						aria-hidden="true"
+						className="m-auto [grid-area:1/1]"
+						label={loadingLabel}
+						size="sm"
+					/>
+				) : null}
+			</span>
 		</button>
 	);
 });

@@ -1,4 +1,4 @@
-import { AdsEmptyState } from '@admin-ds/components';
+import { AdsEmptyState } from '@dvmarques/admin-ds-components';
 import { act } from '@testing-library/react';
 import { hydrateRoot } from 'react-dom/client';
 import { renderToString } from 'react-dom/server';
@@ -15,13 +15,22 @@ function Dashboard() {
 				trend="up"
 				value="R$ 48.200"
 			/>
-			<AdsMetricCard loading title="Clientes" />
+			<AdsMetricCard
+				change="-8%"
+				sentiment="positive"
+				sparkline={{ label: 'Cancelamentos', values: [9, null, 7] }}
+				title="Cancelamentos"
+				trend="down"
+				value="38"
+			/>
+			<AdsMetricCard loading sparkline={{ values: [1, 2] }} title="Clientes" />
 			<AdsMetricCard empty="Sem dados no período." title="Pedidos" />
 			<AdsDashboardPanel description="Últimos 7 dias" span={2} title="Vendas">
 				<p>Conteúdo</p>
 			</AdsDashboardPanel>
 			<AdsDashboardPanel loading title="Carregando" />
 			<AdsDashboardPanel error="Falhou" title="Erro" />
+			<AdsDashboardPanel empty="Nenhum registro." title="Painel vazio" />
 			<AdsDashboardPanel empty={<AdsEmptyState title="Nada por aqui" />} title="Sem dados" />
 		</AdsDashboardGrid>
 	);
@@ -33,7 +42,12 @@ describe('dashboard patterns SSR and hydration', () => {
 		expect(html).toContain('ads-dashboard-grid-items');
 		expect(html).toContain('aria-labelledby');
 		expect(html).toContain('Em alta');
+		expect(html).toContain('Em queda');
+		expect(html).toContain('data-tone="positive"');
+		expect(html).toContain('Cancelamentos: 2 pontos');
 		expect(html).toContain('Nada por aqui');
+		expect(html).toContain('Nenhum registro.');
+		expect(html).toContain('data-size="compact"');
 	});
 
 	it('hydrates without warnings, recoverable errors or markup changes', async () => {

@@ -7,8 +7,8 @@ import {
 	type AdsFilterValues,
 	type AdsSmartTableColumn,
 	type AdsStepDefinition,
-} from '@admin-ds/admin';
-import { AdsBadge, AdsButton, AdsField, AdsInput, AdsSelect } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-admin';
+import { AdsBadge, AdsButton, AdsField, AdsInput, AdsSelect } from '@dvmarques/admin-ds-components';
 
 interface User {
 	id: string;
@@ -98,7 +98,45 @@ export const ListWithBulkActions: Story = {
 	render: () => <ListFlowDemo />,
 };
 
-function StepFormDemo({ startInvalid = false }: { startInvalid?: boolean }) {
+function ConfirmWithContentDemo() {
+	const [open, setOpen] = useState(false);
+	const [reason, setReason] = useState('');
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)} variant="danger">
+				Arquivar conta
+			</AdsButton>
+			<AdsConfirmDialog
+				confirmLabel="Arquivar"
+				description="A conta deixa de aparecer nas listagens."
+				onConfirm={() => setOpen(false)}
+				onOpenChange={setOpen}
+				open={open}
+				title="Arquivar a conta?"
+			>
+				<AdsField label="Motivo (opcional)">
+					<AdsInput onChange={(event) => setReason(event.target.value)} value={reason} />
+				</AdsField>
+			</AdsConfirmDialog>
+		</>
+	);
+}
+
+/**
+ * Com controles focáveis em `children`, o foco inicial vai ao primeiro controle elegível (não
+ * desabilitado, visível e não inerte). Sem eles, vai a "Cancelar".
+ */
+export const ConfirmWithInteractiveContent: Story = {
+	render: () => <ConfirmWithContentDemo />,
+};
+
+function StepFormDemo({
+	asyncValidation = false,
+	startInvalid = false,
+}: {
+	asyncValidation?: boolean;
+	startInvalid?: boolean;
+}) {
 	const [step, setStep] = useState('account');
 	const [name, setName] = useState('');
 	const [role, setRole] = useState('editor');
@@ -112,7 +150,11 @@ function StepFormDemo({ startInvalid = false }: { startInvalid?: boolean }) {
 			description: 'Dados básicos do usuário.',
 			validate: () => {
 				setTouched(true);
-				return name.trim() !== '';
+				const valid = name.trim() !== '';
+				// Simula uma consulta ao servidor; um `validate` síncrono continua suportado.
+				return asyncValidation
+					? new Promise<boolean>((resolve) => setTimeout(() => resolve(valid), 800))
+					: valid;
 			},
 			content: (
 				<AdsField error={nameError} label="Nome" validationState={nameError ? 'error' : 'default'}>
@@ -164,6 +206,65 @@ export const StepForm: Story = { render: () => <StepFormDemo /> };
 
 export const StepFormWithError: Story = {
 	render: () => <StepFormDemo startInvalid />,
+};
+
+export const StepFormWithAsyncValidation: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'`validate` pode retornar uma `Promise`: durante a espera o formulário fica com `aria-busy`, o botão mostra o carregamento e as ações ficam indisponíveis sem perder o foco. Depois de avançar, o indicador permite voltar às etapas anteriores e às já validadas.',
+			},
+		},
+	},
+	render: () => <StepFormDemo asyncValidation />,
+};
+
+function ConfirmDialogDemo({ destructive }: { destructive: boolean }) {
+	const [open, setOpen] = useState(false);
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)} variant={destructive ? 'danger' : 'primary'}>
+				{destructive ? 'Excluir conta' : 'Publicar alterações'}
+			</AdsButton>
+			<AdsConfirmDialog
+				confirmLabel={destructive ? 'Excluir' : 'Publicar'}
+				description={
+					destructive
+						? 'Esta ação não pode ser desfeita.'
+						: 'As alterações ficarão visíveis a todos.'
+				}
+				destructive={destructive}
+				onConfirm={() => setOpen(false)}
+				onOpenChange={setOpen}
+				open={open}
+				title={destructive ? 'Excluir a conta?' : 'Publicar as alterações?'}
+			/>
+		</>
+	);
+}
+
+export const ConfirmDestructive: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Com `destructive` (padrão) o painel usa `role="alertdialog"` e a variante de perigo. `role` explícito prevalece.',
+			},
+		},
+	},
+	render: () => <ConfirmDialogDemo destructive />,
+};
+
+export const ConfirmNonDestructive: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story: 'Com `destructive={false}` o painel usa `role="dialog"` e a confirmação primária.',
+			},
+		},
+	},
+	render: () => <ConfirmDialogDemo destructive={false} />,
 };
 
 export const Narrow: Story = {

@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
+import { expectNoAxeViolations } from './axe';
+import { releaseShellHeight } from './full-page-shell';
+import { chooseTheme } from './theme-control';
 
 async function hideDevelopmentPortal(page: Page) {
 	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
@@ -14,10 +17,28 @@ test('preserva semântica e acesso aos dados em viewport estreita', async ({ pag
 			name: 'Apresentação de dados administrativos',
 		}),
 	).toBeVisible();
-	await expect(page.getByRole('table', { name: 'Clientes recentes' })).toBeVisible();
+	await expect(page.getByRole('table', { name: 'Clientes recentes', exact: true })).toBeVisible();
 	await expect(page.getByRole('columnheader', { name: 'Cliente' })).toBeVisible();
 	await expect(page.getByRole('cell', { name: 'Mariana Costa' })).toBeVisible();
-	await expect(page.locator('.ads-table-container')).toHaveCSS('overflow-x', 'auto');
+	await expect(page.locator('.ads-table-container').first()).toHaveCSS('overflow-x', 'auto');
+});
+
+test('a tabela compacta usa menos espaçamento vertical que a confortável', async ({ page }) => {
+	await page.goto('/data-display');
+
+	const comfortable = page
+		.getByRole('table', { name: 'Clientes recentes', exact: true })
+		.getByRole('cell', { name: 'Mariana Costa' });
+	const compact = page
+		.getByRole('table', { name: 'Clientes recentes (compacta)' })
+		.getByRole('cell', { name: 'Helena Prado' });
+	await expect(page.getByRole('table', { name: 'Clientes recentes (compacta)' })).toHaveAttribute(
+		'data-density',
+		'compact',
+	);
+	const padding = (cell: typeof compact) =>
+		cell.evaluate((element) => Number.parseFloat(getComputedStyle(element).paddingTop));
+	expect(await padding(compact)).toBeLessThan(await padding(comfortable));
 });
 
 test('expõe progresso e estado vazio sem semântica de erro implícita', async ({ page }) => {
@@ -47,7 +68,7 @@ test('alterna visualmente o tema e permite voltar à visão geral pela sidebar',
 	const lightBackground = await page.locator('body').evaluate((element) => {
 		return getComputedStyle(element).backgroundColor;
 	});
-	await page.getByRole('button', { name: 'Usar tema escuro' }).click();
+	await chooseTheme(page, 'dark');
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 	const darkBackground = await page.locator('body').evaluate((element) => {
 		return getComputedStyle(element).backgroundColor;
@@ -60,9 +81,21 @@ test('alterna visualmente o tema e permite voltar à visão geral pela sidebar',
 	await expect(page).toHaveURL('/');
 });
 
-test('mantém a apresentação de dados nos temas claro e escuro', async ({ page }) => {
-	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
+test('exibe os sparklines com alternativa textual', async ({ page }) => {
+	await page.goto('/data-display');
 
+	await expect(page.getByRole('heading', { level: 2, name: 'Sparkline' })).toBeVisible();
+	await expect(
+		page.getByRole('img', { name: /^Visitas por dia: 7 pontos, de 12 a 25/ }),
+	).toBeVisible();
+	await expect(
+		page.getByRole('img', { name: /^Receita semanal: 4 pontos, de 8 \(S1\) a 15 \(S6\)/ }),
+	).toBeVisible();
+	await expect(page.getByRole('img', { name: 'Novo indicador: 1 ponto, valor 7.' })).toBeVisible();
+	await expectNoAxeViolations(page);
+});
+
+test('mantém a apresentação de dados nos temas claro e escuro', async ({ page }) => {
 	await page.context().addCookies([
 		{
 			name: 'ads-theme',
@@ -72,6 +105,7 @@ test('mantém a apresentação de dados nos temas claro e escuro', async ({ page
 	]);
 	await page.goto('/data-display');
 	await hideDevelopmentPortal(page);
+	await releaseShellHeight(page);
 	await expect(page).toHaveScreenshot('data-display-dark.png', { fullPage: true });
 
 	await page.context().addCookies([
@@ -83,5 +117,6 @@ test('mantém a apresentação de dados nos temas claro e escuro', async ({ page
 	]);
 	await page.reload();
 	await hideDevelopmentPortal(page);
+	await releaseShellHeight(page);
 	await expect(page).toHaveScreenshot('data-display-light.png', { fullPage: true });
 });

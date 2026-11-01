@@ -9,13 +9,23 @@ import {
 } from './admin-shell-navigation.js';
 import { AdsAdminShellStateProvider, type AdsAdminShellStateProps } from './admin-shell-state.js';
 import { classNames } from './class-names.js';
+import {
+	AdsAdminShellNavigation,
+	AdsAdminShellNavigationSection,
+	AdsAdminShellNavigationGroup,
+	AdsAdminShellNavigationItem,
+} from './sidebar-navigation.js';
 
 export interface AdsAdminShellProps
-	extends HTMLAttributes<HTMLDivElement>, Omit<AdsAdminShellStateProps, 'children'> {}
+	extends HTMLAttributes<HTMLDivElement>, Omit<AdsAdminShellStateProps, 'children'> {
+	/** Optional layout aligning Sidebar.header with the main header on desktop. */
+	layout?: 'standard' | 'sidebar-header';
+}
 
 function AdsAdminShellRoot({
 	children,
 	className,
+	layout = 'standard',
 	collapsed,
 	defaultCollapsed,
 	onCollapsedChange,
@@ -25,7 +35,14 @@ function AdsAdminShellRoot({
 	...props
 }: AdsAdminShellProps) {
 	return (
-		<div {...props} className={classNames('ads-admin-shell', className)}>
+		<div
+			{...props}
+			className={classNames(
+				'ads-admin-shell',
+				layout === 'sidebar-header' && 'ads-admin-shell--sidebar-header',
+				className,
+			)}
+		>
 			<AdsAdminShellStateProvider
 				collapsed={collapsed}
 				defaultCollapsed={defaultCollapsed}
@@ -52,7 +69,9 @@ function AdsAdminShellBody({ className, ...props }: AdsAdminShellBodyProps) {
 
 export type AdsAdminShellMainProps = HTMLAttributes<HTMLElement>;
 function AdsAdminShellMain({ className, ...props }: AdsAdminShellMainProps) {
-	return <main {...props} className={classNames('ads-admin-shell-main', className)} />;
+	// No desktop o main é a região rolável: precisa ser alcançável pelo teclado mesmo sem
+	// conteúdo focável. O consumidor pode sobrescrever `tabIndex`.
+	return <main tabIndex={0} {...props} className={classNames('ads-admin-shell-main', className)} />;
 }
 
 export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
@@ -63,6 +82,10 @@ export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
 	Body: AdsAdminShellBody,
 	Sidebar: AdsAdminShellSidebar,
 	Main: AdsAdminShellMain,
+	Navigation: AdsAdminShellNavigation,
+	NavigationSection: AdsAdminShellNavigationSection,
+	NavigationGroup: AdsAdminShellNavigationGroup,
+	NavigationItem: AdsAdminShellNavigationItem,
 });
 
 export type {

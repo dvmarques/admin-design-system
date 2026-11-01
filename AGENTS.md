@@ -33,15 +33,38 @@ ou imports de caminhos internos dos pacotes em componentes reutilizáveis.
 - O CSS compilado deve continuar utilizável por aplicações consumidoras.
 - Mudanças em APIs públicas devem considerar compatibilidade retroativa.
 
+## Identidade visual
+
+A identidade atual é definida pelos tokens, por `docs/visual-identity.md`,
+`docs/visual-polish.md` e pelo catálogo Storybook. Preserve a Inter, a escala
+de marca, os temas, a densidade e os componentes existentes. Use as APIs
+públicas `Ads*` e os tokens semânticos ao compor interfaces.
+
+As skills de design são orientações auxiliares para este projeto. Elas não
+autorizam trocar fontes, importar outro design system, adicionar dependências
+ou redesenhar interfaces por preferência estética. Mudanças na identidade
+precisam fazer parte do escopo solicitado e seguir o processo OpenSpec.
+
+## Leitura de contexto por demanda
+
+Após ler as regras obrigatórias deste arquivo, use `docs/agent-context-map.md` para identificar o escopo e os documentos necessários. Evite carregar referências não relacionadas à tarefa; em mudanças transversais, inclua os consumidores afetados. Nenhuma otimização de contexto dispensa regras, verificações ou gates obrigatórios.
+
+Para orquestrar uma issue até a revisão da PR, invoque a skill própria `adaptive-ai-workflow` e consulte `docs/ai-development-workflow.md`. Os perfis Fast, Standard e Critical ajustam a profundidade de planejamento, **nunca** dispensam as validações e políticas obrigatórias.
+
 ## Antes de alterar arquivos
 
-1. Leia `README.md`, `openspec/config.yaml` e a documentação relevante em `docs/`.
+1. Consulte `README.md` e `openspec/config.yaml` para o processo aplicável; use `docs/agent-context-map.md` para selecionar documentação adicional do escopo.
 2. Verifique as changes ativas com `openspec.cmd list`.
 3. Para mudanças relevantes de comportamento, API, tokens, estilos ou arquitetura,
    crie ou atualize uma change em `openspec/changes/<change-id>` antes da implementação.
 4. Preserve mudanças locais não relacionadas.
-5. Use uma branch de trabalho e submeta alterações por Pull Request conforme as
+5. Para toda mudança relevante ao produto, fluxo de desenvolvimento ou documentação, registre uma entrada em `CHANGELOG.md`, na versão `[0.1.1] - Em andamento`, sob `Added`, `Changed` ou `Fixed` conforme o caso. Identifique a change OpenSpec ou issue e descreva objetivamente o efeito. Não omita o registro por otimização de contexto; se não houver mudança registrável, justifique explicitamente na PR.
+6. Use uma branch de trabalho e submeta alterações por Pull Request conforme as
    políticas do repositório.
+
+## Contribuição e conclusão de changes
+
+Para abertura de issues e PRs, veja [CONTRIBUTING.md](CONTRIBUTING.md) e os templates em `.github/`. Para operações de conclusão, consulte [docs/openspec-lifecycle.md](docs/openspec-lifecycle.md): tasks verificáveis concluídas antes do archive; archive/sync autorizado na branch da PR comum; revisão, validação e CI do diff final antes de squash em `develop`. Archive, merge e fechamento administrativo são gates da PR, não tarefas de implementação em `tasks.md`. Somente restrição técnica concreta e aprovada admite integração prévia e PR posterior de archive. **Releases mantêm integralmente o fluxo próprio de `docs/release-process.md`, incluindo merge commit.** Aprovações humanas e validações obrigatórias não são dispensadas.
 
 ## Processo OpenSpec
 
@@ -58,6 +81,37 @@ Antes de concluir uma change, execute:
 ```powershell
 openspec.cmd validate --all --strict
 ```
+
+Sem `openspec.cmd` no ambiente (Linux/nuvem), use o equivalente da CI:
+`npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`.
+Não relate o CLI como indisponível sem tentar esse comando; nunca use `@latest`.
+
+## Compatibilidade entre agentes
+
+O repositório é usado com Claude Code, Cursor e Codex.
+
+- `AGENTS.md` é a fonte única de instruções; `CLAUDE.md` apenas o importa.
+- As skills do OpenSpec são geradas por `openspec.cmd update .` em `.agents/skills`,
+  `.claude/skills` e `.cursor/skills`. Não as edite à mão.
+- Skills próprias vivem em `.agents/skills` (lida por Codex e Cursor) e são listadas
+  em `skills-lock.json`. Após alterá-las, execute `npm run sync:agent-skills` para
+  copiá-las para `.claude/skills`; `npm run check:agent-skills` valida a sincronia.
+  Usa-se cópia, não symlink, por causa do Windows.
+- As três skills próprias de design são adaptações locais para a identidade
+  do projeto. `skills-lock.json` preserva sua origem e os hashes de importação,
+  não os hashes dos textos adaptados. Não sobrescreva as adaptações ao atualizar
+  o conteúdo de origem; revise as diferenças e sincronize as cópias.
+- Servidores MCP do projeto ficam em `.mcp.json` (Claude Code), `.cursor/mcp.json`
+  (Cursor) e `.codex/config.toml` (Codex); mantenha servidores e versões alinhados.
+  Credenciais, modelos e preferências pessoais permanecem fora do repositório.
+- Claude Code configura hooks em `.claude/settings.json`/`.claude/hooks` e revisores em
+  `.claude/agents`. O Codex usa `.codex/hooks.json`/`.codex/hooks` e revisores TOML em
+  `.codex/agents`. Os formatos são nativos de cada ferramenta; não copie payloads
+  de hooks entre elas. As skills compartilhadas permanecem em `.agents/skills`.
+- Os hooks Codex protegem gerados e formatam arquivos de chamadas `apply_patch`;
+  não interceptam escritas por shell. Revise e confie nos hooks pelo próprio Codex
+  antes de depender deles. Consulte `docs/agent-setup.md` para ativação e limites.
+- Mantenha o texto das skills neutro: diga "invoque a skill X" em vez de `/X` ou `$X`.
 
 ## Releases
 
@@ -100,7 +154,7 @@ npm run validate
 
 Antes de abrir ou atualizar um PR, prefira a saída concisa dos comandos
 oficiais. A sequência equivalente é `npm run format`, `npm run lint`,
-`npm run build`, `npm run typecheck`, `npm run test:quiet` e
+`npm run build`, `npm run typecheck`, `npm run test:quality` e
 `npm run test:e2e`. Para diagnosticar falhas, use `npm run test:verbose` ou
 `npm run test:e2e:verbose`.
 
@@ -118,6 +172,10 @@ npm run dev --workspace @admin-ds/docs
 npm run dev --workspace @admin-ds/admin-demo
 npm run test:e2e
 ```
+
+O hook `pre-commit` (Husky + lint-staged, instalado por `npm install` via `prepare`)
+executa `eslint --fix` e `prettier --write` nos arquivos staged. Ele não substitui
+`npm run validate`, e a CI usa `npm ci --ignore-scripts`, então não o instala.
 
 Antes da conclusão, formate os arquivos alterados e confirme:
 

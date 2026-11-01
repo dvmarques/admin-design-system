@@ -65,3 +65,282 @@ AdsDialog e AdsDrawer MUST usar a escala semântica de elevação e camada para 
 
 - **WHEN** um diálogo com ações é exibido em largura inferior a 768 px
 - **THEN** conteúdo, ações e controle de fechar permanecem acessíveis sem colisão ou corte do conteúdo
+
+### Requirement: Escape em overlays aninhados fecha apenas a camada superior
+
+Quando mais de um overlay estiver aberto, o Escape MUST ser tratado apenas pela camada superior, definida pela ordem de abertura, e MUST NOT fechar uma camada inferior no mesmo pressionamento.
+
+#### Scenario: Popover aberto dentro de um diálogo
+
+- **WHEN** um popover aberto a partir de um diálogo recebe um Escape
+- **THEN** apenas o popover solicita fechamento, o diálogo permanece aberto e o foco volta ao gatilho do popover dentro do diálogo
+
+#### Scenario: Segundo Escape fecha o diálogo
+
+- **WHEN** o popover já foi fechado e o usuário pressiona Escape novamente
+- **THEN** o diálogo solicita fechamento e o foco volta ao elemento que o abriu
+
+#### Scenario: Camada superior não fecha por Escape
+
+- **WHEN** a camada superior tem o fechamento por Escape desabilitado e o usuário pressiona Escape
+- **THEN** nenhuma camada solicita fechamento e a camada inferior permanece aberta
+
+### Requirement: Drawer mantém o contrato modal nos dois posicionamentos
+
+`AdsDrawer` MUST oferecer, à esquerda e à direita, a mesma semântica modal do diálogo: papel de diálogo com `aria-modal`, nome acessível, foco preso, fechamento por Escape quando habilitado e retorno do foco ao elemento que o abriu.
+
+#### Scenario: Drawer à esquerda e à direita
+
+- **WHEN** um drawer é aberto com posicionamento à esquerda ou à direita
+- **THEN** ele expõe `role="dialog"` com `aria-modal="true"` e nome acessível, e o foco entra no seu conteúdo
+
+#### Scenario: Escape e retorno de foco no drawer
+
+- **WHEN** um drawer aberto recebe um Escape e permite esse fechamento
+- **THEN** a aplicação recebe a solicitação de fechamento e, ao fechar, o foco volta ao elemento que o abriu
+
+### Requirement: Conteúdo fora do modal fica inerte
+
+Enquanto um `AdsDialog` ou `AdsDrawer` estiver aberto, o conteúdo da página fora do overlay MUST ficar inerte: sem receber foco, cliques ou ativação por teclado e fora da árvore de acessibilidade, nos navegadores com suporte ao atributo `inert`.
+
+#### Scenario: Usuário tenta alcançar o fundo por teclado
+
+- **WHEN** um modal está aberto e o usuário percorre a página com Tab e Shift+Tab
+- **THEN** o foco permanece dentro do modal e nenhum controle do fundo o recebe
+
+#### Scenario: Usuário clica no conteúdo de fundo
+
+- **WHEN** um modal está aberto e o usuário clica em um controle do fundo
+- **THEN** o controle não é acionado e o clique na área do backdrop segue as regras de fechamento por backdrop
+
+#### Scenario: Tecnologia assistiva lê a página
+
+- **WHEN** um modal está aberto
+- **THEN** o conteúdo do fundo não é exposto na árvore de acessibilidade e o modal permanece acessível
+
+### Requirement: Estado anterior do conteúdo é restaurado
+
+Ao fechar ou desmontar o modal, o conteúdo da página MUST voltar ao estado anterior à abertura, preservando um `inert` que a aplicação já tivesse aplicado e sem deixar a página inerte.
+
+#### Scenario: Modal é fechado
+
+- **WHEN** o modal aberto é fechado ou desmontado
+- **THEN** o fundo volta a receber foco e cliques e o foco retorna ao elemento que abriu o modal
+
+#### Scenario: Aplicação altera o inert durante o modal
+
+- **WHEN** a aplicação acrescenta `inert` a uma região coberta enquanto o modal está aberto
+- **THEN** a região continua inerte depois do fechamento, e um `inert` que ela remova é aplicado de novo enquanto o modal está aberto
+
+#### Scenario: Aplicação já tornou uma região inerte
+
+- **WHEN** uma região já marcada como inerte pela aplicação existe quando o modal abre e depois fecha
+- **THEN** a região continua inerte depois do fechamento
+
+### Requirement: Modais aninhados restauram o fundo apenas no último fechamento
+
+Com mais de um modal aberto, apenas o modal mais recente MUST ficar interativo, e a página MUST voltar a ser interativa somente quando o último modal fechar, em qualquer ordem de fechamento.
+
+#### Scenario: Modal aberto a partir de outro modal
+
+- **WHEN** um segundo modal é aberto a partir do primeiro
+- **THEN** o primeiro modal fica inerte e apenas o segundo recebe foco e cliques
+
+#### Scenario: Modais fechados fora de ordem
+
+- **WHEN** o primeiro modal fecha enquanto o segundo continua aberto
+- **THEN** o fundo continua inerte até o segundo modal fechar
+
+### Requirement: Inerte sem suporte, em StrictMode e na renderização do servidor
+
+Em navegadores sem suporte ao atributo `inert`, o modal MUST manter o comportamento de foco preso e `aria-modal` sem erro. O mesmo comportamento MUST valer em StrictMode, e a renderização no servidor e a hidratação MUST NOT ser alteradas.
+
+#### Scenario: Aplicação em StrictMode
+
+- **WHEN** um modal abre e fecha em StrictMode
+- **THEN** o fundo fica inerte enquanto o modal está aberto e é restaurado ao fechar
+
+#### Scenario: Aplicação Next.js com App Router
+
+- **WHEN** uma página com um modal inicialmente fechado é renderizada no servidor e hidratada
+- **THEN** o HTML do servidor não contém `inert` e a hidratação ocorre sem divergência
+
+### Requirement: Conteúdo criado durante o modal também fica inerte
+
+Enquanto um modal está aberto, um nó adicionado ou substituído como filho de `document.body` MUST ficar inerte, exceto toasts e popups nascidos dentro de um overlay interativo.
+
+#### Scenario: Conteúdo da página é substituído com o modal aberto
+
+- **WHEN** a aplicação ou um portal de terceiros insere ou substitui um nó de página enquanto o modal está aberto
+- **THEN** o novo nó fica inerte e volta ao estado anterior quando o último modal fecha
+
+#### Scenario: Popup aberto pelo fundo durante o modal
+
+- **WHEN** um popover da página, e não do modal, é aberto enquanto o modal está aberto
+- **THEN** o popover fica inerte até o modal fechar
+
+### Requirement: Foco volta a um alvo utilizável com modais aninhados
+
+Ao fechar um modal, o foco MUST voltar ao elemento que o abriu e, se esse elemento não estiver mais na página, ao elemento que abriu o modal ao redor.
+
+#### Scenario: Modal de origem fecha antes do modal aninhado
+
+- **WHEN** o modal A abre o modal B, A fecha enquanto B está aberto e depois B fecha
+- **THEN** o foco volta ao elemento da página que abriu A
+
+### Requirement: Camadas de overlay hierárquicas
+
+Quando houver mais de um overlay aberto, o sistema MUST tratar foco por teclado, fechamento por clique externo e fechamento por backdrop segundo a hierarquia lógica das camadas, incluindo overlays renderizados em portais, e MUST NOT alterar as APIs públicas dos componentes.
+
+#### Scenario: Modais empilhados
+
+- **WHEN** um diálogo é aberto sobre outro diálogo e o usuário usa Tab ou Shift+Tab
+- **THEN** somente o diálogo superior controla o foco, e o foco não alcança o diálogo inferior nem a página
+
+#### Scenario: Fechar o modal superior
+
+- **WHEN** o diálogo superior é fechado
+- **THEN** o diálogo inferior volta a controlar o foco, Escape e o scroll, e o foco retorna ao elemento que abriu o superior
+
+#### Scenario: Popup dentro de um modal
+
+- **WHEN** um popover ou menu aberto dentro de um modal recebe foco ou clique
+- **THEN** o modal não interrompe a navegação do popup e o clique no popup não fecha o modal nem popups pais
+
+#### Scenario: Popup aninhado em popup
+
+- **WHEN** o usuário interage com um popover aberto a partir de outro popover
+- **THEN** o popover pai permanece aberto
+
+#### Scenario: Backdrop com popup aberto
+
+- **WHEN** o usuário clica no backdrop com um popup aberto sobre o modal
+- **THEN** somente o popup fecha e o modal permanece aberto
+
+### Requirement: Isolamento e scroll do fundo durante modais
+
+Enquanto houver um modal aberto, a página de fundo MUST estar isolada da interação e MUST NOT rolar; ao fechar o último modal, o isolamento e o scroll MUST ser restaurados aos valores anteriores.
+
+#### Scenario: Scroll bloqueado
+
+- **WHEN** um diálogo ou drawer é aberto
+- **THEN** a rolagem do documento é bloqueada sem deslocar o conteúdo por perda da barra de rolagem
+
+#### Scenario: Modais empilhados e fechamento
+
+- **WHEN** dois modais estão abertos e o superior é fechado
+- **THEN** o scroll permanece bloqueado até o fechamento do último, quando os valores originais retornam
+
+#### Scenario: Desmontagem com modal aberto
+
+- **WHEN** um modal aberto é desmontado sem ser fechado
+- **THEN** o scroll, o isolamento e os listeners globais são liberados
+
+#### Scenario: Renderização no servidor e StrictMode
+
+- **WHEN** os componentes são renderizados no servidor ou sob React StrictMode
+- **THEN** não há acesso ao DOM durante a renderização e não restam listeners ou estilos residuais
+
+### Requirement: Papel configurável do diálogo
+
+`AdsDialog` MUST aceitar `role` com `dialog` (padrão) ou `alertdialog` e MUST aplicá-lo ao painel modal, preservando `aria-modal`, nome e descrição acessíveis, foco e fechamento. `AdsDrawer` MUST manter `role="dialog"`.
+
+#### Scenario: Papel padrão
+
+- **WHEN** `AdsDialog` abre sem `role`
+- **THEN** o painel tem `role="dialog"`
+
+#### Scenario: Alertdialog
+
+- **WHEN** `AdsDialog` abre com `role="alertdialog"`
+- **THEN** o painel tem `role="alertdialog"`, `aria-modal="true"` e o mesmo nome e descrição acessíveis
+
+### Requirement: Drawer preserva altura integral em telas estreitas
+
+AdsDrawer MUST ocupar toda a altura disponível do backdrop em telas estreitas, sem herdar o limite de altura reservado a AdsDialog. MUST preservar rolagem interna, foco, isolamento e fechamento existentes.
+
+#### Scenario: Drawer móvel com conteúdo longo
+
+- **WHEN** um drawer esquerdo ou direito abre em uma viewport móvel
+- **THEN** ele alcança o rodapé da viewport, o conteúdo rola internamente e os controles permanecem alcançáveis
+
+#### Scenario: Diálogo móvel
+
+- **WHEN** um AdsDialog abre na mesma viewport
+- **THEN** seus limites e margens anteriores permanecem preservados
+
+### Requirement: Armadilha de Tab usa elegibilidade consistente com o foco inicial
+
+Em `AdsDialog` e `AdsDrawer`, incluindo o `AdsConfirmDialog` que os compõe, o sistema MUST determinar o primeiro e o último destino da navegação por Tab usando o mesmo critério de elegibilidade de foco inicial. Controles desabilitados, incluindo por `fieldset disabled`, ocultos, inertes e com `tabindex` negativo MUST NOT atuar como pontos de virada do ciclo, e o sistema MUST reavaliar a elegibilidade a cada Tab ou Shift+Tab, de modo que mudanças com o modal aberto sejam respeitadas.
+
+#### Scenario: Tab avança com controle inelegível no início
+
+- **WHEN** um modal aberto contém um controle inelegível antes do primeiro controle elegível e o usuário usa Tab no último controle elegível
+- **THEN** o foco retorna ao primeiro controle elegível e não fica parado, não vai ao controle inelegível nem escapa ao fundo
+
+#### Scenario: Shift+Tab retorna com controle inelegível no fim
+
+- **WHEN** um modal aberto contém controles inelegíveis depois do último elegível e o usuário usa Shift+Tab no primeiro elegível
+- **THEN** o foco chega ao último elegível e não vai ao controle inelegível nem ao fundo
+
+#### Scenario: Controle perde elegibilidade com modal aberto
+
+- **WHEN** um controle focado é desabilitado ou ocultado enquanto um modal está aberto e o usuário pressiona Tab ou Shift+Tab
+- **THEN** o foco segue para uma extremidade elegível ou fallback interno sem escapar ao conteúdo de fundo
+
+#### Scenario: Controle com tabindex negativo não é ponta do ciclo
+
+- **WHEN** um modal aberto contém um controle com `tabindex` negativo antes do primeiro ou depois do último controle elegível
+- **THEN** esse controle não recebe o foco inicial nem atua como ponto de virada, e o ciclo usa o controle elegível mais próximo da extremidade
+
+#### Scenario: Nenhum candidato elegível
+
+- **WHEN** um modal não contém controles elegíveis e o usuário pressiona Tab ou Shift+Tab
+- **THEN** o contêiner do modal permanece como fallback seguro de foco, sem liberar navegação ao fundo
+
+#### Scenario: Popup descendente e retorno de foco
+
+- **WHEN** um popup portalled descendente do modal está interativo ou o modal fecha
+- **THEN** o ciclo do modal não interrompe o popup e os contratos existentes de retorno de foco, Escape e camadas continuam válidos
+
+#### Scenario: Temas, dispositivos e renderização
+
+- **WHEN** os overlays são usados nos temas claro/escuro, em viewport estreita ou em página Next.js hidratada
+- **THEN** a regra de foco e os indicadores acessíveis mantêm-se sem divergência de hidratação
+
+### Requirement: Pontas do ciclo de Tab seguem a ordem real de tabulação
+
+Em `AdsDialog` e `AdsDrawer`, incluindo o `AdsConfirmDialog` que os compõe, o sistema MUST determinar o primeiro e o último destino do ciclo de Tab pela ordem real de tabulação do navegador: controles com `tabindex` positivo em ordem crescente, seguidos dos demais em ordem de documento. O sistema MUST tratar cada grupo de rádio (mesmo `name` e mesmo formulário) como uma única parada: a opção marcada ou, sem marcada, a primeira no Tab e a última no Shift+Tab.
+
+#### Scenario: Tabindex positivo define as pontas
+
+- **WHEN** um modal aberto contém controles com `tabindex` positivo e outros sem `tabindex`, e o usuário usa Tab no último controle da ordem real ou Shift+Tab no primeiro
+- **THEN** o foco vai à outra ponta da ordem real de tabulação, sem saltar controles nem escapar do modal
+
+#### Scenario: Grupo de rádio na ponta do ciclo
+
+- **WHEN** um grupo de rádio está na última ou na primeira posição do modal e o usuário usa Tab ou Shift+Tab a partir da parada do grupo
+- **THEN** o foco dá a volta do ciclo imediatamente, sem passar pelo documento fora do modal
+
+#### Scenario: Rádios que não formam grupo
+
+- **WHEN** rádios têm `name` diferentes, formulários distintos ou não têm `name`
+- **THEN** cada um permanece como parada própria
+
+### Requirement: Foco inicial com abertura na montagem em StrictMode
+
+O sistema MUST mover o foco para o primeiro controle elegível, ou para o contêiner, quando um overlay modal é montado já aberto, inclusive sob React StrictMode.
+
+#### Scenario: Montagem aberta em StrictMode
+
+- **WHEN** um `AdsDialog`, `AdsDrawer` ou `AdsConfirmDialog` é renderizado em StrictMode com `open` inicial verdadeiro
+- **THEN** `document.activeElement` fica dentro do modal
+
+### Requirement: iframe na ponta do ciclo é limitação documentada
+
+O sistema MUST NOT excluir `iframe` do ciclo de Tab, e a limitação de que o foco transferido ao documento interno não é alcançável pelo ciclo MUST constar em `docs/limitations.md`.
+
+#### Scenario: Documentação da limitação
+
+- **WHEN** um consumidor consulta `docs/limitations.md`
+- **THEN** encontra o `iframe` como limitação conhecida e não encontra rádios nem `tabindex` positivo como limitações

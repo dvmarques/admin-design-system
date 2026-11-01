@@ -70,6 +70,11 @@ export function useAdminShellContext() {
 	return context;
 }
 
+/** Internal: like `useAdminShellContext`, but `null` outside `AdsAdminShell` (optional composition). */
+export function useOptionalAdminShellContext() {
+	return useContext(AdminShellContext);
+}
+
 /** Reads the shell state so consumers can adapt their own content, for example when collapsed. */
 export function useAdsAdminShell(): AdsAdminShellState {
 	const { collapsed, setCollapsed, mobileOpen, setMobileOpen, isDesktop } = useAdminShellContext();

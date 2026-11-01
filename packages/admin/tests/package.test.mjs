@@ -9,7 +9,7 @@ test('admin package exposes only its public entry points', () => {
 });
 
 test('admin package declares its runtime peers explicitly', () => {
-	for (const peer of ['@admin-ds/components', 'react', 'react-dom']) {
+	for (const peer of ['@dvmarques/admin-ds-components', 'react', 'react-dom']) {
 		assert.ok(manifest.peerDependencies[peer], `missing peer dependency: ${peer}`);
 	}
 });
@@ -88,6 +88,19 @@ test('smart table styles use public tokens, a focusable scroll region and the se
 	assert.match(css, /\.ads-smart-table-columns-panel\[hidden\]\s*\{[^}]*display:\s*none/);
 });
 
+test('smart table caption is padded with density tokens before the visually hidden rule', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	const caption = css.match(/\.ads-smart-table-scroll :where\(\.ads-table-caption\)\s*\{([^}]*)\}/);
+	assert.ok(caption, 'missing smart table caption padding');
+	assert.match(
+		caption[1],
+		/padding:[^;]*--ads-density-cell-padding-y[^;]*--ads-density-cell-padding-x/,
+	);
+	// A legenda oculta zera o padding; para vencer com a mesma especificidade, vem depois.
+	assert.ok(css.indexOf('.ads-smart-table-visually-hidden') > caption.index);
+});
+
 test('smart table selection cell has no percentage width, so the table is not stretched', async () => {
 	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
 	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
@@ -105,4 +118,17 @@ test('smart table column panel is inline and the grid does not grow past its con
 	assert.doesNotMatch(panel, /position:\s*(absolute|fixed)|z-index/);
 	assert.match(css, /\.ads-smart-table\s*\{[^}]*grid-template-columns:\s*minmax\(0,\s*1fr\)/);
 	assert.match(css, /\.ads-smart-table-pagination > \.ads-pagination\s*\{[^}]*min-width:\s*0/);
+});
+
+test('admin styles take durations from the motion tokens and cover forced colors', async () => {
+	const source = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+	const css = source.replace(/\/\*[\s\S]*?\*\//g, '');
+	assert.doesNotMatch(css, /transition:[^;]*\d+m?s/);
+	assert.doesNotMatch(css, /transition:\s*none/);
+	const forced = css.slice(css.indexOf('@media (forced-colors: active)'));
+	assert.match(
+		forced,
+		/\.ads-smart-table \.ads-table-row\[data-selected\]\s*\{[^}]*outline:[^;]*Highlight/,
+	);
+	assert.match(forced, /\.ads-filter-bar\[data-loading\]::before\s*\{[^}]*Highlight/);
 });

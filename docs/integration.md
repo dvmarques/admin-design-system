@@ -1,18 +1,154 @@
 # Integração do design system
 
-## Instalação e estilos
+## Antes da primeira publicação npm
 
-Uma aplicação consumidora importa as APIs e folhas de estilo públicas:
+**Estado em 31/10/2026:** a [#194](https://github.com/dvmarques/admin-design-system/issues/194) validou os quatro pacotes com `npm pack` e uma aplicação Next.js externa usando tarballs locais (`file:`), incluindo tipos, CSS compilado sem Tailwind no consumidor e hidratação. **Os pacotes ainda não estão disponíveis no registro npm.** A [#195](https://github.com/dvmarques/admin-design-system/issues/195) executará a primeira publicação e confirmará sua instalação real pelo registry. O comando de instalação abaixo é **prospectivo**, não evidência de instalação pelo npm.
 
-```ts
-import { ThemeToggle } from '@admin-ds/components';
-import { tokenValues } from '@admin-ds/tokens';
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/components/styles.css';
+O teste pré-publicação usa os tarballs gerados por `npm run verify:distribution` após instalar dependências e seguir o fluxo da #194; não tente obter nomes ainda inéditos pelo registro. Não substitua os tarballs validados por aliases de workspace nem por imports internos do monorepo.
+
+## Instalação externa — caminho mínimo (após a publicação)
+
+Para um projeto React/Next.js App Router, escolha os pacotes necessários e os respectivos peers; os manifests pedem React e React DOM `>=18.2.0`. A aplicação de demonstração usa Next.js 16/React 19; **isso é uma combinação testada no projeto, não garantia de suporte para todas as versões de Next.js**.
+
+```bash
+# UI básica: tokens + components
+npm install @dvmarques/admin-ds-tokens @dvmarques/admin-ds-components
+
+# Apenas se precisar das composições administrativas
+npm install @dvmarques/admin-ds-admin
+
+# Apenas se precisar do realce de código (Shiki isolado)
+npm install @dvmarques/admin-ds-highlighted-code
+
+# Apenas se precisar de AdsMaskedInput no subpath components/masked-input
+npm install react-imask
 ```
 
-O CSS distribuído já contém as classes necessárias. A aplicação consumidora
-não precisa instalar ou configurar Tailwind CSS para usar os componentes.
+**Versões e reprodução:** os manifests na branch de desenvolvimento indicam atualmente `0.1.0`, mas essa versão **não foi publicada** e pode ser alterada pela #195. Depois de verificar a primeira publicação, fixe a mesma versão coordenada nos pacotes de que precisa, substituindo `X.Y.Z` pela versão **confirmada no registry**:
+
+```bash
+npm install @dvmarques/admin-ds-tokens@X.Y.Z @dvmarques/admin-ds-components@X.Y.Z
+# Se precisar de composições:
+npm install @dvmarques/admin-ds-admin@X.Y.Z
+# Se precisar de realce:
+npm install @dvmarques/admin-ds-highlighted-code@X.Y.Z
+```
+
+Os comandos fixados são modelos **para depois** da publicação, não provas de que `X.Y.Z` exista hoje. O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
+
+| Pacote                                 | CSS público                                       | Responsabilidade               |
+| -------------------------------------- | ------------------------------------------------- | ------------------------------ |
+| `@dvmarques/admin-ds-tokens`           | `@dvmarques/admin-ds-tokens/styles.css`           | Tokens/temas                   |
+| `@dvmarques/admin-ds-components`       | `@dvmarques/admin-ds-components/styles.css`       | Primitivas, formulários e UI   |
+| `@dvmarques/admin-ds-admin`            | `@dvmarques/admin-ds-admin/styles.css`            | Shell e fluxos administrativos |
+| `@dvmarques/admin-ds-highlighted-code` | `@dvmarques/admin-ds-highlighted-code/styles.css` | Realce opcional de código      |
+
+### Exemplo mínimo — App Router sem imports internos
+
+`app/layout.tsx` carrega CSS global **em ordem** (tokens, components e depois admin/realce se utilizados):
+
+```tsx
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import type { ReactNode } from 'react';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+	return (
+		<html lang="pt-BR" data-theme="light">
+			<body>{children}</body>
+		</html>
+	);
+}
+```
+
+`app/page.tsx` usa Client Component só onde existe interatividade:
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { AdsButton } from '@dvmarques/admin-ds-components';
+
+export default function Page() {
+	const [count, setCount] = useState(0);
+	return (
+		<main>
+			<AdsButton onClick={() => setCount((n) => n + 1)}>Total: {count}</AdsButton>
+		</main>
+	);
+}
+```
+
+Para compor `AdsAdminShell`, importe `@dvmarques/admin-ds-admin/styles.css` depois de `components/styles.css` no layout. Para realce, importe o CSS de `highlighted-code` depois de tokens e use `AdsHighlightedCodeSnippet` somente no cliente. Elementos sem eventos podem ficar em Server Components **quando a API o permitir**; callbacks, hooks, efeitos e renderizações de portal exigem fronteiras Client. O exemplo acima é um caso mínimo estático de tema claro; não implementa persistência.
+
+## Tema, fonte e hidratação
+
+Os tokens respeitam `data-theme="light"` e `data-theme="dark"`; sem atributo explícito, o CSS acompanha `prefers-color-scheme`. `AdsThemeControl` apresenta a preferência `light/dark/system`, mas a aplicação precisa persistir a escolha, resolver `system` contra o ambiente e aplicar o tema efetivo. Em SSR, o servidor não sabe necessariamente o esquema local do sistema; o admin demo usa fallback inicial claro e script antes da primeira pintura, com comportamento diferente na exportação estática. Copiar apenas o controle visual não copia esse gerenciamento. Revise a política CSP e teste hidratação em claro/escuro.
+
+A pilha de fontes começa pela **Inter**, mas os pacotes não distribuem a fonte. O consumidor pode carregar a Inter via `next/font` ou definir a própria fonte por tokens, mantendo licenças de terceiros. Para sobrescritas de tema use `[data-theme='light']`/`[data-theme='dark']` também fora de `:root`, pois overlays portados recebem tema no próprio contêiner.
+
+Consulte [ThemeControl e Sistema](#controle-de-preferência-claro-escuro-e-sistema), [tokens/identidade](visual-identity.md), [API detalhada](https://dvmarques.github.io/admin-design-system/storybook/) e [limitações por componente](limitations.md). A [publicação npm](release-process.md) é separada do deploy Demo/Storybook via GitHub Pages.
+
+## Referência de API e exemplos
+
+A [referência técnica no Storybook](https://dvmarques.github.io/admin-design-system/storybook/) documenta props, tipos e exemplos dos exports públicos; a [Demo](https://dvmarques.github.io/admin-design-system/) ilustra uma aplicação. Os contratos são os de `package.json#exports`, não o arranjo de arquivos do monorepo. Abaixo estão orientações aprofundadas por componente, sem substituir o Storybook.
+
+## Feedback persistente: AdsAlert
+
+Use `AdsAlert` para mensagens **inline**, sem timeout e sem portal, como erros de formulário e retorno de operações. Diferentemente de `AdsToast`, permanece no fluxo da página. `appearance="compact"` é o padrão; `appearance="callout"` aumenta o destaque visual. Variantes: `info`, `success`, `warning` e `error`.
+
+```tsx
+'use client';
+import { useState } from 'react';
+import { AdsAlert, AdsButton } from '@dvmarques/admin-ds-components';
+
+export function Feedback() {
+	const [open, setOpen] = useState(true);
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)}>Mostrar aviso</AdsButton>
+			<AdsAlert
+				variant="warning"
+				appearance="callout"
+				title="Revise os dados"
+				open={open}
+				dismissible
+				onClose={() => setOpen(false)}
+				actions={
+					<AdsButton size="sm" onClick={() => setOpen(false)}>
+						Entendi
+					</AdsButton>
+				}
+			>
+				Existem campos que precisam ser revisados.
+			</AdsAlert>
+		</>
+	);
+}
+```
+
+Sem `open`, o componente controla internamente o fechamento e `defaultOpen` define apenas o estado inicial; depois de fechado não há como reabrir nesse modo. Para reabrir (ou iniciar oculto e exibir depois), use o modo controlado com `open`. Com `open`, `onClose` solicita o fechamento e o consumidor deve atualizar o estado. Cada variante tem um ícone padrão distinto (`info`, `check`, `alertTriangle`, `alertCircle`). Use `icon={null}` para ocultar o ícone ou passe um `ReactNode` personalizado. `dismissible` é opcional (padrão `false`); `closeLabel` personaliza o nome acessível do botão. O botão de fechar não submete formulários.
+
+Por padrão, `error` usa `role="alert"` e as demais variantes usam `role="status"`; o consumidor pode sobrescrever `role` conforme a urgência real. Evite remontar a mesma mensagem repetidamente, pois isso pode gerar anúncios duplicados. Algumas combinações de leitor de tela não anunciam uma região `status` que já nasce com conteúdo; para mensagens que exigem atenção imediata, use a variante `error` ou mova o foco. Ao fechar pelo botão, o foco não se perde: ele vai para o elemento passado em `returnFocusRef` (por exemplo, o campo ou botão que originou a mensagem) ou, sem ele, para o próximo elemento focável após o alerta (ou o último antes dele). O foco só é movido se o botão de fechar o tinha e nenhum outro elemento o assumiu. Traduções de códigos e estados específicos de negócio pertencem aos adaptadores das aplicações consumidoras, não ao design system.
+
+## Navegação hierárquica da sidebar
+
+Dentro de `AdsAdminShell.Sidebar`, use `AdsAdminShell.Navigation` como raiz,
+`NavigationSection label="Componentes"` como seção não interativa,
+`NavigationGroup label="Básicos" icon={...}` como categoria expansível e
+`NavigationItem` envolvendo um link nativo ou do roteador. As partes e os tipos
+`AdsAdminShellNavigation*Props` são públicos no pacote admin; os estilos já são
+distribuídos em `@dvmarques/admin-ds-admin/styles.css`.
+
+As seções usam `role="group"` com `aria-labelledby` vinculado ao título por um id único, inclusive entre instâncias e durante hidratação.
+
+O grupo usa `details/summary`: Tab move o foco e Enter/Espaço alternam a expansão.
+Para controlar a abertura, passe `open` e `onToggle`; omitir `open` permite o
+comportamento nativo. O consumidor aplica `aria-current="page"` no link e decide
+quando abrir o grupo de destino. No desktop recolhido, acionar o ícone expande
+a sidebar e abre o grupo. As partes usam o contexto de `AdsAdminShell` e não
+dependem do roteamento Next.js. Veja a story **Layout/Admin Shell — Navegação com
+seções, grupos e itens** e `/catalogo/admin-shell`.
 
 ## Temas
 
@@ -26,24 +162,126 @@ Os valores aceitos são `light` e `dark`. Sem o atributo, os tokens usam a
 preferência `prefers-color-scheme` do sistema. A aplicação é responsável por
 persistir a preferência e aplicá-la antes da hidratação quando necessário.
 
+### Controle de preferência: Claro, Escuro e Sistema
+
+`AdsThemeControl` oferece as três preferências (`light`, `dark` e `system`). Ele
+só apresenta e **emite** a escolha: a biblioteca não impõe provider, persistência,
+roteador nem acesso ao DOM global. A aplicação guarda a preferência, resolve
+`system` e aplica o tema efetivo (`light` ou `dark`) em `data-theme`.
+
+```tsx
+'use client';
+import { AdsThemeControl, type AdsThemePreference } from '@dvmarques/admin-ds-components';
+
+type Props = {
+	preference: AdsThemePreference;
+	onChange: (value: AdsThemePreference) => void;
+};
+
+export function HeaderThemeControl({ preference, onChange }: Props) {
+	return <AdsThemeControl value={preference} onValueChange={onChange} />;
+}
+```
+
+- `variant="menu"` (padrão): botão compacto só com ícone que abre as opções.
+  O gatilho mostra o ícone da **preferência** (sol, lua ou monitor) e, em Sistema,
+  mantém o monitor mesmo quando o tema efetivo muda. `variant="group"` mostra as
+  três opções inline.
+- `optionDisplay="icon"` (padrão) usa só ícones, com nome acessível e tooltip;
+  `optionDisplay="icon-text"` acrescenta o texto.
+- `triggerVariant` (`secondary` por padrão) muda a aparência do botão do menu; `ghost` o deixa sem
+  borda, como no cabeçalho do admin demo.
+  No cabeçalho do admin demo o gatilho é só ícone (com tooltip) e o menu usa
+  `optionDisplay="icon-text"`: ao abrir, cada opção mostra ícone e nome.
+- Controlado (`value` + `onValueChange`) ou não controlado (`defaultValue`, padrão
+  `system`). Mudanças externas atualizam o controle sem remontagem nem `key`, e o
+  foco é preservado.
+- `labels` (`group`, `light`, `dark`, `system`) personaliza nomes e tooltips; `tooltips={false}`
+  desliga os tooltips; `disabled` e `className` seguem o padrão do projeto.
+- Acessibilidade: o menu usa itens `menuitemradio` com `aria-checked`, o grupo usa
+  `radiogroup` com `radio`; a opção ativa também recebe uma marca visual. Escape
+  fecha o menu e devolve o foco ao gatilho; escolher uma opção também.
+
+**Escolha do controle de tema.** Para oferecer as preferências Claro, Escuro e Sistema,
+use `AdsThemeControl` (`defaultValue`/`value` e `onValueChange`) e resolva `system`
+na aplicação. Se precisar apenas de alternância binária entre claro e escuro,
+`ThemeToggle` permanece disponível com `initialTheme` e `onThemeChange`.
+Nenhum dos controles persiste a preferência sozinho.
+
+**Exemplo completo (admin demo).** O cabeçalho e as Preferências compartilham uma
+única fonte de verdade nos atributos de `<html>` (`data-theme-preference` guarda a
+escolha e `data-theme` o tema efetivo):
+
+- a preferência é persistida no cookie `ads-theme` (`light`, `dark` ou `system`);
+  cookies `light`/`dark` anteriores continuam válidos e a ausência de valor equivale a
+  Sistema;
+- `system` é resolvido por `prefers-color-scheme` e acompanhado enquanto estiver
+  selecionado (o listener é removido ao sair); escolhas explícitas não são
+  sobrescritas pelo sistema;
+- um script inline no `<head>` aplica a preferência antes da primeira pintura em todos
+  os builds. O servidor não conhece o esquema do sistema: com `system` ou sem cookie ele
+  renderiza `data-theme="light"` como fallback e o script o corrige antes da pintura (se o
+  script for bloqueado, por exemplo por CSP, o fallback `light` permanece). `<html>` usa
+  `suppressHydrationWarning` por isso; o ícone do gatilho depende só da preferência e
+  não diverge na hidratação;
+- se o cookie não puder ser gravado, a escolha vale na sessão e a interface continua
+  funcional.
+
+## Fonte
+
+A pilha tipográfica começa por `Inter`, mas a biblioteca não distribui a fonte. Carregue-a na
+aplicação (em Next.js, com `next/font`) para que o texto renderize igual em todas as plataformas;
+sem isso, o texto usa a fonte de sistema da pilha. Detalhes e exemplo em
+[Identidade visual](visual-identity.md).
+
 ## Next.js App Router
 
 Importe os estilos globais em `app/layout.tsx` e mantenha componentes
-interativos, como `ThemeToggle`, em um limite de Client Component. Tokens e
+interativos, como `AdsThemeControl`, em um limite de Client Component. Tokens e
 componentes puramente apresentacionais podem ser usados por Server Components.
+
+### Tooltip, Popover e Dropdown nas bordas
+
+Os painéis ancorados preferem o lado solicitado, invertem para o oposto quando
+necessário e ajustam os dois eixos com margem de 8px. `data-placement` informa o
+lado efetivo nos três componentes; a seta do Tooltip acompanha esse lado e o
+centro do gatilho, respeitando os limites do painel. Nenhuma prop mudou.
+
+Tooltip e Popover medem o gatilho visível (os elementos que o filho renderiza), não
+o wrapper `ads-tooltip-anchor`/`ads-popover-anchor`. Assim, em contêineres flex ou
+grid que esticam o wrapper (`align-items: stretch`), o painel e a seta continuam
+centralizados no botão; gatilhos com vários elementos têm o painel posicionado pelo primeiro deles e a
+troca do elemento do gatilho com o painel aberto reposiciona o painel. No Popover,
+cliques em qualquer elemento do gatilho alternam a abertura; a área vazia do
+wrapper esticado não alterna e conta como clique externo.
+
+Os painéis acompanham alterações de tamanho da âncora/conteúdo, scroll de
+ancestrais, resize e mudanças da viewport visual. As medidas usam CSS pixels
+e posicionamento fixo no portal, sem somar o scroll da página. O portal é
+montado após hidratação; as APIs do navegador só são usadas no cliente.
+
+Se nenhum dos lados opostos comportar o conteúdo, escolhe-se o de maior espaço
+e o painel pode sobrepor a âncora. Conteúdo maior que a viewport não pode ficar
+inteiramente visível: limite as dimensões e ofereça rolagem no conteúdo quando
+necessário. Evite transformar `html`/`body`, pois isso pode redefinir o bloco
+de referência do posicionamento fixo.
+
+O Storybook inclui `ExtremePositions`; o admin-demo oferece a rota
+`/componentes/overlays` para testar lados, cantos, conteúdo dinâmico, temas,
+resize, scroll e zoom usando apenas o CSS compilado dos pacotes.
 
 ## Admin Shell
 
-O `AdsAdminShell`, de `@admin-ds/admin`, organiza header, navegação e conteúdo sem
+O `AdsAdminShell`, de `@dvmarques/admin-ds-admin`, organiza header, navegação e conteúdo sem
 assumir autenticação, autorização ou roteamento. Os links pertencem à aplicação
 consumidora, que pode usar `a`, `next/link` ou sua própria abstração de navegação
 dentro da sidebar.
 
 ```tsx
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/components/styles.css';
-import '@admin-ds/admin/styles.css';
-import { AdsAdminShell } from '@admin-ds/admin';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import '@dvmarques/admin-ds-admin/styles.css';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 
 export default function AdminPage() {
 	return (
@@ -66,13 +304,40 @@ export default function AdminPage() {
 
 ### Estilos e dependências
 
-Os estilos do shell ficam em `@admin-ds/admin/styles.css`, que deve ser importado
-junto com `@admin-ds/tokens/styles.css` e `@admin-ds/components/styles.css`. Eles
+Os estilos do shell ficam em `@dvmarques/admin-ds-admin/styles.css`, que deve ser importado
+junto com `@dvmarques/admin-ds-tokens/styles.css` e `@dvmarques/admin-ds-components/styles.css`. Eles
 usam apenas os tokens públicos `--ads-*`, portanto não exigem Tailwind no
-consumidor. `@admin-ds/admin` declara `@admin-ds/components` como peer
+consumidor. `@dvmarques/admin-ds-admin` declara `@dvmarques/admin-ds-components` como peer
 dependency, pois reutiliza `AdsDrawer` na navegação móvel. A largura da sidebar
 pode ser ajustada por `--ads-admin-shell-sidebar-width` e
 `--ads-admin-shell-sidebar-width-collapsed`.
+
+### Altura e rolagem no desktop
+
+No layout desktop (a partir de `48rem`, o mesmo limite em que a sidebar substitui o
+drawer), o shell ocupa a altura da viewport (`100dvh`, com `100vh` como fallback). O
+header mantém a altura natural, mesmo que quebre linhas, e a área abaixo dele é dividida
+entre a sidebar e `AdsAdminShell.Main`, que rolam de forma independente: a sidebar só
+mostra barra de rolagem quando os itens excedem a altura disponível, e a página não rola
+no uso padrão. Por isso o contêiner de rolagem do conteúdo é `AdsAdminShell.Main`, não a
+janela: `window.scrollTo`, restauração de scroll da janela e elementos `sticky` do
+conteúdo passam a se relacionar com o main. Não renderize o shell dentro de um contêiner
+com altura própria e não use `position: fixed` para reposicionar a sidebar. No layout
+móvel nada muda: a página rola e a navegação continua no drawer.
+
+`AdsAdminShell.Main` recebe `tabIndex={0}` por padrão, para que a região rolável seja
+alcançável pelo teclado mesmo sem conteúdo focável; passe `tabIndex` para sobrescrever.
+
+### Conteúdo do header em telas estreitas
+
+O header é um contêiner flex de uma única linha: o shell não quebra linha nem
+esconde o conteúdo que a aplicação compõe nele. Em telas estreitas, como 390px,
+componha o header com itens que possam encolher ou quebrar linha, por exemplo
+agrupando as ações em um contêiner com `flex-wrap`, para que nenhum controle fique
+cortado nem a página ganhe rolagem horizontal. `ThemeToggle` usa a fonte do design
+system e mantém o rótulo em uma única linha, então ele depende desse contêiner para
+quebrar de linha quando não couber. O gatilho compacto de `AdsThemeControl` ocupa 2,5 rem
+quadrados e não exige essa quebra.
 
 ### Server Components e estado
 
@@ -126,10 +391,196 @@ cookie (para renderizar no servidor sem troca visual) ou `localStorage`.
 O `AdsNav` atual é horizontal. Por isso a sidebar permanece composicional e aceita
 qualquer estrutura de navegação fornecida pela aplicação, como uma lista de links.
 
+## Conta, notificações e organização no shell
+
+Três composições de `@dvmarques/admin-ds-admin`, independentes entre si, completam o cabeçalho e a
+sidebar do `AdsAdminShell`: `AdsAccountMenu`, `AdsNotificationCenter` e
+`AdsOrganizationSwitcher`. Nenhuma implementa autenticação, sessão, autorização,
+multitenancy, backend, persistência ou transporte de notificações: a aplicação fornece os dados
+e executa as ações. Todas são Client Components, não exigem provider, roteador ou o próprio shell,
+e o servidor renderiza apenas os gatilhos fechados. O CSS vem de `@dvmarques/admin-ds-admin/styles.css`.
+
+```tsx
+<AdsAdminShell.Header>
+	{/* ... */}
+	<AdsThemeControl onValueChange={onTheme} value={theme} />
+	<AdsNotificationCenter notifications={items} unreadCount={total} onMarkRead={markRead} />
+	<AdsAccountMenu groups={groups} user={user} />
+</AdsAdminShell.Header>
+<AdsAdminShell.Sidebar>
+	<AdsOrganizationSwitcher organizations={orgs} value={orgId} onValueChange={switchOrg} />
+	<AdsAdminShell.Navigation>{/* ... */}</AdsAdminShell.Navigation>
+</AdsAdminShell.Sidebar>
+```
+
+### Menu de conta (`AdsAccountMenu`)
+
+O gatilho é um botão com o `AdsAvatar` (foto quando carrega; iniciais quando ausente, quando a imagem
+falha ou quando `initials` é informado; sem `initials`, derivam de `name`). O painel é um diálogo não
+modal, não um `role="menu"`: mistura identidade (avatar, nome e e-mail, com truncamento) e ações
+(`groups`, com ícone opcional, `href` ou `onSelect`, `disabled`, `tone="danger"`).
+
+- O foco vai para a primeira ação ao abrir; setas, Home e End movem entre as ações habilitadas; Escape,
+  clique externo e Tab além das extremidades fecham o painel e devolvem o foco ao botão.
+- `switchAccount` é opcional e aparece como grupo próprio "Trocar conta". É troca de identidade
+  (autenticação), não de organização: não a use para o seletor de organização.
+- `onSelect` pode retornar uma `Promise`: a ação fica `aria-busy`, as demais ficam inoperantes (sem Sair
+  duplicado) e o painel só fecha ao concluir; a rejeição mostra um alerta e reabilita a ação.
+- Aceita `open`/`onOpenChange` (controlado) ou `defaultOpen`, `labels` e `placement`.
+- O avatar do gatilho e da identidade tem fundo (padrão: tom `primary`). Escolha um tom do tema com
+  `user.avatarTone` (`neutral`, `primary`, `success`, `warning`, `danger`) ou qualquer cor CSS com
+  `user.avatarBackgroundColor` e `user.avatarForegroundColor` (cuide do contraste). `AdsAvatar` aceita
+  as mesmas opções (`tone`, `backgroundColor`, `foregroundColor`); o padrão segue neutro.
+- `AdsAvatar` continua utilizável sozinho; passou a tentar de novo a imagem quando `src` muda após uma
+  falha e aceita `src={undefined}` explícito.
+
+### Central de notificações (`AdsNotificationCenter`)
+
+Sino com contador e painel lateral direito modal (sobre `AdsDrawer`: isolamento do fundo, Escape,
+foco e retorno ao sino). Dados, contagem e leitura são controlados:
+
+| Prop                                            | Papel                                                                                                         |
+| ----------------------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `notifications`                                 | Itens carregados (`id`, `title`, `description`, `timestamp` ou `timeLabel`, `icon`/`avatar`, `read`, `href`). |
+| `unreadCount`                                   | Total de não lidas da aplicação; não presume igualdade com os itens carregados.                               |
+| `onMarkRead`, `onMarkAllRead`                   | Pedem a leitura; o item só vira lido quando `read` muda nos dados. Podem retornar `Promise`.                  |
+| `onItemSelect`, `markReadOnSelect`              | Ativar um item chama `onItemSelect` e, por padrão, `onMarkRead` para itens não lidos.                         |
+| `status`, `onRetry`                             | `ready`, `loading` ou `error` com "Tentar novamente".                                                         |
+| `hasMore`, `onLoadMore`, `loadingMore`          | "Carregar mais" opcional; sem busca nem paginação de backend.                                                 |
+| `filter`/`defaultFilter`/`onFilterChange`       | Filtros "Todas" e "Não lidas".                                                                                |
+| `historyHref`, `labels`, `locale`, `formatTime` | Rodapé opcional, textos e datas do consumidor.                                                                |
+
+Política de leitura: **abrir o painel nunca marca nada como lido.** Cada item separa navegação e
+leitura: o link ou botão do item e o botão "Marcar como lida" são irmãos (nunca um botão dentro de
+link). Ativar um item não lido marca-o como lido por padrão; use `markReadOnSelect={false}` para deixar
+a leitura apenas ao botão. O badge fica oculto em zero e mostra `99+` acima de 99, enquanto o nome
+acessível do sino mantém a contagem exata. Não há região viva: atualizações de lista e contagem não são
+anunciadas. Itens não lidos têm marca visual e texto "Não lida"; os lidos ficam atenuados. A lista rola
+internamente (cabeçalho e ações fixos) e o painel ocupa a largura disponível em telas estreitas. As
+datas só são formatadas dentro do painel, no cliente; sem `formatTime`, usa-se `Intl.DateTimeFormat`
+com `locale`.
+
+### Seletor de organização (`AdsOrganizationSwitcher`)
+
+Opcional e independente: coloque-o como primeiro filho de `AdsAdminShell.Sidebar`. O `AdsAdminShell`
+não o exige nem cria organização fictícia; sem ele, a navegação ocupa o topo, sem bloco, altura
+reservada ou separador residual. O gatilho mostra logo ou iniciais, nome, descrição opcional e seta; o
+painel lista as organizações com a atual marcada (`aria-selected`, marca visual e texto), busca a partir
+de 7 opções (`searchable`), estado sem resultados e `manage` ("Gerenciar organizações") opcional. Desde
+a #239 o painel é o do `AdsCombobox` com `presentation="popover"` (veja
+[AdsCombobox apresentação popover](#adscombobox-apresentação-popover-239)): a API pública, as classes
+`ads-organization-switcher-*` e o visual são os mesmos; só a semântica interna do painel muda, de uma
+lista de botões (`aria-current`) para `listbox`/`option` (`aria-selected`).
+
+**Possível quebra para testes de consumidores** (não para o código de produção): consultas como
+`getByRole('button', { name: 'Globex' })`, `[aria-current="true"]`, `getByRole('listitem')`,
+`aria-busy` na opção ou `getByRole('alert')` para o erro de carregamento da lista deixam de
+funcionar. Migração: use `getByRole('option', { name })` e `aria-selected="true"` (a opção atual
+continua com o texto "(organização atual)"), `getByRole('option')` em vez de `listitem`, a região
+`getByRole('status')` para "Trocando de organização", carregamento e erro da lista (antes `alert`
+no erro; a falha da troca continua `role="alert"`) e o `searchbox` de antes, que não mudou.
+
+- A aplicação controla `value` e `onValueChange`. Com uma `Promise`, a opção fica pendente e o gatilho
+  continua mostrando a organização anterior até `value` mudar; a rejeição mantém o painel aberto com um
+  alerta. Permissões e a mudança efetiva de contexto ficam com a aplicação.
+- Cobre zero (gatilho desabilitado), uma e muitas organizações, nomes longos, logo indisponível,
+  opções desabilitadas, `status` `loading` e `error` com `onRetry`.
+- Na sidebar desktop recolhida o gatilho fica compacto (logo ou iniciais, com tooltip e nome acessível)
+  e a seleção continua utilizável sem expandir a sidebar; `collapsed` força esse modo fora do shell. No
+  drawer móvel, o painel é uma camada acima do modal: Escape fecha só o painel.
+
+### Acessibilidade e validação
+
+Gatilhos são botões únicos com nome acessível, `aria-haspopup="dialog"` e `aria-expanded`. O painel
+da conta reutiliza `AdsPopover` e o da organização, o `AdsCombobox` popover (ambos diálogos não modais) e o das notificações,
+`AdsDrawer` (modal). Os testes cobrem teclado, foco e retorno, `Promise` pendente ou rejeitada, axe,
+SSR e hidratação; os E2E cobrem os três fluxos no demo, claro e escuro, 320 px, sidebar recolhida,
+menu móvel e overlays aninhados. O demo (`/catalogo/account-menu`, `/catalogo/notification-center` e
+`/catalogo/organization-switcher`) compara a sidebar com e sem o seletor.
+
+## AdsCombobox apresentação popover (#239)
+
+`AdsCombobox` tem duas apresentações. `presentation="input"` (padrão) é o campo editável de sempre, com
+`role="combobox"`, e **não mudou**, nem `AdsAutocomplete`. `presentation="popover"` é um botão que abre
+um painel com pesquisa separada, uma lista de seleção única e um rodapé opcional. É genérica: não
+conhece organizações, rotas nem regras de negócio.
+
+```tsx
+<AdsCombobox
+	presentation="popover"
+	options={options}
+	value={owner}
+	onValueChange={setOwner}
+	panelLabel="Escolher responsável"
+	searchLabel="Pesquisar responsável"
+	renderTrigger={({ selectedOption, triggerProps }) => (
+		<button {...triggerProps}>{selectedOption?.label ?? 'Sem responsável'}</button>
+	)}
+	footer={<a href="/equipe">Gerenciar equipe</a>}
+/>
+```
+
+- **Props exclusivas do popover:** `renderTrigger`, `footer`, `triggerRef`, `searchInputRef`,
+  `searchable` (padrão `true`), `filterOption(option, query)`, `closeOnSelect` (padrão `true`),
+  `panelLabel`, `searchLabel`, `searchPlaceholder`, `listLabel`, `retryLabel`, `statusMessage`,
+  `panelClassName`, `placement` e `align`. Reutiliza `options`, `value`/`defaultValue`,
+  `onValueChange(value, option)`, `selectedOption`, `open`/`defaultOpen`/`onOpenChange`, `renderOption`,
+  `showOptionVisuals`, `filterOptions`, `loading`, `error`, `onRetry`, `emptyText`, `loadingText`,
+  `disabled`, `readOnly`, `name`, `form` e `required`. O tipo é discriminado por `presentation`
+  (`AdsComboboxPopoverProps`); `AdsComboboxProps` continua descrevendo só o modo input.
+- **Valor e consulta são independentes:** `inputValue`/`defaultInputValue`/`onInputValueChange(query,
+reason)` são a **consulta** (`reason`: `input`, `select` ou `close`). Digitar nunca limpa nem
+  substitui a seleção confirmada; a consulta é zerada ao fechar. Escolher a opção já confirmada não
+  emite `onValueChange`.
+- **`renderTrigger` e um único dono do toggle:** devolva **um** `<button>` e espalhe `triggerProps`
+  nele (`aria-haspopup="dialog"`, `aria-expanded`, `aria-controls`, `type="button"`, `disabled`,
+  `ref` e `onClick`). Não ligue outro `onClick` que alterne a abertura; para compor o seu, chame o
+  de `triggerProps` dentro dele. Pode ser envolvido, por exemplo, por `AdsTooltip`.
+- **Semântica ARIA:** o gatilho **não** é `role="combobox"`. O painel é um `dialog` não modal
+  rotulado (`panelLabel`); o campo de pesquisa é um `searchbox` com `aria-controls` e
+  `aria-activedescendant` para a `listbox`, que contém apenas `option`s (`aria-selected` marca o valor
+  **confirmado**, nunca o destaque). `renderOption` não deve criar botões ou links dentro da opção:
+  ações vão no `footer`, fora da lista.
+- **Teclado e foco:** o foco inicial vai ao campo de pesquisa (ou à lista, com `searchable={false}`).
+  Setas movem o destaque ignorando opções desabilitadas, Enter confirma, Home/End só atuam na lista
+  sem pesquisa, Escape fecha **somente** o painel (camada superior) e devolve o foco ao gatilho, e um
+  clique externo fecha sem roubar o foco do controle clicado. Tab percorre pesquisa e rodapé; ao passar
+  da última extremidade (ou Shift+Tab na primeira) o painel fecha e o fluxo da página continua a partir
+  do gatilho, sem prender o foco.
+- **Seleção controlada de forma assíncrona:** com `closeOnSelect={false}` e `value` controlado, pedir
+  outra opção só emite `onValueChange`; painel e seleção visual seguem as props até o consumidor
+  confirmar (sem atualização otimista). `statusMessage` anuncia a operação pendente. É assim que
+  `AdsOrganizationSwitcher` aguarda a `Promise`; a primitiva não interpreta `Promise`.
+- **Formulários:** com `name`, só o valor confirmado é enviado (nunca o rótulo nem a consulta), inclusive
+  em formulários externos (`form`). Com `required`, a ausência de seleção é detectada pela validação
+  nativa (`checkValidity`, `reportValidity`, envio); o foco vai ao gatilho, que recebe
+  `aria-invalid`, e o texto "Selecione uma opção" é anunciado. O controle validável é um `input`
+  oculto, sem tab stop e fora da árvore de acessibilidade. `reset` restaura o `defaultValue`
+  (não controlado), e `disabled` o exclui do envio.
+- **Overlays:** o painel usa `OverlayPortal`, posicionamento ancorado e as pilhas de Escape e de
+  clique externo da biblioteca; dentro de `AdsDialog` ou do drawer móvel ele fica acima do modal e
+  Escape fecha só o painel. Para Next.js, mantenha o uso em Client Components; o servidor renderiza
+  apenas o gatilho fechado, com ids estáveis. O painel é `fixed` no portal e acompanha rolagem e
+  redimensionamento.
+- **Orientações ao consumidor:** nomeie o gatilho com `AdsField`/`<label for>` ou `aria-labelledby`
+  (sem `panelLabel`, o diálogo herda o nome do gatilho); em `renderTrigger`, `required` não é
+  propagado ao botão: descreva a obrigatoriedade com `aria-describedby`; o painel limita a altura
+  com `100vh`, então use `max-height` com `dvh` em `panelClassName` se precisar acompanhar a barra de
+  endereço móvel; `statusMessage` substitui o texto do estado na região viva. O destaque do teclado
+  usa contorno próprio (`data-active`) e, em cores forçadas, a opção selecionada tem barra lateral.
+- **Estilo:** o painel, as opções e o rodapé têm classes públicas `ads-combobox__panel`,
+  `ads-combobox__option--popover`, `ads-combobox__list-popover`, `ads-combobox__state`,
+  `ads-combobox__retry` e `ads-combobox__footer`, estilizadas com tokens `--ads-*`; use
+  `panelClassName` para estreitá-las, sem exigir Tailwind no consumidor.
+
+Migração interna: `AdsOrganizationSwitcher` deixou de usar `AdsPopover`, `AdsInput` e a navegação
+própria; consumidores do seletor não precisam migrar. Outros popovers com busca podem adotar
+`presentation="popover"` por conta própria; nenhum foi migrado por oportunidade.
+
 ## Padrões de dashboard
 
-`@admin-ds/admin` também exporta `AdsMetricCard`, `AdsDashboardGrid` e
-`AdsDashboardPanel`, com os mesmos estilos de `@admin-ds/admin/styles.css` (sem
+`@dvmarques/admin-ds-admin` também exporta `AdsMetricCard`, `AdsDashboardGrid` e
+`AdsDashboardPanel`, com os mesmos estilos de `@dvmarques/admin-ds-admin/styles.css` (sem
 Tailwind no consumidor). Eles não buscam dados nem conhecem rotas: a aplicação
 decide quando exibir cada estado.
 
@@ -153,11 +604,41 @@ decide quando exibir cada estado.
   como item de flex em linha sem `flex: 1` (ou `width`), em `inline-block`, em
   `float` ou em elemento `absolute` sem largura. Em bloco comum ou como item de
   grid, ocupa a largura disponível.
-- `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos não
-  fazem parte desta entrega.
+- `AdsDashboardPanel` prioriza `loading`, `error`, `empty` e conteúdo. Gráficos
+  completos não fazem parte do pacote; só o `AdsSparkline` (abaixo).
 - `error` e `empty` são nós nos dois componentes e aceitam elementos de bloco,
   como uma lista. No painel, passe um `AdsEmptyState` em `empty`
   (`empty={<AdsEmptyState title="Sem pedidos" />}`); no card, um texto curto.
+
+### Sparkline
+
+`AdsSparkline` (`@dvmarques/admin-ds-components`) desenha a evolução de uma série em SVG, sem
+eixos, sem animação e sem dependência de runtime. Funciona em Server Components.
+
+```tsx
+<AdsSparkline label="Receita diária" values={[10, 8, 12, 15, null, 18]} />
+
+<AdsMetricCard
+	title="Cancelamentos"
+	value="38"
+	change="-8%"
+	trend="down"
+	sentiment="positive"
+	sparkline={{ label: 'Cancelamentos, últimos 12 meses', values: serie }}
+/>
+```
+
+- `values` aceita `null`, `undefined` e `NaN`: são ignorados e a linha liga os pontos
+  válidos, mantendo o espaçamento pelo índice. Sem pontos válidos, nada é renderizado
+  (no card, o sparkline é omitido). Um ponto vira um marcador; série constante, uma
+  linha reta. `min` e `max` fixam a escala.
+- O nome acessível (`role="img"`) é gerado: quantidade de pontos, primeiro e último
+  valor, mínimo e máximo, formatados em pt-BR. Ajuste com `label`, `labels` (rótulo
+  por ponto), `formatValue` ou substitua tudo com `summary`.
+- `tone` (`default`, `positive`, `negative`) usa `--ads-color-chart1`, `-success` e
+  `-danger`; no card, o tom vem do `sentiment`. A cor nunca é a única informação, e em
+  `forced-colors` o traço usa `CanvasText`.
+- A largura é a do contêiner e a altura padrão é `2rem` (`className` sobrescreve).
 
 ## Aplicação de referência (`admin-demo`)
 
@@ -230,7 +711,7 @@ efeito que fecha o drawer na montagem o fecharia ao abri-lo.
 ```tsx
 'use client';
 
-import { useAdsAdminShell } from '@admin-ds/admin';
+import { useAdsAdminShell } from '@dvmarques/admin-ds-admin';
 import { usePathname } from 'next/navigation';
 import { useEffect, useRef } from 'react';
 
@@ -293,6 +774,97 @@ A biblioteca não acessa o roteador. `renderPage` (que recebe um botão pronto)
 continua funcionando, mas está obsoleto: envolver o botão em um link gera
 conteúdo interativo aninhado.
 
+### Tabs, Breadcrumb e Accordion
+
+`AdsTabs` e `AdsAccordion` usam estado e declaram `"use client"`: podem ser
+importados por uma página Server Component, mas qualquer função passada a eles
+(`onValueChange`, por exemplo) precisa vir de um Client Component. Em uma página
+Server Component, componha as partes pelas exportações nomeadas (`AdsTabsList`,
+`AdsTabsTrigger`, `AdsTabsPanel`, `AdsAccordionItem`, `AdsAccordionHeader`,
+`AdsAccordionTrigger` e `AdsAccordionPanel`): a notação `AdsTabs.List` e
+`AdsAccordion.Item` só funciona dentro de Client Components.
+`AdsBreadcrumb` e `AdsNav` continuam sem `"use client"`, então uma página Server
+Component pode passar `renderLink` com `next/link` diretamente. Só o botão de
+expandir do breadcrumb é uma ilha cliente.
+
+**`AdsTabs`**
+
+| Prop             | Valores                     | Padrão       | Efeito                                                                                          |
+| ---------------- | --------------------------- | ------------ | ----------------------------------------------------------------------------------------------- |
+| `activationMode` | `manual`, `automatic`       | `manual`     | `manual` ativa com Enter ou Space; `automatic` ativa ao mover o foco                            |
+| `orientation`    | `horizontal`, `vertical`    | `horizontal` | `vertical` usa ↑ e ↓ (Home e End valem nas duas) e um indicador lateral; empilha abaixo de `sm` |
+| `keepMounted`    | `boolean` (raiz ou `Panel`) | `false`      | mantém painéis inativos no documento, com `hidden`, preservando o estado interno do conteúdo    |
+
+Por padrão o painel inativo é desmontado. Os ids derivados de `value` são
+válidos para qualquer texto e nunca colidem, e a lista sempre tem uma tab
+tabulável, inclusive quando a ativa está desabilitada.
+
+**`AdsBreadcrumb`**
+
+```tsx
+<AdsBreadcrumb
+	items={items}
+	maxItems={4}
+	itemsBeforeCollapse={1}
+	itemsAfterCollapse={2}
+	separator="›"
+	aria-label="Trilha de navegação"
+	expandLabel="Mostrar caminho completo"
+/>
+```
+
+Com mais itens que `maxItems`, os do meio ficam atrás de um botão que expande a
+trilha no lugar e leva o foco ao primeiro item revelado. O item atual nunca é
+escondido. Sem `maxItems`, a trilha aparece por inteiro. `separator` aceita
+qualquer nó e é ignorado por leitores de tela.
+
+**`AdsAccordion`**
+
+```tsx
+<AdsAccordion type="single" collapsible defaultValue="account">
+	<AdsAccordion.Item value="account">
+		<AdsAccordion.Header level={3}>
+			<AdsAccordion.Trigger>Conta</AdsAccordion.Trigger>
+		</AdsAccordion.Header>
+		<AdsAccordion.Panel>Conteúdo</AdsAccordion.Panel>
+	</AdsAccordion.Item>
+</AdsAccordion>
+```
+
+- `type="single"` abre um item por vez (`value` e `defaultValue` são texto;
+  `collapsible` permite fechar o aberto e `onValueChange` recebe `''`);
+  `type="multiple"` abre vários (`value` e `defaultValue` são listas).
+- `AdsAccordion.Header` é um heading real: ajuste `level` (2 a 6, padrão 3) à
+  hierarquia da página.
+- `Item` aceita `disabled`: o item não alterna e é pulado pelas setas. Todos os
+  gatilhos habilitados continuam na ordem de tabulação; ↑, ↓, Home e End movem o
+  foco entre eles (com volta ao início e ao fim, como nas tabs).
+- Por padrão o painel fechado fica no documento com `hidden`, e o estado dos
+  campos é preservado. `unmountOnCollapse` remove o conteúdo; defina na raiz e
+  sobrescreva por item. Não aplique classes de `display` ao `Panel`, que
+  anulariam o `hidden`.
+- O painel é uma região nomeada pelo gatilho. Com muitos itens (mais de seis), o
+  WAI-ARIA recomenda evitar o papel para não poluir os pontos de referência:
+  sobrescreva com `role` no `Panel`.
+
+**Textos e idiomas**
+
+Os textos embutidos têm padrão em inglês (`Breadcrumb` e `Show full path` no
+breadcrumb) e sempre podem ser sobrescritos por prop. A biblioteca não traduz
+nem depende de uma biblioteca de i18n: passe os textos da sua aplicação.
+
+```tsx
+<AdsBreadcrumb
+	aria-label={t('breadcrumb')}
+	expandLabel={t('showFullPath')}
+	items={items}
+	maxItems={4}
+/>
+```
+
+A ordem de resolução é a prop explícita e depois o padrão em inglês. Um provider
+de idioma e o suporte a RTL são evoluções futuras.
+
 ### Filtros e tabela inteligente (`/clientes`)
 
 `/clientes` combina `AdsFilterBar` e `AdsSmartTable` (`apps/admin-demo`), usando
@@ -333,7 +905,7 @@ numérico ou menor que 1 vale 1; valores acima do total valem a última página;
 ### Sobrescrita de tokens
 
 Sobrescreva variáveis `--ads-*` no CSS da aplicação, **depois** de importar
-`@admin-ds/tokens/styles.css`, com seletores `[data-theme='light']` e
+`@dvmarques/admin-ds-tokens/styles.css`, com seletores `[data-theme='light']` e
 `[data-theme='dark']` (sem `:root`), e sem recompilar os componentes:
 
 ```css
@@ -354,6 +926,305 @@ porque os overlays (dialog, drawer e toast) são renderizados em um `div` com
 não os alcança. O demo não traz essa sobrescrita de forma permanente: ela é
 injetada apenas no teste `e2e/admin-demo-all-routes.spec.ts`, com `--ads-color-text`.
 
+## Botões ao lado de campos
+
+`AdsButton` e os campos de texto (`AdsInput`, `AdsSelect`) de mesmo `size` não têm
+a mesma altura: o botão usa `--ads-dimension-control-*` e o campo usa
+`--ads-dimension-field-*`. A diferença vem desses tokens distintos (os botões
+compartilham a altura de controle com outros componentes) e aparece quando os dois
+ficam na mesma linha.
+
+| `size` | `AdsButton` | `AdsInput` e `AdsSelect` |
+| ------ | ----------- | ------------------------ |
+| `sm`   | 32px        | 30px                     |
+| `md`   | 36px        | 32px                     |
+| `lg`   | 40px        | 36px                     |
+
+Em uma linha com `align-items: center`, o campo desce 1px em `sm` e 2px em `md` e
+`lg` em relação ao botão. Para alinhar, escolha um dos dois caminhos:
+
+- **Mesma altura.** Use `align-items: stretch`, que é o padrão de `display: flex`:
+  o campo cresce até a altura do botão (32, 36 ou 40px).
+- **Mesmo topo.** Use `align-items: flex-start` e aceite a diferença de 2 a 4px.
+
+O `AdsDatePicker` faz o inverso: o gatilho do calendário anula a própria altura
+mínima e acompanha a altura do campo.
+
+```css
+.minha-busca {
+	display: flex;
+	gap: 0.5rem;
+	align-items: stretch;
+}
+```
+
+O CSS distribuído contém apenas as utilidades que a própria biblioteca usa, então
+escreva o layout da linha no CSS da aplicação em vez de depender de classes
+utilitárias da biblioteca.
+
+Um `AdsButton` pode ser o conteúdo de `startContent` ou `endContent` de
+`AdsInputGroup`. O adendo perde a moldura (borda, fundo e padding), o botão fica rente
+ao campo, com a quina externa arredondada, e o grupo mantém a altura do campo (30, 32 ou
+36px). O `size` do botão só define o padding horizontal e a fonte: a altura é sempre a
+do campo, então não é preciso combinar `size` do botão e do campo.
+
+```tsx
+<AdsInputGroup endContent={<AdsButton type="submit">Buscar</AdsButton>}>
+	<AdsInput aria-label="Busca" placeholder="Nome ou e-mail" />
+</AdsInputGroup>
+```
+
+Vários botões no mesmo adendo ficam contíguos: só a quina externa do conjunto é
+arredondada e cada junção sobrepõe 1px, para as bordas não somarem 2px.
+
+```tsx
+<AdsInputGroup
+	endContent={
+		<>
+			<AdsButton type="button" variant="secondary">
+				Limpar
+			</AdsButton>
+			<AdsButton type="submit">Buscar</AdsButton>
+		</>
+	}
+>
+	<AdsInput aria-label="Busca" />
+</AdsInputGroup>
+```
+
+O adendo deve conter só botões como filhos diretos. Texto e botão no mesmo adendo não são
+suportados: o adendo perde a moldura e o texto fica sem fundo nem padding; para texto e
+botão lado a lado, use um adendo de texto em `startContent` e o botão em `endContent`. Um
+botão dentro de outro elemento no adendo mantém a moldura e a altura do botão, e o campo
+cresce para 34, 38 ou 42px.
+
+## Campo de senha (`AdsPasswordInput`)
+
+`AdsPasswordInput` (em `@dvmarques/admin-ds-components`) é um `AdsInput` mascarado com um botão de
+visibilidade. Funciona dentro de `AdsField`, controlado (`value`) ou não (`defaultValue`), e
+aceita as props nativas de `input`, exceto `type`.
+
+```tsx
+<AdsField label="Senha" description="Use ao menos 8 caracteres.">
+	<AdsPasswordInput
+		autoComplete="new-password"
+		showStrength
+		rules={[{ id: 'length', label: 'Ao menos 8 caracteres', test: (value) => value.length >= 8 }]}
+	/>
+</AdsField>
+```
+
+- O botão exibe `Mostrar`/`Ocultar` (`showPasswordText`, `hidePasswordText`) e tem o nome
+  `Mostrar senha`/`Ocultar senha` (`showPasswordLabel`, `hidePasswordLabel`, que devem começar
+  pelo texto visível). Com o teclado o foco permanece no botão; com o ponteiro volta ao campo.
+  `ref` e `className` vão para o `<input>`, preserva valor, foco e seleção, nunca envia o formulário e some com
+  `showVisibilityToggle={false}`. Desabilitar o campo desabilita também o botão.
+- `showStrength` mostra uma pontuação **apenas orientativa** (comprimento, maiúscula, número
+  e símbolo; `Forte` exige 12 caracteres e três critérios), em texto e associada ao campo por `aria-describedby`; use `strengthLabels` e
+  `strengthPrefix` para traduzir. Não substitui a validação do servidor.
+- `rules` mostra uma lista de regras avaliadas no navegador a cada renderização: cada `test` deve
+  ser puro, síncrono e não lançar erro (se lançar, a regra fica `Pendente`); cada item informa `Atendida` ou
+  `Pendente` em texto (`ruleStatusLabels`), sem depender de cor ou de ícone.
+- A biblioteca não armazena nem transmite a senha e não implementa autenticação.
+
+## Campo com máscara (`AdsMaskedInput`)
+
+`AdsMaskedInput` formata o texto durante a digitação, a colagem e a remoção, preservando caret,
+seleção e composição IME. Ele é **opt-in**: fica no subpath `@dvmarques/admin-ds-components/masked-input` e usa
+o peer opcional `react-imask` (`^7.6.1`). O entrypoint `@dvmarques/admin-ds-components` não o reexporta nem o
+carrega, então quem não importa o subpath não instala nem empacota nada de máscara.
+
+```bash
+npm install react-imask
+```
+
+```tsx
+import { AdsField } from '@dvmarques/admin-ds-components';
+import { AdsMaskedInput } from '@dvmarques/admin-ds-components/masked-input';
+
+<AdsField label="Código" description="Seis dígitos.">
+	<AdsMaskedInput
+		inputMode="numeric"
+		mask="000-000"
+		name="codigo"
+		onValueChange={({ maskedValue, unmaskedValue, complete }) => {
+			/* ... */
+		}}
+	/>
+</AdsField>;
+```
+
+É um Client Component (`"use client"`): use-o dentro de um componente de cliente quando precisar
+passar funções (`onValueChange`, `dispatch`, `validate`). Sem acesso a `window`/`document` na
+renderização, o servidor entrega o `defaultValue`/`value` como texto e a hidratação o formata sem
+divergência, inclusive em StrictMode.
+
+### Valores e eventos
+
+`value` e `defaultValue` representam sempre o **texto formatado exibido**. `onValueChange` informa:
+
+| Campo           | Tipo      | Conteúdo                                                                                                  |
+| --------------- | --------- | --------------------------------------------------------------------------------------------------------- |
+| `maskedValue`   | `string`  | Texto exibido, com os literais da máscara.                                                                |
+| `unmaskedValue` | `string`  | Texto sem os literais; sempre string e preserva zeros à esquerda. Em máscaras de data inclui separadores. |
+| `typedValue`    | `unknown` | `number` em máscaras `Number`, `Date` em máscaras `Date`; nos demais casos, o texto bruto.                |
+| `complete`      | `boolean` | Todas as posições obrigatórias preenchidas; sempre `true` sem máscara.                                    |
+
+- `onValueChange` é adaptado do `onAccept` do motor de máscara e é chamado **uma vez por alteração
+  aceita da pessoa usuária**, inclusive quando a máscara ainda está incompleta. Teclas rejeitadas
+  (texto visível inalterado) não notificam. Ele **não** é chamado na montagem, na hidratação nem
+  quando `value` muda por fora.
+- `onChange` continua sendo o evento nativo do input. A documentação do motor recomenda não usá-lo
+  para acompanhar alterações mascaradas, e o DS **não sintetiza** `ChangeEvent`: não há garantia de
+  um `onChange` por alteração aceita. Bibliotecas de formulário devem ser ligadas a `onValueChange`
+  (por exemplo, `field.onChange(maskedValue)` e `field.onBlur` em `onBlur`).
+- Controlado: o campo segue `value`. Se o consumidor não atualizar `value` após `onValueChange`, o
+  texto volta ao valor controlado. Alterações externas de `value` (inclusive limpar) atualizam o
+  texto sem notificação. Passe o **texto formatado** (`maskedValue`) de volta; um texto bruto é
+  reformatado, mas o caret pode ser reposicionado.
+- Não controlado: `defaultValue` é aplicado uma vez na montagem (formatado, sem notificação).
+  Um `<form>` com `reset` restaura o `defaultValue`, formatado, e notifica `onValueChange` quando o
+  texto mudou; em campos controlados o reset reaplica `value`, sem notificação.
+- Mudar `mask` em tempo de execução reformata o texto atual e, se ele mudar, notifica
+  `onValueChange`. Memoize `mask` quando ele contiver funções (`dispatch`, `validate`, `prepare`),
+  para evitar reconfigurar o motor a cada renderização.
+- `ref` e `inputRef` apontam, ambos, para o `HTMLInputElement`; não é a instância do componente do
+  motor, que não é exposta.
+- Sem `mask`, o campo é um input de texto comum e `onValueChange` vem do evento nativo.
+
+### Formulários, validação e acessibilidade
+
+- `name` envia o **texto formatado exibido**. O valor bruto só é enviado se a aplicação criar um
+  campo próprio (por exemplo, um `<input type="hidden">` alimentado por `unmaskedValue`).
+- `required` é a semântica HTML do input e **não** valida a máscara completa. Use `complete` (e a
+  validação do formulário) para exigir todos os dígitos; a máscara não substitui validação de
+  conteúdo nem regras de negócio.
+- `disabled`, `readOnly`, `inputMode`, `autoComplete`, `placeholder` e demais atributos nativos de
+  input passam direto. `AdsField` fornece rótulo, `aria-describedby` e `aria-invalid`;
+  `validationState="error"` também marca o campo como inválido. Escolha `inputMode` e `type`
+  adequados ao teclado móvel (`numeric`, `tel`, `decimal`).
+- Estilo e tamanho (`sm`, `md`, `lg`) são idênticos aos de `AdsInput`, com o CSS compilado do DS e
+  sem Tailwind no consumidor.
+- Descreva o formato esperado: dê sempre ao `AdsField` uma `description` com ele (por exemplo,
+  `Formato 000-000`). `placeholder` **não** substitui a descrição (some ao digitar e não é um rótulo),
+  e o `placeholderChar` de máscaras não lazy (`lazy: false`) é lido por leitores de tela como texto
+  do valor, então prefira o modo lazy (padrão) ou descreva o formato no campo de ajuda.
+- Não use a máscara como único indicador de erro: um valor incompleto não anuncia nada sozinho. O
+  `role="alert"` do `AdsField` só cobre o erro quando `error` é informado; derive `error` e
+  `validationState="error"` de `complete` (e do servidor) e leve o foco ao campo inválido ao enviar.
+- Resolução de módulos: o subpath usa o mapa `exports` do pacote, então o TypeScript do consumidor
+  precisa de `moduleResolution` `Bundler`, `Node16` ou `NodeNext` (o `node10` não resolve
+  `@dvmarques/admin-ds-components/masked-input`). O Next.js App Router já usa `Bundler`.
+
+### Receita: CPF, CNPJ ou documento único
+
+Exemplos com valores fictícios. A máscara **só formata**: ela **não valida o dígito verificador**
+(regra de negócio, fora do componente). O `name` envia o texto formatado; para enviar só dígitos,
+use `unmaskedValue`.
+
+```tsx
+<AdsField label="CPF" description="Formato 000.000.000-00">
+	<AdsMaskedInput inputMode="numeric" mask="000.000.000-00" name="cpf" onValueChange={setCpf} />
+</AdsField>
+
+<AdsField label="CNPJ" description="Formato 00.000.000/0000-00">
+	<AdsMaskedInput inputMode="numeric" mask="00.000.000/0000-00" onValueChange={setCnpj} />
+</AdsField>
+
+{/* CPF (11 dígitos) ou CNPJ (14): a máscara troca ao passar do 11º dígito. */}
+<AdsField label="Documento" description="CPF 000.000.000-00 ou CNPJ 00.000.000/0000-00">
+	<AdsMaskedInput
+		inputMode="numeric"
+		mask={['000.000.000-00', '00.000.000/0000-00']}
+		onValueChange={({ unmaskedValue, complete }) => setDigits(complete ? unmaskedValue : '')}
+	/>
+</AdsField>
+```
+
+Valide o dígito verificador no formulário ou no servidor (por exemplo, quando `complete` for
+`true`) e informe o resultado em `error` e `validationState`. Num campo único, 11 dígitos já são um
+`complete` válido para o CPF; o CNPJ só fica completo com 14.
+
+### Máscaras suportadas
+
+`mask` aceita um padrão (`'000-000'`; `0` dígito, `a` letra, `*` qualquer), uma `RegExp`, `Number`,
+`Date`, uma função de validação, uma **lista** de padrões (máscara dinâmica: usa o primeiro que
+serve) ou um objeto `AdsMaskOptions` (`mask` mais `definitions`, `lazy`, `placeholderChar`, `eager`,
+`overwrite`, `skipInvalid`, `prepare`, `prepareChar`, `validate`, `commit`, `dispatch` e as opções
+de `Number` e `Date`). Esse subconjunto documentado é o contrato; instâncias do motor, `blocks` e
+opções fora da lista não fazem parte da API pública. Os atributos HTML `min`, `max` e `pattern` não
+chegam ao input, porque `min`/`max` pertencem às máscaras numéricas e de data. Máscaras `Date` com
+`pattern` próprio exigem também `format` e `parse`.
+
+### Migração de um campo mascarado existente
+
+Para substituir um `IMaskMixin`/`IMaskInput` aplicado a um controle visual de terceiros:
+
+| Antes (adaptador sobre controle de terceiros) | Depois (`AdsMaskedInput`)                                                               |
+| --------------------------------------------- | --------------------------------------------------------------------------------------- |
+| `mask`, `definitions`, `lazy`, `overwrite`…   | `mask` (padrão ou `AdsMaskOptions`); `blocks` e instâncias do motor não têm equivalente |
+| `onAccept(value, maskRef, event)`             | `onValueChange({ maskedValue, unmaskedValue, typedValue, complete })`                   |
+| `onComplete(value)`                           | `complete` no `onValueChange`                                                           |
+| `unmask` (`true`/`'typed'`)                   | Não exposto: `value` é sempre o texto formatado; leia `unmaskedValue` ou `typedValue`   |
+| `value` (texto mascarado)                     | `value` (texto formatado), atualizado a partir de `onValueChange`                       |
+| `inputRef`                                    | `inputRef` ou `ref`, ambos o `HTMLInputElement`                                         |
+| `ref` (instância do componente do motor)      | Não existe equivalente; use `inputRef`                                                  |
+| `onChange`                                    | Não é equivalente ao aceite da máscara; use `onValueChange`                             |
+| Props visuais do controle de terceiros        | `size`, `validationState`, `className` e `AdsField` para rótulo, ajuda e erro           |
+
+A troca no consumidor é uma mudança à parte, com seus testes: verifique `onChange`/`onAccept`,
+`size`, a leitura de `value` e o CSS antes de substituir cada campo.
+
+### Limitações conhecidas
+
+- O DS não oferece máscaras de regras de negócio (documentos, códigos) nem validação semântica.
+- A integração depende da versão `^7.6.1` do peer opcional; outras versões maiores exigem revisão.
+- Composição IME: o motor ignora eventos intermediários e aplica a máscara ao confirmar a
+  composição. Caracteres não aceitos pela máscara (por exemplo, dígitos de largura total em máscara
+  de `0`) são descartados na confirmação.
+- A instalação do peer traz dependências transitivas do motor (por exemplo `imask`,
+  `@babel/runtime-corejs3` e `core-js-pure`, todas MIT); `core-js-pure` declara um script de
+  instalação apenas informativo, que pode ser ignorado com `--ignore-scripts`.
+- O custo adicional medido (cenário `masked-input-public`) está em `docs/scenario-budget.json` e é
+  pago somente por quem importa o subpath.
+
+## Overlays modais e o conteúdo de fundo
+
+Com um `AdsDialog` ou `AdsDrawer` aberto (inclusive o diálogo de `AdsConfirmDialog` e o drawer de
+navegação do `AdsAdminShell`), os filhos de `<body>` fora do modal recebem o atributo `inert`: o
+fundo deixa de receber foco, cliques e leitura por tecnologia assistiva. Isso vale também para nós
+criados ou substituídos em `<body>` enquanto o modal está aberto (navegação, portais de terceiros).
+Ao fechar, o estado anterior é restaurado. Com modais aninhados só o mais recente é interativo.
+
+- Popovers, tooltips e menus abertos a partir do modal continuam interativos, e `AdsToast` nunca fica
+  inerte. Um popup aberto por código da página, antes ou durante o modal, fica inerte.
+- Um `inert` que a aplicação já tinha é preservado. Se a aplicação acrescentar `inert` a uma região
+  durante o modal, ele permanece depois do fechamento; se a aplicação o remover, a região é marcada
+  de novo enquanto o modal estiver aberto.
+- Ao fechar, o foco volta ao elemento que abriu o modal. Se ele saiu da página (por exemplo, o modal
+  de origem fechou antes de um modal aninhado), volta ao elemento que abriu o modal ao redor.
+- O atributo exige suporte do navegador (Chromium 102+, Firefox 112+, Safari 15.5+); sem ele o foco
+  continua preso por teclado e `aria-modal` segue exposto, mas o fundo ainda é alcançável por clique.
+- **Tab e Shift+Tab** circulam somente pelos controles elegíveis, os mesmos que podem receber o foco
+  inicial: o ciclo ignora controles desabilitados (inclusive por `fieldset disabled`), `inert`,
+  `hidden`, `display: none`, `visibility: hidden` (também herdados) e `tabindex` negativo. A lista é
+  reavaliada a cada Tab, então um campo bloqueado ou ocultado com o modal aberto deixa de ser ponta
+  do ciclo: se o controle focado ficou inelegível na ponta, o foco volta ao outro extremo em vez de
+  escapar para o navegador. Sem nenhum controle elegível, o foco fica no próprio painel. Controles
+  intermediários mantêm a navegação nativa e um popover aberto a partir do modal segue o fluxo dele.
+  Conteúdo recolhido (`content-visibility: hidden`, como o de um `<details>` fechado) também fica
+  fora, e o `summary` do `details` é uma parada de Tab (Enter expande e os controles internos entram no ciclo). Efeito colateral intencional no foco inicial: controles nativos (`button`, `input` etc.) com
+  `tabindex` negativo, inclusive `-2` ou menor, deixam de receber o foco inicial; antes só o seletor
+  genérico `[tabindex]` era filtrado. As pontas seguem a ordem real de tabulação do navegador (`tabindex`
+  positivo em ordem crescente, depois os demais em ordem de documento) e cada grupo de rádio (mesmo
+  `name` e formulário) é uma parada só: o marcado ou, sem marcado, o primeiro no Tab e o último no
+  Shift+Tab. Um modal montado já aberto (`open` inicial verdadeiro), inclusive em StrictMode, recebe o
+  foco inicial. Um `iframe` na ponta continua fora do alcance do ciclo (veja `docs/limitations.md`).
+- A rolagem do fundo não é bloqueada.
+- Nada muda na API: não há prop nova, e a marcação só acontece no cliente, depois da hidratação. O
+  atributo `data-ads-overlay-layer` do root do portal é interno e não deve ser usado em seletores da
+  aplicação.
+
 ## Seletor de data
 
 O `AdsDatePicker` seleciona uma data ou um intervalo (`mode="range"`) por
@@ -373,7 +1244,7 @@ hidratação; a data atual só é lida ao abrir o calendário.
 
 ## Barra de filtros
 
-O `AdsFilterBar`, de `@admin-ds/admin`, compõe filtros de texto, seleção
+O `AdsFilterBar`, de `@dvmarques/admin-ds-admin`, compõe filtros de texto, seleção
 (`select`), seleção múltipla (`multiselect`), data (`date`) e intervalo
 (`date-range`), com os filtros ativos como chips removíveis e a ação "Limpar
 filtros". É um Client Component e o estado é do consumidor: `value` é um objeto
@@ -415,7 +1286,11 @@ export default async function Page({
 // app/usuarios/usuarios-filtros.tsx
 'use client';
 
-import { AdsFilterBar, type AdsFilterDefinition, type AdsFilterValues } from '@admin-ds/admin';
+import {
+	AdsFilterBar,
+	type AdsFilterDefinition,
+	type AdsFilterValues,
+} from '@dvmarques/admin-ds-admin';
 import { usePathname, useRouter } from 'next/navigation';
 import { useEffect, useRef, useState, useTransition } from 'react';
 
@@ -510,7 +1385,7 @@ export function UsuariosFiltros({ params }: { params: Params }) {
 
 ## Tabela inteligente
 
-O `AdsSmartTable`, de `@admin-ds/admin`, compõe `AdsTable`, `AdsPagination`,
+O `AdsSmartTable`, de `@dvmarques/admin-ds-admin`, compõe `AdsTable`, `AdsPagination`,
 `AdsSkeleton` e `AdsEmptyState` com ordenação, seleção de linhas e visibilidade
 de colunas. É um Client Component e todo o estado é do consumidor: a tabela não
 busca, ordena nem pagina dados, e as `rows` já chegam processadas. Como `cell` e
@@ -547,8 +1422,8 @@ abaixo).
 // app/usuarios/usuarios-tabela.tsx
 'use client';
 
-import { AdsSmartTable, type AdsSmartTableSort } from '@admin-ds/admin';
-import { AdsButton } from '@admin-ds/components';
+import { AdsSmartTable, type AdsSmartTableSort } from '@dvmarques/admin-ds-admin';
+import { AdsButton } from '@dvmarques/admin-ds-components';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 import { useLayoutEffect, useRef, useState, type MouseEvent } from 'react';
@@ -695,7 +1570,7 @@ quando o filtro muda.
 
 ## Fluxos administrativos
 
-`@admin-ds/admin` compõe os componentes públicos em fluxos recorrentes. Todo o
+`@dvmarques/admin-ds-admin` compõe os componentes públicos em fluxos recorrentes. Todo o
 estado (seleção, filtros, etapa ativa, abertura do diálogo) é do consumidor: os
 fluxos não persistem nem enviam dados, não leem a URL e não usam o roteador do
 Next.js. São Client Components; funções como `validate` e `cell` não atravessam
@@ -728,8 +1603,8 @@ import {
 	type AdsFilterDefinition,
 	type AdsFilterValues,
 	type AdsSmartTableColumn,
-} from '@admin-ds/admin';
-import { AdsButton, type AdsPaginationProps } from '@admin-ds/components';
+} from '@dvmarques/admin-ds-admin';
+import { AdsButton, type AdsPaginationProps } from '@dvmarques/admin-ds-components';
 import { useState } from 'react';
 
 interface Usuario {
@@ -814,15 +1689,20 @@ export function Usuarios({
 }
 ```
 
-`AdsConfirmDialog` usa `AdsDialog`: o foco inicial vai a "Cancelar", `Escape` e o
+`AdsConfirmDialog` usa `AdsDialog`. O foco inicial vai ao primeiro controle
+interativo elegível de `children` (não desabilitado, visível e não inerte) e, sem
+esse controle, a "Cancelar"; por isso, na composição padrão, e com conteúdo apenas
+informativo, o foco inicial é "Cancelar". `Escape` e o
 clique fora cancelam (`onOpenChange(false)`) e `onConfirm` não fecha o diálogo.
 `pending` deixa as ações indisponíveis com `aria-disabled` (o botão focado não
 perde o foco) e suspende `Escape` e o clique fora, mesmo com `closeOnEscape` ou
 `closeOnBackdrop` informados. Ao fechar, o foco volta ao elemento que abriu o
 diálogo; se ele saiu da página, vai a `returnFocusRef`, quando informado.
-`destructive` (padrão) usa a variante de perigo. O tipo `AdsDialogProps` não
-expõe `role`, então o diálogo usa `role="dialog"` com título e descrição
-associados, e não `alertdialog`.
+`destructive` (padrão) usa a variante de perigo e o papel `role="alertdialog"`;
+com `destructive={false}` o papel é `dialog`. `role` explícito prevalece (por
+exemplo `role="dialog"` para manter o papel anterior). `AdsDialogProps` também
+expõe `role` (`dialog` | `alertdialog`); `AdsDrawer` continua `dialog`. Título e
+descrição permanecem associados nos dois casos.
 
 ### Formulário em etapas (`AdsStepForm`)
 
@@ -845,7 +1725,21 @@ const steps = [
 />;
 ```
 
-- `validate` (síncrona) roda ao avançar e ao confirmar; com `false`, a etapa não
+- `validate` pode ser síncrona ou retornar `Promise<boolean>`. Com uma Promise, o
+  formulário fica com `aria-busy`, anuncia `labels.validating`, mostra o
+  carregamento no botão acionado e deixa as ações com `aria-disabled` (o foco não
+  se perde) até resolver; rejeitar equivale a `false`, e um resultado que chega
+  depois de a etapa mudar ou do desmonte é descartado. Os campos ficam inertes
+  durante a espera e editar um campo cancela a validação pendente (acione
+  "Próxima" de novo), e alterar por código o valor de um campo nativo da etapa
+  durante a espera descarta o resultado; estado sem campo nativo correspondente
+  não é detectado, então evite alterá-lo enquanto valida.
+  Retorno síncrono continua sendo tratado de forma síncrona.
+- O indicador de etapas navega para etapas anteriores e, adiante, apenas para as
+  que já foram validadas ao avançar (a atual e as intermediárias incluídas). Editar
+  uma etapa remove essa marca, e "Próxima" a revalida. A marca depende de eventos
+  `change` borbulhantes nos campos da etapa.
+- `validate` roda ao avançar e ao confirmar; com `false`, a etapa não
   muda, um alerta é exibido e o foco vai ao primeiro campo `aria-invalid="true"`
   (ou ao título da etapa). Os erros de campo são do consumidor e devem ser
   definidos no mesmo ciclo em que `validate` retorna: com `AdsField`, informe
@@ -858,3 +1752,309 @@ const steps = [
 - A última etapa mostra "Confirmar" (`labels.submit`), que valida e chama
   `onSubmit`. Inclua nela um resumo para revisão. `submitting` desabilita as
   ações e define `aria-busy`. `Enter` em um campo não envia nem avança.
+
+## Paginação adaptativa e rodapé opcional
+
+`AdsPagination` observa a largura real do contêiner e dos controles, preservando
+primeira, atual e última página. `siblingCount` limita os adjacentes; uma lacuna
+unitária usa o número da página quando cabe. Se faltam slots para reticências,
+elas cedem espaço aos números obrigatórios. Se o conjunto mínimo não cabe fisicamente,
+a região "Controles de paginação roláveis" permite rolar e receber foco, com
+folga vertical para bordas, hover e foco. Os dígitos usam largura estável pelo
+total de páginas. SSR produz HTML determinístico; a medição começa após montagem.
+
+A adaptação reduz a lista calculada por `siblingCount` (padrão 1, até sete
+itens numéricos/reticências para coleções extensas); ela não acrescenta mais
+adjacentes só porque o contêiner ficou largo. Para ampliar essa lista, configure
+`siblingCount`. Totais pequenos mantêm a exibição completa quando couber.
+
+O padrão continua texto "Anterior"/"Próxima", sem salto ou controles extras.
+`navigationMode="arrows"`, `previousContent`, `nextContent`, `showFirstLast`,
+`showPageJump` e `loading` são opcionais. `labels` personaliza nomes acessíveis,
+`previousText`/`nextText`, salto, erro e nome da região rolável. As props
+públicas e `renderPage` legado continuam disponíveis; prefira `renderPageLink`
+e espalhe as props recebidas no link, sem envolver um botão em uma âncora.
+
+Ao trocar `labels.previousText` ou `labels.nextText`, atualize também
+`labels.previous` ou `labels.next`: o nome acessível deve conter o texto
+visível, inclusive com `previousContent`/`nextContent` customizados. Exemplo:
+`labels={{ previousText: "Voltar", previous: "Voltar uma página", nextText: "Avançar", next: "Avançar uma página" }}`.
+No modo de setas sem texto, mantenha nomes acessíveis descritivos.
+
+```tsx
+<AdsPagination
+	page={page}
+	pageCount={pageCount}
+	onPageChange={setPage}
+	navigationMode="arrows"
+	showPageJump
+	loading={pending}
+/>
+```
+
+O salto aceita inteiro decimal entre 1 e `pageCount`, por Enter ou "Ir";
+vazio, fração, expoente, fora da faixa e página atual não navegam. O campo
+sincroniza mudanças externas de página e total. Não cria form, podendo ser
+usado dentro do formulário do consumidor. Com `renderPageLink`, "Ir" é o link
+do consumidor e Enter ativa esse mesmo link; o callback de paginação não é
+chamado nesse modo. Loading usa `aria-disabled` e `aria-busy`, mantém os links
+e botões focáveis e bloqueia ativações, sem fazer busca de dados. O consumidor
+sinaliza o loading enquanto sua navegação estiver pendente.
+
+Quando `pageCount` positivo torna `page` inválida, a página visual é limitada
+ao intervalo e `onPageChange` solicita a correção em efeito, uma vez por
+combinação inválida; o consumidor deve atualizar estado e dados. A solicitação
+é adiada durante loading e nunca ocorre com total zero. No modo somente de
+links, o consumidor normaliza URL e dados: não há redirecionamento automático.
+Mudanças externas não movem foco; resize/interação recuperam foco na página
+atual somente se o controle focado foi removido e o foco se perdeu.
+
+Na `AdsSmartTable`, passe essas opções em `pagination`. `pageSize` e
+`onPageSizeChange` habilitam o seletor controlado, com `pageSizeOptions`
+(padrão 10/25/50/100); o consumidor decide a nova página, total e busca.
+`totalItems` e `pageSize` habilitam o resumo, limitado às `rows` recebidas e ao
+total, inclusive última página incompleta. Sem total conhecido, página válida
+ou durante loading, não é inventado um intervalo. `labels.pageSize`,
+`labels.pageSummary(first,last,total)` e `labels.emptyPage` localizam o rodapé.
+Loading da tabela ou de sua paginação bloqueia também o seletor. Nenhum desses
+controles altera os comportamentos padrão sem as props opcionais.
+
+O salto e o seletor usam `input type="number"` e `select` nativos com estilos
+locais e tokens semânticos, em vez de `AdsInput`/`AdsSelect`. A escolha mantém
+a estrutura compacta, a largura do campo e o foco sob controle desta composição;
+não representa uma restrição dos componentes de formulário. O erro do salto é
+comunicado por `aria-invalid`, descrição e alerta textual, sem borda de erro
+específica. O campo fica `readOnly` durante loading para preservar o foco e
+`disabled` quando não há páginas. O seletor é desabilitado durante loading. Estilos dedicados
+para esses estados e a unificação visual com os campos do sistema ficam como
+melhoria futura, preservando os contratos atuais.
+
+Exemplos interativos: `/componentes/paginacao` no admin-demo e stories
+Navigation/Components (PaginationResponsive, PaginationLocalizedLoading) e
+Layout/SmartTable (PaginationFooter). Os apps consomem os exports públicos e
+CSS compilado; não é necessário configurar Tailwind no consumidor.
+
+### AdsSmartTable: virtualização, redimensionamento e exportação
+
+Os três recursos são opcionais e independentes; sem as props, a tabela se
+comporta como antes. A tabela continua sem buscar, ordenar nem paginar dados.
+
+```tsx
+const [widths, setWidths] = useState<Record<string, number>>({});
+
+<AdsSmartTable<Usuario>
+	caption="Usuários"
+	columns={columns} // com `minWidth`, `maxWidth`, `exportValue` e `exportable`
+	rows={usuarios}
+	getRowId={(u) => u.id}
+	virtualization={{ rowHeight: 44, height: 480 }}
+	columnWidths={widths}
+	onColumnWidthsChange={setWidths}
+	onExport={(dados) => baixar(getAdsSmartTableCsv(dados, { bom: true }))}
+/>;
+```
+
+- **Virtualização.** `virtualization={{ rowHeight, height, overscan? }}` renderiza
+  só as linhas visíveis em uma região rolável de altura máxima `height`, com
+  cabeçalho fixo. Cada linha tem exatamente `rowHeight` pixels e o conteúdo que
+  excede é cortado. A tabela expõe `aria-rowcount` (total de linhas mais o
+  cabeçalho) e `aria-rowindex` em cada linha montada. A linha que contém o foco
+  não é desmontada ao rolar. "Selecionar todas" e a contagem de selecionadas
+  consideram todas as linhas recebidas, não só as montadas. O HTML inicial é a
+  primeira janela, igual no servidor e no cliente.
+- **Redimensionamento.** `onColumnWidthsChange` exibe uma alça por coluna
+  (`role="separator"`, com `aria-valuenow`, `aria-valuemin` e `aria-valuemax`).
+  Com o ponteiro, arraste; com o teclado, foque a alça e use ←/→ (10 px; Shift,
+  50 px), Home/End (mínimo/máximo) e Enter (volta à largura automática; duplo
+  clique faz o mesmo). `columnWidths` é a fonte da verdade: sem aplicar o valor
+  recebido, nada muda. Limites por coluna em `minWidth` (80) e `maxWidth` (640);
+  `resizable: false` remove a alça.
+- **Exportação.** `onExport` exibe o botão "Exportar" na barra de ferramentas,
+  desabilitado durante carregamento, erro e sem linhas, e emite `columns`
+  (visíveis, na ordem exibida e com `exportable !== false`), `rows`, `records`
+  (valores por id de coluna), `selectedIds` e `selectedRows`. O valor de cada
+  célula vem de `exportValue` ou, na falta, do retorno de `cell` quando for texto
+  ou número; conteúdo React vira `null`. `getAdsSmartTableCsv(dados, opções)` é um
+  helper opcional que gera CSV (RFC 4180; `separator`, `onlySelected`, `bom`) e
+  prefixa com `'` textos iniciados por `=`, `+`, `-` ou `@`
+  (`neutralizeFormulas`). Gerar o arquivo e baixá-lo é do consumidor.
+
+Textos configuráveis em `labels.export` e `labels.resizeColumn`. Exemplos:
+`/componentes/tabela-avancada` no admin-demo e as stories Layout/SmartTable
+(Virtualized, ResizableColumns, ExportHook).
+
+## Marca no topo da sidebar (opcional)
+
+Use `<AdsAdminShell layout="sidebar-header">` e passe `header` em
+`AdsAdminShell.Sidebar` com a marca e `AdsAdminShell.SidebarToggle`.
+O padrão continua `standard`, com header de largura completa. O slot aceita
+ReactNode, não cria marca ou organização e, ausente, não cria bloco vazio.
+No desktop opt-in, topo da sidebar e header compartilham altura natural por CSS
+grid/subgrid; navegação e main rolam separadamente. O controle circular com chevron fica na divisória,
+sem empilhar marca e botão nem aumentar a altura do topo. Use `ads-admin-shell-sidebar-label` no nome para ocultá-lo visualmente
+no desktop recolhido, preservando o nome acessível.
+
+Mantenha `NavigationTrigger` no header principal: o toggle desktop fica oculto no
+mobile. O slot `header` aparece no Drawer aberto; componha também uma identificação
+compacta no header móvel. O consumidor esconde essa alternativa no desktop.
+
+```tsx
+<AdsAdminShell layout="sidebar-header">
+	<AdsAdminShell.Header>
+		<AdsAdminShell.NavigationTrigger />
+		{/* ações do consumidor e identificação compacta móvel */}
+	</AdsAdminShell.Header>
+	<AdsAdminShell.Body>
+		<AdsAdminShell.Sidebar
+			header={
+				<>
+					<span className="ads-admin-shell-sidebar-label">Minha aplicação</span>
+					<AdsAdminShell.SidebarToggle />
+				</>
+			}
+		>
+			{/* organização opcional e navegação */}
+		</AdsAdminShell.Sidebar>
+		<AdsAdminShell.Main>Conteúdo</AdsAdminShell.Main>
+	</AdsAdminShell.Body>
+</AdsAdminShell>
+```
+
+`--ads-sidebar-active-background` personaliza apenas o fundo do item ativo
+(fallback `--ads-color-surface-selected`). Texto, faixa lateral e foco permanecem
+independentes. O demo sobrescreve essa variável somente no light.
+Veja as stories **Marca na sidebar** e `/catalogo/admin-shell`.
+Estado controlado/não controlado, SSR/hidratação e persistência do consumidor seguem
+os contratos anteriores; não há dependências novas.
+
+Cada item de `AdsOrganizationSwitcher.organizations` aceita `avatarTone` (tons de `AdsAvatar`, padrão `neutral`). O tom vale no gatilho e na opção da lista; `primary` usa o mesmo fundo semântico do avatar da conta no demo. Logos e fallback continuam funcionando.
+
+O seletor expandido preenche a largura de seu contêiner, independente do nome; use um contêiner com largura limitada para restringi-lo. No recolhido, somente a cor da borda fica transparente, preservando a geometria. Na composição sidebar-header, o item ativo recolhido mede 2,75rem quadrados; seu recuo lateral é compartilhado pelo expandido e considera a largura útil com scrollbar.
+
+Na composição sidebar-header expandida, o seletor e o destaque de um item raiz ativo compartilham os limites laterais, preservando a posição de avatar/texto. O demo mantém a coordenada do símbolo ao recolher e omite mobileTitle para identificar o menu somente por logo/Admin DS; aria-label continua nomeando o diálogo. O menu móvel do shell preenche toda a viewport; o Drawer genérico mantém sua largura padrão e ocupa toda a altura em telas estreitas, sem herdar o max-height do diálogo.
+
+O destaque recolhido tem dimensões explícitas de 2,75rem. Os containers de consulta ficam no conteúdo da navegação e no seletor expandido, já descontada a scrollbar; não no próprio elemento rolável. Isso preserva proporção e alinhamento com scrollbar nativa visível. O smoke desativa --hide-scrollbars no Chromium para validar o comportamento real.
+
+Na composição desktop `sidebar-header`, os ícones de `NavigationItem` (envolvidos em `.ads-sidebar-icon`) e `NavigationGroup` mantêm a coordenada horizontal ao expandir/recolher. O eixo usa o centro do destaque selecionado compacto, considerando a área útil com scrollbar. O avatar de `AdsOrganizationSwitcher` compartilha esse eixo e também permanece estável entre estados. O destaque ativo continua com 44 px no recolhido, com o ícone centralizado. Em navegadores com scrollbar clássica, o espaço lateral da scrollbar é reservado mesmo sem overflow (`scrollbar-gutter: stable`), evitando deslocamentos quando a rolagem passa a ser necessária. O menu móvel mantém sua composição completa.
+
+## Texto em atualização: AdsLoadingText
+
+Use `AdsLoadingText` quando o conteúdo textual permanecer conhecido mas puder ser atualizado durante processamento ou polling. Não inicia requisições e não substitui `AdsLoadingIndicator` (status acessível) ou `AdsSkeleton` (conteúdo ainda indisponível).
+
+```tsx
+import { AdsLoadingText } from '@dvmarques/admin-ds-components';
+
+<AdsLoadingText loading={emProcessamento} speed="normal">
+	Processando registros...
+</AdsLoadingText>;
+```
+
+A API inclui `loading` (falso por padrão), `speed` (`slow`, `normal`, `fast`), `as` (elemento semântico, padrão `span`) e `className`/atributos HTML. O ciclo normal dura 2,5 segundos. Estilos vêm do CSS público `@dvmarques/admin-ds-components/styles.css` com tokens semânticos; o efeito respeita temas claro/escuro e fica estático com `prefers-reduced-motion` ou cores forçadas. Não há anúncio automático por leitor de tela: para progresso importante, forneça uma região de status acessível separada, evitando anúncios repetidos a cada polling.
+
+Veja as stories `Primitives/LoadingText` e o catálogo `/catalogo/loading-text`.
+
+## AdsCombobox e AdsAutocomplete — migração de react-select (#142)
+
+AdsCombobox pesquisa e seleciona entre opções fornecidas pela aplicação, que pode atualizá-las dinamicamente. AdsAutocomplete usa a mesma base e também aceita opções locais, mas oferece loadOptions(query, signal) para gerenciar buscas assíncronas, debounce e descarte de respostas obsoletas. Ambos aceitam defaultValue ou value/onValueChange; inputValue/onInputValueChange controla o texto separadamente. Se inputValue controlado divergir do rótulo da opção selecionada, o texto é livre e o value antigo não é enviado por name. Use requestKey em AdsAutocomplete para identificar a origem dos dados: ao mudar, a consulta pendente é abortada e a busca refeita (trocar apenas a identidade de loadOptions não refaz a busca). O callback onInputValueChange recebe também o motivo (input, select ou clear). renderOption personaliza cada item. Os papéis ARIA, o popover em portal, o foco e os IDs estáveis são responsabilidade da biblioteca.
+
+### Exemplo local
+
+```tsx
+'use client';
+import { AdsCombobox, AdsAutocomplete, AdsField } from '@dvmarques/admin-ds-components';
+
+const options = [
+	{ value: 'SP', label: 'São Paulo' },
+	{ value: 'RJ', label: 'Rio de Janeiro' },
+];
+export function Estado() {
+	return (
+		<AdsField label="Estado">
+			<AdsAutocomplete options={options} name="uf" defaultValue="SP" />
+		</AdsField>
+	);
+}
+```
+
+### Exemplo remoto
+
+```tsx
+'use client';
+import { AdsAutocomplete, AdsField } from '@dvmarques/admin-ds-components';
+
+export function EstadoRemoto() {
+	return (
+		<AdsField label="Estado remoto">
+			<AdsAutocomplete
+				name="uf"
+				debounceMs={300}
+				loadOptions={async (query, signal) => {
+					const response = await fetch('/api/estados?q=' + encodeURIComponent(query), { signal });
+					if (!response.ok) throw new Error('Falha na consulta');
+					return response.json();
+				}}
+			/>
+		</AdsField>
+	);
+}
+```
+
+Migração de seletores existentes: para listas locais, usar AdsAutocomplete com options (ou AdsCombobox para seleção básica); para carregamento assíncrono, usar AdsAutocomplete com loadOptions. O formato { value, label } permanece, mas a API de seleção recebe e emite a string value, não o objeto como react-select. A personalização de rótulos via formatOptionLabel pode ser adaptada para renderOption. Não são necessários menuPortalTarget nem menuPosition; o sistema existente de overlays fornece portal, tema, empilhamento e reposicionamento dentro de AdsDialog e contêineres com scroll. Consumidores Next.js devem manter a interação em Client Components.
+
+O debounce padrão é 250ms; consultas começam após um caractere. O AbortSignal pode cancelar HTTP, e mesmo provedores que não respeitam o sinal têm respostas obsoletas descartadas. Um texto digitado não se torna automaticamente uma opção válida; ao submeter, o input oculto name contém apenas o value selecionado. Limpar ou selecionar mantém o foco no campo. Para seleção múltipla, use a evolução separada da issue #143.
+
+Ao modificar o texto depois de uma seleção, o componente limpa automaticamente o value anterior e emite onValueChange(null, null); o consumidor deve atualizar o value controlado para evitar enviar valor obsoleto. Resultados assíncronos permanecem vinculados ao termo consultado. O campo desabilitado não inicia novas requisições.
+
+Opções de `AdsCombobox` e `AdsAutocomplete` podem incluir `icon` (nome de `AdsIcon`) ou `avatar: { src, fallback }`; o avatar tem precedência quando ambos são fornecidos. O elemento é decorativo e aparece na lista e na seleção. Use `showOptionVisuals={false}` para ocultar os elementos sem alterar valores. `renderOption` personaliza o conteúdo ao lado do elemento; não repita nele o mesmo ícone. Para opções remotas pré-selecionadas, forneça `selectedOption` com os dados visuais.
+
+## AdsSelect: placeholder opcional e texto longo (#140)
+
+`AdsSelect` continua sendo o `<select>` nativo. A prop `placeholder` é **opt-in**: sem ela nada muda para as chamadas existentes, inclusive as que usam uma primeira `<option value="">`.
+
+```tsx
+'use client';
+import { useState } from 'react';
+import { AdsField, AdsSelect } from '@dvmarques/admin-ds-components';
+
+export function Equipe() {
+	const [team, setTeam] = useState<string | null>(null);
+	return (
+		<AdsField label="Equipe">
+			<AdsSelect
+				name="team"
+				onChange={(event) => setTeam(event.target.value)}
+				placeholder="Selecione…"
+				required
+				value={team}
+			>
+				<option value="">Sem equipe</option>
+				<option value="fin">Financeiro</option>
+			</AdsSelect>
+		</AdsField>
+	);
+}
+```
+
+### Ausência versus valor vazio
+
+| Valor (`value`/`defaultValue`)   | Com `placeholder`                         | Em `required` | Em `FormData`       |
+| -------------------------------- | ----------------------------------------- | ------------- | ------------------- |
+| `null` ou omitido (não control.) | Exibe o placeholder (ausência)            | Inválido      | Não é enviado       |
+| `""`                             | Seleciona a opção **real** de valor vazio | Válido        | Enviado como `""`   |
+| qualquer outro valor             | Seleciona a opção correspondente          | Válido        | Enviado normalmente |
+
+- A ausência é a primeira `<option>` nativa (`value=""`, desabilitada após a montagem), isto é, a _placeholder label option_ do HTML: `checkValidity()`, `reportValidity()` e a mensagem do navegador funcionam sem sentinelas, e nenhum identificador interno chega ao DOM, ao `onChange` ou ao `FormData`. A opção real `""` é distinguida por identidade, não pelo texto do valor.
+- O placeholder não pode ser reescolhido pelo usuário (opção desabilitada). Para voltar à ausência, controle o valor com `null` ou use o reset do formulário. O reset restaura o valor inicial (`defaultValue`, ou ausência).
+- Valores externos, reset e mudanças de `value` não emitem `onChange`. Se o consumidor não atualizar `value`, a escolha do usuário é revertida, como em um `select` controlado do React.
+- Sem `placeholder`, `null` em `value`/`defaultValue` equivale a `""`. `multiple` ignora o placeholder.
+- Em testes, selecione a opção real vazia por rótulo ou índice (`selectOptions(select, 'Sem equipe')`): selecionar por valor `""` alcançaria a opção de ausência desabilitada.
+- Antes da hidratação, o HTML do servidor já exibe o placeholder (primeira opção) e sem JavaScript o formulário envia o valor vazio, como o `select` nativo.
+- **Migração: não duplique a opção vazia.** O `placeholder` já cria a opção de ausência. Se o select tinha uma `<option value="">Escolha</option>` manual apenas para essa função, **remova-a** ao adotar `placeholder`; mantida junto dele, ela vira uma segunda opção vazia (uma opção real de valor `""`, válida em `required`). Mantenha a opção manual somente quando `""` for um valor de negócio.
+- **Janela sem JavaScript ou pré-hidratação:** nela a opção de ausência ainda é habilitada e selecionável; o valor continua `""`, `required` a invalida e um formulário não obrigatório envia `""`. Ela é desabilitada ao hidratar.
+- `data-ads-select-placeholder` é detalhe interno, **não** contrato público: não use em seletores, testes ou estilos da aplicação.
+
+### Texto longo e estados
+
+O texto da opção selecionada é truncado com reticências dentro da caixa do controle, sem invadir a seta (o recuo de `2,25rem` é preservado, inclusive em RTL) e sem alargar o contêiner; o rótulo completo continua como texto da opção, exposto pela semântica nativa. O estilo é escopado a `select.ads-select` simples (não afeta `multiple` nem os demais controles de `formControlClasses()`). O placeholder aparece com a cor `--ads-color-text-muted` e texto explícito; a atenuação é só reforço visual (no tema escuro e com `prefers-contrast: more` ela quase não difere do texto selecionado), e o diferencial é o texto explícito da ausência. Em `forced-colors` valem as cores do sistema. A atenuação usa `:has()` (navegadores modernos); sem suporte, só ela se perde, e o restante segue igual.
+
+Limitações: a aparência da lista aberta é do navegador; as validações automatizadas do `placeholder` usam React 19.2; o mesmo cenário de prova (45 verificações em Chromium: required, FormData, reset, controlado/não controlado, SSR e hidratação) foi executado uma vez, fora do repositório, com React 18.3.1, sem falhas nem avisos (o intervalo de peer `>=18.2` não tem teste automatizado recorrente) e Firefox e WebKit são verificados pela CI do repositório. Veja as stories `Forms/Select` e o catálogo `/catalogo/select`.

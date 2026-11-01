@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useState } from 'react';
 import { describe, expect, it, vi } from 'vitest';
+import { AdsDialog, AdsDrawer } from '@dvmarques/admin-ds-components';
 import {
 	AdsSmartTable,
 	type AdsSmartTableColumn,
@@ -228,10 +229,78 @@ describe('AdsSmartTable', () => {
 		expect(button).toHaveFocus();
 	});
 
+	it.each([
+		['AdsDialog', AdsDialog],
+		['AdsDrawer', AdsDrawer],
+	] as const)(
+		'closes only the column panel on the first Escape inside an %s and the overlay on the second',
+		(_name, Overlay) => {
+			const onOpenChange = vi.fn();
+			render(
+				<Overlay onOpenChange={onOpenChange} open title="Usuários">
+					<Controlled />
+				</Overlay>,
+			);
+			const button = screen.getByRole('button', { name: 'Colunas' });
+			fireEvent.click(button);
+			const checkbox = screen.getByRole('checkbox', { name: 'Nome' });
+			checkbox.focus();
+			fireEvent.keyDown(checkbox, { key: 'Escape' });
+			expect(button).toHaveAttribute('aria-expanded', 'false');
+			expect(button).toHaveFocus();
+			expect(onOpenChange).not.toHaveBeenCalled();
+			fireEvent.keyDown(button, { key: 'Escape' });
+			expect(onOpenChange).toHaveBeenCalledWith(false);
+		},
+	);
+
+	it('handles the panel Escape locally: marked as handled and never seen by the document', () => {
+		const calls: boolean[] = [];
+		const listener = (event: KeyboardEvent) => calls.push(event.defaultPrevented);
+		document.addEventListener('keydown', listener);
+		try {
+			render(<Controlled />);
+			const button = screen.getByRole('button', { name: 'Colunas' });
+			fireEvent.click(button);
+			// Retorno false: `preventDefault` chamado (marcador respeitado pela pilha de Escape).
+			expect(
+				fireEvent.keyDown(screen.getByRole('checkbox', { name: 'Nome' }), { key: 'Escape' }),
+			).toBe(false);
+			// Sem chamadas: `stopPropagation` impediu que o evento chegasse ao `document`.
+			expect(calls).toEqual([]);
+			expect(button).toHaveAttribute('aria-expanded', 'false');
+		} finally {
+			document.removeEventListener('keydown', listener);
+		}
+	});
+
+	it('does not absorb Escape while the column panel is closed', () => {
+		const calls: boolean[] = [];
+		const listener = (event: KeyboardEvent) => calls.push(event.defaultPrevented);
+		document.addEventListener('keydown', listener);
+		try {
+			render(<Controlled />);
+			expect(
+				fireEvent.keyDown(screen.getByRole('button', { name: 'Colunas' }), { key: 'Escape' }),
+			).toBe(true);
+			expect(calls).toEqual([false]);
+		} finally {
+			document.removeEventListener('keydown', listener);
+		}
+	});
+
+	it('passes the density to the table and keeps the default markup without it', () => {
+		const { rerender } = render(<Controlled density="compact" />);
+		expect(screen.getByRole('table')).toHaveAttribute('data-density', 'compact');
+		rerender(<Controlled />);
+		expect(screen.getByRole('table')).not.toHaveAttribute('data-density');
+	});
+
 	it('shows loading skeletons, aria-busy and a disabled select all', () => {
 		render(<Controlled loading loadingRows={2} />);
 		expect(screen.getByRole('table')).toHaveAttribute('aria-busy', 'true');
 		expect(document.querySelectorAll('.ads-skeleton')).toHaveLength(6);
+		expect(document.querySelector('.ads-skeleton')).toHaveAttribute('data-variant', 'text');
 		expect(
 			screen.getByRole('checkbox', { name: 'Selecionar todas as linhas da página' }),
 		).toBeDisabled();
@@ -384,5 +453,78 @@ describe('AdsSmartTable', () => {
 		expect(source).not.toMatch(/from 'next\//);
 		expect(source).not.toMatch(/window\.location/);
 		expect(source.startsWith("'use client'")).toBe(true);
+	});
+});
+
+describe('pagination footer options', () => {
+	it('keeps the previous footer unchanged without opt-in data', () => {
+		render(<Harness pagination={{ page: 1, pageCount: 3 }} />);
+		expect(screen.queryByRole('combobox')).toBeNull();
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+	});
+	it('summarizes the received incomplete page and emits only controlled page-size changes', () => {
+		const size = vi.fn();
+		const page = vi.fn();
+		render(
+			<Harness
+				rows={users.slice(0, 2)}
+				pagination={{ page: 2, pageCount: 2, onPageChange: page, showPageJump: true }}
+				totalItems={12}
+				pageSize={10}
+				onPageSizeChange={size}
+				pageSizeOptions={[10, 25, 25, -1]}
+			/>,
+		);
+		expect(screen.getByText('Exibindo 11–12 de 12 registros')).toBeInTheDocument();
+		const select = screen.getByRole('combobox', { name: 'Registros por página' });
+		expect(within(select).getAllByRole('option')).toHaveLength(2);
+		fireEvent.change(select, { target: { value: '25' } });
+		expect(size).toHaveBeenCalledExactlyOnceWith(25);
+		expect(page).not.toHaveBeenCalled();
+	});
+	it('does not invent counts for unknown totals, empty rows or invalid pages', () => {
+		const { rerender } = render(<Harness pagination={{ page: 1, pageCount: 2 }} pageSize={10} />);
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+		rerender(
+			<Harness rows={[]} pagination={{ page: 1, pageCount: 0 }} pageSize={10} totalItems={0} />,
+		);
+		expect(screen.getByText('Nenhum registro nesta página')).toBeInTheDocument();
+		rerender(<Harness pagination={{ page: 30, pageCount: 2 }} pageSize={10} totalItems={12} />);
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
+		expect(screen.queryByText('Nenhum registro nesta página')).toBeNull();
+	});
+	it('localizes footer and blocks selection/navigation while the table is loading', () => {
+		const size = vi.fn(),
+			page = vi.fn();
+		const { rerender } = render(
+			<Harness
+				rows={users}
+				pagination={{ page: 1, pageCount: 10, onPageChange: page }}
+				pageSize={10}
+				onPageSizeChange={size}
+				totalItems={100}
+				labels={{
+					pageSize: 'Rows',
+					pageSummary: (first, last, total) => `${first}-${last} of ${total}`,
+				}}
+			/>,
+		);
+		expect(screen.getByText('1-3 of 100')).toBeInTheDocument();
+		expect(screen.getByRole('combobox', { name: 'Rows' })).toBeInTheDocument();
+		rerender(
+			<Harness
+				loading
+				pagination={{ page: 1, pageCount: 10, onPageChange: page }}
+				pageSize={10}
+				onPageSizeChange={size}
+				totalItems={100}
+			/>,
+		);
+		expect(screen.getByRole('combobox')).toBeDisabled();
+		fireEvent.change(screen.getByRole('combobox'), { target: { value: '25' } });
+		expect(size).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
+		expect(page).not.toHaveBeenCalled();
+		expect(screen.queryByText(/Exibindo/)).toBeNull();
 	});
 });

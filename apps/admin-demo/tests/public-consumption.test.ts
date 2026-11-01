@@ -12,8 +12,13 @@ import {
 	readDemoFiles,
 	readDemoPackageJson,
 } from './support/demo-contract';
-import { AdsAdminShell } from '@admin-ds/admin';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 import {
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
 	AdsAvatar,
 	AdsBadge,
 	AdsBreadcrumb,
@@ -33,6 +38,7 @@ import {
 	AdsList,
 	AdsListItem,
 	AdsLoadingIndicator,
+	AdsLoadingText,
 	AdsNav,
 	AdsPagination,
 	AdsPopover,
@@ -55,13 +61,18 @@ import {
 	AdsToast,
 	AdsTooltip,
 	AdsTypography,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 const repoRoot = resolve(import.meta.dirname, '../../..');
 
 describe('public component consumption', () => {
 	it('resolves all component exports without internal package paths', () => {
 		expect([
+			AdsAccordion,
+			AdsAccordionHeader,
+			AdsAccordionItem,
+			AdsAccordionPanel,
+			AdsAccordionTrigger,
 			AdsAvatar,
 			AdsBadge,
 			AdsBreadcrumb,
@@ -81,6 +92,7 @@ describe('public component consumption', () => {
 			AdsList,
 			AdsListItem,
 			AdsLoadingIndicator,
+			AdsLoadingText,
 			AdsNav,
 			AdsPagination,
 			AdsPopover,
@@ -104,7 +116,7 @@ describe('public component consumption', () => {
 			AdsTooltip,
 			AdsTypography,
 			AdsAdminShell,
-		]).toHaveLength(42);
+		]).toHaveLength(48);
 	});
 
 	it('includes component styles in the distributed CSS', async () => {
@@ -121,6 +133,7 @@ describe('public component consumption', () => {
 		expect(css).toMatch(/\.ads-overlay-panel/);
 		expect(css).toMatch(/\.ads-toast/);
 		expect(css).toMatch(/\.ads-breadcrumb/);
+		expect(css).toMatch(/\.ads-loading-text/);
 		expect(css).toMatch(/\.ads-dropdown-content/);
 		expect(css).toMatch(/\.ads-pagination/);
 		expect(css).toMatch(/\.overflow-x-auto/);
@@ -140,8 +153,8 @@ describe('public component consumption', () => {
 		const files = await readDemoFiles(['app', 'lib'], /\.(ts|tsx)$/);
 		const sources = files.map((file) => file.content).join('\n');
 
-		expect(sources).toContain("from '@admin-ds/components'");
-		expect(sources).toContain("from '@admin-ds/admin'");
+		expect(sources).toContain("from '@dvmarques/admin-ds-components'");
+		expect(sources).toContain("from '@dvmarques/admin-ds-admin'");
 		for (const file of files) {
 			expect(findInternalPackageImports(importSpecifiers(file.content)), file.path).toEqual([]);
 		}

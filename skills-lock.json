@@ -1,6 +1,11 @@
 {
 	"version": 1,
 	"skills": {
+		"adaptive-ai-workflow": {
+			"source": "local",
+			"sourceType": "local",
+			"skillPath": ".agents/skills/adaptive-ai-workflow/SKILL.md"
+		},
 		"design-taste-frontend": {
 			"source": "Leonxlnx/taste-skill",
 			"sourceType": "github",

@@ -1,0 +1,43 @@
+## 1. Preparação e especificação
+
+- [x] 1.1 Ler a issue #185, AGENTS.md, README.md, configuração OpenSpec, `AdsAvatar`, `AdsPopover`, `AdsDrawer`, `AdsAdminShell` e o demo atual.
+- [x] 1.2 Criar a change OpenSpec (perfil Critical) e validar em modo estrito antes de implementar.
+
+## 2. Evoluções compatíveis em `@admin-ds/components`
+
+- [x] 2.1 `AdsIcon`: ícones `bell`, `building`, `chevronDown`, `chevronsUpDown`, `logOut`, `settings`, `user`; teste decorativo/informativo e regressão dos existentes.
+- [x] 2.2 `AdsAvatar`: falha de imagem reavaliada quando `src` muda; testes de foto, falha, troca de `src`, fallback vazio e uso isolado.
+
+## 3. Incremento 1 — `AdsAccountMenu` (`@admin-ds/admin`)
+
+- [x] 3.1 Componente, tipos, exports públicos e CSS (`ads-account-menu*`).
+- [x] 3.2 Testes: abertura/fechamento, foco e retorno, setas/Home/End/Tab, grupos, `switchAccount` opcional, desabilitada, `Promise` pendente/erro, controlado/não controlado, foto/iniciais/falha, axe e SSR.
+- [x] 3.3 Stories e showcase no catálogo.
+
+## 4. Incremento 2 — `AdsNotificationCenter` (`@admin-ds/admin`)
+
+- [x] 4.1 Componente, tipos, exports públicos e CSS (`ads-notification-center*`).
+- [x] 4.2 Testes: contador (zero, 99+, não lidas ≠ carregadas), abrir não marca, política de ativação, botão irmão do link, filtros, leitura individual/global, carregando/vazio/erro/pendente/erro de ação/carregar mais, rótulos e `formatTime`, foco/Escape/retorno, axe e SSR.
+- [x] 4.3 Stories e showcase no catálogo.
+
+## 5. Incremento 3 — `AdsOrganizationSwitcher` (`@admin-ds/admin`)
+
+- [x] 5.1 Componente, tipos, exports públicos e CSS (`ads-organization-switcher*`), sem alterar `AdsAdminShell` além de um hook interno opcional.
+- [x] 5.2 Testes: ausente/presente, zero/uma/muitas, busca e sem resultados, atual marcada, troca síncrona e assíncrona (pendente/erro, sem confirmar antes), carregando/erro, desabilitada, logo falho, recolhida e mobile, foco, axe e SSR.
+- [x] 5.3 Stories e showcase no catálogo, incluindo exemplo sem organização.
+
+## 6. Incremento 4 — Integração
+
+- [x] 6.1 Demo: cabeçalho (tema + sino + avatar) e topo da sidebar com dados fictícios e feedback local; testes do demo.
+- [x] 6.2 Catálogo: entradas, composições, snippets (`node scripts/catalog-snippets.mjs`), matriz em `docs/admin-demo-catalog.md` e teste de cobertura.
+- [x] 6.3 E2E: conta, notificações, organização (expandida, recolhida, mobile), overlays aninhados, tema claro/escuro, hidratação e exemplo sem organização.
+- [x] 6.4 Documentação em `docs/integration.md`, `docs/admin-demo-catalog.md`, `docs/bundle-baseline.md` (orçamentos de `@admin-ds/admin` atualizados, justificados e aprovados) e CHANGELOG `[0.1.1]`.
+- [x] 6.5 Baselines visuais Linux regenerados pelo workflow "Atualizar baselines visuais" sobre o cabeçalho final (commit `13b70b8`), com validação visual aprovada pelo responsável: tema e sino sem borda, avatar com fundo, intervalo visível igual entre os três controles, menu de tema com ícone e texto, seletor de organização na sidebar, em claro e escuro.
+
+## 7. Formatação e validação
+
+- [x] 7.1 `npx prettier --write` nos arquivos alterados e `npm run format`.
+- [x] 7.2 `npm run lint`, `npm run build`, `npm run typecheck`, `npm run test:quiet` (verboso para diagnóstico: `npm run test:verbose`).
+- [x] 7.3 `npm run test:e2e` sem falhas. Evidência: CI no head `64f099f` (run `40191247153`), com os baselines finais (`13b70b8`): Chromium 267 de 267 aprovados (sem snapshot divergente), Firefox e WebKit aprovados, Qualidade rápida e Artefatos de distribuição aprovados; Validação de release ignorada por não ser PR de release.
+- [x] 7.4 `openspec validate --all --strict` e `npm run check:agent-skills`.
+- [x] 7.5 Revisão independente (contratos públicos e acessibilidade) tratada: foco em estados pendentes, região viva persistente para mensagens de estado, foco ao dispensar durante ação pendente e Escape com painel aberto sem interação prévia, com testes.

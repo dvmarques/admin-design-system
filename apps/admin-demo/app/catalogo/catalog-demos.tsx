@@ -1,0 +1,2202 @@
+'use client';
+import { useState } from 'react';
+import {
+	AdsMaskedInput,
+	type AdsMaskedInputValues,
+} from '@dvmarques/admin-ds-components/masked-input';
+import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
+import Link from 'next/link';
+import { DemoBrand } from '../demo-brand';
+import {
+	AdsButton,
+	AdsBadge,
+	AdsAvatar,
+	AdsIcon,
+	AdsTypography,
+	AdsSurface,
+	AdsLoadingIndicator,
+	AdsLoadingText,
+	AdsSkeleton,
+	AdsSparkline,
+	AdsInput,
+	AdsPasswordInput,
+	AdsTextarea,
+	AdsSelect,
+	AdsCombobox,
+	AdsAutocomplete,
+	AdsCheckbox,
+	AdsRadio,
+	AdsSwitch,
+	AdsField,
+	AdsFieldLabel,
+	AdsFieldDescription,
+	AdsFieldMessage,
+	AdsInputGroup,
+	AdsSelectionGroup,
+	AdsDatePicker,
+	AdsBreadcrumb,
+	AdsNav,
+	AdsTabs,
+	AdsTabsList,
+	AdsTabsPanel,
+	AdsTabsTrigger,
+	AdsAccordion,
+	AdsAccordionHeader,
+	AdsAccordionItem,
+	AdsAccordionPanel,
+	AdsAccordionTrigger,
+	AdsDropdown,
+	AdsPagination,
+	AdsDialog,
+	AdsDrawer,
+	AdsPopover,
+	AdsTooltip,
+	AdsToast,
+	AdsAlert,
+	AdsEmptyState,
+	AdsProgress,
+	AdsTable,
+	AdsTableBody,
+	AdsTableCaption,
+	AdsTableCell,
+	AdsTableHead,
+	AdsTableHeader,
+	AdsTableRow,
+	AdsCard,
+	AdsCardActions,
+	AdsCardContent,
+	AdsCardHeader,
+	AdsList,
+	AdsListItem,
+	ThemeToggle,
+	AdsThemeControl,
+	type AdsThemePreference,
+	StyleFixture,
+} from '@dvmarques/admin-ds-components';
+import {
+	AdsAccountMenu,
+	AdsAdminShell,
+	AdsNotificationCenter,
+	AdsOrganizationSwitcher,
+	AdsDashboardGrid,
+	AdsDashboardPanel,
+	AdsMetricCard,
+	AdsFilterBar,
+	AdsSmartTable,
+	AdsBulkActionBar,
+	AdsConfirmDialog,
+	AdsListFlow,
+	AdsStepForm,
+	type AdsFilterValues,
+	type AdsNotification,
+	type AdsSmartTableSort,
+} from '@dvmarques/admin-ds-admin';
+
+export function ButtonDemo() {
+	const [count, setCount] = useState(0);
+	const [loading, setLoading] = useState(false);
+	return (
+		<>
+			<p role="status">{count} ações</p>
+			{(['primary', 'secondary', 'danger', 'ghost'] as const).map((variant) => (
+				<AdsButton key={variant} variant={variant} onClick={() => setCount(count + 1)}>
+					{variant}
+				</AdsButton>
+			))}
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsButton key={size} size={size} onClick={() => setCount(count + 1)}>
+					{size}
+				</AdsButton>
+			))}
+			<AdsButton disabled>Desabilitado</AdsButton>
+			<AdsButton isLoading>Salvando</AdsButton>
+			<AdsButton variant="secondary" onClick={() => setLoading(!loading)}>
+				Alternar carregamento
+			</AdsButton>
+			<AdsButton isLoading={loading}>Enviar relatório</AdsButton>
+		</>
+	);
+}
+
+export function BadgeDemo() {
+	return (
+		<>
+			{(['neutral', 'primary', 'success', 'warning', 'danger'] as const).map((variant) => (
+				<AdsBadge key={variant} variant={variant}>
+					{variant}
+				</AdsBadge>
+			))}
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsBadge key={size} size={size}>
+					{size}
+				</AdsBadge>
+			))}
+		</>
+	);
+}
+
+export function AvatarDemo() {
+	return (
+		<>
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsAvatar key={size} size={size} alt="Ana Silva" fallback="AS" />
+			))}
+			<AdsAvatar alt="Perfil sem foto" fallback="?" />
+		</>
+	);
+}
+
+export function IconDemo() {
+	return (
+		<>
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsIcon key={size} size={size} name="check" label={`Confirmado ${size}`} />
+			))}
+			<AdsIcon name="search" />
+			<span>Busca (ícone decorativo)</span>
+		</>
+	);
+}
+
+export function TypographyDemo() {
+	return (
+		<>
+			<AdsTypography as="p" variant="heading1">
+				Título visual
+			</AdsTypography>
+			<AdsTypography as="p" variant="heading2">
+				Subtítulo visual
+			</AdsTypography>
+			<AdsTypography as="p" variant="heading3">
+				Seção visual
+			</AdsTypography>
+			<AdsTypography>Texto de leitura</AdsTypography>
+			<AdsTypography variant="muted">Informação auxiliar</AdsTypography>
+		</>
+	);
+}
+
+export function SurfaceDemo() {
+	return (
+		<>
+			{(['neutral', 'raised', 'outlined'] as const).map((variant) => (
+				<AdsSurface key={variant} variant={variant} style={{ padding: '1rem' }}>
+					{variant}
+				</AdsSurface>
+			))}
+		</>
+	);
+}
+
+export function LoadingIndicatorDemo() {
+	return (
+		<>
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsLoadingIndicator key={size} size={size} label={`Carregando ${size}`} />
+			))}
+		</>
+	);
+}
+
+export function LoadingTextDemo() {
+	const [loading, setLoading] = useState(true);
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<AdsButton onClick={() => setLoading((current) => !current)}>
+				{loading ? 'Concluir atualização' : 'Iniciar atualização'}
+			</AdsButton>
+			{(['slow', 'normal', 'fast'] as const).map((speed) => (
+				<AdsLoadingText key={speed} loading={loading} speed={speed}>
+					{speed}: Processando registros da execução...
+				</AdsLoadingText>
+			))}
+			<AdsLoadingText as="p" loading={loading}>
+				O texto longo permanece visível e se adapta ao espaço disponível, mesmo durante o
+				processamento.
+			</AdsLoadingText>
+		</div>
+	);
+}
+
+export function SkeletonDemo() {
+	return (
+		<div aria-busy="true" aria-label="Carregando perfil">
+			<AdsSkeleton style={{ height: '3rem', width: '3rem', borderRadius: '50%' }} />
+			<AdsSkeleton style={{ height: '1rem', width: '12rem', maxWidth: '100%' }} />
+			<span>Carregando perfil</span>
+		</div>
+	);
+}
+
+export function SparklineDemo() {
+	return (
+		<>
+			{(['default', 'positive', 'negative'] as const).map((tone) => (
+				<AdsSparkline
+					key={tone}
+					label={`Evolução ${tone}`}
+					tone={tone}
+					values={[1, 3, null, 2, 6]}
+				/>
+			))}
+			<AdsSparkline label="Série constante" values={[2, 2, 2]} />
+			<AdsSparkline label="Um ponto" values={[5]} />
+			<AdsSparkline label="Sem dados" values={[]} />
+			<p>Série vazia não desenha gráfico.</p>
+		</>
+	);
+}
+
+export function InputDemo() {
+	return (
+		<>
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsField key={size} label={`Tamanho ${size}`}>
+					<AdsInput placeholder="Digite aqui" size={size} />
+				</AdsField>
+			))}
+			<AdsField label="Desabilitado">
+				<AdsInput placeholder="Digite aqui" disabled />
+			</AdsField>
+			<AdsField label="Inválido" validationState="error" error="Revise o valor">
+				<AdsInput placeholder="Digite aqui" />
+			</AdsField>
+			<AdsField label="Válido" validationState="success">
+				<AdsInput placeholder="Digite aqui" />
+			</AdsField>
+		</>
+	);
+}
+
+export function PasswordInputDemo() {
+	return (
+		<>
+			<AdsField description="Use ao menos 8 caracteres." label="Senha">
+				<AdsPasswordInput
+					autoComplete="new-password"
+					placeholder="Digite sua senha"
+					rules={[
+						{ id: 'length', label: 'Ao menos 8 caracteres', test: (value) => value.length >= 8 },
+						{ id: 'digit', label: 'Ao menos um número', test: (value) => /\d/.test(value) },
+					]}
+					showStrength
+				/>
+			</AdsField>
+			<AdsField label="Senha inválida" validationState="error" error="Revise sua senha">
+				<AdsPasswordInput />
+			</AdsField>
+			<AdsField label="Senha desabilitada">
+				<AdsPasswordInput disabled />
+			</AdsField>
+			<AdsField label="Senha sem alternância de visibilidade">
+				<AdsPasswordInput showVisibilityToggle={false} />
+			</AdsField>
+		</>
+	);
+}
+
+export function MaskedInputDemo() {
+	const [fixed, setFixed] = useState<AdsMaskedInputValues>();
+	const [phone, setPhone] = useState<AdsMaskedInputValues>();
+	const [cpf, setCpf] = useState<AdsMaskedInputValues>();
+	const [cnpj, setCnpj] = useState<AdsMaskedInputValues>();
+	const [doc, setDoc] = useState<AdsMaskedInputValues>();
+	const [amount, setAmount] = useState<AdsMaskedInputValues>();
+	const [free, setFree] = useState<AdsMaskedInputValues>();
+	const [controlled, setControlled] = useState('123-4');
+	const [formComplete, setFormComplete] = useState(false);
+	const [formTouched, setFormTouched] = useState(false);
+	const [sent, setSent] = useState<string>();
+	const formInvalid = formTouched && !formComplete;
+	return (
+		<>
+			<AdsField description="Máscara fixa 000-000; dados fictícios." label="Código (máscara fixa)">
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000-000"
+					onValueChange={setFixed}
+					placeholder="000-000"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {fixed?.maskedValue ?? '—'} · Bruto: {fixed?.unmaskedValue ?? '—'} · Completo:{' '}
+				{fixed ? (fixed.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Alterna entre 8 e 9 dígitos conforme o texto cresce."
+				label="Telefone (máscara dinâmica)"
+			>
+				<AdsMaskedInput
+					inputMode="tel"
+					mask={['(00) 0000-0000', '(00) 00000-0000']}
+					onValueChange={setPhone}
+					placeholder="(00) 00000-0000"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {phone?.maskedValue ?? '—'} · Bruto: {phone?.unmaskedValue ?? '—'}
+			</p>
+			<AdsField
+				description="Formato 000.000.000-00; só formata, não valida dígito verificador."
+				label="CPF (máscara fixa)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000.000.000-00"
+					onValueChange={setCpf}
+					placeholder="000.000.000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {cpf?.maskedValue ?? '—'} · Bruto: {cpf?.unmaskedValue ?? '—'} · Completo:{' '}
+				{cpf ? (cpf.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Formato 00.000.000/0000-00; só formata, não valida dígito verificador."
+				label="CNPJ (máscara fixa)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="00.000.000/0000-00"
+					onValueChange={setCnpj}
+					placeholder="00.000.000/0000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {cnpj?.maskedValue ?? '—'} · Bruto: {cnpj?.unmaskedValue ?? '—'} · Completo:{' '}
+				{cnpj ? (cnpj.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="Formato 000.000.000-00 (11 dígitos) ou 00.000.000/0000-00 (14); só formata."
+				label="Documento (CPF ou CNPJ)"
+			>
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask={['000.000.000-00', '00.000.000/0000-00']}
+					onValueChange={setDoc}
+					placeholder="000.000.000-00"
+				/>
+			</AdsField>
+			<p>
+				Formatado: {doc?.maskedValue ?? '—'} · Bruto: {doc?.unmaskedValue ?? '—'} · Completo:{' '}
+				{doc ? (doc.complete ? 'sim' : 'não') : '—'}
+			</p>
+			<AdsField
+				description="typedValue é um número; o valor bruto continua sendo texto."
+				label="Quantia (máscara numérica)"
+			>
+				<AdsMaskedInput
+					inputMode="decimal"
+					mask={{ mask: Number, scale: 2, radix: ',', thousandsSeparator: '.', mapToRadix: ['.'] }}
+					onValueChange={setAmount}
+				/>
+			</AdsField>
+			<p>
+				Formatado: {amount?.maskedValue ?? '—'} · Bruto: {amount?.unmaskedValue ?? '—'} · Número:{' '}
+				{typeof amount?.typedValue === 'number' ? String(amount.typedValue) : '—'}
+			</p>
+			<AdsField
+				description="Sem mask, o campo é um input de texto comum."
+				label="Observação (sem máscara)"
+			>
+				<AdsMaskedInput onValueChange={setFree} placeholder="Texto livre" />
+			</AdsField>
+			<p aria-label="Valores da observação">Bruto: {free?.unmaskedValue ?? '—'}</p>
+			<AdsField description="O estado é do consumidor." label="Protocolo (controlado)">
+				<AdsMaskedInput
+					inputMode="numeric"
+					mask="000-000"
+					onValueChange={(values) => setControlled(values.maskedValue)}
+					value={controlled}
+				/>
+			</AdsField>
+			<div style={{ display: 'flex', gap: '0.5rem' }}>
+				<AdsButton onClick={() => setControlled('987654')} type="button" variant="secondary">
+					Definir 987-654
+				</AdsButton>
+				<AdsButton onClick={() => setControlled('')} type="button" variant="secondary">
+					Limpar protocolo
+				</AdsButton>
+			</div>
+			<AdsField
+				description="O texto inicial é formatado na montagem."
+				label="Referência (não controlado)"
+			>
+				<AdsMaskedInput defaultValue="123456" inputMode="numeric" mask="000-000" />
+			</AdsField>
+			<form
+				aria-label="Formulário de exemplo"
+				noValidate
+				onReset={() => {
+					setFormTouched(false);
+					setFormComplete(false);
+					setSent(undefined);
+				}}
+				onSubmit={(event) => {
+					event.preventDefault();
+					setFormTouched(true);
+					if (formComplete) {
+						setSent(String(new FormData(event.currentTarget).get('codigo') ?? ''));
+						return;
+					}
+					// Leva o foco ao campo inválido, como em um formulário real.
+					const field = event.currentTarget.elements.namedItem('codigo');
+					if (field instanceof HTMLInputElement) field.focus();
+				}}
+				style={{ display: 'grid', gap: '0.75rem' }}
+			>
+				<AdsField
+					description="required é nativo; a completude vem de onValueChange."
+					error={formInvalid ? 'Preencha os seis dígitos.' : undefined}
+					label="Código do formulário"
+					validationState={formInvalid ? 'error' : 'default'}
+				>
+					<AdsMaskedInput
+						inputMode="numeric"
+						mask="000-000"
+						name="codigo"
+						onBlur={() => setFormTouched(true)}
+						onValueChange={(values) => setFormComplete(values.complete)}
+						required
+					/>
+				</AdsField>
+				<div style={{ display: 'flex', gap: '0.5rem' }}>
+					<AdsButton type="submit">Enviar formulário</AdsButton>
+					<AdsButton type="reset" variant="secondary">
+						Redefinir formulário
+					</AdsButton>
+				</div>
+				<p aria-live="polite">{sent ? `Enviado o texto formatado: ${sent}` : 'Nada enviado.'}</p>
+			</form>
+			<AdsField label="Desabilitado">
+				<AdsMaskedInput defaultValue="123456" disabled mask="000-000" />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsMaskedInput defaultValue="123456" mask="000-000" readOnly />
+			</AdsField>
+		</>
+	);
+}
+
+export function TextareaDemo() {
+	return (
+		<>
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsField key={size} label={`Tamanho ${size}`}>
+					<AdsTextarea placeholder="Digite aqui" size={size} />
+				</AdsField>
+			))}
+			<AdsField label="Desabilitado">
+				<AdsTextarea placeholder="Digite aqui" disabled />
+			</AdsField>
+			<AdsField label="Inválido" validationState="error" error="Revise o valor">
+				<AdsTextarea placeholder="Digite aqui" />
+			</AdsField>
+			<AdsField label="Válido" validationState="success">
+				<AdsTextarea placeholder="Digite aqui" />
+			</AdsField>
+		</>
+	);
+}
+
+export function SelectDemo() {
+	const [status, setStatus] = useState<string | null>(null);
+	const [submitted, setSubmitted] = useState('');
+	return (
+		<>
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsField key={size} label={`Tamanho ${size}`}>
+					<AdsSelect size={size}>
+						<option value="">Escolha</option>
+						<option value="a">Ativo</option>
+						<option value="i">Inativo</option>
+					</AdsSelect>
+				</AdsField>
+			))}
+			<AdsField label="Desabilitado">
+				<AdsSelect disabled>
+					<option value="">Escolha</option>
+					<option value="a">Ativo</option>
+					<option value="i">Inativo</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Inválido" validationState="error" error="Revise o valor">
+				<AdsSelect>
+					<option value="">Escolha</option>
+					<option value="a">Ativo</option>
+					<option value="i">Inativo</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Válido" validationState="success">
+				<AdsSelect>
+					<option value="">Escolha</option>
+					<option value="a">Ativo</option>
+					<option value="i">Inativo</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField
+				description="null indica ausência de escolha; o valor vazio é uma opção real."
+				label="Placeholder controlado"
+			>
+				<AdsSelect
+					onChange={(event) => setStatus(event.target.value)}
+					placeholder="Selecione…"
+					value={status}
+				>
+					<option value="">Sem status (valor vazio)</option>
+					<option value="a">Ativo</option>
+					<option value="i">Inativo</option>
+				</AdsSelect>
+			</AdsField>
+			<p data-testid="select-controlled-value" role="status">
+				{status === null ? 'ausente' : status === '' ? 'vazio' : status}
+			</p>
+			<form
+				aria-label="Formulário de seleção"
+				onSubmit={(event) => {
+					event.preventDefault();
+					setSubmitted(JSON.stringify([...new FormData(event.currentTarget).entries()]));
+				}}
+			>
+				<AdsField label="Status obrigatório" description="Ausência é inválida.">
+					<AdsSelect name="status" placeholder="Selecione…" required>
+						<option value="a">Ativo</option>
+						<option value="i">Inativo</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsField label="Equipe (vazio válido)" description="Opção real de valor vazio.">
+					<AdsSelect defaultValue="" name="team" placeholder="Selecione…" required>
+						<option value="">Sem equipe</option>
+						<option value="fin">Financeiro</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsButton type="submit">Enviar</AdsButton>
+				<AdsButton type="reset" variant="secondary">
+					Limpar
+				</AdsButton>
+				<output aria-label="Dados enviados">{submitted}</output>
+			</form>
+			<AdsField label="Texto longo">
+				<AdsSelect defaultValue="long">
+					<option value="long">
+						Departamento de operações financeiras, controladoria e planejamento estratégico
+						corporativo da região metropolitana
+					</option>
+					<option value="short">Curto</option>
+				</AdsSelect>
+			</AdsField>
+		</>
+	);
+}
+
+export function CheckboxDemo() {
+	return (
+		<AdsSelectionGroup legend="Preferências">
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsCheckbox key={size} name="preferencia" value={size} size={size} label={size} />
+			))}
+			<AdsCheckbox name="fixo" defaultChecked disabled label="Selecionado e desabilitado" />
+		</AdsSelectionGroup>
+	);
+}
+
+export function RadioDemo() {
+	return (
+		<AdsSelectionGroup legend="Preferências">
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsRadio key={size} name="preferencia" value={size} size={size} label={size} />
+			))}
+			<AdsRadio name="fixo" defaultChecked disabled label="Selecionado e desabilitado" />
+		</AdsSelectionGroup>
+	);
+}
+
+export function SwitchDemo() {
+	return (
+		<AdsSelectionGroup legend="Preferências">
+			{(['sm', 'md', 'lg'] as const).map((size) => (
+				<AdsSwitch key={size} name="preferencia" value={size} size={size} label={size} />
+			))}
+			<AdsSwitch name="fixo" defaultChecked disabled label="Selecionado e desabilitado" />
+		</AdsSelectionGroup>
+	);
+}
+
+export function FieldDemo() {
+	const [value, setValue] = useState('120');
+	const [error, setError] = useState(false);
+	return (
+		<>
+			<AdsFieldLabel id="amount-label">Valor em reais</AdsFieldLabel>
+			<AdsInputGroup
+				startContent="R$"
+				endContent={
+					<>
+						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>
+							Limpar
+						</AdsButton>
+						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>
+							Restaurar
+						</AdsButton>
+					</>
+				}
+			>
+				<AdsInput
+					aria-labelledby="amount-label"
+					id="amount"
+					value={value}
+					onChange={(event) => setValue(event.target.value)}
+					validationState={error ? 'error' : 'default'}
+					aria-invalid={error}
+					aria-describedby={error ? 'amount-help amount-error' : 'amount-help'}
+				/>
+			</AdsInputGroup>
+			<AdsFieldDescription id="amount-help">
+				Use os adendos para alterar o valor.
+			</AdsFieldDescription>
+			{error && <AdsFieldMessage id="amount-error">Informe um valor válido.</AdsFieldMessage>}
+			<AdsButton onClick={() => setError(!error)}>Alternar erro</AdsButton>
+			<AdsField
+				label="Campo composto"
+				description="Associação automática"
+				validationState={error ? 'error' : 'default'}
+				error={error ? 'Campo obrigatório' : undefined}
+			>
+				<AdsInput />
+			</AdsField>
+		</>
+	);
+}
+
+export function InputGroupDemo() {
+	const [value, setValue] = useState('120');
+	const [error, setError] = useState(false);
+	return (
+		<>
+			<AdsFieldLabel id="amount-label">Valor em reais</AdsFieldLabel>
+			<AdsInputGroup
+				startContent="R$"
+				endContent={
+					<>
+						<AdsButton aria-label="Limpar valor" onClick={() => setValue('')}>
+							Limpar
+						</AdsButton>
+						<AdsButton aria-label="Restaurar valor" onClick={() => setValue('120')}>
+							Restaurar
+						</AdsButton>
+					</>
+				}
+			>
+				<AdsInput
+					aria-labelledby="amount-label"
+					id="amount"
+					value={value}
+					onChange={(event) => setValue(event.target.value)}
+					validationState={error ? 'error' : 'default'}
+					aria-invalid={error}
+					aria-describedby={error ? 'amount-help amount-error' : 'amount-help'}
+				/>
+			</AdsInputGroup>
+			<AdsFieldDescription id="amount-help">
+				Use os adendos para alterar o valor.
+			</AdsFieldDescription>
+			{error && <AdsFieldMessage id="amount-error">Informe um valor válido.</AdsFieldMessage>}
+			<AdsButton onClick={() => setError(!error)}>Alternar erro</AdsButton>
+		</>
+	);
+}
+
+export function SelectionGroupDemo() {
+	return (
+		<AdsSelectionGroup legend="Canais">
+			<AdsCheckbox defaultChecked label="Email" />
+			<AdsCheckbox label="SMS" />
+			<AdsCheckbox disabled label="Telefone indisponível" />
+		</AdsSelectionGroup>
+	);
+}
+
+export function DatePickerDemo() {
+	return (
+		<>
+			<AdsDatePicker
+				aria-label="Data única"
+				defaultValue="2026-10-23"
+				min="2026-10-01"
+				max="2026-10-31"
+			/>
+			<AdsDatePicker
+				aria-label="Período"
+				mode="range"
+				defaultValue={{ start: '2026-10-01', end: '2026-10-10' }}
+			/>
+			<AdsDatePicker aria-label="Data desabilitada" disabled />
+			<AdsDatePicker aria-label="Data inválida" validationState="error" />
+		</>
+	);
+}
+
+export function BreadcrumbDemo() {
+	return (
+		<AdsBreadcrumb
+			maxItems={3}
+			expandLabel="Mostrar caminho completo"
+			items={[
+				{ label: 'Início', renderLink: (props) => <Link href="/" {...props} /> },
+				{ label: 'Catálogo', renderLink: (props) => <Link href="/catalogo" {...props} /> },
+				{
+					label: 'Navegação',
+					renderLink: (props) => <Link href="/catalogo#navegacao" {...props} />,
+				},
+				{ label: 'Trilha' },
+			]}
+		/>
+	);
+}
+
+export function NavDemo() {
+	const [current, setCurrent] = useState('Resumo');
+	return (
+		<>
+			<AdsNav
+				items={['Resumo', 'Atividade'].map((label) => ({
+					label,
+					current: current === label,
+					onClick: () => setCurrent(label),
+				}))}
+			/>
+			<p role="status">Seção: {current}</p>
+		</>
+	);
+}
+
+export function TabsDemo() {
+	return (
+		<AdsTabs defaultValue="summary">
+			<AdsTabsList aria-label="Informações">
+				<AdsTabsTrigger value="summary">Resumo</AdsTabsTrigger>
+				<AdsTabsTrigger value="history">Histórico</AdsTabsTrigger>
+				<AdsTabsTrigger value="disabled" disabled>
+					Indisponível
+				</AdsTabsTrigger>
+			</AdsTabsList>
+			<AdsTabsPanel value="summary">Resumo da conta.</AdsTabsPanel>
+			<AdsTabsPanel value="history">Histórico de alterações.</AdsTabsPanel>
+		</AdsTabs>
+	);
+}
+
+export function AccordionDemo() {
+	return (
+		<AdsAccordion type="multiple" defaultValue={['first']}>
+			<AdsAccordionItem value="first">
+				<AdsAccordionHeader>
+					<AdsAccordionTrigger>Primeira seção</AdsAccordionTrigger>
+				</AdsAccordionHeader>
+				<AdsAccordionPanel>Conteúdo da primeira seção.</AdsAccordionPanel>
+			</AdsAccordionItem>
+			<AdsAccordionItem value="second">
+				<AdsAccordionHeader>
+					<AdsAccordionTrigger>Segunda seção</AdsAccordionTrigger>
+				</AdsAccordionHeader>
+				<AdsAccordionPanel>Conteúdo da segunda seção.</AdsAccordionPanel>
+			</AdsAccordionItem>
+			<AdsAccordionItem value="disabled" disabled>
+				<AdsAccordionHeader>
+					<AdsAccordionTrigger>Seção indisponível</AdsAccordionTrigger>
+				</AdsAccordionHeader>
+				<AdsAccordionPanel>Indisponível</AdsAccordionPanel>
+			</AdsAccordionItem>
+		</AdsAccordion>
+	);
+}
+
+export function DropdownDemo() {
+	const [message, setMessage] = useState('Nenhuma ação');
+	return (
+		<>
+			<AdsDropdown>
+				<AdsDropdown.Trigger>Abrir ações</AdsDropdown.Trigger>
+				<AdsDropdown.Content>
+					<AdsDropdown.Item onSelect={() => setMessage('Exportado')}>Exportar</AdsDropdown.Item>
+					<AdsDropdown.Item disabled>Indisponível</AdsDropdown.Item>
+				</AdsDropdown.Content>
+			</AdsDropdown>
+			<p role="status">{message}</p>
+		</>
+	);
+}
+
+export function PaginationDemo() {
+	const [page, setPage] = useState(1);
+	const [loading, setLoading] = useState(false);
+	return (
+		<>
+			<AdsPagination
+				page={page}
+				pageCount={20}
+				aria-label="Paginação de resultados"
+				onPageChange={setPage}
+				showPageJump
+				loading={loading}
+			/>
+			<AdsButton onClick={() => setLoading(!loading)}>Alternar carregamento</AdsButton>
+			<p role="status">Página {page}, 20 páginas</p>
+			<AdsPagination
+				aria-label="Paginação sem resultados"
+				page={1}
+				pageCount={0}
+				onPageChange={setPage}
+			/>
+		</>
+	);
+}
+
+export function DialogDemo() {
+	const [open, setOpen] = useState(false);
+	const [locked, setLocked] = useState(false);
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)}>Abrir Dialog</AdsButton>
+			<AdsDialog
+				title="Exemplo de Dialog"
+				description="Confira o conteúdo antes de continuar."
+				open={open}
+				onOpenChange={setOpen}
+			>
+				<div style={{ display: 'grid', gap: '0.75rem' }}>
+					<p>Conteúdo do painel.</p>
+					{/* Controles desabilitados ou inertes nas pontas não participam do ciclo de Tab. */}
+					<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Dados bloqueados</legend>
+						<AdsField label="Código interno">
+							<AdsInput defaultValue="A-102" />
+						</AdsField>
+					</fieldset>
+					<AdsField label="Nome do registro">
+						<AdsInput />
+					</AdsField>
+					<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+						{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+					</AdsButton>
+					<fieldset disabled={locked} style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Campos finais</legend>
+						<AdsField label="Observação">
+							<AdsInput />
+						</AdsField>
+					</fieldset>
+				</div>
+			</AdsDialog>
+		</>
+	);
+}
+
+export function DrawerDemo() {
+	const [open, setOpen] = useState(false);
+	const [locked, setLocked] = useState(false);
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)}>Abrir Drawer</AdsButton>
+			<AdsDrawer
+				title="Exemplo de Drawer"
+				description="Confira o conteúdo antes de continuar."
+				open={open}
+				onOpenChange={setOpen}
+			>
+				<div style={{ display: 'grid', gap: '0.75rem' }}>
+					<p>Conteúdo do painel.</p>
+					{/* Controles desabilitados ou inertes nas pontas não participam do ciclo de Tab. */}
+					<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Dados bloqueados</legend>
+						<AdsField label="Código interno">
+							<AdsInput defaultValue="A-102" />
+						</AdsField>
+					</fieldset>
+					<AdsField label="Nome do registro">
+						<AdsInput />
+					</AdsField>
+					<AdsButton variant="secondary" onClick={() => setLocked(!locked)}>
+						{locked ? 'Liberar campos finais' : 'Bloquear campos finais'}
+					</AdsButton>
+					<fieldset disabled={locked} style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+						<legend>Campos finais</legend>
+						<AdsField label="Observação">
+							<AdsInput />
+						</AdsField>
+					</fieldset>
+				</div>
+			</AdsDrawer>
+		</>
+	);
+}
+
+export function ConfirmDialogDemo() {
+	const [open, setOpen] = useState(false);
+	const [message, setMessage] = useState('');
+	return (
+		<>
+			<AdsButton onClick={() => setOpen(true)}>Abrir ConfirmDialog</AdsButton>
+			<AdsConfirmDialog
+				title="Exemplo de ConfirmDialog"
+				description="Confira o conteúdo antes de continuar."
+				open={open}
+				onOpenChange={setOpen}
+				onConfirm={() => {
+					setOpen(false);
+					setMessage('Confirmado');
+				}}
+			>
+				{/* Conteúdo interativo: o foco inicial vai ao primeiro controle elegível, antes de "Cancelar". */}
+				<fieldset disabled style={{ border: 0, margin: 0, minWidth: 0, padding: 0 }}>
+					<legend>Dados bloqueados</legend>
+					<AdsField label="Código interno">
+						<AdsInput defaultValue="A-102" />
+					</AdsField>
+				</fieldset>
+				<AdsField label="Motivo (opcional)">
+					<AdsInput />
+				</AdsField>
+			</AdsConfirmDialog>
+			<p role="status">{message}</p>
+		</>
+	);
+}
+
+export function PopoverDemo() {
+	const [open, setOpen] = useState(false);
+	return (
+		<AdsPopover
+			open={open}
+			onOpenChange={setOpen}
+			content={<AdsButton onClick={() => setOpen(false)}>Concluir</AdsButton>}
+		>
+			<AdsButton>Abrir popover</AdsButton>
+		</AdsPopover>
+	);
+}
+
+export function TooltipDemo() {
+	return (
+		<AdsTooltip content="Informação adicional">
+			<AdsButton>Ajuda</AdsButton>
+		</AdsTooltip>
+	);
+}
+
+export function ToastDemo() {
+	const [open, setOpen] = useState(false);
+	const [variant, setVariant] = useState<'info' | 'success' | 'warning' | 'error'>('success');
+	return (
+		<>
+			<AdsField label="Tom">
+				<AdsSelect
+					value={variant}
+					onChange={(event) => setVariant(event.target.value as typeof variant)}
+				>
+					{['info', 'success', 'warning', 'error'].map((value) => (
+						<option key={value}>{value}</option>
+					))}
+				</AdsSelect>
+			</AdsField>
+			<AdsButton onClick={() => setOpen(true)}>Mostrar notificação</AdsButton>
+			<AdsToast open={open} variant={variant} onClose={() => setOpen(false)}>
+				Operação de demonstração: {variant}
+			</AdsToast>
+		</>
+	);
+}
+
+export function EmptyStateDemo() {
+	const [empty, setEmpty] = useState(true);
+	return empty ? (
+		<AdsEmptyState
+			title="Nenhum resultado"
+			description="Tente outra consulta."
+			actions={<AdsButton onClick={() => setEmpty(false)}>Carregar exemplo</AdsButton>}
+		/>
+	) : (
+		<>
+			<p>Resultado carregado</p>
+			<AdsButton onClick={() => setEmpty(true)}>Limpar resultado</AdsButton>
+		</>
+	);
+}
+
+export function ProgressDemo() {
+	const [value, setValue] = useState(40);
+	return (
+		<>
+			<AdsProgress value={value} label="Importação" />
+			<AdsButton onClick={() => setValue(Math.min(100, value + 20))}>Avançar progresso</AdsButton>
+			<AdsButton onClick={() => setValue(0)}>Reiniciar progresso</AdsButton>
+			<AdsProgress label="Aguardando resposta" />
+		</>
+	);
+}
+
+export function TableDemo() {
+	const [compact, setCompact] = useState(false);
+	return (
+		<>
+			<AdsButton onClick={() => setCompact(!compact)}>Alternar densidade</AdsButton>
+			<AdsTable density={compact ? 'compact' : 'comfortable'}>
+				<AdsTableCaption>Resumo de valores</AdsTableCaption>
+				<AdsTableHead>
+					<AdsTableRow interactive={false}>
+						<AdsTableHeader>Item</AdsTableHeader>
+						<AdsTableHeader align="end">Valor</AdsTableHeader>
+					</AdsTableRow>
+				</AdsTableHead>
+				<AdsTableBody>
+					<AdsTableRow>
+						<AdsTableCell>Exemplo A</AdsTableCell>
+						<AdsTableCell align="end">R$ 120</AdsTableCell>
+					</AdsTableRow>
+				</AdsTableBody>
+			</AdsTable>
+		</>
+	);
+}
+
+export function CardDemo() {
+	const [saved, setSaved] = useState(false);
+	return (
+		<AdsCard>
+			<AdsCardHeader>
+				<h3>Relatório</h3>
+				<p>Composição de conteúdo</p>
+			</AdsCardHeader>
+			<AdsCardContent>
+				<p role="status">{saved ? 'Relatório salvo' : 'Relatório pendente'}</p>
+			</AdsCardContent>
+			<AdsCardActions>
+				<AdsButton onClick={() => setSaved(!saved)}>Alternar status</AdsButton>
+			</AdsCardActions>
+		</AdsCard>
+	);
+}
+
+export function ListDemo() {
+	return (
+		<AdsList>
+			<AdsListItem>Primeiro item</AdsListItem>
+			<AdsListItem>
+				Segundo item com uma descrição mais longa que pode quebrar em telas estreitas.
+			</AdsListItem>
+		</AdsList>
+	);
+}
+
+export function AdminShellDemo() {
+	return (
+		<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
+			<AdsAdminShell layout="sidebar-header">
+				<AdsAdminShell.Header>
+					<AdsAdminShell.NavigationTrigger />
+					<div className="demo-mobile-brand">
+						<DemoBrand compact />
+					</div>
+					<span className="demo-header-tools">Shell de exemplo</span>
+				</AdsAdminShell.Header>
+				<AdsAdminShell.Body>
+					<AdsAdminShell.Sidebar
+						header={
+							<>
+								<DemoBrand />
+								<AdsAdminShell.SidebarToggle />
+							</>
+						}
+						label="Navegação do shell de exemplo"
+						mobileTitle="Menu do exemplo"
+					>
+						<AdsAdminShell.Navigation>
+							<AdsAdminShell.NavigationSection label="Exemplos">
+								<AdsAdminShell.NavigationGroup label="Páginas" icon={<AdsIcon name="info" />} open>
+									<AdsAdminShell.NavigationItem>
+										<a href="#shell-content" aria-current="page">
+											Conteúdo
+										</a>
+									</AdsAdminShell.NavigationItem>
+								</AdsAdminShell.NavigationGroup>
+							</AdsAdminShell.NavigationSection>
+						</AdsAdminShell.Navigation>
+					</AdsAdminShell.Sidebar>
+					<AdsAdminShell.Main>
+						<h1>Shell administrativo</h1>
+						<p id="shell-content">
+							Conteúdo administrativo. Use os controles para recolher ou abrir o menu.
+						</p>
+					</AdsAdminShell.Main>
+				</AdsAdminShell.Body>
+			</AdsAdminShell>
+		</div>
+	);
+}
+
+export function DashboardDemo() {
+	return (
+		<AdsDashboardGrid>
+			<AdsMetricCard
+				title="Receita"
+				value="R$ 120"
+				change="+12%"
+				trend="up"
+				sparkline={{ label: 'Receita diária', values: [1, 3, 2, 5] }}
+			/>
+			<AdsMetricCard title="Carregando" value="0" loading />
+			<AdsDashboardPanel title="Erro" error="Falha ao carregar" />
+			<AdsDashboardPanel title="Sem dados" empty={<AdsEmptyState title="Sem registros" />} />
+			<AdsDashboardPanel title="Resumo" span={2}>
+				<p>Painel com conteúdo</p>
+			</AdsDashboardPanel>
+		</AdsDashboardGrid>
+	);
+}
+
+export function FilterBarDemo() {
+	const [value, setValue] = useState<AdsFilterValues>({});
+	return (
+		<>
+			<AdsFilterBar
+				value={value}
+				onChange={setValue}
+				filters={[
+					{ id: 'query', type: 'text', label: 'Buscar nome' },
+					{
+						id: 'status',
+						type: 'select',
+						label: 'Status',
+						options: [{ label: 'Ativo', value: 'active' }],
+					},
+					{
+						id: 'tags',
+						type: 'multiselect',
+						label: 'Tags',
+						options: [
+							{ label: 'Novo', value: 'new' },
+							{ label: 'VIP', value: 'vip' },
+						],
+					},
+					{ id: 'date', type: 'date', label: 'Data' },
+					{ id: 'period', type: 'date-range', label: 'Período' },
+				]}
+			/>
+			<output aria-label="Valores dos filtros">{JSON.stringify(value)}</output>
+		</>
+	);
+}
+
+export function SmartTableDemo() {
+	const [selected, setSelected] = useState<string[]>([]);
+	const [sort, setSort] = useState<AdsSmartTableSort | null>(null);
+	const [hidden, setHidden] = useState<string[]>([]);
+	const [filters, setFilters] = useState<AdsFilterValues>({});
+	const [state, setState] = useState('ready');
+	const [page, setPage] = useState(1);
+	const allRows = [
+		{ id: '1', name: 'Ana' },
+		{ id: '2', name: 'Bruno' },
+		{ id: '3', name: 'Carla' },
+	];
+	const rows = allRows
+		.filter((row) => row.name.toLowerCase().includes(String(filters.query ?? '').toLowerCase()))
+		.sort((a, b) =>
+			sort ? a.name.localeCompare(b.name) * (sort.direction === 'asc' ? 1 : -1) : 0,
+		);
+	return (
+		<>
+			<AdsField label="Estado da tabela">
+				<AdsSelect value={state} onChange={(event) => setState(event.target.value)}>
+					{['ready', 'loading', 'error', 'empty'].map((value) => (
+						<option key={value}>{value}</option>
+					))}
+				</AdsSelect>
+			</AdsField>
+			<AdsSmartTable
+				caption="Pessoas de demonstração"
+				columns={[{ id: 'name', label: 'Nome', sortable: true, cell: (row) => row.name }]}
+				rows={state === 'empty' ? [] : rows.slice(page - 1, page)}
+				getRowId={(row) => row.id}
+				getRowLabel={(row) => row.name}
+				sort={sort}
+				onSortChange={setSort}
+				selectedIds={selected}
+				onSelectionChange={setSelected}
+				hiddenColumnIds={hidden}
+				onHiddenColumnsChange={setHidden}
+				loading={state === 'loading'}
+				error={state === 'error' ? 'Falha de demonstração' : undefined}
+				onRetry={() => setState('ready')}
+				pagination={{ page, pageCount: Math.max(1, rows.length), onPageChange: setPage }}
+				filters={
+					<AdsFilterBar
+						filters={[{ id: 'query', type: 'text', label: 'Buscar nome' }]}
+						value={filters}
+						onChange={setFilters}
+					/>
+				}
+			/>
+			<output aria-label="Seleção atual">{selected.join(', ') || 'Nenhuma seleção'}</output>
+		</>
+	);
+}
+
+export function ListFlowDemo() {
+	const [selected, setSelected] = useState<string[]>([]);
+	const [sort, setSort] = useState<AdsSmartTableSort | null>(null);
+	const [hidden, setHidden] = useState<string[]>([]);
+	const [filters, setFilters] = useState<AdsFilterValues>({});
+	const [state, setState] = useState('ready');
+	const [page, setPage] = useState(1);
+	const allRows = [
+		{ id: '1', name: 'Ana' },
+		{ id: '2', name: 'Bruno' },
+		{ id: '3', name: 'Carla' },
+	];
+	const rows = allRows
+		.filter((row) => row.name.toLowerCase().includes(String(filters.query ?? '').toLowerCase()))
+		.sort((a, b) =>
+			sort ? a.name.localeCompare(b.name) * (sort.direction === 'asc' ? 1 : -1) : 0,
+		);
+	return (
+		<>
+			<AdsField label="Estado da tabela">
+				<AdsSelect value={state} onChange={(event) => setState(event.target.value)}>
+					{['ready', 'loading', 'error', 'empty'].map((value) => (
+						<option key={value}>{value}</option>
+					))}
+				</AdsSelect>
+			</AdsField>
+			<AdsListFlow
+				caption="Pessoas de demonstração"
+				columns={[{ id: 'name', label: 'Nome', sortable: true, cell: (row) => row.name }]}
+				rows={state === 'empty' ? [] : rows.slice(page - 1, page)}
+				getRowId={(row) => row.id}
+				getRowLabel={(row) => row.name}
+				sort={sort}
+				onSortChange={setSort}
+				selectedIds={selected}
+				onSelectionChange={setSelected}
+				hiddenColumnIds={hidden}
+				onHiddenColumnsChange={setHidden}
+				loading={state === 'loading'}
+				error={state === 'error' ? 'Falha de demonstração' : undefined}
+				onRetry={() => setState('ready')}
+				pagination={{ page, pageCount: Math.max(1, rows.length), onPageChange: setPage }}
+				filterBar={{
+					filters: [{ id: 'query', type: 'text', label: 'Buscar nome' }],
+					value: filters,
+					onChange: setFilters,
+				}}
+				bulkActions={<AdsButton onClick={() => setSelected([])}>Concluir seleção</AdsButton>}
+			/>
+			<output aria-label="Seleção atual">{selected.join(', ') || 'Nenhuma seleção'}</output>
+		</>
+	);
+}
+
+export function BulkActionBarDemo() {
+	const [count, setCount] = useState(0);
+	return (
+		<>
+			<AdsButton onClick={() => setCount(count + 1)}>Selecionar item</AdsButton>
+			<AdsBulkActionBar selectedCount={count} onClear={() => setCount(0)}>
+				<AdsButton onClick={() => setCount(0)}>Concluir ação em massa</AdsButton>
+			</AdsBulkActionBar>
+		</>
+	);
+}
+
+export function StepFormDemo() {
+	const [active, setActive] = useState('name');
+	const [name, setName] = useState('');
+	const [error, setError] = useState(false);
+	const [done, setDone] = useState(false);
+	return (
+		<>
+			<AdsStepForm
+				aria-label="Cadastro de exemplo"
+				activeStepId={active}
+				onActiveStepChange={setActive}
+				onSubmit={() => setDone(true)}
+				steps={[
+					{
+						id: 'name',
+						label: 'Identificação',
+						// Validação assíncrona simulada (por exemplo, consulta de disponibilidade no servidor).
+						validate: async () => {
+							await new Promise((resolve) => setTimeout(resolve, 300));
+							setError(!name.trim());
+							return Boolean(name.trim());
+						},
+						content: (
+							<AdsField
+								label="Nome"
+								validationState={error ? 'error' : 'default'}
+								error={error ? 'Informe o nome' : undefined}
+							>
+								<AdsInput value={name} onChange={(event) => setName(event.target.value)} />
+							</AdsField>
+						),
+					},
+					{ id: 'review', label: 'Revisão', content: <p>Confirme o cadastro de {name}.</p> },
+				]}
+			/>
+			<p role="status">{done ? 'Cadastro confirmado' : 'Cadastro em andamento'}</p>
+		</>
+	);
+}
+
+export function ThemeControlDemo() {
+	const [preference, setPreference] = useState<AdsThemePreference>('system');
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+				<AdsThemeControl onValueChange={setPreference} value={preference} />
+				<AdsThemeControl
+					optionDisplay="icon-text"
+					onValueChange={setPreference}
+					value={preference}
+				/>
+				<AdsThemeControl disabled value={preference} />
+			</div>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
+				<AdsThemeControl onValueChange={setPreference} value={preference} variant="group" />
+				<AdsThemeControl
+					optionDisplay="icon-text"
+					onValueChange={setPreference}
+					value={preference}
+					variant="group"
+				/>
+			</div>
+			<p role="status">Preferência: {preference}</p>
+		</div>
+	);
+}
+
+export function AccountMenuDemo() {
+	// Imagem corrompida embutida: falha ao decodificar sem requisição de rede.
+	const brokenImage = 'data:image/png;base64,AAAA';
+	const [feedback, setFeedback] = useState('Nenhuma ação executada.');
+	// Foto fictícia embutida: sem rede, e a falha de imagem usa uma origem inexistente.
+	const photo = `data:image/svg+xml,${encodeURIComponent(
+		'<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 40 40"><rect width="40" height="40" fill="#4f46e5"/><circle cx="20" cy="16" r="7" fill="#fff"/><path d="M6 40a14 14 0 0 1 28 0Z" fill="#fff"/></svg>',
+	)}`;
+	const groups = [
+		{
+			id: 'conta',
+			actions: [
+				{
+					id: 'minha-conta',
+					icon: 'user' as const,
+					label: 'Minha conta',
+					onSelect: () => setFeedback('Minha conta aberta (demonstração).'),
+				},
+				{
+					id: 'preferencias',
+					icon: 'settings' as const,
+					label: 'Preferências',
+					onSelect: () => setFeedback('Preferências abertas (demonstração).'),
+				},
+				{ id: 'indisponivel', label: 'Faturamento', disabled: true },
+			],
+		},
+		{
+			id: 'sessao',
+			actions: [
+				{
+					id: 'sair',
+					icon: 'logOut' as const,
+					label: 'Sair',
+					tone: 'danger' as const,
+					// Assíncrona: o menu fica ocupado e aberto até concluir, sem encerrar sessão real.
+					onSelect: () =>
+						new Promise<void>((resolve) => setTimeout(resolve, 600)).then(() =>
+							setFeedback('Saída simulada: nenhuma sessão real foi encerrada.'),
+						),
+				},
+			],
+		},
+	];
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'center' }}>
+				<AdsAccountMenu
+					groups={groups}
+					user={{ name: 'Ana Souza', email: 'ana.souza@exemplo.com.br', avatarSrc: photo }}
+				/>
+				<AdsAccountMenu
+					groups={groups}
+					switchAccount={{
+						icon: 'user',
+						label: 'Usar outra conta',
+						onSelect: () => setFeedback('Troca de conta solicitada (demonstração).'),
+					}}
+					user={{ name: 'Bruno Lima', email: 'bruno.lima@exemplo.com.br' }}
+				/>
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Carla Dias',
+						email: 'carla.dias@exemplo.com.br',
+						avatarSrc: brokenImage,
+					}}
+				/>
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Maria Aparecida de Albuquerque Montenegro Vasconcelos Figueiredo',
+						email:
+							'maria.aparecida.albuquerque.montenegro@empresa-com-nome-muito-longo.example.com',
+						initials: 'MA',
+					}}
+				/>
+				<AdsAccountMenu groups={groups} user={{}} />
+				<AdsAccountMenu groups={groups} user={{ name: 'Eduardo Prado', avatarTone: 'success' }} />
+				<AdsAccountMenu
+					groups={groups}
+					user={{
+						name: 'Fernanda Rocha',
+						avatarBackgroundColor: '#0f766e',
+						avatarForegroundColor: '#ffffff',
+					}}
+				/>
+			</div>
+			<p role="status">{feedback}</p>
+		</div>
+	);
+}
+
+export function NotificationCenterDemo() {
+	const [scenario, setScenario] = useState<'normal' | 'loading' | 'error' | 'empty' | 'long'>(
+		'normal',
+	);
+	const [read, setRead] = useState<string[]>([]);
+	const [pages, setPages] = useState(1);
+	const [loadingMore, setLoadingMore] = useState(false);
+	const [log, setLog] = useState('Nenhum item aberto.');
+	const wait = (milliseconds: number) =>
+		new Promise((resolve) => setTimeout(resolve, milliseconds));
+	const base: AdsNotification[] = [
+		{
+			id: 'pedido',
+			title: 'Pedido aprovado',
+			description: 'O pedido 1024 foi aprovado.',
+			icon: 'check',
+			timeLabel: 'há 5 min',
+			read: false,
+		},
+		{
+			id: 'comentario',
+			title: 'Novo comentário',
+			description: 'João Mendes comentou no cadastro.',
+			avatar: { fallback: 'JM', alt: 'João Mendes' },
+			timeLabel: 'há 32 min',
+			read: false,
+			href: '#detalhe',
+		},
+		{
+			id: 'exportacao',
+			title: 'Exportação concluída',
+			icon: 'info',
+			timestamp: '2026-10-24T18:30:00Z',
+			read: true,
+		},
+	];
+	const older: AdsNotification[] = Array.from({ length: 4 }, (_, index) => ({
+		id: `antiga-${index}`,
+		title: `Notificação antiga ${index + 1}`,
+		timeLabel: `${index + 2} dias atrás`,
+		read: index % 2 === 0,
+	}));
+	const long: AdsNotification[] = Array.from({ length: 60 }, (_, index) => ({
+		id: `longa-${index}`,
+		title: `Notificação ${index + 1} com um título razoavelmente longo para quebrar linhas`,
+		description: 'Descrição curta da notificação.',
+		timeLabel: `${index + 1} h atrás`,
+		read: index > 40,
+	}));
+	const source =
+		scenario === 'empty'
+			? []
+			: scenario === 'long'
+				? long
+				: [...base, ...older.slice(0, (pages - 1) * 2)];
+	const notifications = source.map((item) => ({
+		...item,
+		read: item.read || read.includes(item.id),
+	}));
+	const loaded = notifications.filter((item) => !item.read).length;
+	const unreadCount =
+		scenario === 'long'
+			? Math.max(120 - read.length, 0)
+			: loaded + (pages < 3 && scenario === 'normal' ? 1 : 0);
+	return (
+		<div style={{ display: 'grid', gap: '1rem', justifyItems: 'start' }}>
+			<AdsField label="Cenário">
+				<AdsSelect
+					value={scenario}
+					onChange={(event) => {
+						setScenario(event.target.value as typeof scenario);
+						setRead([]);
+						setPages(1);
+					}}
+				>
+					<option value="normal">Normal</option>
+					<option value="loading">Carregando</option>
+					<option value="error">Erro ao carregar</option>
+					<option value="empty">Vazio</option>
+					<option value="long">Lista longa (120 não lidas)</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsNotificationCenter
+				hasMore={scenario === 'normal' && pages < 3}
+				historyHref="#historico"
+				loadingMore={loadingMore}
+				notifications={notifications}
+				onItemSelect={(item) => setLog(`Item aberto: ${item.title}`)}
+				onLoadMore={async () => {
+					setLoadingMore(true);
+					await wait(500);
+					setPages((current) => current + 1);
+					setLoadingMore(false);
+				}}
+				onMarkAllRead={async () => {
+					await wait(400);
+					setRead(source.map((item) => item.id));
+				}}
+				onMarkRead={async (id) => {
+					await wait(250);
+					setRead((current) => [...current, id]);
+				}}
+				onRetry={() => setScenario('normal')}
+				status={scenario === 'loading' ? 'loading' : scenario === 'error' ? 'error' : 'ready'}
+				unreadCount={scenario === 'loading' || scenario === 'error' ? 0 : unreadCount}
+			/>
+			<p role="status">{log}</p>
+		</div>
+	);
+}
+
+export function OrganizationSwitcherDemo() {
+	const brokenImage = 'data:image/png;base64,AAAA';
+	const [value, setValue] = useState('acme');
+	const [count, setCount] = useState<'zero' | 'one' | 'many'>('many');
+	const [status, setStatus] = useState<'ready' | 'loading' | 'error'>('ready');
+	const [outcome, setOutcome] = useState<'success' | 'failure'>('success');
+	const [log, setLog] = useState('Organização atual: Acme Brasil.');
+	const all = [
+		{ id: 'acme', name: 'Acme Brasil', description: 'Plano Enterprise' },
+		{ id: 'globex', name: 'Globex Logística', description: 'Plano Business' },
+		{ id: 'initech', name: 'Initech', description: 'Plano Starter' },
+		{ id: 'umbrella', name: 'Umbrella Saúde', logoSrc: brokenImage },
+		{ id: 'hooli', name: 'Hooli Tecnologia' },
+		{ id: 'stark', name: 'Stark Indústrias' },
+		{ id: 'wayne', name: 'Wayne Participações' },
+		{ id: 'vandelay', name: 'Vandelay Importações', disabled: true },
+	];
+	const organizations = count === 'zero' ? [] : count === 'one' ? all.slice(0, 1) : all;
+	const current = organizations.find((item) => item.id === value);
+	const basePath = process.env.NEXT_PUBLIC_BASE_PATH ?? '';
+	const select = async (id: string) => {
+		await new Promise((resolve) => setTimeout(resolve, 600));
+		if (outcome === 'failure') throw new Error('Falha simulada');
+		setValue(id);
+		setLog(`Organização atual: ${all.find((item) => item.id === id)?.name}.`);
+	};
+	return (
+		<div style={{ display: 'grid', gap: '1.5rem' }}>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+				<AdsField label="Quantidade de organizações">
+					<AdsSelect
+						value={count}
+						onChange={(event) => setCount(event.target.value as typeof count)}
+					>
+						<option value="many">Muitas (com busca)</option>
+						<option value="one">Uma</option>
+						<option value="zero">Nenhuma</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsField label="Lista">
+					<AdsSelect
+						value={status}
+						onChange={(event) => setStatus(event.target.value as typeof status)}
+					>
+						<option value="ready">Pronta</option>
+						<option value="loading">Carregando</option>
+						<option value="error">Erro</option>
+					</AdsSelect>
+				</AdsField>
+				<AdsField label="Resultado da troca">
+					<AdsSelect
+						value={outcome}
+						onChange={(event) => setOutcome(event.target.value as typeof outcome)}
+					>
+						<option value="success">Sucesso (600 ms)</option>
+						<option value="failure">Falha</option>
+					</AdsSelect>
+				</AdsField>
+			</div>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1.5rem', alignItems: 'flex-start' }}>
+				<div style={{ width: '16rem' }}>
+					<AdsOrganizationSwitcher
+						manage={{ onSelect: () => setLog('Gerenciar organizações (demonstração).') }}
+						onRetry={() => setStatus('ready')}
+						onValueChange={select}
+						organizations={organizations}
+						status={status}
+						value={current ? value : undefined}
+					/>
+				</div>
+				<div style={{ width: '4.5rem' }}>
+					<AdsOrganizationSwitcher
+						collapsed
+						onValueChange={select}
+						organizations={organizations}
+						status={status}
+						value={current ? value : undefined}
+					/>
+				</div>
+			</div>
+			<p role="status">{log}</p>
+			<div style={{ display: 'grid', gap: '1rem' }}>
+				<iframe
+					title="Shell com seletor de organização"
+					src={`${basePath}/catalogo-organizacao/?variante=com`}
+					style={{ width: '100%', height: '20rem', border: 0 }}
+				/>
+				<iframe
+					title="Shell sem seletor de organização"
+					src={`${basePath}/catalogo-organizacao/?variante=sem`}
+					style={{ width: '100%', height: '20rem', border: 0 }}
+				/>
+			</div>
+		</div>
+	);
+}
+
+/** Sidebar composta com ou sem o seletor: sem ele, a navegação ocupa o topo, sem espaço residual. */
+export function OrganizationShellExample({ withSwitcher }: { withSwitcher: boolean }) {
+	const [value, setValue] = useState('acme');
+	return (
+		<div style={{ height: '18rem', width: '100%', overflow: 'auto' }}>
+			<AdsAdminShell>
+				<AdsAdminShell.Header>
+					<AdsAdminShell.NavigationTrigger />
+					<AdsAdminShell.SidebarToggle />
+					<span>{withSwitcher ? 'Com seletor de organização' : 'Sem seletor de organização'}</span>
+				</AdsAdminShell.Header>
+				<AdsAdminShell.Body>
+					<AdsAdminShell.Sidebar label="Navegação do exemplo" mobileTitle="Menu do exemplo">
+						{withSwitcher ? (
+							<AdsOrganizationSwitcher
+								onValueChange={setValue}
+								organizations={[
+									{ id: 'acme', name: 'Acme Brasil', description: 'Plano Enterprise' },
+									{ id: 'globex', name: 'Globex Logística' },
+								]}
+								value={value}
+							/>
+						) : null}
+						<AdsAdminShell.Navigation>
+							<AdsAdminShell.NavigationItem>
+								<a aria-current="page" href="#conteudo">
+									Início
+								</a>
+							</AdsAdminShell.NavigationItem>
+						</AdsAdminShell.Navigation>
+					</AdsAdminShell.Sidebar>
+					<AdsAdminShell.Main>
+						<h1 id="conteudo">Conteúdo</h1>
+					</AdsAdminShell.Main>
+				</AdsAdminShell.Body>
+			</AdsAdminShell>
+		</div>
+	);
+}
+
+export function ThemeToggleDemo() {
+	const [theme, setTheme] = useState<'light' | 'dark'>('light');
+	return (
+		<div
+			data-theme={theme}
+			style={{
+				background: 'var(--ads-color-surface)',
+				color: 'var(--ads-color-text)',
+				padding: '1rem',
+			}}
+		>
+			<ThemeToggle initialTheme="light" onThemeChange={setTheme} />
+			<p>Tema do exemplo: {theme}</p>
+		</div>
+	);
+}
+
+export function StyleFixtureDemo() {
+	return (
+		<>
+			<StyleFixture>Superfície neutra</StyleFixture>
+			<StyleFixture variant="primary">Superfície de marca</StyleFixture>
+		</>
+	);
+}
+
+export function AlertDemo() {
+	const [variant, setVariant] = useState<'info' | 'success' | 'warning' | 'error'>('info');
+	const [appearance, setAppearance] = useState<'compact' | 'callout'>('compact');
+	const [open, setOpen] = useState(true);
+	const [message, setMessage] = useState('Mensagem persistente de exemplo.');
+	return (
+		<div style={{ display: 'grid', gap: '1rem', width: '100%' }}>
+			<AdsField label="Variante">
+				<AdsSelect
+					value={variant}
+					onChange={(event) => {
+						setVariant(event.target.value as typeof variant);
+						setOpen(true);
+					}}
+				>
+					<option value="info">Informação</option>
+					<option value="success">Sucesso</option>
+					<option value="warning">Atenção</option>
+					<option value="error">Erro</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Apresentação">
+				<AdsSelect
+					value={appearance}
+					onChange={(event) => setAppearance(event.target.value as typeof appearance)}
+				>
+					<option value="compact">Compacto</option>
+					<option value="callout">Destacado</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsButton variant="secondary" onClick={() => setOpen(true)}>
+				Mostrar mensagem
+			</AdsButton>
+			<AdsAlert
+				variant={variant}
+				appearance={appearance}
+				title={variant === 'error' ? 'Não foi possível salvar' : 'Resultado da operação'}
+				open={open}
+				onClose={() => setOpen(false)}
+				dismissible
+				actions={
+					<AdsButton
+						size="sm"
+						variant="secondary"
+						onClick={() => setMessage('Ação executada no exemplo.')}
+					>
+						Ação opcional
+					</AdsButton>
+				}
+			>
+				{message}
+			</AdsAlert>
+			<AdsAlert variant="error" title="Validação de formulário" dismissible={false}>
+				Informe um nome válido para continuar.
+			</AdsAlert>
+			<AdsAlert variant="success" title="Resposta de operação" appearance="callout">
+				Registro atualizado e disponível para consulta.
+			</AdsAlert>
+		</div>
+	);
+}
+
+export function ComboboxDemo() {
+	const stateOptions = [
+		{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },
+		{ value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
+		{ value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
+		{ value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
+	];
+	const [uf, setUf] = useState<string | null>('SP');
+	const [dialogOpen, setDialogOpen] = useState(false);
+	const [showVisuals, setShowVisuals] = useState(true);
+	const teamOptions = [
+		{
+			value: 'ana',
+			label: 'Ana Souza',
+			description: 'Produto',
+			avatar: { fallback: 'AS' },
+		},
+		{ value: 'bia', label: 'Bia Lima', description: 'Design', avatar: { fallback: 'BL' } },
+		{ value: 'caio', label: 'Caio Prado', description: 'Engenharia', avatar: { fallback: 'CP' } },
+		{
+			value: 'duda',
+			label: 'Duda Reis',
+			description: 'Suporte',
+			avatar: { fallback: 'DR' },
+			disabled: true,
+		},
+	];
+	const [owner, setOwner] = useState<string | null>('bia');
+	const [submitted, setSubmitted] = useState<string | null>(null);
+	return (
+		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
+			<AdsSwitch
+				label="Mostrar ícones nas opções"
+				checked={showVisuals}
+				onChange={(event) => setShowVisuals(event.target.checked)}
+			/>
+			<AdsField description="Digite, use as setas ou pressione Enter." label="Estado (controlado)">
+				<AdsCombobox
+					name="uf"
+					options={stateOptions.map((option, index) =>
+						index === 0 ? { ...option, icon: 'building' as const } : option,
+					)}
+					showOptionVisuals={showVisuals}
+					onValueChange={setUf}
+					value={uf}
+					renderOption={(option) => (
+						<span>
+							{option.label} [{option.value}]
+						</span>
+					)}
+				/>
+			</AdsField>
+			<output aria-label="Valor selecionado">{uf ?? 'Nenhum'}</output>
+			<AdsField label="Seleção inicial não controlada">
+				<AdsCombobox options={stateOptions} defaultValue="RJ" size="sm" />
+			</AdsField>
+			<AdsField label="Inválido" error="Selecione um estado." validationState="error">
+				<AdsCombobox options={stateOptions} />
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsCombobox options={stateOptions} disabled defaultValue="MG" />
+			</AdsField>
+			<AdsButton type="button" onClick={() => setDialogOpen(true)}>
+				Abrir diálogo com combobox
+			</AdsButton>
+			<AdsDialog title="Seleção em diálogo" open={dialogOpen} onOpenChange={setDialogOpen}>
+				<AdsField label="Estado em diálogo">
+					<AdsCombobox options={stateOptions} />
+				</AdsField>
+				<AdsField label="Responsável em diálogo (popover)">
+					<AdsCombobox
+						options={teamOptions}
+						panelLabel="Escolher responsável no diálogo"
+						presentation="popover"
+					/>
+				</AdsField>
+			</AdsDialog>
+			<AdsTypography as="h3" variant="heading4">
+				Apresentação popover
+			</AdsTypography>
+			<AdsTypography as="p" variant="muted">
+				Um botão abre um painel com pesquisa separada, lista de seleção única e rodapé. O gatilho
+				não é um combobox editável: use Enter, Espaço ou seta para baixo para abrir.
+			</AdsTypography>
+			<AdsField label="Responsável (popover não controlado)">
+				<AdsCombobox
+					defaultValue="ana"
+					options={teamOptions}
+					panelLabel="Escolher responsável"
+					presentation="popover"
+					searchLabel="Pesquisar responsável"
+					searchPlaceholder="Pesquisar responsável"
+				/>
+			</AdsField>
+			<AdsField label="Responsável (popover controlado)">
+				<AdsCombobox
+					onValueChange={setOwner}
+					options={teamOptions}
+					panelLabel="Escolher responsável controlado"
+					presentation="popover"
+					renderTrigger={({ selectedOption, triggerProps }) => (
+						<button
+							{...triggerProps}
+							style={{
+								display: 'flex',
+								alignItems: 'center',
+								gap: '0.75rem',
+								width: '100%',
+								padding: '0.5rem 0.75rem',
+								border: '1px solid var(--ads-color-border-control)',
+								borderRadius: 'var(--ads-radius-md)',
+								background: 'var(--ads-color-form-background)',
+								color: 'var(--ads-color-text)',
+								font: 'inherit',
+								textAlign: 'start',
+								cursor: 'pointer',
+							}}
+						>
+							{selectedOption?.avatar ? (
+								<AdsAvatar alt="" fallback={selectedOption.avatar.fallback} size="sm" />
+							) : null}
+							<span style={{ display: 'grid', flex: 1 }}>
+								<strong>{selectedOption?.label ?? 'Sem responsável'}</strong>
+								<small>{selectedOption?.description ?? 'Escolha uma pessoa'}</small>
+							</span>
+							<AdsIcon name="chevronsUpDown" size="sm" />
+						</button>
+					)}
+					footer={
+						<AdsButton onClick={() => setOwner(null)} size="sm" type="button" variant="ghost">
+							Remover responsável
+						</AdsButton>
+					}
+					value={owner}
+				/>
+			</AdsField>
+			<output aria-label="Responsável selecionado">{owner ?? 'Nenhum'}</output>
+			<AdsField label="Apenas lista, sem pesquisa">
+				<AdsCombobox
+					defaultValue="bia"
+					options={teamOptions}
+					panelLabel="Escolher sem pesquisa"
+					presentation="popover"
+					searchable={false}
+				/>
+			</AdsField>
+			<AdsField label="Lista vazia">
+				<AdsCombobox options={[]} panelLabel="Lista vazia" presentation="popover" />
+			</AdsField>
+			<AdsField label="Carregando">
+				<AdsCombobox loading options={teamOptions} panelLabel="Carregando" presentation="popover" />
+			</AdsField>
+			<AdsField label="Com erro">
+				<AdsCombobox
+					error="Não foi possível carregar a equipe."
+					onRetry={() => undefined}
+					options={teamOptions}
+					panelLabel="Erro de carregamento"
+					presentation="popover"
+				/>
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsCombobox
+					defaultValue="caio"
+					disabled
+					options={teamOptions}
+					panelLabel="Desabilitado"
+					presentation="popover"
+				/>
+			</AdsField>
+			<form
+				onSubmit={(event) => {
+					event.preventDefault();
+					setSubmitted(String(new FormData(event.currentTarget).get('responsavel') ?? ''));
+				}}
+				style={{ display: 'grid', gap: '0.75rem' }}
+			>
+				<AdsField
+					description="Obrigatório. Apenas o valor confirmado é enviado."
+					label="Responsável (formulário)"
+				>
+					<AdsCombobox
+						name="responsavel"
+						options={teamOptions}
+						panelLabel="Escolher responsável do formulário"
+						presentation="popover"
+						required
+					/>
+				</AdsField>
+				<AdsButton type="submit">Enviar formulário</AdsButton>
+				<output aria-label="Valor enviado">{submitted ?? 'Nada enviado'}</output>
+			</form>
+		</div>
+	);
+}
+
+export function AutocompleteDemo() {
+	const stateOptions = [
+		{ value: 'SP', label: 'São Paulo', description: 'Sudeste' },
+		{ value: 'RJ', label: 'Rio de Janeiro', description: 'Sudeste' },
+		{ value: 'MG', label: 'Minas Gerais', description: 'Sudeste' },
+		{ value: 'PR', label: 'Paraná', description: 'Sul', disabled: true },
+	];
+	const asyncStates = [
+		{ value: 'SP', label: 'São Paulo' },
+		{ value: 'RJ', label: 'Rio de Janeiro' },
+		{ value: 'MG', label: 'Minas Gerais' },
+		{ value: 'SC', label: 'Santa Catarina' },
+		{ value: 'RS', label: 'Rio Grande do Sul' },
+	];
+	async function loadStateOptions(query: string, _signal: AbortSignal) {
+		void _signal;
+		// Ignora o abort de propósito: a lista não pode reverter com respostas fora de ordem.
+		await new Promise((resolve) => setTimeout(resolve, query.length < 3 ? 700 : 180));
+		if (query.toLocaleLowerCase().includes('erro')) throw new Error('Falha simulada da API');
+		if (query.toLocaleLowerCase().includes('vazio')) return [];
+		return asyncStates.filter((option) =>
+			option.label.toLocaleLowerCase().includes(query.toLocaleLowerCase()),
+		);
+	}
+	const [value, setValue] = useState<string | null>('SP');
+	const [debounceMs, setDebounceMs] = useState(250);
+	const [showVisuals, setShowVisuals] = useState(true);
+	return (
+		<div style={{ display: 'grid', gap: '1rem', width: '100%', maxWidth: '32rem' }}>
+			<AdsSwitch
+				label="Mostrar avatares nas opções"
+				checked={showVisuals}
+				onChange={(event) => setShowVisuals(event.target.checked)}
+			/>
+			<AdsField label="Busca local" description="Filtragem instantânea por nome ou sigla.">
+				<AdsAutocomplete
+					options={stateOptions.map((option, index) =>
+						index === 0
+							? {
+									...option,
+									avatar: {
+										src: (process.env.NEXT_PUBLIC_BASE_PATH ?? '') + '/icon.svg',
+										fallback: 'SP',
+									},
+								}
+							: option,
+					)}
+					showOptionVisuals={showVisuals}
+					placeholder="Busque um estado"
+					onValueChange={setValue}
+					value={value}
+				/>
+			</AdsField>
+			<output aria-label="Valor da busca local">{value ?? 'Nenhum'}</output>
+			<AdsField
+				label="Busca remota simulada"
+				description="Digite erro, vazio ou rapidamente para testar concorrência."
+			>
+				<AdsAutocomplete
+					debounceMs={debounceMs}
+					loadOptions={loadStateOptions}
+					name="uf-remota"
+					placeholder="Digite ao menos uma letra"
+				/>
+			</AdsField>
+			<AdsField label="Debounce (ms)">
+				<AdsSelect
+					value={debounceMs}
+					onChange={(event) => setDebounceMs(Number(event.target.value))}
+				>
+					<option value={0}>Imediato</option>
+					<option value={250}>250 ms</option>
+					<option value={500}>500 ms</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Busca remota desabilitada">
+				<AdsAutocomplete disabled loadOptions={loadStateOptions} />
+			</AdsField>
+		</div>
+	);
+}
+
+export function HighlightedCodeSnippetDemo() {
+	const [language, setLanguage] = useState<'tsx' | 'java' | 'sql' | 'json' | 'unknown'>('tsx');
+	const [theme, setTheme] = useState<'light' | 'dark' | 'auto'>('auto');
+	const [showLineNumbers, setShowLineNumbers] = useState(true);
+	const [wrapLines, setWrapLines] = useState(false);
+	const samples = {
+		tsx: 'export function Saudacao() { return <strong>Olá!</strong>; }',
+		java: 'public class Exemplo { public static void main(String[] args) {} }',
+		sql: 'SELECT id, titulo FROM receitas ORDER BY titulo;',
+		json: '{ "nome": "Admin DS", "ativo": true }',
+		unknown: 'Este código permanece sem destaque e continua copiável.',
+	};
+	return (
+		<div className="demo-highlighted-code-page">
+			<AdsField label="Linguagem">
+				<AdsSelect
+					value={language}
+					onChange={(event) => setLanguage(event.target.value as typeof language)}
+				>
+					<option value="tsx">TSX</option>
+					<option value="java">Java</option>
+					<option value="sql">SQL</option>
+					<option value="json">JSON</option>
+					<option value="unknown">Desconhecida (fallback)</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsField label="Tema do código">
+				<AdsSelect value={theme} onChange={(event) => setTheme(event.target.value as typeof theme)}>
+					<option value="auto">Automático</option>
+					<option value="light">Claro</option>
+					<option value="dark">Escuro</option>
+				</AdsSelect>
+			</AdsField>
+			<AdsSwitch
+				label="Exibir números de linha"
+				checked={showLineNumbers}
+				onChange={(event) => setShowLineNumbers(event.target.checked)}
+			/>
+			<AdsSwitch
+				label="Quebrar linhas longas"
+				checked={wrapLines}
+				onChange={(event) => setWrapLines(event.target.checked)}
+			/>
+			<AdsHighlightedCodeSnippet
+				code={samples[language]}
+				language={language}
+				theme={theme}
+				showLineNumbers={showLineNumbers}
+				wrapLines={wrapLines}
+				codeLabel="Prévia do código destacado"
+			/>
+			<p>
+				Instalação no monorepo: importar de <code>@dvmarques/admin-ds-highlighted-code</code> e
+				carregar os estilos do pacote opcional. O código original permanece copiável durante o
+				carregamento e em fallback.
+			</p>
+			<Link href="/exemplos/codigo-destacado">Ver demonstração avançada de código destacado</Link>
+		</div>
+	);
+}
+
+export const catalogDemos = {
+	Button: ButtonDemo,
+	Badge: BadgeDemo,
+	Avatar: AvatarDemo,
+	Icon: IconDemo,
+	Typography: TypographyDemo,
+	Surface: SurfaceDemo,
+	LoadingIndicator: LoadingIndicatorDemo,
+	LoadingText: LoadingTextDemo,
+	Skeleton: SkeletonDemo,
+	Sparkline: SparklineDemo,
+	Input: InputDemo,
+	PasswordInput: PasswordInputDemo,
+	MaskedInput: MaskedInputDemo,
+	Textarea: TextareaDemo,
+	Select: SelectDemo,
+	Combobox: ComboboxDemo,
+	Autocomplete: AutocompleteDemo,
+	Checkbox: CheckboxDemo,
+	Radio: RadioDemo,
+	Switch: SwitchDemo,
+	Field: FieldDemo,
+	InputGroup: InputGroupDemo,
+	SelectionGroup: SelectionGroupDemo,
+	DatePicker: DatePickerDemo,
+	Breadcrumb: BreadcrumbDemo,
+	Nav: NavDemo,
+	Tabs: TabsDemo,
+	Accordion: AccordionDemo,
+	Dropdown: DropdownDemo,
+	Pagination: PaginationDemo,
+	Dialog: DialogDemo,
+	Drawer: DrawerDemo,
+	ConfirmDialog: ConfirmDialogDemo,
+	Popover: PopoverDemo,
+	Tooltip: TooltipDemo,
+	Toast: ToastDemo,
+	Alert: AlertDemo,
+	EmptyState: EmptyStateDemo,
+	Progress: ProgressDemo,
+	Table: TableDemo,
+	Card: CardDemo,
+	List: ListDemo,
+	AdminShell: AdminShellDemo,
+	Dashboard: DashboardDemo,
+	FilterBar: FilterBarDemo,
+	SmartTable: SmartTableDemo,
+	ListFlow: ListFlowDemo,
+	BulkActionBar: BulkActionBarDemo,
+	StepForm: StepFormDemo,
+	ThemeControl: ThemeControlDemo,
+	AccountMenu: AccountMenuDemo,
+	NotificationCenter: NotificationCenterDemo,
+	OrganizationSwitcher: OrganizationSwitcherDemo,
+	ThemeToggle: ThemeToggleDemo,
+	StyleFixture: StyleFixtureDemo,
+	HighlightedCodeSnippet: HighlightedCodeSnippetDemo,
+};

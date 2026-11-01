@@ -1,13 +1,15 @@
 {
-	"name": "@admin-ds/admin",
-	"version": "0.1.0",
-	"private": true,
+	"name": "@dvmarques/admin-ds-admin",
+	"version": "0.1.1",
+	"private": false,
+	"license": "MIT",
 	"type": "module",
 	"sideEffects": [
 		"./dist/styles.css"
 	],
 	"files": [
-		"dist"
+		"dist",
+		"LICENSE.md"
 	],
 	"exports": {
 		".": {
@@ -18,12 +20,12 @@
 	},
 	"types": "./dist/index.d.ts",
 	"peerDependencies": {
-		"@admin-ds/components": "0.1.0",
+		"@dvmarques/admin-ds-components": "0.1.1",
 		"react": ">=18.2.0",
 		"react-dom": ">=18.2.0"
 	},
 	"devDependencies": {
-		"@admin-ds/components": "0.1.0"
+		"@dvmarques/admin-ds-components": "0.1.1"
 	},
 	"scripts": {
 		"build:css": "node ./scripts/build-css.mjs",
@@ -34,5 +36,15 @@
 		"build": "tsc -p tsconfig.build.json && npm run build:css && npm run verify:package",
 		"test:node": "node --test ./tests/**/*.test.mjs",
 		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs"
+	},
+	"publishConfig": {
+		"access": "public"
+	},
+	"author": "Daniel Marques",
+	"description": "Composições administrativas do Admin Design System",
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/dvmarques/admin-design-system.git",
+		"directory": "packages/admin"
 	}
 }

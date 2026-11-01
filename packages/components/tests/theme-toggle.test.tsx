@@ -22,6 +22,11 @@ describe('ThemeToggle', () => {
 		expect(results.violations).toEqual([]);
 	});
 
+	it('uses the design system font and keeps its label on one line', () => {
+		render(<ThemeToggle />);
+		expect(screen.getByRole('button')).toHaveClass('font-sans', 'whitespace-nowrap');
+	});
+
 	it('merges a consumer className into its public element', () => {
 		render(<ThemeToggle className="consumer-theme-toggle" />);
 		expect(screen.getByRole('button')).toHaveClass('consumer-theme-toggle');

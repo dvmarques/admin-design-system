@@ -30,6 +30,23 @@ export function validateTokenSource(source) {
 		if (!source[category]) throw new Error(`Missing required token category: ${category}`);
 	if (!source.color?.semantic?.light || !source.color?.semantic?.dark)
 		throw new Error('Both light and dark semantic color themes are required');
+	if (!source.color?.semanticContrast?.light || !source.color?.semanticContrast?.dark)
+		throw new Error('Both light and dark high-contrast overrides are required');
+	for (const theme of ['light', 'dark'])
+		for (const name of Object.keys(source.color.semanticContrast[theme]))
+			if (!(name in source.color.semantic[theme]))
+				throw new Error(`Unknown high-contrast override: ${theme}.${name}`);
+	for (const [variant, base] of [
+		['elevationDark', 'elevation'],
+		['densityCompact', 'density'],
+	]) {
+		const keys = (name) =>
+			Object.keys(source[name] ?? {})
+				.sort()
+				.join(',');
+		if (!source[variant] || keys(variant) !== keys(base))
+			throw new Error(`${variant} must define the same tokens as ${base}`);
+	}
 	const names = flatten(source).map(([name]) => name);
 	if (new Set(names).size !== names.length) throw new Error('Duplicate token name detected');
 	for (const [, value] of flatten(source)) resolveValue(value, source);
@@ -44,9 +61,13 @@ export function createArtifacts(source) {
 		border: source.border,
 		radius: source.radius,
 		elevation: source.elevation,
+		skeleton: source.skeleton,
 		opacity: source.opacity,
 		motion: source.motion,
 	});
+	// Densidade fica fora dos blocos de tema: reemitida por eles, venceria `data-density` em <html>.
+	const densityEntries = (name) => flatten({ density: source[name] });
+	const darkElevationEntries = flatten({ elevation: source.elevationDark });
 	const themeEntries = (theme) =>
 		flatten(source.color.semantic[theme]).map(([name, value]) => [
 			`color.${name}`,
@@ -55,13 +76,34 @@ export function createArtifacts(source) {
 	const cssBlock = (selector, entries) =>
 		`${selector} {\n${entries.map(([name, value]) => `  ${toCssVariable(name)}: ${value};`).join('\n')}\n}\n`;
 	const lightEntries = [...sharedEntries, ...themeEntries('light')];
-	const darkEntries = [...sharedEntries, ...themeEntries('dark')];
+	const darkEntries = [...sharedEntries, ...darkElevationEntries, ...themeEntries('dark')];
+	const contrastEntries = (theme) =>
+		flatten(source.color.semanticContrast[theme]).map(([name, value]) => [
+			`color.${name}`,
+			resolveValue(value, source),
+		]);
+	const reducedMotionEntries = flatten({ motion: source.motion })
+		.filter(([name]) => name !== 'motion.easing')
+		.map(([name]) => [name, '0ms']);
+	const indent = (block) =>
+		block
+			.trimEnd()
+			.split('\n')
+			.map((line) => `  ${line}`)
+			.join('\n');
+	// A ordem importa: em seletores de mesma especificidade, o tema escuro vem depois do claro,
+	// e `:root:not([data-theme])` (maior especificidade) só vale quando não há tema explícito.
 	const css = [
 		cssBlock(':root, [data-theme="light"]', lightEntries),
 		cssBlock('[data-theme="dark"]', darkEntries),
 		`@media (prefers-color-scheme: dark) {\n${cssBlock(':root:not([data-theme])', darkEntries)}}\n`,
+		cssBlock(':root, [data-density="comfortable"]', densityEntries('density')),
+		cssBlock('[data-density="compact"]', densityEntries('densityCompact')),
+		`@media (prefers-reduced-motion: reduce) {\n${indent(cssBlock(':root, [data-theme="light"], [data-theme="dark"], :root:not([data-theme])', reducedMotionEntries))}\n}\n`,
+		`@media (prefers-contrast: more) {\n${indent(cssBlock(':root, [data-theme="light"]', contrastEntries('light')))}\n${indent(cssBlock('[data-theme="dark"]', contrastEntries('dark')))}\n}\n`,
+		`@media (prefers-contrast: more) and (prefers-color-scheme: dark) {\n${indent(cssBlock(':root:not([data-theme])', contrastEntries('dark')))}\n}\n`,
 	].join('\n');
-	const metadata = Object.fromEntries(lightEntries);
+	const metadata = Object.fromEntries([...lightEntries, ...densityEntries('density')]);
 	const module = [
 		'/** Generated from source/tokens.mjs. Do not edit manually. */',
 		`export const tokenValues = ${JSON.stringify(metadata, null, 2)} as const`,

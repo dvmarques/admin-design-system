@@ -128,6 +128,14 @@ const dayStates = {
 	normal: 'border-transparent bg-transparent text-text hover:bg-surface-hover',
 } as const;
 
+// AdsButton sizes by `--ads-dimension-control-*`, taller than the field (`--ads-dimension-field-*` is
+// only a minimum: the field also grows with its padding and line height). The trigger drops its own
+// minimum and its anchor stretches to the row, whose height is the field's, so both always match and
+// the field stays aligned with its neighbours. `!` is needed because both `min-h-*` utilities would
+// otherwise tie and the winner would depend on CSS order.
+const triggerHeightClassName = 'min-h-0!';
+const triggerAnchorClassName = '[&>.ads-popover-anchor]:self-stretch';
+
 // AdsButton only dims the native `disabled`; the month buttons stay focusable with aria-disabled.
 const monthNavClassName =
 	'aria-disabled:cursor-not-allowed aria-disabled:opacity-50 aria-disabled:hover:translate-y-0 aria-disabled:hover:bg-transparent';
@@ -240,11 +248,7 @@ function DatePickerCalendar({
 	const rangeEnd = value.end;
 
 	return (
-		// The popover content is a React child of the toggling anchor, so clicks must not bubble to it.
-		<div
-			className="ads-date-picker__calendar flex flex-col gap-2"
-			onClick={(event) => event.stopPropagation()}
-		>
+		<div className="ads-date-picker__calendar flex flex-col gap-2">
 			<div className="ads-date-picker__header flex items-center justify-between gap-2">
 				<AdsButton
 					aria-disabled={canGoBack ? undefined : true}
@@ -518,6 +522,7 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 		<div
 			className={classNames(
 				'ads-date-picker flex w-full items-center gap-2',
+				triggerAnchorClassName,
 				isRange ? 'ads-date-picker--range' : undefined,
 				className,
 			)}
@@ -555,7 +560,7 @@ export function AdsDatePicker(props: AdsDatePickerProps) {
 				<AdsButton
 					aria-haspopup="dialog"
 					aria-label={labels.openCalendar}
-					className="ads-date-picker__trigger shrink-0"
+					className={classNames('ads-date-picker__trigger shrink-0', triggerHeightClassName)}
 					disabled={disabled}
 					size={size}
 					type="button"

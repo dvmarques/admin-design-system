@@ -15,15 +15,16 @@ import {
 	useAnchoredPosition,
 	useClickOutside,
 	useEscapeKey,
+	isInsideTrigger,
 	useStableId,
 } from './overlay-utils.js';
 import { AdsTypography } from './typography.js';
 
 const tooltipArrowPlacements = {
-	top: '-bottom-1 left-1/2 -translate-x-1/2',
-	right: '-left-1 top-1/2 -translate-y-1/2',
-	bottom: '-top-1 left-1/2 -translate-x-1/2',
-	left: '-right-1 top-1/2 -translate-y-1/2',
+	top: '-bottom-1 -translate-x-1/2',
+	right: '-left-1 -translate-y-1/2',
+	bottom: '-top-1 -translate-x-1/2',
+	left: '-right-1 -translate-y-1/2',
 } as const;
 
 export type AdsOverlayPlacement = 'top' | 'right' | 'bottom' | 'left';
@@ -33,6 +34,10 @@ export interface AdsTooltipProps {
 	content: ReactNode;
 	placement?: AdsOverlayPlacement;
 	className?: string;
+	/** Com `false`, só o apontamento abre o tooltip; o gatilho mantém seu nome acessível. */
+	showOnFocus?: boolean;
+	/** Com `false`, o gatilho não recebe `aria-describedby`: use quando o tooltip repete o nome acessível. */
+	describeTrigger?: boolean;
 }
 
 export interface AdsPopoverProps extends Omit<
@@ -46,19 +51,35 @@ export interface AdsPopoverProps extends Omit<
 	placement?: AdsOverlayPlacement;
 }
 
-export function AdsTooltip({ children, className, content, placement = 'top' }: AdsTooltipProps) {
+export function AdsTooltip({
+	children,
+	className,
+	content,
+	describeTrigger = true,
+	placement = 'top',
+	showOnFocus = true,
+}: AdsTooltipProps) {
 	const [open, setOpen] = useState(false);
 	const anchorRef = useRef<HTMLSpanElement>(null);
 	const contentRef = useRef<HTMLDivElement>(null);
 	const tooltipId = useStableId('ads-tooltip');
 	const position = useAnchoredPosition(open, anchorRef, contentRef, placement);
-	const trigger = cloneElement(children, (open ? { 'aria-describedby': tooltipId } : {}) as never);
+	// Dispensa o tooltip sem mover o foco: o gatilho só o reabre com um novo foco ou apontamento.
+	useEscapeKey(open, () => setOpen(false));
+	const consumerIds = (children.props as { 'aria-describedby'?: string })['aria-describedby']
+		?.split(/\s+/)
+		.filter(Boolean);
+	const describedBy = [...new Set([...(consumerIds ?? []), tooltipId])].join(' ');
+	const trigger = cloneElement(
+		children,
+		(open && describeTrigger ? { 'aria-describedby': describedBy } : {}) as never,
+	);
 
 	return (
 		<span
 			className="ads-tooltip-anchor inline-flex"
 			onBlur={() => setOpen(false)}
-			onFocus={() => setOpen(true)}
+			onFocus={() => setOpen(showOnFocus)}
 			onPointerEnter={() => setOpen(true)}
 			onPointerLeave={() => setOpen(false)}
 			ref={anchorRef}
@@ -71,18 +92,23 @@ export function AdsTooltip({ children, className, content, placement = 'top' }: 
 							'ads-tooltip fixed z-[var(--ads-layer-overlay)] max-w-[min(20rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised px-3 py-2 font-sans text-text shadow-md',
 							className,
 						)}
-						data-placement={placement}
+						data-placement={position.placement}
 						id={tooltipId}
-						ref={contentRef}
+						ref={position.attachContent}
 						role="tooltip"
-						style={position}
+						style={position.style}
 					>
 						<span
 							aria-hidden="true"
 							className={classNames(
 								'absolute h-2 w-2 rotate-45 bg-surface-raised',
-								tooltipArrowPlacements[placement],
+								tooltipArrowPlacements[position.placement],
 							)}
+							style={
+								position.placement === 'top' || position.placement === 'bottom'
+									? { left: position.arrowOffset }
+									: { top: position.arrowOffset }
+							}
 						/>
 						<AdsTypography as="div" variant="bodySmall">
 							{content}
@@ -119,7 +145,7 @@ export function AdsPopover({
 
 	useEscapeKey(open, () => onOpenChange(false));
 	useClickOutside(open, contentRef, (event) => {
-		if (!(event.target instanceof Node) || !anchorRef.current?.contains(event.target)) {
+		if (!(event.target instanceof Node) || !isInsideTrigger(anchorRef.current, event.target)) {
 			onOpenChange(false);
 		}
 	});
@@ -132,7 +158,12 @@ export function AdsPopover({
 	return (
 		<span
 			className="ads-popover-anchor inline-flex"
-			onClick={() => onOpenChange(!open)}
+			onClick={(event) => {
+				// React events from the portalled panel also bubble through this anchor.
+				if (event.target instanceof Node && isInsideTrigger(event.currentTarget, event.target)) {
+					onOpenChange(!open);
+				}
+			}}
 			ref={anchorRef}
 		>
 			{trigger}
@@ -141,13 +172,14 @@ export function AdsPopover({
 					<div
 						{...props}
 						className={classNames(
-							'ads-popover fixed z-[var(--ads-layer-overlay)] max-w-[min(24rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised p-4 text-text shadow-lg max-md:p-3',
+							'ads-popover fixed z-[var(--ads-layer-overlay)] max-w-[min(24rem,calc(100vw-1rem))] rounded-lg border border-border bg-surface-raised p-4 font-sans text-text shadow-lg max-md:p-3',
 							className,
 						)}
+						data-placement={position.placement}
 						id={popoverId}
-						ref={contentRef}
+						ref={position.attachContent}
 						role="dialog"
-						style={position}
+						style={position.style}
 					>
 						{content}
 					</div>

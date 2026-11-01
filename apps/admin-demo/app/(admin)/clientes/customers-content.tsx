@@ -1,4 +1,4 @@
-import { AdsTypography } from '@admin-ds/components';
+import { AdsTypography } from '@dvmarques/admin-ds-components';
 import type { Customer } from '../../../lib/data/customers';
 import type { CustomersQuery, CustomersState } from '../../../lib/customers-query';
 import { CustomersListing } from './customers-listing';

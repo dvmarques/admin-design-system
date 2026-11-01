@@ -1,48 +1,54 @@
-# @admin-ds/tokens
+# @dvmarques/admin-ds-tokens
 
-Os design tokens possuem uma única fonte em `source/tokens.mjs`. A partir
-dela, `npm run generate` produz:
+Tokens CSS semânticos e temas claro/escuro do **Admin Design System**. Use este pacote sozinho para aplicar as variáveis visuais ou como base para `components`, `admin` e `highlighted-code`.
 
-- `dist/tokens.css`, com variáveis CSS públicas;
-- `dist/tokens.meta.json`, com os metadados de referência;
-- `src/generated.ts`, com valores e tipos TypeScript.
+> **Pré-publicação:** artefato preparado e validado como tarball na [#194](https://github.com/dvmarques/admin-design-system/issues/194), **ainda indisponível no npm**. Os comandos de instalação se aplicam depois da [primeira publicação #195](https://github.com/dvmarques/admin-design-system/issues/195). A versão exibida no manifest do repositório é de desenvolvimento, não promessa da versão inicial no registro.
 
-## Temas
+## Instalar (após a publicação)
 
-Use `data-theme="light"` ou `data-theme="dark"` no elemento raiz da
-aplicação. Sem um atributo explícito, o CSS respeita
-`prefers-color-scheme`.
+```bash
+npm install @dvmarques/admin-ds-tokens
+```
 
-Overlays portados preservam o tema explícito do escopo que os abriu. Os tokens
-`--ads-color-overlay-close-background`, `--ads-color-overlay-close-content` e
-`--ads-color-overlay-close-background-hover` personalizam o controle de fechar
-de dialogs, drawers e toasts nos dois temas.
+## Usar
 
-Para sobrescrever tokens, declare as variáveis **depois** de importar
-`@admin-ds/tokens/styles.css`, com `[data-theme='light']` e
-`[data-theme='dark']` (sem `:root`). Overlays em portal (dialog, drawer e
-toast) são renderizados em um `div` com `data-theme` próprio, fora do `<html>`;
-`:root[data-theme=…]` não os alcança.
+Importe a folha de estilos uma vez no entrypoint global de sua aplicação (por exemplo, `app/layout.tsx` no Next.js):
+
+```tsx
+import '@dvmarques/admin-ds-tokens/styles.css';
+import type { ReactNode } from 'react';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+	return (
+		<html lang="pt-BR" data-theme="light">
+			<body>{children}</body>
+		</html>
+	);
+}
+```
+
+O arquivo `styles.css` carrega o CSS compilado; não configure Tailwind nem importe `src/` no consumidor.
+
+## Temas, personalização e fontes
+
+- `data-theme="light"` e `data-theme="dark"` no elemento raiz forçam um tema; sem atributo, a folha de estilos usa `prefers-color-scheme`.
+- A preferência e sua persistência pertencem à aplicação, inclusive o fallback antes da hidratação para a escolha Sistema.
+- Sobrescreva variáveis depois do CSS distribuído, em seletores que também alcancem overlays portados:
 
 ```css
+[data-theme='light'] {
+	--ads-color-primary: #2563eb;
+}
+
 [data-theme='dark'] {
 	--ads-color-primary: #0ea5e9;
 }
 ```
 
-A aplicação consumidora é responsável por persistir a preferência do
-usuário e aplicar o atributo antes da hidratação, quando necessário.
+- Tokens de elevação (`--ads-elevation-*`), densidade (`--ads-density-*`), skeleton e tipografia mantêm variantes semânticas. O pacote não inclui arquivos da fonte Inter: carregue-a com `next/font` ou outro recurso da aplicação, respeitando a licença da fonte.
 
-## Tipografia
+Este pacote não depende de `components`, `admin`, Shiki ou `react-imask`. Suas exportações de TypeScript e CSS estão definidas em `package.json#exports`. Consulte os nomes e metadados em [identidade visual](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-identity.md) e [elevação e densidade](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-polish.md).
 
-A pilha padrão é `Inter, Roboto, sans-serif`. Inter e Roboto são fontes de
-licença livre para uso comercial (SIL Open Font License 1.1 e Apache License
-2.0, respectivamente). O pacote não distribui arquivos de fonte; consumidores
-que fizerem o download ou empacotamento dessas fontes devem preservar seus
-avisos de licença.
+**Referências:** [guia de integração](https://github.com/dvmarques/admin-design-system/blob/develop/docs/integration.md) · [limitações](https://github.com/dvmarques/admin-design-system/blob/develop/docs/limitations.md) · [Storybook](https://dvmarques.github.io/admin-design-system/storybook/) · [release](https://github.com/dvmarques/admin-design-system/blob/develop/docs/release-process.md) · [licença](https://github.com/dvmarques/admin-design-system/blob/develop/LICENSE.md).
 
-## Compatibilidade
-
-Nomes de tokens públicos são contratos semânticos. Remoções ou renomeações
-exigem orientação de migração e versionamento compatível com uma alteração
-de API pública.
+Licença do projeto: MIT, copyright Daniel Marques. Fontes e outros materiais de terceiros conservam as próprias licenças e atribuições.

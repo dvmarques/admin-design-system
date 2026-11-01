@@ -1,8 +1,9 @@
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import axe from 'axe-core';
 import { useState } from 'react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AdsButton } from '../src/button';
+import { AdsDialog, AdsDrawer } from '../src/overlay-dialog';
 import { AdsPopover, AdsTooltip } from '../src/overlay-anchored';
 
 function PopoverFixture() {
@@ -20,6 +21,105 @@ function PopoverFixture() {
 }
 
 describe('anchored overlays', () => {
+	it('keeps panel interactions open and preserves consumer handlers and bubbling', async () => {
+		const onOpenChange = vi.fn();
+		const onTriggerClick = vi.fn();
+		const onPanelClick = vi.fn();
+		const onAncestorClick = vi.fn();
+		const onAction = vi.fn();
+		function InteractivePopover() {
+			const [open, setOpen] = useState(false);
+			return (
+				<div onClick={onAncestorClick}>
+					<AdsPopover
+						aria-label="Edição rápida"
+						content={
+							<>
+								<input aria-label="Nome" />
+								<AdsButton onClick={onAction}>Aplicar</AdsButton>
+								<AdsButton onClick={() => setOpen(false)}>Concluir</AdsButton>
+							</>
+						}
+						onClick={onPanelClick}
+						onOpenChange={(next) => {
+							onOpenChange(next);
+							setOpen(next);
+						}}
+						open={open}
+					>
+						<AdsButton onClick={onTriggerClick}>
+							<span>Editar nome</span>
+						</AdsButton>
+					</AdsPopover>
+				</div>
+			);
+		}
+		render(<InteractivePopover />);
+		const trigger = screen.getByRole('button', { name: 'Editar nome' });
+		trigger.focus();
+		fireEvent.click(screen.getByText('Editar nome'));
+		const panel = await screen.findByRole('dialog', { name: 'Edição rápida' });
+		expect(trigger).toHaveAttribute('aria-controls', panel.id);
+		expect(onTriggerClick).toHaveBeenCalledTimes(1);
+		expect(onOpenChange.mock.calls).toEqual([[true]]);
+		onAncestorClick.mockClear();
+		const input = screen.getByRole('textbox', { name: 'Nome' });
+		fireEvent.mouseDown(input);
+		fireEvent.click(input);
+		fireEvent.change(input, { target: { value: 'Ana' } });
+		expect(input).toHaveValue('Ana');
+		fireEvent.click(screen.getByRole('button', { name: 'Aplicar' }));
+		expect(onAction).toHaveBeenCalledTimes(1);
+		expect(onPanelClick).toHaveBeenCalledTimes(2);
+		expect(onAncestorClick).toHaveBeenCalledTimes(2);
+		expect(panel).toBeVisible();
+		expect(onOpenChange.mock.calls).toEqual([[true]]);
+		expect((await axe.run(panel)).violations).toEqual([]);
+		fireEvent.click(screen.getByText('Editar nome'));
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+		expect(onTriggerClick).toHaveBeenCalledTimes(2);
+		expect(onOpenChange.mock.calls).toEqual([[true], [false]]);
+		fireEvent.click(trigger);
+		fireEvent.click(screen.getByRole('button', { name: 'Concluir' }));
+		expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
+		expect(onOpenChange.mock.calls).toEqual([[true], [false], [true]]);
+	});
+
+	it('does not open a popover when clicking empty space in a stretched anchor', () => {
+		const onOpenChange = vi.fn();
+		const { container } = render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={false}>
+				<AdsButton>Gatilho</AdsButton>
+			</AdsPopover>,
+		);
+		const anchor = container.querySelector('.ads-popover-anchor');
+		expect(anchor).toBeInTheDocument();
+		fireEvent.click(anchor!);
+		expect(onOpenChange).not.toHaveBeenCalled();
+		fireEvent.click(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(onOpenChange).toHaveBeenCalledWith(true);
+	});
+
+	it('preserves a trigger handler that stops propagation', () => {
+		const onOpenChange = vi.fn();
+		const onClick = vi.fn();
+		render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={false}>
+				<AdsButton
+					onClick={(event) => {
+						onClick();
+						event.stopPropagation();
+					}}
+				>
+					Gatilho
+				</AdsButton>
+			</AdsPopover>,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Gatilho' }));
+		expect(onClick).toHaveBeenCalledTimes(1);
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
 	it('shows a tooltip on focus without capturing focus', async () => {
 		render(
 			<AdsTooltip content="Ajuda contextual">
@@ -27,7 +127,20 @@ describe('anchored overlays', () => {
 			</AdsTooltip>,
 		);
 		const trigger = screen.getByRole('button', { name: 'Ajuda' });
-		trigger.focus();
+		// JSDOM não faz layout: uma âncora em (0, 0) exige flip para bottom.
+		// Agora a geometria vem do botão real, não do wrapper flexível; usar espaço realista acima dele.
+		vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue({
+			top: 100,
+			bottom: 120,
+			left: 100,
+			right: 140,
+			width: 40,
+			height: 20,
+			x: 100,
+			y: 100,
+			toJSON() {},
+		});
+		act(() => trigger.focus());
 		const tooltip = await screen.findByRole('tooltip');
 		expect(tooltip).toHaveTextContent('Ajuda contextual');
 		expect(tooltip).toHaveClass('z-[var(--ads-layer-overlay)]');
@@ -37,6 +150,99 @@ describe('anchored overlays', () => {
 		expect(document.activeElement).toBe(trigger);
 		fireEvent.blur(trigger);
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+	});
+
+	it('anchors a tooltip to the real trigger, not to a stretched wrapper', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		const rect = (left: number, width: number) => ({
+			top: 100,
+			bottom: 120,
+			left,
+			right: left + width,
+			width,
+			height: 20,
+			x: left,
+			y: 100,
+			toJSON() {},
+		});
+		vi.spyOn(trigger, 'getBoundingClientRect').mockReturnValue(rect(100, 40));
+		vi.spyOn(trigger.parentElement!, 'getBoundingClientRect').mockReturnValue(rect(0, 400));
+		act(() => trigger.focus());
+		const tooltip = await screen.findByRole('tooltip');
+		// O painel mede 0 x 0 no JSDOM; o centro do botão é 120, o do wrapper seria 200.
+		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
+	});
+
+	it('treats every element rendered by the trigger as part of the popover trigger', async () => {
+		const onOpenChange = vi.fn();
+		function SplitTrigger(props: object) {
+			return (
+				<>
+					<AdsButton {...props}>Primeiro</AdsButton>
+					<AdsButton {...props}>Segundo</AdsButton>
+				</>
+			);
+		}
+		const { container } = render(
+			<AdsPopover content="Conteúdo" onOpenChange={onOpenChange} open={true}>
+				<SplitTrigger />
+			</AdsPopover>,
+		);
+		await screen.findByRole('dialog');
+		fireEvent.click(screen.getByRole('button', { name: 'Segundo' }));
+		expect(onOpenChange).toHaveBeenLastCalledWith(false);
+		onOpenChange.mockClear();
+		// Pressionar o segundo irmão não conta como clique externo (o clique alterna).
+		fireEvent.mouseDown(screen.getByRole('button', { name: 'Segundo' }));
+		expect(onOpenChange).not.toHaveBeenCalled();
+		// A área vazia do wrapper continua sendo clique externo e não alterna.
+		fireEvent.mouseDown(container.querySelector('.ads-popover-anchor')!);
+		expect(onOpenChange).toHaveBeenCalledWith(false);
+		onOpenChange.mockClear();
+		fireEvent.click(container.querySelector('.ads-popover-anchor')!);
+		expect(onOpenChange).not.toHaveBeenCalled();
+	});
+
+	it('re-measures the new trigger element when the trigger changes while open', async () => {
+		const rect = (left: number, width: number) => ({
+			top: 100,
+			bottom: 120,
+			left,
+			right: left + width,
+			width,
+			height: 20,
+			x: left,
+			y: 100,
+			toJSON() {},
+		});
+		function Fixture({ swapped }: { swapped: boolean }) {
+			return (
+				<AdsTooltip content="Ajuda contextual">
+					{swapped ? <a href="#destino">Novo</a> : <AdsButton>Antigo</AdsButton>}
+				</AdsTooltip>
+			);
+		}
+		const { rerender } = render(<Fixture swapped={false} />);
+		const oldTrigger = screen.getByRole('button', { name: 'Antigo' });
+		vi.spyOn(oldTrigger, 'getBoundingClientRect').mockReturnValue(rect(100, 40));
+		act(() => oldTrigger.focus());
+		const tooltip = await screen.findByRole('tooltip');
+		await waitFor(() => expect(tooltip).toHaveStyle({ left: '120px' }));
+		// jsdom não implementa getBoundingClientRect por layout: simula o novo elemento.
+		const spy = vi
+			.spyOn(HTMLAnchorElement.prototype, 'getBoundingClientRect')
+			.mockReturnValue(rect(300, 40));
+		try {
+			rerender(<Fixture swapped={true} />);
+			await waitFor(() => expect(screen.getByRole('tooltip')).toHaveStyle({ left: '320px' }));
+		} finally {
+			spy.mockRestore();
+		}
 	});
 
 	it('shows a tooltip while the pointer hovers the trigger', async () => {
@@ -52,6 +258,226 @@ describe('anchored overlays', () => {
 		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
 	});
 
+	it('keeps the trigger aria-describedby when the tooltip opens on focus', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton aria-describedby="ajuda">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.blur(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
+	it('restores the consumer aria-describedby when Escape dismisses the tooltip', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton aria-describedby="ajuda">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+		expect(document.activeElement).toBe(trigger);
+	});
+
+	it('collapses extra spaces and duplicate ids in the consumer aria-describedby', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton aria-describedby="  ajuda   erro ajuda ">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda erro ${tooltip.id}`);
+	});
+
+	it('composes aria-describedby on a native button trigger', async () => {
+		render(
+			<AdsTooltip content="Ajuda nativa">
+				<button aria-describedby="ajuda" type="button">
+					Nativo
+				</button>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Nativo' });
+		fireEvent.pointerEnter(trigger);
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda ${tooltip.id}`);
+		fireEvent.pointerLeave(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda');
+	});
+
+	it('ignores empty or blank consumer aria-describedby values', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton aria-describedby="  ">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+	});
+
+	it('keeps the trigger aria-describedby when the tooltip opens on hover', async () => {
+		render(
+			<AdsTooltip content="Ajuda por hover">
+				<AdsButton aria-describedby="ajuda erro">Campo</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Campo' });
+		fireEvent.pointerEnter(trigger);
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', `ajuda erro ${tooltip.id}`);
+		fireEvent.pointerLeave(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).toHaveAttribute('aria-describedby', 'ajuda erro');
+	});
+
+	it('removes aria-describedby on close when the trigger had none', async () => {
+		render(
+			<AdsTooltip content="Ajuda">
+				<AdsButton>Sem ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Sem ajuda' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+		fireEvent.blur(trigger);
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(trigger).not.toHaveAttribute('aria-describedby');
+	});
+
+	it('dismisses a focus-opened tooltip with Escape without moving focus', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		trigger.focus();
+		const tooltip = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', tooltip.id);
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(document.activeElement).toBe(trigger);
+		expect(trigger).not.toHaveAttribute('aria-describedby');
+	});
+
+	it('dismisses a hover-opened tooltip with Escape and reopens only on a new pointer entry', async () => {
+		render(
+			<AdsTooltip content="Ajuda por hover">
+				<AdsButton>Detalhes</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Detalhes' });
+		fireEvent.pointerEnter(trigger);
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(document.activeElement).not.toBe(trigger);
+		fireEvent.pointerLeave(trigger);
+		fireEvent.pointerEnter(trigger);
+		const reopened = await screen.findByRole('tooltip');
+		expect(trigger).toHaveAttribute('aria-describedby', reopened.id);
+	});
+
+	it('keeps a dismissed tooltip closed while focus stays and reopens on a new focus', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		trigger.focus();
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		fireEvent.keyDown(trigger, { key: 'a' });
+		expect(screen.queryByRole('tooltip')).not.toBeInTheDocument();
+		trigger.blur();
+		trigger.focus();
+		expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+	});
+
+	it('reopens a focus-dismissed tooltip when the pointer enters the trigger again', async () => {
+		render(
+			<AdsTooltip content="Ajuda contextual">
+				<AdsButton>Ajuda</AdsButton>
+			</AdsTooltip>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Ajuda' });
+		trigger.focus();
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		fireEvent.pointerEnter(trigger);
+		expect(await screen.findByRole('tooltip')).toBeInTheDocument();
+	});
+
+	it.each([
+		['AdsDialog', AdsDialog],
+		['AdsDrawer', AdsDrawer],
+	] as const)(
+		'closes only the tooltip on the first Escape inside an %s',
+		async (_name, Overlay) => {
+			const onOpenChange = vi.fn();
+			render(
+				<Overlay onOpenChange={onOpenChange} open title="Diálogo">
+					<AdsTooltip content="Ajuda">
+						<AdsButton>Dica</AdsButton>
+					</AdsTooltip>
+				</Overlay>,
+			);
+			const trigger = screen.getByRole('button', { name: 'Dica' });
+			// O diálogo move o foco inicial para o primeiro controle; só depois o gatilho recebe foco.
+			await waitFor(() =>
+				expect(document.activeElement).toBe(screen.getByRole('button', { name: 'Fechar' })),
+			);
+			trigger.focus();
+			await screen.findByRole('tooltip');
+			fireEvent.keyDown(document, { key: 'Escape' });
+			await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+			expect(onOpenChange).not.toHaveBeenCalled();
+			expect(document.activeElement).toBe(trigger);
+			fireEvent.keyDown(document, { key: 'Escape' });
+			expect(onOpenChange).toHaveBeenCalledWith(false);
+		},
+	);
+
+	it('closes only the topmost layer when a tooltip and a popover are open', async () => {
+		render(
+			<>
+				<PopoverFixture />
+				<AdsTooltip content="Ajuda">
+					<AdsButton>Dica</AdsButton>
+				</AdsTooltip>
+			</>,
+		);
+		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
+		await screen.findByRole('dialog', { name: 'Ações rápidas' });
+		screen.getByRole('button', { name: 'Dica' }).focus();
+		await screen.findByRole('tooltip');
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('tooltip')).not.toBeInTheDocument());
+		expect(screen.getByRole('dialog', { name: 'Ações rápidas' })).toBeInTheDocument();
+		fireEvent.keyDown(document, { key: 'Escape' });
+		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+	});
+
 	it('opens a popover from its trigger and closes on Escape with focus restoration', async () => {
 		render(<PopoverFixture />);
 		const trigger = screen.getByRole('button', { name: 'Mais ações' });
@@ -60,6 +486,7 @@ describe('anchored overlays', () => {
 		const popover = await screen.findByRole('dialog', { name: 'Ações rápidas' });
 		expect(popover).toBeVisible();
 		expect(popover).toHaveClass('z-[var(--ads-layer-overlay)]');
+		expect(popover).toHaveClass('font-sans');
 		expect(trigger).toHaveAttribute('aria-expanded', 'true');
 		fireEvent.keyDown(document, { key: 'Escape' });
 		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
@@ -71,6 +498,14 @@ describe('anchored overlays', () => {
 		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
 		await screen.findByRole('dialog', { name: 'Ações rápidas' });
 		fireEvent.mouseDown(document.body);
+		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
+	});
+
+	it('closes a popover when pressing the empty area of a stretched anchor', async () => {
+		const { container } = render(<PopoverFixture />);
+		fireEvent.click(screen.getByRole('button', { name: 'Mais ações' }));
+		await screen.findByRole('dialog', { name: 'Ações rápidas' });
+		fireEvent.mouseDown(container.querySelector('.ads-popover-anchor')!);
 		await waitFor(() => expect(screen.queryByRole('dialog')).not.toBeInTheDocument());
 	});
 
@@ -88,6 +523,20 @@ describe('anchored overlays', () => {
 			</AdsTooltip>,
 		);
 		const results = await axe.run(container);
+		expect(results.violations).toEqual([]);
+	});
+
+	it('has no detectable accessibility violations with the tooltip open', async () => {
+		render(
+			<AdsTooltip content="Informação">
+				<AdsButton>Info</AdsButton>
+			</AdsTooltip>,
+		);
+		screen.getByRole('button', { name: 'Info' }).focus();
+		await screen.findByRole('tooltip');
+		const results = await axe.run(document.body, {
+			rules: { 'color-contrast': { enabled: false }, region: { enabled: false } },
+		});
 		expect(results.violations).toEqual([]);
 	});
 });

@@ -8,7 +8,7 @@ Compõe os componentes públicos em fluxos administrativos recorrentes (listagem
 
 ### Requirement: Composição sem regras de negócio
 
-O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsConfirmDialog` em `@admin-ds/admin`, compostos apenas por APIs públicas existentes. Os componentes e tipos públicos MUST usar o prefixo `Ads`, as classes públicas `ads-` e as variáveis `--ads-`, sem expor Tailwind. Eles MUST NOT persistir nem enviar dados, MUST NOT guardar a seleção nem a etapa ativa e MUST NOT importar o roteador do Next.js nem ler a URL.
+O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsConfirmDialog` em `@dvmarques/admin-ds-admin`, compostos apenas por APIs públicas existentes. Os componentes e tipos públicos MUST usar o prefixo `Ads`, as classes públicas `ads-` e as variáveis `--ads-`, sem expor Tailwind. Eles MUST NOT persistir nem enviar dados, MUST NOT guardar a seleção nem a etapa ativa e MUST NOT importar o roteador do Next.js nem ler a URL.
 
 #### Scenario: Estado não aplicado pelo consumidor
 
@@ -65,12 +65,22 @@ O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsC
 
 ### Requirement: Confirmação de ação destrutiva
 
-`AdsConfirmDialog` MUST usar `AdsDialog` com título e descrição associados, MUST oferecer "Cancelar" e "Confirmar" e MUST NOT fechar nem confirmar por conta própria: `onConfirm` e `onOpenChange` notificam o consumidor. O foco inicial MUST ir à ação de cancelar, `Escape` MUST cancelar e o foco MUST voltar ao elemento que abriu o diálogo ao fechar. Com `destructive`, a confirmação MUST usar a variante de perigo. Com `pending`, as ações MUST ficar indisponíveis (`aria-disabled`, sem perder o foco), "Confirmar" MUST exibir indicador de carregamento e `Escape` e o clique fora MUST NOT cancelar, mesmo com `closeOnEscape` ou `closeOnBackdrop` informados.
+`AdsConfirmDialog` MUST usar `AdsDialog` com título e descrição associados e oferecer "Cancelar" e "Confirmar", sem fechar nem confirmar por conta própria: `onConfirm` e `onOpenChange` notificam o consumidor. O foco inicial MUST ir ao primeiro controle elegível de `children` ou, sem ele, a "Cancelar". `Escape` MUST cancelar e o foco MUST voltar ao elemento que abriu o diálogo. `destructive` MUST usar a variante de perigo e `pending` MUST deixar as ações indisponíveis (cenário Pendente).
 
 #### Scenario: Foco e nome acessível
 
-- **WHEN** o diálogo abre
+- **WHEN** o diálogo abre sem controles interativos em `children`
 - **THEN** ele tem nome e descrição acessíveis e o foco está em "Cancelar"
+
+#### Scenario: Foco no primeiro controle do conteúdo
+
+- **WHEN** o diálogo abre com um controle interativo elegível em `children`
+- **THEN** o foco está nesse primeiro controle, e não em "Cancelar"
+
+#### Scenario: Controles inelegíveis são ignorados
+
+- **WHEN** o diálogo abre e os controles de `children` estão desabilitados, ocultos ou inertes
+- **THEN** o foco está em "Cancelar"
 
 #### Scenario: Cancelar com Escape
 
@@ -86,6 +96,16 @@ O sistema MUST fornecer `AdsBulkActionBar`, `AdsListFlow`, `AdsStepForm` e `AdsC
 
 - **WHEN** `pending` é verdadeiro, inclusive com `closeOnEscape` e `closeOnBackdrop` informados, e o foco está em "Confirmar"
 - **THEN** "Cancelar" e "Confirmar" ficam com `aria-disabled="true"` e não respondem ao clique, "Confirmar" exibe indicador de carregamento, `Escape` e o clique fora não cancelam e o foco permanece em "Confirmar", durante e depois do `pending`
+
+#### Scenario: Variante de perigo
+
+- **WHEN** `destructive` é verdadeiro
+- **THEN** a confirmação usa a variante de perigo
+
+#### Scenario: Retorno do foco
+
+- **WHEN** o diálogo fecha
+- **THEN** o foco volta ao elemento que o abriu
 
 ### Requirement: Indicador e navegação do formulário em etapas
 
@@ -177,3 +197,114 @@ Os fluxos MUST funcionar por teclado, com foco visível, nos temas claro e escur
 
 - **WHEN** a aplicação sobrescreve tokens `--ads-*`
 - **THEN** os fluxos refletem a mudança sem recompilar os componentes
+
+### Requirement: Confirmação pendente protege o diálogo de Escape em camadas aninhadas
+
+Enquanto `pending` for verdadeiro, `AdsConfirmDialog` MUST NOT fechar por Escape, inclusive quando houver um overlay aberto dentro dele. Um Escape destinado a esse overlay interno MUST fechar apenas ele e MUST NOT cancelar a confirmação.
+
+#### Scenario: Popover aberto dentro de uma confirmação pendente
+
+- **WHEN** `pending` é verdadeiro, há um popover aberto dentro do diálogo e o usuário pressiona Escape duas vezes
+- **THEN** o primeiro Escape fecha só o popover e o segundo não cancela a confirmação
+
+### Requirement: Papel do diálogo de confirmação
+
+`AdsConfirmDialog` MUST usar `role="alertdialog"` quando `destructive` for verdadeiro (padrão) e `role="dialog"` caso contrário, e MUST aceitar `role` explícito, que prevalece sobre essa regra. A mudança de papel MUST NOT alterar foco inicial, `Escape`, retorno de foco nem o estado `pending`.
+
+#### Scenario: Confirmação destrutiva
+
+- **WHEN** `destructive` é verdadeiro ou omitido e o diálogo abre
+- **THEN** o painel tem `role="alertdialog"` com nome e descrição acessíveis e o foco está em "Cancelar"
+
+#### Scenario: Confirmação não destrutiva
+
+- **WHEN** `destructive` é falso
+- **THEN** o painel tem `role="dialog"`
+
+#### Scenario: Papel explícito
+
+- **WHEN** `role="dialog"` é informado com `destructive` verdadeiro
+- **THEN** o painel tem `role="dialog"` e a confirmação mantém a variante de perigo
+
+### Requirement: Navegação pelo indicador de etapas
+
+`AdsStepForm` MUST permitir ativar uma etapa pelo indicador somente quando ela estiver antes da atual ou quando a etapa atual e todas as intermediárias já tiverem sido validadas ao avançar. Etapas não navegáveis MUST NOT ser interativas. A navegação MUST chamar `onActiveStepChange`, MUST NOT guardar dados e MUST NOT validar de novo etapas já válidas. Editar uma etapa MUST exigir nova validação por "Próxima" antes de navegar adiante a partir dela.
+
+#### Scenario: Voltar pelo indicador
+
+- **WHEN** a etapa 2 está ativa e a pessoa aciona a etapa 1 no indicador por teclado
+- **THEN** `onActiveStepChange` recebe o id da etapa 1 e os dados são preservados
+
+#### Scenario: Etapa futura ainda não validada
+
+- **WHEN** a etapa 1 está ativa e nunca foi validada
+- **THEN** as etapas seguintes não são controles interativos no indicador
+
+#### Scenario: Retornar a etapa já validada
+
+- **WHEN** a pessoa avançou da etapa 1 à 2 e voltou à 1
+- **THEN** a etapa 2 pode ser acionada no indicador sem nova validação
+
+#### Scenario: Edição invalida a marca
+
+- **WHEN** a pessoa edita um campo da etapa 1 depois de validá-la
+- **THEN** a etapa 2 deixa de ser navegável pelo indicador até a etapa 1 ser validada de novo
+
+#### Scenario: Enviando ou validando
+
+- **WHEN** `submitting` ou uma validação assíncrona está em andamento
+- **THEN** os controles do indicador não navegam
+
+### Requirement: Validação assíncrona por etapa
+
+`AdsStepDefinition.validate` MUST aceitar retorno `boolean` ou `Promise<boolean>`, mantendo síncrono o tratamento do retorno síncrono. Enquanto uma Promise está pendente, o formulário MUST sinalizar o carregamento de forma acessível e MUST ignorar novas ações. Resolver `false` ou rejeitar MUST ser tratado como etapa inválida, e resultados obsoletos MUST ser descartados.
+
+#### Scenario: Estado de carregamento acessível
+
+- **WHEN** a validação assíncrona está pendente
+- **THEN** o formulário tem `aria-busy="true"`, uma região `role="status"` anuncia o estado, a ação acionada exibe carregamento e as ações ficam com `aria-disabled` sem perder o foco
+
+#### Scenario: Edição durante a validação
+
+- **WHEN** a validação assíncrona está pendente e um campo da etapa é editado
+- **THEN** a validação pendente é cancelada, o resultado dela é descartado, a etapa não é marcada como validada e a pessoa precisa acionar "Próxima" de novo; durante a espera os campos da etapa ficam inertes
+
+#### Scenario: Valor alterado por código durante a validação
+
+- **WHEN** o valor de um campo nativo da etapa é alterado por código, sem evento `change`, enquanto a validação está pendente
+- **THEN** o resultado é descartado e a etapa não avança nem é marcada como validada
+
+#### Scenario: Resultado obsoleto
+
+- **WHEN** a etapa ativa muda ou o componente desmonta antes de a Promise resolver
+- **THEN** o resultado é descartado e `onActiveStepChange` e `onSubmit` não são chamados por ele
+
+#### Scenario: Avançar com validação assíncrona válida
+
+- **WHEN** `validate` retorna uma Promise que resolve `true` e a pessoa aciona "Próxima"
+- **THEN** durante a espera o formulário tem `aria-busy="true"` e `onActiveStepChange` não foi chamado; ao resolver, `onActiveStepChange` recebe a próxima etapa
+
+#### Scenario: Validação assíncrona inválida
+
+- **WHEN** a Promise resolve `false`
+- **THEN** a etapa não muda, a mensagem de erro é anunciada e o foco vai ao primeiro campo inválido ou ao título
+
+#### Scenario: Promise rejeitada
+
+- **WHEN** a Promise rejeita
+- **THEN** a etapa é tratada como inválida, sem exceção não tratada
+
+#### Scenario: Ações durante a validação
+
+- **WHEN** a validação está pendente e a pessoa aciona "Próxima" de novo
+- **THEN** `validate` não é chamado outra vez
+
+#### Scenario: Confirmação final assíncrona
+
+- **WHEN** a última etapa tem `validate` assíncrona que resolve `true`
+- **THEN** `onSubmit` é chamado uma vez após a resolução
+
+#### Scenario: Validação síncrona preservada
+
+- **WHEN** `validate` retorna `boolean`
+- **THEN** o resultado é aplicado no mesmo evento, sem estado de carregamento

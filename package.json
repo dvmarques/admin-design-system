@@ -1,7 +1,8 @@
 {
 	"name": "admin-design-system",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
+	"license": "MIT",
 	"packageManager": "npm@11.19.1",
 	"engines": {
 		"node": ">=24.0.0",
@@ -12,6 +13,7 @@
 		"packages/*"
 	],
 	"scripts": {
+		"prepare": "husky",
 		"format": "prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
@@ -21,46 +23,72 @@
 		"test:quiet": "npm run test:node:quiet && npm run test:unit:quiet",
 		"test:node": "npm run test:node --workspaces --if-present",
 		"test:node:quiet": "npm --silent run test:node:quiet --workspaces --if-present",
-		"test:unit": "npm run build:css --workspace @admin-ds/components && vitest run",
-		"test:unit:quiet": "npm run build:css --workspace @admin-ds/components && vitest run --silent=passed-only",
-		"test:release": "node --test ./scripts/*release*.test.mjs",
-		"test:quality": "npm run generate --workspace @admin-ds/tokens && npm run test:quiet && npm run test:release && npm run check:generated --workspace @admin-ds/tokens",
+		"test:unit": "npm run build:css --workspace @dvmarques/admin-ds-components && vitest run",
+		"test:coverage": "npm run build:css --workspace @dvmarques/admin-ds-components && vitest run --silent=passed-only --coverage --testTimeout=30000",
+		"test:unit:quiet": "npm run build:css --workspace @dvmarques/admin-ds-components && vitest run --silent=passed-only",
+		"test:release": "node --test ./scripts/*release*.test.mjs ./scripts/npm-publication.test.mjs",
+		"validate:impact": "npm run validate:impact:lint && npm run validate:impact:types && npm run validate:impact:test",
+		"validate:impact:lint": "node scripts/validate-impact.mjs lint",
+		"validate:impact:types": "node scripts/validate-impact.mjs typecheck",
+		"validate:impact:test": "node scripts/validate-impact.mjs test",
+		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs ./scripts/ci-impact.test.mjs ./scripts/ci-scope.test.mjs ./scripts/validate-impact.test.mjs ./scripts/ci-metrics.test.mjs ./scripts/ci-workflow.test.mjs ./scripts/visual-baseline-transfer.test.mjs ./scripts/security-audit.test.mjs ./scripts/codeql-gate.test.mjs ./scripts/quality-budget.test.mjs ./scripts/masked-input-distribution.test.mjs ./scripts/eslint-config.test.mjs ./scripts/codex-hooks.test.mjs",
+		"test:quality": "npm run generate --workspace @dvmarques/admin-ds-tokens && npm run test:quiet && npm run test:release && npm run test:ci && npm run check:agent-skills && npm run check:generated --workspace @dvmarques/admin-ds-tokens",
+		"sync:agent-skills": "node ./scripts/sync-agent-skills.mjs",
+		"check:agent-skills": "node ./scripts/sync-agent-skills.mjs --check",
 		"inspect:packages": "node ./scripts/inspect-packages.mjs",
+		"verify:optional-peer": "node ./scripts/verify-optional-peer.mjs",
 		"build": "node ./scripts/build-all.mjs",
+		"build:pages": "node ./scripts/build-pages-site.mjs --build",
+		"test:e2e:pages": "playwright test --config playwright.pages.config.ts --reporter=dot",
 		"test:e2e": "playwright test --reporter=dot",
 		"test:e2e:verbose": "playwright test --reporter=list",
+		"release:changelog": "node ./scripts/release-changelog.mjs",
 		"release:prepare": "node ./scripts/prepare-release.mjs",
 		"release:validate": "node ./scripts/validate-release.mjs",
 		"release:notes": "node ./scripts/extract-release-notes.mjs",
-		"validate": "npm run format && npm run lint && npm run build && npm run typecheck && npm run test:quality && npm run test:e2e"
+		"validate": "npm run format && npm run lint && npm run build && npm run test:output --workspace @admin-ds/docs && npm run verify:optional-peer && npm run typecheck && npm run test:quality && npm run test:e2e",
+		"verify:distribution": "node ./scripts/verify-public-tarballs.mjs"
+	},
+	"lint-staged": {
+		"*.{js,mjs,cjs,ts,tsx}": [
+			"eslint --fix",
+			"prettier --write"
+		],
+		"*.{json,md,css,yml,yaml}": "prettier --write"
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@playwright/test": "^1.62.0",
-		"@storybook/react-vite": "^10.5.5",
+		"@playwright/test": "1.64.1",
+		"@storybook/addon-docs": "10.6.5",
+		"@storybook/react-vite": "10.6.5",
 		"@tailwindcss/cli": "^4.3.3",
-		"@testing-library/jest-dom": "^7.0.0",
-		"@testing-library/react": "^16.3.2",
+		"@testing-library/jest-dom": "^7.0.1",
+		"@testing-library/react": "^16.3.3",
 		"@types/node": "^24.19.2",
-		"@types/react": "^19.2.17",
-		"@types/react-dom": "^19.2.3",
-		"axe-core": "^4.12.1",
-		"eslint": "^10.8.0",
-		"jsdom": "^29.1.1",
-		"next": "^16.2.12",
-		"prettier": "^3.9.6",
-		"storybook": "^10.5.5",
+		"@types/react": "^19.3.0",
+		"@types/react-dom": "^19.3.0",
+		"@vitest/coverage-v8": "5.0.5",
+		"axe-core": "4.14.0",
+		"esbuild": "0.28.2",
+		"eslint": "^10.13.0",
+		"husky": "^9.1.7",
+		"jsdom": "^30.1.3",
+		"lint-staged": "^17.6.0",
+		"next": "^16.4.3",
+		"prettier": "^3.9.10",
+		"react-docgen-typescript": "^2.4.0",
+		"storybook": "10.6.5",
 		"tailwindcss": "^4.3.3",
-		"typescript": "^5.9.3",
-		"typescript-eslint": "^8.65.0",
-		"vitest": "^4.1.10"
+		"typescript": "~6.0.3",
+		"typescript-eslint": "^8.72.1",
+		"vitest": "5.0.5"
 	},
 	"dependencies": {
-		"react": "^19.2.8",
-		"react-dom": "^19.2.8"
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1"
 	},
 	"allowScripts": {
 		"@parcel/watcher@2.5.1": true,
-		"esbuild@0.28.1": true
+		"esbuild@0.28.2": true
 	}
 }

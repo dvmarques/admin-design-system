@@ -6,10 +6,31 @@ coverage/
 playwright-report/
 test-results/
 *.tsbuildinfo
-debug.log
+*.log
 .env*
 !.env.example
 
-# Gerados localmente (Next.js e execução do E2E fora do Windows; baselines visuais são só win32)
+# Gerado localmente pelo Next.js
 apps/admin-demo/AGENTS.md
-e2e/**/*-linux.png
+
+# Saídas do build do GitHub Pages
+apps/admin-demo/out/
+site/
+
+# Saídas locais do MCP do Playwright
+.playwright-mcp/
+/lint-regression-*/
+
+# Arquivos locais do sistema operacional
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Preferências pessoais do Claude Code
+.claude/settings.local.json
+
+# Referências de API MDX geradas antes do build/dev do Storybook
+apps/docs/src/api-reference/
+
+# Artefato efêmero do workflow manual de baselines
+baseline-transfer/

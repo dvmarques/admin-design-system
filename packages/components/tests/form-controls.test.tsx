@@ -2,6 +2,7 @@ import { fireEvent, render, screen } from '@testing-library/react';
 import axe from 'axe-core';
 import { describe, expect, it } from 'vitest';
 import {
+	AdsButton,
 	AdsCheckbox,
 	AdsField,
 	AdsInput,
@@ -28,6 +29,50 @@ describe('text form controls', () => {
 		);
 	});
 
+	it('counts padding and border inside the width of every text control', () => {
+		const { container } = render(
+			<form>
+				{(['sm', 'md', 'lg'] as const).map((size) => (
+					<AdsInput aria-label={`Texto ${size}`} key={size} size={size} />
+				))}
+				{(['default', 'success', 'error'] as const).map((validationState) => (
+					<AdsInput
+						aria-label={`Estado ${validationState}`}
+						key={validationState}
+						validationState={validationState}
+					/>
+				))}
+				<AdsInput aria-label="Desabilitado" disabled />
+				<AdsTextarea aria-label="Descrição" />
+				<AdsSelect aria-label="Status">
+					<option value="active">Ativo</option>
+				</AdsSelect>
+			</form>,
+		);
+
+		const controls = [...container.querySelectorAll('.ads-form-control')];
+		expect(controls).toHaveLength(9);
+		for (const control of controls) expect(control).toHaveClass('box-border', 'w-full');
+	});
+
+	it.each(['sm', 'md', 'lg'] as const)(
+		'uses tokenized typeface on all text controls in %s',
+		(size) => {
+			render(
+				<>
+					<AdsInput aria-label="Input" size={size} />
+					<AdsTextarea aria-label="Textarea" placeholder="Digite aqui" size={size} />
+					<AdsSelect aria-label="Select" size={size}>
+						<option>Um</option>
+					</AdsSelect>
+				</>,
+			);
+			expect(screen.getByRole('textbox', { name: 'Input' })).toHaveClass('font-sans');
+			expect(screen.getByRole('textbox', { name: 'Textarea' })).toHaveClass('font-sans');
+			expect(screen.getByRole('combobox', { name: 'Select' })).toHaveClass('font-sans');
+		},
+	);
+
 	it('renders textarea and select with native interaction', () => {
 		render(
 			<form>
@@ -53,8 +98,8 @@ describe('text form controls', () => {
 			</>,
 		);
 		expect(screen.getByRole('textbox', { name: 'Somente leitura' })).toHaveClass(
-			'read-only:bg-surface-muted',
-			'read-only:cursor-default',
+			'[&[readonly]]:bg-surface-muted',
+			'[&[readonly]]:cursor-default',
 		);
 		expect(screen.getByRole('textbox', { name: 'Desabilitado' })).toBeDisabled();
 	});
@@ -117,7 +162,7 @@ describe('selection form controls', () => {
 				const indicator = screen.getByRole(label === 'Aceito' ? 'checkbox' : 'radio', {
 					name: label,
 				}).nextElementSibling;
-				expect(indicator).toHaveClass('bg-form-background', 'border-border');
+				expect(indicator).toHaveClass('bg-form-background', 'border-border-control');
 			}
 		},
 	);
@@ -193,6 +238,112 @@ describe('field composition', () => {
 		expect(input.getAttribute('aria-describedby')).toMatch(/description/);
 		expect(input.getAttribute('aria-describedby')).toMatch(/error/);
 		expect(screen.getByRole('alert')).toHaveTextContent('Informe um e-mail válido');
+	});
+
+	it('drops the addon frame and follows the field height when the addon is a button', () => {
+		const { container } = render(
+			<>
+				<AdsInputGroup
+					endContent={<AdsButton type="button">Buscar</AdsButton>}
+					startContent={
+						<AdsButton type="button" variant="secondary">
+							Filtros
+						</AdsButton>
+					}
+				>
+					<AdsInput aria-label="Busca" />
+				</AdsInputGroup>
+				<AdsInputGroup endContent="BRL">
+					<AdsInput aria-label="Valor" />
+				</AdsInputGroup>
+			</>,
+		);
+
+		const [start, end] = [
+			container.querySelector('.ads-input-group__start'),
+			container.querySelector('.ads-input-group__end'),
+		];
+		for (const addon of [start, end]) {
+			expect(addon).toHaveClass(
+				'has-[>.ads-button]:p-0',
+				'has-[>.ads-button]:border-0',
+				'has-[>.ads-button]:bg-transparent',
+				'has-[>.ads-button]:items-stretch',
+				'[&>.ads-button]:min-h-0!',
+				'[&>.ads-button]:translate-y-0!',
+			);
+		}
+		expect(start).toHaveClass('[&>.ads-button]:rounded-r-none', 'has-[>.ads-button]:-mr-px');
+		expect(end).toHaveClass('[&>.ads-button]:rounded-l-none', 'has-[>.ads-button]:-ml-px');
+		// O adendo de texto mantém a moldura; o que muda é só o que a variante `has` ativa.
+		expect(screen.getByText('BRL')).toHaveClass('border', 'bg-surface-muted', 'px-3');
+		expect(screen.getByRole('button', { name: 'Buscar' })).toBeInTheDocument();
+		expect(screen.getByRole('button', { name: 'Filtros' })).toBeInTheDocument();
+	});
+
+	it('keeps currency and buttons unbroken without changing global button styles', () => {
+		const { container } = render(
+			<AdsInputGroup
+				startContent="R$"
+				endContent={
+					<>
+						<AdsButton>Limpar</AdsButton>
+						<AdsButton>Restaurar</AdsButton>
+					</>
+				}
+			>
+				<AdsInput aria-label="Valor" />
+			</AdsInputGroup>,
+		);
+		const start = container.querySelector('.ads-input-group__start');
+		const end = container.querySelector('.ads-input-group__end');
+		expect(start).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(end).toHaveClass('shrink-0', 'whitespace-nowrap');
+		expect(container.querySelector('.ads-input-group')).toHaveClass(
+			'overflow-x-auto',
+			'[&>.ads-form-control]:min-w-[4rem]',
+		);
+		// O grupo rola (overflow clipa): o foco dos filhos fica por dentro, sem outline/anel cortado.
+		expect(end).toHaveClass('[&>.ads-button:focus-visible]:outline-offset-[-2px]');
+	});
+
+	it('keeps several buttons in one addon contiguous with only the outer corner rounded', () => {
+		const { container } = render(
+			<AdsInputGroup
+				endContent={
+					<>
+						<AdsButton type="button" variant="secondary">
+							Limpar
+						</AdsButton>
+						<AdsButton type="button">Buscar</AdsButton>
+					</>
+				}
+				startContent={
+					<>
+						<AdsButton type="button" variant="secondary">
+							Filtros
+						</AdsButton>
+						<AdsButton type="button" variant="secondary">
+							Ordem
+						</AdsButton>
+					</>
+				}
+			>
+				<AdsInput aria-label="Busca" />
+			</AdsInputGroup>,
+		);
+
+		expect(container.querySelector('.ads-input-group__start')).toHaveClass(
+			'[&>.ads-button+.ads-button]:-ml-px',
+			'[&>.ads-button]:rounded-r-none',
+			'[&>.ads-button:not(:first-child)]:rounded-l-none',
+		);
+		expect(container.querySelector('.ads-input-group__end')).toHaveClass(
+			'[&>.ads-button+.ads-button]:-ml-px',
+			'[&>.ads-button]:rounded-l-none',
+			'[&>.ads-button:not(:last-child)]:rounded-r-none',
+		);
+		expect(screen.getAllByRole('button')).toHaveLength(4);
 	});
 
 	it('preserves consumer ids and composes input and selection groups', async () => {

@@ -4,7 +4,7 @@ import { expect, type Page } from '@playwright/test';
 
 interface AxeViolation {
 	id: string;
-	nodes: { target: unknown[] }[];
+	nodes: { target: unknown[]; failureSummary?: string }[];
 }
 
 const requireFromRoot = createRequire(join(process.cwd(), 'noop.js'));
@@ -57,6 +57,7 @@ export async function expectNoAxeViolations(page: Page) {
 		return results.violations.map((violation) => ({
 			id: violation.id,
 			targets: violation.nodes.map((node) => node.target.join(' ')),
+			failureSummaries: violation.nodes.map((node) => node.failureSummary),
 		}));
 	});
 

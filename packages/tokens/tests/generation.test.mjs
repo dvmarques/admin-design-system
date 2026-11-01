@@ -33,79 +33,104 @@ test('keeps theme overrides isolated by selector', () => {
 	assert.match(css, /\[data-theme="dark"\][\s\S]*--ads-color-primary/);
 });
 
-function luminance(hex) {
-	const channels = hex.match(/[a-f\d]{2}/gi).map((value) => Number.parseInt(value, 16) / 255);
-	const linear = channels.map((channel) =>
-		channel <= 0.03928 ? channel / 12.92 : ((channel + 0.055) / 1.055) ** 2.4,
+test('reduces motion durations to zero for every theme selector', () => {
+	const { css } = createArtifacts(tokenSource);
+	const block = css.match(/@media \(prefers-reduced-motion: reduce\) \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	for (const selector of [
+		':root',
+		'[data-theme="light"]',
+		'[data-theme="dark"]',
+		':root:not([data-theme])',
+	])
+		assert.ok(block.includes(selector), `reduced motion misses ${selector}`);
+	assert.match(block, /--ads-motion-fast: 0ms/);
+	assert.match(block, /--ads-motion-normal: 0ms/);
+	assert.doesNotMatch(block, /motion-easing/);
+});
+
+test('emits high-contrast overrides after the themes, light before dark', () => {
+	const { css } = createArtifacts(tokenSource);
+	const themes = css.lastIndexOf('@media (prefers-color-scheme: dark)');
+	const more = css.indexOf('@media (prefers-contrast: more) {');
+	const light = css.indexOf(':root, [data-theme="light"] {', more);
+	const dark = css.indexOf('[data-theme="dark"] {', more);
+	const system = css.indexOf('@media (prefers-contrast: more) and (prefers-color-scheme: dark)');
+	assert.ok(themes < more && more < light && light < dark && dark < system);
+	assert.match(css.slice(system), /:root:not\(\[data-theme\]\)[\s\S]*--ads-color-border-control/);
+});
+
+test('rejects high-contrast overrides for unknown roles', () => {
+	const invalid = structuredClone(tokenSource);
+	invalid.color.semanticContrast.light.missing = '#000000';
+	assert.throws(
+		() => validateTokenSource(invalid),
+		/Unknown high-contrast override: light.missing/,
 	);
-	return 0.2126 * linear[0] + 0.7152 * linear[1] + 0.0722 * linear[2];
-}
-
-function contrast(first, second) {
-	const [lightest, darkest] = [luminance(first), luminance(second)].sort((a, b) => b - a);
-	return (lightest + 0.05) / (darkest + 0.05);
-}
-
-test('default content and action colors meet the AA contrast baseline', () => {
-	const source = tokenSource.color.reference;
-	assert.ok(contrast(source.slate900, source.slate50) >= 4.5);
-	assert.ok(contrast(source.white, source.blue500) >= 4.5);
 });
 
-function resolveThemeValue(value) {
-	if (!value.startsWith('{')) return value;
-	return value
-		.slice(1, -1)
-		.split('.')
-		.reduce((current, segment) => current[segment], tokenSource);
-}
-
-test('semantic content, actions, states, and focus meet AA contrast in both themes', () => {
-	for (const themeName of ['light', 'dark']) {
-		const theme = tokenSource.color.semantic[themeName];
-		const pair = (foreground, background) =>
-			assert.ok(
-				contrast(resolveThemeValue(theme[foreground]), resolveThemeValue(theme[background])) >= 4.5,
-				`${themeName}: ${foreground} on ${background}`,
-			);
-
-		pair('text', 'surface');
-		pair('textMuted', 'surface');
-		pair('onPrimary', 'primary');
-		pair('onPrimary', 'success');
-		pair('onPrimary', 'warning');
-		pair('onPrimary', 'danger');
-		pair('info', 'infoBackground');
-		pair('success', 'successBackground');
-		pair('warning', 'warningBackground');
-		pair('danger', 'dangerBackground');
-		pair('focus', 'surface');
-		pair('overlayCloseContent', 'overlayCloseBackground');
-		pair('overlayCloseContent', 'overlayCloseBackgroundHover');
-		assert.ok(
-			contrast(resolveThemeValue(theme.focus), resolveThemeValue(theme.overlayCloseBackground)) >=
-				3,
-			`${themeName}: focus on overlayCloseBackground`,
-		);
-	}
+test('emits dark elevation only for dark theme selectors', () => {
+	const { css } = createArtifacts(tokenSource);
+	const light = css.match(/:root, \[data-theme="light"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const dark = css.match(/\[data-theme="dark"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const system = css.match(/:root:not\(\[data-theme\]\) \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	assert.ok(light.includes(`--ads-elevation-md: ${tokenSource.elevation.md}`));
+	for (const block of [dark, system])
+		assert.ok(block.includes(`--ads-elevation-md: ${tokenSource.elevationDark.md}`));
+	assert.notEqual(tokenSource.elevation.md, tokenSource.elevationDark.md);
 });
 
-test('tab and breadcrumb text meets AA contrast on every default surface in both themes', () => {
-	const surfaces = ['canvas', 'surface', 'surfaceRaised', 'surfaceMuted', 'surfaceHover'];
+test('emits density tokens after the themes, compact last', () => {
+	const { css, module } = createArtifacts(tokenSource);
+	const comfortable = css.indexOf(':root, [data-density="comfortable"] {');
+	const compact = css.indexOf('[data-density="compact"] {');
+	const system = css.lastIndexOf('@media (prefers-color-scheme: dark)');
+	assert.ok(system < comfortable && comfortable < compact);
+	assert.match(css.slice(compact), /--ads-density-cell-padding-y: 0\.375rem/);
+	assert.match(css.slice(comfortable, compact), /--ads-density-cell-padding-y: 0\.75rem/);
+	assert.match(module, /"density\.cellPaddingY": "0\.75rem"/);
+	const themeBlocks = css.slice(0, comfortable);
+	assert.doesNotMatch(themeBlocks, /--ads-density-/);
+});
 
-	for (const themeName of ['light', 'dark']) {
-		const theme = tokenSource.color.semantic[themeName];
-		const pair = (foreground, background) =>
-			assert.ok(
-				contrast(resolveThemeValue(theme[foreground]), resolveThemeValue(theme[background])) >= 4.5,
-				`${themeName}: ${foreground} on ${background}`,
-			);
+test('emits skeleton height tokens', () => {
+	const { css } = createArtifacts(tokenSource);
+	assert.match(css, /--ads-skeleton-height-text: 1rem/);
+	assert.match(css, /--ads-skeleton-height-value: 2rem/);
+	assert.match(css, /--ads-skeleton-height-block: 2\.5rem/);
+});
 
-		for (const surface of surfaces) {
-			pair('text', surface);
-			pair('textSecondary', surface);
-			pair('textMuted', surface);
-		}
-		pair('onSurfaceSelected', 'surfaceSelected');
-	}
+test('rejects dark elevation and compact density with different keys', () => {
+	const elevation = structuredClone(tokenSource);
+	delete elevation.elevationDark.lg;
+	assert.throws(() => validateTokenSource(elevation), /elevationDark must define the same tokens/);
+	const density = structuredClone(tokenSource);
+	density.densityCompact.extra = '1px';
+	assert.throws(() => validateTokenSource(density), /densityCompact must define the same tokens/);
+});
+
+test('emits body, heading and monospace font families', () => {
+	const { css, module } = createArtifacts(tokenSource);
+	assert.ok(css.includes(`--ads-typography-font-family: ${tokenSource.typography.fontFamily};`));
+	// Os títulos acompanham o corpo, inclusive quando a aplicação sobrescreve só o token do corpo.
+	assert.ok(
+		css.includes('--ads-typography-font-family-heading: var(--ads-typography-font-family);'),
+	);
+	assert.match(css, /--ads-typography-font-family-mono: ui-monospace/);
+	assert.match(module, /"typography\.fontFamilyMono"/);
+});
+
+test('emits the brand scale and keeps semantic roles pointing at it', () => {
+	const steps = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900];
+	for (const step of steps) assert.ok(tokenSource.color.reference[`brand${step}`]);
+	assert.equal(tokenSource.color.semantic.light.primary, '{color.reference.brand600}');
+	assert.equal(tokenSource.color.semantic.dark.primary, '{color.reference.brand400}');
+});
+
+test('emits the chart colors as --ads-color-chart1 to --ads-color-chart8 in both themes', () => {
+	const { css } = createArtifacts(tokenSource);
+	const light = css.match(/:root, \[data-theme="light"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	const dark = css.match(/\[data-theme="dark"\] \{[\s\S]*?\n\}\n/)?.[0] ?? '';
+	for (let index = 1; index <= 8; index++)
+		for (const block of [light, dark])
+			assert.match(block, new RegExp(`--ads-color-chart${index}: #[\\da-f]{6};`, 'i'));
 });

@@ -1,4 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
+import { releaseShellHeight } from './full-page-shell';
+import { themeTrigger } from './theme-control';
+import { waitForHydration } from './hydration';
 
 async function hideDevelopmentPortal(page: Page) {
 	await page.addStyleTag({ content: 'nextjs-portal { display: none !important; }' });
@@ -35,9 +38,10 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	const darkBackground = await page.locator('body').evaluate((element) => {
 		return getComputedStyle(element).backgroundColor;
 	});
-	const toggle = page.getByRole('button', { name: 'Usar tema claro' });
-	await toggle.focus();
-	await toggle.press('Enter');
+	await waitForHydration(themeTrigger(page));
+	await themeTrigger(page).focus();
+	await page.keyboard.press('Enter');
+	await page.getByRole('menuitemradio', { name: 'Claro', exact: true }).press('Enter');
 
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 	const lightBackground = await page.locator('body').evaluate((element) => {
@@ -47,17 +51,20 @@ test('consome os artefatos públicos, preserva o tema do servidor e alterna pelo
 	expect(hydrationErrors).toEqual([]);
 });
 
-test('mantém o foco no botão de tema depois de ativá-lo pelo teclado', async ({ page }) => {
+test('mantém o foco no gatilho de tema depois de escolher pelo teclado', async ({ page }) => {
 	await page
 		.context()
 		.addCookies([{ name: 'ads-theme', value: 'light', url: 'http://127.0.0.1:3000' }]);
 	await page.goto('/');
 
-	await page.getByRole('button', { name: 'Usar tema escuro' }).focus();
+	await waitForHydration(themeTrigger(page));
+	await themeTrigger(page).focus();
 	await page.keyboard.press('Enter');
+	await page.getByRole('menuitemradio', { name: 'Escuro', exact: true }).press('Enter');
 
 	await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-	await expect(page.getByRole('button', { name: 'Usar tema claro' })).toBeFocused();
+	await expect(themeTrigger(page)).toHaveAccessibleName('Tema: Escuro');
+	await expect(themeTrigger(page)).toBeFocused();
 });
 
 test('apresenta o catálogo de componentes com os tokens públicos', async ({ page }) => {
@@ -70,8 +77,6 @@ test('apresenta o catálogo de componentes com os tokens públicos', async ({ pa
 });
 
 test('mantém a apresentação de referência nos temas claro e escuro', async ({ page }) => {
-	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
-
 	await page.context().addCookies([
 		{
 			name: 'ads-theme',
@@ -81,6 +86,7 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 	]);
 	await page.goto('/');
 	await hideDevelopmentPortal(page);
+	await releaseShellHeight(page);
 	await expect(page).toHaveScreenshot('admin-demo-dark.png', { fullPage: true });
 
 	await page.context().addCookies([
@@ -92,6 +98,7 @@ test('mantém a apresentação de referência nos temas claro e escuro', async (
 	]);
 	await page.reload();
 	await hideDevelopmentPortal(page);
+	await releaseShellHeight(page);
 	await expect(page).toHaveScreenshot('admin-demo-light.png', { fullPage: true });
 });
 
@@ -109,7 +116,8 @@ test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ p
 	await expect(trigger).toHaveAttribute('aria-expanded', 'true');
 	await expect(drawer.getByRole('link', { name: 'Componentes' })).toBeVisible();
 
-	await expect(drawer.getByRole('heading', { name: 'Navegação do demo' })).toBeVisible();
+	await expect(drawer.getByRole('heading', { name: 'Navegação do demo' })).toHaveCount(0);
+	await expect(drawer.locator('.demo-brand-heading')).toHaveText('Admin DS');
 	const closeButton = page.getByRole('button', { name: 'Fechar navegação' });
 	await expect(closeButton).toBeVisible();
 	// The close button must be the topmost element at its center, not covered by the navigation,
@@ -120,11 +128,6 @@ test('abre e fecha a navegação móvel do Admin Shell pelo teclado', async ({ p
 			const hit = document.elementFromPoint(rect.left + rect.width / 2, rect.top + rect.height / 2);
 			return hit !== null && button.contains(hit);
 		});
-	expect(await closeButtonOnTop()).toBe(true);
-	await drawer.getByRole('heading', { name: 'Navegação do demo' }).evaluate((heading) => {
-		heading.nextElementSibling?.classList.remove('mt-5');
-		heading.remove();
-	});
 	expect(await closeButtonOnTop()).toBe(true);
 
 	await closeButton.press('Enter');
@@ -156,8 +159,6 @@ test('encerra a navegação móvel ao entrar no desktop e não a reabre ao volta
 test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro e escuro', async ({
 	page,
 }) => {
-	test.skip(Boolean(process.env.CI), 'Snapshots visuais são validados localmente.');
-
 	for (const theme of ['dark', 'light'] as const) {
 		await page
 			.context()
@@ -178,4 +179,57 @@ test('mantém a apresentação do Admin Shell recolhido e móvel nos temas claro
 		await expect(page.getByRole('dialog', { name: 'Navegação do demo' })).toBeVisible();
 		await expect(page).toHaveScreenshot(`admin-shell-mobile-open-${theme}.png`);
 	}
+});
+
+test('mantém o cabeçalho do Admin Shell dentro da largura em 390px', async ({ page }) => {
+	await page.setViewportSize({ width: 390, height: 844 });
+	await page.goto('/');
+	const header = page.getByRole('banner');
+	await expect(header).toBeVisible();
+
+	const overflow = await page.evaluate(
+		() => document.documentElement.scrollWidth - document.documentElement.clientWidth,
+	);
+	expect(overflow).toBeLessThanOrEqual(0);
+
+	for (const control of await header.getByRole('button').all()) {
+		if (!(await control.isVisible())) continue;
+		const box = await control.boundingBox();
+		expect(box).not.toBeNull();
+		expect(box!.x).toBeGreaterThanOrEqual(0);
+		expect(box!.x + box!.width).toBeLessThanOrEqual(390);
+	}
+});
+
+test('alinha o logo ao centro dos ícones da sidebar sem movê-lo ao recolher', async ({ page }) => {
+	await page.setViewportSize({ width: 1280, height: 720 });
+	await page.goto('/');
+	await waitForHydration(page.getByRole('button', { name: 'Recolher barra lateral' }));
+
+	const centers = () =>
+		page.evaluate(() => {
+			const sidebar = document.querySelector('.ads-admin-shell-sidebar-desktop')!;
+			const center = (element: Element) => {
+				const box = element.getBoundingClientRect();
+				return box.left + box.width / 2;
+			};
+			return {
+				logo: center(sidebar.querySelector('.ads-admin-shell-sidebar-header img')!),
+				icon: center(sidebar.querySelector('.ads-sidebar-item .ads-sidebar-icon')!),
+			};
+		});
+
+	const expanded = await centers();
+	expect(Math.abs(expanded.logo - expanded.icon)).toBeLessThanOrEqual(1);
+
+	await page.getByRole('button', { name: 'Recolher barra lateral' }).click();
+	await expect(page.getByRole('button', { name: 'Expandir barra lateral' })).toBeVisible();
+	await expect
+		.poll(async () => {
+			const collapsed = await centers();
+			return Math.abs(collapsed.logo - expanded.logo);
+		})
+		.toBeLessThanOrEqual(1);
+	const collapsed = await centers();
+	expect(Math.abs(collapsed.logo - collapsed.icon)).toBeLessThanOrEqual(1);
 });

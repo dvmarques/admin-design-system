@@ -18,14 +18,23 @@ on:
 permissions:
   contents: read
 
+concurrency:
+  group: ci-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 jobs:
   quality:
     name: Qualidade rápida
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      # Apenas informa o escopo; este job sempre executa a validação completa.
+      - run: node ./scripts/ci-scope.mjs --summary
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: npm
@@ -33,55 +42,158 @@ jobs:
       - run: npm ci --ignore-scripts
       - run: npm run format
       - run: npm run lint
-      - run: npm run build --workspace @admin-ds/tokens
-      - run: npm run build --workspace @admin-ds/components
-      - run: npm run build --workspace @admin-ds/admin
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
       - run: npm run typecheck
       - run: npm run test:quality
+      - name: Gerar cobertura dos testes Node de CI
+        run: npm run test:ci
+        env:
+          NODE_V8_COVERAGE: coverage/node-ci
+      - name: Gerar cobertura dos testes Vitest
+        run: npm run test:coverage
+      - name: Publicar cobertura dos testes Vitest
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cobertura-vitest
+          path: coverage/vitest/
+          if-no-files-found: warn
+          retention-days: 14
+      - name: Publicar cobertura dos testes Node de CI
+        if: always()
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        with:
+          name: cobertura-node-ci
+          path: coverage/node-ci/
+          if-no-files-found: warn
+          retention-days: 14
 
   build:
     name: Artefatos de distribuição
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
-    needs: quality
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        run: node ./scripts/ci-scope.mjs
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm ci --ignore-scripts
-      - run: npm run generate --workspace @admin-ds/tokens
-      - run: npm run check:generated --workspace @admin-ds/tokens
-      - run: npm run build --workspace @admin-ds/tokens
-      - run: npm run build --workspace @admin-ds/components
-      - run: npm run build --workspace @admin-ds/admin
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run generate --workspace @dvmarques/admin-ds-tokens
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run check:generated --workspace @dvmarques/admin-ds-tokens
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @admin-ds/docs
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_docs != 'false'
+      - run: npm run test:output --workspace @admin-ds/docs
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_docs != 'false'
       - run: npm run build --workspace @admin-ds/admin-demo
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.build_demo != 'false'
       - run: npm run inspect:packages
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm run verify:optional-peer
+        if: steps.scope.outputs.docs_only != 'true'
 
   e2e:
-    name: Fluxos no navegador
+    name: ${{ matrix.check }}
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false
-    needs: build
     runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
+      options: --ipc=host
+      env:
+        HOME: /root
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - browser: chromium
+            check: Fluxos no navegador
+          - browser: firefox
+            check: Fluxos no navegador (Firefox)
+          - browser: webkit
+            check: Fluxos no navegador (WebKit)
     steps:
-      - uses: actions/checkout@v6
-      - uses: actions/setup-node@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+      - id: scope
+        run: node ./scripts/ci-scope.mjs
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
       - run: npm ci --ignore-scripts
-      - run: |
-          sudo rm -f /etc/apt/sources.list.d/google-chrome.list /etc/apt/sources.list.d/google-chrome.sources
-          npx playwright install --with-deps chromium
-      - run: npm run build --workspace @admin-ds/tokens
-      - run: npm run build --workspace @admin-ds/components
-      - run: npm run build --workspace @admin-ds/admin
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+      - name: Verificar versão Playwright da imagem e do lockfile
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+        shell: bash
+        run: |
+          EXPECTED=1.64.1
+          node --version
+          npm --version
+          test "$(node -p 'process.versions.node.split(".")[0]')" = 24
+          test "$(npm --version)" = 11.19.1
+          node - <<'NODE'
+          const fs = require('node:fs');
+          const lock = require('./package-lock.json');
+          const expected = '1.64.1';
+          for (const name of ['@playwright/test', 'playwright', 'playwright-core']) {
+            const locked = lock.packages['node_modules/' + name]?.version;
+            const installed = require(name + '/package.json').version;
+            if (locked !== expected || installed !== expected) {
+              throw new Error(name + ': imagem=' + expected + ', lockfile=' + locked + ', instalado=' + installed);
+            }
+          }
+          const { chromium, firefox, webkit } = require('playwright');
+          for (const [name, browser] of Object.entries({ chromium, firefox, webkit })) {
+            const executable = browser.executablePath();
+            if (!fs.existsSync(executable)) {
+              throw new Error(name + ': executável ausente na imagem: ' + executable);
+            }
+          }
+          NODE
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
       - run: npm run build --workspace @admin-ds/admin-demo
-      - run: npx playwright test
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+      - name: Smoke de tarballs em Next.js externo
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false' && matrix.browser == 'chromium'
+        run: npm run verify:distribution
+      - run: npx playwright test --project=${{ matrix.browser }}
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
+        env:
+          HOME: /root
 
   develop-policy:
     name: Política de develop
@@ -96,11 +208,12 @@ jobs:
       GITHUB_HEAD_REF: ${{ github.head_ref }}
       PR_HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
+          persist-credentials: false
       - run: node ./scripts/develop-policy.mjs
-      - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive
+      - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
 
   release-check:
     name: Validação de release
@@ -112,10 +225,11 @@ jobs:
     env:
       GITHUB_TOKEN: ${{ github.token }}
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
         with:
           fetch-depth: 0
-      - uses: actions/setup-node@v6
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: npm
@@ -148,4 +262,4 @@ jobs:
             echo "$BAD" >&2
             exit 1
           fi
-      - run: npx --yes @fission-ai/openspec@1.10.0 validate --all --strict --no-interactive
+      - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive

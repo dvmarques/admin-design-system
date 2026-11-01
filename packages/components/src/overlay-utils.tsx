@@ -23,7 +23,61 @@ const focusableSelector = [
 	'object',
 	'[contenteditable="true"]',
 	'[tabindex]:not([tabindex="-1"])',
+	'summary',
 ].join(',');
+
+/**
+ * Elegível ao foco inicial e ao Tab: não desabilitado (inclusive por `fieldset`), sem `inert`, sem
+ * `tabindex` negativo e visível (sem `hidden`, `display: none` ou `visibility: hidden` até o contêiner).
+ */
+function isFocusEligible(element: HTMLElement, container: HTMLElement) {
+	// Só o primeiro `summary` de um `details` é o controle de alternância; os demais são conteúdo.
+	if (element.matches('summary')) {
+		const details = element.parentElement;
+		if (details?.tagName !== 'DETAILS' || details.querySelector(':scope>summary') !== element)
+			return false;
+	}
+	if (element.matches(':disabled') || element.closest('[inert]')) return false;
+	if (element.hasAttribute('tabindex') && element.tabIndex < 0) return false;
+	// Cobre também `content-visibility: hidden` (conteúdo de `<details>` fechado), onde o foco não entra.
+	if (element.checkVisibility?.({ visibilityProperty: true }) === false) return false;
+	if (getComputedStyle(element).visibility !== 'visible') return false;
+	for (
+		let node: HTMLElement | null = element;
+		node && container.contains(node);
+		node = node.parentElement
+	) {
+		if (node.hidden || getComputedStyle(node).display === 'none') return false;
+	}
+	return true;
+}
+
+const isNamedRadio = (element: HTMLElement): element is HTMLInputElement =>
+	element instanceof HTMLInputElement && element.type === 'radio' && element.name !== '';
+
+// Grupo de rádio: mesmo `name` e mesmo formulário.
+const radioGroup = (radio: HTMLInputElement) =>
+	`${radio.name}\0${radio.form ? Array.from(document.forms).indexOf(radio.form) : -1}`;
+
+/**
+ * Candidatos elegíveis dentro de `container`, na ordem real de tabulação: `tabindex` positivo em ordem
+ * crescente e depois os demais em ordem de documento. Cada grupo de rádio é uma parada só, como no
+ * navegador: o marcado ou, sem marcado, o primeiro (o último com `reverse`, para Shift+Tab).
+ */
+function getEligibleFocusableElements(container: HTMLElement, reverse = false) {
+	const elements = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector))
+		.filter((element) => isFocusEligible(element, container))
+		.sort((a, b) => (Math.max(a.tabIndex, 0) || 32768) - (Math.max(b.tabIndex, 0) || 32768));
+	const radios = elements.filter(isNamedRadio);
+	const stops = new Map<string, HTMLInputElement>();
+	for (const radio of reverse ? radios.reverse() : radios) {
+		const stop = stops.get(radioGroup(radio));
+		if (!stop || (radio.checked && !stop.checked)) stops.set(radioGroup(radio), radio);
+	}
+	return elements.filter(
+		(element) => !isNamedRadio(element) || stops.get(radioGroup(element)) === element,
+	);
+}
 
 export function useStableId(prefix: string) {
 	const reactId = useId();
@@ -36,8 +90,201 @@ export function useMounted() {
 	return mounted;
 }
 
-export function OverlayPortal({ children }: { children: ReactNode }) {
+type OverlayLayer = 'modal' | 'popup' | 'toast';
+
+interface OpenModal {
+	root: HTMLElement;
+}
+
+const openModals: OpenModal[] = [];
+// Nós de `body` que a biblioteca marcou como inertes e que ela mesma desfaz ao liberar.
+const inertOwned = new Set<Element>();
+// Origem lógica (na árvore React) do root de cada portal: decide se um popup nasceu dentro de um modal.
+const overlaySources = new WeakMap<Element, Element>();
+// Elemento que abriu cada modal, por root, para o fallback do retorno de foco.
+const overlayOrigins = new WeakMap<Element, RefObject<HTMLElement | null>>();
+let bodyObserver: MutationObserver | null = null;
+const nonRenderedTags = new Set(['SCRIPT', 'STYLE', 'LINK', 'META', 'NOSCRIPT', 'TEMPLATE']);
+const overlayRootSelector = '[data-ads-overlay-root]';
+
+/**
+ * Indica se `target` pertence a `container` na hierarquia lógica: dentro dele no DOM ou dentro de um
+ * portal cuja origem (na árvore React) está, recursivamente, dentro dele.
+ */
+function logicalContains(container: Element | null, target: Node): boolean {
+	const seen = new Set<Element>();
+	let node: Node | null = target;
+	while (node) {
+		if (container?.contains(node)) return true;
+		const element: Element | null = node instanceof Element ? node : node.parentElement;
+		const root: Element | null = element?.closest(overlayRootSelector) ?? null;
+		const source: Element | undefined = root ? overlaySources.get(root) : undefined;
+		if (!root || !source || seen.has(root)) return false;
+		seen.add(root);
+		node = source;
+	}
+	return false;
+}
+
+function isTopModal(container: Element) {
+	const top = openModals[openModals.length - 1];
+	return Boolean(top && top.root.contains(container));
+}
+
+// Contêineres de camadas que fecham por clique externo e estão abertas, para o backdrop dos modais.
+const dismissibleLayers = new Set<RefObject<HTMLElement | null>>();
+
+/** Há um popup aberto, com clique externo, logicamente dentro de `container`? */
+export function hasOpenDismissibleChild(container: Element | null) {
+	if (!container) return false;
+	for (const layer of dismissibleLayers) {
+		if (layer.current && layer.current !== container && logicalContains(container, layer.current))
+			return true;
+	}
+	return false;
+}
+
+// Scroll da página: aplicado pelo primeiro modal e liberado pelo último.
+let scrollLock: { overflow: string; paddingRight: string; applied: [string, string] } | null = null;
+
+function lockScroll() {
+	const root = document.documentElement;
+	const scrollbar = window.innerWidth - root.clientWidth;
+	const overflow = root.style.overflow;
+	const paddingRight = root.style.paddingRight;
+	root.style.overflow = 'hidden';
+	if (scrollbar > 0) {
+		const base = Number.parseFloat(getComputedStyle(root).paddingRight) || 0;
+		root.style.paddingRight = `${base + scrollbar}px`;
+	}
+	scrollLock = { overflow, paddingRight, applied: [root.style.overflow, root.style.paddingRight] };
+}
+
+function unlockScroll() {
+	if (!scrollLock) return;
+	const root = document.documentElement;
+	// Só desfaz o que a biblioteca aplicou: uma escrita posterior do consumidor é preservada.
+	if (root.style.overflow === scrollLock.applied[0]) root.style.overflow = scrollLock.overflow;
+	if (root.style.paddingRight === scrollLock.applied[1])
+		root.style.paddingRight = scrollLock.paddingRight;
+	scrollLock = null;
+}
+
+// Um root de overlay continua interativo se for o modal mais recente, um toast, ou um popup cuja
+// origem está dentro de um overlay interativo. Um modal ainda não registrado é tratado como novo.
+function isInteractiveRoot(root: Element): boolean {
+	const layer = root.getAttribute('data-ads-overlay-layer');
+	if (layer === 'toast') return true;
+	if (layer === 'modal') {
+		return (
+			root === openModals[openModals.length - 1]?.root ||
+			!openModals.some((modal) => modal.root === root)
+		);
+	}
+	const host = overlaySources.get(root)?.closest(overlayRootSelector);
+	return host ? isInteractiveRoot(host) : false;
+}
+
+function shouldBeInert(child: Element) {
+	if (nonRenderedTags.has(child.tagName)) return false;
+	return !(child.hasAttribute('data-ads-overlay-root') && isInteractiveRoot(child));
+}
+
+// Uma escrita externa em `inert` num nó que a biblioteca marcou transfere a posse ao consumidor:
+// se ele acrescentou o atributo, ele permanece depois do modal; se o removeu, o nó é marcado de novo
+// enquanto houver modal aberto e o atributo volta a faltar ao liberar.
+function adoptExternalWrites(records: MutationRecord[]) {
+	for (const record of records) {
+		if (record.type === 'attributes') inertOwned.delete(record.target as Element);
+	}
+}
+
+/**
+ * Reconcilia o `inert` de `body` com os modais abertos: tudo fora do modal mais recente, de toasts
+ * e de popups nascidos dentro dele fica inerte, inclusive nós criados depois da abertura. Nós que já
+ * tinham `inert` não são tocados.
+ */
+function syncInert(records: MutationRecord[] = bodyObserver?.takeRecords() ?? []) {
+	if (!bodyObserver) return;
+	adoptExternalWrites(records);
+	const children = Array.from(document.body.children);
+	// Um nó marcado que saiu de `body` devolve o estado: se for reinserido, não volta inerte sozinho.
+	for (const owned of inertOwned) {
+		if (children.includes(owned)) continue;
+		owned.removeAttribute('inert');
+		inertOwned.delete(owned);
+	}
+	for (const child of children) {
+		bodyObserver.observe(child, { attributes: true, attributeFilter: ['inert'] });
+		if (shouldBeInert(child)) {
+			if (!inertOwned.has(child) && !child.hasAttribute('inert')) {
+				child.setAttribute('inert', '');
+				inertOwned.add(child);
+			}
+		} else if (inertOwned.has(child)) {
+			child.removeAttribute('inert');
+			inertOwned.delete(child);
+		}
+	}
+	// Descarta os registros das próprias escritas.
+	bodyObserver.takeRecords();
+}
+
+function registerModal(root: HTMLElement) {
+	const modal = { root };
+	openModals.push(modal);
+	if (!bodyObserver) {
+		bodyObserver = new MutationObserver((records) => syncInert(records));
+		bodyObserver.observe(document.body, { childList: true });
+	}
+	if (openModals.length === 1) lockScroll();
+	syncInert();
+	return () => {
+		const index = openModals.indexOf(modal);
+		if (index !== -1) openModals.splice(index, 1);
+		if (openModals.length > 0) {
+			syncInert();
+			return;
+		}
+		adoptExternalWrites(bodyObserver?.takeRecords() ?? []);
+		bodyObserver?.disconnect();
+		bodyObserver = null;
+		unlockScroll();
+		for (const node of inertOwned) node.removeAttribute('inert');
+		inertOwned.clear();
+	};
+}
+
+/**
+ * Candidatos para devolver o foco quando o elemento que abriu o modal saiu da página: os elementos
+ * que abriram os modais ao redor, do mais próximo ao mais externo.
+ */
+function collectFocusFallbacks(origin: HTMLElement | null) {
+	const chain: HTMLElement[] = [];
+	const seen = new Set<Element>();
+	let node: Element | null = origin;
+	while (node) {
+		const root: Element | null = node.closest(overlayRootSelector);
+		if (!root) break;
+		const modalOrigin = overlayOrigins.get(root)?.current;
+		const next: Element | undefined = modalOrigin ?? overlaySources.get(root);
+		if (!next || seen.has(next)) break;
+		seen.add(next);
+		if (modalOrigin) chain.push(modalOrigin);
+		node = next;
+	}
+	return chain;
+}
+
+export function OverlayPortal({
+	children,
+	layer = 'popup',
+}: {
+	children: ReactNode;
+	layer?: OverlayLayer;
+}) {
 	const mounted = useMounted();
+	const rootRef = useRef<HTMLDivElement>(null);
 	const sourceRef = useRef<HTMLSpanElement>(null);
 	const [theme, setTheme] = useState<string | null>(null);
 
@@ -52,12 +299,32 @@ export function OverlayPortal({ children }: { children: ReactNode }) {
 		return () => observer.disconnect();
 	}, []);
 
+	useLayoutEffect(() => {
+		const root = rootRef.current;
+		const source = sourceRef.current;
+		if (mounted && root && source) overlaySources.set(root, source);
+	}, [mounted]);
+
+	// O cleanup roda na desmontagem do portal, antes de `useOverlayFocus` devolver o foco: um
+	// elemento inerte não recebe foco.
+	useEffect(() => {
+		const root = rootRef.current;
+		if (!mounted || layer !== 'modal' || !root) return;
+		return registerModal(root);
+	}, [layer, mounted]);
+
 	return (
 		<>
 			<span aria-hidden="true" hidden ref={sourceRef} />
 			{mounted
 				? createPortal(
-						<div className="contents" data-ads-overlay-root="" data-theme={theme ?? undefined}>
+						<div
+							className="contents"
+							data-ads-overlay-layer={layer}
+							data-ads-overlay-root=""
+							data-theme={theme ?? undefined}
+							ref={rootRef}
+						>
 							{children}
 						</div>,
 						document.body,
@@ -71,16 +338,16 @@ export function useOverlayFocus(
 	open: boolean,
 	containerRef: RefObject<HTMLElement | null>,
 	restoreFocusRef: RefObject<HTMLElement | null>,
+	fallbackFocusRef?: RefObject<HTMLElement[]>,
 ) {
 	const previousOpen = useRef(false);
 
 	useLayoutEffect(() => {
-		if (!open || previousOpen.current) return;
+		if (!open) return;
 		const focus = () => {
 			const container = containerRef.current;
 			if (!container) return;
-			const first = container.querySelector<HTMLElement>(focusableSelector);
-			(first ?? container).focus();
+			(getEligibleFocusableElements(container)[0] ?? container).focus();
 		};
 		focus();
 		const timer = window.setTimeout(focus, 0);
@@ -91,17 +358,31 @@ export function useOverlayFocus(
 		if (open && !previousOpen.current) previousOpen.current = true;
 		if (!open && previousOpen.current) {
 			previousOpen.current = false;
-			restoreFocusRef.current?.focus();
+			// Se o elemento de origem saiu da página, usa o que abriu o modal ao redor.
+			const target = [restoreFocusRef.current, ...(fallbackFocusRef?.current ?? [])].find(
+				(element) => element?.isConnected,
+			);
+			target?.focus();
 		}
-	}, [open, restoreFocusRef]);
+	}, [fallbackFocusRef, open, restoreFocusRef]);
 
 	useEffect(() => {
 		if (!open) return;
 		const onKeyDown = (event: KeyboardEvent) => {
 			if (event.key !== 'Tab') return;
 			const container = containerRef.current;
-			if (!container) return;
-			const elements = Array.from(container.querySelectorAll<HTMLElement>(focusableSelector));
+			// Só o modal superior governa o Tab; o foco num popup descendente segue o fluxo dele.
+			if (!container || !isTopModal(container)) return;
+			const active = document.activeElement;
+			if (
+				active &&
+				active !== document.body &&
+				!container.contains(active) &&
+				logicalContains(container, active)
+			)
+				return;
+			// Reavaliada a cada Tab: a elegibilidade pode mudar com o modal aberto.
+			const elements = getEligibleFocusableElements(container, event.shiftKey);
 			if (elements.length === 0) {
 				event.preventDefault();
 				container.focus();
@@ -109,12 +390,20 @@ export function useOverlayFocus(
 			}
 			const first = elements[0]!;
 			const last = elements[elements.length - 1]!;
-			if (event.shiftKey && document.activeElement === first) {
+			const direction = event.shiftKey
+				? Node.DOCUMENT_POSITION_PRECEDING
+				: Node.DOCUMENT_POSITION_FOLLOWING;
+			// Fora da lista (contêiner ou controle que perdeu a elegibilidade), só dá a volta sem
+			// destino elegível adiante; senão o Tab nativo escaparia da camada.
+			if (
+				!active ||
+				!container.contains(active) ||
+				active === (event.shiftKey ? first : last) ||
+				(!(active instanceof HTMLElement && elements.includes(active)) &&
+					!elements.some((element) => active.compareDocumentPosition(element) & direction))
+			) {
 				event.preventDefault();
-				last.focus();
-			} else if (!event.shiftKey && document.activeElement === last) {
-				event.preventDefault();
-				first.focus();
+				(event.shiftKey ? last : first).focus();
 			}
 		};
 		document.addEventListener('keydown', onKeyDown);
@@ -122,15 +411,50 @@ export function useOverlayFocus(
 	}, [containerRef, open]);
 }
 
-export function useEscapeKey(open: boolean, onEscape?: () => void) {
+interface EscapeLayer {
+	canClose: boolean;
+	onEscape: () => void;
+}
+
+// Camadas abertas na ordem de abertura: a última é a superior. Só é tocada em efeitos, no cliente.
+const escapeLayers: EscapeLayer[] = [];
+
+function handleEscapeKeyDown(event: KeyboardEvent) {
+	if (event.key !== 'Escape' || event.defaultPrevented || event.isComposing) return;
+	const top = escapeLayers[escapeLayers.length - 1];
+	if (!top) return;
+	// Marca o evento como tratado sem interromper a propagação para outros observadores.
+	event.preventDefault();
+	if (top.canClose) top.onEscape();
+}
+
+function registerEscapeLayer(layer: EscapeLayer) {
+	if (escapeLayers.length === 0) document.addEventListener('keydown', handleEscapeKeyDown);
+	escapeLayers.push(layer);
+	return () => {
+		const index = escapeLayers.indexOf(layer);
+		if (index !== -1) escapeLayers.splice(index, 1);
+		if (escapeLayers.length === 0) document.removeEventListener('keydown', handleEscapeKeyDown);
+	};
+}
+
+/**
+ * Registra uma camada para o Escape. Só a camada superior trata o evento. Com `canClose` falso, ela
+ * continua absorvendo o Escape sem fechar, para que uma camada inferior não feche em seu lugar.
+ */
+export function useEscapeKey(open: boolean, onEscape?: () => void, canClose = true) {
+	const layerRef = useRef<EscapeLayer>({ canClose, onEscape: () => undefined });
+
 	useEffect(() => {
-		if (!open || !onEscape) return;
-		const listener = (event: KeyboardEvent) => {
-			if (event.key === 'Escape') onEscape();
-		};
-		document.addEventListener('keydown', listener);
-		return () => document.removeEventListener('keydown', listener);
-	}, [onEscape, open]);
+		layerRef.current.canClose = canClose;
+		layerRef.current.onEscape = onEscape ?? (() => undefined);
+	});
+
+	const active = open && Boolean(onEscape);
+	useEffect(() => {
+		if (!active) return;
+		return registerEscapeLayer(layerRef.current);
+	}, [active]);
 }
 
 export function useClickOutside(
@@ -140,59 +464,240 @@ export function useClickOutside(
 ) {
 	useEffect(() => {
 		if (!open || !onOutside) return;
+		dismissibleLayers.add(containerRef);
 		const listener = (event: MouseEvent) => {
 			const target = event.target;
-			if (target instanceof Node && !containerRef.current?.contains(target)) onOutside(event);
+			if (target instanceof Node && !logicalContains(containerRef.current, target))
+				onOutside(event);
 		};
 		document.addEventListener('mousedown', listener);
-		return () => document.removeEventListener('mousedown', listener);
+		return () => {
+			dismissibleLayers.delete(containerRef);
+			document.removeEventListener('mousedown', listener);
+		};
 	}, [containerRef, onOutside, open]);
 }
+
+type AnchoredPlacement = 'top' | 'right' | 'bottom' | 'left';
+type AnchoredAlign = 'center' | 'start';
+
+const oppositePlacement: Record<AnchoredPlacement, AnchoredPlacement> = {
+	top: 'bottom',
+	bottom: 'top',
+	left: 'right',
+	right: 'left',
+};
+
+export interface AnchoredPosition {
+	style: React.CSSProperties;
+	placement: AnchoredPlacement;
+	arrowOffset: number;
+}
+
+/** Calcula a geometria sem acessar o DOM, para permitir testes determinísticos. */
+export function calculateAnchoredPosition(
+	anchor: Pick<DOMRect, 'top' | 'right' | 'bottom' | 'left' | 'width' | 'height'>,
+	width: number,
+	height: number,
+	viewport: { left: number; top: number; width: number; height: number },
+	preferred: AnchoredPlacement,
+	align: AnchoredAlign = 'center',
+): AnchoredPosition {
+	const gap = 8;
+	const margin = 8;
+	const bounds = {
+		left: viewport.left + margin,
+		top: viewport.top + margin,
+		right: viewport.left + viewport.width - margin,
+		bottom: viewport.top + viewport.height - margin,
+	};
+	const space: Record<AnchoredPlacement, number> = {
+		top: anchor.top - bounds.top - gap,
+		bottom: bounds.bottom - anchor.bottom - gap,
+		left: anchor.left - bounds.left - gap,
+		right: bounds.right - anchor.right - gap,
+	};
+	const size = preferred === 'top' || preferred === 'bottom' ? height : width;
+	const opposite = oppositePlacement[preferred];
+	const placement =
+		space[preferred] >= size || space[preferred] >= space[opposite] ? preferred : opposite;
+	const clamp = (value: number, min: number, max: number) =>
+		Math.min(Math.max(value, min), Math.max(min, max));
+	const horizontal = placement === 'top' || placement === 'bottom';
+	const anchorCenterX = anchor.left + anchor.width / 2;
+	const anchorCenterY = anchor.top + anchor.height / 2;
+	const left = horizontal
+		? align === 'start'
+			? anchor.left
+			: anchorCenterX - width / 2
+		: placement === 'left'
+			? anchor.left - width - gap
+			: anchor.right + gap;
+	const top = horizontal
+		? placement === 'top'
+			? anchor.top - height - gap
+			: anchor.bottom + gap
+		: anchorCenterY - height / 2;
+	const x = clamp(left, bounds.left, bounds.right - width);
+	const y = clamp(top, bounds.top, bounds.bottom - height);
+	const arrowOffset = horizontal
+		? clamp(anchorCenterX - x, Math.min(8, width / 2), Math.max(width / 2, width - 8))
+		: clamp(anchorCenterY - y, Math.min(8, height / 2), Math.max(height / 2, height - 8));
+	return { style: { left: x, top: y }, placement, arrowOffset };
+}
+
+const display = (el: Element) => getComputedStyle(el).display;
+
+function getTriggerElements(anchor: HTMLElement) {
+	return anchor.matches('.ads-tooltip-anchor, .ads-popover-anchor')
+		? [...anchor.children].filter((el) => display(el) !== 'none')
+		: [anchor];
+}
+
+export const isInsideTrigger = (anchor: HTMLElement | null, target: Node) =>
+	anchor && getTriggerElements(anchor).some((el) => el.contains(target));
 
 export function useAnchoredPosition(
 	open: boolean,
 	anchorRef: RefObject<HTMLElement | null>,
 	contentRef: RefObject<HTMLElement | null>,
-	placement: 'top' | 'right' | 'bottom' | 'left' = 'bottom',
-	align: 'center' | 'start' = 'center',
+	placement: AnchoredPlacement = 'bottom',
+	align: AnchoredAlign = 'center',
 ) {
-	const [position, setPosition] = useState<React.CSSProperties>({});
-	const update = useCallback(() => {
-		const anchor = anchorRef.current;
-		const content = contentRef.current;
-		if (!anchor || !content) return;
-		const rect = anchor.getBoundingClientRect();
-		const width = content.offsetWidth;
-		const height = content.offsetHeight;
-		const gap = 8;
-		let left = align === 'start' ? rect.left : rect.left + rect.width / 2 - width / 2;
-		let top = rect.bottom + gap;
-		if (placement === 'top') top = rect.top - height - gap;
-		if (placement === 'left') {
-			left = rect.left - width - gap;
-			top = rect.top + rect.height / 2 - height / 2;
-		}
-		if (placement === 'right') {
-			left = rect.right + gap;
-			top = rect.top + rect.height / 2 - height / 2;
-		}
-		left = Math.min(Math.max(8, left), Math.max(8, window.innerWidth - width - 8));
-		top = Math.min(Math.max(8, top), Math.max(8, window.innerHeight - height - 8));
-		setPosition({ left, top });
-	}, [align, anchorRef, contentRef, placement]);
-
+	const [panel, setPanel] = useState<HTMLElement | null>(null);
+	// A ref de callback acompanha a montagem real do portal, inclusive anexos tardios.
+	const attachContent = useCallback(
+		(node: HTMLElement | null) => {
+			contentRef.current = node;
+			setPanel(node);
+		},
+		[contentRef],
+	);
+	const [position, setPosition] = useState<AnchoredPosition>({
+		style: { opacity: 0 },
+		placement,
+		arrowOffset: 0,
+	});
 	useLayoutEffect(() => {
-		if (!open) return;
-		update();
-		const timer = window.setTimeout(update, 0);
-		window.addEventListener('resize', update);
-		window.addEventListener('scroll', update, true);
-		return () => {
-			window.clearTimeout(timer);
-			window.removeEventListener('resize', update);
-			window.removeEventListener('scroll', update, true);
+		const anchor = anchorRef.current;
+		if (!open || !anchor || !panel) return;
+		const view = panel.ownerDocument.defaultView;
+		if (!view) return;
+		const visual = view.visualViewport;
+		let frame: number | null = null;
+		let disposed = false;
+		let fixedOrigin: HTMLDivElement | null = null;
+		const update = () => {
+			if (disposed) return;
+			const rect = panel.getBoundingClientRect();
+			const anchorRect = (
+				getTriggerElements(anchor).find((el) => display(el) !== 'contents') ?? anchor
+			).getBoundingClientRect();
+			// Uma origem fixed conhecida converte rects visuais sem identificar motores
+			// por aliases CSS. Só precisamos medi-la quando há pan da viewport visual.
+			let dx = 0;
+			let dy = 0;
+			if (visual && (visual.offsetLeft !== 0 || visual.offsetTop !== 0)) {
+				if (!fixedOrigin) {
+					fixedOrigin = panel.ownerDocument.createElement('div');
+					fixedOrigin.setAttribute('data-ads-fixed-origin', '');
+					fixedOrigin.setAttribute('aria-hidden', 'true');
+					fixedOrigin.style.cssText =
+						'all:initial;position:fixed;left:0;top:0;width:0;height:0;margin:0;padding:0;border:0;visibility:hidden;pointer-events:none';
+					panel.ownerDocument.body.append(fixedOrigin);
+				}
+				const originRect = fixedOrigin.getBoundingClientRect();
+				dx = -originRect.left;
+				dy = -originRect.top;
+			}
+			const next = calculateAnchoredPosition(
+				{
+					left: anchorRect.left + dx,
+					right: anchorRect.right + dx,
+					top: anchorRect.top + dy,
+					bottom: anchorRect.bottom + dy,
+					width: anchorRect.width,
+					height: anchorRect.height,
+				},
+				rect.width,
+				rect.height,
+				{
+					left: visual?.offsetLeft ?? 0,
+					top: visual?.offsetTop ?? 0,
+					width: visual?.width ?? (view.document.documentElement.clientWidth || view.innerWidth),
+					height:
+						visual?.height ?? (view.document.documentElement.clientHeight || view.innerHeight),
+				},
+				placement,
+				align,
+			);
+			setPosition((previous) =>
+				previous.placement === next.placement &&
+				previous.arrowOffset === next.arrowOffset &&
+				previous.style.left === next.style.left &&
+				previous.style.top === next.style.top &&
+				previous.style.opacity === undefined
+					? previous
+					: next,
+			);
 		};
-	}, [open, update]);
+		const schedule = () => {
+			if (disposed || frame !== null) return;
+			frame = view.requestAnimationFrame(() => {
+				frame = null;
+				update();
+			});
+		};
+		update();
+		view.addEventListener('resize', schedule);
+		view.addEventListener('scroll', schedule, true);
+		visual?.addEventListener('resize', schedule);
+		visual?.addEventListener('scroll', schedule);
+		const observer = typeof ResizeObserver === 'undefined' ? null : new ResizeObserver(schedule);
+		const watch = () => {
+			observer?.disconnect();
+			for (const el of [anchor, ...anchor.children, panel]) observer?.observe(el);
+		};
+		watch();
+		const mutations = new MutationObserver(() => {
+			watch();
+			schedule();
+		});
+		mutations.observe(anchor, { childList: true });
+		return () => {
+			disposed = true;
+			mutations.disconnect();
+			fixedOrigin?.remove();
+			if (frame !== null) view.cancelAnimationFrame(frame);
+			observer?.disconnect();
+			view.removeEventListener('resize', schedule);
+			view.removeEventListener('scroll', schedule, true);
+			visual?.removeEventListener('resize', schedule);
+			visual?.removeEventListener('scroll', schedule);
+		};
+	}, [align, anchorRef, open, panel, placement]);
+	return {
+		...position,
+		attachContent,
+		style: open && panel ? position.style : { opacity: 0 },
+	};
+}
 
-	return position;
+export function useOverlayOrigin(restoreFocusRef: RefObject<HTMLElement | null>) {
+	const fallbackFocusRef = useRef<HTMLElement[]>([]);
+	const attachPanel = useCallback(
+		(panel: HTMLElement | null) => {
+			const root = panel?.closest(overlayRootSelector);
+			if (root) overlayOrigins.set(root, restoreFocusRef);
+		},
+		[restoreFocusRef],
+	);
+	const captureOrigin = useCallback(
+		(origin: HTMLElement | null) => {
+			restoreFocusRef.current = origin;
+			fallbackFocusRef.current = collectFocusFallbacks(origin);
+		},
+		[restoreFocusRef],
+	);
+	return { attachPanel, captureOrigin, fallbackFocusRef };
 }

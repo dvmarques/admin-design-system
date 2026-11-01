@@ -5,7 +5,7 @@ import {
 	AdsDialog,
 	AdsLoadingIndicator,
 	type AdsDialogProps,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useEffect, useRef, type ReactNode, type RefObject } from 'react';
 import { isFocusLost } from './selection-focus.js';
 
@@ -19,7 +19,10 @@ export interface AdsConfirmDialogProps extends Omit<
 	onConfirm: () => void;
 	confirmLabel?: string;
 	cancelLabel?: string;
-	/** Usa a variante de perigo na confirmação. Padrão: `true`. */
+	/**
+	 * Usa a variante de perigo na confirmação e o papel `alertdialog` (a menos que `role` seja
+	 * informado). Padrão: `true`.
+	 */
 	destructive?: boolean;
 	/**
 	 * Enquanto o consumidor processa a confirmação: as ações ficam indisponíveis
@@ -37,9 +40,11 @@ export interface AdsConfirmDialogProps extends Omit<
 }
 
 /**
- * Confirmação de ação destrutiva sobre `AdsDialog`. O foco inicial vai a "Cancelar", `Escape`
- * e o clique fora cancelam (exceto com `pending`). O consumidor decide quando fechar. Se `children`
- * tiver controles focáveis, o foco inicial vai ao primeiro deles, antes de "Cancelar".
+ * Confirmação de ação destrutiva sobre `AdsDialog`. `Escape` e o clique fora cancelam (exceto com
+ * `pending`). O consumidor decide quando fechar.
+ *
+ * Foco inicial: o primeiro controle interativo elegível de `children` (não desabilitado, visível e
+ * não inerte), antes das ações; sem esse controle, "Cancelar". Não há prop para forçar outro alvo.
  */
 export function AdsConfirmDialog({
 	cancelLabel = 'Cancelar',
@@ -50,6 +55,7 @@ export function AdsConfirmDialog({
 	onOpenChange,
 	pending = false,
 	returnFocusRef,
+	role,
 	...props
 }: AdsConfirmDialogProps) {
 	const wasOpen = useRef(props.open);
@@ -88,6 +94,8 @@ export function AdsConfirmDialog({
 			closeOnBackdrop={!pending && (props.closeOnBackdrop ?? true)}
 			closeOnEscape={!pending && (props.closeOnEscape ?? true)}
 			onOpenChange={onOpenChange}
+			// Ação destrutiva pede resposta imediata: `alertdialog`, salvo `role` explícito.
+			role={role ?? (destructive ? 'alertdialog' : 'dialog')}
 			showCloseButton={false}
 		>
 			{children}

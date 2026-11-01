@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsStepForm, type AdsStepDefinition } from '@admin-ds/admin';
+import { AdsStepForm, type AdsStepDefinition } from '@dvmarques/admin-ds-admin';
 import {
 	AdsField,
 	AdsInput,
@@ -9,7 +9,7 @@ import {
 	AdsSelectionGroup,
 	AdsToast,
 	AdsTypography,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 import { useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 

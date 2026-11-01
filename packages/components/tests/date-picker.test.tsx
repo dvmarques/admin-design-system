@@ -12,6 +12,24 @@ async function openCalendar() {
 }
 
 describe('AdsDatePicker single date', () => {
+	it('keeps month navigation open and lets calendar clicks reach consumers', async () => {
+		const onClick = vi.fn();
+		render(
+			<div onClick={onClick}>
+				<AdsDatePicker defaultValue="2026-03-10" />
+			</div>,
+		);
+		await openCalendar();
+		onClick.mockClear();
+		fireEvent.click(screen.getByRole('button', { name: 'Próximo mês' }));
+		expect(screen.getByText('abril de 2026')).toBeVisible();
+		expect(screen.getByRole('grid')).toBeVisible();
+		expect(onClick).toHaveBeenCalledTimes(1);
+		fireEvent.click(screen.getByRole('button', { name: 'Mês anterior' }));
+		expect(screen.getByText('março de 2026')).toBeVisible();
+		expect(onClick).toHaveBeenCalledTimes(2);
+	});
+
 	it('renders a deterministic pt-BR placeholder and a labelled field', () => {
 		render(
 			<AdsField description="Dica" error="Obrigatório" label="Vencimento" validationState="error">
@@ -147,6 +165,12 @@ describe('AdsDatePicker single date', () => {
 		fireEvent.keyDown(grid, { key: 'PageUp', shiftKey: true });
 		await waitFor(() => expect(screen.getByText('abril de 2025')).toBeInTheDocument());
 		expect(grid.querySelectorAll('[tabindex="0"]')).toHaveLength(1);
+	});
+
+	it('renders the calendar panel with the design system font', async () => {
+		render(<AdsDatePicker defaultValue="2026-03-10" />);
+		const grid = await openCalendar();
+		expect(grid.closest('[role="dialog"]')).toHaveClass('font-sans');
 	});
 
 	it('closes with Escape', async () => {
@@ -434,4 +458,24 @@ describe('AdsDatePicker day styles', () => {
 		expect(day(12)).not.toHaveClass(...conflicting);
 		expect(day(20)).toHaveClass('bg-transparent', 'text-text', 'border-transparent');
 	});
+});
+
+describe('AdsDatePicker trigger height', () => {
+	it.each(['sm', 'md', 'lg'] as const)(
+		'lets the calendar trigger follow the field height at size %s',
+		(size) => {
+			const { container, unmount } = render(<AdsDatePicker size={size} />);
+			expect(screen.getByRole('button', { name: 'Abrir calendário' })).toHaveClass('min-h-0!');
+			expect(container.querySelector('.ads-date-picker')).toHaveClass(
+				'[&>.ads-popover-anchor]:self-stretch',
+			);
+			unmount();
+
+			const range = render(<AdsDatePicker mode="range" size={size} />);
+			expect(screen.getByRole('button', { name: 'Abrir calendário' })).toHaveClass('min-h-0!');
+			expect(range.container.querySelector('.ads-date-picker')).toHaveClass(
+				'[&>.ads-popover-anchor]:self-stretch',
+			);
+		},
+	);
 });

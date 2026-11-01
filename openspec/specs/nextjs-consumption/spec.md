@@ -8,12 +8,17 @@ Garantir que os pacotes do design system possam ser consumidos por aplicações 
 
 ### Requirement: Consumo pelo App Router
 
-A biblioteca MUST permitir que uma aplicação Next.js com App Router importe suas APIs públicas e seus estilos globais por caminhos documentados.
+A biblioteca MUST permitir que uma aplicação Next.js com App Router importe suas APIs públicas e seus estilos globais por caminhos documentados. A validação de distribuição MUST contemplar os quatro pacotes `@dvmarques/admin-ds-*` em tarballs instalados por `file:` fora do monorepo, incluindo o pacote opcional `highlighted-code`.
 
 #### Scenario: Aplicação Next.js executa build de produção
 
 - **WHEN** a aplicação de referência importa os pacotes apenas por pontos de entrada públicos
 - **THEN** o build de produção é concluído sem configuração baseada em caminhos internos do workspace
+
+#### Scenario: Aplicação Next.js externa instala tarballs antes da publicação
+
+- **WHEN** uma aplicação Next.js App Router limpa, fora dos workspaces, instala os quatro tarballs locais e importa os estilos públicos
+- **THEN** os peers internos são resolvidos pelas dependências `file:`, tipos e build funcionam sem buscar pacotes `@dvmarques/admin-ds-*` ainda inexistentes no npm, e componentes Client hidratam sem divergências atribuíveis à biblioteca
 
 ### Requirement: Compatibilidade com renderização no servidor
 
@@ -35,7 +40,7 @@ Componentes que exigem execução no navegador MUST expor um ponto de entrada co
 
 ### Requirement: Hidratação consistente
 
-Os componentes MUST produzir marcação inicial determinística para as mesmas propriedades e o mesmo estado de tema disponíveis no servidor e no cliente.
+Os componentes MUST produzir marcação inicial determinística para as mesmas propriedades e o mesmo estado de tema disponíveis no servidor e no cliente. Em um build normal, o servidor pode ler a preferência explícita do cookie; um export estático não tem renderização por requisição e precisa reconciliar preferência Sistema ou explícita por script pré-hidratação sem prometer SSR personalizado.
 
 #### Scenario: Página é hidratada
 
@@ -68,12 +73,12 @@ O projeto MUST manter uma aplicação Next.js de referência que consuma os arte
 
 ### Requirement: Padrões avançados na aplicação de referência
 
-A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`, mantendo filtros, ordenação e página de `/clientes` em `searchParams`, tratados de forma determinística no servidor, com dados estáticos.
+A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel`, mantendo filtros, ordenação e página de `/clientes` nos parâmetros da URL, tratados deterministicamente no servidor no build normal e no cliente no export estático, com dados estáticos.
 
 #### Scenario: Filtros e ordenação de clientes na URL
 
 - **WHEN** a página `/clientes` é aberta com `?q=`, `?status=`, `?plano=`, `?de=`, `?ate=` ou `?ordem=`
-- **THEN** o servidor exibe somente os clientes correspondentes, na ordem pedida, e abrir a mesma URL de novo produz o mesmo resultado
+- **THEN** somente os clientes correspondentes aparecem, na ordem pedida, com processamento no servidor no build normal ou no cliente após inicialização da página exportada estaticamente; a mesma URL produz o mesmo resultado
 
 #### Scenario: Parâmetros inválidos são normalizados
 
@@ -83,7 +88,7 @@ A aplicação de referência MUST demonstrar `AdsFilterBar`, `AdsSmartTable`, `A
 #### Scenario: Alterar filtro ou ordenação
 
 - **WHEN** a pessoa altera um filtro ou a ordenação em `/clientes`
-- **THEN** a URL é atualizada, a lista é recalculada no servidor e a paginação volta para a página 1
+- **THEN** a URL é atualizada, a lista é recalculada pelo servidor no build normal ou pelo cliente no export estático e a paginação volta para a página 1
 
 #### Scenario: Filtros sem resultado
 

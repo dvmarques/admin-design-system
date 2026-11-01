@@ -1,74 +1,73 @@
-# Baseline inicial de distribuição
+# Orçamentos de distribuição — guia vigente
 
-O baseline versionado está em `docs/bundle-baseline.json`. O comando
-`npm run inspect:packages` verifica os exports, arquivos publicados,
-peer dependencies e o tamanho total de `dist/`, permitindo crescimento de
-até 10% antes de exigir uma atualização explícita do baseline.
+Os limites executáveis são os arquivos versionados [bundle-baseline.json](bundle-baseline.json), [browser-budget.json](browser-budget.json) e [scenario-budget.json](scenario-budget.json). Este guia explica **como medir e interpretar** os resultados, não fornece uma medição corrente do branch.
 
-Dependências de runtime devem ser justificadas na change que as introduzir.
-React e React DOM são peer dependencies dos pacotes de renderização e não
-devem ser incluídos nos artefatos distribuídos.
+## Validar os pacotes
 
-O baseline de `@admin-ds/components` foi atualizado na change
-`add-data-display-components` para incluir os módulos e estilos distribuídos
-de tabela, coleções, progresso e estado vazio, sem novas dependências de runtime.
+Com Node 24 e npm 11.19.1 (versões prescritas em `.nvmrc` e `packageManager`), use a raiz do repositório:
 
-O baseline de `@admin-ds/components` foi atualizado na change `add-date-picker`
-para incluir os módulos distribuídos do seletor de data (`date-picker` e
-`date-utils`, com declarações e source maps), sem novas dependências de runtime.
+```bash
+npm ci
+npm run build
+npm run inspect:packages
+```
 
-O baseline de `@admin-ds/admin` foi atualizado na change
-`add-dashboard-patterns` de 30975 para 51658 bytes (+18411 sobre a `develop`,
-que media 33247) para incluir `AdsMetricCard`, `AdsDashboardGrid` e
-`AdsDashboardPanel`: módulo JavaScript, source maps e declarações (+13973), CSS
-do dashboard (+3817) e exports (+621), sem novas dependências de runtime. O
-valor é medido com LF, como na CI; num checkout com CRLF o `styles.css` copiado
-para `dist/` soma 1 byte por linha.
+A inspeção verifica exports, arquivos publicados, peer dependencies, `dist/` e limites orçamentários. `bundle-baseline.json` admite até **10% acima do baseline versionado**, salvo atualização explícita e justificada. Consulte também [medição e cenários de browser](bundle-measurement.md).
 
-O baseline de `@admin-ds/admin` foi atualizado na change `add-filter-bar` de
-51658 para 89246 bytes (+37588) para incluir `AdsFilterBar`: módulo JavaScript,
-source maps e declarações (+32812), CSS da barra em `styles.css` (+4197) e
-exports (+579), sem novas dependências de runtime. As revisões somaram 6200
-bytes ao valor inicial de 83046: 1692 na R1 (foco com os campos recolhidos e
-descrição e erro ligados ao grupo da seleção múltipla), 975 nas sugestões
-(indicador de carregamento e ids sanitizados), 1973 na R3 (foco pendente com
-`value` assíncrono e documentação do `id`) e 1560 na R4 (foco reposto só
-quando o botão acionado sai da página). O valor é medido com LF, como na CI.
+Antes de comparar bytes, preserve e anote: **commit SHA**, data, SO, Node/npm, toolchain de build, `dist/` limpo e LF versus CRLF. Builds de commits diferentes e toolchains distintas não são automaticamente comparáveis. React e React DOM permanecem peer dependencies dos pacotes de renderização; não se deve adicionar dependência de runtime sem justificativa.
 
-O baseline de `@admin-ds/admin` foi atualizado na change `add-smart-table` de
-89246 para 122324 bytes (+33078) para incluir `AdsSmartTable`: módulo JavaScript,
-source maps e declarações (+29520), CSS da tabela em `styles.css` (+3083) e
-exports (+475), sem novas dependências de runtime. A R1 somou 1862 bytes ao
-valor de 120462 (célula de seleção sem largura percentual, painel de colunas
-inline, regiões de anúncio separadas, contador por página e linhas sem hover).
-O valor é medido com LF, como na CI.
+## Alterar um orçamento
 
-O baseline de `@admin-ds/components` foi atualizado na change `add-smart-table`
-de 272527 para 272938 bytes (+411) por causa do `containerProps` opcional de
-`AdsTable` (`data-table.*`, com declarações e source maps): 346 da prop e 65 do
-tipo que exclui `children` e `dangerouslySetInnerHTML`. O valor é medido com
-LF, como na CI.
+Somente atualize os JSONs após build limpo, inspecione as diferenças e justifique na change/PR o novo artefato público e seu custo. Não eleve um limite para mascarar falha; esta issue #197 **não altera nenhum orçamento**.
 
-O baseline de `@admin-ds/components` foi atualizado na R2 de `add-smart-table`
-de 272938 para 273237 bytes (+299) por causa da prop `interactive` em
-`AdsTableRow`, usada nas linhas estáticas de `AdsSmartTable`. O valor é medido
-com LF, como na CI.
+## Medição da mudança #257 — licenciamento dos 20 ícones
 
-O baseline de `@admin-ds/admin` foi ajustado na R2 de `add-smart-table` para
-122232 bytes (−92), medido em LF após `AdsTableRow` com `interactive={false}`
-no lugar da marcação manual das linhas estáticas.
+A branch da PR #258 recebeu `develop` (incluindo [PR #254](https://github.com/dvmarques/admin-design-system/pull/254)) em 29/10/2026, por meio da [PR de sincronização #260](https://github.com/dvmarques/admin-design-system/pull/260). Antes dessa sincronização, a CI mediu `@admin-ds/components` em uma base **sem** o Combobox Popover de #254:
 
-O baseline de `@admin-ds/tokens` foi ajustado de 26673 para 27039 bytes (+366) na
-medição em LF com `dist/` limpo; não houve mudança de código nos tokens.
+- [Execução inicial](https://github.com/dvmarques/admin-design-system/actions/runs/40948420869): distribuição **531.534 B**, limite da base antiga **513.370 B**, diferença **+18.164 B**.
+- [Execução intermediária](https://github.com/dvmarques/admin-design-system/actions/runs/40950748996): JS/CSS publicados **232.180 B**, limite da base antiga **228.000 B**.
+- [Execução de gzip](https://github.com/dvmarques/admin-design-system/actions/runs/40951320374): gzip de JS/CSS **69.654 B**, limite da base antiga **69.150 B**.
 
-O baseline de `@admin-ds/admin` foi atualizado na change `add-admin-flows` de
-122232 para 165809 bytes (+43577), medido em LF com `dist/` limpo após
-`git clean -xfd packages/*/dist`, `npm ci`, `generate`/`check:generated` dos
-tokens e build de tokens, components e admin (`inspect:packages`). O incremento
-se divide em +33670 para `AdsBulkActionBar`, `AdsConfirmDialog`, `AdsListFlow` e
-`AdsStepForm` (JS, maps e declarações +30521, CSS dos fluxos +3149, exports
-+1000; `AdsStepForm` é a maior parte do JS) e +9907 na revisão R1 (I3–I6,
-S1/S3): `confirm-dialog` +3584, módulo interno `selection-focus` ~+2061 (não
-exportado em `index`), `step-form` +1864, `bulk-action-bar` +1418, `list-flow`
-+772, CSS +208. Não há testes, exemplos nem pacotes extras no `dist/`. Sem novas
-dependências de runtime.
+**Esses números são históricos e não devem ser comparados diretamente com a base atual.** A PR #254 já havia mudado `docs/bundle-baseline.json`, `docs/browser-budget.json` e `docs/scenario-budget.json`. Na sincronização, foram **restaurados os três arquivos integrais da `develop`**, descartando ajustes incrementais de budget feitos sobre a base antiga. Seus valores para `@admin-ds/components` são baseline de distribuição **516.000 B** (limite 567.600 B), JS/CSS **250.800 B** e gzip **76.300 B**.
+
+O pacote `@admin-ds/components` agora inclui `LICENSE.md` e `THIRD_PARTY_NOTICES.md` com as licenças MIT/ISC dos ícones, além dos novos elementos SVG. Esses arquivos legais não devem ser retirados para atender ao budget. Os novos limites só devem ser alterados se uma **CI executada após a sincronização** demonstrar um excesso, devidamente atribuído à mudança de #257. Não elevar orçamentos sem medição, nem confundir aumento do pacote distribuído com custo de JS/CSS entregue ao consumidor.
+
+### Resultado histórico medido após sincronizar com #254
+
+O job [Artefatos de distribuição — CI #40957590062](https://github.com/dvmarques/admin-design-system/actions/runs/40957590062) **passou** em 29/10/2026, em Linux/Node 24.22.1, com as seguintes métricas do pacote `@admin-ds/components` e cenários de consumo:
+
+| Métrica                                      | Medição histórica | Limite da develop (#254) |         Limite adotado naquela execução |
+| -------------------------------------------- | ----------------: | -----------------------: | --------------------------------------: |
+| Distribuição completa `@admin-ds/components` |         584.641 B |                567.600 B | **585.200 B** (baseline 532.000 B +10%) |
+| JS/CSS publicado `@admin-ds/components`      |         254.232 B |                250.800 B |                           **255.000 B** |
+| JS/CSS gzip `@admin-ds/components`           |          76.243 B |                 76.300 B |               **76.300 B — inalterado** |
+| JS minificado `components-public`            |          32.663 B |                 30.400 B |                            **33.000 B** |
+| JS gzip `components-public`                  |          11.511 B |                 11.300 B |                            **11.700 B** |
+| JS minificado `admin-public`                 |          70.669 B |                 70.000 B |                            **71.000 B** |
+
+Naquela execução também passaram, **sem aumento de orçamento naquele momento**, os CSS dos cenários: `components-public` 57.742/58.000 B e gzip 9.568/9.650 B; `admin-public` 97.524/97.800 B e gzip 14.655/14.800 B; `admin-public` JS gzip 23.714/23.900 B, e os pacotes `tokens`, `highlighted-code` e `admin`. Os limites atuais constam dos JSONs e da medição posterior abaixo.
+
+O merge da PR #254 havia medido 566.459 B de distribuição e 249.982 B de JS/CSS do components (conforme o changelog da #254). A PR #258 combinada mede +18.182 B e +4.250 B, respectivamente. **Essas diferenças incluem a troca da geometria SVG e a inclusão obrigatória de avisos MIT/ISC; não são uma decomposição byte a byte por arquivo**, e podem conter variação residual de toolchain/ambiente. Todos os cinco ajustes acima são restritos aos budgets com excesso demonstrado; os demais valores foram preservados do último `develop`.
+
+## Nova sincronização de #257 com develop
+
+Após integrar `origin/develop` em `1361fc3`, o build local em Windows, Node 24.21.0 e npm 12.2.1 mediu os artefatos abaixo (dependências instaladas com npm 11.19.1). Para obter todas as métricas, a inspeção usou cópias temporárias dos budgets com limites ampliados. Os seis limites excedidos foram ajustados; a confirmação em Linux permanece pendente.
+
+| Métrica                 |   Medição | Limite develop | Limite ajustado |
+| ----------------------- | --------: | -------------: | --------------: |
+| Distribuição components | 588.948 B |      568.260 B |       589.050 B |
+| JS/CSS components       | 255.966 B |      251.150 B |       256.000 B |
+| JS/CSS gzip components  |  77.248 B |       76.300 B |        77.300 B |
+| components-public       |  33.027 B |       30.500 B |        33.100 B |
+| components-public gzip  |  11.707 B |       11.330 B |        11.800 B |
+| admin-public            |  71.030 B |       70.000 B |        71.100 B |
+
+O valor local inclui a modularização, os avisos de licença e as mudanças mais recentes de develop. Não é uma comparação equivalente com a medição histórica Linux acima, nem isola o custo da modularização. Os demais limites passaram sem aumento; a inspeção completa também passou com os limites ajustados.
+
+## Sincronização posterior com #231
+
+Após integrar `develop` em `c46359f` (AdsMaskedInput), o build local Windows com Node 24.21.0 e npm 12.2.1 mediu `@admin-ds/components` em 610.014 B de distribuição, 263.282 B de JS/CSS e 79.417 B gzip. Os limites de `develop` eram, respectivamente, 589.380 B, 258.500 B e 78.400 B; foram ajustados para 610.060 B (baseline 554.600 B), 263.300 B e 79.500 B. A inspeção passou, inclusive para o novo cenário `masked-input-public` (67.490 B e 18.971 B gzip). Os cenários públicos já ajustados para os ícones não exigiram novos aumentos. A [CI Linux #40979835315](https://github.com/dvmarques/admin-design-system/actions/runs/40979835315) confirmou as mesmas medições e aprovou a inspeção na base combinada.
+
+## Registro de decisões e resultados passados
+
+A cronologia de medições foi movida para comentários nas issues de origem de cada change (por exemplo [#135](https://github.com/dvmarques/admin-design-system/issues/135#issuecomment-6403057452), [#138](https://github.com/dvmarques/admin-design-system/issues/138#issuecomment-6403059227), [#136](https://github.com/dvmarques/admin-design-system/issues/136#issuecomment-6403059406), [#92](https://github.com/dvmarques/admin-design-system/issues/92#issuecomment-6403059645), [#93](https://github.com/dvmarques/admin-design-system/issues/93#issuecomment-6403059824), [#185](https://github.com/dvmarques/admin-design-system/issues/185#issuecomment-6403060029) e [#147](https://github.com/dvmarques/admin-design-system/issues/147#issuecomment-6403060274)); trechos sem issue única identificada estão na [#197](https://github.com/dvmarques/admin-design-system/issues/197#issuecomment-6403060491). Os comentários documentam aumentos históricos por change, revisões, commits e exceções de toolchain. Os números ali **não** são a medição do HEAD atual. Alguns registros foram medidos em Node 22.22.0/LF (por exemplo, AdsSmartTable), enquanto o fluxo atual usa Node 24/npm 11.19.1. Preserve diferenças, anotações e incertezas na evidência original; não as «corrija» retroativamente com um novo build.

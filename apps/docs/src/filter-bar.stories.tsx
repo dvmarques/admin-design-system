@@ -5,7 +5,7 @@ import {
 	type AdsFilterBarProps,
 	type AdsFilterDefinition,
 	type AdsFilterValues,
-} from '@admin-ds/admin';
+} from '@dvmarques/admin-ds-admin';
 
 const filters: AdsFilterDefinition[] = [
 	{ id: 'q', type: 'text', label: 'Busca', placeholder: 'Nome ou e-mail' },

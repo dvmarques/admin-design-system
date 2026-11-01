@@ -1,10 +1,8 @@
-import { cookies } from 'next/headers';
-import { resolveTheme, themeCookieName } from '../../../lib/theme';
+import { readServerPreference } from '../../../lib/server-theme';
 import { PreferencesContent } from './preferences-content';
 
 export default async function PreferencesPage() {
-	const cookieStore = await cookies();
-	const theme = resolveTheme(cookieStore.get(themeCookieName)?.value);
+	const preference = await readServerPreference();
 
-	return <PreferencesContent initialTheme={theme} />;
+	return <PreferencesContent initialPreference={preference} />;
 }

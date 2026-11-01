@@ -60,7 +60,7 @@ function selectionControl(type: 'checkbox' | 'radio', props: AdsSelectionControl
 			<span
 				aria-hidden="true"
 				className={classNames(
-					'pointer-events-none relative shrink-0 border border-border bg-form-background transition-[background-color,border-color,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring-offset peer-disabled:opacity-60',
+					'pointer-events-none relative shrink-0 border border-border-control bg-form-background transition-[background-color,border-color,transform] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)] peer-checked:border-primary peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring-offset peer-disabled:opacity-60',
 					selectionSizes[size],
 					indicatorClass,
 					validationState === 'error' &&
@@ -101,14 +101,14 @@ export function AdsSwitch(props: AdsSelectionControlProps) {
 				<span
 					aria-hidden="true"
 					className={classNames(
-						'pointer-events-none relative block rounded-full border border-border bg-surface transition-colors duration-150 peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring-offset peer-disabled:opacity-50',
+						'pointer-events-none relative block rounded-full border border-border-control bg-surface transition-colors duration-[var(--ads-motion-fast)] peer-checked:bg-primary peer-focus-visible:outline peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-focus-ring peer-focus-visible:ring-2 peer-focus-visible:ring-focus-ring-offset peer-disabled:opacity-50',
 						switchSizes[size].track,
 						validationState === 'error' && 'border-form-invalid',
 					)}
 				>
 					<span
 						className={classNames(
-							'absolute block rounded-full bg-surface-muted transition-[background-color,transform] duration-150 peer-checked:bg-surface',
+							'absolute block rounded-full bg-surface-muted transition-[background-color,transform] duration-[var(--ads-motion-fast)] peer-checked:bg-surface',
 							switchSizes[size].thumb,
 						)}
 					/>

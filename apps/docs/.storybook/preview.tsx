@@ -1,7 +1,11 @@
 import type { Preview } from '@storybook/react-vite';
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/components/styles.css';
-import '@admin-ds/admin/styles.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import '@dvmarques/admin-ds-admin/styles.css';
 
 const preview: Preview = {
 	globalTypes: {
@@ -19,7 +23,8 @@ const preview: Preview = {
 					background: 'var(--ads-color-background)',
 					color: 'var(--ads-color-text)',
 					fontFamily: 'var(--ads-typography-font-family)',
-					minHeight: '100vh',
+					// Em Docs cada exemplo é embutido na página: altura da viewport deixaria um vazio abaixo dele.
+					minHeight: context.viewMode === 'docs' ? undefined : '100vh',
 					padding: '2rem',
 				}}
 			>

@@ -14,6 +14,7 @@ import {
 	validateCoordinatedManifests,
 	validateTargetAgainstState,
 } from './release-utils.mjs';
+import { validateChangelogReview } from './release-changelog.mjs';
 
 const PINNED_NPM = '11.19.1';
 const npmCli =
@@ -61,6 +62,7 @@ const changelogPath = path.join(root, 'CHANGELOG.md');
 const changelog = await fs.readFile(changelogPath, 'utf8');
 const parsed = parseChangelog(changelog);
 validateTargetAgainstState({ target, current, parsed });
+validateChangelogReview(changelog, target, 'ongoing');
 
 const staged = new Map();
 for (const { rel, json } of updateManifestVersions(manifests, target)) {

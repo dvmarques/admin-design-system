@@ -1,5 +1,11 @@
 export { AdsAdminShell } from './admin-shell.js';
 export type {
+	AdsAdminShellNavigationProps,
+	AdsAdminShellNavigationSectionProps,
+	AdsAdminShellNavigationGroupProps,
+	AdsAdminShellNavigationItemProps,
+} from './sidebar-navigation.js';
+export type {
 	AdsAdminShellBodyProps,
 	AdsAdminShellHeaderProps,
 	AdsAdminShellMainProps,
@@ -18,6 +24,7 @@ export type {
 	AdsDashboardPanelSpan,
 	AdsMetricCardProps,
 	AdsMetricSentiment,
+	AdsMetricSparklineProps,
 	AdsMetricTrend,
 } from './dashboard.js';
 export { AdsFilterBar } from './filter-bar.js';
@@ -35,6 +42,14 @@ export type {
 	AdsTextFilter,
 } from './filter-bar.js';
 export { AdsSmartTable } from './smart-table.js';
+export { getAdsSmartTableCsv } from './smart-table-export.js';
+export type {
+	AdsSmartTableCsvOptions,
+	AdsSmartTableExport,
+	AdsSmartTableExportColumn,
+	AdsSmartTableExportValue,
+} from './smart-table-export.js';
+export type { AdsSmartTableVirtualization } from './smart-table-virtual.js';
 export type {
 	AdsSmartTableColumn,
 	AdsSmartTableLabels,
@@ -51,3 +66,27 @@ export { AdsListFlow } from './list-flow.js';
 export type { AdsListFlowProps } from './list-flow.js';
 export { AdsStepForm } from './step-form.js';
 export type { AdsStepDefinition, AdsStepFormLabels, AdsStepFormProps } from './step-form.js';
+export { AdsAccountMenu } from './account-menu.js';
+export type {
+	AdsAccountMenuAction,
+	AdsAccountMenuGroup,
+	AdsAccountMenuLabels,
+	AdsAccountMenuProps,
+	AdsAccountMenuUser,
+} from './account-menu.js';
+export { AdsNotificationCenter } from './notification-center.js';
+export type {
+	AdsNotification,
+	AdsNotificationCenterLabels,
+	AdsNotificationCenterProps,
+	AdsNotificationFilter,
+	AdsNotificationStatus,
+} from './notification-center.js';
+export { AdsOrganizationSwitcher } from './organization-switcher.js';
+export type {
+	AdsOrganization,
+	AdsOrganizationSwitcherLabels,
+	AdsOrganizationSwitcherManage,
+	AdsOrganizationSwitcherProps,
+	AdsOrganizationSwitcherStatus,
+} from './organization-switcher.js';

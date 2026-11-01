@@ -1,128 +1,98 @@
 # Admin Design System
 
-Design system React reutilizável para a construção de aplicações
-administrativas com Next.js App Router. O projeto é inspirado nos padrões
-de usabilidade e layout de painéis administrativos como o CoreUI, mas
-possui arquitetura, identidade visual e implementação próprias.
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="assets/brand/admin-ds-logo-lockup-dark.svg">
+  <img alt="Admin Design System" src="assets/brand/admin-ds-logo-lockup.svg" height="64">
+</picture>
 
-A biblioteca utilizará TypeScript, Tailwind CSS e variáveis CSS
-semânticas para oferecer componentes acessíveis, responsivos e
-personalizáveis, com suporte a temas claro e escuro. Os pacotes serão
-documentados no Storybook e validados por uma aplicação Next.js de
-referência.
+Biblioteca de componentes e composições administrativas para **React e Next.js App Router**, com TypeScript, design tokens CSS, componentes de interface e um shell para dashboards, formulários e listagens.
 
-O desenvolvimento é orientado por especificações com OpenSpec. Cada
-mudança relevante passa por proposta, requisitos, design, tarefas,
-implementação, validação e arquivamento.
+- **UI reutilizável:** formulários, tabelas, overlays, navegação, feedback e estados de interface.
+- **Composições administrativas:** shell, cards e painéis de dashboard, filtros, tabelas e fluxos.
+- **Personalização:** variáveis `--ads-*`, temas claro/escuro e escolha Sistema.
+- **Integração gradual:** instale somente os pacotes necessários; CSS compilado, sem configurar Tailwind no consumidor.
+- **Documentação executável:** exemplos na Demo e referência de API no Storybook.
 
-## Requisitos
+[**Explorar a Demo**](https://dvmarques.github.io/admin-design-system/) · [**Consultar API no Storybook**](https://dvmarques.github.io/admin-design-system/storybook/)
 
-- Node.js 24 ou superior (veja `.nvmrc`; use `nvm use` ou equivalente);
-- npm `11.19.1`, fixado em `packageManager`.
+A **Demo** mostra uma aplicação Next.js com dados fictícios; o **Storybook** contém componentes, variantes, estados e referência técnica. A biblioteca não fornece backend, autenticação ou regras de negócio.
 
-## Executar as aplicações
+<!-- RELEASE TODO (#195): após confirmar no npm a publicação dos quatro pacotes, remover o aviso de indisponibilidade pré-publicação abaixo; atualizar também a introdução dos comandos npm install e conferir os links/avisos equivalentes nos READMEs dos pacotes e docs/integration.md. Só remover após verificação real no registry. -->
 
-Instale as dependências uma vez, na raiz do repositório:
+> **Disponibilidade (antes da primeira publicação):** os quatro pacotes foram preparados e validados como tarballs na [#194](https://github.com/dvmarques/admin-design-system/issues/194), mas **ainda não estão publicados no npm**. Os comandos `npm install` abaixo são instruções para uso **após** a publicação, que será verificada na [#195](https://github.com/dvmarques/admin-design-system/issues/195). Não representam uma instalação realizada pelo registro. Para teste pré-publicação, consulte o [contrato de distribuição](docs/integration.md#antes-da-primeira-publicação-npm).
 
-```powershell
-npm install
+## Comece pelos componentes
+
+Após a primeira publicação npm, em uma aplicação React/Next.js com versões compatíveis:
+
+```bash
+npm install @dvmarques/admin-ds-tokens @dvmarques/admin-ds-components
 ```
 
-Antes de iniciar qualquer aplicação, gere os artefatos distribuídos dos
-pacotes internos:
+Importe o CSS público **uma vez**, nesta ordem, no layout raiz (`app/layout.tsx`):
 
-```powershell
-npm run build
+```tsx
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import type { ReactNode } from 'react';
+
+export default function RootLayout({ children }: { children: ReactNode }) {
+	return (
+		<html lang="pt-BR" data-theme="light">
+			<body>{children}</body>
+		</html>
+	);
+}
 ```
 
-### Catálogo de componentes (Storybook)
+Exemplo interativo em `app/page.tsx`:
 
-Inicie o catálogo visual dos componentes com:
+```tsx
+'use client';
 
-```powershell
-npm run dev --workspace @admin-ds/docs
+import { useState } from 'react';
+import { AdsButton } from '@dvmarques/admin-ds-components';
+
+export default function Page() {
+	const [clicks, setClicks] = useState(0);
+	return (
+		<main>
+			<AdsButton onClick={() => setClicks((n) => n + 1)}>Cliques: {clicks}</AdsButton>
+		</main>
+	);
+}
 ```
 
-Abra [http://localhost:6006](http://localhost:6006) no navegador. Para
-interromper o servidor, pressione `Ctrl+C` no terminal.
+O exemplo usa tema claro fixo para ser mínimo; veja [preferência Sistema, persistência e fonte Inter](docs/integration.md#tema-fonte-e-hidratação) para uma aplicação completa. A UI não requer Tailwind CSS no consumidor. APIs interativas precisam de uma fronteira `'use client'` no App Router; não transforme a aplicação inteira em Client Component sem necessidade.
 
-### Aplicação de demonstração (`admin-demo`)
+## Escolha os pacotes
 
-Inicie a aplicação Next.js de referência com:
+| Pacote                                                                        | O que oferece                                          | Instale quando                                         | Relação                                                      |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------ | ------------------------------------------------------ | ------------------------------------------------------------ |
+| [`@dvmarques/admin-ds-tokens`](packages/tokens/README.md)                     | Tokens e estilos de tema                               | Precisar de temas/variáveis CSS, mesmo sem componentes | Base visual independente                                     |
+| [`@dvmarques/admin-ds-components`](packages/components/README.md)             | Botões, campos, tabela, overlays, navegação e feedback | Criar interfaces com componentes básicos               | Use com `tokens` e peers React/React DOM; máscara é opcional |
+| [`@dvmarques/admin-ds-admin`](packages/admin/README.md)                       | Shell, dashboard, filtros, tabela inteligente e fluxos | Construir composições administrativas                  | Use com `tokens` e `components`                              |
+| [`@dvmarques/admin-ds-highlighted-code`](packages/highlighted-code/README.md) | `AdsHighlightedCodeSnippet` com Shiki                  | Exibir código destacado                                | **Opcional e isolado**; não vem no `components`              |
 
-```powershell
-npm run dev --workspace @admin-ds/admin-demo
-```
+Não é necessário instalar os quatro. O `react-imask` só é necessário para o subpath opcional `components/masked-input`; Shiki acompanha exclusivamente o pacote `highlighted-code`. Os manifests declaram React/React DOM `>=18.2.0` e peers próprios; a Demo usa React 19 e Next.js 16, mas isso não constitui certificação de todas as versões de Next.js.
 
-Abra [http://localhost:3000](http://localhost:3000) no navegador. Para
-interromper o servidor, pressione `Ctrl+C` no terminal.
+## Temas e personalização
 
-## Releases
+O CSS de `tokens` define variáveis `--ads-*`. O elemento raiz pode usar `data-theme="light"` ou `data-theme="dark"`; sem atributo explícito, o CSS acompanha `prefers-color-scheme`. A aplicação decide como salvar a preferência e evitar troca visual na hidratação. `AdsThemeControl` apresenta **Claro, Escuro e Sistema**, mas não implementa persistência sozinho. Consulte [integração](docs/integration.md#tema-fonte-e-hidratação) e [identidade visual](docs/visual-identity.md).
 
-Fluxo resumido:
+Para overlays renderizados em portal, sobrescreva tokens usando seletores `[data-theme='light']` e `[data-theme='dark']`, não somente `:root[data-theme]`. Fontes (como Inter) são responsabilidade da aplicação.
 
-```text
-develop -> release/X.Y.Z -> PR master -> back-merge develop -> Publicar release -> vX.Y.Z + GitHub Release
-```
+## Caminho de adoção e documentação
 
-A escolha da versão, os merges e o disparo da publicação são ações humanas. A preparação, as validações de consistência, a resolução do commit liberado, a tag anotada e a GitHub Release são automatizadas. Pull Requests em Draft não executam a CI automática de PR; a validação completa é disparada ao marcar o PR como Ready for review.
+1. [Instalação externa e CSS em App Router](docs/integration.md), incluindo limite Server/Client, tema, fonte, tipos e recursos opcionais.
+2. [Storybook / referência técnica de API](https://dvmarques.github.io/admin-design-system/storybook/) e [catálogo demonstrável da aplicação](docs/admin-demo-catalog.md).
+3. [Limitações e testes](docs/limitations.md), [histórico por componente](docs/component-changelog.md) e [CHANGELOG](CHANGELOG.md).
+4. [Licença MIT](LICENSE.md) e [atribuições de terceiros](docs/licensing.md).
 
-Consulte o passo a passo, regras de recuperação e configuração de branch protection em [Processo de release](docs/release-process.md).
+## Desenvolvimento e contribuição
 
-## Documentação
+Quer **desenvolver o Admin Design System** ou executar as aplicações localmente? Comece pelo [Guia de desenvolvimento](docs/development.md): requisitos, instalação, build, comandos para subir a Demo e o Storybook, estrutura dos pacotes, testes, OpenSpec, branches, CI e solução de problemas.
 
-- [Projeto e issues no GitHub](https://github.com/users/dvmarques/projects/2)
-- [Estrutura e arquitetura do monorepo](docs/architecture.md)
-- [Critérios de qualidade](docs/quality.md)
-- [Processo de release](docs/release-process.md)
-- [Integração em aplicações consumidoras](docs/integration.md)
-- [Licenças e atribuições](docs/licensing.md)
-- [Limitações conhecidas](docs/limitations.md)
-- [Comandos úteis do OpenSpec](docs/openspec-commands.md)
-- [Modelos recomendados por fase](docs/models.md)
+Consulte também [Como contribuir](CONTRIBUTING.md), [arquitetura](docs/architecture.md) e [AGENTS.md](AGENTS.md) para as regras obrigatórias. O [processo de release](docs/release-process.md) explica a publicação de versões; **publicação npm e deploy da Demo/Storybook via GitHub Pages são processos distintos**.
 
-## Estado atual
-
-A change `establish-design-system-foundation` concluiu a fundação do
-monorepo, design tokens, temas, distribuição dos pacotes, integração com
-Next.js, documentação e controles de qualidade. A change
-`add-core-primitives` concluiu os componentes públicos fundamentais:
-`AdsButton`, `AdsBadge`, `AdsAvatar`, `AdsSurface`, `AdsTypography`,
-`AdsIcon` e `AdsLoadingIndicator`. A change `add-form-components` concluiu
-os controles e composições de formulário, e `add-overlay-components` concluiu
-`AdsDialog`, `AdsDrawer`, `AdsTooltip`, `AdsPopover` e `AdsToast`, incluindo
-foco, teclado, temas, CSS distribuído, documentação, testes e integração no
-admin demo. A change `add-navigation-components` concluiu `AdsBreadcrumb`,
-`AdsNav`, `AdsTabs`, `AdsDropdown` e `AdsPagination`, com interações por
-teclado, temas, CSS distribuído, documentação, testes, snapshots visuais e
-consumo pela aplicação Next.js de demonstração. A change
-`add-data-display-components` concluiu `AdsTable`, `AdsList`, `AdsCard`,
-`AdsProgress` e `AdsEmptyState`, com semântica acessível, composição sem
-acoplamento a dados ou fetching, temas, CSS distribuído, documentação, testes
-e integração no admin demo. A change `add-admin-shell` concluiu o
-`AdsAdminShell` em `@admin-ds/admin`, com header, sidebar recolhível, área de
-conteúdo e navegação móvel em drawer, estados controlados e não controlados,
-transição segura entre breakpoints, compatibilidade com SSR, CSS próprio
-distribuído e integração no admin demo. A change `add-dashboard-patterns` adicionou
-`AdsMetricCard`, `AdsDashboardGrid` e `AdsDashboardPanel` em `@admin-ds/admin`,
-com tendência por ícone e texto, grid responsivo e estados de carregamento,
-vazio e erro por painel, sem gráficos.
-
-O histórico das changes está arquivado no OpenSpec. Consulte as mudanças
-ativas e arquivadas com:
-
-```powershell
-openspec.cmd list
-Get-ChildItem openspec/changes/archive
-```
-
-## Tecnologias planejadas
-
-- React e TypeScript com modo estrito
-- Next.js com App Router
-- Tailwind CSS e variáveis CSS semânticas
-- npm workspaces
-- Storybook
-- Vitest e React Testing Library
-- Playwright
-- OpenSpec
+O projeto próprio usa a [licença MIT](LICENSE.md), copyright Daniel Marques; componentes e dependências de terceiros preservam seus avisos e licenças próprios.

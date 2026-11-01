@@ -4,7 +4,11 @@
 @source './**/*.{ts,tsx}';
 
 @theme inline {
+	/* Transições sem `duration-*` herdam o token, que vira 0ms com movimento reduzido. */
+	--default-transition-duration: var(--ads-motion-fast);
 	--font-sans: var(--ads-typography-font-family);
+	--font-heading: var(--ads-typography-font-family-heading);
+	--font-mono: var(--ads-typography-font-family-mono);
 	--text-xs: var(--ads-typography-font-size-xs);
 	--text-sm: var(--ads-typography-font-size-sm);
 	--text-base: var(--ads-typography-font-size-md);
@@ -33,6 +37,7 @@
 	--color-text-secondary: var(--ads-color-text-secondary);
 	--color-border: var(--ads-color-border);
 	--color-border-strong: var(--ads-color-border-strong);
+	--color-border-control: var(--ads-color-border-control);
 	--color-primary: var(--ads-color-primary);
 	--color-primary-hover: var(--ads-color-primary-hover);
 	--color-danger-hover: var(--ads-color-danger-hover);
@@ -72,6 +77,53 @@
 }
 
 @layer components {
+	/* Altura dos placeholders pelos tokens; a largura continua vindo de `className`. */
+	.ads-skeleton[data-variant='text'] {
+		height: var(--ads-skeleton-height-text);
+	}
+
+	.ads-skeleton[data-variant='value'] {
+		height: var(--ads-skeleton-height-value);
+	}
+
+	.ads-skeleton[data-variant='block'] {
+		height: var(--ads-skeleton-height-block);
+	}
+
+	/* Sparkline: a largura segue o contêiner; o traço não deforma com a escala do `viewBox`. */
+	.ads-sparkline {
+		display: block;
+		width: 100%;
+		height: 2rem;
+		overflow: visible;
+		color: var(--ads-color-chart1);
+	}
+
+	.ads-sparkline[data-tone='positive'] {
+		color: var(--ads-color-success);
+	}
+
+	.ads-sparkline[data-tone='negative'] {
+		color: var(--ads-color-danger);
+	}
+
+	.ads-sparkline-line,
+	.ads-sparkline-dot {
+		fill: none;
+		stroke: currentColor;
+		stroke-linecap: round;
+		stroke-linejoin: round;
+		vector-effect: non-scaling-stroke;
+	}
+
+	.ads-sparkline-line {
+		stroke-width: 2;
+	}
+
+	.ads-sparkline-dot {
+		stroke-width: 6;
+	}
+
 	.ads-overlay-backdrop,
 	.ads-overlay-panel,
 	.ads-tooltip,
@@ -93,5 +145,433 @@
 	.ads-pagination,
 	.ads-pagination-item {
 		isolation: isolate;
+	}
+}
+
+/*
+ * Cores forçadas (Windows alto contraste): o navegador substitui cores e remove sombras, então
+ * estados desenhados só por fundo ou `box-shadow` precisam de contorno ou borda com cores de
+ * sistema. Fora de `@layer` para vencer as utilidades.
+ */
+@media (forced-colors: active) {
+	.ads-sparkline,
+	.ads-sparkline[data-tone] {
+		color: CanvasText;
+	}
+
+	.ads-selection-control__input:checked + span,
+	.ads-switch input:checked + span {
+		forced-color-adjust: none;
+		background-color: Highlight;
+		border-color: Highlight;
+	}
+
+	.ads-selection-control__input[type='checkbox']:checked + span::after {
+		border-color: HighlightText;
+	}
+
+	.ads-selection-control__input[type='radio']:checked + span::after {
+		background-color: HighlightText;
+	}
+
+	.ads-switch input:checked + span > span {
+		forced-color-adjust: none;
+		background-color: HighlightText;
+	}
+
+	.ads-nav-item[aria-current],
+	.ads-tabs-trigger[aria-selected='true'],
+	[aria-selected='true'] > .ads-date-picker__day {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
+	}
+
+	.ads-nav-item[aria-current],
+	.ads-tabs-trigger[aria-selected='true'] {
+		text-decoration: underline;
+	}
+
+	.ads-nav-item[aria-current]:focus-visible,
+	.ads-tabs-trigger[aria-selected='true']:focus-visible,
+	[aria-selected='true'] > .ads-date-picker__day:focus-visible {
+		outline-color: CanvasText;
+		outline-offset: 2px;
+	}
+}
+
+@layer components {
+	.ads-pagination {
+		width: 100%;
+	}
+	.ads-pagination-scroll {
+		max-width: 100%;
+		width: 100%;
+		min-width: 0;
+		overflow-x: auto;
+		padding-block: 0.5rem;
+	}
+	.ads-pagination-list {
+		margin: 0;
+		width: max-content;
+		padding: 0.25rem;
+	}
+	.ads-pagination-list > li {
+		flex: none;
+	}
+	.ads-pagination-number,
+	.ads-pagination-ellipsis {
+		box-sizing: border-box;
+		width: max(2.5rem, calc(var(--ads-pagination-digits, 2) * 1ch + 1.5rem));
+	}
+	.ads-pagination-ellipsis {
+		display: inline-flex;
+		justify-content: center;
+	}
+	.ads-pagination [aria-disabled='true'] {
+		cursor: wait;
+		opacity: 0.6;
+	}
+	.ads-pagination-jump {
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: 0.5rem;
+		min-width: 0;
+		max-width: 100%;
+		padding: 0.25rem;
+		font-size: 0.875rem;
+	}
+	.ads-pagination-jump label,
+	.ads-pagination-jump [role='alert'] {
+		overflow-wrap: anywhere;
+	}
+	.ads-pagination-jump input {
+		box-sizing: border-box;
+		min-height: 2.5rem;
+		min-width: 0;
+		width: 5rem;
+		max-width: 100%;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background: var(--ads-color-surface);
+		color: var(--ads-color-text);
+		padding: 0.25rem 0.5rem;
+		font: inherit;
+	}
+	.ads-pagination-jump input:focus-visible,
+	.ads-pagination-scroll:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+}
+
+/* Utilities are unlayered; keep this scoped size override outside @layer components to override their minimum sizes. */
+
+.ads-pagination .ads-pagination-item {
+	min-height: 2.5rem;
+	min-width: 2.5rem;
+	box-sizing: border-box;
+}
+.ads-pagination-ellipsis {
+	font-size: 0.875rem;
+	font-weight: 500;
+}
+
+/* Texto em atualização: brilho só nos glifos, sem mudar o layout. */
+@keyframes ads-loading-text-shimmer {
+	from {
+		background-position:
+			150% center,
+			0 0;
+	}
+	to {
+		background-position:
+			-150% center,
+			0 0;
+	}
+}
+
+/* Texto sempre legível: base apagada (fallback: text-muted) para o pico text-primary destacar a passagem. */
+.ads-loading-text[data-loading='true'] {
+	--ads-loading-text-base: var(--ads-color-text-muted);
+	color: var(--ads-loading-text-base);
+}
+
+/* Razão base/pico de ~4,2:1 (referência do Daniel), derivada dos tokens. A fatia de text-muted segue o escopo de tema mais próximo (como os tokens), inclusive tema claro aninhado em raiz escura. */
+@supports (color: color-mix(in srgb, white, black)) {
+	:root,
+	[data-theme='light'] {
+		--ads-loading-text-muted-share: 77%;
+	}
+
+	[data-theme='dark'] {
+		--ads-loading-text-muted-share: 42%;
+	}
+
+	@media (prefers-color-scheme: dark) {
+		:root:not([data-theme]) {
+			--ads-loading-text-muted-share: 42%;
+		}
+	}
+
+	.ads-loading-text[data-loading='true'] {
+		--ads-loading-text-base: color-mix(
+			in srgb,
+			var(--ads-color-text-muted) var(--ads-loading-text-muted-share),
+			var(--ads-color-surface)
+		);
+	}
+}
+
+/* Duas camadas explícitas: faixa luminosa acima da base opaca, ambas recortadas nos glifos. */
+@supports ((-webkit-background-clip: text) or (background-clip: text)) {
+	.ads-loading-text[data-loading='true'] {
+		-webkit-text-fill-color: transparent;
+		background-image:
+			linear-gradient(90deg, transparent 33%, var(--ads-color-text-primary) 50%, transparent 67%),
+			linear-gradient(var(--ads-loading-text-base), var(--ads-loading-text-base));
+		background-size:
+			200% 100%,
+			100% 100%;
+		background-repeat: no-repeat;
+		background-position:
+			150% center,
+			0 0;
+		-webkit-background-clip: text;
+		background-clip: text;
+		animation: ads-loading-text-shimmer 2.5s ease-in-out infinite;
+	}
+}
+.ads-loading-text[data-speed='slow'] {
+	animation-duration: 4s;
+}
+.ads-loading-text[data-speed='fast'] {
+	animation-duration: 1.5s;
+}
+
+/* Regra separada: :dir() inválido em navegador sem suporte descartaria a regra inteira, então não pode ser agrupada com os seletores acima. Respeita a direção de leitura sem alterar o conteúdo ou a API. */
+.ads-loading-text[data-loading='true']:dir(rtl) {
+	animation-direction: reverse;
+}
+
+@media (prefers-reduced-motion: reduce) {
+	.ads-loading-text[data-loading='true'] {
+		animation: none;
+		background-image: none;
+		-webkit-text-fill-color: currentColor;
+		color: var(--ads-color-text);
+	}
+}
+
+@media (forced-colors: active) {
+	.ads-loading-text[data-loading='true'] {
+		animation: none;
+		background-image: none;
+		-webkit-text-fill-color: CanvasText;
+		color: CanvasText;
+	}
+}
+
+/*
+ * AdsAlert: em cores forçadas o fundo semântico é descartado; além do ícone
+ * próprio de cada variante, a severidade também é distinguida pelo estilo da
+ * borda, sem depender de cor.
+ */
+@media (forced-colors: active) {
+	.ads-alert {
+		border-color: CanvasText;
+	}
+
+	.ads-alert[data-variant='warning'] {
+		border-style: dashed;
+	}
+
+	.ads-alert[data-variant='error'] {
+		border-style: double;
+		border-width: 4px;
+	}
+
+	.ads-alert-icon {
+		color: CanvasText;
+	}
+
+	.ads-alert-close {
+		border-color: ButtonText;
+	}
+
+	.ads-alert-close:focus-visible {
+		outline-color: Highlight;
+	}
+}
+
+select.ads-select:not([multiple]):not([size]) {
+	appearance: none;
+	padding-inline-end: 2.25rem;
+	background-image:
+		linear-gradient(45deg, transparent 50%, currentColor 50%),
+		linear-gradient(135deg, currentColor 50%, transparent 50%);
+	background-repeat: no-repeat;
+	background-position:
+		right 17px center,
+		right 12px center;
+	background-size: 5px 5px;
+	/* Rótulo longo: contido na caixa, truncado antes da seta e sem alargar o contêiner. */
+	min-width: 0;
+	max-width: 100%;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+/* Ausência de escolha (`placeholder`): texto explícito e atenuado; as opções mantêm a cor do texto. */
+.ads-select:has(> [data-ads-select-placeholder]:checked) {
+	color: var(--ads-color-text-muted);
+}
+.ads-select:has(> [data-ads-select-placeholder]:checked) option {
+	color: var(--ads-color-text);
+}
+select.ads-select:not([multiple]):not([size]):dir(rtl) {
+	background-position:
+		left 12px center,
+		left 17px center;
+}
+@media (forced-colors: active) {
+	select.ads-select:not([multiple]):not([size]) {
+		appearance: auto;
+		background-image: none;
+	}
+}
+.ads-combobox__input--visual {
+	padding-inline-start: 2.25rem;
+}
+.ads-combobox__selected-visual {
+	position: absolute;
+	inset-inline-start: 0.5rem;
+	top: 50%;
+	transform: translateY(-50%);
+	pointer-events: none;
+	display: flex;
+	align-items: center;
+}
+.ads-combobox__visual {
+	display: inline-flex;
+	flex: none;
+}
+.ads-combobox__visual .ads-avatar,
+.ads-combobox__selected-visual .ads-avatar {
+	width: 1.25rem;
+	height: 1.25rem;
+	font-size: 0.625rem;
+}
+
+/* AdsCombobox `presentation="popover"`: painel, lista e opções com CSS próprio (sem utilidades) para que composições, como o seletor de organização, ajustem a aparência por classe. */
+@layer components {
+	.ads-combobox__panel {
+		position: fixed;
+		z-index: var(--ads-layer-overlay);
+		box-sizing: border-box;
+		display: flex;
+		flex-direction: column;
+		gap: var(--ads-spacing-1, 0.25rem);
+		width: max(15rem, var(--ads-combobox-anchor-width, 0px));
+		max-width: calc(100vw - 1rem);
+		max-height: min(24rem, calc(100vh - 1rem));
+		margin: 0;
+		padding: var(--ads-spacing-1, 0.25rem);
+		overflow-y: auto;
+		overscroll-behavior: contain;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-lg);
+		background-color: var(--ads-color-surface-raised);
+		box-shadow: var(--ads-elevation-lg);
+		color: var(--ads-color-text);
+		font-family: var(--ads-typography-font-family);
+		font-size: var(--ads-typography-font-size-sm);
+	}
+	.ads-combobox__panel:focus {
+		outline: none;
+	}
+	.ads-combobox__list-popover {
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+	.ads-combobox__list-popover:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: -2px;
+		border-radius: var(--ads-radius-md);
+	}
+	.ads-combobox__list-popover[hidden] {
+		display: none;
+	}
+	.ads-combobox__option--popover {
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		gap: var(--ads-spacing-2, 0.5rem);
+		padding: var(--ads-spacing-2, 0.5rem) var(--ads-spacing-3, 0.75rem);
+		border-radius: var(--ads-radius-md);
+		cursor: pointer;
+	}
+	.ads-combobox__option--popover[data-active='true'] {
+		background-color: var(--ads-color-surface-hover);
+	}
+	.ads-combobox__option--popover[aria-selected='true'] {
+		background-color: var(--ads-color-surface-selected);
+		color: var(--ads-color-on-surface-selected);
+	}
+	/* Destaque do teclado: contorno próprio, visível também sobre a opção selecionada. */
+	.ads-combobox__option--popover[data-active='true'] {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: -2px;
+	}
+	.ads-combobox__option--popover[aria-selected='true'] .ads-combobox__option-description {
+		color: inherit;
+	}
+	.ads-combobox__option--popover[aria-disabled='true'] {
+		cursor: not-allowed;
+		opacity: 0.5;
+	}
+	.ads-combobox__option-text {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: 0.125rem;
+	}
+	.ads-combobox__option-description {
+		font-size: var(--ads-typography-font-size-xs);
+		color: var(--ads-color-text-muted);
+	}
+	.ads-combobox__state {
+		padding: var(--ads-spacing-2, 0.5rem) var(--ads-spacing-3, 0.75rem);
+		color: var(--ads-color-text-muted);
+	}
+	.ads-combobox__retry {
+		align-self: flex-start;
+		margin-inline: var(--ads-spacing-3, 0.75rem);
+		padding: 0;
+		border: 0;
+		background: transparent;
+		color: inherit;
+		font: inherit;
+		text-decoration: underline;
+		cursor: pointer;
+	}
+	.ads-combobox__retry:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+	.ads-combobox__footer {
+		border-top: 1px solid var(--ads-color-border);
+		padding-top: var(--ads-spacing-1, 0.25rem);
+	}
+}
+/* Cores forçadas: selecionada = barra lateral (borda); ativa = contorno; ambas são distintas. */
+@media (forced-colors: active) {
+	.ads-combobox__option--popover[aria-selected='true'] {
+		border-inline-start: 0.25rem solid Highlight;
+	}
+	.ads-combobox__option--popover[data-active='true'] {
+		outline: 2px solid Highlight;
+		outline-offset: -2px;
 	}
 }

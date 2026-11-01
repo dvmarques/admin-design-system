@@ -1,6 +1,6 @@
 'use client';
 
-import { AdsDrawer } from '@admin-ds/components';
+import { AdsDrawer } from '@dvmarques/admin-ds-components';
 import {
 	useEffect,
 	useRef,
@@ -31,7 +31,11 @@ export function AdsAdminShellNavigationTrigger({
 			className={classNames('ads-admin-shell-navigation-trigger', className)}
 			onClick={(event) => {
 				onClick?.(event);
-				if (!event.defaultPrevented) setMobileOpen(true);
+				if (!event.defaultPrevented) {
+					// Safari does not focus buttons on pointer activation by default.
+					event.currentTarget.focus();
+					setMobileOpen(true);
+				}
 			}}
 			type={props.type ?? 'button'}
 		>
@@ -76,6 +80,11 @@ export function AdsAdminShellSidebarToggle({
 	);
 }
 
+/** Whether a ReactNode would produce output; `0` and `NaN` render text, so they count. */
+function isRenderable(node: ReactNode): boolean {
+	return node != null && typeof node !== 'boolean' && node !== '';
+}
+
 function isHidden(element: Element): boolean {
 	return typeof element.checkVisibility === 'function' && !element.checkVisibility();
 }
@@ -95,6 +104,8 @@ function shouldRedirectFocus(active: Element | null, mobileNavigationId: string)
 export interface AdsAdminShellSidebarProps extends HTMLAttributes<HTMLElement> {
 	label?: string;
 	mobileTitle?: ReactNode;
+	/** Optional content above navigation; aligned to Header in layout="sidebar-header". */
+	header?: ReactNode;
 }
 
 /**
@@ -106,11 +117,13 @@ export function AdsAdminShellSidebar({
 	className,
 	label = 'Navegação principal',
 	mobileTitle,
+	header,
 	...props
 }: AdsAdminShellSidebarProps) {
 	const { collapsed, desktopSidebarId, isDesktop, mobileNavigationId, mobileOpen, setMobileOpen } =
 		useAdminShellContext();
 	const desktopNavigationRef = useRef<HTMLElement>(null);
+	const desktopSidebarRef = useRef<HTMLElement>(null);
 	const wasMobileOpenRef = useRef(mobileOpen);
 
 	useEffect(() => {
@@ -125,7 +138,25 @@ export function AdsAdminShellSidebar({
 		wasMobileOpenRef.current = mobileOpen;
 	}, [isDesktop, mobileNavigationId, mobileOpen]);
 
+	useEffect(() => {
+		// The stable scrollbar gutter width depends on the platform; the header brand mirrors it in CSS.
+		const sidebar = desktopSidebarRef.current;
+		const navigation = desktopNavigationRef.current;
+		if (!isDesktop || !sidebar || !navigation) return;
+		const measure = () => {
+			const gutter = navigation.offsetWidth - navigation.clientWidth;
+			sidebar.style.setProperty('--ads-sidebar-scrollbar-size', `${Math.max(0, gutter)}px`);
+		};
+		measure();
+		// Re-measure when the navigation box changes (zoom, scrollbar settings, collapse transition).
+		if (typeof ResizeObserver === 'undefined') return;
+		const observer = new ResizeObserver(measure);
+		observer.observe(navigation);
+		return () => observer.disconnect();
+	}, [isDesktop, collapsed]);
+
 	const navigationClassName = classNames('ads-admin-shell-sidebar', className);
+	const hasHeader = isRenderable(header);
 
 	if (isDesktop) {
 		return (
@@ -133,7 +164,9 @@ export function AdsAdminShellSidebar({
 				className="ads-admin-shell-sidebar-desktop"
 				data-collapsed={collapsed ? 'true' : 'false'}
 				id={desktopSidebarId}
+				ref={desktopSidebarRef}
 			>
+				{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 				<nav
 					{...props}
 					aria-label={label}
@@ -158,6 +191,7 @@ export function AdsAdminShellSidebar({
 			placement="left"
 			title={mobileTitle}
 		>
+			{hasHeader && <div className="ads-admin-shell-sidebar-header">{header}</div>}
 			<nav {...props} aria-label={label} className={navigationClassName}>
 				{children}
 			</nav>

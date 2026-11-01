@@ -12,6 +12,7 @@ import {
 	AdsListItem,
 	AdsPagination,
 	AdsProgress,
+	AdsSparkline,
 	AdsTable,
 	AdsTableBody,
 	AdsTableCell,
@@ -19,7 +20,7 @@ import {
 	AdsTableHeader,
 	AdsTableRow,
 	AdsTypography,
-} from '@admin-ds/components';
+} from '@dvmarques/admin-ds-components';
 
 export default function DataDisplayPage() {
 	return (
@@ -31,7 +32,7 @@ export default function DataDisplayPage() {
 						Apresentação de dados administrativos
 					</AdsTypography>
 					<AdsTypography variant="muted">
-						Exemplo consumindo somente APIs públicas de @admin-ds/components.
+						Exemplo consumindo somente APIs públicas de @dvmarques/admin-ds-components.
 					</AdsTypography>
 				</header>
 
@@ -65,6 +66,30 @@ export default function DataDisplayPage() {
 						</AdsTableBody>
 					</AdsTable>
 					<AdsPagination page={1} pageCount={4} />
+				</section>
+
+				<section aria-labelledby="data-table-compact" className="demo-section">
+					<AdsTypography as="h2" id="data-table-compact" variant="heading2">
+						Densidade compacta
+					</AdsTypography>
+					<AdsTable aria-label="Clientes recentes (compacta)" density="compact">
+						<AdsTableHead>
+							<AdsTableRow>
+								<AdsTableHeader>Conta</AdsTableHeader>
+								<AdsTableHeader align="end">Pedidos</AdsTableHeader>
+							</AdsTableRow>
+						</AdsTableHead>
+						<AdsTableBody>
+							<AdsTableRow>
+								<AdsTableCell>Helena Prado</AdsTableCell>
+								<AdsTableCell align="end">18</AdsTableCell>
+							</AdsTableRow>
+							<AdsTableRow>
+								<AdsTableCell>Otávio Reis</AdsTableCell>
+								<AdsTableCell align="end">7</AdsTableCell>
+							</AdsTableRow>
+						</AdsTableBody>
+					</AdsTable>
 				</section>
 
 				<section aria-labelledby="collections" className="demo-section">
@@ -110,6 +135,38 @@ export default function DataDisplayPage() {
 						description="Ajuste os filtros para tentar novamente."
 						actions={<AdsButton variant="secondary">Limpar filtros</AdsButton>}
 					/>
+				</section>
+
+				<section aria-labelledby="sparkline" className="demo-section">
+					<AdsTypography as="h2" id="sparkline" variant="heading2">
+						Sparkline
+					</AdsTypography>
+					<div className="demo-foundations-grid">
+						{(
+							[
+								['default', 'Visitas por dia', [12, 14, 13, 18, 17, 22, 25]],
+								['positive', 'Pedidos por dia', [31, 34, 33, 38, 41, 40, 45]],
+								['negative', 'Erros por dia', [4, 6, 5, 9, 8, 12, 14]],
+							] as const
+						).map(([tone, label, values]) => (
+							<div key={tone}>
+								<AdsTypography>{label}</AdsTypography>
+								<AdsSparkline label={label} tone={tone} values={values} />
+							</div>
+						))}
+						<div>
+							<AdsTypography>Com lacunas e rótulos</AdsTypography>
+							<AdsSparkline
+								label="Receita semanal"
+								labels={['S1', 'S2', 'S3', 'S4', 'S5', 'S6']}
+								values={[8, null, 12, 11, null, 15]}
+							/>
+						</div>
+						<div>
+							<AdsTypography>Um único ponto</AdsTypography>
+							<AdsSparkline label="Novo indicador" values={[7]} />
+						</div>
+					</div>
 				</section>
 			</div>
 		</div>

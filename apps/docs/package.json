@@ -1,22 +1,29 @@
 {
 	"name": "@admin-ds/docs",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": true,
+	"license": "MIT",
 	"type": "module",
 	"dependencies": {
-		"@admin-ds/admin": "0.1.0",
-		"@admin-ds/components": "0.1.0",
-		"@admin-ds/tokens": "0.1.0",
-		"react": "^19.2.8",
-		"react-dom": "^19.2.8"
+		"@dvmarques/admin-ds-admin": "0.1.1",
+		"@dvmarques/admin-ds-components": "0.1.1",
+		"@dvmarques/admin-ds-highlighted-code": "0.1.1",
+		"@dvmarques/admin-ds-tokens": "0.1.1",
+		"@fontsource/inter": "^5.3.0",
+		"react": "^19.3.1",
+		"react-dom": "^19.3.1",
+		"react-imask": "^7.6.1"
 	},
 	"scripts": {
+		"predev": "node ../../scripts/generate-storybook-api.mjs",
 		"dev": "storybook dev -p 6006",
 		"typecheck": "tsc --noEmit -p tsconfig.json",
 		"build": "storybook build",
 		"test": "npm run test:node",
 		"test:quiet": "npm run test:node:quiet",
 		"test:node": "node --test ./tests/**/*.test.mjs",
-		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs"
+		"test:node:quiet": "node --test --test-reporter=dot ./tests/**/*.test.mjs",
+		"prebuild": "node ../../scripts/generate-storybook-api.mjs",
+		"test:output": "node --test ./tests/storybook-output.check.mjs"
 	}
 }

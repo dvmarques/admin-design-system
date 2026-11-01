@@ -8,7 +8,7 @@ Define os estados de carregamento, vazio e erro dos painéis e cards de métrica
 
 ### Requirement: Painel cobre carregamento, vazio e erro
 
-`AdsDashboardPanel` MUST suportar os estados de carregamento, vazio e erro, com prioridade carregamento, erro, vazio e conteúdo. `error` e `empty` MUST aceitar nós React. O componente MUST NOT buscar dados.
+`AdsDashboardPanel` MUST suportar os estados de carregamento, vazio e erro, com prioridade carregamento, erro, vazio e conteúdo, e MUST NOT buscar dados. `error` MUST aceitar nós React. `empty` MUST aceitar `string`, `number` ou nós React, e texto ou número MUST renderizar `AdsEmptyState` compacto com o valor como título. `null`, `undefined`, `false` e string vazia, mas não `0`, MUST contar como ausência de `empty` e renderizar os filhos.
 
 #### Scenario: Carregamento
 
@@ -27,8 +27,23 @@ Define os estados de carregamento, vazio e erro dos painéis e cards de métrica
 
 #### Scenario: Vazio
 
-- **WHEN** `empty` é informado e não há carregamento nem erro
-- **THEN** o painel apresenta o conteúdo de vazio informado, por exemplo um `AdsEmptyState` com título e descrição, no lugar dos filhos
+- **WHEN** `empty` é um nó React, como um `AdsEmptyState` com título e descrição, e não há carregamento nem erro
+- **THEN** o painel apresenta o conteúdo de vazio informado no lugar dos filhos
+
+#### Scenario: Vazio textual
+
+- **WHEN** `empty` é `string` ou `number` e não há carregamento nem erro
+- **THEN** o painel apresenta `AdsEmptyState` compacto com o texto como título, no lugar dos filhos
+
+#### Scenario: Vazio numérico zero
+
+- **WHEN** `empty` é `0` e não há carregamento nem erro
+- **THEN** o painel apresenta `AdsEmptyState` compacto com o título `0`, no lugar dos filhos
+
+#### Scenario: String vazia não é vazio
+
+- **WHEN** `empty` é `""` e não há carregamento nem erro
+- **THEN** o painel renderiza seus filhos, como quando `empty` não é informado
 
 #### Scenario: Conteúdo
 
@@ -37,7 +52,7 @@ Define os estados de carregamento, vazio e erro dos painéis e cards de métrica
 
 ### Requirement: Card de métrica cobre os mesmos estados
 
-`AdsMetricCard` MUST suportar `loading`, `error` e `empty` com a mesma prioridade e os mesmos tipos do painel (nós React), mantendo o título visível.
+`AdsMetricCard` MUST suportar `loading`, `error` e `empty` com a mesma prioridade e os mesmos tipos do painel (`string`, `number` ou nós React), mantendo o título visível. Quando `empty` for texto ou número, MUST renderizar `AdsEmptyState` compacto com o valor como título. A presença de `empty` MUST seguir as mesmas regras do painel (`0` ativa o estado vazio; `null`, `undefined`, `false` e `""` não).
 
 #### Scenario: Métrica em carregamento
 
@@ -46,5 +61,20 @@ Define os estados de carregamento, vazio e erro dos painéis e cards de métrica
 
 #### Scenario: Métrica sem dados
 
-- **WHEN** `empty` é informado e não há carregamento nem erro
+- **WHEN** `empty` é um nó React e não há carregamento nem erro
 - **THEN** o card mantém o título e apresenta o conteúdo de vazio no lugar de valor e variação
+
+#### Scenario: Métrica sem dados textual
+
+- **WHEN** `empty` é `string` ou `number` e não há carregamento nem erro
+- **THEN** o card mantém o título e apresenta `AdsEmptyState` compacto no lugar de valor e variação, sem `role="alert"`
+
+#### Scenario: Métrica com zero como vazio
+
+- **WHEN** `empty` é `0` e não há carregamento nem erro
+- **THEN** o card mantém o título e apresenta `AdsEmptyState` compacto com o título `0`, no lugar de valor e variação
+
+#### Scenario: String vazia não é vazio no card
+
+- **WHEN** `empty` é `""` e não há carregamento nem erro
+- **THEN** o card mantém o título e apresenta valor e variação como no conteúdo normal

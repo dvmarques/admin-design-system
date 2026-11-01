@@ -1,0 +1,65 @@
+## ADDED Requirements
+
+### Requirement: Entrada documental orientada à adoção
+
+O README raiz MUST apresentar proposta de valor verificável, links públicos da Demo e do Storybook, exemplo de consumo e caminho progressivo, mantendo instruções operacionais de desenvolvimento e release em documentos próprios.
+
+#### Scenario: Visitante avalia a biblioteca
+
+- **WHEN** um visitante abre o README do projeto
+- **THEN** identifica os benefícios implementados, experimenta a Demo, consulta a referência de API no Storybook e localiza os guias de integração, limitações, histórico, desenvolvimento, contribuição e licença
+
+### Requirement: Pacotes com instruções autossuficientes
+
+Cada um dos quatro pacotes MUST ter README com finalidade, dependências/peers, instalação condicional, imports públicos e CSS aplicável, incluindo links absolutos que funcionam na página do npm. O destaque de código e o peer de máscaras MUST ser descritos como opcionais.
+
+#### Scenario: Consumidor escolhe somente componentes básicos
+
+- **WHEN** a aplicação precisa de tokens e componentes sem máscaras ou realce de código
+- **THEN** o guia não exige instalar `admin`, `highlighted-code`, Shiki ou `react-imask` como dependência de uso básico
+
+#### Scenario: Consumidor precisa do pacote opcional
+
+- **WHEN** a aplicação opta por realce de código ou entrada mascarada
+- **THEN** encontra o pacote/subpath próprio, a dependência opcional, o CSS correspondente e exemplo com exports existentes
+
+### Requirement: Integração Next.js externa reproduzível
+
+A documentação MUST mostrar caminho de consumo externo por nomes públicos, CSS compilado em ordem e limites Server/Client em App Router, sem aliases internos, fontes do monorepo ou exigência de Tailwind no consumidor. MUST documentar fonte, temas e responsabilidade da aplicação pela persistência da preferência.
+
+#### Scenario: Aplicação Next.js usa o design system
+
+- **WHEN** um consumidor segue a receita de instalação e cria layout e componente interativo
+- **THEN** os imports e peers correspondem aos manifests, o CSS usa os subpaths públicos e os limites de cliente/servidor e tema são apresentados sem prometer comportamento não implementado
+
+### Requirement: Informação correta antes e depois da publicação
+
+A documentação MUST distinguir pacotes preparados e validados por tarballs de disponibilidade efetiva no registry. Antes da primeira publicação verificada, MUST NOT apresentar instalação npm remota como já testada; a atualização pós-publicação será coordenada com #195.
+
+#### Scenario: Leitor consulta o guia antes da primeira release npm
+
+- **WHEN** os pacotes ainda não foram publicados no registry
+- **THEN** o leitor vê aviso inequívoco e entende que comandos npm remotos serão aplicáveis apenas após #195
+
+### Requirement: Primeira adoção, identidade visual e desenvolvimento local
+
+O README raiz MUST preservar o logo para temas claro/escuro e indicar um guia separado de desenvolvimento. Esse guia MUST cobrir instalação, build, Demo/Storybook, testes e contribuição. Sem versão pública anterior, a documentação MUST NOT exigir migração de pacotes ou temas; o histórico MUST corresponder às APIs atuais e às issues verificadas.
+
+#### Scenario: Colaborador prepara o ambiente
+
+- **WHEN** um desenvolvedor abre o README e precisa executar as aplicações
+- **THEN** encontra o logo, um guia de desenvolvimento com comandos existentes e as referências de contribuição e validação
+
+#### Scenario: Primeiro consumidor escolhe pacotes e tema
+
+- **WHEN** um visitante planeja adotar a primeira versão pública
+- **THEN** encontra somente os nomes públicos de pacotes atuais e as alternativas `AdsThemeControl` e `ThemeToggle`, sem guia de migração de uma release inexistente
+
+### Requirement: Limites e cobertura do catálogo rastreáveis
+
+A documentação MUST permitir localizar limitações por componente e MUST diferenciar testes automatizados de validações manuais. As exclusões textuais do catálogo MUST coincidir com `apps/admin-demo/catalog-coverage.test.ts`, sem modificar testes apenas para corrigir a descrição.
+
+#### Scenario: Export auxiliar não possui demo visual
+
+- **WHEN** o leitor consulta as exclusões do catálogo
+- **THEN** encontra `getAdsSmartTableCsv` e os demais auxiliares que o teste efetivamente exclui, sem confundir exclusão visual com ausência da API

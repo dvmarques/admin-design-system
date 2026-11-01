@@ -3,7 +3,14 @@
 import { useEffect, useRef, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { AdsIcon } from './icon.js';
-import { OverlayPortal, useEscapeKey, useOverlayFocus, useStableId } from './overlay-utils.js';
+import {
+	OverlayPortal,
+	hasOpenDismissibleChild,
+	useEscapeKey,
+	useOverlayFocus,
+	useOverlayOrigin,
+	useStableId,
+} from './overlay-utils.js';
 import { AdsTypography } from './typography.js';
 
 interface AdsOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>, 'role' | 'title'> {
@@ -17,7 +24,10 @@ interface AdsOverlayProps extends Omit<HTMLAttributes<HTMLDivElement>, 'role' | 
 	showCloseButton?: boolean;
 }
 
-export type AdsDialogProps = AdsOverlayProps;
+export interface AdsDialogProps extends AdsOverlayProps {
+	/** `alertdialog` para mensagens que exigem resposta imediata, como confirmar uma ação destrutiva. */
+	role?: 'dialog' | 'alertdialog';
+}
 export interface AdsDrawerProps extends AdsOverlayProps {
 	placement?: 'left' | 'right';
 }
@@ -42,26 +52,32 @@ function OverlayPanel({
 	const titleId = useStableId('ads-overlay-title');
 	const descriptionId = useStableId('ads-overlay-description');
 	const previousOpen = useRef(false);
+	const { attachPanel, captureOrigin, fallbackFocusRef } = useOverlayOrigin(restoreFocusRef);
 
 	useEffect(() => {
-		if (open && !previousOpen.current)
-			restoreFocusRef.current = document.activeElement as HTMLElement;
+		if (open && !previousOpen.current) captureOrigin(document.activeElement as HTMLElement);
 		previousOpen.current = open;
-	}, [open]);
+	}, [captureOrigin, open]);
 
-	useOverlayFocus(open, panelRef, restoreFocusRef);
-	useEscapeKey(open && closeOnEscape, () => onOpenChange(false));
+	useOverlayFocus(open, panelRef, restoreFocusRef, fallbackFocusRef);
+	useEscapeKey(open, () => onOpenChange(false), closeOnEscape);
 
 	if (!open) return null;
 	const isDrawer = Boolean(placement);
 	return (
-		<OverlayPortal>
+		<OverlayPortal layer="modal">
 			<div
 				className="ads-overlay-backdrop fixed inset-0 z-[var(--ads-layer-overlay)] flex bg-black/60"
 				data-overlay="backdrop"
 				style={{ backgroundColor: 'var(--ads-color-overlay-backdrop)' }}
 				onMouseDown={(event) => {
-					if (closeOnBackdrop && event.target === event.currentTarget) onOpenChange(false);
+					// O mesmo clique já fecha um popup aberto sobre o modal: só a camada superior fecha.
+					if (
+						closeOnBackdrop &&
+						event.target === event.currentTarget &&
+						!hasOpenDismissibleChild(panelRef.current)
+					)
+						onOpenChange(false);
 				}}
 			>
 				<div
@@ -70,22 +86,25 @@ function OverlayPanel({
 					aria-labelledby={title ? titleId : props['aria-labelledby']}
 					aria-modal="true"
 					className={classNames(
-						'ads-overlay-panel relative max-h-[calc(100vh-2rem)] overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-lg outline-none max-md:max-h-[calc(100vh-1rem)] max-md:p-4',
+						'ads-overlay-panel relative overflow-auto border border-border bg-surface-raised p-6 font-sans text-text shadow-lg outline-none max-md:p-4',
 						isDrawer
 							? placement === 'left'
 								? 'mr-auto h-full max-h-none w-[min(24rem,100vw)] rounded-r-lg'
 								: 'ml-auto h-full max-h-none w-[min(24rem,100vw)] rounded-l-lg'
-							: 'm-auto w-[min(32rem,calc(100vw-2rem))] rounded-lg',
+							: 'm-auto max-h-[calc(100vh-2rem)] w-[min(32rem,calc(100vw-2rem))] rounded-lg max-md:max-h-[calc(100vh-1rem)]',
 						className,
 					)}
-					ref={panelRef}
+					ref={(element) => {
+						panelRef.current = element;
+						attachPanel(element);
+					}}
 					role={role}
 					tabIndex={-1}
 				>
 					{showCloseButton ? (
 						<button
 							aria-label={closeLabel}
-							className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-overlay-close-background text-overlay-close-content transition-[background-color,color,transform] duration-150 hover:bg-overlay-close-background-hover active:scale-95 motion-reduce:transform-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
+							className="absolute right-4 top-4 inline-flex h-8 w-8 items-center justify-center rounded-md border border-transparent bg-overlay-close-background text-overlay-close-content transition-[background-color,color,transform] duration-[var(--ads-motion-fast)] hover:bg-overlay-close-background-hover active:scale-95 motion-reduce:transform-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-focus"
 							onClick={() => onOpenChange(false)}
 							type="button"
 						>
@@ -116,8 +135,8 @@ function OverlayPanel({
 	);
 }
 
-export function AdsDialog(props: AdsDialogProps) {
-	return <OverlayPanel {...props} />;
+export function AdsDialog({ role = 'dialog', ...props }: AdsDialogProps) {
+	return <OverlayPanel {...props} role={role} />;
 }
 
 export function AdsDrawer({ placement = 'right', ...props }: AdsDrawerProps) {

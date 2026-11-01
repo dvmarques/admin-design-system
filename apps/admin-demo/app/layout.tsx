@@ -1,11 +1,16 @@
-import '@admin-ds/tokens/styles.css';
-import '@admin-ds/components/styles.css';
-import '@admin-ds/admin/styles.css';
+import '@fontsource/inter/latin-400.css';
+import '@fontsource/inter/latin-500.css';
+import '@fontsource/inter/latin-600.css';
+import '@fontsource/inter/latin-700.css';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import '@dvmarques/admin-ds-admin/styles.css';
 import type { Metadata } from 'next';
-import { cookies } from 'next/headers';
 import type { ReactNode } from 'react';
 import './globals.css';
-import { resolveTheme, themeCookieName } from '../lib/theme';
+import { readServerPreference } from '../lib/server-theme';
+import { themeForPreference, themeInitScript } from '../lib/theme';
+import { ThemeSystemSync } from './theme-system-sync';
 
 export const metadata: Metadata = {
 	title: 'Admin Design System Demo',
@@ -13,12 +18,25 @@ export const metadata: Metadata = {
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
-	const cookieStore = await cookies();
-	const theme = resolveTheme(cookieStore.get(themeCookieName)?.value);
+	const preference = await readServerPreference();
 
 	return (
-		<html lang="pt-BR" data-scroll-behavior="smooth" data-theme={theme}>
-			<body>{children}</body>
+		<html
+			lang="pt-BR"
+			data-scroll-behavior="smooth"
+			// With `system` the server renders the light fallback; the init script corrects it (and
+			// applies the saved preference in the static export) before the first paint.
+			data-theme={themeForPreference(preference)}
+			data-theme-preference={preference}
+			suppressHydrationWarning
+		>
+			<head>
+				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+			</head>
+			<body>
+				<ThemeSystemSync />
+				{children}
+			</body>
 		</html>
 	);
 }

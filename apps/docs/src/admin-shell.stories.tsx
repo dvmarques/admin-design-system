@@ -1,21 +1,62 @@
 import type { Meta, StoryObj } from '@storybook/react-vite';
-import { AdsAdminShell, useAdsAdminShell } from '@admin-ds/admin';
-import { AdsBadge, AdsButton, AdsCard, AdsTypography, ThemeToggle } from '@admin-ds/components';
+import {
+	AdsAdminShell,
+	AdsOrganizationSwitcher,
+	useAdsAdminShell,
+} from '@dvmarques/admin-ds-admin';
+import {
+	AdsBadge,
+	AdsButton,
+	AdsCard,
+	AdsIcon,
+	AdsTypography,
+	ThemeToggle,
+} from '@dvmarques/admin-ds-components';
 import { useState, type CSSProperties } from 'react';
 
-const meta = {
+const meta: Meta<typeof AdsAdminShell> = {
 	title: 'Layout/Admin Shell',
+	component: AdsAdminShell,
 	tags: ['autodocs'],
+	argTypes: {
+		layout: {
+			description:
+				'standard preserva o layout normal; sidebar-header alinha o topo da Sidebar ao Header.',
+			options: ['standard', 'sidebar-header'],
+			control: 'select',
+			table: {
+				type: { summary: "'standard' | 'sidebar-header'" },
+				defaultValue: { summary: 'standard' },
+			},
+		},
+		collapsed: {
+			description:
+				'Estado controlado de recolhimento da navegação desktop; não abre nem fecha o drawer móvel.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'uncontrolled' } },
+		},
+		defaultCollapsed: {
+			description: 'Valor inicial de recolhimento desktop na variante não controlada.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+		mobileOpen: {
+			description: 'Estado controlado de abertura do drawer no mobile, independente de collapsed.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'uncontrolled' } },
+		},
+		defaultMobileOpen: {
+			description: 'Valor inicial da abertura do drawer móvel na variante não controlada.',
+			table: { type: { summary: 'boolean' }, defaultValue: { summary: 'false' } },
+		},
+	},
 	parameters: {
 		layout: 'fullscreen',
 		docs: {
 			description: {
 				component:
-					'Estrutura administrativa com header, sidebar e conteúdo principal. A sidebar persistente (desktop) e o drawer (mobile) nunca são montados ao mesmo tempo. `collapsed` afeta somente a sidebar desktop; `mobileOpen` é um estado separado. Ambos aceitam modo controlado e não controlado. A persistência de preferências pertence à aplicação consumidora.',
+					'Estrutura administrativa com header, sidebar e conteúdo principal. A sidebar persistente (desktop) e o drawer (mobile) nunca são montados ao mesmo tempo. `collapsed` afeta somente a sidebar desktop; `mobileOpen` é um estado separado. Ambos aceitam modo controlado e não controlado. A persistência de preferências pertence à aplicação consumidora. **Composição pública:** AdsAdminShell.Header e .Body definem a estrutura; .Sidebar e .Main definem as regiões; .NavigationTrigger controla o drawer mobile; .SidebarToggle alterna a largura desktop. .Navigation, .NavigationSection, .NavigationGroup e .NavigationItem compõem o menu acessível com contexto do shell. A propriedade opcional Sidebar.header permite o branding alinhado em layout=sidebar-header. O hook useAdsAdminShell lê o contexto, e não deve ser usado fora de AdsAdminShell. As partes aninhadas não são inferidas individualmente pelo docgen: consulte as stories de navegação hierárquica, menu móvel e rolagem independente e os contratos de types em packages/admin/src/admin-shell.tsx e sidebar-navigation.tsx. As ações por teclado mantêm foco e rótulos ARIA.',
 			},
 		},
 	},
-} satisfies Meta;
+};
 export default meta;
 type Story = StoryObj<typeof meta>;
 
@@ -98,9 +139,9 @@ function HeaderContent() {
 			<AdsAdminShell.NavigationTrigger />
 			<AdsAdminShell.SidebarToggle />
 			<AdsTypography as="strong" variant="heading4">
-				Admin Abril
+				Admin Demo
 			</AdsTypography>
-			<div className="ml-auto flex items-center gap-3">
+			<div className="ml-auto flex flex-wrap items-center gap-2">
 				<AdsBadge>Produção</AdsBadge>
 				<ThemeToggle />
 				<AdsButton size="sm" variant="secondary">
@@ -131,6 +172,74 @@ function ShellExample(props: Omit<React.ComponentProps<typeof AdsAdminShell>, 'c
 
 export const Default: Story = {
 	render: () => <ShellExample />,
+};
+
+export const HierarchicalNavigation: Story = {
+	name: 'Navegação com seções, grupos e itens',
+	render: () => (
+		<AdsAdminShell>
+			<AdsAdminShell.Header>
+				<HeaderContent />
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar mobileTitle="Menu">
+					<AdsAdminShell.Navigation>
+						<AdsAdminShell.NavigationSection label="Componentes">
+							<AdsAdminShell.NavigationGroup label="Básicos" icon={<AdsIcon name="plus" />} open>
+								<AdsAdminShell.NavigationItem>
+									<a href="#button" aria-current="page">
+										Button
+									</a>
+								</AdsAdminShell.NavigationItem>
+								<AdsAdminShell.NavigationItem>
+									<a href="#badge">Badge</a>
+								</AdsAdminShell.NavigationItem>
+							</AdsAdminShell.NavigationGroup>
+							<AdsAdminShell.NavigationGroup label="Formulários" icon={<AdsIcon name="calendar" />}>
+								<AdsAdminShell.NavigationItem>
+									<a href="#input">Input</a>
+								</AdsAdminShell.NavigationItem>
+							</AdsAdminShell.NavigationGroup>
+						</AdsAdminShell.NavigationSection>
+					</AdsAdminShell.Navigation>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					<PageContent />
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	),
+};
+
+/** Desktop: header e sidebar ficam fixos; sidebar e conteúdo rolam de forma independente. */
+export const LongPageIndependentScroll: Story = {
+	name: 'Página longa com rolagem independente',
+	render: () => (
+		<AdsAdminShell>
+			<AdsAdminShell.Header>
+				<HeaderContent />
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar mobileTitle="Menu">
+					<AdsAdminShell.Navigation>
+						<AdsAdminShell.NavigationSection label="Páginas">
+							{Array.from({ length: 40 }, (_, index) => (
+								<AdsAdminShell.NavigationItem key={index}>
+									<a href={`#pagina-${index + 1}`}>Página {index + 1}</a>
+								</AdsAdminShell.NavigationItem>
+							))}
+						</AdsAdminShell.NavigationSection>
+					</AdsAdminShell.Navigation>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					{Array.from({ length: 12 }, (_, index) => (
+						<PageContent key={index} />
+					))}
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	),
+	parameters: { layout: 'fullscreen' },
 };
 
 export const DesktopCollapsed: Story = {
@@ -215,7 +324,7 @@ export const CustomTrigger: Story = {
 		<AdsAdminShell>
 			<AdsAdminShell.Header>
 				<AdsTypography as="strong" variant="heading4">
-					Admin Abril
+					Admin Demo
 				</AdsTypography>
 				<AdsAdminShell.NavigationTrigger className="ml-auto" label="Abrir menu principal" />
 			</AdsAdminShell.Header>
@@ -246,4 +355,109 @@ export const TokenCustomization: Story = {
 			<ShellExample />
 		</div>
 	),
+};
+
+function SidebarBrand() {
+	const { collapsed, isDesktop } = useAdsAdminShell();
+	return (
+		<>
+			<div
+				style={{
+					display: 'flex',
+					gap: 'var(--ads-spacing-2)',
+					alignItems: 'center',
+					minWidth: 0,
+					flex: 1,
+					marginInlineStart:
+						isDesktop && !collapsed
+							? 'calc((var(--ads-admin-shell-sidebar-width-collapsed) - 1px - 30px) / 2 - var(--ads-spacing-4))'
+							: 0,
+				}}
+			>
+				<img src="./admin-ds-favicon.svg" width={30} height={30} alt="" />
+				<strong className="ads-admin-shell-sidebar-label" style={{ overflowWrap: 'anywhere' }}>
+					Admin DS
+				</strong>
+			</div>
+			<AdsAdminShell.SidebarToggle
+				title={collapsed && isDesktop ? 'Expandir barra lateral' : 'Recolher barra lateral'}
+			/>
+		</>
+	);
+}
+function SidebarBrandShell({
+	organization = false,
+	collapsed = false,
+}: {
+	organization?: boolean;
+	collapsed?: boolean;
+}) {
+	return (
+		<AdsAdminShell layout="sidebar-header" defaultCollapsed={collapsed}>
+			<AdsAdminShell.Header>
+				<AdsAdminShell.NavigationTrigger />
+				<div className="ml-auto">
+					<ThemeToggle />
+				</div>
+			</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar header={<SidebarBrand />}>
+					{organization && (
+						<AdsOrganizationSwitcher
+							organizations={[
+								{
+									id: 'demo',
+									name: 'Organização de demonstração',
+									initials: 'OD',
+									avatarTone: 'primary',
+								},
+							]}
+							value="demo"
+						/>
+					)}
+					<AdsAdminShell.Navigation>
+						<AdsAdminShell.NavigationItem>
+							<a href="#overview" aria-current="page">
+								<span aria-hidden="true" className="ads-sidebar-icon">
+									Vg
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Visão geral</span>
+							</a>
+						</AdsAdminShell.NavigationItem>
+						<AdsAdminShell.NavigationItem>
+							<a href="#catalog">
+								<span aria-hidden="true" className="ads-sidebar-icon">
+									<AdsIcon name="search" />
+								</span>
+								<span className="ads-admin-shell-sidebar-label">Catálogo</span>
+							</a>
+						</AdsAdminShell.NavigationItem>
+					</AdsAdminShell.Navigation>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>
+					<PageContent />
+				</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+		</AdsAdminShell>
+	);
+}
+export const SidebarBranding: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'No desktop, a coluna de ícones mantém sua posição horizontal ao recolher ou expandir, centralizada no destaque selecionado da barra compacta mesmo com scrollbar nativa. O avatar da organização compartilha essa coluna.',
+			},
+		},
+	},
+	name: 'Marca na sidebar, sem organização',
+	render: () => <SidebarBrandShell />,
+};
+export const SidebarBrandingWithOrganization: Story = {
+	name: 'Marca na sidebar, com organização',
+	render: () => <SidebarBrandShell organization />,
+};
+export const SidebarBrandingCollapsed: Story = {
+	name: 'Marca na sidebar recolhida',
+	render: () => <SidebarBrandShell organization collapsed />,
 };

@@ -46,6 +46,16 @@ describe('OverviewContent', () => {
 		expect(html).toMatch(/<h2[^>]*>Atividade recente<\/h2>/);
 	});
 
+	it('renders a sparkline with a textual alternative and a positive drop for cancellations', () => {
+		const html = renderOverview();
+
+		expect((html.match(/class="ads-sparkline /g) ?? []).length).toBe(overviewIndicators.length);
+		expect(html).toContain('Evolução de Cancelamentos, últimos 12 meses: 12 pontos');
+		const cancellations = overviewIndicators.find((item) => item.id === 'cancellations');
+		expect(cancellations).toMatchObject({ trend: 'down', sentiment: 'positive' });
+		expect(html).toMatch(/data-sentiment="positive" data-trend="down"/);
+	});
+
 	it('exposes a single main heading', () => {
 		expect(renderOverview().match(/<h1[\s>]/g)).toHaveLength(1);
 	});

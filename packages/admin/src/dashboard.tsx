@@ -1,6 +1,15 @@
-import { AdsCard, AdsProgress, AdsSkeleton, type AdsProgressProps } from '@admin-ds/components';
+import {
+	AdsCard,
+	AdsEmptyState,
+	AdsProgress,
+	AdsSkeleton,
+	AdsSparkline,
+	type AdsProgressProps,
+	type AdsSparklineProps,
+} from '@dvmarques/admin-ds-components';
 import { useId, type HTMLAttributes, type ReactNode } from 'react';
 import { classNames } from './class-names.js';
+import { hasDashboardEmpty } from './dashboard-empty.js';
 
 export type AdsMetricTrend = 'up' | 'down' | 'neutral';
 export type AdsMetricSentiment = 'positive' | 'negative' | 'neutral';
@@ -41,6 +50,9 @@ function TrendIcon({ trend }: { trend: AdsMetricTrend }) {
 	);
 }
 
+/** Props do `AdsSparkline` do card. A cor do traço vem do `sentiment` do card, não de `tone`. */
+export type AdsMetricSparklineProps = Omit<AdsSparklineProps, 'tone'>;
+
 export interface AdsMetricCardProps extends Omit<HTMLAttributes<HTMLDivElement>, 'title'> {
 	title: ReactNode;
 	value?: ReactNode;
@@ -53,11 +65,22 @@ export interface AdsMetricCardProps extends Omit<HTMLAttributes<HTMLDivElement>,
 	sentiment?: AdsMetricSentiment;
 	description?: ReactNode;
 	progress?: AdsProgressProps;
+	/** Evolução da métrica abaixo da variação. É omitida sem pontos válidos e fora do estado normal. */
+	sparkline?: AdsMetricSparklineProps;
 	loading?: boolean;
 	loadingLabel?: string;
 	error?: ReactNode;
 	/** Conteúdo exibido quando não há dados, por exemplo um texto curto. */
 	empty?: ReactNode;
+}
+
+/** Texto ou número vira um `AdsEmptyState` compacto; nós React são renderizados como informados. */
+function renderEmpty(empty: ReactNode) {
+	return typeof empty === 'string' || typeof empty === 'number' ? (
+		<AdsEmptyState size="compact" title={empty} />
+	) : (
+		empty
+	);
 }
 
 /** Card de métrica (KPI) sem regras de negócio. A tendência usa ícone e texto, nunca só cor. */
@@ -71,18 +94,21 @@ export function AdsMetricCard({
 	loadingLabel = 'Carregando métrica',
 	progress,
 	sentiment,
+	sparkline,
 	title,
 	trend,
 	trendLabel,
 	value,
 	...props
 }: AdsMetricCardProps) {
+	const effectiveSentiment = sentiment ?? defaultSentiments[trend ?? 'neutral'];
 	let body: ReactNode;
 	if (loading) {
 		body = (
 			<div className="ads-metric-card-loading">
 				<AdsSkeleton className="ads-metric-card-skeleton-value" label={loadingLabel} />
 				<AdsSkeleton className="ads-metric-card-skeleton-change" />
+				{sparkline ? <AdsSkeleton className="ads-metric-card-skeleton-sparkline" /> : null}
 			</div>
 		);
 	} else if (error) {
@@ -91,8 +117,8 @@ export function AdsMetricCard({
 				{error}
 			</div>
 		);
-	} else if (empty) {
-		body = <div className="ads-metric-card-message">{empty}</div>;
+	} else if (hasDashboardEmpty(empty)) {
+		body = <div className="ads-metric-card-message">{renderEmpty(empty)}</div>;
 	} else {
 		body = (
 			<>
@@ -100,7 +126,7 @@ export function AdsMetricCard({
 				{trend || change ? (
 					<p
 						className="ads-metric-card-change"
-						data-sentiment={sentiment ?? defaultSentiments[trend ?? 'neutral']}
+						data-sentiment={effectiveSentiment}
 						data-trend={trend}
 					>
 						{trend ? <TrendIcon trend={trend} /> : null}
@@ -111,6 +137,13 @@ export function AdsMetricCard({
 						) : null}
 						{change}
 					</p>
+				) : null}
+				{sparkline ? (
+					<AdsSparkline
+						{...sparkline}
+						className={classNames('ads-metric-card-sparkline', sparkline.className)}
+						tone={effectiveSentiment === 'neutral' ? 'default' : effectiveSentiment}
+					/>
 				) : null}
 				{description ? <p className="ads-metric-card-description">{description}</p> : null}
 				{progress ? <AdsProgress {...progress} /> : null}
@@ -199,8 +232,8 @@ export function AdsDashboardPanel({
 				{errorActions ? <div className="ads-dashboard-panel-actions">{errorActions}</div> : null}
 			</div>
 		);
-	} else if (empty) {
-		body = empty;
+	} else if (hasDashboardEmpty(empty)) {
+		body = renderEmpty(empty);
 	} else {
 		body = children;
 	}

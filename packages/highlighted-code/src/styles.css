@@ -1,0 +1,148 @@
+.ads-highlighted-code-snippet {
+	display: flex;
+	flex-direction: column;
+	min-width: 0;
+	max-width: 100%;
+	border: 1px solid var(--ads-color-border, #d4d4d8);
+	border-radius: var(--ads-radius-md, 0.375rem);
+	background: var(--ads-color-surface-muted, #f4f4f5);
+	color: var(--ads-color-text, #18181b);
+	font-family: var(--ads-typography-font-family-mono, ui-monospace, monospace);
+	font-size: 0.875rem;
+	line-height: 1.5;
+}
+
+.ads-highlighted-code-snippet__header {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 0.75rem;
+	padding: 0.5rem 0.75rem;
+	border-bottom: 1px solid var(--ads-color-border, #d4d4d8);
+	background: var(--ads-color-surface, #fff);
+}
+
+.ads-highlighted-code-snippet__language {
+	font-size: 0.75rem;
+	font-weight: 600;
+	text-transform: uppercase;
+	letter-spacing: 0.04em;
+	color: var(--ads-color-text-muted, #52525b);
+}
+
+.ads-highlighted-code-snippet__copy {
+	font: inherit;
+	font-size: 0.8125rem;
+	font-weight: 500;
+	padding: 0.25rem 0.625rem;
+	border-radius: var(--ads-radius-sm, 0.25rem);
+	border: 1px solid var(--ads-color-border, #d4d4d8);
+	background: var(--ads-color-surface, #fff);
+	color: var(--ads-color-text, #18181b);
+	cursor: pointer;
+}
+
+.ads-highlighted-code-snippet__copy:hover {
+	background: var(--ads-color-surface-hover, #f4f4f5);
+}
+
+.ads-highlighted-code-snippet__copy:focus-visible {
+	outline: 2px solid var(--ads-color-focus-ring, #2563eb);
+	outline-offset: 2px;
+}
+
+/* A região de status fica sempre montada; vazia, não ocupa espaço. */
+.ads-highlighted-code-snippet__feedback {
+	margin: 0;
+	padding: 0.25rem 0.75rem 0;
+	font-size: 0.8125rem;
+	color: var(--ads-color-text-muted, #52525b);
+}
+
+.ads-highlighted-code-snippet__feedback:empty {
+	padding: 0;
+}
+
+/*
+ * Cores por tema, com as regras dos tokens (`:root`/light, dark e prefers-color-scheme sem atributo):
+ * valem pela herança do `[data-theme]` válido mais próximo e servem ao `auto` antes de resolver.
+ * Depois, `[data-resolved-theme]` as define no próprio snippet.
+ */
+:root,
+[data-theme='light'],
+.ads-highlighted-code-snippet[data-resolved-theme='light'] {
+	--ads-hc-surface: #ffffff;
+	--ads-hc-text: #000000;
+	--ads-hc-line-number: #6e7681;
+}
+
+[data-theme='dark'],
+.ads-highlighted-code-snippet[data-resolved-theme='dark'] {
+	--ads-hc-surface: #1e1e1e;
+	--ads-hc-text: #d4d4d4;
+	--ads-hc-line-number: #8b8b8b;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme]) {
+		--ads-hc-surface: #1e1e1e;
+		--ads-hc-text: #d4d4d4;
+		--ads-hc-line-number: #8b8b8b;
+	}
+}
+
+.ads-highlighted-code-snippet__viewport {
+	position: relative;
+	overflow: auto;
+	max-width: 100%;
+	padding: 0.75rem 0;
+	background: var(--ads-hc-surface, #ffffff);
+	color: var(--ads-hc-text, #000000);
+}
+
+.ads-highlighted-code-snippet--wrap .ads-highlighted-code-snippet__line-content {
+	white-space: pre-wrap;
+	word-break: break-word;
+}
+
+.ads-highlighted-code-snippet:not(.ads-highlighted-code-snippet--wrap)
+	.ads-highlighted-code-snippet__line-content {
+	white-space: pre;
+}
+
+.ads-highlighted-code-snippet__pre {
+	margin: 0;
+	padding: 0 0.75rem;
+	tab-size: 2;
+}
+
+.ads-highlighted-code-snippet__pre:focus-visible {
+	outline: 2px solid var(--ads-color-focus-ring, #2563eb);
+	outline-offset: 2px;
+}
+
+.ads-highlighted-code-snippet__line {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	min-width: min-content;
+}
+
+/* O número vive sobre o fundo do tema do snippet, não da página: cor própria por tema (≥ 4,5:1). */
+.ads-highlighted-code-snippet__line-number {
+	flex: 0 0 auto;
+	width: 2.75rem;
+	padding-right: 0.75rem;
+	text-align: right;
+	user-select: none;
+	color: var(--ads-hc-line-number, #6e7681);
+}
+
+.ads-highlighted-code-snippet__line-content {
+	flex: 1 1 auto;
+	min-width: 0;
+}
+
+.ads-highlighted-code-snippet__plain {
+	display: block;
+}

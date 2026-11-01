@@ -1,5 +1,5 @@
-import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@admin-ds/admin';
-import { AdsList, AdsListItem, AdsProgress, AdsTypography } from '@admin-ds/components';
+import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@dvmarques/admin-ds-admin';
+import { AdsList, AdsListItem, AdsProgress, AdsTypography } from '@dvmarques/admin-ds-components';
 import type {
 	OverviewActivity,
 	OverviewIndicator,
@@ -15,7 +15,7 @@ interface OverviewContentProps {
 /** Presentational overview: receives its data as props so it renders the same anywhere. */
 export function OverviewContent({ indicators, progress, activity }: OverviewContentProps) {
 	return (
-		<div className="demo-page">
+		<div className="demo-page demo-overview">
 			<div className="demo-shell">
 				<header className="demo-section">
 					<p className="demo-kicker">Admin Design System</p>
@@ -39,6 +39,11 @@ export function OverviewContent({ indicators, progress, activity }: OverviewCont
 								description={indicator.note}
 								key={indicator.id}
 								role="group"
+								{...(indicator.sentiment ? { sentiment: indicator.sentiment } : {})}
+								sparkline={{
+									label: `Evolução de ${indicator.label}, últimos 12 meses`,
+									values: indicator.series,
+								}}
 								title={indicator.label}
 								trend={indicator.trend}
 								value={indicator.value}

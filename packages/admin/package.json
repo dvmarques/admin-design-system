@@ -1,6 +1,6 @@
 {
 	"name": "@dvmarques/admin-ds-admin",
-	"version": "0.1.0",
+	"version": "0.1.1",
 	"private": false,
 	"license": "MIT",
 	"type": "module",
@@ -20,12 +20,12 @@
 	},
 	"types": "./dist/index.d.ts",
 	"peerDependencies": {
-		"@dvmarques/admin-ds-components": "0.1.0",
+		"@dvmarques/admin-ds-components": "0.1.1",
 		"react": ">=18.2.0",
 		"react-dom": ">=18.2.0"
 	},
 	"devDependencies": {
-		"@dvmarques/admin-ds-components": "0.1.0"
+		"@dvmarques/admin-ds-components": "0.1.1"
 	},
 	"scripts": {
 		"build:css": "node ./scripts/build-css.mjs",

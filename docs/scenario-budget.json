@@ -3,9 +3,7 @@
 		"entry": "scripts/scenarios/tokens.mjs",
 		"bytes": 3800,
 		"gzipBytes": 1300,
-		"cssFiles": [
-			"packages/tokens/dist/tokens.css"
-		],
+		"cssFiles": ["packages/tokens/dist/tokens.css"],
 		"cssBytes": 14300,
 		"cssGzipBytes": 1900
 	},
@@ -13,10 +11,7 @@
 		"entry": "scripts/scenarios/components.mjs",
 		"bytes": 33420,
 		"gzipBytes": 11880,
-		"cssFiles": [
-			"packages/tokens/dist/tokens.css",
-			"packages/components/dist/styles.css"
-		],
+		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
 		"cssBytes": 58000,
 		"cssGzipBytes": 9650
 	},
@@ -24,10 +19,7 @@
 		"entry": "scripts/scenarios/masked-input.mjs",
 		"bytes": 74100,
 		"gzipBytes": 20900,
-		"cssFiles": [
-			"packages/tokens/dist/tokens.css",
-			"packages/components/dist/styles.css"
-		],
+		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
 		"cssBytes": 58000,
 		"cssGzipBytes": 9650
 	},
@@ -35,10 +27,7 @@
 		"entry": "scripts/scenarios/highlighted-code.mjs",
 		"bytes": 1864000,
 		"gzipBytes": 416000,
-		"cssFiles": [
-			"packages/tokens/dist/tokens.css",
-			"packages/highlighted-code/dist/styles.css"
-		],
+		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/highlighted-code/dist/styles.css"],
 		"cssBytes": 16800,
 		"cssGzipBytes": 2600
 	},

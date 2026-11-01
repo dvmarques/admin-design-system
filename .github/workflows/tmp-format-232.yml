@@ -1,0 +1,48 @@
+name: Format Issue 232 (temporary)
+on:
+  pull_request:
+    types: [synchronize]
+permissions:
+  contents: read
+jobs:
+  format-232:
+    if: github.event.pull_request.head.ref == 'feat/232-ads-file-upload'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@d23441a48e516b6c34aea4fa41551a30e30af803 # v6
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - run: npm ci --ignore-scripts
+      - run: node scripts/catalog-snippets.mjs
+      - run: npx prettier --write "apps/admin-demo/app/(admin)/componentes/arquivos/page.tsx" "apps/admin-demo/app/(admin)/componentes/page.tsx" apps/admin-demo/app/catalogo/catalog-data.ts apps/admin-demo/app/catalogo/catalog-demos.tsx apps/admin-demo/app/catalogo/catalog-snippets.json apps/docs/src/file-upload.stories.tsx apps/docs/api-reference-notes.json CHANGELOG.md docs/integration.md docs/admin-demo-catalog.md e2e/file-upload.spec.ts openspec/changes/add-file-upload/proposal.md openspec/changes/add-file-upload/design.md openspec/changes/add-file-upload/specs/file-upload/spec.md openspec/changes/add-file-upload/tasks.md packages/components/src/file-upload.tsx packages/components/src/index.ts packages/components/tests/file-upload.test.tsx
+      - name: Emit canonical formatted file blobs
+        run: |
+          node --input-type=module <<'NODE'
+          import { readFileSync } from 'node:fs';
+          const paths = [
+            'apps/admin-demo/app/(admin)/componentes/arquivos/page.tsx',
+            'apps/admin-demo/app/(admin)/componentes/page.tsx',
+            'apps/admin-demo/app/catalogo/catalog-data.ts',
+            'apps/admin-demo/app/catalogo/catalog-demos.tsx',
+            'apps/admin-demo/app/catalogo/catalog-snippets.json',
+            'apps/docs/src/file-upload.stories.tsx',
+            'apps/docs/api-reference-notes.json',
+            'CHANGELOG.md',
+            'docs/integration.md',
+            'docs/admin-demo-catalog.md',
+            'e2e/file-upload.spec.ts',
+            'openspec/changes/add-file-upload/proposal.md',
+            'openspec/changes/add-file-upload/design.md',
+            'openspec/changes/add-file-upload/specs/file-upload/spec.md',
+            'openspec/changes/add-file-upload/tasks.md',
+            'packages/components/src/file-upload.tsx',
+            'packages/components/src/index.ts',
+            'packages/components/tests/file-upload.test.tsx'
+          ];
+          for (const path of paths) {
+            console.log('FORMATTED232::' + path + '::' + readFileSync(path).toString('base64'));
+          }
+          NODE

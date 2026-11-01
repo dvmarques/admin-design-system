@@ -125,6 +125,15 @@ export const catalogEntries = [
 		href: '/catalogo/masked-input',
 	},
 	{
+		name: 'AdsFileUpload',
+		group: 'Formulários',
+		slug: 'file-upload',
+		demo: 'FileUpload',
+		description:
+			'Seleção de arquivos com filtros e limites, estados acessíveis e sem envio HTTP.',
+		href: '/catalogo/file-upload',
+	},
+	{
 		name: 'AdsTextarea',
 		group: 'Formulários',
 		slug: 'textarea',

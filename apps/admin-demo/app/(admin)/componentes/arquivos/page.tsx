@@ -23,8 +23,9 @@ export default function FileImportPage() {
   };
 
   const simulate = () => {
-    if (busy || files.length !== 1) return;
-    const name = files[0].name;
+    const [first] = files;
+    if (busy || files.length !== 1 || !first) return;
+    const name = first.name;
     setBusy(true);
     window.setTimeout(() => {
       setBusy(false);

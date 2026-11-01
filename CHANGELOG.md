@@ -8,6 +8,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.2] - Em andamento
 
+#### Changed
+
+- Workflows do GitHub Actions atualizados para `actions/checkout` 7.0.1 e `actions/deploy-pages` 5.0.1 (Node 24), mantendo os pins por SHA. Sem alteração de dependências npm. (#276, #277)
+
 ### [0.1.1] - 31-out-2026
 
 #### Added

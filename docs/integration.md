@@ -2058,3 +2058,42 @@ export function Equipe() {
 O texto da opção selecionada é truncado com reticências dentro da caixa do controle, sem invadir a seta (o recuo de `2,25rem` é preservado, inclusive em RTL) e sem alargar o contêiner; o rótulo completo continua como texto da opção, exposto pela semântica nativa. O estilo é escopado a `select.ads-select` simples (não afeta `multiple` nem os demais controles de `formControlClasses()`). O placeholder aparece com a cor `--ads-color-text-muted` e texto explícito; a atenuação é só reforço visual (no tema escuro e com `prefers-contrast: more` ela quase não difere do texto selecionado), e o diferencial é o texto explícito da ausência. Em `forced-colors` valem as cores do sistema. A atenuação usa `:has()` (navegadores modernos); sem suporte, só ela se perde, e o restante segue igual.
 
 Limitações: a aparência da lista aberta é do navegador; as validações automatizadas do `placeholder` usam React 19.2; o mesmo cenário de prova (45 verificações em Chromium: required, FormData, reset, controlado/não controlado, SSR e hidratação) foi executado uma vez, fora do repositório, com React 18.3.1, sem falhas nem avisos (o intervalo de peer `>=18.2` não tem teste automatizado recorrente) e Firefox e WebKit são verificados pela CI do repositório. Veja as stories `Forms/Select` e o catálogo `/catalogo/select`.
+
+## Seleção e validação de arquivos — AdsFileUpload (#232)
+
+O componente `AdsFileUpload` recebe `accept` (extensões, MIME e curinga como `image/*`), `maxSizeBytes`, `maxFiles`, `multiple`, `files`/`defaultFiles` e callbacks tipados `onFilesChange(files, reason)` e `onReject(rejections)`. Ele não executa upload HTTP. O `accept` do navegador e a validação adicional em JavaScript são apenas **filtros de experiência**; o backend deve validar conteúdo, tamanho e permissões antes de aceitar arquivos.
+
+A cada escolha, a lista selecionada substitui a anterior; uma escolha inteiramente rejeitada preserva os arquivos anteriores. O seletor é limpo após cada escolha para permitir escolher novamente o mesmo arquivo; cancelar não altera a seleção. O consumidor decide quando desmontar o controle ou limpar `files` ao fechar um diálogo.
+
+```tsx
+'use client';
+
+import { useState } from 'react';
+import { AdsFileUpload, AdsButton } from '@dvmarques/admin-ds-components';
+
+export function ImportarArquivo() {
+	const [files, setFiles] = useState<File[]>([]);
+	return (
+		<section>
+			<AdsFileUpload
+				label="Arquivo de dados"
+				accept=".csv,application/json"
+				maxSizeBytes={2_000_000}
+				files={files}
+				onFilesChange={setFiles}
+				onReject={(rejections) => console.warn('Arquivos rejeitados:', rejections.length)}
+			/>
+			<AdsButton
+				disabled={files.length !== 1}
+				onClick={() => {
+					/* Envio pelo consumidor */
+				}}
+			>
+				Importar
+			</AdsButton>
+		</section>
+	);
+}
+```
+
+Para um fluxo modal, componha `AdsDialog` e `AdsButton` na aplicação. Consulte a rota de demonstração `/componentes/arquivos` para um envio simulado sem backend. Drag-and-drop não integra o MVP: o botão nativo acessível é o caminho de seleção obrigatório. O componente deve ser usado em uma fronteira Client Component no App Router; não requer Next.js dentro da biblioteca.

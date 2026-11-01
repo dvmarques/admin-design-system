@@ -31,6 +31,7 @@ const clientModules = [
 	'breadcrumb-collapse',
 	'select-placeholder',
 	'masked-input',
+	'file-upload',
 ];
 const serverModules = ['navigation', 'select'];
 for (const name of clientModules) {

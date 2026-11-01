@@ -8,6 +8,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 ### [0.1.2] - Em andamento
 
+#### Added
+
+- Novo `AdsFileUpload` com seleção nativa, filtros, limites, feedback acessível, estados controlados e exemplo de importação simulada no Admin Demo/Storybook; sem upload HTTP. (change `add-file-upload`, #232)
+
 #### Changed
 
 - Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)

@@ -108,6 +108,18 @@ function inspectArchive(item, bytes) {
 		'git+https://github.com/dvmarques/admin-design-system.git',
 		'Repositório de origem inesperado.',
 	);
+	for (const field of [
+		'dependencies',
+		'devDependencies',
+		'peerDependencies',
+		'optionalDependencies',
+	]) {
+		for (const [name, value] of Object.entries(manifest[field] ?? {})) {
+			if (PACKAGE_ORDER.map(NAME).includes(name)) {
+				assert.equal(value, item.version, 'Dependência interna divergente: ' + name);
+			}
+		}
+	}
 	if (item.name === NAME('admin')) {
 		assert.equal(
 			manifest.peerDependencies?.[NAME('components')],

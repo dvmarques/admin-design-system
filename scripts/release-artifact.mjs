@@ -10,7 +10,10 @@ import { makePlan, PACKAGE_ORDER, registryVersion, verifyPlan } from './npm-publ
 
 export const REPOSITORY = 'dvmarques/admin-design-system';
 export const PREPARE_WORKFLOW = '.github/workflows/release-prepare.yml';
+export const PYTHON_COMMAND = process.platform === 'win32' ? 'python' : 'python3';
 const MAX_ARCHIVE = 100 * 1024 * 1024;
+const API_TIMEOUT_MS = 30_000;
+const DOWNLOAD_TIMEOUT_MS = 120_000;
 const integer = (value) => Number.isSafeInteger(Number(value)) && Number(value) > 0;
 
 export function artifactName(version, sha, runId, attempt) {
@@ -42,7 +45,12 @@ export function validateOrigin({
 	assert.equal(run.head_repository?.id, repository.id, 'Run de fork.');
 	assert.equal(run.event, 'workflow_dispatch', 'Evento não autorizado.');
 	assert.equal(run.head_branch, 'develop', 'Branch não autorizada.');
-	assert.equal(run.path, PREPARE_WORKFLOW, 'Workflow não autorizado.');
+	assert.equal(typeof run.path, 'string', 'Caminho do workflow ausente.');
+	const [runWorkflowPath, runWorkflowRef] = run.path.split('@');
+	assert.equal(runWorkflowPath, PREPARE_WORKFLOW, 'Workflow não autorizado.');
+	if (runWorkflowRef !== undefined) {
+		assert.equal(runWorkflowRef, 'refs/heads/develop', 'Ref do workflow não autorizada.');
+	}
 	assert.equal(workflow.path, PREPARE_WORKFLOW);
 	assert.equal(run.workflow_id, workflow.id, 'Workflow ID divergente.');
 	assert.equal(run.status, 'completed');
@@ -78,11 +86,12 @@ export function extractArchive(archive, destination, version) {
 		...PACKAGE_ORDER.map((part) => `dvmarques-admin-ds-${part}-${version}.tgz`),
 	];
 	execFileSync(
-		'python3',
+		PYTHON_COMMAND,
 		[
+			'-I',
 			'-c',
 			`
-import json, pathlib, stat, sys, zipfile
+import json, os, pathlib, stat, sys, zipfile
 archive, destination, expected = sys.argv[1], pathlib.Path(sys.argv[2]), json.loads(sys.argv[3])
 with zipfile.ZipFile(archive) as z:
     entries = z.infolist()
@@ -91,12 +100,19 @@ with zipfile.ZipFile(archive) as z:
     if sum(x.file_size for x in entries) > 150 * 1024 * 1024:
         raise ValueError('ZIP excede limite descompactado')
     destination.mkdir(parents=True, exist_ok=False)
+    destination_real = destination.resolve(strict=True)
     for x in entries:
         mode = x.external_attr >> 16
         if stat.S_IFMT(mode) not in (0, stat.S_IFREG) or x.flag_bits & 1:
             raise ValueError('ZIP contém link, diretório ou arquivo cifrado')
-        with (destination / x.filename).open('xb') as target:
-            target.write(z.read(x))
+        target_path = destination / x.filename
+        if target_path.parent.resolve(strict=True) != destination_real:
+            raise ValueError('Caminho ZIP fora do diretório validado')
+        descriptor = os.open(target_path, os.O_WRONLY | os.O_CREAT | os.O_EXCL | getattr(os, 'O_NOFOLLOW', 0), 0o600)
+        with os.fdopen(descriptor, 'wb') as target:
+            with z.open(x) as source:
+                while chunk := source.read(64 * 1024):
+                    target.write(chunk)
 `,
 			archive,
 			destination,
@@ -108,6 +124,7 @@ with zipfile.ZipFile(archive) as z:
 
 async function api(path, { redirect = 'follow' } = {}) {
 	const response = await globalThis.fetch(`https://api.github.com/repos/${REPOSITORY}${path}`, {
+		signal: globalThis.AbortSignal.timeout(API_TIMEOUT_MS),
 		headers: {
 			authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
 			accept: 'application/vnd.github+json',
@@ -124,6 +141,11 @@ async function api(path, { redirect = 'follow' } = {}) {
 }
 
 async function boundedBytes(response) {
+	const contentLength = response.headers.get('content-length');
+	if (contentLength !== null) {
+		assert.match(contentLength, /^\d+$/, 'Tamanho do artifact inválido.');
+		assert.ok(Number(contentLength) <= MAX_ARCHIVE, 'Artifact excede limite de tamanho.');
+	}
 	const chunks = [];
 	let size = 0;
 	for await (const chunk of response.body) {
@@ -187,7 +209,9 @@ export async function fetchArtifact(id, version, sha, destination) {
 	const location = redirect.headers.get('location');
 	assert.ok(location?.startsWith('https://'), 'URL de download inválida.');
 	// Never send GitHub credentials to the signed blob URL or expose that URL in logs.
-	const response = await globalThis.fetch(location);
+	const response = await globalThis.fetch(location, {
+		signal: globalThis.AbortSignal.timeout(DOWNLOAD_TIMEOUT_MS),
+	});
 	assert.ok(response.ok, `Download do artifact falhou: HTTP ${response.status}`);
 	const bytes = await boundedBytes(response);
 	verifyArchiveDigest(bytes, artifact.digest);

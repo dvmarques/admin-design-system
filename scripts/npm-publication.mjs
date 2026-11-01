@@ -12,6 +12,7 @@ export const PACKAGE_ORDER = ['tokens', 'components', 'highlighted-code', 'admin
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const REGISTRY = 'https://registry.npmjs.org';
 const NAME = (part) => '@dvmarques/admin-ds-' + part;
+const INTERNAL_PACKAGE_NAMES = new Set(PACKAGE_ORDER.map(NAME));
 
 function verifyVersion(version) {
 	if (!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version)) {
@@ -50,11 +51,14 @@ export async function makePlan(version, releaseSha, directory, root = ROOT) {
 	const rootManifest = JSON.parse(await readFile(join(root, 'package.json'), 'utf8'));
 	assert.equal(rootManifest.version, version, 'Raiz não coincide com release aprovada.');
 	const entries = await readdir(directory);
-	const actualTarballs = entries.filter((name) => name.endsWith('.tgz')).sort();
 	const expectedTarballs = PACKAGE_ORDER.map(
 		(part) => 'dvmarques-admin-ds-' + part + '-' + version + '.tgz',
 	).sort();
-	assert.deepEqual(actualTarballs, expectedTarballs, 'Inventário de tarballs inesperado.');
+	assert.deepEqual(
+		entries.sort(),
+		expectedTarballs,
+		'Inventário de tarballs/artifacts inesperado.',
+	);
 	const packages = [];
 	for (const part of PACKAGE_ORDER) {
 		const name = NAME(part);
@@ -115,7 +119,7 @@ function inspectArchive(item, bytes) {
 		'optionalDependencies',
 	]) {
 		for (const [name, value] of Object.entries(manifest[field] ?? {})) {
-			if (PACKAGE_ORDER.map(NAME).includes(name)) {
+			if (INTERNAL_PACKAGE_NAMES.has(name)) {
 				assert.equal(value, item.version, 'Dependência interna divergente: ' + name);
 			}
 		}
@@ -211,6 +215,7 @@ export async function publishPlan(plan, { getVersion, publishTarball, sleep = de
 export async function registryVersion(name, version) {
 	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
 	const response = await globalThis.fetch(url, {
+		signal: globalThis.AbortSignal.timeout(30_000),
 		headers: { accept: 'application/json' },
 		cache: 'no-store',
 	});

@@ -11,6 +11,7 @@ import {
 	extractArchive,
 	fetchArtifact,
 	PREPARE_WORKFLOW,
+	PYTHON_COMMAND,
 	REPOSITORY,
 	validateOrigin,
 	verifyArchiveDigest,
@@ -32,7 +33,7 @@ function origin() {
 			id: 30,
 			run_attempt: 1,
 			workflow_id: 20,
-			path: PREPARE_WORKFLOW,
+			path: `${PREPARE_WORKFLOW}@refs/heads/develop`,
 			repository: { id: 10 },
 			head_repository: { id: 10 },
 			event: 'workflow_dispatch',
@@ -61,6 +62,9 @@ function origin() {
 test('origem exige run manual bem-sucedido do workflow em develop do mesmo repo', () => {
 	const input = origin();
 	assert.equal(validateOrigin(input).runId, '30');
+	const apiRunPath = structuredClone(input);
+	apiRunPath.run.path = `${PREPARE_WORKFLOW}@refs/heads/feature`;
+	assert.throws(() => validateOrigin(apiRunPath), /Ref do workflow não autorizada/);
 	const variants = [
 		(x) => {
 			x.run.event = 'pull_request';
@@ -79,6 +83,9 @@ test('origem exige run manual bem-sucedido do workflow em develop do mesmo repo'
 		},
 		(x) => {
 			x.run.path = '.github/workflows/ci.yml';
+		},
+		(x) => {
+			delete x.run.path;
 		},
 		(x) => {
 			x.run.workflow_id = 99;
@@ -175,7 +182,7 @@ async function fixture() {
 	}
 	await writeFile(join(directory, 'publication-plan.json'), JSON.stringify(plan));
 	const archive = join(temporary, 'artifact.zip');
-	execFileSync('python3', [
+	execFileSync(PYTHON_COMMAND, [
 		'-c',
 		'import zipfile,pathlib,sys; p=pathlib.Path(sys.argv[1]); z=zipfile.ZipFile(sys.argv[2],"w"); [z.write(f,f.name) for f in p.iterdir()]; z.close()',
 		directory,
@@ -198,8 +205,11 @@ test('download pelo ID verifica ZIP, origem, plano e manifests do merge; reexecu
 	const originalFetch = globalThis.fetch;
 	try {
 		const requested = [];
-		globalThis.fetch = async (url) => {
+		const requestSignals = [];
+		let oversized = false;
+		globalThis.fetch = async (url, options = {}) => {
 			requested.push(url);
+			requestSignals.push(options.signal);
 			if (url.endsWith('/runs/30'))
 				return globalThis.Response.json({ ...fx.input.run, run_attempt: 2, conclusion: 'failure' });
 			if (url === 'https://blob.example/artifact.zip') return new globalThis.Response(fx.bytes);
@@ -227,6 +237,10 @@ test('download pelo ID verifica ZIP, origem, plano e manifests do merge; reexecu
 		}
 		assert.ok(requested.some((url) => url.endsWith('/runs/30/attempts/1')));
 		assert.ok(
+			requestSignals.every((signal) => signal instanceof globalThis.AbortSignal),
+			'Chamadas de API e download têm timeout.',
+		);
+		assert.ok(
 			!requested.some((url) => url.endsWith('/runs/30')),
 			'Re-run posterior não substitui evidência da tentativa original',
 		);
@@ -235,6 +249,33 @@ test('download pelo ID verifica ZIP, origem, plano e manifests do merge; reexecu
 			/Destino já existe/,
 		);
 		assert.ok(await readFile(join(fx.temporary, 'first', 'publication-plan.json')));
+		globalThis.fetch = async (url) => {
+			if (url === 'https://blob.example/artifact.zip') {
+				return new globalThis.Response(fx.bytes, {
+					headers: oversized ? { 'content-length': String(100 * 1024 * 1024 + 1) } : {},
+				});
+			}
+			if (url.endsWith('/zip')) {
+				return new globalThis.Response(null, {
+					status: 302,
+					headers: { location: 'https://blob.example/artifact.zip' },
+				});
+			}
+			const value = url.endsWith('/artifacts/40')
+				? fx.input.artifact
+				: url.endsWith('/runs/30/attempts/1')
+					? fx.input.run
+					: url.endsWith('/workflows/release-prepare.yml')
+						? fx.input.workflow
+						: fx.input.repository;
+			return globalThis.Response.json(value);
+		};
+		oversized = true;
+		await assert.rejects(
+			fetchArtifact('40', version, sha, join(fx.temporary, 'oversized')),
+			/Artifact excede limite/,
+		);
+		oversized = false;
 		fx.input.artifact.digest = 'sha256:' + 'f'.repeat(64);
 		await assert.rejects(
 			fetchArtifact('40', version, sha, join(fx.temporary, 'bad')),
@@ -261,7 +302,8 @@ test('extração recusa traversal, duplicatas, arquivos extra e links', async ()
 		extractArchive(fx.archive, join(fx.temporary, 'valid'), version);
 		for (const mode of ['traversal', 'duplicate', 'extra', 'symlink']) {
 			const archive = join(fx.temporary, mode + '.zip');
-			execFileSync('python3', [
+			execFileSync(PYTHON_COMMAND, [
+				'-I',
 				'-c',
 				`
 import zipfile,sys

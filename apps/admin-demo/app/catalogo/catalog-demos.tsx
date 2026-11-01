@@ -2146,7 +2146,7 @@ export function HighlightedCodeSnippetDemo() {
 export function FileUploadDemo() {
 	const [files, setFiles] = useState<File[]>([]);
 	return (
-		<div className="flex max-w-xl flex-col gap-3">
+		<div>
 			<AdsFileUpload
 				accept=".csv,.json"
 				files={files}

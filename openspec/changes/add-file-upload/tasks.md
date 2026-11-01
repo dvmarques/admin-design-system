@@ -11,7 +11,7 @@
 - [x] 2.1 Criar testes unitários para seleção, rejeições, remoção, limpeza, cancelamento, estado controlado, loading e acessibilidade; executar os testes.
 - [x] 2.2 Adicionar Storybook com estados vazio, selecionado, erro, desabilitado e carregando e verificar geração.
 - [x] 2.3 Incluir exemplo funcional no Admin Demo com `AdsDialog`/`AdsButton`, importação simulada sem backend; verificar o consumo do CSS compilado no Next.js.
-- [ ] 2.4 Cobrir fluxo de importação, teclado, acessibilidade e responsividade por E2E; executar e conferir resultados.
+- [x] 2.4 Cobrir fluxo de importação, teclado, acessibilidade e responsividade por E2E; executar e conferir resultados.
 - [x] 2.5 Documentar API, integração/limitações e registrar a change #232 no CHANGELOG da versão em andamento.
 
 ## 3. Gates e revisão

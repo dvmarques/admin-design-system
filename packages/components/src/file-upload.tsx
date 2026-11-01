@@ -109,7 +109,7 @@ export const AdsFileUpload = forwardRef<HTMLInputElement, AdsFileUploadProps>(fu
 
     const accepted: File[] = [];
     const rejected: AdsFileRejection[] = [];
-    const capacity = multiple ? Math.max(0, maxFiles ?? Infinity) : 1;
+    const capacity = Math.min(multiple ? Infinity : 1, Math.max(0, maxFiles ?? Infinity));
 
     for (const file of incoming) {
       let reason: AdsFileRejectionReason | undefined;

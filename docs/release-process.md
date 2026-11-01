@@ -132,17 +132,53 @@ O comportamento foi verificado em 2026-10-16 com a exclusão automática de head
 
 ## Publicação de quatro pacotes npm e GitHub Release (#195)
 
-**Somente após autorização humana da release** e integração de `release/X.Y.Z -> master` por merge commit, seguida do back-merge `release/X.Y.Z -> develop` aprovado e validado, abra **Actions > Publicar release** a partir de `develop` e informe a versão estável `X.Y.Z`. Não dispara em push ou PR. A fila `release-publication` serializa execuções, sem cancelar uma publicação parcialmente concluída.
+**Somente após autorização humana da release** e integração de `release/X.Y.Z -> master` por merge commit, seguida do back-merge `release/X.Y.Z -> develop` aprovado e validado, execute primeiro **Actions > Preparar artefatos npm**, em `develop`, com a versão estável `X.Y.Z`. Essa preparação não publica. Depois de revisar o resultado e autorizar a publicação separadamente, execute **Actions > Publicar release**, também em `develop`, informando a versão e o **artifact ID** aprovado (não o run ID). Não dispara em push ou PR. A fila `release-publication` serializa execuções, sem cancelar uma publicação parcialmente concluída.
 
 O identificador da publicação é **sempre a versão coordenada do commit de merge da release em master**, não o HEAD mais recente de master, nem a evolução posterior de develop. Exemplo: `release/0.1.1` aprovada publica exclusivamente `@dvmarques/admin-ds-*@0.1.1`, tag `v0.1.1` e GitHub Release `v0.1.1`. Essa versão é ilustrativa; a primeira ainda será escolhida pelo mantenedor.
 
-O workflow separa cinco jobs:
+### Preparar uma vez, publicar os mesmos bytes
 
-1. `resolve-validate` (leitura): identifica os dois merges exatos, compara changelog e versões, verifica predecessora, regras de reachability e integridade do estado remoto. Preserva a lógica atual de release.
-2. `prepare-npm` (leitura): checkout do commit **aprovado em master**, Node 24, npm 11.19.1, smoke externo `npm run verify:distribution` de Next.js com os quatro tarballs, tipos, CSS e hidratação; mantém esses **mesmos arquivos** no artifact do workflow e registra nomes/versões e hashes SHA-512/SHA-256 em `publication-plan.json`.
-3. `publish-npm` (OIDC, sem `contents: write`): verifica hash e identidade de cada artifact, consulta o registry, usa `npm publish <tarball> --access public --provenance` apenas quando a versão não existe, espera confirmação de cada pacote e verifica os quatro novamente. Ordem: **tokens → components → highlighted-code → admin**. Versão existente com `dist.integrity` diferente é erro fatal; não sobrescrever ou apagar. `components` precisa estar confirmado antes de `admin`.
-4. `verify-registry` (somente leitura): instala os quatro pacotes **por nome e versão diretamente do npm**, executa `npm audit signatures` e repete o smoke Next.js externo de tipos, CSS e hidratação; falhas bloqueiam a tag.
-5. `publish-github` (`contents: write`, sem OIDC): só após sucesso do npm **e do smoke no registry**, revalida estado remoto com lógica confiável, cria/recupera tag anotada `vX.Y.Z` no merge commit **exato** da PR para master, e GitHub Release com notas do changelog fechado. Nunca move tag, altera release divergente ou executa código arbitrário do commit com token de escrita.
+`release-prepare.yml` é um despacho manual separado, sem `id-token: write`, `contents: write`, comandos de publicação ou criação de tag/release. A fila `release-publication` também serializa preparação e publicação.
+
+1. `resolve-validate` preserva os gates de merges, back-merge, predecessora e changelog. A lógica de controle é fixada no SHA de `develop` que disparou a execução; o código a empacotar é o merge exato aprovado em `master`.
+2. `prepare-npm` constrói os quatro tarballs **uma única vez**, executa `verify:distribution` com smoke Next.js externo (tipos, CSS, Server/Client, hidratação) e gera `publication-plan.json`, incluindo SHA-256, SHA-512 e produtor (repositório, workflow SHA, run ID e tentativa). Nenhuma mudança de APIs, temas, acessibilidade ou estilos é introduzida por esse fluxo.
+3. Upload Artifacts v4, `overwrite: false`, nome `npm-release-X.Y.Z-MERGE_SHA-RUN_ID-ATTEMPT`. O ID identifica o objeto imutável; o nome sozinho não autoriza seu uso. O summary registra ID, digest ZIP e merge. A retenção solicitada é **90 dias**, limitada pelas configurações do repositório; conferir `expires_at` real. Não executar re-run da preparação: ela recusa tentativas posteriores e geração quando qualquer versão alvo já está no npm. O artifact da primeira tentativa continua válido mesmo se uma tentativa posterior falhar. Nova preparação, antes de qualquer bootstrap, é uma nova identidade e exige nova revisão; nunca substitui silenciosamente o ID selecionado.
+
+`release.yml` **não constrói ou empacota bibliotecas**. Recebe `version` e `artifact_id` obrigatórios:
+
+1. `resolve-validate` revalida o estado da release; `fetch-npm` consulta o artifact por ID na API do próprio repositório.
+2. `release-artifact.mjs` exige o workflow ID/path `release-prepare.yml`, evento `workflow_dispatch`, branch `develop`, repository/head-repository IDs locais, tentativa original concluída com sucesso e workflow SHA ancestral do checkout confiável. Recusa PRs, forks, outras branches/workflows e metadados incompletos. A evidência usa a tentativa original, não a situação mutável de um re-run posterior.
+3. O download verifica **fatalmente** SHA-256 do ZIP contra o digest da API; não depende do aviso não bloqueante da action de download. Extração só aceita os cinco arquivos regulares esperados, sem caminhos, links, duplicatas ou extras e com limites de tamanho. Verifica origem do plano, merge SHA, versão, nomes, hashes e manifests/dependências contra `git show` do merge aprovado. Nunca executa scripts do artifact.
+4. `publish-npm` repete o download/verificação do **mesmo ID**, em job separado com `id-token: write`, sem `contents: write` e sem credenciais npm permanentes. O plano e a integridade de todas as versões existentes são conferidos antes da primeira escrita. Publica somente ausentes, na ordem **tokens → components → highlighted-code → admin**. Existente idêntico é no-op; divergente bloqueia tudo.
+5. `verify-registry` instala por nome/versão, verifica assinaturas e executa smoke externo. `publish-github`, isolado com `contents: write` e sem OIDC, revalida estado e só então cria/recupera tag anotada e GitHub Release no merge exato, preservando todas as regras existentes.
+
+### Bootstrap da 0.1.1 sem backup pessoal permanente
+
+Após integrar esta evolução em `develop`, preparar `version=0.1.1`; o resolver deve selecionar o merge **`259aa29d621a085660d50ff4c5f5b721efeab1ea`**, sem modificar seu código. A preparação executa o build/smoke desse merge e usa a lógica confiável atual para selar o conjunto. Revisar a execução bem-sucedida e registrar na #195: artifact ID, URL/run/tentativa, merge SHA, digest do ZIP, `expires_at` e hashes do plano. Não publicar antes de confirmar os quatro nomes e o controle da conta npm com 2FA.
+
+Para baixar os bytes do bootstrap, em um checkout limpo e confiável de `develop` com histórico completo, Node 24, npm 11.19.1, Python 3 e `tar`, disponibilizar `GITHUB_TOKEN` **apenas no ambiente local** usando autenticação GitHub com leitura de Actions. Não colar token/comando de autenticação com valor literal em logs. Definir `GITHUB_REPOSITORY=dvmarques/admin-design-system` e `GITHUB_REF_NAME=develop` e executar:
+
+```bash
+node scripts/release-artifact.mjs fetch 0.1.1 259aa29d621a085660d50ff4c5f5b721efeab1ea ARTIFACT_ID
+```
+
+O comando consulta/valida o artifact e grava `npm-release-artifacts/` somente após verificar tudo, sem construir ou publicar. Um diretório de destino existente é preservado e causa erro; use checkout/diretório limpo para novo download. O titular então, **com autorização separada**, publica os quatro `.tgz` exatos, sem scripts e sem rebuild, com autenticação pessoal/2FA fora da CI, na ordem documentada. Confirmar `name`, `version` e `dist.integrity` após cada um. Os arquivos locais são temporários e podem ser apagados após conferência; a continuidade usa o mesmo ID hospedado no GitHub, não um ZIP pessoal.
+
+Depois do bootstrap, executar **Publicar release** com o mesmo ID somente após autorizar seus efeitos (inclusive tag/GitHub Release). Se todos já estiverem presentes com os mesmos hashes, a etapa npm será no-op. Isso **não valida OIDC real**. Não criar Trusted Publishers com antecedência para uma execução que só fará no-op; planejar o primeiro publish OIDC da próxima versão efetivamente publicável dentro da janela npm de dois dias.
+
+A provenance npm usa o contexto OIDC do workflow disparado em `develop`; esse workflow SHA e o merge SHA do código empacotado são identidades diferentes, ambas registradas no plano. Não afirmar que provenance comprova automaticamente o build no merge aprovado. Bootstrap manual não recebe automaticamente provenance OIDC; conferir atestação efetiva por pacote e manter esse critério pendente até haver evidência.
+
+### Expiração e interrupção segura
+
+Artifacts v4 são imutáveis por ID, mas **não são armazenamento permanente**. Exclusão do artifact/run ou expiração torna o download indisponível. Não há fallback para nome, outro run, novo ID, cache ou rebuild. O processo falha antes de publicar qualquer pacote. As mesmas verificações são repetidas nas reexecuções, sem reiniciar a preparação.
+
+- **Antes de qualquer pacote publicado:** se o conjunto expirar, uma nova preparação pode ser revisada e autorizada como novo conjunto/ID; o anterior não é recuperado nem considerado equivalente.
+- **Publicação parcial:** enquanto o ID estiver disponível, baixar novamente e retomar somente os ausentes, depois de comparar todos os hashes. Se expirar, **interromper e manter a release incompleta**, preservando os pacotes existentes; não tentar completar a mesma versão com builds novos. Sem fonte gerenciada e autenticada dos bytes originais faltantes, não há recuperação automática segura. Documentar os pacotes/hashes já publicados e deliberar uma estratégia de recuperação separada. Os gates da predecessora e a proibição de sobrescrita continuam valendo; não avançar para nova versão contornando esses gates.
+- **Todos os quatro já publicados:** o registry conserva os tarballs publicados e suas integridades; permite recuperar/verificar esses bytes contra o plano/evidências, sem backup pessoal. Isso não ressuscita o artifact GitHub expirado: o fluxo atual continua bloqueado e eventual conclusão de tag/GitHub Release exige procedimento de recuperação separado, revisado e autorizado.
+
+Planejar bootstrap e conclusão dentro da retenção; retenção, quota e exclusão administrativa são limitações operacionais explícitas. Não marcar release concluída por sucesso parcial nem exigir do mantenedor arquivo pessoal por tempo indefinido.
+
+Referências: [Artifacts imutáveis e digest](https://docs.github.com/en/actions/tutorials/store-and-share-data), [API de artifacts](https://docs.github.com/en/rest/actions/artifacts), [tentativas de workflow](https://docs.github.com/en/rest/actions/workflow-runs).
 
 `apps/*` e raiz nunca são publicados; somente os quatro pacotes com `private: false` e `publishConfig.access: public`. `highlighted-code` continua opcional e independente, sem contaminar o bundle principal com Shiki. Para a publicação npm são usados `npm@11.19.1` e Node 24 (OIDC suportado), `id-token: write` apenas no job npm e nenhuma credencial npm de longa duração.
 
@@ -157,7 +193,7 @@ O mantenedor deve acessar o npm sob a conta **dvmarques** e conferir o controle 
 - Allowed actions: habilitar explicitamente **`npm publish`** (não apenas `npm stage publish`); publicação direta foi aprovada.
 - Executar no GitHub-hosted runner, não self-hosted. Confirmar `repository.url` dos quatro manifests, conta do registry e ausência de credenciais no workflow.
 
-**Bootstrap da primeira publicação:** se os quatro nomes ainda não existem no npm e não for possível cadastrar Trusted Publishers antes de criá-los, o mantenedor deve primeiro publicar manualmente **os mesmos tarballs aprovados e inspecionados**, após a release ter sido integrada e autorizada, com autenticação pessoal/2FA fora do GitHub Actions. Não publicar versões provisórias nem fazer bootstrap a partir de novos builds: a imutabilidade de nome/versão exigirá identidade SHA-512 exata. Depois, cadastrar e confirmar Trusted Publisher de cada pacote, restringir tokens permanentes no painel npm e executar o workflow para verificar/no-op e criar tag/GitHub Release. Antes de executar o workflow de lançamento pela primeira vez, documentar a decisão de bootstrap aplicável e o mecanismo seguro de acesso aos tarballs daquele **commit exato**. **Nenhum bootstrap é executado na implementação da issue.** A configuração recém-criada deve ter primeiro publish via OIDC em até 48h, conforme a política atual do npm; portanto, planejar a configuração junto à release seguinte se o bootstrap inicial não contar como primeiro uso OIDC.
+**Bootstrap da primeira publicação:** seguir o procedimento de artifact ID acima. Se os nomes ainda não existem, o titular deve criar os pacotes pela via autenticada aprovada, usando os mesmos bytes validados. Nunca gerar versões provisórias. Configurar Trusted Publishers somente com autorização e planejamento do primeiro publish OIDC real, em até dois dias; um no-op não satisfaz essa condição. Nenhum bootstrap ou configuração é executado pela preparação.
 
 Documentação oficial: [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/), [npm trust github](https://docs.npmjs.com/cli/v11/commands/npm-trust/) e [provenance](https://docs.npmjs.com/generating-provenance-statements/). Não escrever senhas, códigos 2FA, tokens ou arquivos .npmrc autenticados no Git, CI ou issues.
 

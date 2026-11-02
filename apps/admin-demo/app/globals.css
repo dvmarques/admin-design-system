@@ -876,3 +876,14 @@ body {
 		margin: 0;
 	}
 }
+
+/* Importação de arquivos: layout do consumidor sem utilitários Tailwind privados. */
+.demo-file-upload-form {
+	display: grid;
+	gap: 1rem;
+}
+
+.demo-file-upload-actions {
+	justify-content: flex-end;
+	margin-top: 0;
+}

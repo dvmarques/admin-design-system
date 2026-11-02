@@ -23,6 +23,10 @@ const changelogReview = await fs.readFile(
 	new URL('./release-changelog.mjs', import.meta.url),
 	'utf8',
 );
+const preparation = await fs.readFile(
+	new URL('../.github/workflows/release-prepare.yml', import.meta.url),
+	'utf8',
+);
 
 test('fechamento exige revisão editorial aprovada e não inclui marcador nas notas', () => {
 	assert.match(prepareRelease, /validateChangelogReview\(changelog, target, 'ongoing'\)/);
@@ -54,8 +58,8 @@ test('registry smoke retries install only in registry mode', async () => {
 });
 
 test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => {
-	assert.match(release, /prepare-npm:[\s\S]*?verify:distribution/);
-	assert.match(release, /prepare-npm:[\s\S]*?npm-publication\.mjs plan/);
+	assert.match(preparation, /prepare-npm:[\s\S]*?verify:distribution/);
+	assert.match(preparation, /prepare-npm:[\s\S]*?release-artifact\.mjs plan/);
 	assert.match(release, /publish-npm:[\s\S]*?id-token: write/);
 	assert.match(release, /publish-npm:[\s\S]*?npm-publication\.mjs publish/);
 	assert.match(release, /verify-registry:[\s\S]*?PUBLIC_REGISTRY_VERSION/);
@@ -64,6 +68,23 @@ test('npm publication is OIDC-only, sequential and precedes GitHub tags', () => 
 	const npmJob = release.split('  publish-npm:')[1].split('  publish-github:')[0];
 	assert.doesNotMatch(npmJob, /contents: write/);
 	assert.doesNotMatch(release, /cancel-in-progress: true/);
+});
+
+test('preparação não publica e publicação exige ID sem reconstruir tarballs', () => {
+	assert.doesNotMatch(
+		preparation,
+		/id-token: write|contents: write|npm-publication\.mjs publish|publish-release\.mjs/,
+	);
+	assert.match(preparation, /retention-days: 90/);
+	assert.match(preparation, /overwrite: false/);
+	assert.match(release, /artifact_id:[\s\S]*?required: true/);
+	assert.match(release, /fetch-npm:[\s\S]*?actions: read/);
+	assert.match(release, /release-artifact\.mjs fetch/g);
+	assert.doesNotMatch(
+		release,
+		/npm-publication\.mjs plan|npm run build|npm pack|PUBLIC_PACK_DIR:.*source/,
+	);
+	assert.match(release, /needs: \[resolve-validate, fetch-npm\]/);
 });
 
 test('CI keeps checks visible while draft PR jobs are skipped and Ready reruns them', () => {
@@ -132,6 +153,17 @@ test('publication recovers a valid tag by creating only the missing release', ()
 });
 
 test('publication revalidates read-only evidence and mutable state before writes', () => {
+	assert.match(
+		publishRelease,
+		/import \{ extractReleaseNotes, releaseNotesSha \} from '\.\.\/\.\.\/scripts\/release-utils\.mjs'/,
+	);
+	assert.match(publishRelease, /extractReleaseNotes\(releaseChangelog, version\)/);
+	assert.match(publishRelease, /extractReleaseNotes\(developChangelog, version\)/);
+	assert.match(publishRelease, /extractReleaseNotes\(changelog, target\)/);
+	assert.match(publishRelease, /releaseNotesSha\(releaseChangelog, version\)/);
+	assert.match(publishRelease, /parseChangelog\(changelog\);\s*const notes = extractReleaseNotes/);
+	assert.match(publishRelease, /parseChangelog\(developChangelog\);/);
+	assert.doesNotMatch(publishRelease, /function releaseBlock/);
 	assert.match(publishRelease, /Commit rederivado diverge do job read-only/);
 	assert.match(publishRelease, /Back-merge rederivado diverge do job read-only/);
 	assert.match(publishRelease, /Notas rederivadas divergem da evidência read-only/);

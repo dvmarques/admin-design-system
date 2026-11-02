@@ -4,7 +4,13 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
-import { PACKAGE_ORDER, makePlan, publishPlan, verifyPlan } from './npm-publication.mjs';
+import {
+	PACKAGE_ORDER,
+	makePlan,
+	publishPlan,
+	registryVersion,
+	verifyPlan,
+} from './npm-publication.mjs';
 
 const packageName = (part) => '@dvmarques/admin-ds-' + part;
 const manifest = (name, version, isPrivate) => ({
@@ -14,6 +20,22 @@ const manifest = (name, version, isPrivate) => ({
 	license: 'MIT',
 	publishConfig: { access: 'public' },
 	peerDependencies: name === packageName('admin') ? { [packageName('components')]: version } : {},
+});
+
+test('registry lookup has a bounded timeout', async () => {
+	const originalFetch = globalThis.fetch;
+	let signal;
+	try {
+		globalThis.fetch = async (_url, options) => {
+			signal = options.signal;
+			return globalThis.Response.json({ name: packageName('tokens'), version: '0.2.0' });
+		};
+		await registryVersion(packageName('tokens'), '0.2.0');
+		assert.ok(signal instanceof globalThis.AbortSignal);
+		assert.equal(signal.aborted, false);
+	} finally {
+		globalThis.fetch = originalFetch;
+	}
 });
 
 async function fixture(version = '0.2.0') {
@@ -120,6 +142,9 @@ test('rejeita pacote privado, versão divergente, tarball ausente e arquivo extr
 		await writeFile(join(fx.dir, 'extra.tgz'), 'wrong package');
 		await assert.rejects(fx.plan(), /Inventário/);
 		await rm(join(fx.dir, 'extra.tgz'));
+		await writeFile(join(fx.dir, 'README.txt'), 'unexpected artifact file');
+		await assert.rejects(fx.plan(), /Inventário/);
+		await rm(join(fx.dir, 'README.txt'));
 		await rm(join(fx.dir, 'dvmarques-admin-ds-admin-0.2.0.tgz'));
 		await assert.rejects(fx.plan(), /Inventário/);
 	} finally {

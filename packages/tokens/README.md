@@ -2,9 +2,7 @@
 
 Tokens CSS semânticos e temas claro/escuro do **Admin Design System**. Use este pacote sozinho para aplicar as variáveis visuais ou como base para `components`, `admin` e `highlighted-code`.
 
-> **Pré-publicação:** artefato preparado e validado como tarball na [#194](https://github.com/dvmarques/admin-design-system/issues/194), **ainda indisponível no npm**. Os comandos de instalação se aplicam depois da [primeira publicação #195](https://github.com/dvmarques/admin-design-system/issues/195). A versão exibida no manifest do repositório é de desenvolvimento, não promessa da versão inicial no registro.
-
-## Instalar (após a publicação)
+## Instalar
 
 ```bash
 npm install @dvmarques/admin-ds-tokens

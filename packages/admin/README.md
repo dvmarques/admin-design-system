@@ -2,9 +2,7 @@
 
 Composições administrativas do **Admin Design System**: `AdsAdminShell`, dashboard, filtros, tabela inteligente, ações em lote, formulários em etapas, confirmação e componentes opcionais de conta, notificações e organização. O pacote organiza interface, **não** fornece backend, autenticação, autorização, roteador nem regras de negócio.
 
-> **Pré-publicação:** tarball testado externamente na [#194](https://github.com/dvmarques/admin-design-system/issues/194); **ainda indisponível no npm**. Instale pelo registro somente após a [publicação #195](https://github.com/dvmarques/admin-design-system/issues/195), com a versão confirmada nela.
-
-## Instalar (após a publicação)
+## Instalar
 
 ```bash
 npm install @dvmarques/admin-ds-tokens @dvmarques/admin-ds-components @dvmarques/admin-ds-admin

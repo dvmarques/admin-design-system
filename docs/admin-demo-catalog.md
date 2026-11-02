@@ -45,6 +45,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsInput`                  | Formulários | `/catalogo/input`                    | `admin-flows.stories.tsx`, `form.stories.tsx`                       |
 | `AdsPasswordInput`          | Formulários | `/catalogo/password-input`           | `form.stories.tsx`                                                  |
 | `AdsMaskedInput`            | Formulários | `/catalogo/masked-input`             | `masked-input.stories.tsx` (subpath opcional)                       |
+| `AdsFileUpload`             | Formulários | `/catalogo/file-upload`              | `file-upload.stories.tsx`                                           |
 | `AdsTextarea`               | Formulários | `/catalogo/textarea`                 | `form.stories.tsx`                                                  |
 | `AdsSelect`                 | Formulários | `/catalogo/select`                   | `admin-flows.stories.tsx`, `form.stories.tsx`, `select.stories.tsx` |
 | `AdsCombobox`               | Formulários | `/catalogo/combobox`                 | `combobox.stories.tsx`                                              |

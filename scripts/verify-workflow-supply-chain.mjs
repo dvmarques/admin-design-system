@@ -76,6 +76,7 @@ export function verifyWorkflowSupplyChain() {
 	const pages = read('.github/workflows/pages.yml');
 	const security = read('.github/workflows/security.yml');
 	const release = read('.github/workflows/release.yml');
+	const releasePreparation = read('.github/workflows/release-prepare.yml');
 	const baseline = read('.github/workflows/update-visual-baselines.yml');
 	assert.match(ci, /^permissions:\n {2}contents: read/m);
 	assert.match(pages, /^permissions:\n {2}contents: read/m);
@@ -90,7 +91,10 @@ export function verifyWorkflowSupplyChain() {
 	assert.doesNotMatch(block(release, 'publish-github'), /id-token: write/);
 	assert.match(block(release, 'publish-npm'), /id-token: write/);
 	assert.doesNotMatch(block(release, 'publish-npm'), /contents: write/);
-	assert.doesNotMatch(block(release, 'prepare-npm'), /contents: write|id-token: write/);
+	assert.doesNotMatch(releasePreparation, /contents: write|id-token: write/);
+	assert.doesNotMatch(block(releasePreparation, 'prepare-npm'), /contents: write|id-token: write/);
+	assert.doesNotMatch(block(release, 'fetch-npm'), /contents: write|id-token: write/);
+	assert.match(block(release, 'fetch-npm'), /actions: read/);
 	assert.doesNotMatch(block(release, 'verify-registry'), /contents: write|id-token: write/);
 	assert.match(baseline, /^permissions:\n {2}contents: read/m);
 	assert.doesNotMatch(block(baseline, 'generate'), /contents: write/);

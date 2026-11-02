@@ -1,0 +1,4 @@
+schema: spec-driven
+created: 2026-11-01
+goal: Permitir publicar ou retomar uma release aprovada com as notas públicas
+  canônicas, sem incluir o marcador editorial interno.

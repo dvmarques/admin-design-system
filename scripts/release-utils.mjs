@@ -1,3 +1,4 @@
+import { createHash } from 'node:crypto';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 
@@ -133,6 +134,12 @@ export function extractReleaseNotes(text, version) {
 	const start = section.index + section.heading.length;
 	const next = parsed.sections.find((candidate) => candidate.index > section.index);
 	return stripReleaseReviewMarker(text.slice(start, next?.index ?? text.length)).trim();
+}
+
+export function releaseNotesSha(text, version) {
+	return createHash('sha256')
+		.update(`${extractReleaseNotes(text, version)}\n`)
+		.digest('hex');
 }
 
 export function normalizeReleaseBody(text) {

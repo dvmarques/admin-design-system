@@ -19,6 +19,7 @@ import {
 	AdsSkeleton,
 	AdsSparkline,
 	AdsInput,
+	AdsFileUpload,
 	AdsPasswordInput,
 	AdsTextarea,
 	AdsSelect,
@@ -2142,6 +2143,25 @@ export function HighlightedCodeSnippetDemo() {
 	);
 }
 
+export function FileUploadDemo() {
+	const [files, setFiles] = useState<File[]>([]);
+	return (
+		<div>
+			<AdsFileUpload
+				accept=".csv,.json"
+				files={files}
+				label="Arquivo de dados"
+				maxSizeBytes={2_000_000}
+				onFilesChange={setFiles}
+			/>
+			<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
+				Limpar dados
+			</AdsButton>
+			<Link href="/componentes/arquivos">Testar importação simulada</Link>
+		</div>
+	);
+}
+
 export const catalogDemos = {
 	Button: ButtonDemo,
 	Badge: BadgeDemo,
@@ -2156,6 +2176,7 @@ export const catalogDemos = {
 	Input: InputDemo,
 	PasswordInput: PasswordInputDemo,
 	MaskedInput: MaskedInputDemo,
+	FileUpload: FileUploadDemo,
 	Textarea: TextareaDemo,
 	Select: SelectDemo,
 	Combobox: ComboboxDemo,

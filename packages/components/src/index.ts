@@ -178,3 +178,11 @@ export type {
 	AdsDatePickerSingleProps,
 	AdsDateRange,
 } from './date-picker.js';
+
+export { AdsFileUpload } from './file-upload.js';
+export type {
+	AdsFileUploadProps,
+	AdsFileRejection,
+	AdsFileRejectionReason,
+	AdsFileChangeReason,
+} from './file-upload.js';

@@ -2,7 +2,7 @@
 
 ## Purpose
 
-Definir a experiência documental de adoção por consumidores externos: README de entrada, READMEs dos quatro pacotes distribuíveis, integração com Next.js App Router e guia de desenvolvimento separado, sempre indicando a disponibilidade pré-publicação no npm.
+Definir a experiência documental de adoção por consumidores externos: README de entrada, READMEs dos quatro pacotes distribuíveis, integração com Next.js App Router e guia de desenvolvimento separado, indicando corretamente a disponibilidade dos pacotes no npm.
 
 ## Requirements
 
@@ -40,12 +40,17 @@ A documentação MUST mostrar caminho de consumo externo por nomes públicos, CS
 
 ### Requirement: Informação correta antes e depois da publicação
 
-A documentação MUST distinguir pacotes preparados e validados por tarballs de disponibilidade efetiva no registry. Antes da primeira publicação verificada, MUST NOT apresentar instalação npm remota como já testada; a atualização pós-publicação será coordenada com #195.
+A documentação MUST distinguir pacotes preparados e validados por tarballs da disponibilidade efetiva no registry. Para cada pacote com versão publicada e verificada, MUST apresentar comandos de instalação npm remota aplicáveis sem avisos de pré-publicação. Antes da primeira publicação verificada de um pacote, MUST NOT apresentar instalação npm remota como disponível ou já testada.
 
-#### Scenario: Leitor consulta o guia antes da primeira release npm
+#### Scenario: Leitor consulta a documentação de pacotes publicados
 
-- **WHEN** os pacotes ainda não foram publicados no registry
-- **THEN** o leitor vê aviso inequívoco e entende que comandos npm remotos serão aplicáveis apenas após #195
+- **WHEN** o leitor consulta os guias de um pacote com versão publicada e verificada
+- **THEN** encontra comandos de instalação npm aplicáveis e não vê avisos de indisponibilidade pré-publicação
+
+#### Scenario: Leitor consulta a documentação de pacote ainda não publicado
+
+- **WHEN** o leitor consulta os guias de um pacote sem publicação verificada
+- **THEN** entende que a instalação remota ainda não está disponível ou validada
 
 ### Requirement: Primeira adoção, identidade visual e desenvolvimento local
 

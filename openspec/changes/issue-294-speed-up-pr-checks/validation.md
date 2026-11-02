@@ -60,3 +60,55 @@ Se um cenário especial revelar verde falso, teste ausente ou regressão, revert
 a mudança isolada na CI/Pages (ou a PR completa) preservando os checks
 obrigatórios e registrando os links da falha. Não alterar snapshots nem
 configurações de segurança para contornar falhas.
+
+## Medição local de flags npm
+
+Em 02/11/2026, no worktree Windows com Node 24.21.0 e npm 11.19.1, rodei
+`npm ci --ignore-scripts --no-audit --no-fund` com cache npm isolado e depois
+repeti as variantes para comparar o cache quente/frio. Uma única execução por
+condição produziu:
+
+| Cache  | Flags                  | Duração |
+| ------ | ---------------------- | ------: |
+| frio   | sem `--prefer-offline` |  27,2 s |
+| quente | com `--prefer-offline` |  28,7 s |
+| quente | sem `--prefer-offline` |  28,9 s |
+| frio   | com `--prefer-offline` |  29,9 s |
+
+As quatro observações não mostram vantagem mensurável para `--prefer-offline`;
+diferenças de 0,2 s no cache quente são ruído de uma amostra e não sustentam
+uma melhoria. Por isso, a flag foi removida dos jobs CI e Pages. O ambiente
+local não reproduz runners/caches do GitHub Actions e não fornece custo de
+runners. `--no-audit` continua restrito a instalações de validação: o workflow
+Security Gate mantém o `npm audit` explícito sobre dependências de produção e
+desenvolvimento, relatório, política high/critical e falha bloqueante.
+
+Essa conclusão para a task 3.4 usa somente medições locais no Windows; uma nova
+medição em runner Linux fica registrada como pendência de integração na task
+5.4.
+
+## Revisão externa e verificações locais desta execução
+
+Revisão normal do Claude Code, em modo somente leitura, encontrou inicialmente
+que um script auxiliar do agregador não seria encontrado porque `chromium-gate`
+não faz checkout. A implementação foi corrigida para Bash inline, sem checkout,
+mantendo falha para qualquer resultado diferente de `success`; o teste estático
+verifica esse contrato e que o gate não depende de arquivos do repositório.
+Uma segunda revisão do Claude não encontrou achados bloqueantes. O revisor
+também confirmou os resumos de escopo docs-only e os limites de cancelamento.
+
+No Windows, a validação completa passou por format, lint, builds, teste de saída
+Storybook, verificação do peer opcional, typecheck e `test:quality` (80 arquivos
+Vitest/1.511 testes; 120 testes Node e 18 skips deliberados). `test:e2e` executou
+511 testes: 501 passaram, 1 foi skipped e 9 falharam porque as snapshots
+`chromium-win32` não existem no repositório; os PNGs gerados localmente foram
+removidos e nenhuma baseline foi atualizada. `build:pages` passou; o E2E Pages
+teve 21 aprovações e 9 falhas com 404 em requisições RSC sob o subcaminho, no
+servidor estático Windows. Essas duas limitações locais ainda precisam ser
+confirmadas pelo CI Linux no SHA atualizado; não se atribui a elas ganho ou
+aprovação de cobertura.
+
+O WSL não está instalado. `verify:optional-peer` falhou apenas quando a primeira
+tentativa usou o npm 12.2.1 do host; repetido com npm 11.19.1, passou. A correção
+do teste de transferência de snapshots (`fileURLToPath`) fez os oito casos
+passarem no Windows.

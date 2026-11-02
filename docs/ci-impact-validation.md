@@ -56,7 +56,7 @@ Garantias:
 - Condições usam `!= 'false'`: saída ausente executa tudo.
 - O E2E só é dispensado quando `apps/admin-demo` está fora do fecho de impacto. O Playwright serve e testa apenas o demo; o teste `skipping E2E is equivalent...` falha se a configuração ou os specs passarem a depender de outro workspace.
 - A validação completa continua a cada push em `develop`/`master` e em PRs de release; é ela que garante a premissa de base verde das PRs `scoped`.
-- O resumo do job `Qualidade rápida` mostra a decisão e o que foi dispensado.
+- Os resumos dos jobs `Qualidade rápida`, `Artefatos de distribuição`, E2E e Pages mostram a decisão e o que foi dispensado.
 
 ### Otimização de PRs — issue #294
 

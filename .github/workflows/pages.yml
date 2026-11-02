@@ -36,7 +36,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - id: scope
-        run: node ./scripts/ci-scope.mjs
+        run: node ./scripts/ci-scope.mjs --summary
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         if: steps.scope.outputs.docs_only != 'true'
         with:
@@ -44,7 +44,7 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
         if: steps.scope.outputs.docs_only != 'true'
-      - run: npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
+      - run: npm ci --ignore-scripts --no-audit --no-fund
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @dvmarques/admin-ds-tokens
         if: steps.scope.outputs.docs_only != 'true'

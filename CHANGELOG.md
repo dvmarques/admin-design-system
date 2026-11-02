@@ -10,7 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
-- Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Sem redução de cobertura nem de gates de segurança. (#294)
+- Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Os resumos de CI exibem dispensas de escopo sem alegar testes executados; `--prefer-offline` foi removido após não mostrar ganho. Sem redução de cobertura nem de gates de segurança. (#294)
+- Teste de transferência de baselines converte URLs em caminhos de arquivo compatíveis com Windows e Unix. (#294)
 
 ### [0.1.2] - 02-nov-2026
 

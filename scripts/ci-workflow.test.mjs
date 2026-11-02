@@ -53,8 +53,19 @@ test('required E2E check aggregates all Chromium shards and browsers', () => {
 	assert.match(gate, /needs: e2e/);
 	assert.match(gate, /if: always\(\)/);
 	assert.match(gate, /MATRIX_RESULT: \$\{\{ needs\.e2e\.result \}\}/);
-	assert.match(gate, /\[\[ "\$MATRIX_RESULT" != "success" \]\]/);
-	assert.match(gate, /exit 1/);
+	assert.match(
+		gate,
+		/shell: bash[\s\S]*run: \|[\s\S]*\[\[ "\$MATRIX_RESULT" != "success" \]\][\s\S]*exit 1/,
+	);
+	assert.doesNotMatch(gate, /uses: actions\/checkout/);
+	assert.match(
+		e2e,
+		/if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+	);
+	assert.match(
+		gate,
+		/if: always\(\) && \(github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false\)/,
+	);
 });
 
 test('quality executes each suite once while publishing both coverage artifacts', () => {
@@ -87,10 +98,19 @@ test('jobs that read the scope fetch full history and use the shared script', ()
 	for (const job of ['build', 'e2e']) {
 		const text = section(job);
 		assert.match(text, /fetch-depth: 0/, job);
-		assert.match(text, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs/, job);
+		assert.match(text, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs(?: --summary)?/, job);
 	}
 	assert.doesNotMatch(ci, /ci-changed-paths\.mjs/);
 	assert.match(section('quality'), /fetch-depth: 0/);
+});
+
+test('scope decisions are visible in E2E and Pages summaries, with full validation on uncertainty', () => {
+	const e2e = section('e2e');
+	const pages = read('.github/workflows/pages.yml');
+	assert.match(e2e, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs --summary/);
+	assert.match(pages, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs --summary/);
+	assert.match(read('scripts/ci-scope.mjs'), /mode: 'full'/);
+	assert.match(read('scripts/ci-scope.mjs'), /GITHUB_STEP_SUMMARY/);
 });
 
 test('every E2E step after the scope step honors both the docs and the E2E decision', () => {
@@ -205,6 +225,22 @@ test('Pages verifies pull requests in Linux and publishes only develop outside p
 	assert.ok(deploy.includes(gate));
 	assert.match(deploy, /needs: build/);
 	assert.match(pages, /group: pages-.*github.event.pull_request.number/);
+});
+
+test('cancellation is limited to superseded pull request runs across CI, Pages, and Security', () => {
+	for (const path of [
+		'.github/workflows/ci.yml',
+		'.github/workflows/pages.yml',
+		'.github/workflows/security.yml',
+	]) {
+		const workflow = read(path);
+		assert.match(
+			workflow,
+			/cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/,
+			path,
+		);
+		assert.doesNotMatch(workflow, /cancel-in-progress: true/, path);
+	}
 });
 
 test('workflows usam SHAs, digest Playwright e mínimo privilégio', async () => {

@@ -17,7 +17,7 @@
 - [x] 3.1 Eliminar duplicação de suites `test:ci` e Vitest na CI sem alterar `test:quality` local.
 - [x] 3.2 Manter coberturas Node/Vitest e validar conteúdo dos artefatos.
 - [x] 3.3 Avaliar relocação do smoke de tarballs com browser real; só alterar se ambiente equivalente for comprovado.
-- [ ] 3.4 Avaliar flags/cache/npm audit sob cache quente e frio sem enfraquecer Segurança.
+- [x] 3.4 Avaliar flags/cache/npm audit sob cache quente e frio sem enfraquecer Segurança.
 
 ## 4. Pages, testes e documentação
 

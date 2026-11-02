@@ -16,7 +16,8 @@ import { classNames } from './class-names.js';
 import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 
 export interface AdsOTPInputProps
-	extends Omit<
+	extends
+		Omit<
 			InputHTMLAttributes<HTMLInputElement>,
 			'type' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'children' | 'className'
 		>,
@@ -155,7 +156,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 				aria-describedby={describedBy}
 				aria-invalid={validationState === 'error' ? true : ariaInvalid}
 				autoComplete={autoComplete}
-				className="ads-otp-input__native absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
+				className="ads-otp-input__native absolute inset-0 h-full w-full"
 				disabled={disabled}
 				id={id}
 				inputMode={inputMode}
@@ -167,6 +168,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 				onSelect={handleSelect}
 				readOnly={readOnly}
 				ref={setRef}
+				style={{ opacity: 0, cursor: 'text', zIndex: 1 }}
 				type="text"
 				value={currentValue}
 			/>
@@ -184,15 +186,19 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 							: validationState === 'success'
 								? 'border-form-success'
 								: 'border-border-control',
-						focused && Math.min(caret, count - 1) === index
-							? 'outline-2 outline-offset-2 outline-focus-ring ring-2 ring-focus-ring-offset'
-							: undefined,
 						disabled ? 'border-transparent bg-form-background-disabled opacity-60' : undefined,
 						readOnly ? 'bg-surface-muted' : undefined,
 					)}
 					data-active={focused && Math.min(caret, count - 1) === index ? 'true' : undefined}
 					key={index}
-					style={{ maxWidth: `var(--ads-dimension-field-${size})` }}
+					style={{
+						maxWidth: `var(--ads-dimension-field-${size})`,
+						outline:
+							focused && Math.min(caret, count - 1) === index
+								? '2px solid var(--ads-color-focus-ring)'
+								: undefined,
+						outlineOffset: '2px',
+					}}
 				>
 					{currentValue[index] ?? ''}
 				</span>

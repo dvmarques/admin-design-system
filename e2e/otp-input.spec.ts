@@ -16,7 +16,7 @@ test('digitação, colagem, setas e conclusão no catálogo OTP', async ({ page 
 	await expect(input).toHaveValue('0012');
 	await input.pressSequentially('34');
 	await expect(input).toHaveValue('001234');
-	await expect(page.getByText('Código completo.', { exact: false })).toBeVisible();
+	await expect(page.getByText('6/6 dígitos. Código completo.', { exact: true })).toBeVisible();
 	await page.keyboard.press('ArrowLeft');
 	await page.keyboard.press('Backspace');
 	await expect(input).toHaveValue('00124');

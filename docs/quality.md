@@ -286,6 +286,9 @@ O job **Qualidade rápida** publica dois artefatos por 14 dias:
 - `cobertura-node-ci`: dados brutos V8 (`NODE_V8_COVERAGE`) de `npm run test:ci`; não é uma porcentagem consolidada.
 - `cobertura-vitest`: relatório de `npm run test:coverage` (resumo, `coverage-summary.json` e `lcov`) dos testes React/Vitest sobre `packages/*/src`.
 
+Na CI, o Vitest com cobertura usa timeout de 30 segundos por teste; o comando local
+`test:unit:quiet` mantém o timeout padrão do Vitest.
+
 O pipeline executa as suítes de CI e Vitest uma vez com as coberturas, em vez
 de repetir os testes apenas para coletar dados; o comando local `test:quality`
 permanece inalterado. Não há limite mínimo de cobertura nem serviço externo;

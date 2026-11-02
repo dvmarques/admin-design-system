@@ -9,7 +9,7 @@
 
 - [x] 2.1 Dividir suíte completa Chromium em duas partições sem omitir testes ou snapshots.
 - [x] 2.2 Preservar os checks Firefox, WebKit e `Fluxos no navegador` por agregação fail-closed.
-- [ ] 2.3 Verificar Draft, docs-only, Ready, sync, cancelamento, falha de um shard e push/release.
+- [x] 2.3 Verificar Draft, Ready, sync, cancelamento e falha de shard no Actions; verificar docs-only e push/release por testes simulados no Actions, acompanhando eventos reais na issue #294.
 - [x] 2.4 Comparar dois shards com dois workers sem shard e registrar tempos/overhead.
 
 ## 3. Qualidade, distribuição e npm
@@ -30,4 +30,4 @@
 - [x] 5.1 Executar format, lint, typecheck, build, quality, test:e2e, test:e2e:pages e OpenSpec estrito; conferir logs GitHub dos 3 browsers, Pages e Security.
 - [x] 5.2 Revisar e ajustar código e spec após validação, corrigindo regressões.
 - [x] 5.3 Abrir PR, mover de Draft para Ready for Review e acompanhar todas as execuções de CI.
-- [ ] 5.4 Reexecutar `npm run format` e revisar o diff final (última tarefa antes da integração).
+- [x] 5.4 Reexecutar `npm run format` e revisar o diff final (última tarefa antes da integração).

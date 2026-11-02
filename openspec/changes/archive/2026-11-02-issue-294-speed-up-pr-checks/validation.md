@@ -103,9 +103,7 @@ Vitest/1.511 testes; 120 testes Node e 18 skips deliberados). `test:e2e` executo
 `chromium-win32` não existem no repositório; os PNGs gerados localmente foram
 removidos e nenhuma baseline foi atualizada. `build:pages` passou; o E2E Pages
 teve 21 aprovações e 9 falhas com 404 em requisições RSC sob o subcaminho, no
-servidor estático Windows. Essas duas limitações locais ainda precisam ser
-confirmadas pelo CI Linux no SHA atualizado; não se atribui a elas ganho ou
-aprovação de cobertura.
+servidor estático Windows. No head 9145fab, a CI Linux e o Pages passaram; essas limitações permanecem específicas da execução local descrita.
 
 O WSL não está instalado. `verify:optional-peer` falhou apenas quando a primeira
 tentativa usou o npm 12.2.1 do host; repetido com npm 11.19.1, passou. A correção

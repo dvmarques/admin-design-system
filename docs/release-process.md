@@ -197,7 +197,7 @@ O mantenedor deve acessar o npm sob a conta **dvmarques** e conferir o controle 
 
 **Trusted Publishers (um por pacote):** com autorização e uma publicação OIDC real planejada, configurar o publisher de cada pacote. O prazo de dois dias começa quando cada configuração é criada: nesse período, ela precisa concluir seu primeiro publish bem-sucedido, conforme a [regra de expiração do npm](https://docs.npmjs.com/trusted-publishers/#trusted-publisher-configuration-expiry). Um no-op sem `npm publish` não valida a configuração.
 
-**Pré-flight de publicação:** antes de iniciar o workflow, conferir que os quatro publishers estão configurados e dentro da janela para o primeiro publish OIDC. Se um publisher expirou, removê-lo e recriá-lo somente com nova autorização e publicação real planejada dentro da nova janela de dois dias.
+**Pré-flight de publicação:** antes de iniciar o workflow, conferir que existe um publisher válido para cada pacote. Para publishers ainda não validados, o primeiro publish bem-sucedido precisa ocorrer em até dois dias da criação; após a validação, essa janela inicial não se aplica às releases seguintes. Se uma configuração expirar antes de ser validada, removê-la e recriá-la somente com nova autorização e publicação real planejada dentro da nova janela.
 
 Documentação oficial: [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/), [npm trust github](https://docs.npmjs.com/cli/v11/commands/npm-trust/) e [provenance](https://docs.npmjs.com/generating-provenance-statements/). Não escrever senhas, códigos 2FA, tokens ou arquivos .npmrc autenticados no Git, CI ou issues.
 

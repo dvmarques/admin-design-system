@@ -14,6 +14,6 @@
 - `npm run format`: passou.
 - `openspec.cmd validate --all --strict`: 66/66 itens passaram após o archive.
 - `git diff --check`: passou.
-- Busca por `docs/integration.md#antes-da-primeira-publicação-npm`, âncoras de headings renomeados e avisos em docs, OpenSpec, apps, packages, E2E e `.github`: sem referências obsoletas. Os links mantidos para `#tema-fonte-e-hidratação` continuam válidos.
+- Busca por `docs/integration.md#antes-da-primeira-publicação-npm`, headings `caminho mínimo (após a publicação)`/`Instalar (após a publicação)` e avisos em docs, OpenSpec, apps, packages, E2E e `.github`: sem referências obsoletas. Os links mantidos para `#tema-fonte-e-hidratação` continuam válidos.
 - `e2e/highlighted-code-demo.spec.ts` verifica headings, regiões acessíveis e interação sem assertar o texto editorial antigo. Snapshots visuais não cobrem a rota `/catalogo`.
 - `npm view` de cada um dos quatro pacotes `@dvmarques/admin-ds-* @0.1.1` confirmou versão e `dist.integrity`; `packages/highlighted-code/package.json` declara `private: false`.

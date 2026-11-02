@@ -18,7 +18,7 @@ npm install @dvmarques/admin-ds-highlighted-code
 npm install react-imask
 ```
 
-**Versões e reprodução:** os exemplos fixados abaixo reproduzem a versão de referência `0.1.1`. Para instalar uma versão mais recente, confira a versão disponível no registry e fixe o mesmo número nos pacotes selecionados:
+**Versões e reprodução:** os exemplos fixados abaixo reproduzem a versão de referência `0.1.1` e não são atualizados automaticamente a cada release. Para instalar a versão atual, use os comandos sem pin acima; para reproduzir outra versão, confira-a no registry e fixe o mesmo número nos pacotes selecionados:
 
 ```bash
 npm install @dvmarques/admin-ds-tokens@0.1.1 @dvmarques/admin-ds-components@0.1.1

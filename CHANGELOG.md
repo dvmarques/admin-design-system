@@ -14,6 +14,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Sem redução de cobertura nem de gates de segurança. (#294)
+
 - Guias de adoção atualizados após a publicação da versão 0.1.1 no npm: avisos removidos, exemplos fixados e spec `consumer-adoption` alinhada aos estados publicado e não publicado (`2026-11-02-issue-195-spec-sync`). `AGENTS.md` aponta para a seção em andamento; o runbook documenta autorização, no-op e expiração dos Trusted Publishers. (#195)
 
 - Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)

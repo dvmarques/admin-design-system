@@ -1,6 +1,6 @@
 # Guia de desenvolvimento
 
-Este é o ponto de entrada para quem deseja **desenvolver o Admin Design System**, executar suas aplicações e contribuir para o monorepo. Para **consumir a biblioteca** em outro projeto, use o [README principal](../README.md) e a [integração](integration.md). Os pacotes distribuíveis e suas instruções de instalação estão descritos no [guia de integração](integration.md).
+Este é o ponto de entrada para quem deseja **desenvolver o Admin Design System**, executar suas aplicações e contribuir para o monorepo. Para **consumir a biblioteca** em outro projeto, consulte o [README principal](../README.md) e o [guia de integração](integration.md).
 
 ## Pré-requisitos
 

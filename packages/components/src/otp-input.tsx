@@ -18,7 +18,7 @@ import type { AdsFormControlBase, AdsFormSize } from './form-types.js';
 export interface AdsOTPInputProps
 	extends Omit<
 			InputHTMLAttributes<HTMLInputElement>,
-			'type' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'children'
+			'type' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'children' | 'className'
 		>,
 		AdsFormControlBase {
 	/** Number of numeric positions; defaults to 6. Must be a positive integer. */

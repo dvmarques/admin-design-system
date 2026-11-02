@@ -1,4 +1,5 @@
 import assert from 'node:assert/strict';
+import { createHash } from 'node:crypto';
 import test from 'node:test';
 import {
 	approveChangelog,
@@ -10,6 +11,7 @@ import {
 import {
 	extractReleaseNotes,
 	prepareChangelog,
+	releaseNotesSha,
 	stripReleaseReviewMarker,
 } from './release-utils.mjs';
 
@@ -75,6 +77,11 @@ test('aprovação vincula o texto exato, preserva versões fechadas e permite pr
 	const notes = extractReleaseNotes(closed, '1.0.1');
 	assert.match(notes, /Ícones: fontes MIT\/ISC/);
 	assert.doesNotMatch(notes, /release-changelog-approved/);
+	assert.equal(
+		releaseNotesSha(closed, '1.0.1'),
+		createHash('sha256').update(`${notes}\n`).digest('hex'),
+		'o hash canônico cobre as mesmas notas sem o marcador editorial',
+	);
 	assert.match(closed, /### \[1\.0\.2\] - Em andamento/);
 });
 

@@ -108,6 +108,14 @@ export const catalogEntries = [
 		href: '/catalogo/input',
 	},
 	{
+		name: 'AdsOTPInput',
+		group: 'Formulários',
+		slug: 'otp-input',
+		demo: 'OTPInput',
+		description: 'Código numérico segmentado com colagem, autofill, teclado e valores controlados.',
+		href: '/catalogo/otp-input',
+	},
+	{
 		name: 'AdsPasswordInput',
 		group: 'Formulários',
 		slug: 'password-input',

@@ -43,6 +43,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsSkeleton`               | Básicos     | `/catalogo/skeleton`                 | `data-display.stories.tsx`                                          |
 | `AdsSparkline`              | Básicos     | `/catalogo/sparkline`                | `dashboard.stories.tsx`, `sparkline.stories.tsx`                    |
 | `AdsInput`                  | Formulários | `/catalogo/input`                    | `admin-flows.stories.tsx`, `form.stories.tsx`                       |
+| `AdsOTPInput`               | Formulários | `/catalogo/otp-input`                | `otp-input.stories.tsx`                                             |
 | `AdsPasswordInput`          | Formulários | `/catalogo/password-input`           | `form.stories.tsx`                                                  |
 | `AdsMaskedInput`            | Formulários | `/catalogo/masked-input`             | `masked-input.stories.tsx` (subpath opcional)                       |
 | `AdsFileUpload`             | Formulários | `/catalogo/file-upload`              | `file-upload.stories.tsx`                                           |

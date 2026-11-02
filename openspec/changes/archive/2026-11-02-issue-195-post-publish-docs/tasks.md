@@ -6,4 +6,4 @@
 - [x] 1.4 Generalizar as instruções de bootstrap e documentar a expiração e recriação dos Trusted Publishers.
 - [x] 1.5 Registrar a mudança na seção `[0.1.2] - Em andamento`, sem modificar a versão fechada `[0.1.1]`.
 - [x] 1.6 Atualizar a regra dinâmica de versão do CHANGELOG em `AGENTS.md` e o texto editorial da página de API no demo.
-- [x] 1.7 Executar formatação e validação OpenSpec estrita; verificar que não restam avisos de pré-publicação nem links para o anchor removido.
+- [x] 1.7 Executar formatação e validação OpenSpec estrita; verificar no repositório que não restam avisos de pré-publicação nem links para o anchor removido, e conferir os testes que cobrem o texto editorial alterado.

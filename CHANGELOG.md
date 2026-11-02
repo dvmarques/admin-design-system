@@ -6,25 +6,25 @@ Design System.
 O formato segue as convenções do Keep a Changelog. As mudanças são organizadas
 por versão e pelas changes correspondentes do OpenSpec.
 
-### [0.1.2] - Em andamento
-
-#### Added
-
-- Novo `AdsFileUpload` com seleção nativa, filtros, limites, feedback acessível, estados controlados e exemplo de importação simulada no Admin Demo/Storybook; sem upload HTTP. (change `add-file-upload`, #232)
+### [0.1.3] - Em andamento
 
 #### Changed
 
 - Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Sem redução de cobertura nem de gates de segurança. (#294)
 
-- Guias de adoção atualizados após a publicação da versão 0.1.1 no npm: avisos removidos, exemplos fixados e spec `consumer-adoption` alinhada aos estados publicado e não publicado (`2026-11-02-issue-195-spec-sync`). `AGENTS.md` aponta para a seção em andamento; o runbook documenta autorização, no-op e expiração dos Trusted Publishers. (#195)
+### [0.1.2] - 02-nov-2026
 
-- Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)
+#### Added
 
-- Workflows do GitHub Actions atualizados para `actions/checkout` 7.0.1 e `actions/deploy-pages` 5.0.1 (Node 24), mantendo os pins por SHA. Sem alteração de dependências npm. (#276, #277)
+- Adicionado `AdsFileUpload` com seleção nativa, filtros, limites, feedback acessível e estados controlados; o Admin Demo/Storybook simula a importação sem upload HTTP. (#232)
 
-#### Fixed
+#### Changed
 
-- Publicação e retomada da GitHub Release agora derivam e calculam o hash das notas canônicas, sem incluir o marcador editorial interno. (#195)
+- Reutiliza tarballs npm imutáveis, valida origem/hashes/manifests, limita downloads e retoma falhas sem rebuild; normaliza notas da GitHub Release; atualiza guias pós-0.1.1 sem avisos e sobre Trusted Publishers. (#195)
+
+- Atualizados `actions/checkout` para 7.0.1 e `actions/deploy-pages` para 5.0.1 (Node 24), mantendo pins por SHA. (#276, #277)
+
+<!-- release-changelog-approved sha256:db7f0769e601ba3fe25c0ed891d9aaa2788bd4b6c9447e70fb0de5b10e9dd2fc -->
 
 ### [0.1.1] - 31-out-2026
 

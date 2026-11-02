@@ -149,7 +149,10 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 
 	return (
 		<div
-			className={classNames('ads-otp-input relative inline-flex w-full max-w-full gap-1.5', className)}
+			className={classNames(
+				'ads-otp-input relative inline-flex w-full max-w-full gap-1.5',
+				className,
+			)}
 			data-disabled={disabled ? 'true' : undefined}
 		>
 			<input

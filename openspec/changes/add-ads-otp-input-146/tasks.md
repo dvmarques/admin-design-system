@@ -1,20 +1,24 @@
 # Tasks — AdsOTPInput (#146)
 
 ## Planejamento e API
+
 - [x] Ler issue, contratos dos inputs, catálogos e políticas; definir perfil Critical e API.
 - [x] Criar proposta, design, especificação e tarefas OpenSpec; revisar cenários de compatibilidade e acessibilidade.
 
 ## Biblioteca
+
 - [x] Implementar AdsOTPInput com código numérico, 4/6+ dígitos, colagem/autofill e navegação nativa.
 - [x] Implementar valores controlado/não controlado, callbacks e tratamento de mutações externas/completude.
 - [x] Integrar AdsField, estados, ref e classes de tema; export público (compilação CSS pendente de validação).
 
 ## Demonstração e documentação
+
 - [x] Adicionar página navegável no catálogo do Admin Demo com estados funcionais.
 - [x] Adicionar stories Storybook com uso básico, interações, controles e estados.
 - [x] Atualizar guia do componente e CHANGELOG da versão em andamento.
 
 ## Verificação
+
 - [ ] Adicionar e executar testes unitários, interação, formulário e acessibilidade (incluindo regressões).
 - [ ] Adicionar e executar E2E no Admin Demo com verificação de teclado, responsividade e temas.
 - [ ] Executar build, typecheck, lint, testes de qualidade, consumo Next.js e avaliação de CSS distribuído.

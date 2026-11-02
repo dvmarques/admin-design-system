@@ -47,9 +47,19 @@ describe('AdsOTPInput', () => {
 			const [code, setCode] = useState('12');
 			return (
 				<>
-					<AdsOTPInput aria-label="OTP" length={4} onChange={setCode} onComplete={onComplete} value={code} />
-					<button onClick={() => setCode('0099')} type="button">Definir</button>
-					<button onClick={() => setCode('')} type="button">Limpar</button>
+					<AdsOTPInput
+						aria-label="OTP"
+						length={4}
+						onChange={setCode}
+						onComplete={onComplete}
+						value={code}
+					/>
+					<button onClick={() => setCode('0099')} type="button">
+						Definir
+					</button>
+					<button onClick={() => setCode('')} type="button">
+						Limpar
+					</button>
 				</>
 			);
 		}
@@ -107,7 +117,12 @@ describe('AdsOTPInput', () => {
 		const onComplete = vi.fn();
 		render(
 			<StrictMode>
-				<AdsOTPInput aria-label="OTP" defaultValue="123456" onChange={onChange} onComplete={onComplete} />
+				<AdsOTPInput
+					aria-label="OTP"
+					defaultValue="123456"
+					onChange={onChange}
+					onComplete={onComplete}
+				/>
 			</StrictMode>,
 		);
 		expect(onChange).not.toHaveBeenCalled();

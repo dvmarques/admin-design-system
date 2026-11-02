@@ -42,7 +42,9 @@ test('estado controlado, erro, desabilitado e leitores de tela', async ({ page }
 for (const theme of ['light', 'dark'] as const) {
 	test(`OTP não transborda a largura móvel no tema ${theme}`, async ({ page }) => {
 		await page.setViewportSize({ width: 320, height: 720 });
-		await page.context().addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 		await openDemo(page);
 		const overflow = await page.evaluate(() => document.documentElement.scrollWidth);
 		expect(overflow).toBeLessThanOrEqual(320);

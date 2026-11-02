@@ -276,7 +276,10 @@ export function OTPInputDemo() {
 	const [complete, setComplete] = useState(false);
 	return (
 		<div className="flex max-w-sm flex-col gap-4">
-			<AdsField description="Código fictício: cole ou digite seis dígitos." label="Código de 6 dígitos">
+			<AdsField
+				description="Código fictício: cole ou digite seis dígitos."
+				label="Código de 6 dígitos"
+			>
 				<AdsOTPInput
 					name="codigo"
 					onChange={(next) => {

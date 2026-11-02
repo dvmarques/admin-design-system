@@ -51,7 +51,14 @@ export const Controlled: Story = {
 					<AdsButton onClick={() => setValue('0012')} type="button" variant="secondary">
 						Preencher exemplo 0012
 					</AdsButton>
-					<AdsButton onClick={() => { setValue(''); setComplete(''); }} type="button" variant="secondary">
+					<AdsButton
+						onClick={() => {
+							setValue('');
+							setComplete('');
+						}}
+						type="button"
+						variant="secondary"
+					>
 						Limpar
 					</AdsButton>
 				</div>
@@ -67,9 +74,15 @@ export const States: Story = {
 			<AdsField error="Código inválido" label="Erro" validationState="error">
 				<AdsOTPInput defaultValue="12" length={4} />
 			</AdsField>
-			<AdsField label="Desabilitado"><AdsOTPInput defaultValue="123456" disabled /></AdsField>
-			<AdsField label="Somente leitura"><AdsOTPInput defaultValue="001234" readOnly /></AdsField>
-			<AdsField label="Confirmado" validationState="success"><AdsOTPInput defaultValue="123456" /></AdsField>
+			<AdsField label="Desabilitado">
+				<AdsOTPInput defaultValue="123456" disabled />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsOTPInput defaultValue="001234" readOnly />
+			</AdsField>
+			<AdsField label="Confirmado" validationState="success">
+				<AdsOTPInput defaultValue="123456" />
+			</AdsField>
 		</div>
 	),
 };

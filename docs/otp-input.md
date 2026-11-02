@@ -9,19 +9,21 @@ import { useState } from 'react';
 import { AdsField, AdsOTPInput } from '@dvmarques/admin-ds-components';
 
 export function Exemplo() {
-  const [codigo, setCodigo] = useState('');
-  return (
-    <AdsField label="Código de verificação" description="Digite os 6 dígitos recebidos">
-      <AdsOTPInput
-        length={6}
-        name="codigo"
-        required
-        value={codigo}
-        onChange={setCodigo}
-        onComplete={(valor) => console.info('Código completo recebido pela aplicação', valor.length)}
-      />
-    </AdsField>
-  );
+	const [codigo, setCodigo] = useState('');
+	return (
+		<AdsField label="Código de verificação" description="Digite os 6 dígitos recebidos">
+			<AdsOTPInput
+				length={6}
+				name="codigo"
+				required
+				value={codigo}
+				onChange={setCodigo}
+				onComplete={(valor) =>
+					console.info('Código completo recebido pela aplicação', valor.length)
+				}
+			/>
+		</AdsField>
+	);
 }
 ```
 

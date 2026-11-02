@@ -24,6 +24,8 @@ export { AdsSurface } from './surface.js';
 export type { AdsSurfaceProps, AdsSurfaceVariant } from './surface.js';
 export { AdsInput } from './input.js';
 export type { AdsInputProps } from './input.js';
+export { AdsOTPInput } from './otp-input.js';
+export type { AdsOTPInputProps } from './otp-input.js';
 export { AdsPasswordInput } from './password-input.js';
 export type {
 	AdsPasswordInputProps,

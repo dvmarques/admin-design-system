@@ -19,6 +19,7 @@ import {
 	AdsSkeleton,
 	AdsSparkline,
 	AdsInput,
+	AdsOTPInput,
 	AdsFileUpload,
 	AdsPasswordInput,
 	AdsTextarea,
@@ -266,6 +267,54 @@ export function InputDemo() {
 				<AdsInput placeholder="Digite aqui" />
 			</AdsField>
 		</>
+	);
+}
+
+export function OTPInputDemo() {
+	const [code, setCode] = useState('');
+	const [pin, setPin] = useState('');
+	const [complete, setComplete] = useState(false);
+	return (
+		<div className="flex max-w-sm flex-col gap-4">
+			<AdsField description="Código fictício: cole ou digite seis dígitos." label="Código de 6 dígitos">
+				<AdsOTPInput
+					name="codigo"
+					onChange={(next) => {
+						setCode(next);
+						setComplete(false);
+					}}
+					onComplete={() => setComplete(true)}
+					required
+					value={code}
+				/>
+			</AdsField>
+			<p aria-live="polite">
+				{code.length}/6 dígitos. {complete ? 'Código completo.' : 'Aguardando preenchimento.'}
+			</p>
+			<AdsField description="Experimente os botões de valor controlado." label="PIN de 4 dígitos">
+				<AdsOTPInput length={4} onChange={setPin} value={pin} />
+			</AdsField>
+			<div className="flex flex-wrap gap-2">
+				<AdsButton onClick={() => setPin('0012')} type="button" variant="secondary">
+					Preencher PIN 0012
+				</AdsButton>
+				<AdsButton onClick={() => setPin('')} type="button" variant="secondary">
+					Limpar PIN
+				</AdsButton>
+			</div>
+			<AdsField error="Código incorreto" label="Código inválido" validationState="error">
+				<AdsOTPInput defaultValue="12" length={4} />
+			</AdsField>
+			<AdsField label="Código desabilitado">
+				<AdsOTPInput defaultValue="123456" disabled />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsOTPInput defaultValue="001234" readOnly />
+			</AdsField>
+			<AdsField label="Confirmado" validationState="success">
+				<AdsOTPInput defaultValue="123456" />
+			</AdsField>
+		</div>
 	);
 }
 
@@ -2174,6 +2223,7 @@ export const catalogDemos = {
 	Skeleton: SkeletonDemo,
 	Sparkline: SparklineDemo,
 	Input: InputDemo,
+	OTPInput: OTPInputDemo,
 	PasswordInput: PasswordInputDemo,
 	MaskedInput: MaskedInputDemo,
 	FileUpload: FileUploadDemo,

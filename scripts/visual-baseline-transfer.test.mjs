@@ -1,8 +1,9 @@
 import assert from 'node:assert/strict';
 import { spawnSync } from 'node:child_process';
 import test from 'node:test';
+import { fileURLToPath } from 'node:url';
 
-const script = new URL('./visual-baseline-transfer.mjs', import.meta.url).pathname;
+const script = fileURLToPath(new URL('./visual-baseline-transfer.mjs', import.meta.url));
 const sha = 'a'.repeat(40);
 
 const run = (env) =>

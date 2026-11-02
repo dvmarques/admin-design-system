@@ -19,29 +19,31 @@ Os workspaces vêm dos padrões `workspaces` da raiz. O grafo usa `dependencies`
 | Evento / estado                                          | Política e qualidade                       | Build de apps / E2E da CI principal                                                | Pages (build + E2E Pages)                              |
 | -------------------------------------------------------- | ------------------------------------------ | ---------------------------------------------------------------------------------- | ------------------------------------------------------ |
 | PR Draft para `develop` ou `master`                      | Checks de PR skipped                       | Checks skipped, nenhum teste executado                                             | Job de PR skipped (somente PR para develop)            |
-| PR Ready para `develop`, impacto `docs`                  | Qualidade completa e política de develop   | Jobs concluídos com etapas dispensadas (`docs_only`), sem builds, E2E ou snapshots | Executa integralmente em PR para develop, sem publicar |
+| PR Ready para `develop`, impacto `docs`                  | Qualidade completa e política de develop   | Jobs concluídos com etapas dispensadas (`docs_only`), sem builds, E2E ou snapshots | Dispensa etapas pesadas; não publica                   |
 | PR Ready para `develop`, impacto `scoped`                | Qualidade completa e política de develop   | Builds de pacotes e inspeção; apps/E2E somente se afetados                         | Executa integralmente em PR para develop, sem publicar |
 | PR Ready para `develop`, impacto `full` ou indeterminado | Qualidade completa e política de develop   | Builds, inspeção e E2E completos, snapshots Chromium                               | Executa integralmente em PR para develop, sem publicar |
 | PR Ready para `master`                                   | Qualidade completa e `release-check`       | Completo, sem dispensa por impacto                                                 | Sem gatilho de PR para master                          |
 | Push para `develop`                                      | Qualidade e jobs da CI principal completos | Completo, sem dispensa por impacto                                                 | Build, teste e publicação no Pages                     |
 | Push para `master`                                       | Qualidade e jobs da CI principal completos | Completo, sem dispensa por impacto                                                 | Sem gatilho de push para master                        |
 
-O workflow `pages.yml` não usa `ci-scope`: em PR Ready para develop ele constrói o
-site estático e roda o E2E Pages mesmo quando a CI principal dispensa etapas por
-impacto `docs`. Ele (corrigido na #189 / PR #190) valida build estático
-e `test:e2e:pages` em PR Ready para develop; publicar é reservado ao push em
-`develop`. Um check **successful** cujo job dispensou etapas não equivale a build
-ou testes executados: leia o resumo do scope e as etapas efetivamente rodadas.
+Desde a #294, o workflow `pages.yml` também usa `ci-scope`: em PR Ready para
+`develop` com impacto comprovadamente `docs`, dispensa instalação, builds e
+`test:e2e:pages`, mantendo o check informado. Nos demais PRs, constrói o site
+estático e verifica as rotas do Pages. O deploy continua reservado ao push em
+`develop`, cuja validação é sempre completa. Execuções obsoletas da mesma PR
+podem ser canceladas; runs de publicação não são cancelados por PRs.
+Um check **successful** cujo job dispensou etapas não equivale a build ou testes
+executados: consulte o resultado do classificador e as etapas realmente rodadas.
 Atualizar baselines visuais não faz parte deste fluxo de documentação e só ocorre
 pelo workflow manual Linux.
 
 ## O que a CI dispensa
 
-`scripts/ci-scope.mjs` (usado pelos jobs `build` e `e2e`) escreve `docs_only`, `build_docs`, `build_demo` e `e2e` somente quando o evento é `pull_request` para `develop` e o diff é identificável. Push, PR para `master` (release) e qualquer falha executam tudo.
+`scripts/ci-scope.mjs` (usado pelos jobs `build`, `e2e` e Pages) escreve `docs_only`, `build_docs`, `build_demo` e `e2e` somente quando o evento é `pull_request` para `develop` e o diff é identificável. Push, PR para `master` (release) e qualquer falha executam tudo.
 
 | Etapa                                                               | `docs` | `apps/docs` apenas | demais `scoped` | `full` |
 | ------------------------------------------------------------------- | :----: | :----------------: | :-------------: | :----: |
-| `Qualidade rápida` (format, lint, build, typecheck, `test:quality`) |   ✅   |         ✅         |       ✅        |   ✅   |
+| `Qualidade rápida` (format, lint, build, types, testes + cobertura) |   ✅   |         ✅         |       ✅        |   ✅   |
 | `Política de develop` (política e OpenSpec estrito)                 |   ✅   |         ✅         |       ✅        |   ✅   |
 | Build dos pacotes, geração de tokens e `inspect:packages`           |   —    |         ✅         |       ✅        |   ✅   |
 | Build do Storybook                                                  |   —    |         ✅         |   se afetado    |   ✅   |
@@ -50,11 +52,23 @@ pelo workflow manual Linux.
 
 Garantias:
 
-- Os jobs dispensam **etapas**, não jobs: os nomes dos checks obrigatórios continuam sendo reportados (um job de matriz pulado por `if` não reporta os nomes `Fluxos no navegador (...)`). Custo: a inicialização do container (≈ 30 s por job de E2E).
+- Os jobs dispensam **etapas**, não jobs: os nomes dos checks obrigatórios continuam sendo reportados. O Chromium usa dois shards (`1/2` e `2/2`); o check obrigatório `Fluxos no navegador` agrega a conclusão de toda a matriz, incluindo Firefox e WebKit. Custo: a inicialização do container em cada job da matriz E2E.
 - Condições usam `!= 'false'`: saída ausente executa tudo.
 - O E2E só é dispensado quando `apps/admin-demo` está fora do fecho de impacto. O Playwright serve e testa apenas o demo; o teste `skipping E2E is equivalent...` falha se a configuração ou os specs passarem a depender de outro workspace.
 - A validação completa continua a cada push em `develop`/`master` e em PRs de release; é ela que garante a premissa de base verde das PRs `scoped`.
-- O resumo do job `Qualidade rápida` mostra a decisão e o que foi dispensado.
+- Os resumos dos jobs `Qualidade rápida`, `Artefatos de distribuição`, E2E e Pages mostram a decisão e o que foi dispensado.
+
+### Otimização de PRs — issue #294
+
+O Chromium completo roda em duas partições de Playwright, sem alterar quais testes
+ou snapshots são exigidos. O check `Fluxos no navegador` depende da conclusão
+de todos os shards e navegadores. A CI de qualidade conserva geração dos tokens,
+testes de Node/workspaces, release, CI e Vitest, coleta as coberturas na primeira
+execução de cada suíte e preserva `npm run test:quality` como comando local.
+O smoke de tarballs permanece no shard Chromium 1/2 porque necessita do browser
+real da imagem Playwright. A otimização de cache npm não substitui a auditoria
+explícita do Security Gate. Comparar ganhos por duração ponta a ponta e minutos
+totais de runner antes de atribuir melhoria ao sharding.
 
 ### Bug corrigido: dispensa de E2E em container
 

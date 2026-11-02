@@ -17,7 +17,8 @@ permissions:
 
 concurrency:
   group: pages-${{ github.event_name == 'pull_request' && github.event.pull_request.number || 'publish' }}
-  cancel-in-progress: false
+  # Nunca cancela publicações; descarta apenas execuções antigas da mesma PR.
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
   build:
@@ -32,21 +33,33 @@ jobs:
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          fetch-depth: 0
           persist-credentials: false
+      - id: scope
+        run: node ./scripts/ci-scope.mjs --summary
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
-      - run: npm ci --ignore-scripts
+        if: steps.scope.outputs.docs_only != 'true'
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @dvmarques/admin-ds-tokens
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @dvmarques/admin-ds-components
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+        if: steps.scope.outputs.docs_only != 'true'
       - run: npm run build --workspace @dvmarques/admin-ds-admin
+        if: steps.scope.outputs.docs_only != 'true'
       - name: Gerar demo estático e Storybook e montar site/
         run: npm run build:pages
+        if: steps.scope.outputs.docs_only != 'true'
       - name: Verificar o site sob o subcaminho do repositório
         run: npm run test:e2e:pages
+        if: steps.scope.outputs.docs_only != 'true'
         env:
           HOME: /root
       - if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'

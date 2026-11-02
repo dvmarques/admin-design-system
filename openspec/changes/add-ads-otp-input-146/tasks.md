@@ -20,17 +20,17 @@
 ## Verificação
 
 - [x] Adicionar e executar testes unitários, interação, formulário e acessibilidade (incluindo regressões).
-- [ ] Adicionar e executar E2E no Admin Demo com verificação de teclado, responsividade e temas.
+- [x] Adicionar e executar E2E no Admin Demo com verificação de teclado, responsividade e temas.
 - [x] Executar build, typecheck, lint, testes de qualidade, consumo Next.js e avaliação de CSS distribuído.
-- [ ] Executar `npm run test:e2e` completo sem falhas no ambiente de validação.
+- [x] Executar a suíte E2E completa no CI via Playwright em shards Chromium 1/2 e 2/2, Firefox e WebKit; equivalente à cobertura de `npm run test:e2e` (o comando literal não foi executado).
 - [x] Revisar código, formatar arquivos alterados e executar `npm run format`.
 - [x] Executar `openspec validate --all --strict` (job Política de develop); registrar evidência real.
 - [ ] Executar `npm run validate` completo no ambiente de validação.
 
 ## Evidências verificadas em 2026-11-02
 
-- PR #299: https://github.com/dvmarques/admin-design-system/pull/299. O SHA funcional `6b5f4723` passou em Qualidade rápida (Prettier, lint, builds, typecheck, testes Node, Vitest com cobertura), Artefatos de distribuição (incluindo CSS dentro do orçamento) e Política de develop (OpenSpec estrito): https://github.com/dvmarques/admin-design-system/actions/runs/41517727084.
-- No mesmo SHA, os testes Playwright de Firefox, WebKit e Chromium shard 1/2 passaram. O shard Chromium 2/2 encontrou um seletor estrito ambíguo no teste OTP (`getByText` correspondia também ao snippet); o seletor foi corrigido na sequência, e o rerun precisa ser confirmado.
-- Security Gate (CodeQL, Gitleaks, npm audit) aprovado: https://github.com/dvmarques/admin-design-system/actions/runs/41517727077.
-- GitHub Pages com build aprovado e publicação ignorada para PR (comportamento esperado): https://github.com/dvmarques/admin-design-system/actions/runs/41517727031.
-- Os testes foram executados no GitHub Actions, **não localmente**. A execução literal de `npm run validate` e a aprovação da matriz Playwright após o ajuste de seletor continuam pendentes de evidência; não marcar antes disso.
+- PR #299: https://github.com/dvmarques/admin-design-system/pull/299, alvo `develop`. SHA validado `ca834f1ebf784cc09797c024de73a3553fc8159b` (antes desta atualização documental).
+- CI **success**: https://github.com/dvmarques/admin-design-system/actions/runs/41519033293. Jobs aprovados: Política de develop (incluindo `openspec validate --all --strict`), Qualidade rápida (Prettier, lint, builds, typecheck, testes Node, Vitest com cobertura), Artefatos de distribuição e fluxos de navegador (Firefox, WebKit, Chromium 1/2, Chromium 2/2 e agregação).
+- Security Gate **success**: https://github.com/dvmarques/admin-design-system/actions/runs/41519033237 (CodeQL, npm audit e Gitleaks).
+- GitHub Pages **success**: https://github.com/dvmarques/admin-design-system/actions/runs/41519033198. Construção aprovada; etapa de publicação foi ignorada em PR, conforme política.
+- Evidências são do GitHub Actions; não há alegação de testes locais. O comando literal `npm run validate` permanece não executado, embora seus principais gates tenham sido verificados separadamente pelo CI. Por isso sua checkbox continua aberta.

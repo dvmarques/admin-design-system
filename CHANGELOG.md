@@ -14,6 +14,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
+- Documentação de integração atualizada após a publicação npm 0.1.1; removidos avisos de pré-publicação e adicionados comandos de instalação pelo registro. (#195)
+
 - Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)
 
 - Workflows do GitHub Actions atualizados para `actions/checkout` 7.0.1 e `actions/deploy-pages` 5.0.1 (Node 24), mantendo os pins por SHA. Sem alteração de dependências npm. (#276, #277)

@@ -195,9 +195,9 @@ O mantenedor deve acessar o npm sob a conta **dvmarques** e conferir o controle 
 
 **Bootstrap inicial:** se algum nome de pacote ainda não existir no npm, seguir o procedimento de artifact ID acima. O titular cria o pacote pela via autenticada aprovada, usando os mesmos bytes validados; nunca gerar versões provisórias. Nenhum bootstrap ou configuração é executado pela preparação.
 
-**Trusted Publishers (um por pacote):** com autorização e uma publicação OIDC real planejada, configurar cada publisher de modo que seu primeiro publish bem-sucedido ocorra em até dois dias, conforme a [regra de expiração do npm](https://docs.npmjs.com/trusted-publishers/#trusted-publisher-configuration-expiry). Um no-op sem `npm publish` não valida a configuração.
+**Trusted Publishers (um por pacote):** com autorização e uma publicação OIDC real planejada, configurar o publisher de cada pacote. O prazo de dois dias começa quando cada configuração é criada: nesse período, ela precisa concluir seu primeiro publish bem-sucedido, conforme a [regra de expiração do npm](https://docs.npmjs.com/trusted-publishers/#trusted-publisher-configuration-expiry). Um no-op sem `npm publish` não valida a configuração.
 
-**Configuração expirada:** remover e recriar o publisher somente com nova autorização e publicação real planejada dentro da janela. O publisher recriado também precisa concluir um publish bem-sucedido em até dois dias.
+**Pré-flight de publicação:** antes de iniciar o workflow, conferir que os quatro publishers estão configurados e dentro da janela para o primeiro publish OIDC. Se um publisher expirou, removê-lo e recriá-lo somente com nova autorização e publicação real planejada dentro da nova janela de dois dias.
 
 Documentação oficial: [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/), [npm trust github](https://docs.npmjs.com/cli/v11/commands/npm-trust/) e [provenance](https://docs.npmjs.com/generating-provenance-statements/). Não escrever senhas, códigos 2FA, tokens ou arquivos .npmrc autenticados no Git, CI ou issues.
 

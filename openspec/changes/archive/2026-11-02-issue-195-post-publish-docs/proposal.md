@@ -2,7 +2,7 @@
 
 ## Why
 
-Atualizar a documentação de adoção relacionada à issue #195 para refletir a publicação efetiva dos quatro pacotes `@dvmarques/admin-ds-*` na versão 0.1.1, removendo instruções temporárias de pré-publicação e deixando comandos de instalação utilizáveis.
+Após a publicação da versão 0.1.1, os avisos de indisponibilidade e as instruções prospectivas poderiam levar consumidores a evitar ou interpretar incorretamente os comandos de instalação. O runbook também precisava explicar como planejar a primeira validação OIDC sem confundir uma execução no-op com um publish bem-sucedido.
 
 ## What Changes
 

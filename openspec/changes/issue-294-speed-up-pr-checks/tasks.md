@@ -30,5 +30,4 @@
 - [x] 5.1 Executar format, lint, typecheck, build, quality, test:e2e, test:e2e:pages e OpenSpec estrito; conferir logs GitHub dos 3 browsers, Pages e Security.
 - [x] 5.2 Revisar e ajustar código e spec após validação, corrigindo regressões.
 - [x] 5.3 Abrir PR, mover de Draft para Ready for Review e acompanhar todas as execuções de CI.
-- [ ] 5.4 Comparar no mínimo três execuções equivalentes pós-merge com baseline e registrar resultados reais na issue #294; não marcar sem dados.
-- [ ] 5.5 Reexecutar `npm run format` e revisar o diff final (última tarefa antes da integração).
+- [ ] 5.4 Reexecutar `npm run format` e revisar o diff final (última tarefa antes da integração).

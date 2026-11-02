@@ -84,8 +84,7 @@ Security Gate mantém o `npm audit` explícito sobre dependências de produção
 desenvolvimento, relatório, política high/critical e falha bloqueante.
 
 Essa conclusão para a task 3.4 usa somente medições locais no Windows; uma nova
-medição em runner Linux fica registrada como pendência de integração na task
-5.4.
+medição em runner Linux será acompanhada na issue #294 após a integração.
 
 ## Revisão externa e verificações locais desta execução
 

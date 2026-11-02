@@ -2,9 +2,7 @@
 
 Componentes React reutilizáveis do **Admin Design System**: botões, campos e seleção, navegação, tabelas, overlays, feedback, calendário e visualização compacta. Para fluxos e shell administrativos, existe um pacote independente de composições administrativas. A [referência de API no Storybook](https://dvmarques.github.io/admin-design-system/storybook/) descreve os exports disponíveis, variantes e estados.
 
-> **Pré-publicação:** validado como tarball externo na [#194](https://github.com/dvmarques/admin-design-system/issues/194), **ainda não publicado no npm**. Os comandos a seguir valem depois da [#195](https://github.com/dvmarques/admin-design-system/issues/195); a primeira versão publicada será confirmada naquele fluxo.
-
-## Instalar (após a publicação)
+## Instalar
 
 ```bash
 npm install @dvmarques/admin-ds-tokens @dvmarques/admin-ds-components

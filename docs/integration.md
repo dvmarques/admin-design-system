@@ -1,14 +1,8 @@
 # Integração do design system
 
-## Antes da primeira publicação npm
+## Instalação externa pelo npm
 
-**Estado em 31/10/2026:** a [#194](https://github.com/dvmarques/admin-design-system/issues/194) validou os quatro pacotes com `npm pack` e uma aplicação Next.js externa usando tarballs locais (`file:`), incluindo tipos, CSS compilado sem Tailwind no consumidor e hidratação. **Os pacotes ainda não estão disponíveis no registro npm.** A [#195](https://github.com/dvmarques/admin-design-system/issues/195) executará a primeira publicação e confirmará sua instalação real pelo registry. O comando de instalação abaixo é **prospectivo**, não evidência de instalação pelo npm.
-
-O teste pré-publicação usa os tarballs gerados por `npm run verify:distribution` após instalar dependências e seguir o fluxo da #194; não tente obter nomes ainda inéditos pelo registro. Não substitua os tarballs validados por aliases de workspace nem por imports internos do monorepo.
-
-## Instalação externa — caminho mínimo (após a publicação)
-
-Para um projeto React/Next.js App Router, escolha os pacotes necessários e os respectivos peers; os manifests pedem React e React DOM `>=18.2.0`. A aplicação de demonstração usa Next.js 16/React 19; **isso é uma combinação testada no projeto, não garantia de suporte para todas as versões de Next.js**.
+Os quatro pacotes `@dvmarques/admin-ds-*` estão publicados no npm. Para uma aplicação React/Next.js App Router, escolha os pacotes necessários e os respectivos peers; os manifests pedem React e React DOM `>=18.2.0`. A aplicação de demonstração usa Next.js 16/React 19; **isso é uma combinação testada no projeto, não garantia de suporte para todas as versões de Next.js**.
 
 ```bash
 # UI básica: tokens + components
@@ -24,17 +18,17 @@ npm install @dvmarques/admin-ds-highlighted-code
 npm install react-imask
 ```
 
-**Versões e reprodução:** os manifests na branch de desenvolvimento indicam atualmente `0.1.0`, mas essa versão **não foi publicada** e pode ser alterada pela #195. Depois de verificar a primeira publicação, fixe a mesma versão coordenada nos pacotes de que precisa, substituindo `X.Y.Z` pela versão **confirmada no registry**:
+**Versões e reprodução:** os exemplos fixados abaixo reproduzem a versão de referência `0.1.1` e não são atualizados automaticamente a cada release. Para instalar a versão atual, use os comandos sem pin acima; para reproduzir outra versão, confira-a no registry e fixe o mesmo número nos pacotes selecionados:
 
 ```bash
-npm install @dvmarques/admin-ds-tokens@X.Y.Z @dvmarques/admin-ds-components@X.Y.Z
+npm install @dvmarques/admin-ds-tokens@0.1.1 @dvmarques/admin-ds-components@0.1.1
 # Se precisar de composições:
-npm install @dvmarques/admin-ds-admin@X.Y.Z
+npm install @dvmarques/admin-ds-admin@0.1.1
 # Se precisar de realce:
-npm install @dvmarques/admin-ds-highlighted-code@X.Y.Z
+npm install @dvmarques/admin-ds-highlighted-code@0.1.1
 ```
 
-Os comandos fixados são modelos **para depois** da publicação, não provas de que `X.Y.Z` exista hoje. O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
+O pacote `admin` declara `components` como peer obrigatório; para o shell, instale explicitamente `tokens`, `components` e `admin`. O `highlighted-code` é independente de `admin` e `components`, mas usa tokens e contém suas próprias dependências Shiki. O peer opcional `react-imask (^7.6.1)` só se aplica a quem importa `@dvmarques/admin-ds-components/masked-input`. Não configure Tailwind CSS nem faça import de `src/`, aliases internos ou workspaces no consumidor.
 
 | Pacote                                 | CSS público                                       | Responsabilidade               |
 | -------------------------------------- | ------------------------------------------------- | ------------------------------ |

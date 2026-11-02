@@ -193,7 +193,11 @@ O mantenedor deve acessar o npm sob a conta **dvmarques** e conferir o controle 
 - Allowed actions: habilitar explicitamente **`npm publish`** (não apenas `npm stage publish`); publicação direta foi aprovada.
 - Executar no GitHub-hosted runner, não self-hosted. Confirmar `repository.url` dos quatro manifests, conta do registry e ausência de credenciais no workflow.
 
-**Bootstrap da primeira publicação:** seguir o procedimento de artifact ID acima. Se os nomes ainda não existem, o titular deve criar os pacotes pela via autenticada aprovada, usando os mesmos bytes validados. Nunca gerar versões provisórias. Configurar Trusted Publishers somente com autorização e planejamento do primeiro publish OIDC real, em até dois dias; um no-op não satisfaz essa condição. Nenhum bootstrap ou configuração é executado pela preparação.
+**Bootstrap inicial:** se algum nome de pacote ainda não existir no npm, seguir o procedimento de artifact ID acima. O titular cria o pacote pela via autenticada aprovada, usando os mesmos bytes validados; nunca gerar versões provisórias. Nenhum bootstrap ou configuração é executado pela preparação.
+
+**Trusted Publishers (um por pacote):** com autorização e uma publicação OIDC real planejada, configurar o publisher de cada pacote. O prazo de dois dias começa quando cada configuração é criada: nesse período, ela precisa concluir seu primeiro publish bem-sucedido, conforme a [regra de expiração do npm](https://docs.npmjs.com/trusted-publishers/#trusted-publisher-configuration-expiry). Um no-op sem `npm publish` não valida a configuração.
+
+**Pré-flight de publicação:** antes de iniciar o workflow, conferir que existe um publisher válido para cada pacote. Para publishers ainda não validados, o primeiro publish bem-sucedido precisa ocorrer em até dois dias da criação; após a validação, essa janela inicial não se aplica às releases seguintes. Se uma configuração expirar antes de ser validada, removê-la e recriá-la somente com nova autorização e publicação real planejada dentro da nova janela.
 
 Documentação oficial: [npm Trusted Publishing](https://docs.npmjs.com/trusted-publishers/), [npm trust github](https://docs.npmjs.com/cli/v11/commands/npm-trust/) e [provenance](https://docs.npmjs.com/generating-provenance-statements/). Não escrever senhas, códigos 2FA, tokens ou arquivos .npmrc autenticados no Git, CI ou issues.
 
@@ -207,7 +211,7 @@ Documentação oficial: [npm Trusted Publishing](https://docs.npmjs.com/trusted-
 - **Tag ausente e estado válido:** cria tag anotada e GitHub Release. Tag correta + release ausente: preserva tag e cria só a release. Tag lightweight/divergente ou GitHub Release incompatível: falha sem mutações.
 - **Indisponibilidade/propagação do registry:** há releituras limitadas; se não confirmar os hashes, falha e exige reconciliação/reexecução, nunca assume sucesso pelo exit code do `npm publish`.
 
-Após publicar, validar `npm view @dvmarques/admin-ds-tokens@X.Y.Z dist.integrity` e os demais, verificar os dados de provenance e executar instalação externa **por nomes do registry** em Next.js (tipos, CSS, React Server/Client e hidratação), já automatizada no job `verify-registry`. A execução de `verify:distribution` com tarballs locais **não substitui** esse último teste. Somente depois de confirmar as quatro versões reais, remover os avisos `RELEASE TODO (#195)` e “antes da primeira publicação” no README/READMEs e `docs/integration.md` em uma PR apropriada; manter Demo/Storybook em workspaces locais sem exigir publicações npm a cada alteração.
+Após publicar, validar `npm view @dvmarques/admin-ds-tokens@X.Y.Z dist.integrity` e os demais, verificar os dados de provenance e executar instalação externa **por nomes do registry** em Next.js (tipos, CSS, React Server/Client e hidratação), já automatizada no job `verify-registry`. A execução de `verify:distribution` com tarballs locais **não substitui** esse último teste. Mantenha Demo/Storybook em workspaces locais sem exigir publicações npm a cada alteração.
 
 Depois de back-merge, npm completo, tag e GitHub Release consistentes e validação externa, a branch `release/X.Y.Z` pode ser removida pelo mantenedor, respeitando o ruleset.
 

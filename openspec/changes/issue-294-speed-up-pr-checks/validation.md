@@ -111,3 +111,10 @@ O WSL não está instalado. `verify:optional-peer` falhou apenas quando a primei
 tentativa usou o npm 12.2.1 do host; repetido com npm 11.19.1, passou. A correção
 do teste de transferência de snapshots (`fileURLToPath`) fez os oito casos
 passarem no Windows.
+
+## Experimentos de Actions na PR #295
+
+- [CI em Draft](https://github.com/dvmarques/admin-design-system/actions/runs/41505860812): todos os jobs, incluindo o agregador, ficaram skipped; [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/41505860877) e [Security](https://github.com/dvmarques/admin-design-system/actions/runs/41505860849) também ficaram skipped.
+- [CI anterior](https://github.com/dvmarques/admin-design-system/actions/runs/41505468788) foi cancelada após novo synchronize da mesma PR. A PR foi restaurada para Ready.
+- [Falha controlada](https://github.com/dvmarques/admin-design-system/actions/runs/41506215952): uma etapa temporária reprovou Chromium 1/2; Chromium 2/2, Firefox e WebKit passaram e o agregador Fluxos no navegador falhou. O job de qualidade também falhou ao detectar a etapa temporária fora das condições esperadas. A etapa foi removida após o experimento.
+- Docs-only, push e PR de release possuem testes de escopo com entradas simuladas executados no job de qualidade; isso não comprova eventos reais desses tipos no GitHub. A issue #294 acompanha essas evidências restantes.

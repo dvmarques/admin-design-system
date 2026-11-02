@@ -2,7 +2,7 @@
 
 ## Why
 
-Atualizar a documentação de adoção para refletir a publicação efetiva dos quatro pacotes `@dvmarques/admin-ds-*` na versão 0.1.1, removendo instruções temporárias de pré-publicação e deixando comandos de instalação utilizáveis.
+Atualizar a documentação de adoção relacionada à issue #195 para refletir a publicação efetiva dos quatro pacotes `@dvmarques/admin-ds-*` na versão 0.1.1, removendo instruções temporárias de pré-publicação e deixando comandos de instalação utilizáveis.
 
 ## What Changes
 

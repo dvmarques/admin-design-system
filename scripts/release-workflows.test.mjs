@@ -153,6 +153,17 @@ test('publication recovers a valid tag by creating only the missing release', ()
 });
 
 test('publication revalidates read-only evidence and mutable state before writes', () => {
+	assert.match(
+		publishRelease,
+		/import \{ extractReleaseNotes, releaseNotesSha \} from '\.\.\/\.\.\/scripts\/release-utils\.mjs'/,
+	);
+	assert.match(publishRelease, /extractReleaseNotes\(releaseChangelog, version\)/);
+	assert.match(publishRelease, /extractReleaseNotes\(developChangelog, version\)/);
+	assert.match(publishRelease, /extractReleaseNotes\(changelog, target\)/);
+	assert.match(publishRelease, /releaseNotesSha\(releaseChangelog, version\)/);
+	assert.match(publishRelease, /parseChangelog\(changelog\);\s*const notes = extractReleaseNotes/);
+	assert.match(publishRelease, /parseChangelog\(developChangelog\);/);
+	assert.doesNotMatch(publishRelease, /function releaseBlock/);
 	assert.match(publishRelease, /Commit rederivado diverge do job read-only/);
 	assert.match(publishRelease, /Back-merge rederivado diverge do job read-only/);
 	assert.match(publishRelease, /Notas rederivadas divergem da evidência read-only/);

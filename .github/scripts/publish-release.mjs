@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 import { Buffer } from 'node:buffer';
-import { createHash } from 'node:crypto';
 import { URLSearchParams } from 'node:url';
+import { extractReleaseNotes, releaseNotesSha } from '../../scripts/release-utils.mjs';
 
 const STABLE_SEMVER = /^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/;
 const VERSION_HEADING = /^### \[([^\]]+)\] - (.+)$/gm;
@@ -146,19 +146,8 @@ function parseChangelog(text) {
 	return { sections, ongoing, closed };
 }
 
-function releaseBlock(text, parsed, target) {
-	const section = parsed.closed.find(({ version: candidate }) => candidate === target);
-	if (!section) throw new Error(`Bloco fechado ${target} ausente.`);
-	const next = parsed.sections.find(({ index }) => index > section.index);
-	return text.slice(section.index + section.heading.length, next?.index ?? text.length).trim();
-}
-
 function normalizeBody(value = '') {
 	return value.replace(/\r\n/g, '\n').replace(/\n+$/, '');
-}
-
-function notesSha(value) {
-	return createHash('sha256').update(`${value}\n`).digest('hex');
 }
 
 async function manifestPaths(ref) {
@@ -229,7 +218,8 @@ async function validatePublished(target) {
 		throw new Error(`Release anterior ${target} inconsistente.`);
 	}
 	const changelog = await contentAt('CHANGELOG.md', pr.merge_commit_sha);
-	const notes = releaseBlock(changelog, parseChangelog(changelog), target);
+	parseChangelog(changelog);
+	const notes = extractReleaseNotes(changelog, target);
 	if (
 		release.tag_name !== `v${target}` ||
 		release.name !== `v${target}` ||
@@ -282,12 +272,13 @@ await validateCoordinated(initialDevelopSha, version);
 
 const releaseChangelog = await contentAt('CHANGELOG.md', releaseSha);
 const releaseParsed = parseChangelog(releaseChangelog);
-const notes = releaseBlock(releaseChangelog, releaseParsed, version);
-if (notesSha(notes) !== readonlyReleaseNotesSha)
+const notes = extractReleaseNotes(releaseChangelog, version);
+if (releaseNotesSha(releaseChangelog, version) !== readonlyReleaseNotesSha)
 	throw new Error('Notas rederivadas divergem da evidência read-only.');
 const developChangelog = await contentAt('CHANGELOG.md', initialDevelopSha);
-const developParsed = parseChangelog(developChangelog);
-if (releaseBlock(developChangelog, developParsed, version) !== notes) {
+parseChangelog(developChangelog);
+// release:validate already verifies each editorial marker; compare only public release notes here.
+if (extractReleaseNotes(developChangelog, version) !== notes) {
 	throw new Error('Bloco fechado em develop diverge do commit liberado.');
 }
 

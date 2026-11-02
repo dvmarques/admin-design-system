@@ -18,6 +18,10 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - Workflows do GitHub Actions atualizados para `actions/checkout` 7.0.1 e `actions/deploy-pages` 5.0.1 (Node 24), mantendo os pins por SHA. Sem alteração de dependências npm. (#276, #277)
 
+#### Fixed
+
+- Publicação e retomada da GitHub Release agora derivam e calculam o hash das notas canônicas, sem incluir o marcador editorial interno. (#195)
+
 ### [0.1.1] - 31-out-2026
 
 #### Added

@@ -7,8 +7,9 @@ Atualizar a documentação de adoção para refletir a publicação efetiva dos 
 ## What Changes
 
 - Atualizar o README principal, os quatro READMEs de pacote, `docs/integration.md` e as orientações operacionais em `docs/release-process.md`.
-- Corrigir menções desatualizadas na documentação de desenvolvimento, Pages e histórico por componente.
+- Corrigir menções desatualizadas em `AGENTS.md`, na página de API do demo, na documentação de desenvolvimento, Pages e histórico por componente.
 - Registrar a alteração em `[0.1.2] - Em andamento` no changelog.
+- Pacotes afetados: tokens, components, admin e highlighted-code, apenas em documentação. APIs públicas: nenhuma alteração. Demo: somente texto editorial da página de API.
 - Não alterar código da publicação, versões npm, configurações Trusted Publisher ou o histórico fechado de `[0.1.1]`.
 
 ## Verification

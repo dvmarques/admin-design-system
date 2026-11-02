@@ -128,8 +128,8 @@ describe('AdsOTPInput', () => {
 		);
 		expect(onChange).not.toHaveBeenCalled();
 		expect(onComplete).not.toHaveBeenCalled();
-		expect(renderToString(<AdsOTPInput aria-label="OTP" defaultValue="1234" />)).toContain(
-			'autocomplete="one-time-code"',
+		expect(renderToString(<AdsOTPInput aria-label="OTP" defaultValue="1234" />)).toMatch(
+			/autocomplete="one-time-code"/i,
 		);
 	});
 

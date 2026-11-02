@@ -275,7 +275,7 @@ export function OTPInputDemo() {
 	const [pin, setPin] = useState('');
 	const [complete, setComplete] = useState(false);
 	return (
-		<div className="flex max-w-sm flex-col gap-4">
+		<div style={{ display: 'grid', gap: 'var(--ads-spacing-4)', maxWidth: 384 }}>
 			<AdsField
 				description="Código fictício: cole ou digite seis dígitos."
 				label="Código de 6 dígitos"
@@ -297,7 +297,7 @@ export function OTPInputDemo() {
 			<AdsField description="Experimente os botões de valor controlado." label="PIN de 4 dígitos">
 				<AdsOTPInput length={4} onChange={setPin} value={pin} />
 			</AdsField>
-			<div className="flex flex-wrap gap-2">
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--ads-spacing-2)' }}>
 				<AdsButton onClick={() => setPin('0012')} type="button" variant="secondary">
 					Preencher PIN 0012
 				</AdsButton>

@@ -190,7 +190,10 @@ test('Pages verifies pull requests in Linux and publishes only develop outside p
 	]) {
 		const position = pages.indexOf('run: ' + script);
 		assert.notEqual(position, -1, script);
-		assert.match(pages.slice(position, position + 210), /if: steps\.scope\.outputs\.docs_only != 'true'/);
+		assert.match(
+			pages.slice(position, position + 210),
+			/if: steps\.scope\.outputs\.docs_only != 'true'/,
+		);
 	}
 
 	const gate = "if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'";

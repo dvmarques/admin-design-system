@@ -33,7 +33,8 @@ describe('AdsOTPInput', () => {
 		expect(onChange).toHaveBeenLastCalledWith('0012');
 		fireEvent.change(input, { target: { value: '001234' } });
 		expect(input.value).toBe('001234');
-		expect(onComplete).toHaveBeenCalledExactlyOnceWith('001234');
+		expect(onComplete).toHaveBeenCalledTimes(1);
+		expect(onComplete).toHaveBeenLastCalledWith('001234');
 		fireEvent.change(input, { target: { value: '001234x' } });
 		expect(onComplete).toHaveBeenCalledTimes(1);
 		fireEvent.change(input, { target: { value: '00123' } });

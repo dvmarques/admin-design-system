@@ -35,9 +35,9 @@ export interface AdsOTPInputProps
 }
 
 const sizes: Record<AdsFormSize, string> = {
-	sm: 'h-[var(--ads-dimension-field-sm)] max-w-10 text-sm',
-	md: 'h-[var(--ads-dimension-field-md)] max-w-12 text-base',
-	lg: 'h-[var(--ads-dimension-field-lg)] max-w-14 text-lg',
+	sm: 'min-h-[var(--ads-dimension-field-sm)] text-sm',
+	md: 'min-h-[var(--ads-dimension-field-md)] text-base',
+	lg: 'min-h-[var(--ads-dimension-field-lg)] text-lg',
 };
 
 function normalize(value: string, length: number) {
@@ -76,9 +76,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 	forwardedRef,
 ) {
 	const count = Number.isSafeInteger(length) && length > 0 ? length : 6;
-	const [uncontrolledValue, setUncontrolledValue] = useState(() =>
-		normalize(defaultValue, count),
-	);
+	const [uncontrolledValue, setUncontrolledValue] = useState(() => normalize(defaultValue, count));
 	const currentValue = normalize(value === undefined ? uncontrolledValue : value, count);
 	const inputRef = useRef<HTMLInputElement | null>(null);
 	const composing = useRef(false);
@@ -149,10 +147,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 
 	return (
 		<div
-			className={classNames(
-				'ads-otp-input relative inline-flex w-full max-w-full gap-1.5',
-				className,
-			)}
+			className={classNames('ads-otp-input relative inline-flex w-full gap-1', className)}
 			data-disabled={disabled ? 'true' : undefined}
 		>
 			<input
@@ -160,7 +155,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 				aria-describedby={describedBy}
 				aria-invalid={validationState === 'error' ? true : ariaInvalid}
 				autoComplete={autoComplete}
-				className="ads-otp-input__native absolute inset-0 z-10 m-0 h-full w-full cursor-text border-0 bg-transparent p-0 opacity-0"
+				className="ads-otp-input__native absolute inset-0 z-10 h-full w-full cursor-text opacity-0"
 				disabled={disabled}
 				id={id}
 				inputMode={inputMode}
@@ -182,7 +177,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 				<span
 					aria-hidden="true"
 					className={classNames(
-						'ads-otp-input__slot box-border flex min-w-0 flex-1 items-center justify-center rounded-md border bg-form-background font-sans font-medium text-text transition-[border-color,box-shadow] duration-[var(--ads-motion-normal)] ease-[var(--ads-motion-easing)]',
+						'ads-otp-input__slot box-border flex min-w-0 flex-1 items-center justify-center rounded-md border bg-form-background font-sans font-medium text-text',
 						sizes[size],
 						validationState === 'error'
 							? 'border-form-invalid'
@@ -195,8 +190,9 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 						disabled ? 'border-transparent bg-form-background-disabled opacity-60' : undefined,
 						readOnly ? 'bg-surface-muted' : undefined,
 					)}
-					data-active={focused && caret === index ? 'true' : undefined}
+					data-active={focused && Math.min(caret, count - 1) === index ? 'true' : undefined}
 					key={index}
+					style={{ maxWidth: `var(--ads-dimension-field-${size})` }}
 				>
 					{currentValue[index] ?? ''}
 				</span>

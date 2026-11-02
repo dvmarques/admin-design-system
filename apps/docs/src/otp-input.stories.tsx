@@ -47,7 +47,9 @@ export const Controlled: Story = {
 							value={value}
 						/>
 					</AdsField>
-					<p aria-live="polite">Dígitos: {value.length}/4. {complete ? 'Código completo.' : ''}</p>
+					<p aria-live="polite">
+						Dígitos: {value.length}/4. {complete ? 'Código completo.' : ''}
+					</p>
 					<AdsButton onClick={() => setValue('0012')} type="button" variant="secondary">
 						Preencher exemplo 0012
 					</AdsButton>

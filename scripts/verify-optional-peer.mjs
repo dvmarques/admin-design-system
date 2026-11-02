@@ -16,6 +16,7 @@ import { join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { build } from 'esbuild';
 import { npmCli } from './npm-cli.mjs';
+import { parseNpmPackOutput } from './npm-pack-output.mjs';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
 const components = resolve(root, 'packages/components');
@@ -75,7 +76,7 @@ try {
 	// 1. Pacote publicado: somente `dist`, sem fontes nem o peer embutido.
 	const packDir = join(work, 'pack');
 	mkdirSync(packDir);
-	const packed = JSON.parse(
+	const packed = parseNpmPackOutput(
 		run(
 			process.execPath,
 			[
@@ -89,7 +90,7 @@ try {
 			],
 			root,
 		),
-	)[0];
+	);
 	const names = packed.files.map((file) => file.path);
 	for (const expected of ['dist/index.js', 'dist/masked-input.js', 'dist/masked-input.d.ts'])
 		if (!names.includes(expected)) throw new Error(`O pacote não publica ${expected}`);

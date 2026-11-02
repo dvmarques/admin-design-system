@@ -39,7 +39,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
-      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
       - run: npm run format
       - run: npm run lint
       - run: npm run build --workspace @dvmarques/admin-ds-tokens
@@ -47,7 +47,13 @@ jobs:
       - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
       - run: npm run build --workspace @dvmarques/admin-ds-admin
       - run: npm run typecheck
-      - run: npm run test:quality
+      # `test:quality` local permanece inalterado; na CI, testes com cobertura
+      # substituem as passagens Vitest e test:ci sem duplicar as suítes.
+      - run: npm run generate --workspace @dvmarques/admin-ds-tokens
+      - run: npm run test:node:quiet
+      - run: npm run test:release
+      - run: npm run check:agent-skills
+      - run: npm run check:generated --workspace @dvmarques/admin-ds-tokens
       - name: Gerar cobertura dos testes Node de CI
         run: npm run test:ci
         env:
@@ -89,7 +95,7 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
         if: steps.scope.outputs.docs_only != 'true'
-      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
         if: steps.scope.outputs.docs_only != 'true'
       - run: npm run generate --workspace @dvmarques/admin-ds-tokens
         if: steps.scope.outputs.docs_only != 'true'
@@ -128,10 +134,16 @@ jobs:
       matrix:
         include:
           - browser: chromium
-            check: Fluxos no navegador
+            shard: '1/2'
+            check: Fluxos no navegador (Chromium 1/2)
+          - browser: chromium
+            shard: '2/2'
+            check: Fluxos no navegador (Chromium 2/2)
           - browser: firefox
+            shard: ''
             check: Fluxos no navegador (Firefox)
           - browser: webkit
+            shard: ''
             check: Fluxos no navegador (WebKit)
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -147,7 +159,7 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
-      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
       - name: Verificar versão Playwright da imagem e do lockfile
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
@@ -188,12 +200,30 @@ jobs:
       - run: npm run build --workspace @admin-ds/admin-demo
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
       - name: Smoke de tarballs em Next.js externo
-        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false' && matrix.browser == 'chromium'
+        if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false' && matrix.browser == 'chromium' && matrix.shard == '1/2'
         run: npm run verify:distribution
-      - run: npx playwright test --project=${{ matrix.browser }}
+      - run: npx playwright test --project=${{ matrix.browser }} ${{ matrix.shard && format('--shard={0}', matrix.shard) || '' }}
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
         env:
           HOME: /root
+
+  chromium-gate:
+    # O required check histórico continua existindo e só fica verde quando
+    # TODAS as variantes da matriz E2E aprovam (inclusive ambos os shards).
+    name: Fluxos no navegador
+    needs: e2e
+    if: always() && (github.event_name != 'pull_request' || github.event.pull_request.draft == false)
+    runs-on: ubuntu-latest
+    steps:
+      - name: Validar resultado integral da matriz E2E
+        env:
+          MATRIX_RESULT: ${{ needs.e2e.result }}
+        shell: bash
+        run: |
+          if [[ "$MATRIX_RESULT" != "success" ]]; then
+            echo "E2E não aprovado em todos os shards/navegadores: $MATRIX_RESULT" >&2
+            exit 1
+          fi
 
   develop-policy:
     name: Política de develop
@@ -234,7 +264,7 @@ jobs:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
-      - run: npm ci --ignore-scripts
+      - run: npm ci --ignore-scripts --no-audit --no-fund --prefer-offline
       - name: Validar identidade e preparação
         shell: bash
         run: |

@@ -14,7 +14,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
-- Documentação de integração atualizada após a publicação npm 0.1.1; avisos de pré-publicação removidos e comandos de instalação agora apresentados como disponíveis no registry. (#195)
+- Documentação de adoção e processo de release atualizados após npm 0.1.1; avisos removidos, comandos apresentados como disponíveis no registry e orientação do changelog alinhada à versão em andamento. (#195)
 
 - Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)
 

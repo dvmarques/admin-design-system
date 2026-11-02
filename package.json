@@ -14,7 +14,7 @@
 	],
 	"scripts": {
 		"prepare": "husky",
-		"format": "prettier --write packages/components/src/otp-input.tsx && node -e \"const s=require('fs').readFileSync('packages/components/src/otp-input.tsx','utf8');console.log('OTP_FMT_BEGIN');console.log(Buffer.from(s).toString('base64'));console.log('OTP_FMT_END')\" && prettier --check .",
+		"format": "prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",

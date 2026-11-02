@@ -19,7 +19,14 @@ export interface AdsOTPInputProps
 	extends
 		Omit<
 			InputHTMLAttributes<HTMLInputElement>,
-			'type' | 'size' | 'value' | 'defaultValue' | 'onChange' | 'maxLength' | 'children' | 'className'
+			| 'type'
+			| 'size'
+			| 'value'
+			| 'defaultValue'
+			| 'onChange'
+			| 'maxLength'
+			| 'children'
+			| 'className'
 		>,
 		AdsFormControlBase {
 	/** Number of numeric positions; defaults to 6. Must be a positive integer. */

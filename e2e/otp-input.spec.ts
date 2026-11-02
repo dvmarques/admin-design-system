@@ -1,8 +1,8 @@
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { expectNoAxeViolations } from './axe';
 import { waitForHydration } from './hydration';
 
-async function openDemo(page: import('@playwright/test').Page) {
+async function openDemo(page: Page) {
 	await page.goto('/catalogo/otp-input');
 	await expect(page.getByRole('heading', { name: 'AdsOTPInput', level: 1 })).toBeVisible();
 	await waitForHydration(page.getByRole('textbox', { name: 'Código de 6 dígitos' }));

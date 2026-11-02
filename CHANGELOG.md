@@ -14,7 +14,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Changed
 
-- Documentação de adoção e processo de release atualizados após npm 0.1.1; avisos removidos, exemplos fixados, comandos apresentados como disponíveis e orientação do changelog e Trusted Publishers atualizada. (#195)
+- Documentação de adoção atualizada após npm 0.1.1; avisos removidos e exemplos fixados. `AGENTS.md` aponta para a seção em andamento, e o runbook esclarece autorização e expiração dos Trusted Publishers. (#195)
 
 - Preparação npm separada da publicação, com tarballs imutáveis em GitHub Actions Artifacts, verificação de origem/hashes, limites de download e timeout de rede, e reexecução sem rebuild; expiração interrompe a retomada com segurança. (#195)
 

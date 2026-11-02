@@ -1,6 +1,6 @@
 # Histórico por componente
 
-Este índice destaca mudanças observáveis e ligações às issues originais. A referência de versão é o [CHANGELOG principal](../CHANGELOG.md); este histórico por componente não substitui as versões publicadas no npm. A [API atual está no Storybook](https://dvmarques.github.io/admin-design-system/storybook/).
+Este índice destaca mudanças observáveis e ligações às issues originais. A referência de versão é o [CHANGELOG principal](../CHANGELOG.md); entradas em andamento não pertencem a uma versão já publicada no npm. A [API atual está no Storybook](https://dvmarques.github.io/admin-design-system/storybook/).
 
 | Componente / área                           | Alteração relevante                                                                                                                       | Origem                                                                                                                                                                                                      |
 | ------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |

@@ -161,7 +161,6 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 				disabled={disabled}
 				id={id}
 				inputMode={inputMode}
-				maxLength={count}
 				onBlur={handleBlur}
 				onChange={handleChange}
 				onCompositionEnd={handleCompositionEnd}
@@ -187,7 +186,7 @@ export const AdsOTPInput = forwardRef<HTMLInputElement, AdsOTPInputProps>(functi
 							: validationState === 'success'
 								? 'border-form-success'
 								: 'border-border-control',
-						focused && caret === index
+						focused && Math.min(caret, count - 1) === index
 							? 'outline-2 outline-offset-2 outline-focus-ring ring-2 ring-focus-ring-offset'
 							: undefined,
 						disabled ? 'border-transparent bg-form-background-disabled opacity-60' : undefined,

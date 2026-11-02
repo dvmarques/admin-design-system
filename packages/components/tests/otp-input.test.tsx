@@ -16,7 +16,7 @@ describe('AdsOTPInput', () => {
 		expect(input.value).toBe('0012');
 		expect(input).toHaveAttribute('autocomplete', 'one-time-code');
 		expect(input).toHaveAttribute('inputmode', 'numeric');
-		expect(input).toHaveAttribute('maxlength', '4');
+		expect(input).not.toHaveAttribute('maxlength');
 		expect(input).toHaveAccessibleDescription(/Código fictício.*4 dígitos/);
 		expect(input).toHaveAttribute('name', 'otp');
 		expect(document.querySelectorAll('.ads-otp-input__slot')).toHaveLength(4);

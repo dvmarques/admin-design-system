@@ -606,7 +606,7 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 	}
 	.ads-multi-select__control--disabled {
 		background: var(--ads-color-form-background-disabled);
-		opacity: 0.6;
+		/* Keep chip text at full opacity for 4.5:1 contrast in both themes. */
 		cursor: not-allowed;
 	}
 	.ads-multi-select__input {

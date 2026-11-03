@@ -14,7 +14,7 @@
 - [x] 3.1 Testes unitários e interação para controlled/uncontrolled, filtro, teclado, chip, clear, limite, reset, `name`, `required`, disabled e ARIA; regressões Combobox/FilterBar.
 - [x] 3.2 Adicionar exemplos funcionais e navegáveis no Admin Demo, atualizando catálogo, controles de estados e testes de consumo público.
 - [x] 3.3 Adicionar stories com estados/variantes ao Storybook; documentação API, CHANGELOG e matriz do catálogo.
-- [ ] 3.4 E2E e acessibilidade em Chromium/Firefox/WebKit quando aplicável; contrastes, mobile, zoom, formulário, SSR/hidratação, sobreposições e snapshots revisados.
+- [x] 3.4 E2E e acessibilidade em Chromium/Firefox/WebKit quando aplicável; contrastes, mobile, zoom, formulário, SSR/hidratação, sobreposições e snapshots revisados. (E2E Chromium: temas claro e escuro, 390px, 320px, zoom 200% equivalente a 195px, lista sobreposta ao conteúdo, fechamento por clique externo e Escape, axe; Firefox e WebKit seguem a política do repositório de executar apenas smoke.)
 
 ## 4. Verificação antes da revisão
 

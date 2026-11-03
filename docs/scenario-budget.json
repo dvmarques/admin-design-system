@@ -12,16 +12,16 @@
 		"bytes": 33420,
 		"gzipBytes": 11880,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 58000,
-		"cssGzipBytes": 9650
+		"cssBytes": 63000,
+		"cssGzipBytes": 10400
 	},
 	"masked-input-public": {
 		"entry": "scripts/scenarios/masked-input.mjs",
 		"bytes": 74100,
 		"gzipBytes": 20900,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 58000,
-		"cssGzipBytes": 9650
+		"cssBytes": 63000,
+		"cssGzipBytes": 10400
 	},
 	"highlighted-code-public": {
 		"entry": "scripts/scenarios/highlighted-code.mjs",
@@ -40,7 +40,7 @@
 			"packages/components/dist/styles.css",
 			"packages/admin/dist/styles.css"
 		],
-		"cssBytes": 97800,
-		"cssGzipBytes": 14800
+		"cssBytes": 103000,
+		"cssGzipBytes": 15400
 	}
 }

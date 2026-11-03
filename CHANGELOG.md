@@ -10,10 +10,12 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- Novo `AdsMultiSelect` com busca, chips removíveis, seleção múltipla controlada/não controlada, limites e serialização de formulário; Admin Demo e Storybook navegáveis. (#143, OpenSpec `add-ads-multi-select-143`)
 - Novo `AdsOTPInput` para códigos numéricos com comprimento configurável, navegação nativa, colagem e autofill, estados controlados e integração a `AdsField`; exemplos no Admin Demo e Storybook. (#146, OpenSpec `add-ads-otp-input-146`)
 
 #### Changed
 
+- Orçamento técnico de JS/CSS publicado de `@dvmarques/admin-ds-components` revisto de 285.000 para 295.000 bytes após medição explícita de 292.236 bytes com o novo `AdsMultiSelect`; limite gzip revisto de 86.000 para 89.000 bytes após medição de 87.601 bytes; demais cenários sujeitos à validação. (#143)
 - Verificador de distribuição do peer opcional aceita as saídas JSON do npm pack 11 e 12, mantendo o contrato de tarball. (#299)
 - Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Os resumos de CI exibem dispensas de escopo sem alegar testes executados; `--prefer-offline` foi removido após não mostrar ganho. Sem redução de cobertura nem de gates de segurança. (#294)
 - Teste de transferência de baselines converte URLs em caminhos de arquivo compatíveis com Windows e Unix. (#294)

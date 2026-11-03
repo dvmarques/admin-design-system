@@ -25,6 +25,7 @@ import {
 	AdsTextarea,
 	AdsSelect,
 	AdsCombobox,
+	AdsMultiSelect,
 	AdsAutocomplete,
 	AdsCheckbox,
 	AdsRadio,
@@ -639,6 +640,74 @@ export function SelectDemo() {
 				</AdsSelect>
 			</AdsField>
 		</>
+	);
+}
+
+export function MultiSelectDemo() {
+	const choices = [
+		{ value: 'design', label: 'Design de produto' },
+		{ value: 'frontend', label: 'Desenvolvimento frontend' },
+		{ value: 'backend', label: 'Desenvolvimento backend' },
+		{ value: 'qualidade', label: 'Qualidade e testes' },
+		{ value: 'operacoes', label: 'Operações', disabled: true },
+	];
+	const [selected, setSelected] = useState<string[]>(['design']);
+	const [submitted, setSubmitted] = useState('');
+	return (
+		<div style={{ display: 'grid', gap: 'var(--ads-spacing-4)', maxWidth: 600 }}>
+			<AdsField
+				description="Busque opções, use setas e Enter, remova chips ou limpe tudo. Limite de 3."
+				label="Áreas (controlado)"
+			>
+				<AdsMultiSelect
+					maxSelections={3}
+					onValueChange={setSelected}
+					options={choices}
+					value={selected}
+				/>
+			</AdsField>
+			<p aria-label="Valores selecionados">{selected.join(', ') || 'Nenhum'}</p>
+			<AdsButton onClick={() => setSelected(['frontend'])} type="button" variant="secondary">
+				Definir Frontend externamente
+			</AdsButton>
+			<form
+				aria-label="Formulário de áreas"
+				onSubmit={(event) => {
+					event.preventDefault();
+					setSubmitted(JSON.stringify(new FormData(event.currentTarget).getAll('areas')));
+				}}
+				style={{ display: 'grid', gap: 'var(--ads-spacing-2)' }}
+			>
+				<AdsField
+					description="O formulário envia apenas values, repetindo name para cada escolha."
+					label="Áreas obrigatórias"
+				>
+					<AdsMultiSelect name="areas" options={choices} required />
+				</AdsField>
+				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--ads-spacing-2)' }}>
+					<AdsButton type="submit">Enviar valores</AdsButton>
+					<AdsButton type="reset" variant="secondary">
+						Reiniciar formulário
+					</AdsButton>
+				</div>
+				<output aria-label="Dados enviados">{submitted}</output>
+			</form>
+			<AdsField label="Sem resultados">
+				<AdsMultiSelect emptyText="Nenhuma equipe disponível" options={[]} />
+			</AdsField>
+			<AdsField label="Carregamento">
+				<AdsMultiSelect loading options={choices} />
+			</AdsField>
+			<AdsField error="Falha simulada" label="Erro" validationState="error">
+				<AdsMultiSelect error="Não foi possível carregar opções." options={choices} />
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsMultiSelect defaultValue={['design']} disabled options={choices} />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsMultiSelect defaultValue={['design']} options={choices} readOnly />
+			</AdsField>
+		</div>
 	);
 }
 
@@ -2233,6 +2302,7 @@ export const catalogDemos = {
 	Textarea: TextareaDemo,
 	Select: SelectDemo,
 	Combobox: ComboboxDemo,
+	MultiSelect: MultiSelectDemo,
 	Autocomplete: AutocompleteDemo,
 	Checkbox: CheckboxDemo,
 	Radio: RadioDemo,

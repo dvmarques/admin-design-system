@@ -45,6 +45,8 @@ export type {
 	AdsComboboxQueryReason,
 	AdsComboboxTriggerContext,
 } from './combobox.js';
+export { AdsMultiSelect } from './multi-select.js';
+export type { AdsMultiSelectProps, AdsMultiSelectOption } from './multi-select.js';
 export { AdsAutocomplete } from './autocomplete.js';
 export type { AdsAutocompleteProps } from './autocomplete.js';
 export type { AdsSelectProps, AdsSelectValue } from './select.js';

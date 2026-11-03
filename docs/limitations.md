@@ -162,3 +162,9 @@ As limitações abaixo são classificadas por área/componente e complementam o 
   `dialog` caso contrário; `AdsDrawer` não expõe `role`. Em `AdsListFlow` o
   slot `filters` da tabela é ocupado pelo fluxo. Sem snapshot visual
   para eles, o comportamento é coberto por testes de componente, SSR e `axe`.
+
+## AdsMultiSelect
+
+- A pesquisa filtra as opções fornecidas localmente; o componente não busca dados remotamente, não cria opções novas nem virtualiza listas grandes. A aplicação gerencia estados e respostas assíncronas.
+- A lista fica ancorada ao controle no fluxo de posicionamento local: recipientes com `overflow: hidden` podem recortar o popup. Requer avaliação específica antes de utilização em todos os overlays aninhados; não altera a issue #91.
+- `maxSelections` restringe novas interações, mas não altera silenciosamente `value` recebido de fora. Forneça uma lista de opções com valores únicos.

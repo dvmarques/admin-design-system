@@ -2,7 +2,7 @@
 
 ## Purpose
 
-TBD - created by archiving change add-ads-multi-select-143. Update Purpose after archive.
+Disponibilizar às aplicações administrativas um seletor de múltiplas opções acessível, com busca local, chips removíveis, limites de escolha, estados de loading, vazio, erro e desabilitado, e serialização compatível com formulários nativos, em modos controlado e não controlado.
 
 ## Requirements
 

@@ -90,6 +90,8 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 	) {
 		const [uncontrolled, setUncontrolled] = useState(() => unique(defaultValue));
 		const selected = unique(value === undefined ? uncontrolled : value);
+		const defaultRef = useRef(defaultValue);
+		defaultRef.current = defaultValue;
 		const [query, setQuery] = useState('');
 		const [expanded, setExpanded] = useState(false);
 		const [activeIndex, setActiveIndex] = useState(-1);
@@ -157,14 +159,14 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 			const form = inputRef.current?.form;
 			if (!form) return;
 			const reset = () => {
-				if (value === undefined) setUncontrolled(unique(defaultValue));
+				if (value === undefined) setUncontrolled(unique(defaultRef.current));
 				setQuery('');
 				setExpanded(false);
 				setActiveIndex(-1);
 			};
 			form.addEventListener('reset', reset);
 			return () => form.removeEventListener('reset', reset);
-		}, [value, defaultValue]);
+		}, [value]);
 
 		useEffect(() => {
 			if (!open) return;
@@ -234,7 +236,7 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 						aria-activedescendant={active >= 0 ? listId + '-option-' + active : undefined}
 						aria-autocomplete="list"
 						aria-busy={loading || undefined}
-						aria-controls={open ? listId : undefined}
+						aria-controls={open && !loading && !error && items.length > 0 ? listId : undefined}
 						aria-describedby={[describedBy, statusId].filter(Boolean).join(' ')}
 						aria-expanded={open}
 						aria-invalid={
@@ -316,7 +318,9 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 						: (error ??
 							(limitReached
 								? 'Limite de seleções atingido.'
-								: selected.length + ' opções selecionadas.'))}
+								: selected.length === 1
+									? '1 opção selecionada.'
+									: selected.length + ' opções selecionadas.'))}
 				</span>
 				{!disabled && name
 					? selected.map((item) => (

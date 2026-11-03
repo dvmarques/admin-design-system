@@ -5,15 +5,15 @@
 
 ## 2. Componente reutilizável
 
-- [ ] 2.1 Implementar `AdsMultiSelect` e tipos exportados com busca, chips removíveis, limpeza, controle, limites e opções disabled sem dependências novas.
-- [ ] 2.2 Integrar `AdsField`, estados loading/error/vazio, acessibilidade, foco, teclado, validação e formulários.
-- [ ] 2.3 Criar/ajustar estilos responsivos, temas e tokens; revisar CSS compilado, compatibilidade e orçamento de bundle.
+- [x] 2.1 Implementar `AdsMultiSelect` e tipos exportados com busca, chips removíveis, limpeza, controle, limites e opções disabled sem dependências novas.
+- [x] 2.2 Integrar `AdsField`, estados loading/error/vazio, acessibilidade, foco, teclado, validação e formulários.
+- [x] 2.3 Criar/ajustar estilos responsivos, temas e tokens; revisar CSS compilado, compatibilidade e orçamento de bundle.
 
 ## 3. Testes e demonstrações
 
 - [ ] 3.1 Testes unitários e interação para controlled/uncontrolled, filtro, teclado, chip, clear, limite, reset, `name`, `required`, disabled e ARIA; regressões Combobox/FilterBar.
-- [ ] 3.2 Adicionar exemplos funcionais e navegáveis no Admin Demo, atualizando catálogo, controles de estados e testes de consumo público.
-- [ ] 3.3 Adicionar stories com estados/variantes ao Storybook; documentação API, CHANGELOG e matriz do catálogo.
+- [x] 3.2 Adicionar exemplos funcionais e navegáveis no Admin Demo, atualizando catálogo, controles de estados e testes de consumo público.
+- [x] 3.3 Adicionar stories com estados/variantes ao Storybook; documentação API, CHANGELOG e matriz do catálogo.
 - [ ] 3.4 E2E e acessibilidade em Chromium/Firefox/WebKit quando aplicável; contrastes, mobile, zoom, formulário, SSR/hidratação, sobreposições e snapshots revisados.
 
 ## 4. Verificação antes da revisão

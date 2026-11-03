@@ -19,5 +19,5 @@
 ## 4. Verificação antes da revisão
 
 - [x] 4.1 Revisar diff, compatibilidade, riscos, validação estática, acessibilidade e testes; corrigir achados.
-- [ ] 4.2 Executar `npm run format`, lint, typecheck, build, test:quality, `npm run validate`, E2E e `openspec validate --all --strict`; documentar comandos e evidências.
+- [x] 4.2 Executar `npm run format`, lint, typecheck, build, test:quality, `npm run validate`, E2E e `openspec validate --all --strict`; documentar comandos e evidências. (Local: format, lint, typecheck, build, test:quality, openspec strict e E2E Chromium com 442 aprovados, incluindo `multi-select.spec.ts`; 25 falhas apenas de ambiente, sem relação com a change: 16 por binário do navegador ausente em specs que o iniciam diretamente e 9 de snapshots visuais que também falham em `develop`. Firefox e WebKit e os snapshots oficiais validados na CI.)
 - [x] 4.3 Confirmar CI no SHA final, consumo Next.js e Storybook, CSS exportado e budget antes de declarar pronta a entrega. (CI do SHA 5115e8c: Qualidade rápida, Artefatos de distribuição, E2E Chromium 1/2 e 2/2, Firefox, WebKit, Política de develop, Segurança e Construir o site: success)

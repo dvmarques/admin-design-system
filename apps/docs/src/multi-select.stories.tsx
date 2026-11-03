@@ -91,7 +91,9 @@ export const Form: Story = {
 			</AdsField>
 			<div className="flex gap-2">
 				<AdsButton type="submit">Enviar</AdsButton>
-				<AdsButton type="reset" variant="secondary">Restaurar</AdsButton>
+				<AdsButton type="reset" variant="secondary">
+					Restaurar
+				</AdsButton>
 			</div>
 		</form>
 	),

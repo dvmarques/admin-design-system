@@ -2092,7 +2092,6 @@ export function ImportarArquivo() {
 
 Para um fluxo modal, componha `AdsDialog` e `AdsButton` na aplicação. Consulte a rota de demonstração `/componentes/arquivos` para um envio simulado sem backend. Drag-and-drop não integra o MVP: o botão nativo acessível é o caminho de seleção obrigatório. O componente deve ser usado em uma fronteira Client Component no App Router; não requer Next.js dentro da biblioteca.
 
-
 ## AdsMultiSelect — seleção múltipla (#143)
 
 Importe `AdsMultiSelect` de `@dvmarques/admin-ds-components` e use `AdsField` para rótulo, ajuda e mensagem de erro. As opções têm `value` (valor enviado ao formulário), `label` e, opcionalmente, `description`/`disabled`. Não repita `value` entre opções.
@@ -2102,16 +2101,19 @@ Importe `AdsMultiSelect` de `@dvmarques/admin-ds-components` e use `AdsField` pa
 import { AdsField, AdsMultiSelect } from '@dvmarques/admin-ds-components';
 
 export function Categorias() {
-  return (
-    <AdsField label="Categorias" description="Escolha até duas categorias.">
-      <AdsMultiSelect
-        name="categorias"
-        required
-        maxSelections={2}
-        options={[{ value: 'a', label: 'A' }, { value: 'b', label: 'B' }]}
-      />
-    </AdsField>
-  );
+	return (
+		<AdsField label="Categorias" description="Escolha até duas categorias.">
+			<AdsMultiSelect
+				name="categorias"
+				required
+				maxSelections={2}
+				options={[
+					{ value: 'a', label: 'A' },
+					{ value: 'b', label: 'B' },
+				]}
+			/>
+		</AdsField>
+	);
 }
 ```
 

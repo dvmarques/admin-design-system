@@ -163,7 +163,6 @@ As limitações abaixo são classificadas por área/componente e complementam o 
   slot `filters` da tabela é ocupado pelo fluxo. Sem snapshot visual
   para eles, o comportamento é coberto por testes de componente, SSR e `axe`.
 
-
 ## AdsMultiSelect
 
 - A pesquisa filtra as opções fornecidas localmente; o componente não busca dados remotamente, não cria opções novas nem virtualiza listas grandes. A aplicação gerencia estados e respostas assíncronas.

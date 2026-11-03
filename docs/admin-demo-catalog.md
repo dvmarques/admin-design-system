@@ -50,7 +50,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsTextarea`               | Formulários | `/catalogo/textarea`                 | `form.stories.tsx`                                                  |
 | `AdsSelect`                 | Formulários | `/catalogo/select`                   | `admin-flows.stories.tsx`, `form.stories.tsx`, `select.stories.tsx` |
 | `AdsCombobox`               | Formulários | `/catalogo/combobox`                 | `combobox.stories.tsx`                                              |
-| `AdsMultiSelect`            | Formulários | `/catalogo/multi-select`              | `multi-select.stories.tsx`                                             |
+| `AdsMultiSelect`            | Formulários | `/catalogo/multi-select`             | `multi-select.stories.tsx`                                          |
 | `AdsAutocomplete`           | Formulários | `/catalogo/autocomplete`             | `autocomplete.stories.tsx`                                          |
 | `AdsCheckbox`               | Formulários | `/catalogo/checkbox`                 | `form.stories.tsx`                                                  |
 | `AdsRadio`                  | Formulários | `/catalogo/radio`                    | `form.stories.tsx`                                                  |

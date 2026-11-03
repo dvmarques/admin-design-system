@@ -29,7 +29,10 @@ describe('AdsMultiSelect', () => {
 		fireEvent.click(screen.getByRole('option', { name: 'São Paulo' }));
 		fireEvent.click(screen.getByRole('option', { name: 'Rio de Janeiro' }));
 		expect(new FormData(container.querySelector('form')!).getAll('uf')).toEqual(['sp', 'rj']);
-		expect(screen.getByRole('option', { name: 'Rio de Janeiro' })).toHaveAttribute('aria-selected', 'true');
+		expect(screen.getByRole('option', { name: 'Rio de Janeiro' })).toHaveAttribute(
+			'aria-selected',
+			'true',
+		);
 		fireEvent.click(screen.getByRole('button', { name: 'Remover São Paulo' }));
 		expect(onValueChange).toHaveBeenLastCalledWith(['rj']);
 		expect(new FormData(container.querySelector('form')!).getAll('uf')).toEqual(['rj']);
@@ -48,7 +51,12 @@ describe('AdsMultiSelect', () => {
 		expect(callback).toHaveBeenCalledWith(['sp']);
 		expect(screen.queryByRole('button', { name: 'Remover São Paulo' })).toBeNull();
 		rerender(
-			<AdsMultiSelect aria-label="Estados" onValueChange={callback} options={options} value={['sp']} />,
+			<AdsMultiSelect
+				aria-label="Estados"
+				onValueChange={callback}
+				options={options}
+				value={['sp']}
+			/>,
 		);
 		expect(screen.getByRole('button', { name: 'Remover São Paulo' })).toBeInTheDocument();
 	});
@@ -114,7 +122,13 @@ describe('AdsMultiSelect', () => {
 	it('desabilitado não serializa, readOnly impede mudanças e estados são anunciados', () => {
 		const { container } = render(
 			<form>
-				<AdsMultiSelect aria-label="Desabilitado" disabled defaultValue={['sp']} name="uf" options={options} />
+				<AdsMultiSelect
+					aria-label="Desabilitado"
+					disabled
+					defaultValue={['sp']}
+					name="uf"
+					options={options}
+				/>
 				<AdsMultiSelect aria-label="Leitura" defaultValue={['sp']} options={options} readOnly />
 				<AdsField error="Erro simulado" label="Falhou" validationState="error">
 					<AdsMultiSelect error="Sem conexão" options={options} />
@@ -125,13 +139,18 @@ describe('AdsMultiSelect', () => {
 		);
 		expect(new FormData(container.querySelector('form')!).getAll('uf')).toEqual([]);
 		expect(screen.getByRole('combobox', { name: 'Leitura' })).toHaveAttribute('readonly');
-		expect(screen.getByRole('combobox', { name: 'Falhou' })).toHaveAttribute('aria-invalid', 'true');
+		expect(screen.getByRole('combobox', { name: 'Falhou' })).toHaveAttribute(
+			'aria-invalid',
+			'true',
+		);
 		fireEvent.focus(screen.getByRole('combobox', { name: 'Vazio' }));
 		expect(screen.getByText('Sem opções')).toBeInTheDocument();
 	});
 
 	it('não quebra SSR e não apresenta violações automáticas de acessibilidade', async () => {
-		expect(renderToString(<AdsMultiSelect aria-label="Estados" options={options} />)).toContain('role="combobox"');
+		expect(renderToString(<AdsMultiSelect aria-label="Estados" options={options} />)).toContain(
+			'role="combobox"',
+		);
 		const { container } = render(
 			<AdsField label="Estados">
 				<AdsMultiSelect options={options} />
@@ -145,7 +164,14 @@ describe('AdsMultiSelect', () => {
 	it('estado controlado pode ser gerido por consumidor React', () => {
 		function Demo() {
 			const [value, setValue] = useState<string[]>([]);
-			return <AdsMultiSelect aria-label="Equipes" onValueChange={setValue} options={options} value={value} />;
+			return (
+				<AdsMultiSelect
+					aria-label="Equipes"
+					onValueChange={setValue}
+					options={options}
+					value={value}
+				/>
+			);
 		}
 		render(<Demo />);
 		const input = screen.getByRole('combobox', { name: 'Equipes' });

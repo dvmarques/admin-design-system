@@ -686,7 +686,9 @@ export function MultiSelectDemo() {
 				</AdsField>
 				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--ads-spacing-2)' }}>
 					<AdsButton type="submit">Enviar valores</AdsButton>
-					<AdsButton type="reset" variant="secondary">Reiniciar formulário</AdsButton>
+					<AdsButton type="reset" variant="secondary">
+						Reiniciar formulário
+					</AdsButton>
 				</div>
 				<output aria-label="Dados enviados">{submitted}</output>
 			</form>

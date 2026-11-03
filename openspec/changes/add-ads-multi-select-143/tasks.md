@@ -20,4 +20,4 @@
 
 - [x] 4.1 Revisar diff, compatibilidade, riscos, validação estática, acessibilidade e testes; corrigir achados.
 - [ ] 4.2 Executar `npm run format`, lint, typecheck, build, test:quality, `npm run validate`, E2E e `openspec validate --all --strict`; documentar comandos e evidências.
-- [ ] 4.3 Confirmar CI no SHA final, consumo Next.js e Storybook, CSS exportado e budget antes de declarar pronta a entrega.
+- [x] 4.3 Confirmar CI no SHA final, consumo Next.js e Storybook, CSS exportado e budget antes de declarar pronta a entrega. (CI do SHA 5115e8c: Qualidade rápida, Artefatos de distribuição, E2E Chromium 1/2 e 2/2, Firefox, WebKit, Política de develop, Segurança e Construir o site: success)

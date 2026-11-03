@@ -18,15 +18,23 @@ test('multi-select: busca, teclado, limite, chip e limpeza', async ({ page }) =>
 });
 
 test('multi-select: required e envio de valores reais sem consulta', async ({ page }) => {
+	console.info('[multi-select/form] navigating');
 	await page.goto('/catalogo/multi-select');
 	const required = page.getByRole('combobox', { name: 'Áreas obrigatórias' });
+	console.info('[multi-select/form] clicking empty required submit');
 	await page.getByRole('button', { name: 'Enviar valores' }).click();
+	console.info('[multi-select/form] asserting focus on required input');
 	await expect(required).toBeFocused();
+	console.info('[multi-select/form] searching produto');
 	await required.fill('produto');
+	console.info('[multi-select/form] selecting design');
 	await page.getByRole('option', { name: 'Design de produto' }).click();
+	console.info('[multi-select/form] searching frontend');
 	await required.fill('frontend');
+	console.info('[multi-select/form] selecting frontend');
 	await page.getByRole('option', { name: 'Desenvolvimento frontend' }).click();
 	await page.getByRole('button', { name: 'Enviar valores' }).click();
+	console.info('[multi-select/form] verifying submitted FormData');
 	await expect(page.getByLabel('Dados enviados')).toHaveText('["design","frontend"]');
 	await page.getByRole('button', { name: 'Reiniciar formulário' }).click();
 	await expect(required).toHaveValue('');

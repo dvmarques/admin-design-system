@@ -300,7 +300,7 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 					) : items.length === 0 ? (
 						<p className="ads-multi-select__message" role="status">{emptyText}</p>
 					) : (
-						<ul aria-multiselectable="true" className="ads-multi-select__list" id={listId} role="listbox">
+						<ul aria-label="Opções disponíveis" aria-multiselectable="true" className="ads-multi-select__list" id={listId} role="listbox">
 							{items.map((option, index) => {
 								const unavailable = !selectable(option);
 								return (

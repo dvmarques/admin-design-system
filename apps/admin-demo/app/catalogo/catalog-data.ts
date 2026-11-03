@@ -91,6 +91,14 @@ export const catalogEntries = [
 		href: '/catalogo/combobox',
 	},
 	{
+		name: 'AdsMultiSelect',
+		group: 'Formulários',
+		slug: 'multi-select',
+		demo: 'MultiSelect',
+		description: 'Múltiplas escolhas com busca, chips removíveis, limites e formulário acessível.',
+		href: '/catalogo/multi-select',
+	},
+	{
 		name: 'AdsAutocomplete',
 		group: 'Formulários',
 		slug: 'autocomplete',

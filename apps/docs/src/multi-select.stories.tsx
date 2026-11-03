@@ -14,6 +14,7 @@ const meta = {
 	title: 'Forms/Multi select',
 	component: AdsMultiSelect,
 	tags: ['autodocs'],
+	args: { options },
 	parameters: {
 		docs: {
 			description: {

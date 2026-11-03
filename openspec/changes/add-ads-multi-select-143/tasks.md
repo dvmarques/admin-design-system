@@ -1,7 +1,7 @@
 ## 1. Contrato e planejamento
 
 - [x] 1.1 Analisar issue #143, dependências e perfil Critical; definir contrato controlado/não controlado, opção, limites, ARIA, formulário e decisões de rollback nesta change.
-- [ ] 1.2 Revisar e validar OpenSpec via CLI strict antes do Apply; resolver dúvidas de serialização, `required`, reset e overlays.
+- [x] 1.2 Revisar e validar OpenSpec via CLI strict; serialização, `required`, reset e overlays documentados. (CI PR #300 run 41557877400, job Política de develop, step OpenSpec strict: success)
 
 ## 2. Componente reutilizável
 

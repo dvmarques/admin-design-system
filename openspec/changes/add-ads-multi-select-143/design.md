@@ -33,9 +33,14 @@ Alternativas: (A) estender `AdsCombobox` com `multiple` causa sobrecarga de esta
 - Uma segunda [CI] mediu 87.601 bytes de gzip por arquivo,
   acima do antigo teto de 86.000 bytes.
 - O teto gzip proposto é 89.000 bytes (+3,49%).
-- Os cenários de consumo mantêm os orçamentos anteriores até nova medição.
+- A [medição de CSS] confirmou `components-public` e
+  `masked-input-public`: 61.162 bytes e gzip 10.009 bytes.
+- `admin-public`: 100.944 bytes e gzip 15.093 bytes.
+- Tetos revisados: 63.000/10.400 bytes para components e masked;
+  103.000/15.400 bytes para admin (CSS bruto/gzip).
 - O custo adicional, os checks e a necessidade de otimização futura devem
   ser revisados por humano antes do merge.
 
 [CI inicial]: https://github.com/dvmarques/admin-design-system/actions/runs/41558579830
 [CI]: https://github.com/dvmarques/admin-design-system/actions/runs/41558918105
+[medição de CSS]: https://github.com/dvmarques/admin-design-system/actions/runs/41559584729

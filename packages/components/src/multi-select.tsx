@@ -118,7 +118,7 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 			!option.disabled &&
 			(selectedSet.has(option.value) || !limitReached);
 		const active =
-			open && activeIndex >= 0 && activeIndex < items.length && selectable(items[activeIndex])
+			open && activeIndex >= 0 && activeIndex < items.length && selectable(items[activeIndex]!)
 				? activeIndex
 				: -1;
 

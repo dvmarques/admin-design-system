@@ -25,6 +25,18 @@ Alternativas: (A) estender `AdsCombobox` com `multiple` causa sobrecarga de esta
 - Gates: `npm run format`, `npm run validate`, `openspec validate --all --strict`, `npm run test:e2e`, builds Next.js/Storybook, `inspect:packages`, CI executada no SHA final e revisão humana antes de archive/merge. Não assumir sucesso por job skipped nem por ausência de logs locais.
 
 
-## Evidência de orçamento na integração CI (#143)
+## Evidência do orçamento na CI (#143)
 
-Na execução [CI #41558579830](https://github.com/dvmarques/admin-design-system/actions/runs/41558579830) do commit `9429edef`, `npm run inspect:packages` mediu **292.236 bytes** de JS/CSS públicos em `@dvmarques/admin-ds-components` contra o teto anterior de **285.000 bytes**. O artefato completo mediu **670.263 bytes**, permanecendo abaixo do teto de **690.852 bytes** do baseline de distribuição; o novo controle público agrega lógica e CSS, mantendo os imports de Shiki fora do entrypoint. Para não mascarar a mudança, o teto JS/CSS publicado foi revisado explicitamente para **295.000 bytes** (incremento de 10.000 bytes, 3,51%), com 2.764 bytes de margem sobre a medição; orçamento gzip e demais cenários permanecem inalterados e exigem nova medição. A aprovação humana da PR deve revisar esse custo e o resultado de `inspect:packages` completo antes de merge; não usar a elevação como substituto dos gates.
+- A [CI inicial] mediu 292.236 bytes de JS/CSS publicados
+  (limite antigo de 285.000 bytes).
+- O dist completo tem 670.263 bytes, abaixo do teto de 690.852 bytes.
+- O novo teto de JS/CSS é 295.000 bytes (+3,51%).
+- Uma segunda [CI] mediu 87.601 bytes de gzip por arquivo,
+  acima do antigo teto de 86.000 bytes.
+- O teto gzip proposto é 89.000 bytes (+3,49%).
+- Os cenários de consumo mantêm os orçamentos anteriores até nova medição.
+- O custo adicional, os checks e a necessidade de otimização futura devem
+  ser revisados por humano antes do merge.
+
+[CI inicial]: https://github.com/dvmarques/admin-design-system/actions/runs/41558579830
+[CI]: https://github.com/dvmarques/admin-design-system/actions/runs/41558918105

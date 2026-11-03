@@ -1,0 +1,56 @@
+name: Diagnosticar bundles #143 (temporário)
+on:
+  push:
+    branches:
+      - feat/143-ads-multi-select
+permissions:
+  contents: write
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1
+        with:
+          ref: feat/143-ads-multi-select
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Format OpenSpec
+        run: |
+          npx prettier --write openspec/changes/add-ads-multi-select-143/design.md
+          npm run format
+      - name: Build styles
+        run: |
+          npm run build --workspace @dvmarques/admin-ds-tokens
+          npm run build --workspace @dvmarques/admin-ds-components
+          npm run build --workspace @dvmarques/admin-ds-admin
+      - name: Measure CSS scenarios without changing budgets
+        run: |
+          node --input-type=module <<'JS'
+          import { build } from 'esbuild';
+          import { gzipSync } from 'node:zlib';
+          import { Buffer } from 'node:buffer';
+          for (const [name, files] of Object.entries({
+            'components-public': ['packages/tokens/dist/tokens.css','packages/components/dist/styles.css'],
+            'masked-input-public': ['packages/tokens/dist/tokens.css','packages/components/dist/styles.css'],
+            'admin-public': ['packages/tokens/dist/tokens.css','packages/components/dist/styles.css','packages/admin/dist/styles.css'],
+          })) {
+            const bufs = [];
+            for (const file of files) {
+              const result = await build({entryPoints:[file],minify:true,write:false,outdir:'out',logLevel:'silent'});
+              bufs.push(Buffer.concat(result.outputFiles.map(x=>x.contents)));
+            }
+            console.log('BUDGET_METRICS ' + JSON.stringify({name,cssBytes:bufs.reduce((n,b)=>n+b.length,0),cssGzipBytes:gzipSync(Buffer.concat(bufs),{level:9}).length}));
+          }
+          JS
+      - name: Commit official formatting
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add openspec/changes/add-ads-multi-select-143/design.md
+          if ! git diff --cached --quiet; then
+            git commit -m "style(openspec): aplicar Prettier oficial (#143)"
+            git push origin HEAD:feat/143-ads-multi-select
+          fi

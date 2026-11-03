@@ -24,7 +24,6 @@ Alternativas: (A) estender `AdsCombobox` com `multiple` causa sobrecarga de esta
 - Rollback: remover export e novos arquivos sem afetar APIs anteriores, caso validação de acessibilidade, CSS ou CI falhe.
 - Gates: `npm run format`, `npm run validate`, `openspec validate --all --strict`, `npm run test:e2e`, builds Next.js/Storybook, `inspect:packages`, CI executada no SHA final e revisão humana antes de archive/merge. Não assumir sucesso por job skipped nem por ausência de logs locais.
 
-
 ## Evidência do orçamento na CI (#143)
 
 - A [CI inicial] mediu 292.236 bytes de JS/CSS publicados

@@ -124,7 +124,7 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 	};
 
 	const toggle = (option: AdsMultiSelectOption) => {
-		if (!selectable(option)) return;
+		if (!option || !selectable(option)) return;
 		if (selectedSet.has(option.value)) commit(selected.filter((item) => item !== option.value));
 		else commit([...selected, option.value]);
 		setQuery('');
@@ -171,7 +171,7 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 		const target = cursor === -1
 			? (direction === 1 ? 0 : indices.length - 1)
 			: (cursor + direction + indices.length) % indices.length;
-		setActiveIndex(indices[target]);
+		setActiveIndex(indices[target] ?? -1);
 	};
 
 	const remove = (item: string, event?: ReactMouseEvent<HTMLButtonElement>) => {
@@ -246,7 +246,8 @@ export const AdsMultiSelect = forwardRef<HTMLInputElement, AdsMultiSelectProps>(
 							move(event.key === 'ArrowDown' ? 1 : -1);
 						} else if (event.key === 'Enter' && open && active >= 0) {
 							event.preventDefault();
-							toggle(items[active]);
+							const option = items[active];
+			if (option) toggle(option);
 						} else if (event.key === 'Escape' && open) {
 							event.preventDefault();
 							setExpanded(false);

@@ -10,6 +10,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 #### Added
 
+- Novo `AdsTimePicker` com formatos 12h/24h, `HH:mm` canônico, passo de minutos, limites, validação e exemplos no Admin Demo/Storybook. (#144, OpenSpec `add-ads-time-picker-144`)
+
 - Novo `AdsMultiSelect` com busca, chips removíveis, seleção múltipla controlada/não controlada, limites e serialização de formulário; Admin Demo e Storybook navegáveis. (#143, OpenSpec `add-ads-multi-select-143`)
 - Novo `AdsOTPInput` para códigos numéricos com comprimento configurável, navegação nativa, colagem e autofill, estados controlados e integração a `AdsField`; exemplos no Admin Demo e Storybook. (#146, OpenSpec `add-ads-otp-input-146`)
 

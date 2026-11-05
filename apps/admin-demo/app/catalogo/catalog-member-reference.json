@@ -228,5 +228,10 @@
 		"description": "Alias público do componente raiz AdsDropdown; gerencia a abertura do menu.",
 		"props": "open, defaultOpen, onOpenChange, children",
 		"usage": "<AdsDropdown.Root>…</AdsDropdown.Root>"
+	},
+	"AdsTimePicker": {
+		"description": "Seleção acessível de horário independente de data e fuso horário.",
+		"props": "value, defaultValue, onValueChange, format, minuteStep, min, max, disabled, required, name, labels, size, validationState",
+		"usage": "<AdsTimePicker defaultValue=\"14:30\" format=\"24h\" minuteStep={15} />"
 	}
 }

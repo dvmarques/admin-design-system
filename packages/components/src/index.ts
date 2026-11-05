@@ -175,6 +175,8 @@ export type {
 export { AdsEmptyState, AdsProgress } from './data-feedback.js';
 export type { AdsEmptyStateProps, AdsProgressProps } from './data-feedback.js';
 export { AdsDatePicker } from './date-picker.js';
+export { AdsTimePicker } from './time-picker.js';
+export type { AdsTimePickerProps, AdsTimePickerLabels } from './time-picker.js';
 export type {
 	AdsDatePickerLabels,
 	AdsDatePickerProps,

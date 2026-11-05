@@ -22,6 +22,7 @@ export function TimePickerExamples() {
 				<AdsTimePicker required />
 			</AdsField>
 			<AdsField label="Horário desabilitado"><AdsTimePicker defaultValue="17:00" disabled /></AdsField>
+			<AdsField label="Período do registro"><AdsDatePicker defaultValue={{ start: '2026-03-10', end: '2026-03-18' }} mode="range" /></AdsField>
 			<AdsField label="Data independente"><AdsDatePicker defaultValue="2026-11-05" /></AdsField>
 			<AdsField label="Hora independente"><AdsTimePicker defaultValue="10:45" /></AdsField>
 		</div>

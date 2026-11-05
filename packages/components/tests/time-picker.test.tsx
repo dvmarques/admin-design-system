@@ -64,6 +64,14 @@ describe('AdsTimePicker', () => {
 		expect(change).toHaveBeenLastCalledWith('13:00');
 	});
 
+	it('atualiza a exibição não controlada ao alternar entre 24h e 12h', () => {
+		const { rerender } = render(<AdsTimePicker defaultValue="14:30" />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('14');
+		rerender(<AdsTimePicker defaultValue="14:30" format="12h" />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('02');
+		expect(screen.getByRole('combobox', { name: 'Período' })).toHaveValue('PM');
+	});
+
 	it('preserva valor controlado se o pai não atualizar a prop', () => {
 		const change = vi.fn();
 		const { rerender } = render(<AdsTimePicker value="08:20" onValueChange={change} />);

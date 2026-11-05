@@ -109,8 +109,8 @@ export function AdsTimePicker({
 	const current = controlled ? value : innerValue;
 	const [draft, setDraft] = useState<TimeParts>(() => splitTime(current, format));
 	useEffect(() => {
-		if (controlled) setDraft(splitTime(value, format));
-	}, [controlled, value, format]);
+		setDraft(splitTime(current, format));
+	}, [current, format]);
 	const minMinutes = min === undefined ? 0 : parseTime(min);
 	const maxMinutes = max === undefined ? 1439 : parseTime(max);
 	const validStep = Number.isInteger(minuteStep) && minuteStep >= 1 && minuteStep <= 60;

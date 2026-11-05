@@ -77,9 +77,72 @@ describe('AdsTimePicker', () => {
 		const { rerender } = render(<AdsTimePicker value="08:20" onValueChange={change} />);
 		fireEvent.change(screen.getByRole('combobox', { name: 'Horas' }), { target: { value: '09' } });
 		expect(change).toHaveBeenLastCalledWith('09:20');
-		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('08');
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('09');
+		rerender(<AdsTimePicker value="08:20" onValueChange={change} />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('09');
 		rerender(<AdsTimePicker value="09:20" onValueChange={change} />);
 		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('09');
+	});
+
+	it('mantém edição parcial controlada quando o pai ignora null ou aplica null', () => {
+		const change = vi.fn();
+		const { rerender } = render(
+			<AdsTimePicker value="12:30" min="12:00" max="13:00" onValueChange={change} />,
+		);
+		fireEvent.change(screen.getByRole('combobox', { name: 'Horas' }), { target: { value: '13' } });
+		expect(change).toHaveBeenLastCalledWith(null);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('13');
+		expect(screen.getByRole('combobox', { name: 'Minutos' })).toHaveValue('');
+		rerender(<AdsTimePicker value="12:30" min="12:00" max="13:00" onValueChange={change} />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('13');
+		fireEvent.change(screen.getByRole('combobox', { name: 'Minutos' }), {
+			target: { value: '00' },
+		});
+		expect(change).toHaveBeenLastCalledWith('13:00');
+	});
+
+	it('preserva rascunho parcial controlado quando o pai aplica null', () => {
+		const change = vi.fn();
+		const { rerender } = render(
+			<AdsTimePicker value="12:30" min="12:00" max="13:00" onValueChange={change} />,
+		);
+		fireEvent.change(screen.getByRole('combobox', { name: 'Horas' }), { target: { value: '13' } });
+		expect(change).toHaveBeenLastCalledWith(null);
+		rerender(<AdsTimePicker value={null} min="12:00" max="13:00" onValueChange={change} />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('13');
+		expect(screen.getByRole('combobox', { name: 'Minutos' })).toHaveValue('');
+	});
+
+	it('sincroniza valor externo controlado e alternância 12h/24h', () => {
+		const change = vi.fn();
+		const { rerender } = render(<AdsTimePicker value="14:30" onValueChange={change} />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('14');
+		rerender(<AdsTimePicker value="16:45" onValueChange={change} />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('16');
+		expect(screen.getByRole('combobox', { name: 'Minutos' })).toHaveValue('45');
+		rerender(<AdsTimePicker value="16:45" format="12h" onValueChange={change} />);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('04');
+		expect(screen.getByRole('combobox', { name: 'Período' })).toHaveValue('PM');
+	});
+
+	it('mantém edição parcial controlada em 12h ao trocar só a hora', () => {
+		const change = vi.fn();
+		const { rerender } = render(
+			<AdsTimePicker format="12h" max="01:30" min="00:00" value="00:30" onValueChange={change} />,
+		);
+		fireEvent.change(screen.getByRole('combobox', { name: 'Minutos' }), { target: { value: '' } });
+		fireEvent.change(screen.getByRole('combobox', { name: 'Horas' }), { target: { value: '01' } });
+		expect(change).toHaveBeenLastCalledWith(null);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('01');
+		expect(screen.getByRole('combobox', { name: 'Período' })).toHaveValue('AM');
+		rerender(
+			<AdsTimePicker format="12h" max="01:30" min="00:00" value="00:30" onValueChange={change} />,
+		);
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('01');
+		fireEvent.change(screen.getByRole('combobox', { name: 'Minutos' }), {
+			target: { value: '00' },
+		});
+		expect(change).toHaveBeenLastCalledWith('01:00');
 	});
 
 	it('integra AdsField, required, estado disabled e descrição acessível', () => {

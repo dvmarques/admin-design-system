@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { classNames } from './class-names.js';
 import { AdsSelect } from './select.js';
 import type { AdsFormSize, AdsValidationState } from './form-types.js';
@@ -70,6 +70,30 @@ function splitTime(value: string | null | undefined, format: '12h' | '24h'): Tim
 	};
 }
 
+function isPartialDraft(parts: TimeParts): boolean {
+	return (parts.hour !== '' && parts.minute === '') || (parts.hour === '' && parts.minute !== '');
+}
+
+function hour24FromParts(parts: TimeParts, format: '12h' | '24h'): number {
+	const hour = Number(parts.hour);
+	return format === '12h' ? (hour % 12) + (parts.period === 'PM' ? 12 : 0) : hour;
+}
+
+function reformatDraft(parts: TimeParts, from: '12h' | '24h', to: '12h' | '24h'): TimeParts {
+	if (from === to) return parts;
+	const minutes = toMinutes(parts, from);
+	if (minutes !== null) {
+		return splitTime(`${pad(Math.floor(minutes / 60))}:${pad(minutes % 60)}`, to);
+	}
+	if (parts.hour === '') return { ...parts, period: 'AM' };
+	if (from === '24h' && to === '12h') {
+		const h24 = Number(parts.hour);
+		return { hour: pad(h24 % 12 || 12), minute: parts.minute, period: h24 >= 12 ? 'PM' : 'AM' };
+	}
+	const h24 = hour24FromParts(parts, '12h');
+	return { hour: pad(h24), minute: parts.minute, period: 'AM' };
+}
+
 function toMinutes(parts: TimeParts, format: '12h' | '24h'): number | null {
 	if (parts.hour === '' || parts.minute === '') return null;
 	const hour = Number(parts.hour);
@@ -108,9 +132,34 @@ export function AdsTimePicker({
 	const [innerValue, setInnerValue] = useState<string | null>(defaultValue);
 	const current = controlled ? value : innerValue;
 	const [draft, setDraft] = useState<TimeParts>(() => splitTime(current, format));
+	const prevValueRef = useRef(value);
+	const prevFormatRef = useRef(format);
 	useEffect(() => {
-		setDraft(splitTime(current, format));
-	}, [current, format]);
+		const formatChanged = prevFormatRef.current !== format;
+		if (formatChanged) {
+			const previousFormat = prevFormatRef.current;
+			prevFormatRef.current = format;
+			setDraft((parts) => reformatDraft(parts, previousFormat, format));
+		}
+		if (controlled) {
+			if (prevValueRef.current !== value) {
+				prevValueRef.current = value;
+				if (value == null) {
+					setDraft((parts) => (isPartialDraft(parts) ? parts : splitTime(null, format)));
+				} else {
+					setDraft(splitTime(value, format));
+				}
+			}
+			return;
+		}
+		prevValueRef.current = value;
+		if (formatChanged) return;
+		if (current === null) {
+			setDraft((parts) => (isPartialDraft(parts) ? parts : splitTime(null, format)));
+		} else {
+			setDraft(splitTime(current, format));
+		}
+	}, [controlled, value, current, format]);
 	const minMinutes = min === undefined ? 0 : parseTime(min);
 	const maxMinutes = max === undefined ? 1439 : parseTime(max);
 	const validStep = Number.isInteger(minuteStep) && minuteStep >= 1 && minuteStep <= 60;
@@ -130,7 +179,7 @@ export function AdsTimePicker({
 		invalidValue ||
 		!validStep ||
 		!validBounds;
-	const visible = controlled && current !== null ? splitTime(current, format) : draft;
+	const visible = draft;
 	const toHour24 = (hour: string, period: 'AM' | 'PM') => {
 		const h = Number(hour);
 		return format === '12h' ? (h % 12) + (period === 'PM' ? 12 : 0) : h;
@@ -147,7 +196,7 @@ export function AdsTimePicker({
 				).some((hour) => allowed(toHour24(hour, parts.period) * 60 + minute));
 
 	const update = (key: keyof TimeParts, selection: string) => {
-		let next: TimeParts = { ...visible, [key]: selection };
+		let next: TimeParts = { ...draft, [key]: selection };
 		if (next.hour && !hourHasChoices(next.hour, next.period)) {
 			next = { ...next, hour: '', minute: '' };
 		} else if (next.minute && !minuteAllowed(Number(next.minute), next)) {

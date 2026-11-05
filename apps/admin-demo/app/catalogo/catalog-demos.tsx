@@ -37,6 +37,7 @@ import {
 	AdsInputGroup,
 	AdsSelectionGroup,
 	AdsDatePicker,
+	AdsTimePicker,
 	AdsBreadcrumb,
 	AdsNav,
 	AdsTabs,
@@ -835,6 +836,36 @@ export function SelectionGroupDemo() {
 			<AdsCheckbox label="SMS" />
 			<AdsCheckbox disabled label="Telefone indisponível" />
 		</AdsSelectionGroup>
+	);
+}
+
+export function TimePickerDemo() {
+	const [time, setTime] = useState<string | null>('15:30');
+	const [format, setFormat] = useState<'12h' | '24h'>('24h');
+	return (
+		<div className="demo-time-picker-group">
+			<AdsField label="Horário controlado" description={'Valor: ' + (time ?? 'vazio')}>
+				<AdsTimePicker value={time} onValueChange={setTime} format={format} />
+			</AdsField>
+			<AdsButton onClick={() => setFormat(format === '24h' ? '12h' : '24h')}>
+				Alternar 12h/24h
+			</AdsButton>
+			<AdsField label="Horário limitado">
+				<AdsTimePicker defaultValue="09:15" min="09:00" max="17:00" minuteStep={15} />
+			</AdsField>
+			<AdsField label="Horário obrigatório" error="Selecione um horário." validationState="error">
+				<AdsTimePicker required />
+			</AdsField>
+			<AdsField label="Horário desabilitado">
+				<AdsTimePicker defaultValue="10:00" disabled />
+			</AdsField>
+			<AdsField label="Data independente">
+				<AdsDatePicker defaultValue="2026-11-05" />
+			</AdsField>
+			<AdsField label="Hora independente">
+				<AdsTimePicker defaultValue="10:45" />
+			</AdsField>
+		</div>
 	);
 }
 
@@ -2311,6 +2342,7 @@ export const catalogDemos = {
 	InputGroup: InputGroupDemo,
 	SelectionGroup: SelectionGroupDemo,
 	DatePicker: DatePickerDemo,
+	TimePicker: TimePickerDemo,
 	Breadcrumb: BreadcrumbDemo,
 	Nav: NavDemo,
 	Tabs: TabsDemo,

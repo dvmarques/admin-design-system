@@ -61,6 +61,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsFieldMessage`           | Formulários | `/catalogo/field-message`            | `catalog-composition.stories.tsx`                                   |
 | `AdsInputGroup`             | Formulários | `/catalogo/input-group`              | `form.stories.tsx`, `catalog-composition.stories.tsx`               |
 | `AdsSelectionGroup`         | Formulários | `/catalogo/selection-group`          | `form.stories.tsx`                                                  |
+| `AdsTimePicker`             | Formulários | `/catalogo/time-picker`              | `time-picker.stories.tsx`                                           |
 | `AdsDatePicker`             | Formulários | `/catalogo/date-picker`              | `date-picker.stories.tsx`                                           |
 | `AdsBreadcrumb`             | Navegação   | `/catalogo/breadcrumb`               | `navigation.stories.tsx`                                            |
 | `AdsNav`                    | Navegação   | `/catalogo/nav`                      | `navigation.stories.tsx`                                            |

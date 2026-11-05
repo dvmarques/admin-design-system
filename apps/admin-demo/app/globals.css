@@ -887,3 +887,24 @@ body {
 	justify-content: flex-end;
 	margin-top: 0;
 }
+
+/* Exemplos de TimePicker no catálogo e na página de datas. */
+.demo-time-picker-group {
+	display: flex;
+	width: 100%;
+	max-width: 28rem;
+	flex-direction: column;
+	gap: 1rem;
+}
+
+.demo-time-picker-stack {
+	display: flex;
+	flex-direction: column;
+	gap: 1.25rem;
+}
+
+.demo-time-picker-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.5rem;
+}

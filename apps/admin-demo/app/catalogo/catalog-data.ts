@@ -237,6 +237,14 @@ export const catalogEntries = [
 		href: '/catalogo/selection-group',
 	},
 	{
+		name: 'AdsTimePicker',
+		group: 'Formulários',
+		slug: 'time-picker',
+		demo: 'TimePicker',
+		description: 'Seleção de horas/minutos 12h/24h com passo, limites e formulário.',
+		href: '/catalogo/time-picker',
+	},
+	{
 		name: 'AdsDatePicker',
 		group: 'Formulários',
 		slug: 'date-picker',

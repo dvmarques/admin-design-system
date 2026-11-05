@@ -18,7 +18,7 @@ Uma seleção incompleta preserva edição local, mas emite `null` (limpa valor 
 
 ## Fronteiras e distribuição
 
-`'use client'` apenas no arquivo interativo; `packages/components` não importa Next.js nem `apps/`. `apps/admin-demo` consome entrypoint público e CSS compilado, sem imports internos; a página server pode hospedar um exemplo client. SSR inicial determinístico, sem `Date.now()`; React hidrata os selects. Classes estáticas usam tokens existentes e prefixo `ads-`; nenhuma alteração de token. Sem dependências novas; impacto de bundle aditivo limitado ao módulo e export.
+`'use client'` apenas no arquivo interativo; `packages/components` não importa Next.js nem `apps/`. `apps/admin-demo` consome entrypoint público e CSS compilado, sem imports internos; a página server pode hospedar um exemplo client. SSR inicial determinístico, sem `Date.now()`; React hidrata os selects. Classes estáticas usam tokens existentes e prefixo `ads-`; nenhuma alteração de token. Sem dependências novas; impacto de bundle aditivo limitado ao módulo e export. O cenário tree-shaken `scripts/scenarios/components.mjs` **não** importa `AdsTimePicker`; o custo aditivo do componente é validado via orçamento de navegador (`docs/browser-budget.json`) e artefatos em `dist/`, não via o limite do cenário `components-public`.
 
 ## Testes, rollback
 

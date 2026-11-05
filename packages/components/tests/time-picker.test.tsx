@@ -64,6 +64,20 @@ describe('AdsTimePicker', () => {
 		expect(change).toHaveBeenLastCalledWith('13:00');
 	});
 
+	it('converte edição parcial ao alternar entre 24h e 12h', () => {
+		const { rerender } = render(<AdsTimePicker />);
+		const hours = () => screen.getByRole('combobox', { name: 'Horas' });
+		fireEvent.change(hours(), { target: { value: '14' } });
+		rerender(<AdsTimePicker format="12h" />);
+		expect(hours()).toHaveValue('02');
+		expect(screen.getByRole('combobox', { name: 'Minutos' })).toHaveValue('');
+		expect(screen.getByRole('combobox', { name: 'Período' })).toHaveValue('PM');
+		fireEvent.change(hours(), { target: { value: '10' } });
+		rerender(<AdsTimePicker format="24h" />);
+		expect(hours()).toHaveValue('22');
+		expect(screen.queryByRole('combobox', { name: 'Período' })).not.toBeInTheDocument();
+	});
+
 	it('atualiza a exibição não controlada ao alternar entre 24h e 12h', () => {
 		const { rerender } = render(<AdsTimePicker defaultValue="14:30" />);
 		expect(screen.getByRole('combobox', { name: 'Horas' })).toHaveValue('14');
@@ -143,6 +157,59 @@ describe('AdsTimePicker', () => {
 			target: { value: '00' },
 		});
 		expect(change).toHaveBeenLastCalledWith('01:00');
+	});
+
+	it.each([0, 61, 1.5])('invalida minuteStep %s e impede seleção', (minuteStep) => {
+		const change = vi.fn();
+		render(<AdsTimePicker defaultValue="12:30" minuteStep={minuteStep} onValueChange={change} />);
+		const hour = screen.getByRole('combobox', { name: 'Horas' });
+		const minute = screen.getByRole('combobox', { name: 'Minutos' });
+		expect(hour).toHaveAttribute('aria-invalid', 'true');
+		expect(hour.querySelector('option[value="12"]')).toBeDisabled();
+		expect(minute.querySelector('option[value="30"]')).toBeDisabled();
+		fireEvent.change(hour, { target: { value: '13' } });
+		expect(hour).toHaveValue('');
+		expect(change).toHaveBeenLastCalledWith(null);
+	});
+
+	it('invalida min maior que max e impede seleção', () => {
+		const change = vi.fn();
+		render(<AdsTimePicker defaultValue="12:30" min="13:00" max="12:00" onValueChange={change} />);
+		const hour = screen.getByRole('combobox', { name: 'Horas' });
+		expect(hour).toHaveAttribute('aria-invalid', 'true');
+		expect(hour.querySelector('option[value="12"]')).toBeDisabled();
+		expect(screen.getByRole('combobox', { name: 'Minutos' })).toHaveValue('30');
+		expect(
+			screen.getByRole('combobox', { name: 'Minutos' }).querySelector('option[value="30"]'),
+		).toBeDisabled();
+		fireEvent.change(hour, { target: { value: '13' } });
+		expect(hour).toHaveValue('');
+		expect(change).toHaveBeenLastCalledWith(null);
+	});
+
+	it.each(['24h', '12h'] as const)('bloqueia a submissão nativa com required em %s', (format) => {
+		const submit = vi.fn();
+		const { container } = render(
+			<form
+				onSubmit={(event) => {
+					event.preventDefault();
+					submit(event.nativeEvent);
+				}}
+			>
+				<AdsTimePicker format={format} required />
+			</form>,
+		);
+		const form = container.querySelector('form')!;
+		expect(screen.getByRole('combobox', { name: 'Horas' })).toBeRequired();
+		expect(screen.getByRole('combobox', { name: 'Minutos' })).toBeRequired();
+		form.requestSubmit();
+		expect(submit).not.toHaveBeenCalled();
+		fireEvent.change(screen.getByRole('combobox', { name: 'Horas' }), { target: { value: '09' } });
+		fireEvent.change(screen.getByRole('combobox', { name: 'Minutos' }), {
+			target: { value: '30' },
+		});
+		form.requestSubmit();
+		expect(submit).toHaveBeenCalledOnce();
 	});
 
 	it('integra AdsField, required, estado disabled e descrição acessível', () => {

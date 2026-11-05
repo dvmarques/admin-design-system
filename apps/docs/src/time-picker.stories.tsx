@@ -7,43 +7,68 @@ const meta = {
 	component: AdsTimePicker,
 	tags: ['autodocs'],
 	parameters: {
-		docs: { description: { component: 'Seleção acessível de horas/minutos com selects nativos; valores HH:mm em 24h mesmo quando format="12h". Sem fuso horário ou backend.' } },
+		docs: {
+			description: {
+				component:
+					'Seleção acessível de horas/minutos com selects nativos; valores HH:mm em 24h mesmo quando format="12h". Sem fuso horário ou backend.',
+			},
+		},
 	},
 } satisfies Meta<typeof AdsTimePicker>;
 export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Basic: Story = {
-	render: () => <AdsField label="Horário"><AdsTimePicker defaultValue="14:30" /></AdsField>,
+	render: () => (
+		<AdsField label="Horário">
+			<AdsTimePicker defaultValue="14:30" />
+		</AdsField>
+	),
 };
 
-export const ControlledTwelveHour: Story = {
-	render: () => {
-		const [time, setTime] = useState<string | null>('12:15');
-		return <AdsField label="Horário 12h" description={'Valor: ' + (time ?? 'vazio')}>
+function ControlledTimePickerStory() {
+	const [time, setTime] = useState<string | null>('12:15');
+	return (
+		<AdsField label="Horário 12h" description={'Valor: ' + (time ?? 'vazio')}>
 			<AdsTimePicker format="12h" value={time} onValueChange={setTime} />
-		</AdsField>;
-	},
+		</AdsField>
+	);
+}
+
+export const ControlledTwelveHour: Story = {
+	render: () => <ControlledTimePickerStory />,
 };
 
 export const Constraints: Story = {
-	render: () => <AdsField label="Agendamento" description="09h até 17h, em quartos de hora.">
-		<AdsTimePicker min="09:00" max="17:00" minuteStep={15} defaultValue="09:15" />
-	</AdsField>,
+	render: () => (
+		<AdsField label="Agendamento" description="09h até 17h, em quartos de hora.">
+			<AdsTimePicker min="09:00" max="17:00" minuteStep={15} defaultValue="09:15" />
+		</AdsField>
+	),
 };
 
 export const States: Story = {
-	render: () => <div className="flex max-w-md flex-col gap-4">
-		<AdsField label="Obrigatório" error="Selecione o horário." validationState="error">
-			<AdsTimePicker required />
-		</AdsField>
-		<AdsField label="Bloqueado"><AdsTimePicker disabled defaultValue="13:00" /></AdsField>
-	</div>,
+	render: () => (
+		<div className="flex max-w-md flex-col gap-4">
+			<AdsField label="Obrigatório" error="Selecione o horário." validationState="error">
+				<AdsTimePicker required />
+			</AdsField>
+			<AdsField label="Bloqueado">
+				<AdsTimePicker disabled defaultValue="13:00" />
+			</AdsField>
+		</div>
+	),
 };
 
 export const DateComposition: Story = {
-	render: () => <div className="flex max-w-md flex-col gap-4">
-		<AdsField label="Dia"><AdsDatePicker defaultValue="2026-11-05" /></AdsField>
-		<AdsField label="Hora"><AdsTimePicker defaultValue="13:30" /></AdsField>
-	</div>,
+	render: () => (
+		<div className="flex max-w-md flex-col gap-4">
+			<AdsField label="Dia">
+				<AdsDatePicker defaultValue="2026-11-05" />
+			</AdsField>
+			<AdsField label="Hora">
+				<AdsTimePicker defaultValue="13:30" />
+			</AdsField>
+		</div>
+	),
 };

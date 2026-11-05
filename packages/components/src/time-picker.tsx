@@ -114,22 +114,26 @@ export function AdsTimePicker({
 	const minMinutes = min === undefined ? 0 : parseTime(min);
 	const maxMinutes = max === undefined ? 1439 : parseTime(max);
 	const validStep = Number.isInteger(minuteStep) && minuteStep >= 1 && minuteStep <= 60;
-	const validBounds =
-		minMinutes !== null && maxMinutes !== null && minMinutes <= maxMinutes;
+	const validBounds = minMinutes !== null && maxMinutes !== null && minMinutes <= maxMinutes;
 	const allowed = (minutes: number) =>
 		validStep &&
 		validBounds &&
 		minutes >= minMinutes! &&
 		minutes <= maxMinutes! &&
-		minutes % 60 % minuteStep === 0;
+		(minutes % 60) % minuteStep === 0;
 	const parsed = parseTime(current);
 	const invalidValue = current !== null && (parsed === null || !allowed(parsed));
-	const invalid = validationState === 'error' || ariaInvalid === true || ariaInvalid === 'true' ||
-		invalidValue || !validStep || !validBounds;
+	const invalid =
+		validationState === 'error' ||
+		ariaInvalid === true ||
+		ariaInvalid === 'true' ||
+		invalidValue ||
+		!validStep ||
+		!validBounds;
 	const visible = controlled && current !== null ? splitTime(current, format) : draft;
 	const toHour24 = (hour: string, period: 'AM' | 'PM') => {
 		const h = Number(hour);
-		return format === '12h' ? h % 12 + (period === 'PM' ? 12 : 0) : h;
+		return format === '12h' ? (h % 12) + (period === 'PM' ? 12 : 0) : h;
 	};
 	const hourHasChoices = (hour: string, period: 'AM' | 'PM') => {
 		const base = toHour24(hour, period) * 60;
@@ -151,9 +155,10 @@ export function AdsTimePicker({
 		}
 		setDraft(next);
 		const result = toMinutes(next, format);
-		const nextValue = result !== null && allowed(result)
-			? pad(Math.floor(result / 60)) + ':' + pad(result % 60)
-			: null;
+		const nextValue =
+			result !== null && allowed(result)
+				? pad(Math.floor(result / 60)) + ':' + pad(result % 60)
+				: null;
 		if (!controlled) setInnerValue(nextValue);
 		if (nextValue !== current) onValueChange?.(nextValue);
 	};
@@ -171,7 +176,12 @@ export function AdsTimePicker({
 	const minuteOptions = Array.from({ length: 60 }, (_, i) => pad(i));
 
 	return (
-		<div className={classNames('ads-time-picker flex w-full min-w-0 flex-wrap items-center gap-2', className)}>
+		<div
+			className={classNames(
+				'ads-time-picker flex w-full min-w-0 flex-wrap items-center gap-2',
+				className,
+			)}
+		>
 			<AdsSelect
 				{...shared}
 				aria-label={ariaLabel ?? (id ? undefined : labels.hour)}
@@ -187,7 +197,9 @@ export function AdsTimePicker({
 					</option>
 				))}
 			</AdsSelect>
-			<span aria-hidden="true" className="ads-time-picker__separator text-text-muted">:</span>
+			<span aria-hidden="true" className="ads-time-picker__separator text-text-muted">
+				:
+			</span>
 			<AdsSelect
 				{...shared}
 				aria-label={labels.minute}
@@ -216,12 +228,21 @@ export function AdsTimePicker({
 					validationState={invalid ? 'error' : validationState}
 					value={visible.period}
 				>
-					<option disabled={!hourOptions.some((hour) => hourHasChoices(hour, 'AM'))} value="AM">AM</option>
-					<option disabled={!hourOptions.some((hour) => hourHasChoices(hour, 'PM'))} value="PM">PM</option>
+					<option disabled={!hourOptions.some((hour) => hourHasChoices(hour, 'AM'))} value="AM">
+						AM
+					</option>
+					<option disabled={!hourOptions.some((hour) => hourHasChoices(hour, 'PM'))} value="PM">
+						PM
+					</option>
 				</AdsSelect>
 			) : null}
 			{name ? (
-				<input disabled={disabled} name={name} type="hidden" value={parsed !== null && allowed(parsed) ? current! : ''} />
+				<input
+					disabled={disabled}
+					name={name}
+					type="hidden"
+					value={parsed !== null && allowed(parsed) ? current! : ''}
+				/>
 			) : null}
 		</div>
 	);

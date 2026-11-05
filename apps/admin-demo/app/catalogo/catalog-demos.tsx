@@ -859,8 +859,12 @@ export function TimePickerDemo() {
 			<AdsField label="Horário desabilitado">
 				<AdsTimePicker defaultValue="10:00" disabled />
 			</AdsField>
-			<AdsField label="Data independente"><AdsDatePicker defaultValue="2026-11-05" /></AdsField>
-			<AdsField label="Hora independente"><AdsTimePicker defaultValue="10:45" /></AdsField>
+			<AdsField label="Data independente">
+				<AdsDatePicker defaultValue="2026-11-05" />
+			</AdsField>
+			<AdsField label="Hora independente">
+				<AdsTimePicker defaultValue="10:45" />
+			</AdsField>
 		</div>
 	);
 }

@@ -17,4 +17,4 @@
 - [x] 3.1 Criar testes unitários/interação, SSR e axe para API, limites, 12h, teclado e formulários.
 - [x] 3.2 Criar e executar E2E do admin demo; validar temas e responsividade.
 - [x] 3.3 Executar format, lint, build, typecheck, test:quality, test:e2e e openspec validate --all --strict; corrigir achados.
-- [ ] 3.4 Revisar o diff/API/ARIA/consumidores, corrigir achados e atualizar evidências.
+- [x] 3.4 Revisar o diff/API/ARIA/consumidores, corrigir achados e atualizar evidências.

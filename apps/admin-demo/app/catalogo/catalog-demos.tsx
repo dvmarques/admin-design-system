@@ -843,7 +843,7 @@ export function TimePickerDemo() {
 	const [time, setTime] = useState<string | null>('15:30');
 	const [format, setFormat] = useState<'12h' | '24h'>('24h');
 	return (
-		<div className="flex w-full max-w-md flex-col gap-4">
+		<div className="demo-time-picker-group">
 			<AdsField label="Horário controlado" description={'Valor: ' + (time ?? 'vazio')}>
 				<AdsTimePicker value={time} onValueChange={setTime} format={format} />
 			</AdsField>

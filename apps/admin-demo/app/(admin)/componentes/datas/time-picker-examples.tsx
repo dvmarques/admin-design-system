@@ -13,7 +13,7 @@ export function TimePickerExamples() {
 	const [time, setTime] = useState<string | null>('14:30');
 	const [format, setFormat] = useState<NonNullable<AdsTimePickerProps['format']>>('24h');
 	return (
-		<div className="flex flex-col gap-5">
+		<div className="demo-time-picker-stack">
 			<AdsField
 				label="Horário de atendimento"
 				description="Entre 09:00 e 18:00, a cada 15 minutos."
@@ -32,7 +32,7 @@ export function TimePickerExamples() {
 			>
 				<AdsTimePicker format={format} name="controlado" value={time} onValueChange={setTime} />
 			</AdsField>
-			<div className="flex flex-wrap gap-2">
+			<div className="demo-time-picker-actions">
 				<AdsButton
 					type="button"
 					variant="secondary"

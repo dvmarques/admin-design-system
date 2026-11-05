@@ -92,7 +92,7 @@ describe('AdsTimePicker', () => {
 		expect(hour).toBeRequired();
 		expect(hour).toHaveAttribute('aria-invalid', 'true');
 		expect(hour.getAttribute('aria-describedby')).toContain('-error');
-		expect(screen.getByRole('combobox', { name: 'Minutos' })).toHaveAttribute(
+		expect(screen.getAllByRole('combobox', { name: 'Minutos' })[0]).toHaveAttribute(
 			'aria-invalid',
 			'true',
 		);

@@ -52,6 +52,26 @@ test('publication workflow is manually dispatched only from approved master merg
 	assert.match(release, /git fetch origin develop --no-tags/g);
 });
 
+test('publicação npm usa só SHA e ref imutáveis do run e o SHA aprovado do gate', () => {
+	const publishNpm = release.slice(
+		release.indexOf('  publish-npm:'),
+		release.indexOf('  verify-registry:'),
+	);
+	assert.match(
+		publishNpm,
+		/RELEASE_SHA: \$\{\{ needs\.resolve-validate\.outputs\.release_sha \}\}/,
+	);
+	assert.match(publishNpm, /ref: \$\{\{ github\.sha \}\}/);
+	assert.doesNotMatch(publishNpm, /ref: (master|develop|\$\{\{ github\.ref)/);
+	assert.match(publishNpm, /npm-publication\.mjs publish "\$VERSION" "\$RELEASE_SHA"/);
+	// fetch-npm e publish-npm repetem o mesmo artifact ID e a mesma verificação de origem.
+	assert.equal(
+		release.match(/release-artifact\.mjs fetch "\$VERSION" "\$RELEASE_SHA" "\$ARTIFACT_ID"/g)
+			?.length,
+		2,
+	);
+});
+
 test('publication separates read-only validation from privileged publication', () => {
 	assert.match(release, /resolve-validate:[\s\S]*?permissions:[\s\S]*?contents: read/);
 	assert.match(release, /publish-github:[\s\S]*?permissions:[\s\S]*?contents: write/);

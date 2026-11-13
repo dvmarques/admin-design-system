@@ -164,20 +164,20 @@ padrão**: se não for sobrescrito, cada uso resolve dinamicamente para o token
 semântico global existente. Assim, alterar a cor global ainda altera o
 componente, exceto quando há override específico.
 
-| Token opcional | Fallback automático |
-| --- | --- |
-| `--ads-sidebar-background` | `--ads-color-surface-raised` |
-| `--ads-sidebar-text` | `--ads-color-text` |
-| `--ads-sidebar-text-muted` | `--ads-color-text-muted` |
-| `--ads-sidebar-hover-background` | `--ads-color-surface-hover` |
-| `--ads-sidebar-active-background` (já existente) | `--ads-color-surface-selected` |
-| `--ads-sidebar-active-text` | `--ads-color-on-surface-selected` |
-| `--ads-sidebar-active-indicator` | `--ads-color-primary` |
-| `--ads-sidebar-border` | `--ads-color-border` |
-| `--ads-sidebar-header-background` | `--ads-sidebar-background` e depois `--ads-color-surface-raised` |
-| `--ads-header-background` | `--ads-color-surface` |
-| `--ads-header-text` | `--ads-color-text` |
-| `--ads-header-border` | `--ads-color-border` |
+| Token opcional                                   | Fallback automático                                              |
+| ------------------------------------------------ | ---------------------------------------------------------------- |
+| `--ads-sidebar-background`                       | `--ads-color-surface-raised`                                     |
+| `--ads-sidebar-text`                             | `--ads-color-text`                                               |
+| `--ads-sidebar-text-muted`                       | `--ads-color-text-muted`                                         |
+| `--ads-sidebar-hover-background`                 | `--ads-color-surface-hover`                                      |
+| `--ads-sidebar-active-background` (já existente) | `--ads-color-surface-selected`                                   |
+| `--ads-sidebar-active-text`                      | `--ads-color-on-surface-selected`                                |
+| `--ads-sidebar-active-indicator`                 | `--ads-color-primary`                                            |
+| `--ads-sidebar-border`                           | `--ads-color-border`                                             |
+| `--ads-sidebar-header-background`                | `--ads-sidebar-background` e depois `--ads-color-surface-raised` |
+| `--ads-header-background`                        | `--ads-color-surface`                                            |
+| `--ads-header-text`                              | `--ads-color-text`                                               |
+| `--ads-header-border`                            | `--ads-color-border`                                             |
 
 Exemplo para o CSS **do consumidor**, carregado após os estilos dos pacotes:
 
@@ -196,8 +196,10 @@ Exemplo para o CSS **do consumidor**, carregado após os estilos dos pacotes:
 }
 ```
 
-Também é possível limitar um token a uma instância do shell com uma classe
+Também é possível limitar um token ao shell desktop com uma classe
 própria (por exemplo, `.meu-back-admin { --ads-sidebar-background: ... }`).
+Para alcançar o Drawer renderizado em portal, configure as variáveis em
+`[data-theme='light']` / `[data-theme='dark']` no CSS global, como acima.
 Se nenhum token específico for definido, as cores atuais permanecem intactas.
 O fundo do Drawer da navegação móvel acompanha `--ads-sidebar-background`;
 a navegação interna conserva seu fundo transparente no móvel. O cabeçalho móvel

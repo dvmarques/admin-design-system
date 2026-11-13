@@ -36,12 +36,17 @@ test('fechamento exige revisão editorial aprovada e não inclui marcador nas no
 	assert.match(changelogReview, /editorialWarnings/);
 });
 
-test('publication workflow is manually dispatched only from develop and serialized', () => {
+test('publication workflow is manually dispatched only from approved master merge and serialized', () => {
 	assert.match(release, /workflow_dispatch:/);
 	assert.match(release, /group: release-publication/);
 	assert.match(release, /queue: max/);
 	assert.doesNotMatch(release, /cancel-in-progress:\s*true/);
-	assert.match(release, /GITHUB_REF_NAME" == "develop/);
+	assert.match(release, /GITHUB_REF" == "refs\/heads\/master/);
+	assert.match(release, /release-publication-ref\.mjs/);
+	assert.match(release, /"\$GITHUB_REF" "\$GITHUB_SHA" "\$RELEASE_SHA"/);
+	assert.match(release, /ref: \$\{\{ steps\.resolve\.outputs\.checked_develop_sha \}\}/);
+	assert.match(release, /TRUSTED_DEVELOP_SHA: \$\{\{ needs\.resolve-validate\.outputs\.develop_sha \}\}/g);
+	assert.match(release, /git fetch origin develop --no-tags/g);
 });
 
 test('publication separates read-only validation from privileged publication', () => {

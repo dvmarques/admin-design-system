@@ -19,6 +19,7 @@
 - [x] 3.2 Verificar na CI o sucesso de `npm run test:release`, `npm run format`, lint, build, typecheck, qualidade e E2E (CI #43529306068, SHA `47ef607`; o comando agregado `npm run validate` não foi executado literalmente).
 - [x] 3.3 Validar OpenSpec com `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` (job Política de develop, CI #43529306068).
 - [x] 3.4 Revisar CI, Pages e Security no SHA `47ef607`: todos os workflows concluíram com sucesso.
+- [x] 3.5a Revisão técnica da documentação, do delta e do changelog: alegações conferidas contra `scripts/release-changelog.mjs` e `release-utils.mjs`; formatação corrigida na entrada do changelog; local: `test:release` (62 ok), Prettier e OpenSpec strict (70 ok).
 - [ ] 3.5 Obter revisão/aprovação humana do desenho editorial antes do aceite; após este registro, validar novamente a CI no novo SHA.
 
 Não marcar checks indisponíveis como concluídos. Archive/sync e merge são gates externos às tasks e dependem das autorizações e verificações próprias.

@@ -28,9 +28,9 @@ const swatches = {
 for (const theme of ['light', 'dark'] as const) {
 	test(`shell: cores por região sem mudar defaults (${theme})`, async ({ page }) => {
 		const colors = swatches[theme];
-		await page.context().addCookies([
-			{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' },
-		]);
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 		await page.setViewportSize({ width: 1280, height: 800 });
 		await page.goto('/');
 		await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
@@ -41,7 +41,9 @@ for (const theme of ['light', 'dark'] as const) {
 		);
 		const header = page.locator('.ads-admin-shell-header');
 		const main = page.locator('.ads-admin-shell-main');
-		const baselineMain = await main.evaluate((element) => getComputedStyle(element).backgroundColor);
+		const baselineMain = await main.evaluate(
+			(element) => getComputedStyle(element).backgroundColor,
+		);
 		await expect(sidebar).toHaveCSS('background-color', colors.defaultSidebar);
 		await expect(sidebarHeader).toHaveCSS('background-color', colors.defaultSidebar);
 		await expect(header).toHaveCSS('background-color', colors.defaultHeader);

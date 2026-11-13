@@ -4,7 +4,9 @@ Aqui são registradas as principais inclusões, correções e evoluções do Adm
 Design System.
 
 O formato segue as convenções do Keep a Changelog. As mudanças são organizadas
-por versão e pelas changes correspondentes do OpenSpec.
+por versão e pelas changes correspondentes do OpenSpec. Consulte a
+[política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286)
+para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.3] - Em andamento
 
@@ -17,6 +19,8 @@ por versão e pelas changes correspondentes do OpenSpec.
 - Tokens públicos opcionais de cor da sidebar e do header do Admin Shell (`--ads-sidebar-*`, `--ads-header-*`) com fallback dinâmico para os tokens globais; sem override, as cores renderizadas não mudam. (#306, OpenSpec `issue-306-component-color-overrides`)
 
 #### Changed
+
+- Política editorial das notas públicas orienta o resumo pelo impacto em quem consome os pacotes, com migrações explícitas e rastreabilidade preservada. Sem mudar releases anteriores ou validações. (#286)
 
 - Fluxo de publicação npm ajustado para executar Trusted Publisher/OIDC no merge exato aprovado em `master`, preservando o artifact preparado em `develop`, a integridade, o back-merge e as permissões mínimas. (#298, OpenSpec `issue-298-master-release-provenance`)
 - Orçamentos técnicos do `AdsTimePicker` (#144): JS/CSS publicado de `@dvmarques/admin-ds-components` 295.000→302.000 B (medido 299.472 B), gzip de navegador 89.000→91.000 B (89.847 B), `components-public` gzip 11.880→12.000 B (11.881 B), módulo `time-picker.js` ~6.935 B minificado; cenário `admin-public` 71.440→71.800 B e gzip 24.050→24.200 B após medição 71.439/24.050 B (folga mínima anterior); baseline de distribuição completa de components 628.048→693.543 B após I-1 (medido 691.541 B no Windows e 693.543 B na CI Linux/LF, com declarações e source maps do rascunho parcial controlado).

@@ -507,4 +507,3 @@ export const SidebarColorsDark: Story = {
 	name: 'Tokens isolados de sidebar e header — escuro',
 	render: () => <ScopedShellColorExample theme="dark" />,
 };
-

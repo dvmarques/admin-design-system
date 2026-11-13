@@ -45,7 +45,10 @@ test('publication workflow is manually dispatched only from approved master merg
 	assert.match(release, /release-publication-ref\.mjs/);
 	assert.match(release, /"\$GITHUB_REF" "\$GITHUB_SHA" "\$RELEASE_SHA"/);
 	assert.match(release, /ref: \$\{\{ steps\.resolve\.outputs\.checked_develop_sha \}\}/);
-	assert.match(release, /TRUSTED_DEVELOP_SHA: \$\{\{ needs\.resolve-validate\.outputs\.develop_sha \}\}/g);
+	assert.match(
+		release,
+		/TRUSTED_DEVELOP_SHA: \$\{\{ needs\.resolve-validate\.outputs\.develop_sha \}\}/g,
+	);
 	assert.match(release, /git fetch origin develop --no-tags/g);
 });
 

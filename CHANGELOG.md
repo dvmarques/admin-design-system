@@ -19,7 +19,6 @@ por versão e pelas changes correspondentes do OpenSpec.
 #### Changed
 
 - Fluxo de publicação npm ajustado para executar Trusted Publisher/OIDC no merge exato aprovado em `master`, preservando o artifact preparado em `develop`, a integridade, o back-merge e as permissões mínimas. (#298, OpenSpec `issue-298-master-release-provenance`)
-
 - Orçamentos técnicos do `AdsTimePicker` (#144): JS/CSS publicado de `@dvmarques/admin-ds-components` 295.000→302.000 B (medido 299.472 B), gzip de navegador 89.000→91.000 B (89.847 B), `components-public` gzip 11.880→12.000 B (11.881 B), módulo `time-picker.js` ~6.935 B minificado; cenário `admin-public` 71.440→71.800 B e gzip 24.050→24.200 B após medição 71.439/24.050 B (folga mínima anterior); baseline de distribuição completa de components 628.048→693.543 B após I-1 (medido 691.541 B no Windows e 693.543 B na CI Linux/LF, com declarações e source maps do rascunho parcial controlado).
 - Orçamento técnico de JS/CSS publicado de `@dvmarques/admin-ds-components` revisto de 285.000 para 295.000 bytes após medição explícita de 292.236 bytes com o novo `AdsMultiSelect`; limite gzip revisto de 86.000 para 89.000 bytes após medição de 87.601 bytes; demais cenários sujeitos à validação. (#143)
 - Verificador de distribuição do peer opcional aceita as saídas JSON do npm pack 11 e 12, mantendo o contrato de tarball. (#299)

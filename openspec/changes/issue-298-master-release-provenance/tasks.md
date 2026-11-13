@@ -15,7 +15,7 @@
 
 ## 3. Verificação pré-PR
 
-- [ ] 3.1 Executar testes de release, `npm run format`, lint, build, typecheck e qualidade.
+- [x] 3.1 Executar testes de release, `npm run format`, lint, build, typecheck e qualidade.
 - [ ] 3.2 Executar `npm run test:e2e` e garantir nenhuma falha E2E.
 - [ ] 3.3 Executar `npm run validate` e `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`.
 

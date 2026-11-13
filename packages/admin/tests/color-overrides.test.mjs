@@ -42,3 +42,13 @@ test('mobile Drawer has an optional sidebar color but transparent navigation', (
 	assert.ok(navigation, 'missing mobile navigation styles');
 	assert.match(navigation, /background-color:\s*transparent;/);
 });
+
+test('sidebar toggle and header text follow the same overrides', () => {
+	const chain =
+		'var(--ads-sidebar-header-background, var(--ads-sidebar-background, var(--ads-color-surface-raised)))';
+	assert.ok(normalized.includes(`background-color: ${chain}`), 'toggle must follow branding');
+	assert.ok(
+		normalized.includes('color: var(--ads-header-text, var(--ads-color-text))'),
+		'header must set its own text color',
+	);
+});

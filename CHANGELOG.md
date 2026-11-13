@@ -14,6 +14,7 @@ por versão e pelas changes correspondentes do OpenSpec.
 
 - Novo `AdsMultiSelect` com busca, chips removíveis, seleção múltipla controlada/não controlada, limites e serialização de formulário; Admin Demo e Storybook navegáveis. (#143, OpenSpec `add-ads-multi-select-143`)
 - Novo `AdsOTPInput` para códigos numéricos com comprimento configurável, navegação nativa, colagem e autofill, estados controlados e integração a `AdsField`; exemplos no Admin Demo e Storybook. (#146, OpenSpec `add-ads-otp-input-146`)
+- Tokens públicos opcionais de cor da sidebar e do header do Admin Shell (`--ads-sidebar-*`, `--ads-header-*`) com fallback dinâmico para os tokens globais; sem override, as cores renderizadas não mudam. (#306, OpenSpec `issue-306-component-color-overrides`)
 
 #### Changed
 

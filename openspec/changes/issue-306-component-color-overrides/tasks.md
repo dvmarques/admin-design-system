@@ -12,5 +12,5 @@
 ## 3. Validação e entrega
 
 - [x] 3.1 Revisão de CSS (sem alteração de defaults, classes, DOM, props, cores de UI). Conferir tema claro/escuro/mobile e estados.
-- [ ] 3.2 Validar testes/format/lint/typecheck/build/OpenSpec; CI Linux sem diffs visuais não justificados.
+- [x] 3.2 Validar testes/format/lint/typecheck/build/OpenSpec; CI Linux sem diffs visuais não justificados.
 - [x] 3.3 Abrir PR não-draft, relacionar issue #306 e registrar checks e pendências.

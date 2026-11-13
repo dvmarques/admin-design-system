@@ -43,6 +43,7 @@ O arquivo `styles.css` carrega o CSS compilado; não configure Tailwind nem impo
 }
 ```
 
+- O Admin Shell aceita tokens opcionais de cor da sidebar e do header (`--ads-sidebar-*` e `--ads-header-*`) que herdam dos tokens globais quando não definidos; veja o [guia de integração](https://github.com/dvmarques/admin-design-system/blob/develop/docs/integration.md).
 - Tokens de elevação (`--ads-elevation-*`), densidade (`--ads-density-*`), skeleton e tipografia mantêm variantes semânticas. O pacote não inclui arquivos da fonte Inter: carregue-a com `next/font` ou outro recurso da aplicação, respeitando a licença da fonte.
 
 Este pacote não depende de `components`, `admin`, Shiki ou `react-imask`. Suas exportações de TypeScript e CSS estão definidas em `package.json#exports`. Consulte os nomes e metadados em [identidade visual](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-identity.md) e [elevação e densidade](https://github.com/dvmarques/admin-design-system/blob/develop/docs/visual-polish.md).

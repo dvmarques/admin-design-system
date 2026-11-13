@@ -205,6 +205,22 @@ alcança necessariamente um portal. Os tokens específicos alteram os elementos
 do shell; componentes compostos dentro dele podem ter tokens próprios.
 Ao personalizar, valide contraste, hover, seleção e foco nos dois temas.
 
+Detalhes do contrato:
+
+- Esses doze nomes são os únicos tokens públicos de cor do shell. Outras
+  variáveis `--ads-sidebar-*` (`-header-min-height`, `-toggle-size`,
+  `-selection-size`, `-compact-content-width`, `-scrollbar-size`) são internas
+  de layout e não devem ser sobrescritas.
+- `--ads-header-text` define a cor herdada pelo header principal; filhos com cor
+  própria (por exemplo, botões e ícones de componentes) não são afetados.
+- `--ads-sidebar-text` e `--ads-sidebar-text-muted` valem para a sidebar
+  expandida, recolhida, o cabeçalho da sidebar e o Drawer móvel. O anel de foco
+  continua `--ads-color-focus-ring` e não possui token específico.
+- Sob `prefers-contrast: more`, os tokens globais ganham valores de maior
+  contraste. Um override específico definido pela aplicação prevalece sobre
+  eles; a aplicação responde pelo contraste das cores escolhidas.
+- Em `forced-colors: active`, as cores do sistema substituem os tokens.
+
 ### Controle de preferência: Claro, Escuro e Sistema
 
 `AdsThemeControl` oferece as três preferências (`light`, `dark` e `system`). Ele

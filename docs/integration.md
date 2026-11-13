@@ -164,20 +164,18 @@ padrão**: se não for sobrescrito, cada uso resolve dinamicamente para o token
 semântico global existente. Assim, alterar a cor global ainda altera o
 componente, exceto quando há override específico.
 
-| Token opcional                                   | Fallback automático                                              |
-| ------------------------------------------------ | ---------------------------------------------------------------- |
-| `--ads-sidebar-background`                       | `--ads-color-surface-raised`                                     |
-| `--ads-sidebar-text`                             | `--ads-color-text`                                               |
-| `--ads-sidebar-text-muted`                       | `--ads-color-text-muted`                                         |
-| `--ads-sidebar-hover-background`                 | `--ads-color-surface-hover`                                      |
-| `--ads-sidebar-active-background` (já existente) | `--ads-color-surface-selected`                                   |
-| `--ads-sidebar-active-text`                      | `--ads-color-on-surface-selected`                                |
-| `--ads-sidebar-active-indicator`                 | `--ads-color-primary`                                            |
-| `--ads-sidebar-border`                           | `--ads-color-border`                                             |
-| `--ads-sidebar-header-background`                | `--ads-sidebar-background` e depois `--ads-color-surface-raised` |
-| `--ads-header-background`                        | `--ads-color-surface`                                            |
-| `--ads-header-text`                              | `--ads-color-text`                                               |
-| `--ads-header-border`                            | `--ads-color-border`                                             |
+- `--ads-sidebar-background`: fallback `--ads-color-surface-raised`.
+- `--ads-sidebar-text`: fallback `--ads-color-text`.
+- `--ads-sidebar-text-muted`: fallback `--ads-color-text-muted`.
+- `--ads-sidebar-hover-background`: fallback `--ads-color-surface-hover`.
+- `--ads-sidebar-active-background` (já existente): fallback `--ads-color-surface-selected`.
+- `--ads-sidebar-active-text`: fallback `--ads-color-on-surface-selected`.
+- `--ads-sidebar-active-indicator`: fallback `--ads-color-primary`.
+- `--ads-sidebar-border`: fallback `--ads-color-border`.
+- `--ads-sidebar-header-background`: fallback `--ads-sidebar-background`, depois `--ads-color-surface-raised`.
+- `--ads-header-background`: fallback `--ads-color-surface`.
+- `--ads-header-text`: fallback `--ads-color-text`.
+- `--ads-header-border`: fallback `--ads-color-border`.
 
 Exemplo para o CSS **do consumidor**, carregado após os estilos dos pacotes:
 

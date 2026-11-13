@@ -1809,7 +1809,10 @@
 		gap: var(--ads-spacing-2);
 		min-width: 0;
 		padding: var(--ads-spacing-3) var(--ads-spacing-4);
-		background: var(--ads-sidebar-header-background, var(--ads-sidebar-background, var(--ads-color-surface-raised)));
+		background: var(
+			--ads-sidebar-header-background,
+			var(--ads-sidebar-background, var(--ads-color-surface-raised))
+		);
 		color: var(--ads-sidebar-text, var(--ads-color-text));
 	}
 	.ads-admin-shell-sidebar-toggle {
@@ -1903,7 +1906,10 @@
 			width: var(--ads-sidebar-toggle-size);
 			height: var(--ads-sidebar-toggle-size);
 			border-radius: 50%;
-			background-color: var(--ads-sidebar-header-background, var(--ads-sidebar-background, var(--ads-color-surface-raised)));
+			background-color: var(
+				--ads-sidebar-header-background,
+				var(--ads-sidebar-background, var(--ads-color-surface-raised))
+			);
 		}
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-header

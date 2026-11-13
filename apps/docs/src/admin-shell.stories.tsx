@@ -461,3 +461,49 @@ export const SidebarBrandingCollapsed: Story = {
 	name: 'Marca na sidebar recolhida',
 	render: () => <SidebarBrandShell organization collapsed />,
 };
+
+/**
+ * Identidade alternativa do consumidor, não um novo padrão do design system.
+ * As variáveis aqui afetam apenas o shell e deixam superfícies e campos globais intactos.
+ */
+function ScopedShellColorExample({ theme }: { theme: 'light' | 'dark' }) {
+	const light = theme === 'light';
+	return (
+		<div
+			data-theme={theme}
+			style={
+				{
+					'--ads-sidebar-background': light ? '#eaf2ff' : '#223344',
+					'--ads-sidebar-header-background': light ? '#dbeafe' : '#2b4058',
+					'--ads-sidebar-text': light ? '#0f172a' : '#f8fafc',
+					'--ads-sidebar-text-muted': light ? '#334155' : '#e2e8f0',
+					'--ads-sidebar-hover-background': light ? '#dbeafe' : '#354b65',
+					'--ads-sidebar-active-background': light ? '#bfdbfe' : '#435b79',
+					'--ads-sidebar-active-text': light ? '#0f172a' : '#f8fafc',
+					'--ads-header-background': light ? '#f8fafc' : '#192c46',
+					'--ads-header-text': light ? '#0f172a' : '#f8fafc',
+				} as CSSProperties
+			}
+		>
+			<SidebarBrandShell />
+		</div>
+	);
+}
+
+export const SidebarColorsLight: Story = {
+	name: 'Tokens isolados de sidebar e header — claro',
+	render: () => <ScopedShellColorExample theme="light" />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Exemplo opcional, não representa o default. Tokens específicos usam fallback automático para a cor global quando ausentes; confira docs/integration.md para a lista completa.',
+			},
+		},
+	},
+};
+
+export const SidebarColorsDark: Story = {
+	name: 'Tokens isolados de sidebar e header — escuro',
+	render: () => <ScopedShellColorExample theme="dark" />,
+};

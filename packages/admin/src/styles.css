@@ -11,7 +11,7 @@
 	.ads-sidebar-section-title {
 		margin: 0 0 var(--ads-spacing-2);
 		padding-inline: var(--ads-spacing-3);
-		color: var(--ads-color-text-muted);
+		color: var(--ads-sidebar-text-muted, var(--ads-color-text-muted));
 		font-size: 0.6875rem;
 		font-weight: 700;
 		letter-spacing: 0.06em;
@@ -27,7 +27,7 @@
 		min-height: 2.75rem;
 		padding: var(--ads-spacing-2) var(--ads-spacing-3);
 		border-radius: var(--ads-radius-md);
-		color: var(--ads-color-text);
+		color: var(--ads-sidebar-text, var(--ads-color-text));
 		text-decoration: none;
 		overflow-wrap: anywhere;
 		cursor: pointer;
@@ -38,7 +38,7 @@
 	}
 	.ads-sidebar-group-toggle:hover,
 	.ads-sidebar-item > a:hover {
-		background: var(--ads-color-surface-hover);
+		background: var(--ads-sidebar-hover-background, var(--ads-color-surface-hover));
 	}
 	.ads-sidebar-group-toggle:focus-visible,
 	.ads-sidebar-item > a:focus-visible {
@@ -51,7 +51,7 @@
 		justify-content: center;
 		flex: 0 0 1.25rem;
 		width: 1.25rem;
-		color: var(--ads-color-text-muted);
+		color: var(--ads-sidebar-text-muted, var(--ads-color-text-muted));
 	}
 	.ads-sidebar-group-chevron {
 		width: 0.375rem;
@@ -72,8 +72,8 @@
 	}
 	.ads-sidebar-item > a[aria-current='page'] {
 		background: var(--ads-sidebar-active-background, var(--ads-color-surface-selected));
-		color: var(--ads-color-on-surface-selected);
-		box-shadow: inset 3px 0 0 var(--ads-color-primary);
+		color: var(--ads-sidebar-active-text, var(--ads-color-on-surface-selected));
+		box-shadow: inset 3px 0 0 var(--ads-sidebar-active-indicator, var(--ads-color-primary));
 		font-weight: 600;
 	}
 	.ads-sidebar-item > a[aria-current='page'] .ads-sidebar-icon {
@@ -108,8 +108,9 @@
 		min-height: 4rem;
 		align-items: center;
 		gap: 1rem;
-		border-bottom: 1px solid var(--ads-color-border);
-		background-color: var(--ads-color-surface);
+		border-bottom: 1px solid var(--ads-header-border, var(--ads-color-border));
+		background-color: var(--ads-header-background, var(--ads-color-surface));
+		color: var(--ads-header-text, var(--ads-color-text));
 		padding-inline: 1rem;
 		box-shadow: var(--ads-elevation-sm);
 	}
@@ -124,7 +125,7 @@
 		display: none;
 		width: var(--ads-admin-shell-sidebar-width);
 		flex-shrink: 0;
-		border-right: 1px solid var(--ads-color-border);
+		border-right: 1px solid var(--ads-sidebar-border, var(--ads-color-border));
 		transition: width var(--ads-motion-fast);
 	}
 
@@ -157,9 +158,9 @@
 		isolation: isolate;
 		height: 100%;
 		overflow-y: auto;
-		background-color: var(--ads-color-surface-raised);
+		background-color: var(--ads-sidebar-background, var(--ads-color-surface-raised));
 		padding: 1rem;
-		color: var(--ads-color-text);
+		color: var(--ads-sidebar-text, var(--ads-color-text));
 	}
 
 	/*
@@ -1808,7 +1809,11 @@
 		gap: var(--ads-spacing-2);
 		min-width: 0;
 		padding: var(--ads-spacing-3) var(--ads-spacing-4);
-		background: var(--ads-color-surface-raised);
+		background: var(
+			--ads-sidebar-header-background,
+			var(--ads-sidebar-background, var(--ads-color-surface-raised))
+		);
+		color: var(--ads-sidebar-text, var(--ads-color-text));
 	}
 	.ads-admin-shell-sidebar-toggle {
 		flex-shrink: 0;
@@ -1819,7 +1824,7 @@
 	}
 	.ads-admin-shell-mobile-drawer .ads-admin-shell-sidebar-header {
 		padding: 0 0 var(--ads-spacing-4);
-		background: transparent;
+		background: var(--ads-sidebar-header-background, transparent);
 	}
 	@media (min-width: 48rem) {
 		.ads-admin-shell--sidebar-header {
@@ -1852,7 +1857,7 @@
 			z-index: 31;
 			min-height: var(--ads-sidebar-header-min-height);
 			padding-inline-end: var(--ads-spacing-6);
-			border-bottom: 1px solid var(--ads-color-border);
+			border-bottom: 1px solid var(--ads-sidebar-border, var(--ads-color-border));
 		}
 		.ads-admin-shell--sidebar-header .ads-admin-shell-sidebar-desktop > .ads-admin-shell-sidebar {
 			grid-row: 2;
@@ -1901,7 +1906,10 @@
 			width: var(--ads-sidebar-toggle-size);
 			height: var(--ads-sidebar-toggle-size);
 			border-radius: 50%;
-			background-color: var(--ads-color-surface-raised);
+			background-color: var(
+				--ads-sidebar-header-background,
+				var(--ads-sidebar-background, var(--ads-color-surface-raised))
+			);
 		}
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-header
@@ -1913,7 +1921,7 @@
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-header
 			> .ads-admin-shell-sidebar-toggle:hover:not(:disabled) {
-			background-color: var(--ads-color-surface-hover);
+			background-color: var(--ads-sidebar-hover-background, var(--ads-color-surface-hover));
 		}
 		.ads-admin-shell--sidebar-header
 			.ads-admin-shell-sidebar-desktop[data-collapsed='true']
@@ -2007,6 +2015,9 @@
 .ads-admin-shell-mobile-drawer {
 	width: 100%;
 	border-radius: 0;
+	/* Same default as AdsDrawer; optional sidebar identity also applies on mobile. */
+	background-color: var(--ads-sidebar-background, var(--ads-color-surface-raised));
+	color: var(--ads-sidebar-text, var(--ads-color-text));
 }
 
 /* Share the compact selection center between navigation icons and organization avatars. */

@@ -34,9 +34,8 @@ test('sidebar branding can inherit the sidebar background', () => {
 });
 
 test('mobile Drawer has an optional sidebar color but transparent navigation', () => {
-	const panel = css.match(/\.ads-admin-shell-mobile-drawer\s*\{([^}]*)\}/)?.[1];
-	assert.ok(panel, 'missing mobile panel styles');
-	assert.ok(panel.includes('--ads-sidebar-background'));
+	const panels = [...css.matchAll(/\.ads-admin-shell-mobile-drawer\s*\{([^}]*)\}/g)];
+	assert.ok(panels.some(([, rules]) => rules.includes('--ads-sidebar-background')));
 	const navigation = css.match(
 		/\.ads-admin-shell-mobile-drawer \.ads-admin-shell-sidebar\s*\{([^}]*)\}/,
 	)?.[1];

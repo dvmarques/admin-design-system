@@ -16,8 +16,9 @@
 ## 3. Validação e revisão
 
 - [x] 3.1 Conferir por leitura dos contratos existentes que a política preserva parsing, aprovação, extração e back-merge; nenhuma mudança técnica exige testes novos.
-- [ ] 3.2 Executar `npm run test:release`, `npm run format`, `npm run validate` (lint, build, typecheck, qualidade, E2E) em checkout executável.
-- [ ] 3.3 Executar `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`.
-- [ ] 3.4 Rever a CI no SHA final e obter validação/revisão humana do desenho editorial antes do aceite.
+- [x] 3.2 Verificar na CI o sucesso de `npm run test:release`, `npm run format`, lint, build, typecheck, qualidade e E2E (CI #43529306068, SHA `47ef607`; o comando agregado `npm run validate` não foi executado literalmente).
+- [x] 3.3 Validar OpenSpec com `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` (job Política de develop, CI #43529306068).
+- [x] 3.4 Revisar CI, Pages e Security no SHA `47ef607`: todos os workflows concluíram com sucesso.
+- [ ] 3.5 Obter revisão/aprovação humana do desenho editorial antes do aceite; após este registro, validar novamente a CI no novo SHA.
 
 Não marcar checks indisponíveis como concluídos. Archive/sync e merge são gates externos às tasks e dependem das autorizações e verificações próprias.

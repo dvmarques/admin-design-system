@@ -66,15 +66,13 @@ CI, cobertura de testes, refactors sem mudança de contrato, ajustes internos de
 
 **Links de comparação:** podem facilitar a navegação depois que ambas as tags existirem, mas links gerados para um alvo ainda não publicado podem apontar para tags inexistentes. Nesta issue não serão introduzidos nem exigidos; se adotados futuramente, definir política para bootstrap/tags, testar extração e não editar blocos fechados. **Arquivamento** em múltiplos arquivos não é necessário enquanto a leitura e a extração de qualquer versão forem confiáveis; avaliar somente com ganho medido, estratégia de índice e migração testada.
 
-| Etapa               | Contrato preservado                                                                                            |
-| ------------------- | -------------------------------------------------------------------------------------------------------------- |
-| `CHANGELOG.md`      | Uma seção em andamento, versões fechadas intocadas e ordem SemVer decrescente.                                 |
-| `release:changelog` | Prévia sem escrita, limite de 300 caracteres, duplicidade por issue, aprovação humana por hash do texto exato. |
-| `release:prepare`   | Exige aprovação válida; fecha a versão usando data local oficial e abre novo placeholder patch.                |
-| `release:validate`  | Confere versão coordenada, bloco fechado e integridade da aprovação.                                           |
-| `release:notes`     | Extrai **somente** o bloco fechado correspondente, omitindo apenas o comentário HTML de aprovação.             |
-| GitHub Releases     | Corpo deve equivaler às notas extraídas, normalizando apenas CRLF/LF e newline final.                          |
-| Back-merge          | Preserva bloco fechado da release e mantém novas entradas em andamento de `develop`.                           |
+- **`CHANGELOG.md`:** uma seção em andamento, versões fechadas intocadas e ordem SemVer decrescente.
+- **`release:changelog`:** prévia sem escrita, limite de 300 caracteres, duplicidade por issue e aprovação humana por hash do texto exato.
+- **`release:prepare`:** exige aprovação válida, fecha a versão com data local oficial e abre novo placeholder patch.
+- **`release:validate`:** confere versão coordenada, bloco fechado e integridade da aprovação.
+- **`release:notes`:** extrai somente o bloco fechado correspondente, omitindo apenas o comentário HTML de aprovação.
+- **GitHub Releases:** o corpo equivale às notas extraídas, normalizando apenas CRLF/LF e newline final.
+- **Back-merge:** preserva o bloco fechado da release e mantém novas entradas de `develop` na seção em andamento.
 
 Nenhum script, regex, versão fechada ou aprovação existente muda por esta política. Se uma evolução futura alterar parser, extração, aprovação, comparação de notas ou o formato, será obrigatória uma change específica com testes de múltiplas versões (incluindo histórico longo), preservação integral dos blocos fechados e hashes, extração/equivalência das notas e back-merge.
 

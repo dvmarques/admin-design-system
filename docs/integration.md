@@ -156,6 +156,65 @@ Os valores aceitos são `light` e `dark`. Sem o atributo, os tokens usam a
 preferência `prefers-color-scheme` do sistema. A aplicação é responsável por
 persistir a preferência e aplicá-la antes da hidratação quando necessário.
 
+### Cores independentes da sidebar e do header
+
+O CSS de `@dvmarques/admin-ds-admin/styles.css` expõe papéis opcionais de cor
+para o menu lateral e o header principal. **Nenhum deles define uma nova cor
+padrão**: se não for sobrescrito, cada uso resolve dinamicamente para o token
+semântico global existente. Assim, alterar a cor global ainda altera o
+componente, exceto quando há override específico.
+
+| Token opcional | Fallback automático |
+| --- | --- |
+| `--ads-sidebar-background` | `--ads-color-surface-raised` |
+| `--ads-sidebar-text` | `--ads-color-text` |
+| `--ads-sidebar-text-muted` | `--ads-color-text-muted` |
+| `--ads-sidebar-hover-background` | `--ads-color-surface-hover` |
+| `--ads-sidebar-active-background` (já existente) | `--ads-color-surface-selected` |
+| `--ads-sidebar-active-text` | `--ads-color-on-surface-selected` |
+| `--ads-sidebar-active-indicator` | `--ads-color-primary` |
+| `--ads-sidebar-border` | `--ads-color-border` |
+| `--ads-sidebar-header-background` | `--ads-sidebar-background` e depois `--ads-color-surface-raised` |
+| `--ads-header-background` | `--ads-color-surface` |
+| `--ads-header-text` | `--ads-color-text` |
+| `--ads-header-border` | `--ads-color-border` |
+
+Exemplo para o CSS **do consumidor**, carregado após os estilos dos pacotes:
+
+```css
+/* Personalização limitada ao tema claro. Não é a paleta padrão do DS. */
+[data-theme='light'] {
+  --ads-sidebar-background: #eaf2ff;
+  --ads-sidebar-header-background: #eaf2ff;
+  --ads-sidebar-active-background: #cfe0ff;
+}
+
+/* Header principal com identidade independente, apenas no escuro. */
+[data-theme='dark'] {
+  --ads-header-background: #192c46;
+  --ads-header-text: #f8fafc;
+}
+```
+
+Também é possível limitar um token a uma instância do shell com uma classe
+própria (por exemplo, `.meu-back-admin { --ads-sidebar-background: ... }`).
+Se nenhum token específico for definido, as cores atuais permanecem intactas.
+O fundo do Drawer da navegação móvel acompanha `--ads-sidebar-background`;
+a navegação interna conserva seu fundo transparente no móvel. O cabeçalho móvel
+mantém o fundo transparente por padrão e aceita um valor próprio em
+`--ads-sidebar-header-background`.
+
+As variáveis de texto são aplicadas aos elementos controlados pelo shell e
+aos links/grupos de `AdsAdminShell.Navigation`. Componentes externos compostos
+dentro dessas regiões podem ter seus próprios tokens e regras explícitas; não
+são recoloridos globalmente pelo shell.
+
+**Acessibilidade:** ao escolher novas cores, valide contraste de texto, ícones,
+seleção, bordas, foco e hover nos dois temas e em `prefers-contrast: more`.
+O DS mantém os pares padrão; combinações customizadas são responsabilidade
+do consumidor. Use seletores `[data-theme='light'|'dark']` que alcançam
+contêineres portados; evite depender apenas de `:root[data-theme]`.
+
 ### Controle de preferência: Claro, Escuro e Sistema
 
 `AdsThemeControl` oferece as três preferências (`light`, `dark` e `system`). Ele

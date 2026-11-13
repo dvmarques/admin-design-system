@@ -278,6 +278,45 @@ test('confere manifesto dentro do tarball, mesmo com hashes válidos', async () 
 	}
 });
 
+test('publisher OIDC aceita master somente no SHA aprovado e workflow confiável', () => {
+	const sha = 'a'.repeat(40);
+	const env = {
+		PATH: process.env.PATH,
+		GITHUB_ACTIONS: 'true',
+		GITHUB_REPOSITORY: 'dvmarques/admin-design-system',
+		GITHUB_REF_NAME: 'master',
+		GITHUB_REF: 'refs/heads/master',
+		GITHUB_SHA: sha,
+		GITHUB_WORKFLOW_REF:
+			'dvmarques/admin-design-system/.github/workflows/release.yml@refs/heads/master',
+		ACTIONS_ID_TOKEN_REQUEST_URL: 'https://example.invalid/oidc',
+		ACTIONS_ID_TOKEN_REQUEST_TOKEN: 'mock-only',
+	};
+	const run = (changes = {}) =>
+		spawnSync(
+			process.execPath,
+			['scripts/npm-publication.mjs', 'publish', '0.2.0', sha, '/tmp/not-used'],
+			{ encoding: 'utf8', env: { ...env, ...changes } },
+		);
+
+	const valid = run();
+	assert.notEqual(valid.status, 0);
+	assert.match(valid.stderr, /ENOENT/);
+	assert.doesNotMatch(valid.stderr, /Disparo deve|Workflow OIDC inesperado|diverge do merge SHA/);
+
+	for (const [changes, expected] of [
+		[{ GITHUB_REF: 'refs/heads/develop', GITHUB_REF_NAME: 'develop' }, /master/],
+		[{ GITHUB_SHA: 'b'.repeat(40) }, /diverge do merge SHA/],
+		[{ GITHUB_WORKFLOW_REF: env.GITHUB_WORKFLOW_REF.replace('master', 'develop') }, /Workflow OIDC inesperado/],
+		[{ ACTIONS_ID_TOKEN_REQUEST_URL: '' }, /Token OIDC indisponível/],
+		[{ NPM_TOKEN: 'mock-only' }, /Tokens npm permanentes/],
+	]) {
+		const result = run(changes);
+		assert.notEqual(result.status, 0);
+		assert.match(result.stderr, expected);
+	}
+});
+
 test('sem OIDC nem identidade do workflow não inicia publicação', () => {
 	const command = spawnSync(
 		process.execPath,

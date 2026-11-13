@@ -13,13 +13,13 @@
 
 ## Alternativas e trade-offs
 
-| Alternativa | Vantagem | Custo/decisão |
-| --- | --- | --- |
-| `## [Unreleased]` + ISO `YYYY-MM-DD` | Familiaridade com Keep a Changelog e leitura internacional | Altera o parser, placeholders, validações e back-merge; mistura com história passada exige compatibilidade dupla e testes extensivos. **Não adotar agora.** |
-| Links permanentes de diff entre versões | Navegação entre tags | Antes da publicação, tags podem não existir; exigiria política de links/bootstrap. **Adiar.** |
-| `CHANGELOG-archive-*.md` | Arquivo principal menor | Extração e checks de release precisariam buscar diversos arquivos com garantias idênticas; benefício ainda não medido. **Adiar.** |
-| Filtrar itens internos no `release:notes` | Notas públicas mais curtas sem editar changelog | Causa divergência entre texto aprovado, notas extraídas e comparação idempotente. **Rejeitar.** |
-| Documentar seleção editorial antes da aprovação | Menor complexidade e preservação integral das garantias | Depende de revisão humana real; **adotar**. |
+| Alternativa                                     | Vantagem                                                   | Custo/decisão                                                                                                                                               |
+| ----------------------------------------------- | ---------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `## [Unreleased]` + ISO `YYYY-MM-DD`            | Familiaridade com Keep a Changelog e leitura internacional | Altera o parser, placeholders, validações e back-merge; mistura com história passada exige compatibilidade dupla e testes extensivos. **Não adotar agora.** |
+| Links permanentes de diff entre versões         | Navegação entre tags                                       | Antes da publicação, tags podem não existir; exigiria política de links/bootstrap. **Adiar.**                                                               |
+| `CHANGELOG-archive-*.md`                        | Arquivo principal menor                                    | Extração e checks de release precisariam buscar diversos arquivos com garantias idênticas; benefício ainda não medido. **Adiar.**                           |
+| Filtrar itens internos no `release:notes`       | Notas públicas mais curtas sem editar changelog            | Causa divergência entre texto aprovado, notas extraídas e comparação idempotente. **Rejeitar.**                                                             |
+| Documentar seleção editorial antes da aprovação | Menor complexidade e preservação integral das garantias    | Depende de revisão humana real; **adotar**.                                                                                                                 |
 
 ## Revisão de compatibilidade e segurança
 

@@ -38,7 +38,7 @@ CI, cobertura de testes, refactors sem mudança de contrato, ajustes internos de
 
 **Exemplos ilustrativos** (não representam alterações publicadas):
 
-```markdown
+```text
 #### Added
 - Novo `AdsDatePicker` para seleção por teclado e mouse, com mensagens de erro acessíveis. (#123)
 

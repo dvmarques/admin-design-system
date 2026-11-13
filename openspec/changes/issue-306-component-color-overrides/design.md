@@ -32,7 +32,7 @@ O CSS existente é distribuído em `@dvmarques/admin-ds-admin/styles.css` e cons
 ## Risks / Trade-offs
 
 - Variáveis específicas podem produzir contraste inadequado se o consumidor alterar só uma face do par; documentar responsabilidade de ajustar texto/hover/ativo e validar WCAG.
-- O `AdsDrawer` tem superfície própria. A mudança de tema por CSS no desktop não implica automaticamente alterar todo o painel móvel; documentar isso e testar ausência de regressão.
+- O `AdsDrawer` tem superfície própria. `.ads-admin-shell-mobile-drawer` recebe a mesma variável opcional de fundo da sidebar (default `surface-raised` do Drawer), mantendo a navegação interna transparente. O cabeçalho móvel permanece transparente por padrão e só pinta cor própria quando o consumidor define `--ads-sidebar-header-background`. O Drawer genérico não muda.
 - Componentes compostos na sidebar (switcher, botões) ainda usam tokens próprios. Não reestilizar todos por herança global nesta issue.
 - Evitar especificidade e `!important` que vençam customizações externas.
 

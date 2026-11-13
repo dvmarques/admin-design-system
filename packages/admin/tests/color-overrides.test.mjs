@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import { readFile } from 'node:fs/promises';
 
 const css = await readFile(new URL('../src/styles.css', import.meta.url), 'utf8');
+const compactCss = css.replace(/\s+/g, ' ').replace(/\(\s+/g, '(').replace(/\s+\)/g, ')');
 
 const publicRoles = new Map([
 	['--ads-sidebar-background', '--ads-color-surface-raised'],
@@ -20,16 +21,14 @@ const publicRoles = new Map([
 
 test('scoped color roles have dynamic global fallbacks and no baked-in defaults', () => {
 	for (const [role, fallback] of publicRoles) {
-		assert.ok(css.includes(`var(${role}, var(${fallback}))`), `missing fallback for ${role}`);
+		const expected = `var(${role}, var(${fallback}))`;
+		assert.ok(compactCss.includes(expected), `missing fallback for ${role}`);
 		assert.ok(!css.includes(`${role}:`), `fixed default would break inheritance: ${role}`);
 	}
-	assert.ok(
-		css.includes(
-			'var(--ads-sidebar-header-background, var(--ads-sidebar-background, var(--ads-color-surface-raised)))',
-		),
-		'sidebar brand must follow the sidebar background, then the previous global token',
-	);
-	assert.ok(!css.includes('--ads-sidebar-header-background:'), 'no sidebar-header baked-in default');
+	const brandFallback =
+		'var(--ads-sidebar-header-background, var(--ads-sidebar-background, var(--ads-color-surface-raised)))';
+	assert.ok(compactCss.includes(brandFallback), 'sidebar brand must follow sidebar and global');
+	assert.ok(!css.includes('--ads-sidebar-header-background:'), 'no baked-in brand default');
 });
 
 test('navigation and header use only region-scoped color roles', () => {
@@ -44,19 +43,33 @@ test('navigation and header use only region-scoped color roles', () => {
 		'.ads-admin-shell-sidebar-header',
 	];
 	for (const rule of rules) assert.ok(css.includes(rule), `missing rule: ${rule}`);
-	assert.ok(css.includes('box-shadow: inset 3px 0 0 var(--ads-sidebar-active-indicator, var(--ads-color-primary))'));
-	assert.ok(css.includes('background-color: var(--ads-header-background, var(--ads-color-surface))'));
-	assert.ok(css.includes('background-color: var(--ads-sidebar-background, var(--ads-color-surface-raised))'));
-	assert.ok(css.includes('background: var(--ads-sidebar-active-background, var(--ads-color-surface-selected))'));
+	const activeIndicator =
+		'box-shadow: inset 3px 0 0 var(--ads-sidebar-active-indicator, var(--ads-color-primary))';
+	const headerBackground = 'background-color: var(--ads-header-background, var(--ads-color-surface))';
+	const sidebarBackground =
+		'background-color: var(--ads-sidebar-background, var(--ads-color-surface-raised))';
+	const activeBackground =
+		'background: var(--ads-sidebar-active-background, var(--ads-color-surface-selected))';
+	for (const expression of [
+		activeIndicator,
+		headerBackground,
+		sidebarBackground,
+		activeBackground,
+	]) {
+		assert.ok(compactCss.includes(expression), `missing region-scoped expression: ${expression}`);
+	}
 });
 
 test('mobile drawer retains transparent nav while adopting optional sidebar color', () => {
-	assert.match(
-		css,
-		/\.ads-admin-shell-mobile-drawer \.ads-admin-shell-sidebar\s*\{[^}]*background-color: transparent;/,
-	);
-	assert.match(
-		css,
-		/\.ads-admin-shell-mobile-drawer\s*\{[^}]*background-color: var\(--ads-sidebar-background, var\(--ads-color-surface-raised\)\)/,
-	);
+	const mobileNav = css.match(
+		/\.ads-admin-shell-mobile-drawer \.ads-admin-shell-sidebar\s*\{([^}]*)\}/,
+	)?.[1];
+	assert.ok(mobileNav, 'missing mobile navigation rule');
+	assert.match(mobileNav, /background-color:\s*transparent;/);
+
+	const mobilePanel = css.match(/\.ads-admin-shell-mobile-drawer\s*\{([^}]*)\}/)?.[1];
+	assert.ok(mobilePanel, 'missing mobile panel rule');
+	const panelBackground =
+		'background-color: var(--ads-sidebar-background, var(--ads-color-surface-raised))';
+	assert.ok(mobilePanel.includes(panelBackground));
 });

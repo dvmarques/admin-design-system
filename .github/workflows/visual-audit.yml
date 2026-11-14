@@ -53,7 +53,10 @@ jobs:
       # Container do Playwright não herda a exceção de safe.directory do host.
       - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: npm run test:quality
-      - run: npm run test:e2e
+      - name: E2E completo (HOME do usuário root para Firefox no container)
+        run: npm run test:e2e
+        env:
+          HOME: /root
       - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
       - name: Auditar catálogo
         run: npm run audit:visual

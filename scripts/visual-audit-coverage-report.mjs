@@ -1,5 +1,5 @@
 import { Buffer } from 'node:buffer';
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { loadCoverage } from './visual-audit-coverage.mjs';
 
@@ -24,10 +24,10 @@ export function analyzeStateCoverage({ matrix, entries, folder }) {
 		const manifest = join(folder, 'states', scenario.id + '.json');
 		let record = null;
 		let problem = null;
-		if (existsSync(manifest)) {
-			try {
-				record = readJson(manifest);
-			} catch (error) {
+		try {
+			record = readJson(manifest);
+		} catch (error) {
+			if (error?.code !== 'ENOENT') {
 				problem = 'Manifesto ilegível: ' + String(error);
 			}
 		}
@@ -219,13 +219,15 @@ export function buildStateCoverageReport(project = process.cwd()) {
 	);
 	writeFileSync(join(folder, 'coverage-report.md'), lines.join('\n'));
 	const initialJson = join(folder, 'report.json');
-	if (existsSync(initialJson)) {
+	try {
 		const initial = readJson(initialJson);
 		initial.stateCoverage = summaryForInitial(report);
 		writeFileSync(initialJson, JSON.stringify(initial, null, 2) + '\n');
+	} catch (error) {
+		if (error?.code !== 'ENOENT') throw error;
 	}
 	const initialMd = join(folder, 'report.md');
-	if (existsSync(initialMd)) {
+	try {
 		const before = readFileSync(initialMd, 'utf8');
 		writeFileSync(
 			initialMd,
@@ -245,6 +247,8 @@ export function buildStateCoverageReport(project = process.cwd()) {
 				'- [Matriz detalhada por export, estado e evidência](coverage-report.md).\n' +
 				'- Nenhum estado foi aprovado por revisão humana automaticamente.\n',
 		);
+	} catch (error) {
+		if (error?.code !== 'ENOENT') throw error;
 	}
 	console.log(
 		'Cobertura de estados: ' +

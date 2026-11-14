@@ -3,6 +3,7 @@
 import {
 	AdsAvatar,
 	AdsIcon,
+	AdsIconSlot,
 	AdsLoadingIndicator,
 	AdsPopover,
 	type AdsAvatarTone,
@@ -40,6 +41,8 @@ export interface AdsAccountMenuAction {
 	label: ReactNode;
 	description?: ReactNode;
 	icon?: AdsIconName;
+	/** Optional React/SVG artwork, taking precedence over the internal named icon. */
+	iconNode?: ReactNode;
 	/** Renders a native link; routing belongs to the browser or to the consumer. */
 	href?: string;
 	/** May return a `Promise`: the action stays busy and the panel open until it settles (buttons only; with `href` the result is ignored). */
@@ -96,13 +99,21 @@ function ActionContent({
 	pending: boolean;
 	pendingLabel: string;
 }) {
+	const visual =
+		action.iconNode === undefined
+			? action.icon
+				? <AdsIcon name={action.icon} size="sm" />
+				: null
+			: action.iconNode === null
+				? null
+				: <AdsIconSlot icon={action.iconNode} size="sm" />;
 	return (
 		<>
-			{action.icon ? (
+			{visual === null ? null : (
 				<span aria-hidden="true" className="ads-account-menu-action-icon">
-					<AdsIcon name={action.icon} size="sm" />
+					{visual}
 				</span>
-			) : null}
+			)}
 			<span className="ads-account-menu-action-text">
 				<span className="ads-account-menu-action-label">{action.label}</span>
 				{action.description ? (

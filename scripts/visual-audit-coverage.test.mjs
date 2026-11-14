@@ -29,4 +29,7 @@ test('estados N/A, duplicidade e contexto inválido falham antes da auditoria', 
 	assert.match(validateCoverage(altered, entries).join(' '), /não aplicável/);
 	assert.match(validateCoverage(altered, entries).join(' '), /duplicado/);
 	assert.match(validateCoverage(altered, entries).join(' '), /largura fora/);
+	const invalidAction = copy();
+	invalidAction.scenarios[0].action = 'acao-nao-implementada';
+	assert.match(validateCoverage(invalidAction, entries).join(' '), /ação desconhecida/);
 });

@@ -65,3 +65,23 @@ Execução local (Linux, Chromium) sobre o código da change `issue-152-visual-a
 - `npx playwright test --project=chromium`: 473 aprovados e 9 falhas de snapshot visual em páginas não alteradas por esta change (`/componentes`, `/clientes`, `/clientes/novo`, `/preferencias`, referência, Admin Shell e dados). A diferença ocorre no ambiente local (build do Chromium/renderização) e a CI passou no mesmo SHA; nenhum snapshot foi atualizado. Firefox e WebKit ficam a cargo da CI.
 
 A matriz segue `Pendente` até inspeção mais completa por estado.
+
+## Fase 3 — matriz e estados seletivos (#152)
+
+A fonte versionada de aplicabilidade é `visual-audit/coverage-matrix.json`. Ela contém uma decisão explícita de perfil por export e cenários seletivos; **não** duplica o nome da rota nem as stories do catálogo. Os nomes, grupos e rotas são obtidos de `apps/admin-demo/app/catalogo/catalog-data.ts`; o inventário e as ligações com Storybook existentes continuam válidos. Estados não mapeados não são automaticamente "não aplicáveis". As exceções N/A exigem motivo, e todo componente continua com revisão humana pendente.
+
+Comandos:
+
+```sh
+node scripts/visual-audit-coverage.mjs --check
+node scripts/visual-audit-coverage.mjs --print
+node --test scripts/visual-audit-coverage.test.mjs scripts/visual-audit-coverage-report.test.mjs
+npm run build
+npm run audit:visual
+```
+
+A validação da matriz integra `test:ci`, inclusive em PRs normais, mas os 22 cenários adicionais Playwright são **opt-in**, no workflow de auditoria manual. O conjunto não executa um produto cartesiano de todos os exports, estados, temas e viewports. Após uma execução, a pasta ignorada `visual-audit-results/` passa a conter `coverage-report.md`, `coverage-report.json`, `states/<id>.json` e `screenshots/states/<id>.png`, além dos relatórios e 328 amostras iniciais preexistentes. Resultados de falha ou capturas ausentes não são aprovados. O relatório agregado original recebe apenas o resumo adicional e um link ao relatório detalhado.
+
+A cobertura contém focos por teclado, estados de validação, aberturas de overlays, dados, sidebar, forced-colors e prefers-reduced-motion em casos selecionados. Emulação de mídia **não é** avaliação perceptual de contraste, e a mudança de viewport/CSS não comprova zoom real do navegador a 200%. Esta verificação permanece pendente de execução manual dedicada (light/dark, desktop/mobile), com capturas e revisão humana antes de alterar seu status. O mesmo vale para diferenças subjetivas de tipografia, densidade, elevação e affordance. Não atualizar snapshots oficiais como parte dessa auditoria.
+
+Revisão de evidências: para cada sinal, registrar export/rota/estado/tema/largura, esperado e observado, severidade, resultado de inspeção humana, link persistente do artefato e PR ou issue de regressão quando cabível. O artefato Actions tem retenção limitada; links efêmeros não substituem evidência preservada quando uma decisão for tomada. A ausência de alertas não permite declarar visual aprovado, e nenhum checkbox geral da #152 deve ser marcado apenas com base na execução automatizada.

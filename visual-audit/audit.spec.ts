@@ -96,6 +96,9 @@ for (const theme of ['light', 'dark'] as const) {
 						const clippedLabels = controls.filter((node) => {
 							const style = getComputedStyle(node);
 							return (
+								// Ignora controles visualmente ocultos (ex.: input nativo `sr-only` de 1x1px).
+								node.getBoundingClientRect().width > 2 &&
+								node.getBoundingClientRect().height > 2 &&
 								node.clientWidth > 0 &&
 								node.scrollWidth > node.clientWidth + 2 &&
 								style.overflowX !== 'auto' &&

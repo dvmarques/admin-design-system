@@ -41,6 +41,8 @@ A configuração-base executa Chromium nos dois temas e nas larguras de 390px (m
 
 O auditor registra: erros de rota/captura; console do navegador; overflow horizontal do documento; overflow na região de demonstração; controles fora da borda; controles cujo conteúdo excede a largura. **São heurísticas de triagem**, pois tabelas roláveis, truncamento e outras composições podem ser intencionais. Não realiza julgamento visual subjetivo de cores, espaçamentos, contraste ou alinhamento tipográfico. Um status “sem sinais automatizados” NÃO equivale a aprovação visual e não altera as linhas `Pendente` da matriz.
 
+Controles visualmente ocultos (largura ou altura de até 2px, como o `input type="file"` nativo com `sr-only` do `AdsFileUpload`) não entram na heurística de conteúdo que excede a largura, pois o overflow deles não é visível.
+
 Para disparar pelo GitHub após o workflow estar presente na branch padrão, abrir Actions → **Auditoria visual #152** → Run workflow. O artefato contém report.md/report.json e capturas, com retenção de 14 dias. O workflow é manual (`workflow_dispatch`), sem agendamento ou custo recorrente por PR. A primeira validação efetiva só pode ser declarada após rodar e inspecionar esse artefato; nenhum relatório de execução foi pré-gerado nesta PR.
 
 O relatório usa apenas demos com dados fictícios. Não adiciona novos baselines nem altera os snapshots oficiais Linux; qualquer diferença encontrada deve ser investigada e tratada separadamente.

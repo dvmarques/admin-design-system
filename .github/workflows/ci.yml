@@ -34,7 +34,7 @@ jobs:
           persist-credentials: false
       # Apenas informa o escopo; este job sempre executa a validação completa.
       - run: node ./scripts/ci-scope.mjs --summary
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm
@@ -88,7 +88,7 @@ jobs:
           persist-credentials: false
       - id: scope
         run: node ./scripts/ci-scope.mjs --summary
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.scope.outputs.docs_only != 'true'
         with:
           node-version: 24
@@ -152,7 +152,7 @@ jobs:
           persist-credentials: false
       - id: scope
         run: node ./scripts/ci-scope.mjs --summary
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         if: steps.scope.outputs.docs_only != 'true' && steps.scope.outputs.e2e != 'false'
         with:
           node-version: 24
@@ -259,7 +259,7 @@ jobs:
         with:
           fetch-depth: 0
           persist-credentials: false
-      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+      - uses: actions/setup-node@949feb2413d6458794dcd2491c4babbbce0c15c1 # v7.1.0
         with:
           node-version: 24
           cache: npm

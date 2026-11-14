@@ -195,3 +195,29 @@ for (const [name, path] of [
 		expect((await request.get(href)).ok()).toBe(true);
 	});
 }
+
+test('site estático publica CSP parcial e meta referrer nas rotas de autenticação simuladas', async ({
+	page,
+}) => {
+	for (const path of ['/', '/login/', '/esqueci-senha/', '/redefinir-senha/']) {
+		await page.goto(`${base}${path}`);
+		await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+			'content',
+			"object-src 'none'; base-uri 'self'; form-action 'self'",
+		);
+		await expect(page.locator('meta[name="referrer"]')).toHaveAttribute(
+			'content',
+			'strict-origin-when-cross-origin',
+		);
+	}
+});
+
+test('site estático mantém o Shiki com CSP parcial, sem erros de navegador', async ({ page }) => {
+	const errors = collectBrowserErrors(page);
+	await page.goto(`${base}/exemplos/codigo-destacado/`);
+	await waitForHydration(themeTrigger(page));
+	await expect(
+		page.locator('.ads-highlighted-code-snippet__line-content span[style*="color"]').first(),
+	).toBeVisible();
+	expect(errors).toEqual([]);
+});

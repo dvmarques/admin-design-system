@@ -29,7 +29,7 @@ Todos os documentos Next e os dois HTMLs de entrada do Storybook recebem:
 - `form-action 'self'`: restringe a origem para onde os formulários submetem. O fluxo de auth continua simulado, sem backend ou credenciais reais.
 - `referrer`: em navegação entre origens, envia no máximo a origem sob o comportamento `strict-origin-when-cross-origin`. Não é um header `Referrer-Policy` fornecido pelo servidor.
 
-**CSP parcial, não anti-XSS:** propositalmente sem `default-src`, `script-src`, `style-src`, `worker-src`, `connect-src` ou `font-src`; portanto **não restringe** scripts, recursos, estilos, fetches ou WASM. O meta não protege recursos carregados antes dele. As diretivas presentes não são uma CSP estrita.
+**CSP parcial, não anti-XSS:** propositalmente sem `default-src`, `script-src`, `style-src`, `worker-src`, `connect-src` ou `font-src`; portanto **não restringe** scripts, recursos, estilos, fetches ou WASM. O meta não protege recursos carregados antes dele. No `iframe.html` do Storybook, scripts gerados pelo próprio Storybook (como o injetor de mocks do Vite) precedem o meta; o teste de output verifica que nenhum `base` com `href`, `object`, `embed` ou `form` aparece antes dele (o `<base target="_parent">` do Storybook não define URL base). As diretivas presentes não são uma CSP estrita.
 
 ### Políticas que não se tornam efetivas no Pages
 

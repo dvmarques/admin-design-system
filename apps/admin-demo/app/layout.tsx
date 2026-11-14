@@ -8,6 +8,7 @@ import '@dvmarques/admin-ds-admin/styles.css';
 import type { Metadata } from 'next';
 import type { ReactNode } from 'react';
 import './globals.css';
+import { pageContentSecurityPolicy, pageReferrerPolicy } from '../lib/page-policies';
 import { readServerPreference } from '../lib/server-theme';
 import { themeForPreference, themeInitScript } from '../lib/theme';
 import { ThemeSystemSync } from './theme-system-sync';
@@ -15,6 +16,7 @@ import { ThemeSystemSync } from './theme-system-sync';
 export const metadata: Metadata = {
 	title: 'Admin Design System Demo',
 	description: 'Aplicação de referência do Admin Design System',
+	referrer: pageReferrerPolicy,
 };
 
 export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
@@ -32,11 +34,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 		>
 			<head>
 				{/* CSP parcial efetiva no HTML estático; headers e restrições de script exigem outro host. */}
-				<meta
-					httpEquiv="Content-Security-Policy"
-					content="object-src 'none'; base-uri 'self'; form-action 'self'"
-				/>
-				<meta name="referrer" content="strict-origin-when-cross-origin" />
+				<meta httpEquiv="Content-Security-Policy" content={pageContentSecurityPolicy} />
 				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
 			</head>
 			<body>

@@ -19,5 +19,5 @@
 
 - CSP é **parcial**, via meta; `script-src`, `frame-ancestors` e headers de resposta não são implementados no GitHub Pages atual. Não se afirma proteção geral contra XSS, clickjacking nem autenticação de produção.
 - O diff foi revisado e a PR ficou Ready for Review. Sem mudanças nas APIs públicas, dependências, pipeline de release ou snapshots visuais.
-- Esta atualização de evidências/checklist é apenas documentação, mas deve ser verificada pelo CI no novo SHA; caso a nova execução falhe ou seja pulada, registrar isso.
+- O commit `39b57ee` (evidências/checklist) teve CI, Pages e Security Gate verdes (Publicar e Validação de release `skipped`, como esperado em PR). Os ajustes de revisão posteriores (teste de output do Storybook mais estrito, constantes de política no demo, `metadata.referrer`) exigem nova conferência da CI no SHA final; se falhar ou for pulada, registrar aqui.
 - Nenhum merge, fechamento da issue ou archive OpenSpec foi realizado. Revisão humana e autorização são necessárias para integrar.

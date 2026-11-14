@@ -28,7 +28,7 @@ export function verifyWorkflowSupplyChain() {
 	}
 	assert.equal(lock.packages['']?.devDependencies['@playwright/test'], playwrightVersion);
 
-	const expectedImages = ['ci.yml', 'pages.yml', 'update-visual-baselines.yml'];
+	const expectedImages = ['ci.yml', 'pages.yml', 'update-visual-baselines.yml', 'visual-audit.yml'];
 	for (const file of names) {
 		const workflow = read('.github/workflows/' + file);
 		assert.doesNotMatch(workflow, /pull_request_target/, file + ' usa evento privilegiado');

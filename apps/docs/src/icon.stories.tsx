@@ -5,7 +5,14 @@ import { Sun, Truck } from 'lucide-react';
 
 function LocalParcelIcon() {
 	return (
-		<svg aria-hidden="true" fill="none" height="20" stroke="currentColor" viewBox="0 0 24 24" width="20">
+		<svg
+			aria-hidden="true"
+			fill="none"
+			height="20"
+			stroke="currentColor"
+			viewBox="0 0 24 24"
+			width="20"
+		>
 			<rect height="15" rx="2" width="16" x="4" y="5" />
 			<path d="M4 10h16M12 5v20" />
 		</svg>

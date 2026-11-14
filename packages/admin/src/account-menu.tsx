@@ -41,7 +41,7 @@ export interface AdsAccountMenuAction {
 	label: ReactNode;
 	description?: ReactNode;
 	icon?: AdsIconName;
-	/** Optional React/SVG artwork, taking precedence over the internal named icon. */
+	/** Optional React/SVG artwork, taking precedence over the internal named icon. `null` or a boolean (e.g. `cond && <Icon />`) renders no icon, without falling back to `icon`. */
 	iconNode?: ReactNode;
 	/** Renders a native link; routing belongs to the browser or to the consumer. */
 	href?: string;
@@ -104,7 +104,7 @@ function ActionContent({
 			action.icon ? (
 				<AdsIcon name={action.icon} size="sm" />
 			) : null
-		) : action.iconNode === null ? null : (
+		) : action.iconNode === null || typeof action.iconNode === 'boolean' ? null : (
 			<AdsIconSlot icon={action.iconNode} size="sm" />
 		);
 	return (

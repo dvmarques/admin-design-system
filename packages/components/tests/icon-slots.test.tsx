@@ -124,3 +124,26 @@ describe('Optional icon overrides (#316)', () => {
 		expect(closed).toHaveBeenCalledOnce();
 	});
 });
+
+describe('Conditional (boolean) icon overrides render no artwork (#316)', () => {
+	it('treats false as absence for alert and toast close icons', () => {
+		render(
+			<div>
+				<AdsAlert closeIcon={false} dismissible>
+					Aviso
+				</AdsAlert>
+				<AdsToast closeIcon={false}>Atualizado</AdsToast>
+			</div>,
+		);
+		for (const name of ['Fechar mensagem', 'Fechar notificação']) {
+			const button = screen.getByRole('button', { name });
+			expect(button.querySelector('.ads-icon, .ads-icon-slot')).toBeNull();
+		}
+	});
+
+	it('treats false as absence for theme icons', () => {
+		render(<AdsThemeControl icons={{ light: false }} variant="group" />);
+		const light = screen.getByRole('radio', { name: 'Claro' });
+		expect(light.querySelector('.ads-icon, .ads-icon-slot')).toBeNull();
+	});
+});

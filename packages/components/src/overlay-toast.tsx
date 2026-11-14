@@ -66,7 +66,7 @@ export function AdsToast({
 					>
 						{closeIcon === undefined ? (
 							<AdsIcon name="close" size="sm" />
-						) : closeIcon === null ? null : (
+						) : closeIcon === null || typeof closeIcon === 'boolean' ? null : (
 							<AdsIconSlot icon={closeIcon} size="sm" />
 						)}
 					</button>

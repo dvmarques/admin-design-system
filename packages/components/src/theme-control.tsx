@@ -137,7 +137,7 @@ export function AdsThemeControl({
 	const renderOptionIcon = (option: (typeof options)[number]) => {
 		const custom = icons?.[option.value];
 		if (custom === undefined) return <AdsIcon name={option.icon} />;
-		return custom === null ? null : <AdsIconSlot icon={custom} />;
+		return custom === null || typeof custom === 'boolean' ? null : <AdsIconSlot icon={custom} />;
 	};
 
 	const select = (next: AdsThemePreference) => {

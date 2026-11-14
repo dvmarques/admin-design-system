@@ -54,6 +54,7 @@ describe('AdsAccountMenu', () => {
 			},
 			{ id: 'default', label: 'Padrão', icon: 'settings' as const },
 			{ id: 'none', label: 'Sem ícone', icon: 'logOut' as const, iconNode: null },
+			{ id: 'cond', label: 'Condicional', icon: 'user' as const, iconNode: false },
 		];
 		setup({ groups: [{ id: 'g', actions }] });
 		await events.click(trigger());
@@ -62,6 +63,9 @@ describe('AdsAccountMenu', () => {
 		expect(item('Personalizada').querySelector('.ads-icon')).toBeNull();
 		expect(item('Padrão').querySelector('.ads-icon')).not.toBeNull();
 		expect(item('Sem ícone').querySelector('.ads-icon, .ads-icon-slot')).toBeNull();
+		const conditional = item('Condicional');
+		expect(conditional.querySelector('.ads-icon, .ads-icon-slot')).toBeNull();
+		expect(conditional.querySelector('.ads-account-menu-action-icon')).toBeNull();
 	});
 
 	it('opens from the avatar button with the dialog semantics and moves focus to the first action', async () => {

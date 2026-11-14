@@ -56,7 +56,15 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 		const name = action === 'input-error' ? 'Inválido' : 'Válido';
 		const field = preview.getByRole('textbox', { name });
 		await expect(field).toBeVisible();
-		checks.push('field-visible-' + name);
+		if (action === 'input-error') {
+			await expect(field).toHaveAttribute('aria-invalid', 'true');
+			await expect(preview.getByRole('alert', { name: '' }).first()).toContainText('Revise o valor');
+			checks.push('invalid-aria-and-error-message');
+		} else {
+			await expect(field).not.toHaveAttribute('aria-invalid', 'true');
+			await expect(field).toHaveClass(/border-form-success/);
+			checks.push('valid-border-and-no-invalid-aria');
+		}
 		return;
 	}
 	if (action === 'checkbox-selected') {
@@ -110,9 +118,12 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 		return;
 	}
 	if (action === 'table-compact') {
+		const table = preview.getByRole('table');
+		await expect(table).toBeVisible();
+		const initialDensity = await table.getAttribute('class');
 		await preview.getByRole('button', { name: 'Alternar densidade' }).click();
-		await expect(preview.getByRole('table')).toBeVisible();
-		checks.push('table-visible-after-density-toggle');
+		await expect.poll(async () => table.getAttribute('class')).not.toBe(initialDensity);
+		checks.push('table-density-attribute-changed');
 		return;
 	}
 	if (action.startsWith('smart-table-')) {
@@ -120,7 +131,21 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 		const select = preview.getByRole('combobox', { name: 'Estado da tabela' });
 		await select.selectOption(value);
 		await expect(select).toHaveValue(value);
-		checks.push('table-demo-state-' + value);
+		const table = preview.locator('.ads-smart-table');
+		await expect(table).toBeVisible();
+		if (value === 'empty') {
+			await expect(table.getByText('Nenhum registro encontrado')).toBeVisible();
+			checks.push('table-empty-state-visible');
+		} else if (value === 'error') {
+			await expect(table.getByRole('alert')).toContainText('Não foi possível carregar os dados');
+			checks.push('table-error-alert-visible');
+		} else if (value === 'loading') {
+			await expect(table).toHaveAttribute('data-loading', '');
+			await expect(table.locator('.ads-smart-table-skeleton').first()).toBeVisible();
+			checks.push('table-loading-skeleton-visible');
+		} else {
+			throw new Error('Estado de tabela não suportado: ' + value);
+		}
 		return;
 	}
 	if (action === 'shell-collapsed' || action === 'shell-mobile') {
@@ -175,7 +200,7 @@ for (const scenario of plan.scenarios) {
 			await expect(preview).toHaveAttribute('data-theme', scenario.theme);
 			await performAction(page, preview, scenario, evidence.checks);
 			await page.evaluate(() => document.fonts.ready);
-			const image = 'screenshots/states/' + scenario.id + '.png';
+			const image = 'screenshots/states/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
 			mkdirSync(join(output, 'screenshots/states'), { recursive: true });
 			await page.screenshot({
 				path: join(output, image),

@@ -4,7 +4,14 @@ import { Truck } from 'lucide-react';
 import { BellIcon } from '@heroicons/react/24/outline';
 
 const localSvg = (
-	<svg aria-hidden="true" fill="none" height="20" stroke="currentColor" viewBox="0 0 24 24" width="20">
+	<svg
+		aria-hidden="true"
+		fill="none"
+		height="20"
+		stroke="currentColor"
+		viewBox="0 0 24 24"
+		width="20"
+	>
 		<rect height="16" rx="2" width="16" x="4" y="4" />
 	</svg>
 );

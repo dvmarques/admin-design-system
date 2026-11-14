@@ -6,7 +6,8 @@ const { entries, matrix } = loadCoverage();
 const copy = () => structuredClone(matrix);
 
 test('matriz sincronizada ao catálogo e documentável sem inventário duplicado', () => {
-	assert.equal(entries.length, 83);
+	assert.ok(entries.length > 0);
+	assert.equal(Object.keys(matrix.components).length, entries.length);
 	assert.ok(matrix.scenarios.length >= 15);
 	assert.deepEqual(validateCoverage(matrix, entries), []);
 	assert.match(formatCoverageTable({ entries, matrix }), /AdsAdminShell/);

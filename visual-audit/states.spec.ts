@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
+import { applyDemoTheme } from './demo-theme';
 
 type Scenario = {
 	id: string;
@@ -199,60 +200,71 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 	throw new Error('Ação ainda não implementada: ' + action);
 }
 
-for (const scenario of plan.scenarios) {
-	test('cobertura de estado / ' + scenario.id, async ({ page }) => {
-		test.setTimeout(90_000);
-		const entry = catalogEntries.find((candidate) => candidate.name === scenario.name);
-		if (!entry) throw new Error('Export não encontrado no catálogo: ' + scenario.name);
-		const evidence: Evidence = {
-			...scenario,
-			route: entry.href,
-			screenshot: null,
-			checks: [],
-			error: null,
-		};
-		try {
-			await page.setViewportSize({ width: scenario.width, height: 900 });
-			if (scenario.media === 'reduced-motion') {
-				await page.emulateMedia({ reducedMotion: 'reduce' });
-				expect(
-					await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches),
-				).toBe(true);
-				evidence.checks.push('reduced-motion-active');
+test.describe('cobertura seletiva de estados', () => {
+	test.describe.configure({ mode: 'serial' });
+
+	for (const scenario of plan.scenarios) {
+		test('cobertura de estado / ' + scenario.id, async ({ page }) => {
+			test.setTimeout(90_000);
+			const entry = catalogEntries.find((candidate) => candidate.name === scenario.name);
+			if (!entry) throw new Error('Export não encontrado no catálogo: ' + scenario.name);
+			const evidence: Evidence = {
+				...scenario,
+				route: entry.href,
+				screenshot: null,
+				checks: [],
+				error: null,
+			};
+			try {
+				await page.setViewportSize({ width: scenario.width, height: 900 });
+				if (scenario.media === 'reduced-motion') {
+					await page.emulateMedia({ reducedMotion: 'reduce' });
+					expect(
+						await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches),
+					).toBe(true);
+					evidence.checks.push('reduced-motion-active');
+				}
+				if (scenario.media === 'forced-colors') {
+					await page.emulateMedia({ forcedColors: 'active' });
+					expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(
+						true,
+					);
+					evidence.checks.push('forced-colors-active');
+				}
+				const response = await page.goto(entry.href, { waitUntil: 'domcontentloaded' });
+				if (!response?.ok()) throw new Error('Falha HTTP ' + String(response?.status()));
+				await expect(
+					page.getByRole('heading', { name: entry.name, level: 1, exact: true }),
+				).toBeVisible();
+				const preview = page.getByRole('region', { name: 'Demonstração interativa' });
+				await applyDemoTheme(page, preview, scenario.theme);
+				await performAction(page, preview, scenario, evidence.checks);
+				await page.evaluate(() => document.fonts.ready);
+				const image =
+					'screenshots/states/' +
+					scenario.id +
+					'-' +
+					scenario.theme +
+					'-' +
+					scenario.width +
+					'.png';
+				mkdirSync(join(output, 'screenshots/states'), { recursive: true });
+				await page.screenshot({
+					path: join(output, image),
+					animations: 'disabled',
+					timeout: 20_000,
+				});
+				evidence.screenshot = image;
+			} catch (error) {
+				evidence.error = error instanceof Error ? error.message : String(error);
+			} finally {
+				mkdirSync(join(output, 'states'), { recursive: true });
+				writeFileSync(
+					join(output, 'states', scenario.id + '.json'),
+					JSON.stringify(evidence, null, 2) + '\n',
+				);
 			}
-			if (scenario.media === 'forced-colors') {
-				await page.emulateMedia({ forcedColors: 'active' });
-				expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
-				evidence.checks.push('forced-colors-active');
-			}
-			const response = await page.goto(entry.href, { waitUntil: 'domcontentloaded' });
-			if (!response?.ok()) throw new Error('Falha HTTP ' + String(response?.status()));
-			await expect(
-				page.getByRole('heading', { name: entry.name, level: 1, exact: true }),
-			).toBeVisible();
-			const preview = page.getByRole('region', { name: 'Demonstração interativa' });
-			await page.getByLabel('Tema da demonstração').selectOption(scenario.theme);
-			await expect(preview).toHaveAttribute('data-theme', scenario.theme);
-			await performAction(page, preview, scenario, evidence.checks);
-			await page.evaluate(() => document.fonts.ready);
-			const image =
-				'screenshots/states/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
-			mkdirSync(join(output, 'screenshots/states'), { recursive: true });
-			await page.screenshot({
-				path: join(output, image),
-				animations: 'disabled',
-				timeout: 20_000,
-			});
-			evidence.screenshot = image;
-		} catch (error) {
-			evidence.error = error instanceof Error ? error.message : String(error);
-		} finally {
-			mkdirSync(join(output, 'states'), { recursive: true });
-			writeFileSync(
-				join(output, 'states', scenario.id + '.json'),
-				JSON.stringify(evidence, null, 2) + '\n',
-			);
-		}
-		expect(evidence.error, 'erro na execução do cenário ' + scenario.id).toBeNull();
-	});
-}
+			expect(evidence.error, 'erro na execução do cenário ' + scenario.id).toBeNull();
+		});
+	}
+});

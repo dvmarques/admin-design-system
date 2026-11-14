@@ -4,7 +4,35 @@ import { mkdtempSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { test } from 'node:test';
-import { analyzeStateCoverage } from './visual-audit-coverage-report.mjs';
+import {
+	analyzeStateCoverage,
+	buildStateCoverageSection,
+	STATE_COVERAGE_SECTION_HEADING,
+	upsertStateCoverageSection,
+} from './visual-audit-coverage-report.mjs';
+
+test('teardown idempotente mantém uma única seção de cobertura em report.md', () => {
+	const first = buildStateCoverageSection({
+		planned: 22,
+		executed: 22,
+		automaticPass: 20,
+		failed: 2,
+		pending: 0,
+	});
+	const updated = buildStateCoverageSection({
+		planned: 22,
+		executed: 22,
+		automaticPass: 22,
+		failed: 0,
+		pending: 0,
+	});
+	const base = '# Relatório\n\nCorpo inicial.\n';
+	const once = upsertStateCoverageSection(base, first);
+	const twice = upsertStateCoverageSection(once, updated);
+	assert.equal((twice.match(new RegExp(STATE_COVERAGE_SECTION_HEADING, 'g')) ?? []).length, 1);
+	assert.match(twice, /aprovação objetiva: 22/);
+	assert.doesNotMatch(twice, /aprovação objetiva: 20/);
+});
 
 test('estados pendentes, falhas reais e aprovação objetiva não viram revisão humana', () => {
 	const root = mkdtempSync(join(tmpdir(), 'ads-state-coverage-'));

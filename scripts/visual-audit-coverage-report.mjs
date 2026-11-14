@@ -229,24 +229,7 @@ export function buildStateCoverageReport(project = process.cwd()) {
 	const initialMd = join(folder, 'report.md');
 	try {
 		const before = readFileSync(initialMd, 'utf8');
-		writeFileSync(
-			initialMd,
-			before +
-				'\n## Cobertura seletiva de estados\n\n' +
-				'- Planejados: ' +
-				s.planned +
-				'; executados: ' +
-				s.executed +
-				'; aprovação objetiva: ' +
-				s.automaticPass +
-				'; falhas: ' +
-				s.failed +
-				'; pendentes: ' +
-				s.pending +
-				'.\n' +
-				'- [Matriz detalhada por export, estado e evidência](coverage-report.md).\n' +
-				'- Nenhum estado foi aprovado por revisão humana automaticamente.\n',
-		);
+		writeFileSync(initialMd, upsertStateCoverageSection(before, buildStateCoverageSection(s)));
 	} catch (error) {
 		if (error?.code !== 'ENOENT') throw error;
 	}
@@ -265,4 +248,42 @@ export function buildStateCoverageReport(project = process.cwd()) {
 }
 function summaryForInitial(report) {
 	return { ...report.summary, report: 'coverage-report.md', json: 'coverage-report.json' };
+}
+
+export const STATE_COVERAGE_SECTION_HEADING = '## Cobertura seletiva de estados';
+
+export function buildStateCoverageSection(summary) {
+	const s = summary;
+	return (
+		STATE_COVERAGE_SECTION_HEADING +
+		'\n\n' +
+		'- Planejados: ' +
+		s.planned +
+		'; executados: ' +
+		s.executed +
+		'; aprovação objetiva: ' +
+		s.automaticPass +
+		'; falhas: ' +
+		s.failed +
+		'; pendentes: ' +
+		s.pending +
+		'.\n' +
+		'- [Matriz detalhada por export, estado e evidência](coverage-report.md).\n' +
+		'- Nenhum estado foi aprovado por revisão humana automaticamente.\n'
+	);
+}
+
+/** Substitui a seção de cobertura de estados se já existir (teardown idempotente). */
+export function upsertStateCoverageSection(markdown, section) {
+	const heading = STATE_COVERAGE_SECTION_HEADING;
+	const index = markdown.indexOf(heading);
+	if (index === -1) {
+		const needsNewline = markdown.length > 0 && !markdown.endsWith('\n');
+		return (needsNewline ? markdown + '\n' : markdown) + '\n' + section;
+	}
+	const tail = markdown.slice(index + heading.length);
+	const nextHeading = tail.match(/\n## /);
+	const end = nextHeading ? index + heading.length + nextHeading.index : markdown.length;
+	const suffix = nextHeading ? markdown.slice(end) : '';
+	return markdown.slice(0, index) + section + suffix;
 }

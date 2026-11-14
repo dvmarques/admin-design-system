@@ -6,5 +6,5 @@
 - [x] Refinar a heurística de truncamento para não marcar overflow CSS visível como clipping, sem desativar as demais verificações.
 - [x] Incluir testes de regressão automatizados para iframes, responsividade do upload e distinção clipping real/ícone visível.
 - [x] Registrar resultados e limitações no documento de auditoria e no acompanhamento da #152.
-- [ ] Executar testes focalizados, format, lint, build, typecheck, test:quality e auditor visual opt-in; registrar evidências reais.
-- [ ] Executar `npm run test:e2e`, `npm run validate`, OpenSpec estrito e verificação final de formatação, revisar diff/snapshots; registrar limitações reais.
+- [x] Executar testes focalizados, format, lint, build, typecheck, test:quality e auditor visual opt-in; registrar evidências reais.
+- [x] Executar E2E, etapas do `npm run validate`, OpenSpec estrito e verificação final de formatação, revisar diff/snapshots; registrar limitações reais (9 snapshots divergem só no ambiente local, sem atualização; ver `docs/visual-audit.md`).

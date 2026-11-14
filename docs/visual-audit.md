@@ -55,4 +55,13 @@ O relatório usa apenas demos com dados fictícios. Não adiciona novos baseline
 - **Upload:** as ações do exemplo estavam adjacentes, sem `gap`; a composição agora usa um grupo flexível com separação e quebra de linha. O `AdsFileUpload` público permanece intacto.
 - **AdminShell:** sinal `control-text-overflow` no botão de recolher com `overflow: visible` e ícone íntegro nas capturas: classificado como **provável falso positivo** de medição (não é clipping). A heurística de truncamento passa a exigir recorte efetivo; demais checagens não mudam.
 
-Esta documentação registra o diagnóstico e as mudanças de código propostas na change `issue-152-visual-audit-findings`. Não constitui evidência de que a auditoria pós-correção ou o CI tenham passado; links e valores dessa verificação devem ser acrescentados somente após execução real. A matriz segue `Pendente` até inspeção mais completa por estado.
+## Verificação pós-correção
+
+Execução local (Linux, Chromium) sobre o código da change `issue-152-visual-audit-findings`:
+
+- `npm run audit:visual`: **328/328 capturas, 0 sinais para revisão, 0 falhas, 0 não executadas** (antes: quatro sinais na execução #43617023449). O resultado vale apenas para o estado inicial visível de cada rota e não equivale a aprovação visual.
+- `e2e/visual-audit-findings.spec.ts` (Chromium): 6/6 testes aprovados.
+- `npm run format`, `lint`, `build`, `typecheck`, `test:quality`, `test:output` (docs), `verify:optional-peer` e OpenSpec estrito (70/70): sem falhas.
+- `npx playwright test --project=chromium`: 473 aprovados e 9 falhas de snapshot visual em páginas não alteradas por esta change (`/componentes`, `/clientes`, `/clientes/novo`, `/preferencias`, referência, Admin Shell e dados). A diferença ocorre no ambiente local (build do Chromium/renderização) e a CI passou no mesmo SHA; nenhum snapshot foi atualizado. Firefox e WebKit ficam a cargo da CI.
+
+A matriz segue `Pendente` até inspeção mais completa por estado.

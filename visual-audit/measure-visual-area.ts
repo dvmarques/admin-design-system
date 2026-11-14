@@ -10,8 +10,8 @@ export function measureVisualArea(element: Element, boundary: 'element' | 'viewp
 	const controls = Array.from(element.querySelectorAll<HTMLElement>(selector)).filter((node) => {
 		const style = getComputedStyle(node);
 		const size = node.getBoundingClientRect();
-		return style.display !== 'none' && style.visibility !== 'hidden' && size.width > 0 &&
-			size.height > 0;
+		if (style.display === 'none' || style.visibility === 'hidden') return false;
+		return size.width > 0 && size.height > 0;
 	});
 	const outOfBounds = controls.filter((node) => {
 		const size = node.getBoundingClientRect();

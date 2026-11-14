@@ -120,10 +120,10 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 	if (action === 'table-compact') {
 		const table = preview.getByRole('table');
 		await expect(table).toBeVisible();
-		const initialDensity = await table.getAttribute('class');
+		await expect(table).toHaveAttribute('data-density', 'comfortable');
 		await preview.getByRole('button', { name: 'Alternar densidade' }).click();
-		await expect.poll(async () => table.getAttribute('class')).not.toBe(initialDensity);
-		checks.push('table-density-attribute-changed');
+		await expect(table).toHaveAttribute('data-density', 'compact');
+		checks.push('table-compact-density-verified');
 		return;
 	}
 	if (action.startsWith('smart-table-')) {

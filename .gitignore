@@ -34,3 +34,6 @@ apps/docs/src/api-reference/
 
 # Artefato efêmero do workflow manual de baselines
 baseline-transfer/
+
+# Artefatos efêmeros da auditoria visual opt-in
+visual-audit-results/

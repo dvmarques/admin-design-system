@@ -1,0 +1,43 @@
+name: Auditoria visual #152
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Capturar catálogo e gerar relatório
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
+      options: --ipc=host
+      env:
+        HOME: /root
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
+      - run: npm run build --workspace @admin-ds/admin-demo
+      - name: Auditar catálogo
+        run: npm run audit:visual
+      - name: Publicar capturas e relatórios
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: auditoria-visual-152-${{ github.run_id }}
+          path: visual-audit-results/
+          if-no-files-found: warn
+          retention-days: 14

@@ -21,12 +21,12 @@ test('estados pendentes, falhas reais e aprovação objetiva não viram revisão
 		};
 		writeFileSync(join(root, 'states/ok.json'), JSON.stringify({
 			...plan('ok'), route: '/catalogo/button',
-			checks: ['hover-target-visible'], screenshot: 'screenshots/states/ok.png', error: null,
+			checks: ['hover-target-visible'], screenshot: 'screenshots/states/ok-light-390.png', error: null,
 		}));
-		writeFileSync(join(root, 'screenshots/states/ok.png'), 'captura teste');
+		writeFileSync(join(root, 'screenshots/states/ok-light-390.png'), 'captura teste');
 		writeFileSync(join(root, 'states/broken.json'), JSON.stringify({
 			...plan('broken'), route: '/catalogo/button', checks: ['hover-target-visible'],
-			screenshot: 'screenshots/states/broken.png', error: null,
+			screenshot: 'screenshots/states/broken-light-390.png', error: null,
 		}));
 		const result = analyzeStateCoverage({
 			matrix, entries: [{ name: 'AdsButton', group: 'Básicos', route: '/catalogo/button' }], folder: root,

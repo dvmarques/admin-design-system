@@ -116,3 +116,10 @@ test('shell: botão de recolher com ícone visível não é falso truncamento', 
 	expect(metrics.controlsWithOverflow).toBe(0);
 	expect(metrics.controlsOutOfBounds).toBe(0);
 });
+
+test('ThemeToggle: a demo renderiza o tema inicial antes de qualquer clique', async ({ page }) => {
+	await page.goto('/catalogo/theme-toggle');
+	const area = preview(page);
+	await expect(area).toContainText('Tema do exemplo: light');
+	await expect(area.locator('[data-theme="light"]').first()).toBeVisible();
+});

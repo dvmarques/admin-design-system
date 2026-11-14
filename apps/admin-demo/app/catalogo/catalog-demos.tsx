@@ -1902,7 +1902,7 @@ export function OrganizationShellExample({ withSwitcher }: { withSwitcher: boole
 }
 
 export function ThemeToggleDemo() {
-	const [theme, setTheme] = useState<'light' | 'dark' | null>(null);
+	const [theme, setTheme] = useState<'light' | 'dark'>('light');
 	return (
 		<div
 			data-theme={theme}

@@ -14,7 +14,13 @@ test('matriz sincronizada ao catálogo e documentável sem inventário duplicado
 	assert.match(formatCoverageTable({ entries, matrix }), /Revisão humana/);
 });
 test('novo export ou export removido exige decisão explícita', () => {
-	assert.match(validateCoverage(matrix, [...entries, { name: 'AdsNovo', group: 'Teste', route: '/catalogo/novo' }]).join(' '), /export novo/);
+	assert.match(
+		validateCoverage(matrix, [
+			...entries,
+			{ name: 'AdsNovo', group: 'Teste', route: '/catalogo/novo' },
+		]).join(' '),
+		/export novo/,
+	);
 	const altered = copy();
 	delete altered.components.AdsButton;
 	assert.match(validateCoverage(altered, entries).join(' '), /export novo sem perfil: AdsButton/);

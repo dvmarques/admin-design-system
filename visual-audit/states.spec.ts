@@ -26,15 +26,21 @@ const plan = JSON.parse(readFileSync(join(root, 'visual-audit/coverage-matrix.js
 
 async function performAction(page: Page, preview: Locator, scenario: Scenario, checks: string[]) {
 	const action = scenario.action;
-	if (action === 'button-hover' || action === 'button-focus' || action === 'button-keyboard-focus') {
+	if (
+		action === 'button-hover' ||
+		action === 'button-focus' ||
+		action === 'button-keyboard-focus'
+	) {
 		const button = preview.getByRole('button', { name: 'primary', exact: true });
 		await expect(button).toBeVisible();
 		if (action === 'button-hover') {
-			const backgroundBefore = await button.evaluate((node) => getComputedStyle(node).backgroundColor);
+			const backgroundBefore = await button.evaluate(
+				(node) => getComputedStyle(node).backgroundColor,
+			);
 			await button.hover();
-			await expect.poll(async () =>
-				button.evaluate((node) => getComputedStyle(node).backgroundColor),
-			).not.toBe(backgroundBefore);
+			await expect
+				.poll(async () => button.evaluate((node) => getComputedStyle(node).backgroundColor))
+				.not.toBe(backgroundBefore);
 			checks.push('hover-background-changed');
 			if (scenario.media === 'reduced-motion') {
 				const motion = await button.evaluate((node) => {
@@ -42,7 +48,9 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 					return { transform: css.transform, transitionDuration: css.transitionDuration };
 				});
 				expect(motion.transform).toBe('none');
-				expect(motion.transitionDuration.split(',').every((value) => Number.parseFloat(value) === 0)).toBe(true);
+				expect(
+					motion.transitionDuration.split(',').every((value) => Number.parseFloat(value) === 0),
+				).toBe(true);
 				checks.push('motion-reduce-transform-and-transition-disabled');
 			}
 		} else if (action === 'button-focus') {
@@ -50,7 +58,9 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 			await page.keyboard.press('Shift+Tab');
 			await page.keyboard.press('Tab');
 			await expect(button).toBeFocused();
-			await expect.poll(async () => button.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+			await expect
+				.poll(async () => button.evaluate((node) => node.matches(':focus-visible')))
+				.toBe(true);
 			checks.push('keyboard-focus-visible');
 		} else {
 			await button.focus();
@@ -205,7 +215,9 @@ for (const scenario of plan.scenarios) {
 			await page.setViewportSize({ width: scenario.width, height: 900 });
 			if (scenario.media === 'reduced-motion') {
 				await page.emulateMedia({ reducedMotion: 'reduce' });
-				expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+				expect(
+					await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches),
+				).toBe(true);
 				evidence.checks.push('reduced-motion-active');
 			}
 			if (scenario.media === 'forced-colors') {
@@ -215,13 +227,16 @@ for (const scenario of plan.scenarios) {
 			}
 			const response = await page.goto(entry.href, { waitUntil: 'domcontentloaded' });
 			if (!response?.ok()) throw new Error('Falha HTTP ' + String(response?.status()));
-			await expect(page.getByRole('heading', { name: entry.name, level: 1, exact: true })).toBeVisible();
+			await expect(
+				page.getByRole('heading', { name: entry.name, level: 1, exact: true }),
+			).toBeVisible();
 			const preview = page.getByRole('region', { name: 'Demonstração interativa' });
 			await page.getByLabel('Tema da demonstração').selectOption(scenario.theme);
 			await expect(preview).toHaveAttribute('data-theme', scenario.theme);
 			await performAction(page, preview, scenario, evidence.checks);
 			await page.evaluate(() => document.fonts.ready);
-			const image = 'screenshots/states/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
+			const image =
+				'screenshots/states/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
 			mkdirSync(join(output, 'screenshots/states'), { recursive: true });
 			await page.screenshot({
 				path: join(output, image),
@@ -233,7 +248,10 @@ for (const scenario of plan.scenarios) {
 			evidence.error = error instanceof Error ? error.message : String(error);
 		} finally {
 			mkdirSync(join(output, 'states'), { recursive: true });
-			writeFileSync(join(output, 'states', scenario.id + '.json'), JSON.stringify(evidence, null, 2) + '\n');
+			writeFileSync(
+				join(output, 'states', scenario.id + '.json'),
+				JSON.stringify(evidence, null, 2) + '\n',
+			);
 		}
 		expect(evidence.error, 'erro na execução do cenário ' + scenario.id).toBeNull();
 	});

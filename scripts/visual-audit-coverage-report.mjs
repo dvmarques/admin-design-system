@@ -4,6 +4,15 @@ import { loadCoverage } from './visual-audit-coverage.mjs';
 
 const escapeCell = (value) => String(value ?? '').replaceAll('|', '\\|').replaceAll('\n', ' ');
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
+const pngSignature = Buffer.from('89504e470d0a1a0a', 'hex');
+const hasValidPngHeader = (path) => {
+	try {
+		const data = readFileSync(path);
+		return data.length > 32 && data.subarray(0, 8).equals(pngSignature);
+	} catch {
+		return false;
+	}
+};
 
 export function analyzeStateCoverage({ matrix, entries, folder }) {
 	const routes = new Map(entries.map((entry) => [entry.name, entry.route]));
@@ -22,6 +31,7 @@ export function analyzeStateCoverage({ matrix, entries, folder }) {
 		if (record && (
 			record.id !== scenario.id || record.name !== scenario.name ||
 			record.route !== routes.get(scenario.name) || record.state !== scenario.state ||
+			record.action !== scenario.action ||
 			record.theme !== scenario.theme || record.width !== scenario.width ||
 			(record.media ?? null) !== (scenario.media ?? null)
 		)) {
@@ -29,10 +39,11 @@ export function analyzeStateCoverage({ matrix, entries, folder }) {
 		}
 		if (record && !problem && record.error) problem = String(record.error);
 		if (record && !problem && (
-			record.screenshot !== screenshot || !existsSync(join(folder, screenshot)) ||
-			!Array.isArray(record.checks) || !record.checks.length
+			record.screenshot !== screenshot || !hasValidPngHeader(join(folder, screenshot)) ||
+			!Array.isArray(record.checks) || !record.checks.length ||
+			record.checks.some((check) => typeof check !== 'string' || !check.trim())
 		)) {
-			problem = 'Captura ou verificações objetivas ausentes';
+			problem = 'Captura PNG válida ou verificações objetivas ausentes';
 		}
 		const status = !record && !problem ? 'pendente' :
 			problem ? 'falha de execução' : 'verificação objetiva aprovada';

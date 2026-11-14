@@ -43,6 +43,27 @@ function setup(props: Partial<AdsAccountMenuProps> = {}) {
 const trigger = () => screen.getByRole('button', { name: /^Menu da conta: .* Ana Souza$/ });
 
 describe('AdsAccountMenu', () => {
+	it('renders optional iconNode artwork, keeps the internal icon by default and allows null (#316)', async () => {
+		const events = userEvent.setup();
+		const actions = [
+			{
+				id: 'custom',
+				label: 'Personalizada',
+				iconNode: <svg data-testid="custom-icon" viewBox="0 0 24 24" />,
+				icon: 'user' as const,
+			},
+			{ id: 'default', label: 'Padrão', icon: 'settings' as const },
+			{ id: 'none', label: 'Sem ícone', icon: 'logOut' as const, iconNode: null },
+		];
+		setup({ groups: [{ id: 'g', actions }] });
+		await events.click(trigger());
+		const item = (name: string) => screen.getByRole('button', { name: new RegExp(name) });
+		expect(within(item('Personalizada')).getByTestId('custom-icon')).toBeInTheDocument();
+		expect(item('Personalizada').querySelector('.ads-icon')).toBeNull();
+		expect(item('Padrão').querySelector('.ads-icon')).not.toBeNull();
+		expect(item('Sem ícone').querySelector('.ads-icon, .ads-icon-slot')).toBeNull();
+	});
+
 	it('opens from the avatar button with the dialog semantics and moves focus to the first action', async () => {
 		const events = userEvent.setup();
 		setup();

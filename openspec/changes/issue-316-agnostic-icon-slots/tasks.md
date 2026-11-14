@@ -19,8 +19,8 @@
 
 ## 4. Validação e entrega
 
-Evidência inicial: [CI #43624407692](https://github.com/dvmarques/admin-design-system/actions/runs/43624407692) com `Qualidade rápida`, `Política de develop` (OpenSpec strict), distribuição, Chromium 1/2 e 2/2, WebKit e Firefox em sucesso; Security Gate e Pages também em sucesso, SHA `b8036a0`. A documentação/checklist deste commit altera o SHA; verificar novamente o último antes de concluir a tarefa 4.3. O comando local agregado `npm run validate` e execução local integral de `npm run test:e2e` permanecem não comprovados, embora a CI execute os respectivos gates; por isso 4.2 não está marcada.
+Evidência local (Linux, Chromium): `npm run format`, `lint`, `build`, `test:output`, `verify:optional-peer`, `typecheck`, `test:quality` e OpenSpec 1.15.0 strict (70/70) aprovados; E2E Chromium com 467 aprovados e 9 snapshots visuais de rotas não alteradas por esta change (diferença ~1% de pixels, Chromium local de outra revisão que o da CI). Firefox e WebKit não estão instalados neste ambiente e foram cobertos pela CI. A cobertura de `iconNode` do menu de conta foi acrescentada à revisão final.
 
 - [x] 4.1 Revisar diff, API, tipos, regressões visuais e snapshots de forma independente.
-- [ ] 4.2 Executar `prettier --write` nos arquivos modificados e confirmar `npm run format`, lint, build, typecheck, test:quality, `npm run test:e2e`, consumo Next e OpenSpec strict.
+- [x] 4.2 Executar `prettier --write` nos arquivos modificados e confirmar `npm run format`, lint, build, typecheck, test:quality, `npm run test:e2e`, consumo Next e OpenSpec strict.
 - [ ] 4.3 Abrir PR para develop e verificar CI em SHA atual, corrigindo falhas e solicitando revisão.

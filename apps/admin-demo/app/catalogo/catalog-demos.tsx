@@ -1751,7 +1751,7 @@ export function NotificationCenterDemo() {
 
 export function OrganizationSwitcherDemo() {
 	// Acompanha o tema efetivo da página (`data-theme`), inclusive quando a preferência é Sistema.
-	const [theme, setTheme] = useState<'light' | 'dark'>('light');
+	const [theme, setTheme] = useState<'light' | 'dark' | null>(null);
 	useEffect(() => {
 		const root = document.documentElement;
 		const read = () => setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
@@ -1841,16 +1841,21 @@ export function OrganizationSwitcherDemo() {
 			</div>
 			<p role="status">{log}</p>
 			<div style={{ display: 'grid', gap: '1rem' }}>
-				<iframe
-					title="Shell com seletor de organização"
-					src={`${basePath}/catalogo-organizacao/?variante=com&theme=${theme}`}
-					style={{ width: '100%', height: '20rem', border: 0 }}
-				/>
-				<iframe
-					title="Shell sem seletor de organização"
-					src={`${basePath}/catalogo-organizacao/?variante=sem&theme=${theme}`}
-					style={{ width: '100%', height: '20rem', border: 0 }}
-				/>
+				{/* Os iframes só montam após ler o tema efetivo: evita carregar em claro e recarregar em escuro. */}
+				{theme && (
+					<>
+						<iframe
+							title="Shell com seletor de organização"
+							src={`${basePath}/catalogo-organizacao/?variante=com&theme=${theme}`}
+							style={{ width: '100%', height: '20rem', border: 0 }}
+						/>
+						<iframe
+							title="Shell sem seletor de organização"
+							src={`${basePath}/catalogo-organizacao/?variante=sem&theme=${theme}`}
+							style={{ width: '100%', height: '20rem', border: 0 }}
+						/>
+					</>
+				)}
 			</div>
 		</div>
 	);
@@ -1897,7 +1902,7 @@ export function OrganizationShellExample({ withSwitcher }: { withSwitcher: boole
 }
 
 export function ThemeToggleDemo() {
-	const [theme, setTheme] = useState<'light' | 'dark'>('light');
+	const [theme, setTheme] = useState<'light' | 'dark' | null>(null);
 	return (
 		<div
 			data-theme={theme}
@@ -2326,7 +2331,7 @@ export function HighlightedCodeSnippetDemo() {
 export function FileUploadDemo() {
 	const [files, setFiles] = useState<File[]>([]);
 	return (
-		<div className="demo-file-upload-form">
+		<div style={{ display: 'grid', gap: '1rem' }}>
 			<AdsFileUpload
 				accept=".csv,.json"
 				files={files}
@@ -2334,7 +2339,14 @@ export function FileUploadDemo() {
 				maxSizeBytes={2_000_000}
 				onFilesChange={setFiles}
 			/>
-			<div className="demo-file-upload-catalog-actions">
+			<div
+				style={{
+					display: 'flex',
+					flexWrap: 'wrap',
+					alignItems: 'center',
+					gap: 'var(--ads-spacing-3)',
+				}}
+			>
 				<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
 					Limpar dados
 				</AdsButton>

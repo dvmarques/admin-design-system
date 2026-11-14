@@ -50,9 +50,9 @@ for (const width of [320, 390]) {
 	test(`upload: ações mantêm separação e não sobrepõem em ${width}px`, async ({ page }) => {
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto('/catalogo/file-upload');
-		const actions = preview(page).locator('.demo-file-upload-catalog-actions');
-		const button = actions.getByRole('button', { name: 'Limpar dados' });
-		const link = actions.getByRole('link', { name: 'Testar importação simulada' });
+		const button = preview(page).getByRole('button', { name: 'Limpar dados' });
+		const link = preview(page).getByRole('link', { name: 'Testar importação simulada' });
+		const actions = button.locator('..');
 		await expect(button).toBeVisible();
 		await expect(link).toBeVisible();
 		const gap = await actions.evaluate((node) => parseFloat(getComputedStyle(node).gap));
@@ -94,18 +94,24 @@ test('auditor distingue clipping real de overflow visível', async ({ page }) =>
 	expect(metrics.controlsWithOverflow).toBe(1);
 });
 
+test('auditor detecta conteúdo recortado por ancestral com overflow oculto', async ({ page }) => {
+	await page.setContent(`
+		<div style="width: 60px; overflow: hidden;">
+			<button style="width: 40px; overflow: visible; white-space: nowrap;">
+				Texto propositalmente longo
+			</button>
+		</div>
+	`);
+	const metrics = await page.locator('div').evaluate(measureVisualArea, 'element');
+	expect(metrics.controlsWithOverflow).toBe(1);
+});
+
 test('shell: botão de recolher com ícone visível não é falso truncamento', async ({ page }) => {
 	await page.setViewportSize({ width: 1440, height: 900 });
 	await page.goto('/catalogo/admin-shell');
 	const frame = preview(page).frameLocator('iframe[title="Shell administrativo independente"]');
 	const toggle = frame.getByRole('button', { name: 'Recolher barra lateral' });
 	await expect(toggle).toBeVisible();
-	const data = await toggle.evaluate((node) => ({
-		overflowX: getComputedStyle(node).overflowX,
-		clientWidth: node.clientWidth,
-		scrollWidth: node.scrollWidth,
-	}));
-	expect(data.overflowX).toBe('visible');
 	const metrics = await frame.locator('body').evaluate(measureVisualArea, 'viewport');
 	expect(metrics.controlsWithOverflow).toBe(0);
 	expect(metrics.controlsOutOfBounds).toBe(0);

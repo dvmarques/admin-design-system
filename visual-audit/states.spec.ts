@@ -47,8 +47,11 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 			}
 		} else if (action === 'button-focus') {
 			await button.focus();
+			await page.keyboard.press('Shift+Tab');
+			await page.keyboard.press('Tab');
 			await expect(button).toBeFocused();
-			checks.push('focus-visible');
+			await expect.poll(async () => button.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+			checks.push('keyboard-focus-visible');
 		} else {
 			await button.focus();
 			await page.keyboard.press('Tab');
@@ -62,6 +65,10 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 			name: action === 'button-disabled' ? 'Desabilitado' : 'Salvando',
 		});
 		await expect(button).toBeDisabled();
+		if (action === 'button-loading') {
+			await expect(button).toHaveAttribute('aria-busy', 'true');
+			checks.push('loading-aria-busy');
+		}
 		checks.push('disabled-semantic-state');
 		return;
 	}
@@ -71,7 +78,7 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 		await expect(field).toBeVisible();
 		if (action === 'input-error') {
 			await expect(field).toHaveAttribute('aria-invalid', 'true');
-			await expect(preview.getByRole('alert', { name: '' }).first()).toContainText('Revise o valor');
+			await expect(preview.getByRole('alert').filter({ hasText: 'Revise o valor' })).toBeVisible();
 			checks.push('invalid-aria-and-error-message');
 		} else {
 			await expect(field).not.toHaveAttribute('aria-invalid', 'true');
@@ -151,6 +158,7 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 			checks.push('table-empty-state-visible');
 		} else if (value === 'error') {
 			await expect(table.getByRole('alert')).toContainText('Não foi possível carregar os dados');
+			await expect(table.getByRole('alert')).toContainText('Falha de demonstração');
 			checks.push('table-error-alert-visible');
 		} else if (value === 'loading') {
 			await expect(table).toHaveAttribute('data-loading', '');

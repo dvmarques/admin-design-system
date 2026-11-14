@@ -168,7 +168,11 @@ describe('rastreabilidade do catálogo', () => {
 		// AdminShell já dependia de `../demo-brand` antes desta verificação; novos casos devem ser portáveis.
 		const known: Record<string, string[]> = { AdminShell: ['../demo-brand'] };
 		for (const [name, code] of Object.entries(snippets)) {
-			const relative = [...code.matchAll(/from '(\.[^']*)'/g)].map((match) => match[1]);
+			// Cobre aspas simples/duplas, imports só de efeito colateral, import() dinâmico e aliases locais.
+			const specifier = /(?:\bfrom\s*|\bimport\s*\(?\s*)(['"])([^'"]+)\1/g;
+			const relative = [...code.matchAll(specifier)]
+				.map((match) => match[2])
+				.filter((path) => /^(?:\.{1,2}\/|[@~]\/)/.test(path));
 			expect(relative, `snippet ${name}`).toEqual(known[name] ?? []);
 		}
 	});

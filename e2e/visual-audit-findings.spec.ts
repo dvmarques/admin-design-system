@@ -42,9 +42,9 @@ for (const width of [320, 390]) {
 		expect(a).not.toBeNull();
 		expect(b).not.toBeNull();
 		if (a && b) {
-			const overlaps = a.x < b.x + b.width && a.x + a.width > b.x &&
-				a.y < b.y + b.height && a.y + a.height > b.y;
-			expect(overlaps).toBe(false);
+			const horizontalOverlap = a.x < b.x + b.width && a.x + a.width > b.x;
+			const verticalOverlap = a.y < b.y + b.height && a.y + a.height > b.y;
+			expect(horizontalOverlap && verticalOverlap).toBe(false);
 		}
 		await link.focus();
 		await expect(link).toBeFocused();
@@ -65,7 +65,8 @@ test('auditor distingue clipping real de overflow visível', async ({ page }) =>
 	const clipped = page.locator('#clipped');
 	const visible = page.locator('#visible');
 	for (const control of [clipped, visible]) {
-		expect(await control.evaluate((node) => node.scrollWidth - node.clientWidth)).toBeGreaterThan(2);
+		const overflow = await control.evaluate((node) => node.scrollWidth - node.clientWidth);
+		expect(overflow).toBeGreaterThan(2);
 	}
 	expect(await clipped.evaluate((node) => getComputedStyle(node).overflowX)).toBe('hidden');
 	expect(await visible.evaluate((node) => getComputedStyle(node).overflowX)).toBe('visible');

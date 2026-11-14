@@ -27,14 +27,16 @@ export function measureVisualArea(element: Element, boundary: 'element' | 'viewp
 	}).length;
 	const clippedLabels = controls.filter((node) => {
 		const style = getComputedStyle(node);
+		const rect = node.getBoundingClientRect();
+		const clipsContent = style.overflowX === 'hidden' || style.overflowX === 'clip';
 		return (
 			// Ignora controles visualmente ocultos (ex.: input sr-only de 1×1px).
-			node.getBoundingClientRect().width > 2 &&
-			node.getBoundingClientRect().height > 2 &&
+			rect.width > 2 &&
+			rect.height > 2 &&
 			node.clientWidth > 0 &&
 			node.scrollWidth > node.clientWidth + 2 &&
 			// Overflow visível não recorta o ícone e não comprova truncamento.
-			(style.overflowX === 'hidden' || style.overflowX === 'clip')
+			clipsContent
 		);
 	}).length;
 	return {

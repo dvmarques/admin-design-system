@@ -18,6 +18,8 @@ Use a versão de Node indicada em `.nvmrc` (para desenvolvimento, Node 24.15 ou 
 
 Não exponha credenciais, dados pessoais ou material de terceiros sem licença compatível; registre licenças e atribuições conforme [docs/licensing.md](docs/licensing.md) e não adicione dependências de runtime sem justificativa. Respeite os contratos públicos `Ads*`, `ads-` e `--ads-`; mudanças públicas exigem verificação de compatibilidade retroativa. Não descreva vulnerabilidades em issues públicas: avise a pessoa mantenedora do repositório de forma privada.
 
+Para mudanças com impacto no consumidor, escreva o `CHANGELOG.md` conforme a [política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286): priorize o efeito público, não o inventário de atividades internas; mantenha a rastreabilidade na PR/issue e preserve versões fechadas.
+
 ## Referências
 
 - [Workflow adaptativo](docs/ai-development-workflow.md)

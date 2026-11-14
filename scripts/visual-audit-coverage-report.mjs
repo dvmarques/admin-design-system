@@ -1,3 +1,4 @@
+import { Buffer } from 'node:buffer';
 import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { loadCoverage } from './visual-audit-coverage.mjs';

@@ -161,6 +161,11 @@ const typeOverrides = {
 		types: ['AdsIconProps'],
 		defaults: 'packages/components/src/icons/icon.tsx',
 	},
+	AdsIconSlot: {
+		path: 'packages/components/src/icons/types.ts',
+		types: ['AdsIconSlotProps'],
+		defaults: 'packages/components/src/icons/slot.tsx',
+	},
 	AdsCombobox: {
 		path: 'packages/components/src/combobox-types.ts',
 		types: ['AdsComboboxProps', 'AdsComboboxPopoverProps'],

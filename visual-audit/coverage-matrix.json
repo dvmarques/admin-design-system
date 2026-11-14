@@ -1,1063 +1,1063 @@
 {
-  "version": 1,
-  "note": "Aplicabilidades derivadas de perfis com exceções explícitas por export; não testado não equivale a aprovado. Revisar states no código quando a demo mudar; toda aprovação visual humana permanece pendente.",
-  "profiles": {
-    "static": {
-      "states": [
-        "default"
-      ],
-      "notApplicable": {
-        "focus": "Sem controle focável próprio nesta demonstração",
-        "open": "Não abre camada interativa própria"
-      },
-      "viewports": [
-        390,
-        1440
-      ],
-      "checks": [
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "button": {
-      "states": [
-        "default",
-        "hover",
-        "focus",
-        "active",
-        "disabled",
-        "loading"
-      ],
-      "notApplicable": {
-        "open": "Ação não é overlay",
-        "selected": "Não representa seleção persistente"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "field": {
-      "states": [
-        "default",
-        "focus",
-        "disabled",
-        "error",
-        "success",
-        "overflow"
-      ],
-      "notApplicable": {
-        "open": "Controle não apresenta overlay próprio nesta demonstração"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "choice": {
-      "states": [
-        "default",
-        "focus",
-        "selected",
-        "unselected",
-        "disabled"
-      ],
-      "notApplicable": {
-        "loading": "Controles de seleção não gerenciam carregamento nesta demo"
-      },
-      "viewports": [
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "complexField": {
-      "states": [
-        "default",
-        "focus",
-        "disabled",
-        "open",
-        "empty",
-        "error",
-        "loading"
-      ],
-      "notApplicable": {
-        "active": "Não há estado pressionado persistente"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "overlay": {
-      "states": [
-        "default",
-        "open",
-        "closed",
-        "focus",
-        "overflow"
-      ],
-      "notApplicable": {
-        "loading": "A camada não tem estado de carregamento genérico"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "expandable": {
-      "states": [
-        "default",
-        "open",
-        "closed",
-        "focus",
-        "selected",
-        "disabled"
-      ],
-      "notApplicable": {
-        "loading": "Não representa operação assíncrona"
-      },
-      "viewports": [
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "navigation": {
-      "states": [
-        "default",
-        "focus",
-        "active",
-        "disabled",
-        "overflow"
-      ],
-      "notApplicable": {
-        "error": "Navegação não valida entrada"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "table": {
-      "states": [
-        "default",
-        "data",
-        "empty",
-        "loading",
-        "error",
-        "overflow",
-        "selected"
-      ],
-      "notApplicable": {
-        "open": "Tabela não é overlay em si"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "shell": {
-      "states": [
-        "default",
-        "expanded",
-        "collapsed",
-        "mobile",
-        "focus",
-        "overflow"
-      ],
-      "notApplicable": {
-        "error": "Shell não valida formulários"
-      },
-      "viewports": [
-        320,
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "aria",
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "feedback": {
-      "states": [
-        "default",
-        "loading",
-        "error",
-        "success",
-        "empty"
-      ],
-      "notApplicable": {
-        "selected": "Não representa opção selecionável"
-      },
-      "viewports": [
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "geometry",
-        "human-visual"
-      ]
-    },
-    "composition": {
-      "states": [
-        "default",
-        "data",
-        "empty",
-        "loading",
-        "error",
-        "overflow"
-      ],
-      "notApplicable": {
-        "selected": "Composição não representa seleção única"
-      },
-      "viewports": [
-        390,
-        768,
-        1440
-      ],
-      "checks": [
-        "geometry",
-        "human-visual"
-      ]
-    }
-  },
-  "components": {
-    "AdsButton": {
-      "profile": "button",
-      "review": "Pendente"
-    },
-    "AdsBadge": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsAvatar": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsIcon": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsIconSlot": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsTypography": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsSurface": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsLoadingIndicator": {
-      "profile": "static",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "loading"
-      ]
-    },
-    "AdsLoadingText": {
-      "profile": "static",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "loading"
-      ]
-    },
-    "AdsSkeleton": {
-      "profile": "static",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "loading"
-      ]
-    },
-    "AdsSparkline": {
-      "profile": "static",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "empty"
-      ]
-    },
-    "AdsCombobox": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsMultiSelect": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsAutocomplete": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsInput": {
-      "profile": "field",
-      "review": "Pendente"
-    },
-    "AdsOTPInput": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsPasswordInput": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsMaskedInput": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsFileUpload": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsTextarea": {
-      "profile": "field",
-      "review": "Pendente"
-    },
-    "AdsSelect": {
-      "profile": "field",
-      "review": "Pendente"
-    },
-    "AdsCheckbox": {
-      "profile": "choice",
-      "review": "Pendente"
-    },
-    "AdsRadio": {
-      "profile": "choice",
-      "review": "Pendente"
-    },
-    "AdsSwitch": {
-      "profile": "choice",
-      "review": "Pendente"
-    },
-    "AdsField": {
-      "profile": "field",
-      "review": "Pendente"
-    },
-    "AdsFieldLabel": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsFieldDescription": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsFieldMessage": {
-      "profile": "static",
-      "review": "Pendente"
-    },
-    "AdsInputGroup": {
-      "profile": "field",
-      "review": "Pendente"
-    },
-    "AdsSelectionGroup": {
-      "profile": "choice",
-      "review": "Pendente"
-    },
-    "AdsTimePicker": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsDatePicker": {
-      "profile": "complexField",
-      "review": "Pendente"
-    },
-    "AdsBreadcrumb": {
-      "profile": "navigation",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "focus",
-        "active",
-        "overflow"
-      ],
-      "notApplicable": {
-        "disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família navigation"
-      }
-    },
-    "AdsNav": {
-      "profile": "navigation",
-      "review": "Pendente"
-    },
-    "AdsTabs": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsTabsList": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsTabsPanel": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsTabsTrigger": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsAccordion": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsAccordionHeader": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsAccordionItem": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsAccordionPanel": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsAccordionTrigger": {
-      "profile": "expandable",
-      "review": "Pendente"
-    },
-    "AdsDropdown": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsPagination": {
-      "profile": "navigation",
-      "review": "Pendente"
-    },
-    "AdsDialog": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsDrawer": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsPopover": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsTooltip": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsAlert": {
-      "profile": "feedback",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "error",
-        "success"
-      ],
-      "notApplicable": {
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
-      }
-    },
-    "AdsToast": {
-      "profile": "feedback",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "open",
-        "closed",
-        "error",
-        "success"
-      ],
-      "notApplicable": {
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
-      }
-    },
-    "AdsEmptyState": {
-      "profile": "feedback",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "empty",
-        "data"
-      ],
-      "notApplicable": {
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
-        "success": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
-      }
-    },
-    "AdsProgress": {
-      "profile": "feedback",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "loading",
-        "data"
-      ],
-      "notApplicable": {
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
-        "success": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
-      }
-    },
-    "AdsHighlightedCodeSnippet": {
-      "profile": "static",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow",
-        "focus"
-      ]
-    },
-    "AdsTable": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsTableBody": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsTableCaption": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsTableCell": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsTableHead": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsTableHeader": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsTableRow": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow",
-        "selected"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsCard": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsCardActions": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsCardContent": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsCardHeader": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsList": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "empty",
-        "overflow"
-      ],
-      "notApplicable": {
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsListItem": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsAdminShell": {
-      "profile": "shell",
-      "review": "Pendente"
-    },
-    "AdsDashboardGrid": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "overflow"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsDashboardPanel": {
-      "profile": "feedback",
-      "review": "Pendente"
-    },
-    "AdsMetricCard": {
-      "profile": "composition",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "data",
-        "loading"
-      ],
-      "notApplicable": {
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
-        "overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
-      }
-    },
-    "AdsFilterBar": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "focus",
-        "empty",
-        "data"
-      ],
-      "notApplicable": {
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsSmartTable": {
-      "profile": "table",
-      "review": "Pendente"
-    },
-    "AdsBulkActionBar": {
-      "profile": "table",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "selected",
-        "unselected"
-      ],
-      "notApplicable": {
-        "data": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
-        "overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
-      }
-    },
-    "AdsConfirmDialog": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsListFlow": {
-      "profile": "composition",
-      "review": "Pendente"
-    },
-    "AdsStepForm": {
-      "profile": "composition",
-      "review": "Pendente"
-    },
-    "AdsAccountMenu": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsNotificationCenter": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsOrganizationSwitcher": {
-      "profile": "overlay",
-      "review": "Pendente"
-    },
-    "AdsThemeControl": {
-      "profile": "choice",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "focus",
-        "selected",
-        "unselected",
-        "disabled"
-      ]
-    },
-    "ThemeToggle": {
-      "profile": "choice",
-      "review": "Pendente",
-      "states": [
-        "default",
-        "focus",
-        "selected",
-        "unselected"
-      ],
-      "notApplicable": {
-        "disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família choice"
-      }
-    },
-    "StyleFixture": {
-      "profile": "static",
-      "review": "Pendente"
-    }
-  },
-  "scenarios": [
-    {
-      "id": "button-hover",
-      "name": "AdsButton",
-      "state": "hover",
-      "action": "button-hover",
-      "theme": "light",
-      "width": 390
-    },
-    {
-      "id": "button-keyboard-focus",
-      "name": "AdsButton",
-      "state": "focus",
-      "action": "button-keyboard-focus",
-      "theme": "dark",
-      "width": 320
-    },
-    {
-      "id": "button-disabled",
-      "name": "AdsButton",
-      "state": "disabled",
-      "action": "button-disabled",
-      "theme": "light",
-      "width": 1440
-    },
-    {
-      "id": "button-loading",
-      "name": "AdsButton",
-      "state": "loading",
-      "action": "button-loading",
-      "theme": "dark",
-      "width": 390
-    },
-    {
-      "id": "input-error",
-      "name": "AdsInput",
-      "state": "error",
-      "action": "input-error",
-      "theme": "light",
-      "width": 320
-    },
-    {
-      "id": "input-success",
-      "name": "AdsInput",
-      "state": "success",
-      "action": "input-success",
-      "theme": "dark",
-      "width": 768
-    },
-    {
-      "id": "checkbox-selected",
-      "name": "AdsCheckbox",
-      "state": "selected",
-      "action": "checkbox-selected",
-      "theme": "light",
-      "width": 390
-    },
-    {
-      "id": "tabs-selected",
-      "name": "AdsTabs",
-      "state": "selected",
-      "action": "tabs-selected",
-      "theme": "dark",
-      "width": 768
-    },
-    {
-      "id": "accordion-open",
-      "name": "AdsAccordion",
-      "state": "open",
-      "action": "accordion-open",
-      "theme": "light",
-      "width": 390
-    },
-    {
-      "id": "dropdown-open",
-      "name": "AdsDropdown",
-      "state": "open",
-      "action": "dropdown-open",
-      "theme": "dark",
-      "width": 320
-    },
-    {
-      "id": "dialog-open",
-      "name": "AdsDialog",
-      "state": "open",
-      "action": "dialog-open",
-      "theme": "light",
-      "width": 390
-    },
-    {
-      "id": "drawer-open",
-      "name": "AdsDrawer",
-      "state": "open",
-      "action": "drawer-open",
-      "theme": "dark",
-      "width": 768
-    },
-    {
-      "id": "popover-open",
-      "name": "AdsPopover",
-      "state": "open",
-      "action": "popover-open",
-      "theme": "light",
-      "width": 320
-    },
-    {
-      "id": "tooltip-open",
-      "name": "AdsTooltip",
-      "state": "open",
-      "action": "tooltip-open",
-      "theme": "dark",
-      "width": 1440
-    },
-    {
-      "id": "table-data",
-      "name": "AdsTable",
-      "state": "data",
-      "action": "table-compact",
-      "theme": "light",
-      "width": 768
-    },
-    {
-      "id": "table-empty",
-      "name": "AdsSmartTable",
-      "state": "empty",
-      "action": "smart-table-empty",
-      "theme": "dark",
-      "width": 390
-    },
-    {
-      "id": "table-error",
-      "name": "AdsSmartTable",
-      "state": "error",
-      "action": "smart-table-error",
-      "theme": "light",
-      "width": 1440
-    },
-    {
-      "id": "table-loading",
-      "name": "AdsSmartTable",
-      "state": "loading",
-      "action": "smart-table-loading",
-      "theme": "dark",
-      "width": 768
-    },
-    {
-      "id": "shell-collapsed",
-      "name": "AdsAdminShell",
-      "state": "collapsed",
-      "action": "shell-collapsed",
-      "theme": "light",
-      "width": 1440
-    },
-    {
-      "id": "shell-mobile",
-      "name": "AdsAdminShell",
-      "state": "mobile",
-      "action": "shell-mobile",
-      "theme": "dark",
-      "width": 320
-    },
-    {
-      "id": "button-high-contrast",
-      "name": "AdsButton",
-      "state": "focus",
-      "action": "button-focus",
-      "theme": "light",
-      "width": 768,
-      "media": "forced-colors"
-    },
-    {
-      "id": "button-reduced-motion",
-      "name": "AdsButton",
-      "state": "hover",
-      "action": "button-hover",
-      "theme": "dark",
-      "width": 390,
-      "media": "reduced-motion"
-    }
-  ]
+	"version": 1,
+	"note": "Aplicabilidades derivadas de perfis com exceções explícitas por export; não testado não equivale a aprovado. Revisar states no código quando a demo mudar; toda aprovação visual humana permanece pendente.",
+	"profiles": {
+		"static": {
+			"states": [
+				"default"
+			],
+			"notApplicable": {
+				"focus": "Sem controle focável próprio nesta demonstração",
+				"open": "Não abre camada interativa própria"
+			},
+			"viewports": [
+				390,
+				1440
+			],
+			"checks": [
+				"geometry",
+				"human-visual"
+			]
+		},
+		"button": {
+			"states": [
+				"default",
+				"hover",
+				"focus",
+				"active",
+				"disabled",
+				"loading"
+			],
+			"notApplicable": {
+				"open": "Ação não é overlay",
+				"selected": "Não representa seleção persistente"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"field": {
+			"states": [
+				"default",
+				"focus",
+				"disabled",
+				"error",
+				"success",
+				"overflow"
+			],
+			"notApplicable": {
+				"open": "Controle não apresenta overlay próprio nesta demonstração"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"choice": {
+			"states": [
+				"default",
+				"focus",
+				"selected",
+				"unselected",
+				"disabled"
+			],
+			"notApplicable": {
+				"loading": "Controles de seleção não gerenciam carregamento nesta demo"
+			},
+			"viewports": [
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"complexField": {
+			"states": [
+				"default",
+				"focus",
+				"disabled",
+				"open",
+				"empty",
+				"error",
+				"loading"
+			],
+			"notApplicable": {
+				"active": "Não há estado pressionado persistente"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"overlay": {
+			"states": [
+				"default",
+				"open",
+				"closed",
+				"focus",
+				"overflow"
+			],
+			"notApplicable": {
+				"loading": "A camada não tem estado de carregamento genérico"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"expandable": {
+			"states": [
+				"default",
+				"open",
+				"closed",
+				"focus",
+				"selected",
+				"disabled"
+			],
+			"notApplicable": {
+				"loading": "Não representa operação assíncrona"
+			},
+			"viewports": [
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"navigation": {
+			"states": [
+				"default",
+				"focus",
+				"active",
+				"disabled",
+				"overflow"
+			],
+			"notApplicable": {
+				"error": "Navegação não valida entrada"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"table": {
+			"states": [
+				"default",
+				"data",
+				"empty",
+				"loading",
+				"error",
+				"overflow",
+				"selected"
+			],
+			"notApplicable": {
+				"open": "Tabela não é overlay em si"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"shell": {
+			"states": [
+				"default",
+				"expanded",
+				"collapsed",
+				"mobile",
+				"focus",
+				"overflow"
+			],
+			"notApplicable": {
+				"error": "Shell não valida formulários"
+			},
+			"viewports": [
+				320,
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"aria",
+				"geometry",
+				"human-visual"
+			]
+		},
+		"feedback": {
+			"states": [
+				"default",
+				"loading",
+				"error",
+				"success",
+				"empty"
+			],
+			"notApplicable": {
+				"selected": "Não representa opção selecionável"
+			},
+			"viewports": [
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"geometry",
+				"human-visual"
+			]
+		},
+		"composition": {
+			"states": [
+				"default",
+				"data",
+				"empty",
+				"loading",
+				"error",
+				"overflow"
+			],
+			"notApplicable": {
+				"selected": "Composição não representa seleção única"
+			},
+			"viewports": [
+				390,
+				768,
+				1440
+			],
+			"checks": [
+				"geometry",
+				"human-visual"
+			]
+		}
+	},
+	"components": {
+		"AdsButton": {
+			"profile": "button",
+			"review": "Pendente"
+		},
+		"AdsBadge": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsAvatar": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsIcon": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsIconSlot": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsTypography": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsSurface": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsLoadingIndicator": {
+			"profile": "static",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"loading"
+			]
+		},
+		"AdsLoadingText": {
+			"profile": "static",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"loading"
+			]
+		},
+		"AdsSkeleton": {
+			"profile": "static",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"loading"
+			]
+		},
+		"AdsSparkline": {
+			"profile": "static",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"empty"
+			]
+		},
+		"AdsCombobox": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsMultiSelect": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsAutocomplete": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsInput": {
+			"profile": "field",
+			"review": "Pendente"
+		},
+		"AdsOTPInput": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsPasswordInput": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsMaskedInput": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsFileUpload": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsTextarea": {
+			"profile": "field",
+			"review": "Pendente"
+		},
+		"AdsSelect": {
+			"profile": "field",
+			"review": "Pendente"
+		},
+		"AdsCheckbox": {
+			"profile": "choice",
+			"review": "Pendente"
+		},
+		"AdsRadio": {
+			"profile": "choice",
+			"review": "Pendente"
+		},
+		"AdsSwitch": {
+			"profile": "choice",
+			"review": "Pendente"
+		},
+		"AdsField": {
+			"profile": "field",
+			"review": "Pendente"
+		},
+		"AdsFieldLabel": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsFieldDescription": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsFieldMessage": {
+			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsInputGroup": {
+			"profile": "field",
+			"review": "Pendente"
+		},
+		"AdsSelectionGroup": {
+			"profile": "choice",
+			"review": "Pendente"
+		},
+		"AdsTimePicker": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsDatePicker": {
+			"profile": "complexField",
+			"review": "Pendente"
+		},
+		"AdsBreadcrumb": {
+			"profile": "navigation",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"focus",
+				"active",
+				"overflow"
+			],
+			"notApplicable": {
+				"disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família navigation"
+			}
+		},
+		"AdsNav": {
+			"profile": "navigation",
+			"review": "Pendente"
+		},
+		"AdsTabs": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsTabsList": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsTabsPanel": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsTabsTrigger": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsAccordion": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsAccordionHeader": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsAccordionItem": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsAccordionPanel": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsAccordionTrigger": {
+			"profile": "expandable",
+			"review": "Pendente"
+		},
+		"AdsDropdown": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsPagination": {
+			"profile": "navigation",
+			"review": "Pendente"
+		},
+		"AdsDialog": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsDrawer": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsPopover": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsTooltip": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsAlert": {
+			"profile": "feedback",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"error",
+				"success"
+			],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsToast": {
+			"profile": "feedback",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"open",
+				"closed",
+				"error",
+				"success"
+			],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsEmptyState": {
+			"profile": "feedback",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"empty",
+				"data"
+			],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"success": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsProgress": {
+			"profile": "feedback",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"loading",
+				"data"
+			],
+			"notApplicable": {
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"success": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsHighlightedCodeSnippet": {
+			"profile": "static",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow",
+				"focus"
+			]
+		},
+		"AdsTable": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableBody": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableCaption": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableCell": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableHead": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableHeader": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableRow": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow",
+				"selected"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsCard": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsCardActions": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsCardContent": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsCardHeader": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsList": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"empty",
+				"overflow"
+			],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsListItem": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsAdminShell": {
+			"profile": "shell",
+			"review": "Pendente"
+		},
+		"AdsDashboardGrid": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"overflow"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsDashboardPanel": {
+			"profile": "feedback",
+			"review": "Pendente"
+		},
+		"AdsMetricCard": {
+			"profile": "composition",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"data",
+				"loading"
+			],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsFilterBar": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"focus",
+				"empty",
+				"data"
+			],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsSmartTable": {
+			"profile": "table",
+			"review": "Pendente"
+		},
+		"AdsBulkActionBar": {
+			"profile": "table",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"selected",
+				"unselected"
+			],
+			"notApplicable": {
+				"data": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsConfirmDialog": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsListFlow": {
+			"profile": "composition",
+			"review": "Pendente"
+		},
+		"AdsStepForm": {
+			"profile": "composition",
+			"review": "Pendente"
+		},
+		"AdsAccountMenu": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsNotificationCenter": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsOrganizationSwitcher": {
+			"profile": "overlay",
+			"review": "Pendente"
+		},
+		"AdsThemeControl": {
+			"profile": "choice",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"focus",
+				"selected",
+				"unselected",
+				"disabled"
+			]
+		},
+		"ThemeToggle": {
+			"profile": "choice",
+			"review": "Pendente",
+			"states": [
+				"default",
+				"focus",
+				"selected",
+				"unselected"
+			],
+			"notApplicable": {
+				"disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família choice"
+			}
+		},
+		"StyleFixture": {
+			"profile": "static",
+			"review": "Pendente"
+		}
+	},
+	"scenarios": [
+		{
+			"id": "button-hover",
+			"name": "AdsButton",
+			"state": "hover",
+			"action": "button-hover",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "button-keyboard-focus",
+			"name": "AdsButton",
+			"state": "focus",
+			"action": "button-keyboard-focus",
+			"theme": "dark",
+			"width": 320
+		},
+		{
+			"id": "button-disabled",
+			"name": "AdsButton",
+			"state": "disabled",
+			"action": "button-disabled",
+			"theme": "light",
+			"width": 1440
+		},
+		{
+			"id": "button-loading",
+			"name": "AdsButton",
+			"state": "loading",
+			"action": "button-loading",
+			"theme": "dark",
+			"width": 390
+		},
+		{
+			"id": "input-error",
+			"name": "AdsInput",
+			"state": "error",
+			"action": "input-error",
+			"theme": "light",
+			"width": 320
+		},
+		{
+			"id": "input-success",
+			"name": "AdsInput",
+			"state": "success",
+			"action": "input-success",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "checkbox-selected",
+			"name": "AdsCheckbox",
+			"state": "selected",
+			"action": "checkbox-selected",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "tabs-selected",
+			"name": "AdsTabs",
+			"state": "selected",
+			"action": "tabs-selected",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "accordion-open",
+			"name": "AdsAccordion",
+			"state": "open",
+			"action": "accordion-open",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "dropdown-open",
+			"name": "AdsDropdown",
+			"state": "open",
+			"action": "dropdown-open",
+			"theme": "dark",
+			"width": 320
+		},
+		{
+			"id": "dialog-open",
+			"name": "AdsDialog",
+			"state": "open",
+			"action": "dialog-open",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "drawer-open",
+			"name": "AdsDrawer",
+			"state": "open",
+			"action": "drawer-open",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "popover-open",
+			"name": "AdsPopover",
+			"state": "open",
+			"action": "popover-open",
+			"theme": "light",
+			"width": 320
+		},
+		{
+			"id": "tooltip-open",
+			"name": "AdsTooltip",
+			"state": "open",
+			"action": "tooltip-open",
+			"theme": "dark",
+			"width": 1440
+		},
+		{
+			"id": "table-data",
+			"name": "AdsTable",
+			"state": "data",
+			"action": "table-compact",
+			"theme": "light",
+			"width": 768
+		},
+		{
+			"id": "table-empty",
+			"name": "AdsSmartTable",
+			"state": "empty",
+			"action": "smart-table-empty",
+			"theme": "dark",
+			"width": 390
+		},
+		{
+			"id": "table-error",
+			"name": "AdsSmartTable",
+			"state": "error",
+			"action": "smart-table-error",
+			"theme": "light",
+			"width": 1440
+		},
+		{
+			"id": "table-loading",
+			"name": "AdsSmartTable",
+			"state": "loading",
+			"action": "smart-table-loading",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "shell-collapsed",
+			"name": "AdsAdminShell",
+			"state": "collapsed",
+			"action": "shell-collapsed",
+			"theme": "light",
+			"width": 1440
+		},
+		{
+			"id": "shell-mobile",
+			"name": "AdsAdminShell",
+			"state": "mobile",
+			"action": "shell-mobile",
+			"theme": "dark",
+			"width": 320
+		},
+		{
+			"id": "button-high-contrast",
+			"name": "AdsButton",
+			"state": "focus",
+			"action": "button-focus",
+			"theme": "light",
+			"width": 768,
+			"media": "forced-colors"
+		},
+		{
+			"id": "button-reduced-motion",
+			"name": "AdsButton",
+			"state": "hover",
+			"action": "button-hover",
+			"theme": "dark",
+			"width": 390,
+			"media": "reduced-motion"
+		}
+	]
 }

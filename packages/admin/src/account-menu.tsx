@@ -100,13 +100,13 @@ function ActionContent({
 	pendingLabel: string;
 }) {
 	const visual =
-		action.iconNode === undefined
-			? action.icon
-				? <AdsIcon name={action.icon} size="sm" />
-				: null
-			: action.iconNode === null
-				? null
-				: <AdsIconSlot icon={action.iconNode} size="sm" />;
+		action.iconNode === undefined ? (
+			action.icon ? (
+				<AdsIcon name={action.icon} size="sm" />
+			) : null
+		) : action.iconNode === null ? null : (
+			<AdsIconSlot icon={action.iconNode} size="sm" />
+		);
 	return (
 		<>
 			{visual === null ? null : (

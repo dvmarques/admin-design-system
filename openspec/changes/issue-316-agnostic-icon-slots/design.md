@@ -16,6 +16,10 @@ O `span` do slot estabelece caixa de alinhamento com classes `ads-icon-slot`, `i
 - Storybook/Next devem demonstrar `AdsIcon`, composição genérica, SVG local, e bibliotecas externas opcionais; dependências de catálogo ficam restritas ao ambiente de demonstração, nunca em runtime do ADS. Não afirmar exemplo funcional até passar build.
 - Treeshaking: imports seletivos do consumidor, `sideEffects` permanece somente CSS. Registrar `npm pack` e medições reais dos cenários; não alegar valores sem execução.
 
+## Medição de CI e orçamento
+
+CI [execução #43623870450](https://github.com/dvmarques/admin-design-system/actions/runs/43623870450), job **Artefatos de distribuição**, branch em `b85035324ca15a533effd3123a00500251840eef`, Linux GitHub Actions, toolchain prescrito pelo repositório: `@dvmarques/admin-ds-components` **698.864 B de dist completo** (abaixo de 762.897 B), **302.894 B de JS/CSS publicado** (acima de 302.000 B). O incremento corresponde à nova API e aos pontos de integração; não são bytes carregados pelo navegador. Teto proposto de JS/CSS: **303.500 B**, margem 606 B após a medição, +1.500 B no orçamento. Gzip e cenários somente podem ser marcados aprovados com novas medições após esse gate. Catálogos externos são `devDependencies` exclusivos de `apps/docs`, não impactam runtime dos pacotes ADS.
+
 ## Alternativas rejeitadas
 
 1. Tornar Lucide peer obrigatório: força fornecedor e instalação extra, rejeitado.

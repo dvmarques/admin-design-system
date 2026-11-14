@@ -30,8 +30,12 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 		const button = preview.getByRole('button', { name: 'primary', exact: true });
 		await expect(button).toBeVisible();
 		if (action === 'button-hover') {
+			const backgroundBefore = await button.evaluate((node) => getComputedStyle(node).backgroundColor);
 			await button.hover();
-			checks.push('hover-target-visible');
+			await expect.poll(async () =>
+				button.evaluate((node) => getComputedStyle(node).backgroundColor),
+			).not.toBe(backgroundBefore);
+			checks.push('hover-background-changed');
 			if (scenario.media === 'reduced-motion') {
 				const motion = await button.evaluate((node) => {
 					const css = getComputedStyle(node);

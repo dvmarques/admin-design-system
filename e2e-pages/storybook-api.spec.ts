@@ -71,3 +71,37 @@ for (const name of ['AdsSmartTable', 'AdsAdminShell', 'AdsInputGroup'] as const)
 		expect(errors).toEqual([]);
 	});
 }
+
+test('Storybook publicado aplica metas no iframe e mantém highlight com WASM', async ({
+	page,
+	request,
+}) => {
+	const index = await (await request.get(`${base}/index.json`)).json();
+	const stories = Object.values(index.entries) as Array<{
+		id: string;
+		type: string;
+		title: string;
+	}>;
+	const highlighted = stories.find(
+		(entry) => entry.type === 'story' && entry.title === 'Data/HighlightedCodeSnippet',
+	);
+	expect(highlighted).toBeDefined();
+	const errors: string[] = [];
+	page.on('pageerror', (error) => errors.push(error.message));
+	page.on('console', (message) => {
+		if (message.type() === 'error') errors.push(message.text());
+	});
+	await page.goto(`${base}/iframe.html?id=${highlighted!.id}&viewMode=story`);
+	await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+		'content',
+		"object-src 'none'; base-uri 'self'; form-action 'self'",
+	);
+	await expect(page.locator('meta[name="referrer"]')).toHaveAttribute(
+		'content',
+		'strict-origin-when-cross-origin',
+	);
+	await expect(
+		page.locator('.ads-highlighted-code-snippet__line-content span[style*="color"]').first(),
+	).toBeVisible();
+	expect(errors).toEqual([]);
+});

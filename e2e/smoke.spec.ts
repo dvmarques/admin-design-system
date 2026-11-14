@@ -25,6 +25,14 @@ for (const route of smokeRoutes) {
 		await page.goto(route.path);
 		await expect(page.getByRole('main').getByRole('heading', { level: 1 })).toBeVisible();
 		await waitForHydration(themeTrigger(page));
+		await expect(page.locator('meta[http-equiv="Content-Security-Policy"]')).toHaveAttribute(
+			'content',
+			"object-src 'none'; base-uri 'self'; form-action 'self'",
+		);
+		await expect(page.locator('meta[name="referrer"]')).toHaveAttribute(
+			'content',
+			'strict-origin-when-cross-origin',
+		);
 
 		expect(errors).toEqual([]);
 	});

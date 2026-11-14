@@ -40,6 +40,27 @@ export function validateCoverage(matrix, entries) {
     if (component?.review !== 'Pendente') {
       errors.push('status humano não comprovado no plano: ' + name);
     }
+    const base = matrix.profiles?.[component?.profile];
+    const applicable = component?.states ?? base?.states ?? [];
+    if (!Array.isArray(applicable) || !applicable.includes('default') ||
+        new Set(applicable).size !== applicable.length) {
+      errors.push('estados do export inválidos: ' + name);
+    }
+    for (const state of applicable) {
+      if (!knownStates.has(state)) errors.push('estado do export desconhecido: ' + name + '/' + state);
+    }
+    const notApplicable = { ...(base?.notApplicable ?? {}), ...(component?.notApplicable ?? {}) };
+    for (const state of applicable) delete notApplicable[state];
+    for (const [state, reason] of Object.entries(notApplicable)) {
+      if (!knownStates.has(state) || !String(reason).trim()) {
+        errors.push('N/A inválido: ' + name + '/' + state);
+      }
+    }
+    for (const [state, reason] of Object.entries(component?.notApplicable ?? {})) {
+      if (applicable.includes(state) || !String(reason).trim()) {
+        errors.push('N/A conflitante com estado aplicável: ' + name + '/' + state);
+      }
+    }
   }
   for (const [name, profile] of Object.entries(matrix.profiles ?? {})) {
     const applicable = profile.states ?? [];
@@ -65,7 +86,7 @@ export function validateCoverage(matrix, entries) {
     ids.add(scenario.id);
     const component = matrix.components?.[scenario.name];
     const profile = matrix.profiles?.[component?.profile];
-    if (!fromCatalog.has(scenario.name) || !profile?.states.includes(scenario.state)) {
+    if (!fromCatalog.has(scenario.name) || !(component?.states ?? profile?.states ?? []).includes(scenario.state)) {
       errors.push('cenário sem export/estado aplicável: ' + scenario.id);
     }
     if (!themes.has(scenario.theme) || !widths.has(scenario.width) || !profile?.viewports.includes(scenario.width)) {
@@ -95,9 +116,12 @@ export function formatCoverageTable({ entries, matrix }) {
   for (const entry of entries) {
     const component = matrix.components[entry.name];
     const profile = matrix.profiles[component.profile];
-    const notApplicable = Object.entries(profile.notApplicable)
+    const applicable = component.states ?? profile.states;
+    const na = { ...profile.notApplicable, ...component.notApplicable };
+    for (const state of applicable) delete na[state];
+    const notApplicable = Object.entries(na)
       .map(([state, reason]) => state + ': ' + reason).join('; ');
-    lines.push('| ' + entry.name + ' | ' + entry.route + ' | ' + profile.states.join(', ') +
+    lines.push('| ' + entry.name + ' | ' + entry.route + ' | ' + applicable.join(', ') +
       ' | ' + notApplicable + ' | ' + profile.viewports.join(', ') +
       ' | light, dark | ' + profile.checks.join(', ') + ' | ' + component.review + ' |');
   }

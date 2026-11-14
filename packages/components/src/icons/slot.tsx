@@ -11,13 +11,7 @@ const sizes: Record<AdsIconSize, string> = {
  * Layout and accessibility wrapper for a consumer-rendered icon.
  * Never clones its child or assumes library-specific SVG props.
  */
-export function AdsIconSlot({
-	className,
-	icon,
-	label,
-	size = 'md',
-	...props
-}: AdsIconSlotProps) {
+export function AdsIconSlot({ className, icon, label, size = 'md', ...props }: AdsIconSlotProps) {
 	const informative = Boolean(label);
 	return (
 		<span

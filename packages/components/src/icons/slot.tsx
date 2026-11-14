@@ -1,4 +1,3 @@
-import type { HTMLAttributes, ReactNode } from 'react';
 import { classNames } from '../class-names.js';
 import type { AdsIconSlotProps, AdsIconSize } from './types.js';
 

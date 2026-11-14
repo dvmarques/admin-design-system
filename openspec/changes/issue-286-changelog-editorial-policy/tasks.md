@@ -10,8 +10,9 @@
 
 - [x] 2.1 Documentar seções, critérios públicos/internos, textos curtos, BREAKING/migração e exemplos no guia de release.
 - [x] 2.2 Referenciar a política no guia de contribuição e no preâmbulo do changelog.
-- [x] 2.3 Acrescentar entrada apenas na seção em andamento; preservar versões fechadas e hashes existentes.
+- [x] 2.3 Atualizar somente o preâmbulo do CHANGELOG; não publicar entrada autorreferente de manutenção (#286); preservar a seção aberta, versões fechadas e hashes existentes.
 - [x] 2.4 Criar delta OpenSpec com cenários observáveis, sem alteração em scripts de release.
+- [x] 2.5 Reconciliar a exigência de CHANGELOG em `AGENTS.md` com a política por impacto e justificar a ausência de nota pública na PR.
 
 ## 3. Validação e revisão
 

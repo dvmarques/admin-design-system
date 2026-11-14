@@ -11,6 +11,10 @@
 3. **Formato atual:** manter o placeholder versionado `Em andamento` e as datas `dd-mmm-aaaa` em `America/Sao_Paulo`; não converter títulos fechados, datas, hashes ou body das Releases. Manter extração integral do bloco fechado, sem filtros ou resumos automáticos: a seleção se faz **antes** do hash.
 4. **Crescimento:** não particionar o histórico; scripts já localizam seções por versão e a política reduz entradas futuras. Links de comparação ficam como oportunidade condicionada a tags reais e testes de compatibilidade.
 
+## Coerência com as instruções dos agentes
+
+O `AGENTS.md` exigia uma entrada para qualquer alteração relevante de documentação ou processo, mesmo sem impacto para os consumidores. Isso contrariava a seleção editorial proposta e gerava a entrada autorreferente da issue #286. O contrato foi reconciliado: notas públicas são obrigatórias para impacto real nos pacotes; mudanças estritamente internas mantêm rastreabilidade em issue, PR, commits e OpenSpec, com justificativa na PR. Não há filtros posteriores à aprovação ou alteração do fluxo de release.
+
 ## Alternativas e trade-offs
 
 | Alternativa                                     | Vantagem                                                   | Custo/decisão                                                                                                                                               |
@@ -27,4 +31,4 @@ Os scripts, regexes, entradas históricas, marcadores de aprovação, notas já 
 
 ## Verificações e gates
 
-Revisar diff para garantir que somente o preâmbulo e a seção em andamento do changelog mudaram. A documentação deve referenciar exatamente os comandos ativos: `release:changelog`, `release:prepare`, `release:validate`, `release:notes`, GitHub Releases e back-merge. Não há modificação de parser/extração que exija novos testes automatizados; `npm run test:release` deve continuar passando. Validar OpenSpec strict, format e `npm run validate` (incluindo E2E) e observar CI no SHA final. Sem checkout executável neste ambiente, os comandos locais ficam pendentes; checks pulados por `docs_only` não equivalem a execução.
+Revisar diff para garantir que somente o preâmbulo do changelog mudou e os blocos fechados permaneceram idênticos. A documentação deve referenciar exatamente os comandos ativos: `release:changelog`, `release:prepare`, `release:validate`, `release:notes`, GitHub Releases e back-merge. Não há modificação de parser/extração que exija novos testes automatizados; `npm run test:release` deve continuar passando. Validar OpenSpec strict, format e `npm run validate` (incluindo E2E) e observar CI no SHA final. Sem checkout executável neste ambiente, os comandos locais ficam pendentes; checks pulados por `docs_only` não equivalem a execução.

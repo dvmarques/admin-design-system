@@ -12,7 +12,7 @@ O `CHANGELOG.md` combina resultados públicos com tarefas internas em uma releas
 - Formaliza seções, redação orientada ao consumidor, consolidação manual, avisos BREAKING/migração e exemplos de até 300 caracteres.
 - Analisa compatibilidade/custo de `Unreleased`, datas ISO, links de comparação e arquivo histórico; mantém o formato atual.
 - Atualiza guia de release e contribuição, com delta OpenSpec do contrato editorial.
-- Insere entrada prospectiva na seção aberta sem modificar 0.1.2, 0.1.1 ou aprovações anteriores.
+- Alinha a regra obrigatória de `AGENTS.md` com a seleção por impacto; a mudança exclusivamente editorial #286 não gera entrada pública, mas permanece rastreável nesta PR e no OpenSpec.
 
 ## Capabilities
 
@@ -26,6 +26,6 @@ Nenhuma.
 
 ## Impact
 
-Arquivos: `docs/release-process.md`, `CONTRIBUTING.md`, `CHANGELOG.md` (apenas preâmbulo e versão aberta) e artefatos OpenSpec. Sem modificações em `scripts/**`, workflow, parser, `packages/**`, `apps/**`, CSS, tokens, APIs ou bundle. Não há novas dependências, alterações visuais ou E2E funcionais aplicáveis.
+Arquivos: `AGENTS.md`, `docs/release-process.md`, `CONTRIBUTING.md`, `CHANGELOG.md` (apenas preâmbulo) e artefatos OpenSpec. Sem modificações em `scripts/**`, workflow, parser, `packages/**`, `apps/**`, CSS, tokens, APIs ou bundle. Não há novas dependências, alterações visuais ou E2E funcionais aplicáveis.
 
 Fora do escopo: reescrever versões fechadas/hashes, migrar formato para ISO/`Unreleased`, dividir changelog, gerar links automaticamente, trocar Changesets, alterar ou executar publicação, tag e GitHub Releases. Caso futuras alterações de scripts sejam aprovadas, abrir change específica com regressão de histórico longo, aprovação e extração.

@@ -28,6 +28,8 @@ Inclua uma nota quando a mudança afetar o consumo, a segurança ou a migração
 
 CI, cobertura de testes, refactors sem mudança de contrato, ajustes internos de tooling, budgets, documentação de processo e manutenção de infraestrutura **não entram automaticamente** nas notas públicas. Registre-os em issue, PR, commits e OpenSpec. Inclua-os somente se tiverem consequência concreta para instalação, segurança, compatibilidade, distribuição ou operação dos pacotes; descreva essa consequência, não a tarefa interna. Não omita alterações incompatíveis, deprecações ou migrações obrigatórias por serem internas na origem.
 
+Esta regra também orienta a exigência de registro em `AGENTS.md`: uma mudança exclusivamente interna sem consequência para consumidores pode ficar fora do changelog, desde que a PR justifique a ausência e mantenha a rastreabilidade. Não é necessário criar nota pública sobre a própria manutenção da política editorial.
+
 ### Consolidação e redação
 
 1. Revise todas as issues, PRs e changes desde a versão anterior. Agrupe itens correlatos **pelo efeito no consumidor**, não pelo número de commits; mantenha as referências às issues e a OpenSpec quando aplicável.

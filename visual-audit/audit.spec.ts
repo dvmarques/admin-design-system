@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
+import { measureVisualArea } from './measure-visual-area';
 
 type Theme = 'light' | 'dark';
 type AuditSignal = { code: string; detail: string };
@@ -95,52 +96,7 @@ for (const theme of ['light', 'dark'] as const) {
 					sample.screenshot = image;
 
 					// Sinais geométricos: pistas para revisão, NÃO defeitos confirmados.
-					// `boundary`: 'element' mede contra a região do exemplo; 'viewport' contra a janela do frame.
-					const measure = (element: Element, boundary: string) => {
-						const frame =
-							boundary === 'element'
-								? element.getBoundingClientRect()
-								: { left: 0, right: window.innerWidth };
-						const controls = [
-							...element.querySelectorAll<HTMLElement>(
-								'button, input, select, textarea, [role="button"], [role="combobox"]',
-							),
-						].filter((node) => {
-							const style = getComputedStyle(node);
-							const rect = node.getBoundingClientRect();
-							return (
-								style.display !== 'none' &&
-								style.visibility !== 'hidden' &&
-								rect.width > 0 &&
-								rect.height > 0
-							);
-						});
-						const outOfBounds = controls.filter((node) => {
-							const rect = node.getBoundingClientRect();
-							return rect.left < frame.left - 2 || rect.right > frame.right + 2;
-						}).length;
-						const clippedLabels = controls.filter((node) => {
-							const style = getComputedStyle(node);
-							return (
-								// Ignora controles visualmente ocultos (ex.: input nativo `sr-only` de 1x1px).
-								node.getBoundingClientRect().width > 2 &&
-								node.getBoundingClientRect().height > 2 &&
-								node.clientWidth > 0 &&
-								node.scrollWidth > node.clientWidth + 2 &&
-								style.overflowX !== 'auto' &&
-								style.overflowX !== 'scroll'
-							);
-						}).length;
-						return {
-							documentOverflowPx:
-								Math.max(document.documentElement.scrollWidth, document.body?.scrollWidth ?? 0) -
-								window.innerWidth,
-							previewOverflowPx: element.scrollWidth - element.clientWidth,
-							controlsOutOfBounds: outOfBounds,
-							controlsWithOverflow: clippedLabels,
-						};
-					};
-					const addSignals = (m: ReturnType<typeof measure>, scope: string) => {
+					const addSignals = (m: ReturnType<typeof measureVisualArea>, scope: string) => {
 						const where = scope ? ' ' + scope : '';
 						if (m.documentOverflowPx > 2) {
 							sample.signals.push({
@@ -182,7 +138,7 @@ for (const theme of ['light', 'dark'] as const) {
 						}
 					};
 					const metrics: Record<string, number> = {};
-					const parent = await preview.evaluate(measure, 'element');
+					const parent = await preview.evaluate(measureVisualArea, 'element');
 					Object.assign(metrics, parent);
 					addSignals(parent, '');
 					if (hasIframe) {
@@ -198,7 +154,7 @@ for (const theme of ['light', 'dark'] as const) {
 									.frameLocator('iframe')
 									.nth(index)
 									.locator('body')
-									.evaluate(measure, 'viewport');
+									.evaluate(measureVisualArea, 'viewport');
 								outOfBounds += inner.controlsOutOfBounds;
 								withOverflow += inner.controlsWithOverflow;
 								documentOverflow = Math.max(documentOverflow, inner.documentOverflowPx);

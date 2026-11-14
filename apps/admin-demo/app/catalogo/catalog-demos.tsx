@@ -7,6 +7,7 @@ import {
 import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 import Link from 'next/link';
 import { DemoBrand } from '../demo-brand';
+import { useTheme } from '../use-theme';
 import {
 	AdsButton,
 	AdsBadge,
@@ -1732,6 +1733,7 @@ export function NotificationCenterDemo() {
 }
 
 export function OrganizationSwitcherDemo() {
+	const theme = useTheme('light');
 	const brokenImage = 'data:image/png;base64,AAAA';
 	const [value, setValue] = useState('acme');
 	const [count, setCount] = useState<'zero' | 'one' | 'many'>('many');
@@ -1815,12 +1817,12 @@ export function OrganizationSwitcherDemo() {
 			<div style={{ display: 'grid', gap: '1rem' }}>
 				<iframe
 					title="Shell com seletor de organização"
-					src={`${basePath}/catalogo-organizacao/?variante=com`}
+					src={`${basePath}/catalogo-organizacao/?variante=com&theme=${theme}`}
 					style={{ width: '100%', height: '20rem', border: 0 }}
 				/>
 				<iframe
 					title="Shell sem seletor de organização"
-					src={`${basePath}/catalogo-organizacao/?variante=sem`}
+					src={`${basePath}/catalogo-organizacao/?variante=sem&theme=${theme}`}
 					style={{ width: '100%', height: '20rem', border: 0 }}
 				/>
 			</div>
@@ -2298,7 +2300,7 @@ export function HighlightedCodeSnippetDemo() {
 export function FileUploadDemo() {
 	const [files, setFiles] = useState<File[]>([]);
 	return (
-		<div>
+		<div className="demo-file-upload-form">
 			<AdsFileUpload
 				accept=".csv,.json"
 				files={files}
@@ -2306,10 +2308,12 @@ export function FileUploadDemo() {
 				maxSizeBytes={2_000_000}
 				onFilesChange={setFiles}
 			/>
-			<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
-				Limpar dados
-			</AdsButton>
-			<Link href="/componentes/arquivos">Testar importação simulada</Link>
+			<div className="demo-file-upload-catalog-actions">
+				<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
+					Limpar dados
+				</AdsButton>
+				<Link href="/componentes/arquivos">Testar importação simulada</Link>
+			</div>
 		</div>
 	);
 }

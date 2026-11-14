@@ -41,10 +41,18 @@ O comando usa `playwright.visual-audit.config.ts` e `visual-audit/audit.spec.ts`
 
 A configuração-base executa Chromium nos dois temas e nas larguras de 390px (mobile) e 1440px (desktop). Ela **não** executa todas as variações de estado: hover, foco, 320px, 768px, zoom 200%, menus abertos, alto contraste e reduced motion continuam exigindo rodadas específicas. Para subcomponentes que compartilham composição, as capturas podem ser equivalentes e devem ser interpretadas por export, não como estados distintos.
 
-O auditor registra: erros de rota/captura; console do navegador; overflow horizontal do documento; overflow na região de demonstração; controles fora da borda; controles cujo conteúdo excede a largura. **São heurísticas de triagem**, pois tabelas roláveis, truncamento e outras composições podem ser intencionais. Não realiza julgamento visual subjetivo de cores, espaçamentos, contraste ou alinhamento tipográfico. Um status “sem sinais automatizados” NÃO equivale a aprovação visual e não altera as linhas `Pendente` da matriz.
+O auditor registra: erros de rota/captura; console do navegador; overflow horizontal do documento; overflow na região de demonstração; controles fora da borda; controles cujo conteúdo excede a largura. **São heurísticas de triagem**, pois tabelas roláveis, truncamento e outras composições podem ser intencionais. Não realiza julgamento visual subjetivo de cores, espaçamentos, contraste ou alinhamento tipográfico. Um status “sem sinais automatizados” NÃO equivale a aprovação visual e não altera as linhas `Pendente` da matriz. A heurística de truncamento sinaliza apenas controles com conteúdo maior que a caixa e `overflow-x: hidden|clip`; `overflow: visible` não equivale a recorte e os detectores independentes de bordas/viewport permanecem ativos.
 
 Controles visualmente ocultos (largura ou altura de até 2px, como o `input type="file"` nativo com `sr-only` do `AdsFileUpload`) não entram na heurística de conteúdo que excede a largura, pois o overflow deles não é visível.
 
 Para disparar pelo GitHub após o workflow estar presente na branch padrão, abrir Actions → **Auditoria visual** → Run workflow. O artefato contém report.md/report.json e capturas, com retenção de 14 dias. O workflow é manual (`workflow_dispatch`), sem agendamento ou custo recorrente por PR. A primeira validação efetiva só pode ser declarada após rodar e inspecionar esse artefato; nenhum relatório de execução foi pré-gerado nesta PR.
 
 O relatório usa apenas demos com dados fictícios. Não adiciona novos baselines nem altera os snapshots oficiais Linux; qualquer diferença encontrada deve ser investigada e tratada separadamente.
+
+## Triagem da execução #43617023449 — acompanhamento #152
+
+- **Organização:** as capturas dark 390/1440px mostraram dois iframes em light; causa identificada na composição: o URL não incluía `theme`, embora a página isolada espere esse parâmetro. A correção faz os dois exemplos acompanhar o tema efetivo, sem mudar o `AdsOrganizationSwitcher` público.
+- **Upload:** as ações do exemplo estavam adjacentes, sem `gap`; a composição agora usa um grupo flexível com separação e quebra de linha. O `AdsFileUpload` público permanece intacto.
+- **AdminShell:** sinal `control-text-overflow` no botão de recolher com `overflow: visible` e ícone íntegro nas capturas: classificado como **provável falso positivo** de medição (não é clipping). A heurística de truncamento passa a exigir recorte efetivo; demais checagens não mudam.
+
+Esta documentação registra o diagnóstico e as mudanças de código propostas na change `issue-152-visual-audit-findings`. Não constitui evidência de que a auditoria pós-correção ou o CI tenham passado; links e valores dessa verificação devem ser acrescentados somente após execução real. A matriz segue `Pendente` até inspeção mais completa por estado.

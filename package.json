@@ -14,7 +14,7 @@
 	],
 	"scripts": {
 		"prepare": "husky",
-		"format": "prettier --check .",
+		"format": "prettier --write . && node ./scripts/format-preview.mjs && prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",

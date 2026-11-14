@@ -61,6 +61,25 @@ test('build publica uma referência navegável para todo export da matriz #151',
 	}
 });
 
+test('manager e iframe publicados incluem somente CSP meta suportada e política de referrer', () => {
+	for (const file of ['index.html', 'iframe.html']) {
+		const html = readFileSync(new URL('../storybook-static/' + file, import.meta.url), 'utf8');
+		assert.ok(
+			html.includes('content="object-src 'none'; base-uri 'self'; form-action 'self'"'),
+			file + ': CSP parcial ausente',
+		);
+		assert.ok(
+			html.includes('name="referrer" content="strict-origin-when-cross-origin"'),
+			file + ': referrer ausente',
+		);
+		assert.doesNotMatch(
+			html.match(/<meta[^>]+http-equiv="Content-Security-Policy"[^>]*>/i)?.[0] ?? '',
+			/frame-ancestors|unsafe-inline|unsafe-eval|script-src/,
+			file + ': não declarar controles não implementados',
+		);
+	}
+});
+
 test('Autodocs original e novas páginas não possuem IDs duplicados', () => {
 	const published = entries();
 	assert.equal(new Set(published.map((item) => item.id)).size, published.length);

@@ -31,6 +31,12 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
 			suppressHydrationWarning
 		>
 			<head>
+				{/* CSP parcial efetiva no HTML estático; headers e restrições de script exigem outro host. */}
+				<meta
+					httpEquiv="Content-Security-Policy"
+					content="object-src 'none'; base-uri 'self'; form-action 'self'"
+				/>
+				<meta name="referrer" content="strict-origin-when-cross-origin" />
 				<script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
 			</head>
 			<body>

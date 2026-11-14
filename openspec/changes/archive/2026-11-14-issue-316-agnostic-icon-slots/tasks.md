@@ -19,8 +19,8 @@
 
 ## 4. Validação e entrega
 
-Evidência local (Linux, Chromium): `npm run format`, `lint`, `build`, `test:output`, `verify:optional-peer`, `typecheck`, `test:quality` e OpenSpec 1.15.0 strict (70/70) aprovados; E2E Chromium com 467 aprovados e 9 snapshots visuais de rotas não alteradas por esta change (diferença ~1% de pixels, Chromium local de outra revisão que o da CI). Firefox e WebKit não estão instalados neste ambiente e foram cobertos pela CI. A cobertura de `iconNode` do menu de conta foi acrescentada à revisão final.
+Evidência local (Linux, Chromium): `npm run format`, `lint`, `build`, `test:output`, `verify:optional-peer`, `typecheck`, `test:quality` e OpenSpec 1.15.0 strict (70/70) aprovados; E2E Chromium com 467 aprovados e 9 snapshots visuais de rotas não alteradas por esta change (diferença ~1% de pixels, Chromium local de outra revisão que o da CI). Firefox e WebKit não estão instalados neste ambiente e foram cobertos pela CI. CI no SHA `fbc6f50`: [CI #43627655725](https://github.com/dvmarques/admin-design-system/actions/runs/43627655725), [Security Gate #43627655673](https://github.com/dvmarques/admin-design-system/actions/runs/43627655673) e [Pages #43627655668](https://github.com/dvmarques/admin-design-system/actions/runs/43627655668) em sucesso; PR #321 aberta para `develop`, aguardando revisão humana. A cobertura de `iconNode` do menu de conta foi acrescentada à revisão final.
 
 - [x] 4.1 Revisar diff, API, tipos, regressões visuais e snapshots de forma independente.
 - [x] 4.2 Executar `prettier --write` nos arquivos modificados e confirmar `npm run format`, lint, build, typecheck, test:quality, `npm run test:e2e`, consumo Next e OpenSpec strict.
-- [ ] 4.3 Abrir PR para develop e verificar CI em SHA atual, corrigindo falhas e solicitando revisão.
+- [x] 4.3 Abrir PR para develop e verificar CI em SHA atual, corrigindo falhas e solicitando revisão.

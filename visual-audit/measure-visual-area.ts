@@ -1,48 +1,36 @@
 /**
- * Mede sinais de geometria no browser (Playwright serializa esta função em page.evaluate).
- * Não captura dependências externas nem declara bugs confirmados.
+ * Mede sinais de geometria no browser (Playwright serializa a função em page.evaluate).
+ * Não captura dependências externas nem confirma defeitos visuais.
  */
 export function measureVisualArea(element: Element, boundary: 'element' | 'viewport') {
-	const frame =
-		boundary === 'element'
-			? element.getBoundingClientRect()
-			: { left: 0, right: window.innerWidth };
-	const controls = [
-		...element.querySelectorAll<HTMLElement>(
-			'button, input, select, textarea, [role="button"], [role="combobox"]',
-		),
-	].filter((node) => {
+	const rect = element.getBoundingClientRect();
+	const left = boundary === 'element' ? rect.left : 0;
+	const right = boundary === 'element' ? rect.right : window.innerWidth;
+	const selector = 'button, input, select, textarea, [role="button"], [role="combobox"]';
+	const controls = Array.from(element.querySelectorAll<HTMLElement>(selector)).filter((node) => {
 		const style = getComputedStyle(node);
-		const rect = node.getBoundingClientRect();
-		return (
-			style.display !== 'none' &&
-			style.visibility !== 'hidden' &&
-			rect.width > 0 &&
-			rect.height > 0
-		);
+		const size = node.getBoundingClientRect();
+		return style.display !== 'none' && style.visibility !== 'hidden' && size.width > 0 &&
+			size.height > 0;
 	});
 	const outOfBounds = controls.filter((node) => {
-		const rect = node.getBoundingClientRect();
-		return rect.left < frame.left - 2 || rect.right > frame.right + 2;
+		const size = node.getBoundingClientRect();
+		return size.left < left - 2 || size.right > right + 2;
 	}).length;
 	const clippedLabels = controls.filter((node) => {
-		const style = getComputedStyle(node);
-		const rect = node.getBoundingClientRect();
-		const clipsContent = style.overflowX === 'hidden' || style.overflowX === 'clip';
-		return (
-			// Ignora controles visualmente ocultos (ex.: input sr-only de 1×1px).
-			rect.width > 2 &&
-			rect.height > 2 &&
-			node.clientWidth > 0 &&
-			node.scrollWidth > node.clientWidth + 2 &&
-			// Overflow visível não recorta o ícone e não comprova truncamento.
-			clipsContent
-		);
+		const size = node.getBoundingClientRect();
+		if (size.width <= 2 || size.height <= 2) return false;
+		if (node.clientWidth <= 0 || node.scrollWidth <= node.clientWidth + 2) return false;
+		// Overflow visível não equivale a texto ou ícone recortado.
+		const overflowX = getComputedStyle(node).overflowX;
+		return overflowX === 'hidden' || overflowX === 'clip';
 	}).length;
+	const documentWidth = Math.max(
+		document.documentElement.scrollWidth,
+		document.body?.scrollWidth ?? 0,
+	);
 	return {
-		documentOverflowPx:
-			Math.max(document.documentElement.scrollWidth, document.body?.scrollWidth ?? 0) -
-			window.innerWidth,
+		documentOverflowPx: documentWidth - window.innerWidth,
 		previewOverflowPx: element.scrollWidth - element.clientWidth,
 		controlsOutOfBounds: outOfBounds,
 		controlsWithOverflow: clippedLabels,

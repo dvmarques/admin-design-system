@@ -32,6 +32,15 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 		if (action === 'button-hover') {
 			await button.hover();
 			checks.push('hover-target-visible');
+			if (scenario.media === 'reduced-motion') {
+				const motion = await button.evaluate((node) => {
+					const css = getComputedStyle(node);
+					return { transform: css.transform, transitionDuration: css.transitionDuration };
+				});
+				expect(motion.transform).toBe('none');
+				expect(motion.transitionDuration.split(',').every((value) => Number.parseFloat(value) === 0)).toBe(true);
+				checks.push('motion-reduce-transform-and-transition-disabled');
+			}
 		} else if (action === 'button-focus') {
 			await button.focus();
 			await expect(button).toBeFocused();

@@ -9,6 +9,29 @@ const knownStates = new Set([
 	'open', 'closed', 'selected', 'unselected', 'empty', 'data', 'overflow',
 	'expanded', 'collapsed', 'mobile',
 ]);
+const actionStates = new Map([
+	['button-hover', 'hover'],
+	['button-focus', 'focus'],
+	['button-keyboard-focus', 'focus'],
+	['button-disabled', 'disabled'],
+	['button-loading', 'loading'],
+	['input-error', 'error'],
+	['input-success', 'success'],
+	['checkbox-selected', 'selected'],
+	['tabs-selected', 'selected'],
+	['accordion-open', 'open'],
+	['dropdown-open', 'open'],
+	['dialog-open', 'open'],
+	['drawer-open', 'open'],
+	['popover-open', 'open'],
+	['tooltip-open', 'open'],
+	['table-compact', 'data'],
+	['smart-table-empty', 'empty'],
+	['smart-table-error', 'error'],
+	['smart-table-loading', 'loading'],
+	['shell-collapsed', 'collapsed'],
+	['shell-mobile', 'mobile'],
+]);
 const themes = new Set(['light', 'dark']);
 const widths = new Set([320, 390, 768, 1440]);
 
@@ -89,13 +112,15 @@ export function validateCoverage(matrix, entries) {
 		if (!fromCatalog.has(scenario.name) || !(component?.states ?? profile?.states ?? []).includes(scenario.state)) {
 			errors.push('cenário sem export/estado aplicável: ' + scenario.id);
 		}
-		if (!themes.has(scenario.theme) || !widths.has(scenario.width) || !profile?.viewports.includes(scenario.width)) {
+		if (!themes.has(scenario.theme) || !widths.has(scenario.width) || !profile?.viewports?.includes(scenario.width)) {
 			errors.push('tema ou largura fora do perfil: ' + scenario.id);
 		}
 		if (scenario.media && !['reduced-motion', 'forced-colors'].includes(scenario.media)) {
 			errors.push('mídia desconhecida: ' + scenario.id);
 		}
-		if (!scenario.action) errors.push('ação ausente: ' + scenario.id);
+		if (actionStates.get(scenario.action) !== scenario.state) {
+			errors.push('ação desconhecida ou incompatível com estado: ' + scenario.id);
+		}
 	}
 	return errors;
 }

@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
 	AdsMaskedInput,
 	type AdsMaskedInputValues,
@@ -7,7 +7,6 @@ import {
 import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 import Link from 'next/link';
 import { DemoBrand } from '../demo-brand';
-import { useTheme } from '../use-theme';
 import {
 	AdsButton,
 	AdsBadge,
@@ -1733,7 +1732,16 @@ export function NotificationCenterDemo() {
 }
 
 export function OrganizationSwitcherDemo() {
-	const theme = useTheme('light');
+	// Acompanha o tema efetivo da página (`data-theme`), inclusive quando a preferência é Sistema.
+	const [theme, setTheme] = useState<'light' | 'dark'>('light');
+	useEffect(() => {
+		const root = document.documentElement;
+		const read = () => setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+		read();
+		const observer = new MutationObserver(read);
+		observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+		return () => observer.disconnect();
+	}, []);
 	const brokenImage = 'data:image/png;base64,AAAA';
 	const [value, setValue] = useState('acme');
 	const [count, setCount] = useState<'zero' | 'one' | 'many'>('many');

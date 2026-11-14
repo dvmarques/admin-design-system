@@ -164,6 +164,14 @@ describe('rastreabilidade do catálogo', () => {
 		expect(snippets).toEqual(catalogSnippets());
 		expect(snippets.Breadcrumb).toContain("import Link from 'next/link';");
 	});
+	it('não gera snippets com imports internos da aplicação, exceto os já conhecidos', () => {
+		// AdminShell já dependia de `../demo-brand` antes desta verificação; novos casos devem ser portáveis.
+		const known: Record<string, string[]> = { AdminShell: ['../demo-brand'] };
+		for (const [name, code] of Object.entries(snippets)) {
+			const relative = [...code.matchAll(/from '(\.[^']*)'/g)].map((match) => match[1]);
+			expect(relative, `snippet ${name}`).toEqual(known[name] ?? []);
+		}
+	});
 	it('inclui cada composição em stories existentes', () => {
 		const stories = readdirSync(root + 'apps/docs/src')
 			.filter((name) => name.endsWith('.stories.tsx'))

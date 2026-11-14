@@ -26,6 +26,26 @@ for (const width of [390, 1440]) {
 	});
 }
 
+test('organização: iframes acompanham o tema Sistema ao mudar prefers-color-scheme', async ({
+	page,
+}) => {
+	await page.emulateMedia({ colorScheme: 'light' });
+	await page.goto('/catalogo/organization-switcher');
+	const area = preview(page);
+	await page.getByLabel('Tema da demonstração').selectOption('system');
+	const frames = [
+		area.frameLocator('iframe[title="Shell com seletor de organização"]'),
+		area.frameLocator('iframe[title="Shell sem seletor de organização"]'),
+	];
+	for (const scheme of ['dark', 'light'] as const) {
+		await page.emulateMedia({ colorScheme: scheme });
+		await expect(area).toHaveAttribute('data-theme', scheme);
+		for (const frame of frames) {
+			await expect(frame.locator('html')).toHaveAttribute('data-theme', scheme);
+		}
+	}
+});
+
 for (const width of [320, 390]) {
 	test(`upload: ações mantêm separação e não sobrepõem em ${width}px`, async ({ page }) => {
 		await page.setViewportSize({ width, height: 900 });

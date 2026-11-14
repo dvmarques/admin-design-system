@@ -59,15 +59,15 @@
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
 		"@playwright/test": "1.64.1",
-		"@storybook/addon-docs": "10.6.5",
-		"@storybook/react-vite": "10.6.5",
-		"@tailwindcss/cli": "^4.3.3",
+		"@storybook/addon-docs": "10.6.6",
+		"@storybook/react-vite": "10.6.6",
+		"@tailwindcss/cli": "^4.3.4",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
 		"@types/react-dom": "^19.3.0",
-		"@vitest/coverage-v8": "5.0.5",
+		"@vitest/coverage-v8": "5.1.0",
 		"axe-core": "4.14.0",
 		"esbuild": "0.28.2",
 		"eslint": "^10.13.0",
@@ -77,11 +77,11 @@
 		"next": "^16.4.3",
 		"prettier": "^3.9.10",
 		"react-docgen-typescript": "^2.4.0",
-		"storybook": "10.6.5",
+		"storybook": "10.6.6",
 		"tailwindcss": "^4.3.3",
 		"typescript": "~6.0.3",
 		"typescript-eslint": "^8.72.1",
-		"vitest": "5.0.5"
+		"vitest": "5.1.0"
 	},
 	"dependencies": {
 		"react": "^19.3.1",

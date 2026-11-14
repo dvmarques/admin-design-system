@@ -18,7 +18,7 @@ export function analyzeStateCoverage({ matrix, entries, folder }) {
 				problem = 'Manifesto ilegível: ' + String(error);
 			}
 		}
-		const screenshot = 'screenshots/states/' + scenario.id + '.png';
+		const screenshot = 'screenshots/states/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
 		if (record && (
 			record.id !== scenario.id || record.name !== scenario.name ||
 			record.route !== routes.get(scenario.name) || record.state !== scenario.state ||

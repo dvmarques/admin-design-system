@@ -6,11 +6,13 @@ import {
 	type HTMLAttributes,
 	type KeyboardEvent,
 	type ReactElement,
+	type ReactNode,
 } from 'react';
 import { classNames } from './class-names.js';
 import type { AdsButtonVariant } from './button.js';
 import { AdsDropdown } from './dropdown.js';
 import { AdsIcon, type AdsIconName } from './icon.js';
+import { AdsIconSlot } from './icons/slot.js';
 import { AdsTooltip, type AdsOverlayPlacement } from './overlay-anchored.js';
 
 /** A escolha da pessoa; `system` deixa a aplicação seguir o esquema de cores do sistema. */
@@ -34,6 +36,8 @@ export interface AdsThemeControlProps extends Omit<
 	defaultValue?: AdsThemePreference;
 	disabled?: boolean;
 	labels?: AdsThemeControlLabels;
+	/** Optional artwork for each theme; omit a key to use the internal icon. */
+	icons?: Partial<Record<AdsThemePreference, ReactNode>>;
 	onValueChange?: (value: AdsThemePreference) => void;
 	/** `icon` (padrão) mostra só ícones, com nome acessível e tooltip; `icon-text` acrescenta o texto. */
 	optionDisplay?: AdsThemeControlOptionDisplay;
@@ -116,6 +120,7 @@ export function AdsThemeControl({
 	defaultValue = 'system',
 	disabled = false,
 	labels,
+	icons,
 	onValueChange,
 	optionDisplay = 'icon',
 	tooltips = true,
@@ -129,6 +134,11 @@ export function AdsThemeControl({
 	const text = { ...defaultLabels, ...labels };
 	const iconOnly = optionDisplay === 'icon';
 	const optionRefs = useRef<Partial<Record<AdsThemePreference, HTMLButtonElement | null>>>({});
+	const renderOptionIcon = (option: (typeof options)[number]) => {
+		const custom = icons?.[option.value];
+		if (custom === undefined) return <AdsIcon name={option.icon} />;
+		return custom === null ? null : <AdsIconSlot icon={custom} />;
+	};
 
 	const select = (next: AdsThemePreference) => {
 		if (next === current) return;
@@ -186,7 +196,7 @@ export function AdsThemeControl({
 								tabIndex={selected ? 0 : -1}
 								type="button"
 							>
-								<AdsIcon name={option.icon} />
+								{renderOptionIcon(option)}
 								{iconOnly ? null : <span>{text[option.value]}</span>}
 								{selected ? <SelectedMark floating={iconOnly} /> : null}
 							</button>
@@ -210,7 +220,7 @@ export function AdsThemeControl({
 					disabled={disabled}
 					variant={triggerVariant}
 				>
-					<AdsIcon name={currentOption.icon} />
+					{renderOptionIcon(currentOption)}
 				</AdsDropdown.Trigger>
 			</MaybeTooltip>
 			<AdsDropdown.Content
@@ -239,7 +249,7 @@ export function AdsThemeControl({
 								onSelect={() => select(option.value)}
 								role="menuitemradio"
 							>
-								<AdsIcon name={option.icon} />
+								{renderOptionIcon(option)}
 								{iconOnly ? null : <span>{text[option.value]}</span>}
 								{selected ? <SelectedMark floating={iconOnly} /> : null}
 							</AdsDropdown.Item>

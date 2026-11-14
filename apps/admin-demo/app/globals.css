@@ -888,14 +888,6 @@ body {
 	margin-top: 0;
 }
 
-/* Ações da prévia do catálogo: espaçamento local, inclusive com quebra em mobile. */
-.demo-file-upload-catalog-actions {
-	display: flex;
-	flex-wrap: wrap;
-	align-items: center;
-	gap: var(--ads-spacing-3);
-}
-
 /* Exemplos de TimePicker no catálogo e na página de datas. */
 .demo-time-picker-group {
 	display: flex;

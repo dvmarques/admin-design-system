@@ -21,9 +21,15 @@ export function measureVisualArea(element: Element, boundary: 'element' | 'viewp
 		const size = node.getBoundingClientRect();
 		if (size.width <= 2 || size.height <= 2) return false;
 		if (node.clientWidth <= 0 || node.scrollWidth <= node.clientWidth + 2) return false;
-		// Overflow visível não equivale a texto ou ícone recortado.
-		const overflowX = getComputedStyle(node).overflowX;
-		return overflowX === 'hidden' || overflowX === 'clip';
+		// Overflow visível só é recorte se o próprio nó ou um ancestral que recorta cortar o conteúdo.
+		const clips = (value: string) => value === 'hidden' || value === 'clip';
+		if (clips(getComputedStyle(node).overflowX)) return true;
+		const contentRight = size.left + node.scrollWidth;
+		for (let parent = node.parentElement; parent; parent = parent.parentElement) {
+			if (!clips(getComputedStyle(parent).overflowX)) continue;
+			if (contentRight > parent.getBoundingClientRect().right + 2) return true;
+		}
+		return false;
 	}).length;
 	const documentWidth = Math.max(
 		document.documentElement.scrollWidth,

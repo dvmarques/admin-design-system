@@ -50,6 +50,8 @@ jobs:
       - run: npm run build
       - run: npm run typecheck
       - run: node --test ./scripts/visual-audit-coverage.test.mjs ./scripts/visual-audit-coverage-report.test.mjs
+      # Container do Playwright não herda a exceção de safe.directory do host.
+      - run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - run: npm run test:quality
       - run: npm run test:e2e
       - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive

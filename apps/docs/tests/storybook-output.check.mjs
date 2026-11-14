@@ -65,7 +65,7 @@ test('manager e iframe publicados incluem somente CSP meta suportada e política
 	for (const file of ['index.html', 'iframe.html']) {
 		const html = readFileSync(new URL('../storybook-static/' + file, import.meta.url), 'utf8');
 		assert.ok(
-			html.includes('content="object-src 'none'; base-uri 'self'; form-action 'self'"'),
+			html.includes(`content="object-src 'none'; base-uri 'self'; form-action 'self'"`),
 			file + ': CSP parcial ausente',
 		);
 		assert.ok(

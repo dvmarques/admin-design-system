@@ -4,16 +4,14 @@
 
 ## Escopo e o que foi observado
 
-| Superfície | Evidência observada | Classificação e consequência |
-| --- | --- | --- |
-| HTML de layout | `apps/admin-demo/app/layout.tsx` insere `themeInitScript` em `dangerouslySetInnerHTML`; `apps/admin-demo/lib/theme.ts` forma a string internamente e lê cookie apenas no navegador | **Não é evidência de XSS**: script fixo, com preferência limitada a light/dark/system; ainda é inline e restringiria uma futura CSP `script-src` |
-| Exportação de Next | `apps/admin-demo/next.config.ts` usa `output: 'export'`, `basePath` e assets estáticos no Pages | `next.config.ts` não instala headers HTTP no conteúdo estático publicado |
-| Storybook | `apps/docs/.storybook/{main.ts,manager-head.html,preview-head.html,preview.tsx}`; build Vite publica manager e iframe de preview | HTML gerado pode conter bootstrap/chunks; exigir `script-src`/nonce/hashes antes de inventariar o output e validar é risco de quebra |
-| Fonte e CSS | CSS de `@fontsource/inter` e dos pacotes `@dvmarques/admin-ds-*` importado pelos apps | Assets próprios, sem exigência comprovada de CDN externa; estilos inline de componentes exigem análise específica para `style-src` |
-| Destaque de código | `packages/highlighted-code/src/highlighter.ts` importa `shiki/wasm` dinamicamente, temas e linguagens; `highlighted-code-snippet.tsx` renderiza tokens como texto React | Carga WASM e chunks devem ser testados antes de restringir `script-src` ou `worker-src`; entrada de código não vira HTML bruto |
-| Links | `apps/admin-demo/app/storybook-link.tsx` é o link `target="_blank"` localizado na revisão; usa `rel="noopener"` com destino da mesma origem | Proteção já presente contra acesso `window.opener`; `noreferrer` não é necessário para esse destino |
-| Auth simulado | `apps/admin-demo/app/auth/*`, `apps/admin-demo/lib/auth-demo.ts` e `docs/demo-auth-flow.md` | **Não é login real**. Sem backend, sessão, autorização, e-mail enviado ou armazenamento de credenciais; campos sem `name` evitam vazamento em submissão GET nativa sem JS |
-| HTML dinâmico | A renderização dos exemplos usa escaping padrão do React; o `dangerouslySetInnerHTML` do layout é o uso direto encontrado no app | Não se conclui ausência de XSS por busca estática; novas entradas HTML não confiáveis exigem análise e sanitização |
+- **Layout:** `apps/admin-demo/app/layout.tsx` injeta `themeInitScript` via `dangerouslySetInnerHTML`. `apps/admin-demo/lib/theme.ts` forma a string internamente e lê cookie apenas no navegador. **Não é evidência de XSS**: script fixo e preferências limitadas; ainda é inline e exige atenção em futura CSP `script-src`.
+- **Exportação Next:** `apps/admin-demo/next.config.ts` usa `output: 'export'`, `basePath` e assets estáticos. Configurações Next não instalam headers HTTP no Pages.
+- **Storybook:** `apps/docs/.storybook/{main.ts,manager-head.html,preview-head.html,preview.tsx}` geram manager, chunks Vite e iframe de preview. Uma `script-src` sem inventário do output pode quebrar o runtime.
+- **Fontes e CSS:** CSS de `@fontsource/inter` e dos pacotes `@dvmarques/admin-ds-*`. São assets próprios; componentes também podem criar estilos inline que exigem análise futura de `style-src`.
+- **Shiki:** `packages/highlighted-code/src/highlighter.ts` carrega `shiki/wasm`, temas e linguagens dinamicamente. `highlighted-code-snippet.tsx` renderiza tokens como texto React, sem HTML bruto. Limitar scripts/worker antes do teste pode impedir o highlight.
+- **Links:** `apps/admin-demo/app/storybook-link.tsx` é o link `target="_blank"` localizado na revisão; usa `rel="noopener"` com destino na mesma origem, sem necessidade de `noreferrer` para esse link.
+- **Autenticação simulada:** `apps/admin-demo/app/auth/*`, `apps/admin-demo/lib/auth-demo.ts` e `docs/demo-auth-flow.md` descrevem rotas públicas, sem backend, sessão ou armazenamento de credenciais. Campos sem `name` evitam vazamento no GET nativo sem JS.
+- **HTML dinâmico:** o React faz escaping de texto; o layout contém o único sink explícito de HTML observado no app. Busca estática não prova ausência de XSS; entradas não confiáveis futuras exigem análise/sanitização.
 
 Inventário feito nos caminhos citados, nas publicações de Next/Storybook e na busca por `dangerouslySetInnerHTML` e `target="_blank"` na revisão do repositório. Ocorreu também `dangerouslySetInnerHTML` em `packages/components/src/data-table.tsx` apenas como chave **excluída** do tipo `containerProps`, não como sink de HTML. Não foram inspecionados os headers publicados nem testados ataques reais.
 
@@ -35,16 +33,14 @@ Todos os documentos Next e os dois HTMLs de entrada do Storybook recebem:
 
 ### Políticas que não se tornam efetivas no Pages
 
-| Controle | Local tecnicamente correto | Estado desta mudança |
-| --- | --- | --- |
-| `frame-ancestors` e proteção contra clickjacking | Header CSP na resposta HTTP | **Não instalado**; `meta` ignora essa diretiva; Storybook iframe precisa admitir o manager da mesma origem |
-| `X-Frame-Options` | Header HTTP | Não instalado; `DENY` global quebraria o iframe das stories |
-| `Permissions-Policy` (camera, geolocation, microphone etc.) | Header HTTP (e eventuais atributos `allow` por iframe) | Não instalado; verificar necessidade e suporte ao migrar de host |
-| `X-Content-Type-Options: nosniff` | Header HTTP | Não instalado |
-| `Content-Security-Policy-Report-Only` e endpoints de relatório | Header HTTP e infraestrutura de recebimento | Não disponível em `meta`; nenhum modo de observação fictício |
-| COOP, COEP, CORP, HSTS | Headers HTTP | Não instalado; avaliar isolamentos e compatibilidade do Storybook antes de adotar |
-| `Referrer-Policy` | Header HTTP | Não instalado; substituto limitado via `<meta name="referrer">` aplicado |
-| CSP estrita com scripts, estilos, fontes, workers | Preferencialmente header HTTP após inventário/Report-Only | **Não instalada**; nenhuma permissão `unsafe-inline`/`unsafe-eval` foi concedida para contornar incompatibilidades |
+- **Clickjacking e `frame-ancestors`:** header CSP de resposta; **não instalado**. A diretiva é ignorada por meta. O iframe Storybook precisa permitir o manager da própria origem.
+- **`X-Frame-Options`:** header HTTP; não instalado. `DENY` global quebraria o iframe das stories.
+- **`Permissions-Policy`:** header HTTP (e atributo `allow` conforme o iframe); não instalado. Rever permissões necessárias ao migrar de host.
+- **`X-Content-Type-Options: nosniff`:** header HTTP; não instalado.
+- **`Content-Security-Policy-Report-Only`:** header HTTP e endpoint para relatórios; não disponível via meta e não instalado.
+- **COOP, COEP, CORP e HSTS:** headers HTTP; não instalados. Precisam de análise de compatibilidade com Storybook.
+- **`Referrer-Policy`:** header HTTP não instalado; a política `<meta name="referrer">` foi aplicada como mecanismo distinto.
+- **CSP estrita:** preferencialmente header HTTP após inventário e Report-Only. Não instalada; nenhuma permissão `unsafe-inline` ou `unsafe-eval` foi concedida para encobrir problemas.
 
 A configuração `headers()` do Next depende de servidor/adapter que sirva as respostas; um export estático para GitHub Pages não controla arbitrariamente os headers de resposta. Para impor clickjacking e políticas completas é preciso servir o site por um proxy/CDN/host que permita definir headers por rota. Uma política `frame-ancestors 'self'` na **página do iframe Storybook** é diferente de `'none'` no demo, e precisa ser verificada conforme o domínio real.
 

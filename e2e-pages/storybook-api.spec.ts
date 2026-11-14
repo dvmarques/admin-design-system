@@ -77,7 +77,11 @@ test('Storybook publicado aplica metas no iframe e mantém highlight com WASM', 
 	request,
 }) => {
 	const index = await (await request.get(`${base}/index.json`)).json();
-	const stories = Object.values(index.entries) as Array<{ id: string; type: string; title: string }>;
+	const stories = Object.values(index.entries) as Array<{
+		id: string;
+		type: string;
+		title: string;
+	}>;
 	const highlighted = stories.find(
 		(entry) => entry.type === 'story' && entry.title === 'Data/HighlightedCodeSnippet',
 	);

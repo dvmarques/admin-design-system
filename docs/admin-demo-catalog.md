@@ -36,6 +36,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsBadge`                  | Básicos     | `/catalogo/badge`                    | `admin-flows.stories.tsx`, `admin-shell.stories.tsx`                |
 | `AdsAvatar`                 | Básicos     | `/catalogo/avatar`                   | `avatar.stories.tsx`                                                |
 | `AdsIcon`                   | Básicos     | `/catalogo/icon`                     | `icon.stories.tsx`                                                  |
+| `AdsIconSlot`                   | Básicos     | `/catalogo/icon-slot`                     | `icon-slot.stories.tsx`                                                  |
 | `AdsTypography`             | Básicos     | `/catalogo/typography`               | `admin-shell.stories.tsx`, `typography.stories.tsx`                 |
 | `AdsSurface`                | Básicos     | `/catalogo/surface`                  | `navigation.stories.tsx`, `surface.stories.tsx`                     |
 | `AdsLoadingIndicator`       | Básicos     | `/catalogo/loading-indicator`        | `loading-indicator.stories.tsx`                                     |

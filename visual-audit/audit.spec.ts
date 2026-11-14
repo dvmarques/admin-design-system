@@ -62,6 +62,28 @@ for (const theme of ['light', 'dark'] as const) {
 					await expect(preview).toBeVisible();
 					await page.getByLabel('Tema da demonstração').selectOption(theme);
 					await expect(preview).toHaveAttribute('data-theme', theme);
+
+					// Demos com iframe: aguarda cada documento interno antes de capturar e registra o tema aplicado.
+					const frameCount = await preview.locator('iframe').count();
+					const hasIframe = frameCount > 0;
+					const frameThemes: string[] = [];
+					let frameWaitError: string | null = null;
+					for (let index = 0; index < frameCount; index += 1) {
+						const inner = preview.frameLocator('iframe').nth(index);
+						try {
+							await expect(inner.locator('html[data-theme]')).toBeAttached({ timeout: 15000 });
+							await expect(inner.locator('header, main').first()).toBeVisible({ timeout: 15000 });
+							frameThemes.push(
+								(await inner.locator('html').getAttribute('data-theme')) ?? 'indefinido',
+							);
+						} catch (error) {
+							frameWaitError ??=
+								'iframe ' +
+								String(index + 1) +
+								': ' +
+								(error instanceof Error ? error.message.split('\n')[0] : String(error));
+						}
+					}
 					await page.evaluate(() => document.fonts.ready);
 
 					const image = 'screenshots/' + theme + '-' + viewport.width + '/' + entry.slug + '.png';
@@ -73,8 +95,12 @@ for (const theme of ['light', 'dark'] as const) {
 					sample.screenshot = image;
 
 					// Sinais geométricos: pistas para revisão, NÃO defeitos confirmados.
-					const metrics = await preview.evaluate((element) => {
-						const frame = element.getBoundingClientRect();
+					// `boundary`: 'element' mede contra a região do exemplo; 'viewport' contra a janela do frame.
+					const measure = (element: Element, boundary: string) => {
+						const frame =
+							boundary === 'element'
+								? element.getBoundingClientRect()
+								: { left: 0, right: window.innerWidth };
 						const controls = [
 							...element.querySelectorAll<HTMLElement>(
 								'button, input, select, textarea, [role="button"], [role="combobox"]',
@@ -113,39 +139,98 @@ for (const theme of ['light', 'dark'] as const) {
 							controlsOutOfBounds: outOfBounds,
 							controlsWithOverflow: clippedLabels,
 						};
-					});
+					};
+					const addSignals = (m: ReturnType<typeof measure>, scope: string) => {
+						const where = scope ? ' ' + scope : '';
+						if (m.documentOverflowPx > 2) {
+							sample.signals.push({
+								code: 'viewport-overflow',
+								detail:
+									'Documento' + where + ' excede a viewport em ' + m.documentOverflowPx + 'px',
+							});
+						}
+						if (m.previewOverflowPx > 2) {
+							sample.signals.push({
+								code: 'preview-overflow',
+								detail:
+									'Área do exemplo' +
+									where +
+									' apresenta ' +
+									m.previewOverflowPx +
+									'px de conteúdo horizontal extra; pode ser rolagem intencional',
+							});
+						}
+						if (m.controlsOutOfBounds > 0) {
+							sample.signals.push({
+								code: 'control-bounds',
+								detail:
+									String(m.controlsOutOfBounds) +
+									' controles' +
+									where +
+									' excedem as bordas do exemplo; validar layout/rolagem',
+							});
+						}
+						if (m.controlsWithOverflow > 0) {
+							sample.signals.push({
+								code: 'control-text-overflow',
+								detail:
+									String(m.controlsWithOverflow) +
+									' controles' +
+									where +
+									' têm scrollWidth acima de clientWidth; validar truncamento intencional',
+							});
+						}
+					};
+					const metrics: Record<string, number> = {};
+					const parent = await preview.evaluate(measure, 'element');
+					Object.assign(metrics, parent);
+					addSignals(parent, '');
+					if (hasIframe) {
+						metrics.hasIframe = 1;
+						metrics.frameCount = frameCount;
+						metrics.frameAudited = 0;
+						if (frameWaitError === null) {
+							let outOfBounds = 0;
+							let withOverflow = 0;
+							let documentOverflow = 0;
+							for (let index = 0; index < frameCount; index += 1) {
+								const inner = await preview
+									.frameLocator('iframe')
+									.nth(index)
+									.locator('body')
+									.evaluate(measure, 'viewport');
+								outOfBounds += inner.controlsOutOfBounds;
+								withOverflow += inner.controlsWithOverflow;
+								documentOverflow = Math.max(documentOverflow, inner.documentOverflowPx);
+								addSignals(inner, '(dentro do iframe ' + String(index + 1) + ')');
+							}
+							metrics.frameAudited = 1;
+							metrics.frameDocumentOverflowPx = documentOverflow;
+							metrics.frameControlsOutOfBounds = outOfBounds;
+							metrics.frameControlsWithOverflow = withOverflow;
+							const divergent = frameThemes.filter((value) => value !== theme).length;
+							if (divergent > 0) {
+								sample.signals.push({
+									code: 'iframe-theme-mismatch',
+									detail:
+										String(divergent) +
+										' iframe(s) não aplicam o tema "' +
+										theme +
+										'" selecionado (tema interno: ' +
+										frameThemes.join(', ') +
+										'); validar se a demo deveria propagar o tema',
+								});
+							}
+						} else {
+							sample.signals.push({
+								code: 'iframe-not-audited',
+								detail:
+									'Conteúdo do iframe não carregou a tempo; métricas internas ausentes: ' +
+									frameWaitError.slice(0, 200),
+							});
+						}
+					}
 					sample.metrics = metrics;
-					if (metrics.documentOverflowPx > 2) {
-						sample.signals.push({
-							code: 'viewport-overflow',
-							detail: 'Documento excede a viewport em ' + metrics.documentOverflowPx + 'px',
-						});
-					}
-					if (metrics.previewOverflowPx > 2) {
-						sample.signals.push({
-							code: 'preview-overflow',
-							detail:
-								'Área do exemplo apresenta ' +
-								metrics.previewOverflowPx +
-								'px de conteúdo horizontal extra; pode ser rolagem intencional',
-						});
-					}
-					if (metrics.controlsOutOfBounds > 0) {
-						sample.signals.push({
-							code: 'control-bounds',
-							detail:
-								String(metrics.controlsOutOfBounds) +
-								' controles excedem as bordas do exemplo; validar layout/rolagem',
-						});
-					}
-					if (metrics.controlsWithOverflow > 0) {
-						sample.signals.push({
-							code: 'control-text-overflow',
-							detail:
-								String(metrics.controlsWithOverflow) +
-								' controles têm scrollWidth acima de clientWidth; validar truncamento intencional',
-						});
-					}
 				} catch (error) {
 					sample.error = error instanceof Error ? error.message : String(error);
 				}

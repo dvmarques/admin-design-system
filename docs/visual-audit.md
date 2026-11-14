@@ -1,8 +1,10 @@
-# Auditoria visual — issue #152
+# Auditoria visual
+
+Origem: issue #152 (auditoria visual do catálogo). O nome dos arquivos não carrega o número da issue; o acompanhamento fica na issue e no OpenSpec.
 
 ## Escopo da primeira fase
 
-Esta PR inicia a auditoria com inventário dos exports do Admin Demo e referências às stories. A [matriz](visual-audit-152-inventory.md) não declara que componentes foram inspecionados. A cobertura de exports já é conferida por `apps/admin-demo/catalog-coverage.test.ts`; o novo verificador trata da rastreabilidade da inspeção.
+Esta PR inicia a auditoria com inventário dos exports do Admin Demo e referências às stories. A [matriz](visual-audit-inventory.md) não declara que componentes foram inspecionados. A cobertura de exports já é conferida por `apps/admin-demo/catalog-coverage.test.ts`; o novo verificador trata da rastreabilidade da inspeção.
 
 Na raiz do repositório:
 
@@ -43,6 +45,6 @@ O auditor registra: erros de rota/captura; console do navegador; overflow horizo
 
 Controles visualmente ocultos (largura ou altura de até 2px, como o `input type="file"` nativo com `sr-only` do `AdsFileUpload`) não entram na heurística de conteúdo que excede a largura, pois o overflow deles não é visível.
 
-Para disparar pelo GitHub após o workflow estar presente na branch padrão, abrir Actions → **Auditoria visual #152** → Run workflow. O artefato contém report.md/report.json e capturas, com retenção de 14 dias. O workflow é manual (`workflow_dispatch`), sem agendamento ou custo recorrente por PR. A primeira validação efetiva só pode ser declarada após rodar e inspecionar esse artefato; nenhum relatório de execução foi pré-gerado nesta PR.
+Para disparar pelo GitHub após o workflow estar presente na branch padrão, abrir Actions → **Auditoria visual** → Run workflow. O artefato contém report.md/report.json e capturas, com retenção de 14 dias. O workflow é manual (`workflow_dispatch`), sem agendamento ou custo recorrente por PR. A primeira validação efetiva só pode ser declarada após rodar e inspecionar esse artefato; nenhum relatório de execução foi pré-gerado nesta PR.
 
 O relatório usa apenas demos com dados fictícios. Não adiciona novos baselines nem altera os snapshots oficiais Linux; qualquer diferença encontrada deve ser investigada e tratada separadamente.

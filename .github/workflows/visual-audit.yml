@@ -1,4 +1,4 @@
-name: Auditoria visual #152
+name: Auditoria visual
 
 on:
   workflow_dispatch:
@@ -37,7 +37,7 @@ jobs:
         if: always()
         uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
-          name: auditoria-visual-152-${{ github.run_id }}
+          name: auditoria-visual-${{ github.run_id }}
           path: visual-audit-results/
           if-no-files-found: warn
           retention-days: 14

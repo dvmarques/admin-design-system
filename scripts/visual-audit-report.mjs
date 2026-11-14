@@ -5,7 +5,7 @@ export const auditThemes = ['light', 'dark'];
 export const auditWidths = [390, 1440];
 
 function inventoryNames(root) {
-	const source = readFileSync(join(root, 'docs/visual-audit-152-inventory.md'), 'utf8');
+	const source = readFileSync(join(root, 'docs/visual-audit-inventory.md'), 'utf8');
 	const tick = String.fromCharCode(96);
 	const names = source
 		.split(/\r?\n/)
@@ -104,6 +104,10 @@ export function buildVisualAuditReport({
 		review: count('revisão necessária'),
 		failed: count('falha na captura'),
 		missing: count('não executado'),
+		iframeAudited: results.filter((entry) => entry.metrics?.frameAudited === 1).length,
+		iframeNotAudited: results.filter(
+			(entry) => entry.metrics?.hasIframe === 1 && entry.metrics?.frameAudited !== 1,
+		).length,
 	};
 	const report = {
 		issue: 152,
@@ -118,7 +122,7 @@ export function buildVisualAuditReport({
 	writeFileSync(join(folder, 'report.json'), JSON.stringify(report, null, 2) + '\n');
 
 	const markdown = [
-		'# Auditoria visual #152 — relatório de execução',
+		'# Auditoria visual — relatório de execução',
 		'',
 		'Execução: ' + report.generatedAt + (report.commit ? ' · commit ' + report.commit : ''),
 		'',
@@ -133,6 +137,11 @@ export function buildVisualAuditReport({
 		'- Falhas de captura: **' + summary.failed + '**',
 		'- Não executadas: **' + summary.missing + '**',
 		'- Sem sinais automatizados: **' + summary.noSignals + '**',
+		'- Amostras com iframe: métricas internas coletadas em **' +
+			summary.iframeAudited +
+			'**, ausentes em **' +
+			summary.iframeNotAudited +
+			'** (nesses casos o resultado cobre apenas o documento externo)',
 		'',
 		'## Pendências de execução',
 		'',
@@ -193,12 +202,12 @@ export function buildVisualAuditReport({
 	markdown.push(
 		'',
 		'Os estados hover, focus, erro, disabled, loading, zoom 200% e revisão manual ' +
-			'continuam pendentes quando não houver inspeção específica. Consulte docs/visual-audit-152.md.',
+			'continuam pendentes quando não houver inspeção específica. Consulte docs/visual-audit.md.',
 		'',
 	);
 	writeFileSync(join(folder, 'report.md'), markdown.join('\n'));
 	console.log(
-		'Auditoria #152: ' +
+		'Auditoria visual: ' +
 			summary.captured +
 			'/' +
 			expected +

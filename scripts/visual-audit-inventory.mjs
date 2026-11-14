@@ -7,7 +7,7 @@ const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const tick = String.fromCharCode(96);
 const read = (path) => readFileSync(join(root, path), 'utf8');
 const fail = (reason) => {
-	throw new Error('Auditoria #152: ' + reason);
+	throw new Error('Auditoria visual: ' + reason);
 };
 
 function catalog() {
@@ -62,7 +62,7 @@ function matching(source, target, label) {
 }
 function output(source, refs) {
 	const lines = [
-		'# Matriz de auditoria visual — issue #152',
+		'# Matriz de auditoria visual',
 		'',
 		'Fonte: ' +
 			tick +
@@ -73,7 +73,7 @@ function output(source, refs) {
 			'docs/admin-demo-catalog.md' +
 			tick +
 			'. A cobertura do catálogo não significa inspeção visual aprovada.',
-		'Inspeções detalhadas e evidências seguem o protocolo em [Auditoria visual #152](visual-audit-152.md).',
+		'Inspeções detalhadas e evidências seguem o protocolo em [Auditoria visual](visual-audit.md).',
 		'',
 		'## Matriz de inspeção',
 		'',
@@ -120,7 +120,7 @@ try {
 	else {
 		const audit = matching(
 			source,
-			rows(read('docs/visual-audit-152-inventory.md'), '## Matriz de inspeção'),
+			rows(read('docs/visual-audit-inventory.md'), '## Matriz de inspeção'),
 			'auditoria',
 		);
 		const valid = new Set([

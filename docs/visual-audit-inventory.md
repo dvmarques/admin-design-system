@@ -1,7 +1,7 @@
-# Matriz de auditoria visual — issue #152
+# Matriz de auditoria visual
 
 Fonte: `apps/admin-demo/app/catalogo/catalog-data.ts` e `docs/admin-demo-catalog.md`. A cobertura do catálogo não significa inspeção visual aprovada.
-Inspeções detalhadas e evidências seguem o protocolo em [Auditoria visual #152](visual-audit-152.md).
+Inspeções detalhadas e evidências seguem o protocolo em [Auditoria visual](visual-audit.md).
 
 ## Matriz de inspeção
 

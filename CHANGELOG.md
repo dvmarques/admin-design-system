@@ -27,6 +27,7 @@ para distinguir mudanças públicas de manutenção interna.
 - Verificador de distribuição do peer opcional aceita as saídas JSON do npm pack 11 e 12, mantendo o contrato de tarball. (#299)
 - Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Os resumos de CI exibem dispensas de escopo sem alegar testes executados; `--prefer-offline` foi removido após não mostrar ganho. Sem redução de cobertura nem de gates de segurança. (#294)
 - Teste de transferência de baselines converte URLs em caminhos de arquivo compatíveis com Windows e Unix. (#294)
+- Inventário rastreável da auditoria visual (82 exports) e auditor opt-in (`npm run audit:visual`, workflow manual) que gera capturas Chromium em 390/1440 px, claro/escuro, e relatório de triagem. Ferramenta interna do repositório: sem mudança de API, CSS, tokens ou comportamento dos pacotes publicados. (#152, #313, OpenSpec `issue-152-visual-audit-inventory`)
 
 ### [0.1.2] - 02-nov-2026
 

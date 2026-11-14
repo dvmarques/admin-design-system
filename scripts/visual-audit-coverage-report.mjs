@@ -118,7 +118,7 @@ export function buildStateCoverageReport(project = process.cwd()) {
 	for (const result of report.results) {
 		lines.push('| ' + result.name + ' | ' + result.state + ' | ' + result.theme +
 			' | ' + result.width + 'px | ' + (result.media ?? 'padrão') +
-			' | ' + result.status + ' | ' + escapeCell(result.error ?? result.checks.join(', ') || '—') +
+			' | ' + result.status + ' | ' + escapeCell(result.error ?? (result.checks.join(', ') || '—')) +
 			' | ' + (result.screenshot ? '[PNG](' + result.screenshot + ')' : '—') + ' |');
 	}
 	lines.push('', '## Matriz completa por export', '',

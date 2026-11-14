@@ -11,6 +11,73 @@ Este documento descreve o fluxo operacional de release do Admin Design System. A
 - A versão do produto é coordenada entre raiz, `packages/*`, `apps/*`, dependências internas e lockfile.
 - O projeto fixa npm `11.19.1` em `packageManager`; use essa versão na preparação.
 
+## Política editorial do changelog (issue #286)
+
+O `CHANGELOG.md` é o registro público por versão e a fonte integral das GitHub Release Notes. Seu público é **quem instala, atualiza ou integra os pacotes**. A revisão editorial é humana e precede a aprovação por SHA-256. Esta política vale **prospectivamente** para a seção `Em andamento`: não reescreva versões fechadas, marcas de aprovação nem GitHub Releases publicadas.
+
+### Critérios de inclusão
+
+Inclua uma nota quando a mudança afetar o consumo, a segurança ou a migração dos pacotes:
+
+- **Added:** componente, exportação, API ou capacidade pública nova; indique como utilizá-la quando não for óbvio.
+- **Changed:** alteração visível de comportamento, aparência, integração, dependência ou requisito de plataforma; sinalize compatibilidade e eventual ação necessária.
+- **Deprecated:** API ou comportamento ainda disponível, mas desaconselhado, com substituto e prazo quando conhecido.
+- **Removed:** remoção efetiva de API/recurso; descreva substituto ou migração e destaque incompatibilidades.
+- **Fixed:** correção relevante de defeito observável, acessibilidade, integração, regressão ou estabilidade para consumidores.
+- **Security:** correção ou mitigação de risco relevante para consumidores, sem expor instruções de exploração ou detalhes sigilosos.
+
+CI, cobertura de testes, refactors sem mudança de contrato, ajustes internos de tooling, budgets, documentação de processo e manutenção de infraestrutura **não entram automaticamente** nas notas públicas. Registre-os em issue, PR, commits e OpenSpec. Inclua-os somente se tiverem consequência concreta para instalação, segurança, compatibilidade, distribuição ou operação dos pacotes; descreva essa consequência, não a tarefa interna. Não omita alterações incompatíveis, deprecações ou migrações obrigatórias por serem internas na origem.
+
+Esta regra também orienta a exigência de registro em `AGENTS.md`: uma mudança exclusivamente interna sem consequência para consumidores pode ficar fora do changelog, desde que a PR justifique a ausência e mantenha a rastreabilidade. Não é necessário criar nota pública sobre a própria manutenção da política editorial.
+
+### Consolidação e redação
+
+1. Revise todas as issues, PRs e changes desde a versão anterior. Agrupe itens correlatos **pelo efeito no consumidor**, não pelo número de commits; mantenha as referências às issues e a OpenSpec quando aplicável.
+2. Use `#### Added`, `#### Changed`, `#### Deprecated`, `#### Removed`, `#### Fixed` e `#### Security` **somente quando houver entradas**, nessa ordem. Não crie seções vazias. Cada entrada começa com o resultado ou a ação para o consumidor e tem **até 300 caracteres**.
+3. Separe efeitos materialmente diferentes de uma mesma issue (especialmente breaking/security) em frases claras, mas considere que a validação atual sinaliza múltiplas entradas com a mesma issue principal. Consolidar numa entrada não pode ocultar a incompatibilidade; se não couber com segurança no limite, revise o desenho editorial antes de aprovar, **sem contornar** o validador.
+4. Declare explicitamente **BREAKING**, migração exigida e versão/plataforma mínima quando aplicável. Nunca use uma nota genérica como “melhorias e correções diversas”.
+5. Confira a prévia com `npm run release:changelog -- X.Y.Z` e faça a revisão/aprovação na branch `release/X.Y.Z`, conforme [Preparar uma release](#preparar-uma-release). O comando encontra duplicidades por issue e limites de comprimento; **não** decide se uma alteração tem impacto público, nem consolida automaticamente.
+
+**Exemplos ilustrativos** (não representam alterações publicadas):
+
+```text
+#### Added
+- Novo `AdsDatePicker` para seleção por teclado e mouse, com mensagens de erro acessíveis. (#123)
+
+#### Changed
+- BREAKING: `AdsDialog` passa a exigir `title`; migre os usos existentes para informar o título acessível. (#124)
+
+#### Deprecated
+- `oldSize` foi desaconselhado; use `size`. A remoção será anunciada em outra versão. (#125)
+
+#### Removed
+- Removido o export `LegacyButton`; substitua por `AdsButton` antes de atualizar. (#126)
+
+#### Fixed
+- Corrigida a perda de foco ao fechar `AdsPopover` com Escape. (#127)
+
+#### Security
+- Corrigida exposição acidental de dados de entrada em mensagem de erro público. (#128)
+```
+
+**Exemplo de exclusão:** “Refatoração do pipeline, atualização de action e reorganização dos testes (#129)” fica documentada na PR/issue e **não** no changelog se não modificar o pacote entregue. Se a alteração impactar a instalação, a nota pública descreve a compatibilidade ou a correção de publicação observada.
+
+### Formato, crescimento e compatibilidade com os comandos
+
+**Decisão atual: manter o formato existente.** O cabeçalho `### [X.Y.Z] - Em andamento` é o único bloco editável e `### [X.Y.Z] - dd-mmm-aaaa` identifica versões fechadas. A data é gerada em `America/Sao_Paulo`. Não substituir automaticamente pelo `## [Unreleased]` ou por datas ISO `YYYY-MM-DD`: `parseChangelog`, `release:prepare`, `release:validate` e verificações de back-merge dependem desse contrato; formatos mistos exigiriam migração e testes de regressão, em conflito com a preservação do histórico. O formato atual é uma adaptação documentada do Keep a Changelog.
+
+**Links de comparação:** podem facilitar a navegação depois que ambas as tags existirem, mas links gerados para um alvo ainda não publicado podem apontar para tags inexistentes. Nesta issue não serão introduzidos nem exigidos; se adotados futuramente, definir política para bootstrap/tags, testar extração e não editar blocos fechados. **Arquivamento** em múltiplos arquivos não é necessário enquanto a leitura e a extração de qualquer versão forem confiáveis; avaliar somente com ganho medido, estratégia de índice e migração testada.
+
+- **`CHANGELOG.md`:** uma seção em andamento, versões fechadas intocadas e ordem SemVer decrescente.
+- **`release:changelog`:** prévia sem escrita, limite de 300 caracteres, duplicidade por issue e aprovação humana por hash do texto exato.
+- **`release:prepare`:** exige aprovação válida, fecha a versão com data local oficial e abre novo placeholder patch.
+- **`release:validate`:** confere versão coordenada, bloco fechado e integridade da aprovação.
+- **`release:notes`:** extrai somente o bloco fechado correspondente, omitindo apenas o comentário HTML de aprovação.
+- **GitHub Releases:** o corpo equivale às notas extraídas, normalizando apenas CRLF/LF e newline final.
+- **Back-merge:** preserva o bloco fechado da release e mantém novas entradas de `develop` na seção em andamento.
+
+Nenhum script, regex, versão fechada ou aprovação existente muda por esta política. Se uma evolução futura alterar parser, extração, aprovação, comparação de notas ou o formato, será obrigatória uma change específica com testes de múltiplas versões (incluindo histórico longo), preservação integral dos blocos fechados e hashes, extração/equivalência das notas e back-merge.
+
 ## CI de Pull Requests draft
 
 Enquanto um Pull Request estiver em **Draft**, os jobs automáticos de PR ficam skipped: quality, build, E2E, `release-check` e `develop-policy`.

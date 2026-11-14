@@ -4,7 +4,9 @@ Aqui são registradas as principais inclusões, correções e evoluções do Adm
 Design System.
 
 O formato segue as convenções do Keep a Changelog. As mudanças são organizadas
-por versão e pelas changes correspondentes do OpenSpec.
+por versão e pelas changes correspondentes do OpenSpec. Consulte a
+[política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286)
+para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.3] - Em andamento
 

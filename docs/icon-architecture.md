@@ -96,5 +96,7 @@ O conjunto interno e suas **notices existentes não foram substituídos**: consu
 ### Desempenho e verificações
 
 - Import seletivo evita que o ADS incorpore um catálogo. `sideEffects` do pacote `components` continua restrito ao CSS distribuído.
-- A verificação quantitativa exige build e ferramenta de análise/pack: medir `components` isolado, Storybook com dois fornecedores e alternativa local. **Resultados de bundle/footprint ainda não medidos nesta documentação**; números não são inferidos de manifests.
+- Medição CI de 14/11/2026 ([execução #43624407692](https://github.com/dvmarques/admin-design-system/actions/runs/43624407692), SHA `b8036a0`, Linux): `components` dist total **698.865 B**; JS/CSS publicados **302.894 B** (teto 303.500 B); gzip por arquivo **90.877 B** (teto 91.000 B). `admin` total **353.676 B**; JS/CSS **170.970 B** e gzip **46.503 B**.
+- Cenários públicos com esbuild minificado/tree-shaking: `components-public` **33.417 B / 11.882 B gzip** (tetos 33.420 / 12.000 B), `admin-public` **71.439 B / 24.050 B gzip** (tetos 71.800 / 24.200 B). Esses cenários não importam catálogos externos; presença de `AdsIconSlot` no pacote não força sua inclusão no consumo seletivo. O Storybook com Lucide e Heroicons foi construído no Pages, mas os bytes de cada fornecedor **não foram medidos individualmente**.
+- São números de distribuição e cenários de referência, não bytes transferidos por navegação. As licenças de exemplos opcionais permanecem no ambiente de desenvolvimento.
 - Gates de aceite: `npm run format`, lint, build, typecheck, test:quality, E2E, check de OpenSpec strict, inspeção dos visual diffs e CI por SHA. Um build pulado não comprova conformidade.

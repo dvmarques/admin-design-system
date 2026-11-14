@@ -19,7 +19,7 @@ Inventário feito nos caminhos citados, nas publicações de Next/Storybook e na
 
 Todos os documentos Next e os dois HTMLs de entrada do Storybook recebem:
 
-```html
+```text
 <meta http-equiv="Content-Security-Policy" content="object-src 'none'; base-uri 'self'; form-action 'self'" />
 <meta name="referrer" content="strict-origin-when-cross-origin" />
 ```

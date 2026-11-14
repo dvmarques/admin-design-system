@@ -2,6 +2,10 @@ name: Auditoria visual
 
 on:
   workflow_dispatch:
+  # Acionamento temporário exclusivamente para validar a PR #323 antes de Ready.
+  push:
+    branches:
+      - feat/152-visual-coverage-matrix
 
 permissions:
   contents: read
@@ -26,11 +30,14 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - run: npm run build --workspace @dvmarques/admin-ds-tokens
-      - run: npm run build --workspace @dvmarques/admin-ds-components
-      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
-      - run: npm run build --workspace @dvmarques/admin-ds-admin
-      - run: npm run build --workspace @admin-ds/admin-demo
+      - run: npm run format
+      - run: npm run lint
+      - run: npm run build
+      - run: npm run typecheck
+      - run: node --test ./scripts/visual-audit-coverage.test.mjs ./scripts/visual-audit-coverage-report.test.mjs
+      - run: npm run test:quality
+      - run: npm run test:e2e
+      - run: npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive
       - name: Auditar catálogo
         run: npm run audit:visual
       - name: Publicar capturas e relatórios

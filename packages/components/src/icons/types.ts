@@ -5,8 +5,10 @@ export type AdsIconName = keyof typeof iconPaths;
 export type AdsIconSize = 'sm' | 'md' | 'lg';
 
 /** A rendered SVG or React icon supplied by the consumer; no required icon library. */
-export interface AdsIconSlotProps
-	extends Omit<HTMLAttributes<HTMLSpanElement>, 'children' | 'role' | 'aria-label' | 'aria-hidden'> {
+export interface AdsIconSlotProps extends Omit<
+	HTMLAttributes<HTMLSpanElement>,
+	'children' | 'role' | 'aria-label' | 'aria-hidden'
+> {
 	icon: ReactNode;
 	/** Accessible name for informative icons; without it, the slot is decorative. */
 	label?: string;

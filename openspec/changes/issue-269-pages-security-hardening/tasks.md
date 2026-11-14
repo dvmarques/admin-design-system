@@ -1,7 +1,7 @@
 ## 1. Diagnóstico e especificação
 
 - [x] 1.1 Revisar issue #269, fontes principais, limite do Pages, perfil Critical e regras do repositório.
-- [ ] 1.2 Revisar a proposta, design e delta de spec; validar OpenSpec 1.15.0 em modo estrito.
+- [x] 1.2 Revisar a proposta, design e delta de spec; validar OpenSpec 1.15.0 em modo estrito.
 
 ## 2. Segurança compatível com hospedagem estática
 
@@ -12,6 +12,6 @@
 ## 3. Regressão e entrega
 
 - [x] 3.1 Adicionar testes de contrato e do build estático (CSP, meta referrer, links, tema, login e destaque de código).
-- [ ] 3.2 Executar formatação, lint, build, types, qualidade, E2E principal/Pages e OpenSpec estrito sem falha.
-- [ ] 3.3 Revisar diff, abrir PR para develop e verificar CI Ready/Pages/Security nos checks efetivamente executados.
-- [ ] 3.4 Revisar feedback e corrigir regressões sem relaxamento injustificado; marcar somente tarefas com evidência.
+- [x] 3.2 Executar formatação, lint, build, types, qualidade, E2E principal/Pages e OpenSpec estrito sem falha.
+- [x] 3.3 Revisar diff, abrir PR para develop e verificar CI Ready/Pages/Security nos checks efetivamente executados.
+- [x] 3.4 Revisar feedback e corrigir regressões sem relaxamento injustificado; marcar somente tarefas com evidência.

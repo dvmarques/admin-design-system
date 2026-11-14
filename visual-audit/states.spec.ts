@@ -99,7 +99,7 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 	}
 	if (action === 'checkbox-selected') {
 		const checkbox = preview.getByRole('checkbox', { name: 'sm' });
-		await checkbox.check();
+		await preview.getByText('sm', { exact: true }).click();
 		await expect(checkbox).toBeChecked();
 		checks.push('checked-semantic-state');
 		return;

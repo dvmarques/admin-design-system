@@ -49,11 +49,14 @@ export function analyzeStateCoverage({ matrix, entries, folder }) {
 	const components = entries.map((entry) => {
 		const configured = matrix.components[entry.name];
 		const profile = matrix.profiles[configured.profile];
+		const statesApplicable = configured.states ?? profile.states;
+		const statesNotApplicable = { ...profile.notApplicable, ...configured.notApplicable };
+		for (const state of statesApplicable) delete statesNotApplicable[state];
 		const planned = results.filter((result) => result.name === entry.name);
 		return {
 			name: entry.name, route: entry.route, group: entry.group, profile: configured.profile,
-			statesApplicable: profile.states,
-			statesNotApplicable: profile.notApplicable,
+			statesApplicable,
+			statesNotApplicable,
 			viewports: profile.viewports, themes: ['light', 'dark'],
 			inspections: profile.checks,
 			plannedScenarioIds: planned.map((result) => result.id),

@@ -10,6 +10,7 @@ import {
 } from 'react';
 import { classNames } from './class-names.js';
 import { AdsIcon } from './icon.js';
+import { AdsIconSlot } from './icons/slot.js';
 
 const variants = {
 	info: { box: 'bg-info-background border-info-border', foreground: 'text-info', icon: 'info' },
@@ -57,6 +58,8 @@ export interface AdsAlertProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
 	children?: ReactNode;
 	actions?: ReactNode;
 	icon?: ReactNode | null;
+	/** Optional close-button artwork; default remains the internal close icon. */
+	closeIcon?: ReactNode;
 	variant?: AdsAlertVariant;
 	appearance?: AdsAlertAppearance;
 	dismissible?: boolean;
@@ -77,6 +80,7 @@ export function AdsAlert({
 	children,
 	actions,
 	icon,
+	closeIcon,
 	variant = 'info',
 	appearance = 'compact',
 	dismissible = false,
@@ -174,7 +178,11 @@ export function AdsAlert({
 					onClick={handleClose}
 					type="button"
 				>
-					<AdsIcon name="close" size="sm" />
+					{closeIcon === undefined ? (
+						<AdsIcon name="close" size="sm" />
+					) : closeIcon === null || typeof closeIcon === 'boolean' ? null : (
+						<AdsIconSlot icon={closeIcon} size="sm" />
+					)}
 				</button>
 			) : null}
 		</div>

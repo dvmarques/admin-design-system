@@ -1,2 +1,3 @@
 export { AdsIcon } from './icon.js';
-export type { AdsIconName, AdsIconProps, AdsIconSize } from './types.js';
+export { AdsIconSlot } from './slot.js';
+export type { AdsIconName, AdsIconProps, AdsIconSize, AdsIconSlotProps } from './types.js';

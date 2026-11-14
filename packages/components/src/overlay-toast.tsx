@@ -3,6 +3,7 @@
 import type { HTMLAttributes, ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { AdsIcon } from './icon.js';
+import { AdsIconSlot } from './icons/slot.js';
 import { OverlayPortal } from './overlay-utils.js';
 import { AdsTypography } from './typography.js';
 
@@ -21,6 +22,8 @@ export interface AdsToastProps extends Omit<HTMLAttributes<HTMLDivElement>, 'tit
 	open?: boolean;
 	onClose?: () => void;
 	closeLabel?: string;
+	/** Optional close-button artwork; default remains the internal close icon. */
+	closeIcon?: ReactNode;
 	dismissible?: boolean;
 }
 
@@ -28,6 +31,7 @@ export function AdsToast({
 	children,
 	className,
 	closeLabel = 'Fechar notificação',
+	closeIcon,
 	dismissible = true,
 	onClose,
 	open = true,
@@ -60,7 +64,11 @@ export function AdsToast({
 						onClick={onClose}
 						type="button"
 					>
-						<AdsIcon name="close" size="sm" />
+						{closeIcon === undefined ? (
+							<AdsIcon name="close" size="sm" />
+						) : closeIcon === null || typeof closeIcon === 'boolean' ? null : (
+							<AdsIconSlot icon={closeIcon} size="sm" />
+						)}
 					</button>
 				) : null}
 			</div>

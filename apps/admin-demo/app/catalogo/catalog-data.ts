@@ -33,6 +33,14 @@ export const catalogEntries = [
 		href: '/catalogo/icon',
 	},
 	{
+		name: 'AdsIconSlot',
+		group: 'Básicos',
+		slug: 'icon-slot',
+		demo: 'Icon',
+		description: 'Composição de ícones React ou SVG locais com acessibilidade.',
+		href: '/catalogo/icon-slot',
+	},
+	{
 		name: 'AdsTypography',
 		group: 'Básicos',
 		slug: 'typography',

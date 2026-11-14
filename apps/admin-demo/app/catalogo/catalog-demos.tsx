@@ -12,6 +12,7 @@ import {
 	AdsBadge,
 	AdsAvatar,
 	AdsIcon,
+	AdsIconSlot,
 	AdsTypography,
 	AdsSurface,
 	AdsLoadingIndicator,
@@ -158,6 +159,23 @@ export function IconDemo() {
 			))}
 			<AdsIcon name="search" />
 			<span>Busca (ícone decorativo)</span>
+			<AdsIconSlot
+				icon={
+					<svg
+						aria-hidden="true"
+						fill="none"
+						height="20"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						width="20"
+					>
+						<rect height="16" rx="2" width="16" x="4" y="4" />
+						<path d="M4 10h16" />
+					</svg>
+				}
+				label="Pacote local"
+			/>
+			<span>SVG local no slot genérico</span>
 		</>
 	);
 }

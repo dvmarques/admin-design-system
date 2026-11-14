@@ -1,6 +1,7 @@
 import { Buffer } from 'node:buffer';
-import { readFileSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 import { loadCoverage } from './visual-audit-coverage.mjs';
 
 const escapeCell = (value) =>
@@ -8,6 +9,16 @@ const escapeCell = (value) =>
 		.replaceAll('|', '\\|')
 		.replaceAll('\n', ' ');
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
+/** Escrita atômica: evita corrida entre leitura e gravação no mesmo caminho (CodeQL js/file-system-race). */
+const writeTextAtomically = (file, content) => {
+	const temporary = join(dirname(file), '.' + basename(file) + '.' + randomUUID() + '.tmp');
+	try {
+		writeFileSync(temporary, content, { flag: 'wx' });
+		renameSync(temporary, file);
+	} finally {
+		rmSync(temporary, { force: true });
+	}
+};
 const pngSignature = Buffer.from('89504e470d0a1a0a', 'hex');
 const hasValidPngHeader = (path) => {
 	try {
@@ -130,7 +141,7 @@ export function buildStateCoverageReport(project = process.cwd()) {
 		note: 'Aprovação objetiva não equivale à revisão visual humana, WCAG completa ou zoom nativo 200%.',
 		...coverage,
 	};
-	writeFileSync(join(folder, 'coverage-report.json'), JSON.stringify(report, null, 2) + '\n');
+	writeTextAtomically(join(folder, 'coverage-report.json'), JSON.stringify(report, null, 2) + '\n');
 	const s = report.summary;
 	const lines = [
 		'# Matriz de cobertura visual — relatório de execução',
@@ -217,19 +228,22 @@ export function buildStateCoverageReport(project = process.cwd()) {
 		'Capturas do estado inicial: report.md e report.json. Zoom nativo 200% e avaliação humana não executados por esta suíte.',
 		'',
 	);
-	writeFileSync(join(folder, 'coverage-report.md'), lines.join('\n'));
+	writeTextAtomically(join(folder, 'coverage-report.md'), lines.join('\n'));
 	const initialJson = join(folder, 'report.json');
 	try {
 		const initial = readJson(initialJson);
 		initial.stateCoverage = summaryForInitial(report);
-		writeFileSync(initialJson, JSON.stringify(initial, null, 2) + '\n');
+		writeTextAtomically(initialJson, JSON.stringify(initial, null, 2) + '\n');
 	} catch (error) {
 		if (error?.code !== 'ENOENT') throw error;
 	}
 	const initialMd = join(folder, 'report.md');
 	try {
 		const before = readFileSync(initialMd, 'utf8');
-		writeFileSync(initialMd, upsertStateCoverageSection(before, buildStateCoverageSection(s)));
+		writeTextAtomically(
+			initialMd,
+			upsertStateCoverageSection(before, buildStateCoverageSection(s)),
+		);
 	} catch (error) {
 		if (error?.code !== 'ENOENT') throw error;
 	}

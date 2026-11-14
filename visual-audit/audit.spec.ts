@@ -53,7 +53,8 @@ for (const theme of ['light', 'dark'] as const) {
 				};
 				try {
 					const response = await page.goto(entry.href, { waitUntil: 'domcontentloaded' });
-					if (!response?.ok()) throw new Error('HTTP ' + String(response?.status() ?? 'sem resposta'));
+					if (!response?.ok())
+						throw new Error('HTTP ' + String(response?.status() ?? 'sem resposta'));
 					await expect(
 						page.getByRole('heading', { name: entry.name, exact: true, level: 1 }),
 					).toBeVisible({ timeout: 15000 });
@@ -74,13 +75,19 @@ for (const theme of ['light', 'dark'] as const) {
 					// Sinais geométricos: pistas para revisão, NÃO defeitos confirmados.
 					const metrics = await preview.evaluate((element) => {
 						const frame = element.getBoundingClientRect();
-						const controls = [...element.querySelectorAll<HTMLElement>(
-							'button, input, select, textarea, [role="button"], [role="combobox"]',
-						)].filter((node) => {
+						const controls = [
+							...element.querySelectorAll<HTMLElement>(
+								'button, input, select, textarea, [role="button"], [role="combobox"]',
+							),
+						].filter((node) => {
 							const style = getComputedStyle(node);
 							const rect = node.getBoundingClientRect();
-							return style.display !== 'none' && style.visibility !== 'hidden' &&
-								rect.width > 0 && rect.height > 0;
+							return (
+								style.display !== 'none' &&
+								style.visibility !== 'hidden' &&
+								rect.width > 0 &&
+								rect.height > 0
+							);
 						});
 						const outOfBounds = controls.filter((node) => {
 							const rect = node.getBoundingClientRect();
@@ -88,14 +95,17 @@ for (const theme of ['light', 'dark'] as const) {
 						}).length;
 						const clippedLabels = controls.filter((node) => {
 							const style = getComputedStyle(node);
-							return node.clientWidth > 0 && node.scrollWidth > node.clientWidth + 2 &&
-								style.overflowX !== 'auto' && style.overflowX !== 'scroll';
+							return (
+								node.clientWidth > 0 &&
+								node.scrollWidth > node.clientWidth + 2 &&
+								style.overflowX !== 'auto' &&
+								style.overflowX !== 'scroll'
+							);
 						}).length;
 						return {
-							documentOverflowPx: Math.max(
-								document.documentElement.scrollWidth,
-								document.body?.scrollWidth ?? 0,
-							) - window.innerWidth,
+							documentOverflowPx:
+								Math.max(document.documentElement.scrollWidth, document.body?.scrollWidth ?? 0) -
+								window.innerWidth,
 							previewOverflowPx: element.scrollWidth - element.clientWidth,
 							controlsOutOfBounds: outOfBounds,
 							controlsWithOverflow: clippedLabels,
@@ -111,21 +121,25 @@ for (const theme of ['light', 'dark'] as const) {
 					if (metrics.previewOverflowPx > 2) {
 						sample.signals.push({
 							code: 'preview-overflow',
-							detail: 'Área do exemplo apresenta ' + metrics.previewOverflowPx +
+							detail:
+								'Área do exemplo apresenta ' +
+								metrics.previewOverflowPx +
 								'px de conteúdo horizontal extra; pode ser rolagem intencional',
 						});
 					}
 					if (metrics.controlsOutOfBounds > 0) {
 						sample.signals.push({
 							code: 'control-bounds',
-							detail: String(metrics.controlsOutOfBounds) +
+							detail:
+								String(metrics.controlsOutOfBounds) +
 								' controles excedem as bordas do exemplo; validar layout/rolagem',
 						});
 					}
 					if (metrics.controlsWithOverflow > 0) {
 						sample.signals.push({
 							code: 'control-text-overflow',
-							detail: String(metrics.controlsWithOverflow) +
+							detail:
+								String(metrics.controlsWithOverflow) +
 								' controles têm scrollWidth acima de clientWidth; validar truncamento intencional',
 						});
 					}
@@ -142,7 +156,10 @@ for (const theme of ['light', 'dark'] as const) {
 				JSON.stringify({ theme, width: viewport.width, samples }, null, 2) + '\n',
 			);
 			// Falhas de execução quebram a suíte; sinais de geometria exigem revisão humana.
-			expect(samples.filter((sample) => sample.error), 'rotas/capturas com falha').toHaveLength(0);
+			expect(
+				samples.filter((sample) => sample.error),
+				'rotas/capturas com falha',
+			).toHaveLength(0);
 		});
 	}
 }

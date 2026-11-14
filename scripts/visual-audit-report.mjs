@@ -7,7 +7,8 @@ export const auditWidths = [390, 1440];
 function inventoryNames(root) {
 	const source = readFileSync(join(root, 'docs/visual-audit-152-inventory.md'), 'utf8');
 	const tick = String.fromCharCode(96);
-	const names = source.split(/\r?\n/)
+	const names = source
+		.split(/\r?\n/)
 		.filter((line) => line.startsWith('| ' + tick))
 		.map((line) => line.split('|')[1].trim().replaceAll(tick, ''));
 	if (names.length === 0 || new Set(names).size !== names.length) {
@@ -17,7 +18,9 @@ function inventoryNames(root) {
 }
 
 function escapeCell(value) {
-	return String(value ?? '').replaceAll('|', '\\|').replaceAll('\n', ' ');
+	return String(value ?? '')
+		.replaceAll('|', '\\|')
+		.replaceAll('\n', ' ');
 }
 
 export function buildVisualAuditReport({
@@ -52,8 +55,12 @@ export function buildVisualAuditReport({
 			}
 			for (const sample of run.samples) {
 				const key = sample.name + '/' + theme + '/' + width;
-				if (!names.includes(sample.name) || captured.has(key) ||
-					sample.theme !== theme || sample.width !== width) {
+				if (
+					!names.includes(sample.name) ||
+					captured.has(key) ||
+					sample.theme !== theme ||
+					sample.width !== width
+				) {
 					runProblems.push('Amostra inesperada/duplicada: ' + key);
 					continue;
 				}
@@ -67,13 +74,15 @@ export function buildVisualAuditReport({
 			for (const width of widths) {
 				const key = name + '/' + theme + '/' + width;
 				const sample = captured.get(key);
-				const hasScreenshot = sample?.screenshot &&
-					existsSync(join(folder, sample.screenshot));
+				const hasScreenshot = sample?.screenshot && existsSync(join(folder, sample.screenshot));
 				const signals = Array.isArray(sample?.signals) ? sample.signals : [];
-				const status = !sample ? 'não executado'
-					: sample.error || !hasScreenshot ? 'falha na captura'
-					: signals.length ? 'revisão necessária'
-					: 'sem sinais automatizados';
+				const status = !sample
+					? 'não executado'
+					: sample.error || !hasScreenshot
+						? 'falha na captura'
+						: signals.length
+							? 'revisão necessária'
+							: 'sem sinais automatizados';
 				results.push({
 					name,
 					theme,
@@ -127,7 +136,9 @@ export function buildVisualAuditReport({
 		'',
 		'## Pendências de execução',
 		'',
-		...(runProblems.length ? runProblems.map((message) => '- ' + message) : ['Nenhum manifesto ausente ou inválido.']),
+		...(runProblems.length
+			? runProblems.map((message) => '- ' + message)
+			: ['Nenhum manifesto ausente ou inválido.']),
 		'',
 		'## Sinais e falhas para investigar',
 		'',
@@ -136,11 +147,25 @@ export function buildVisualAuditReport({
 	];
 	const suspicious = results.filter((r) => r.status !== 'sem sinais automatizados');
 	for (const entry of suspicious) {
-		const details = [entry.error, ...entry.signals.map((signal) => signal.code + ': ' + signal.detail)]
-			.filter(Boolean).join('; ') || 'Sem dados';
-		markdown.push('| ' + escapeCell(entry.name) + ' | ' + entry.theme + ' | ' + entry.width +
-			'px | ' + entry.status + ' | ' + escapeCell(details) + ' | ' +
-			(entry.screenshot ? '[PNG](' + entry.screenshot + ')' : '—') + ' |');
+		const details =
+			[entry.error, ...entry.signals.map((signal) => signal.code + ': ' + signal.detail)]
+				.filter(Boolean)
+				.join('; ') || 'Sem dados';
+		markdown.push(
+			'| ' +
+				escapeCell(entry.name) +
+				' | ' +
+				entry.theme +
+				' | ' +
+				entry.width +
+				'px | ' +
+				entry.status +
+				' | ' +
+				escapeCell(details) +
+				' | ' +
+				(entry.screenshot ? '[PNG](' + entry.screenshot + ')' : '—') +
+				' |',
+		);
 	}
 	if (suspicious.length === 0) markdown.push('| — | — | — | — | Nenhuma suspeita automática | — |');
 	markdown.push(
@@ -151,16 +176,40 @@ export function buildVisualAuditReport({
 		'| --- | --- | --- | --- | --- |',
 	);
 	for (const entry of results) {
-		markdown.push('| ' + escapeCell(entry.name) + ' | ' + entry.theme + ' | ' +
-			entry.width + 'px | ' + entry.status + ' | ' +
-			(entry.screenshot ? '[PNG](' + entry.screenshot + ')' : '—') + ' |');
+		markdown.push(
+			'| ' +
+				escapeCell(entry.name) +
+				' | ' +
+				entry.theme +
+				' | ' +
+				entry.width +
+				'px | ' +
+				entry.status +
+				' | ' +
+				(entry.screenshot ? '[PNG](' + entry.screenshot + ')' : '—') +
+				' |',
+		);
 	}
-	markdown.push('', 'Os estados hover, focus, erro, disabled, loading, zoom 200% e revisão manual ' +
-		'continuam pendentes quando não houver inspeção específica. Consulte docs/visual-audit-152.md.', '');
+	markdown.push(
+		'',
+		'Os estados hover, focus, erro, disabled, loading, zoom 200% e revisão manual ' +
+			'continuam pendentes quando não houver inspeção específica. Consulte docs/visual-audit-152.md.',
+		'',
+	);
 	writeFileSync(join(folder, 'report.md'), markdown.join('\n'));
-	console.log('Auditoria #152: ' + summary.captured + '/' + expected +
-		' capturas; ' + summary.review + ' para revisão, ' +
-		summary.failed + ' falhas, ' + summary.missing + ' não executadas.');
+	console.log(
+		'Auditoria #152: ' +
+			summary.captured +
+			'/' +
+			expected +
+			' capturas; ' +
+			summary.review +
+			' para revisão, ' +
+			summary.failed +
+			' falhas, ' +
+			summary.missing +
+			' não executadas.',
+	);
 	return report;
 }
 

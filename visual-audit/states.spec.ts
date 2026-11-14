@@ -84,7 +84,7 @@ async function performAction(page: Page, preview: Locator, scenario: Scenario, c
 	}
 	if (action === 'input-error' || action === 'input-success') {
 		const name = action === 'input-error' ? 'Inválido' : 'Válido';
-		const field = preview.getByRole('textbox', { name });
+		const field = preview.getByRole('textbox', { name, exact: true });
 		await expect(field).toBeVisible();
 		if (action === 'input-error') {
 			await expect(field).toHaveAttribute('aria-invalid', 'true');

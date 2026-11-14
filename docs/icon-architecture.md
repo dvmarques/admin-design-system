@@ -37,24 +37,33 @@ import { Truck } from 'lucide-react'; // opcional: instalação feita pela aplic
 import { BellIcon } from '@heroicons/react/24/outline'; // opcional: segunda alternativa
 
 const Local = () => (
-  <svg width={20} height={20} viewBox="0 0 24 24" fill="none" stroke="currentColor" aria-hidden="true">
-    <path d="M4 4h16v16H4z" />
-  </svg>
+	<svg
+		width={20}
+		height={20}
+		viewBox="0 0 24 24"
+		fill="none"
+		stroke="currentColor"
+		aria-hidden="true"
+	>
+		<path d="M4 4h16v16H4z" />
+	</svg>
 );
 
 export function Sample() {
-  return (
-    <>
-      <AdsIcon name="user" />
-      <AdsButton><Truck size={18} aria-hidden="true" /> Entregas</AdsButton>
-      <AdsIconSlot icon={<BellIcon width={20} height={20} />} />
-      <AdsIconSlot icon={<Local />} label="Pacote" size="lg" />
-      <AdsThemeControl
-        variant="group"
-        icons={{ light: <Truck size={20} />, dark: <BellIcon width={20} />, system: <Local /> }}
-      />
-    </>
-  );
+	return (
+		<>
+			<AdsIcon name="user" />
+			<AdsButton>
+				<Truck size={18} aria-hidden="true" /> Entregas
+			</AdsButton>
+			<AdsIconSlot icon={<BellIcon width={20} height={20} />} />
+			<AdsIconSlot icon={<Local />} label="Pacote" size="lg" />
+			<AdsThemeControl
+				variant="group"
+				icons={{ light: <Truck size={20} />, dark: <BellIcon width={20} />, system: <Local /> }}
+			/>
+		</>
+	);
 }
 ```
 
@@ -70,17 +79,17 @@ export function Sample() {
 
 ### Inventário de pontos fixos e prioridade
 
-| Componente/ponto | Estado do contrato | Diretriz |
-| --- | --- | --- |
-| `AdsIcon` | 20 nomes internos, sem alteração | Fallback compatível; sem catálogo obrigatório |
-| `AdsButton`, navegação `AdsNav`, `AdsBreadcrumb` | Composição por `children`, `label` ou separador `ReactNode` | Não criar prop redundante |
-| `AdsAlert` | `icon?: ReactNode\|null` já existia; novo `closeIcon?: ReactNode` | Default interno e acessibilidade de fechar preservados |
-| `AdsToast` | `closeIcon?: ReactNode` | Default de fechar preservado |
-| `AdsThemeControl` | `icons?: Partial<Record<AdsThemePreference, ReactNode>>` | `light/dark/system` e fallback por chave |
-| `AdsAccountMenu` (ações) | `icon?: AdsIconName` original; `iconNode?: ReactNode` | Precedência do nó externo; `null` remove desenho |
-| `AdsAdminShell` (ícones de navegação) | nós definidos no consumidor | Compor sem impor fonte |
-| `AdsCombobox`, `AdsAutocomplete`, `AdsDatePicker`, `AdsTimePicker`, overlays, switcher e notificações | ícones de controles e estados internos | Avaliar override sob demanda; não alterar em massa sem demanda |
-| `AdsSelect` | select nativo/estilização CSS | Preservar semântica nativa; não injetar ícone em `select` |
+| Componente/ponto                                                                                      | Estado do contrato                                                | Diretriz                                                       |
+| ----------------------------------------------------------------------------------------------------- | ----------------------------------------------------------------- | -------------------------------------------------------------- |
+| `AdsIcon`                                                                                             | 20 nomes internos, sem alteração                                  | Fallback compatível; sem catálogo obrigatório                  |
+| `AdsButton`, navegação `AdsNav`, `AdsBreadcrumb`                                                      | Composição por `children`, `label` ou separador `ReactNode`       | Não criar prop redundante                                      |
+| `AdsAlert`                                                                                            | `icon?: ReactNode\|null` já existia; novo `closeIcon?: ReactNode` | Default interno e acessibilidade de fechar preservados         |
+| `AdsToast`                                                                                            | `closeIcon?: ReactNode`                                           | Default de fechar preservado                                   |
+| `AdsThemeControl`                                                                                     | `icons?: Partial<Record<AdsThemePreference, ReactNode>>`          | `light/dark/system` e fallback por chave                       |
+| `AdsAccountMenu` (ações)                                                                              | `icon?: AdsIconName` original; `iconNode?: ReactNode`             | Precedência do nó externo; `null` remove desenho               |
+| `AdsAdminShell` (ícones de navegação)                                                                 | nós definidos no consumidor                                       | Compor sem impor fonte                                         |
+| `AdsCombobox`, `AdsAutocomplete`, `AdsDatePicker`, `AdsTimePicker`, overlays, switcher e notificações | ícones de controles e estados internos                            | Avaliar override sob demanda; não alterar em massa sem demanda |
+| `AdsSelect`                                                                                           | select nativo/estilização CSS                                     | Preservar semântica nativa; não injetar ícone em `select`      |
 
 O conjunto interno e suas **notices existentes não foram substituídos**: consulte `docs/icons-license-audit.md` e `THIRD_PARTY_NOTICES.md`. SVG local do exemplo é desenho de demonstração, e bibliotecas de exemplo mantêm suas próprias licenças em seu ambiente de desenvolvimento.
 

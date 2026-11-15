@@ -115,3 +115,13 @@ test('manifestos incoerentes e identificadores repetidos nunca aprovam', () => {
 		/duplicado/,
 	);
 });
+
+test('falha após captura conserva screenshot como evidência sem aprovar cenário', () => {
+	const folder = fixture();
+	evidence(folder, scenario, { status: 'failed', error: 'Escape não devolveu o foco' });
+	screenshot(folder, 'button-tab-light-390.png');
+	const report = analyzeAccessibilityEvidence({ scenarios: [scenario], entries, folder });
+	assert.equal(report.summary.failed, 1);
+	assert.equal(report.summary.automaticPass, 0);
+	assert.equal(report.results[0].screenshot, 'screenshots/a11y/button-tab-light-390.png');
+});

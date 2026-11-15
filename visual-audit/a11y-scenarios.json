@@ -1,0 +1,128 @@
+{
+	"version": 1,
+	"note": "Seleção focalizada; zoom native probe nunca se confunde com reflow. Aprovação automatizada não é revisão visual humana.",
+	"scenarios": [
+		{
+			"id": "button-tab",
+			"name": "AdsButton",
+			"state": "keyboard",
+			"theme": "light",
+			"width": 390,
+			"action": "tab-order"
+		},
+		{
+			"id": "button-reverse",
+			"name": "AdsButton",
+			"state": "keyboard",
+			"theme": "dark",
+			"width": 768,
+			"action": "reverse-tab"
+		},
+		{
+			"id": "tabs-arrows",
+			"name": "AdsTabs",
+			"state": "keyboard",
+			"theme": "dark",
+			"width": 768,
+			"action": "tab-arrows"
+		},
+		{
+			"id": "dialog-light",
+			"name": "AdsDialog",
+			"state": "overlay",
+			"theme": "light",
+			"width": 390,
+			"action": "dialog"
+		},
+		{
+			"id": "dialog-dark",
+			"name": "AdsDialog",
+			"state": "overlay",
+			"theme": "dark",
+			"width": 320,
+			"action": "dialog"
+		},
+		{
+			"id": "drawer-narrow",
+			"name": "AdsDrawer",
+			"state": "overlay",
+			"theme": "dark",
+			"width": 320,
+			"action": "drawer"
+		},
+		{
+			"id": "dropdown-keys",
+			"name": "AdsDropdown",
+			"state": "overlay",
+			"theme": "light",
+			"width": 390,
+			"action": "dropdown"
+		},
+		{
+			"id": "popover-escape",
+			"name": "AdsPopover",
+			"state": "overlay",
+			"theme": "dark",
+			"width": 390,
+			"action": "popover"
+		},
+		{
+			"id": "shell-mobile",
+			"name": "AdsAdminShell",
+			"state": "navigation",
+			"theme": "dark",
+			"width": 320,
+			"action": "shell"
+		},
+		{
+			"id": "table-reflow",
+			"name": "AdsSmartTable",
+			"state": "reflow",
+			"theme": "dark",
+			"width": 320,
+			"action": "reflow"
+		},
+		{
+			"id": "dialog-reflow",
+			"name": "AdsDialog",
+			"state": "reflow",
+			"theme": "light",
+			"width": 320,
+			"action": "reflow-dialog"
+		},
+		{
+			"id": "reduced-motion",
+			"name": "AdsButton",
+			"state": "preference",
+			"theme": "dark",
+			"width": 390,
+			"action": "focus-preference",
+			"media": "reduced-motion"
+		},
+		{
+			"id": "forced-colors",
+			"name": "AdsButton",
+			"state": "preference",
+			"theme": "light",
+			"width": 768,
+			"action": "focus-preference",
+			"media": "forced-colors"
+		},
+		{
+			"id": "zoom-native-light",
+			"name": "AdsDialog",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-native-dark",
+			"name": "AdsSmartTable",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
+		}
+	]
+}

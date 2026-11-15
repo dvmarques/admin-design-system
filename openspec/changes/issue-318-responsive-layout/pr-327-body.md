@@ -3,7 +3,7 @@
 | Papel                                       | SHA                                        | Observação                                                                                               |
 | ------------------------------------------- | ------------------------------------------ | -------------------------------------------------------------------------------------------------------- |
 | **Código / CI**                             | `452283bc9d94a0a6ac78c71c69d174a141600b06` | Último commit com alteração de implementação (demo/CSS). Gates automatizados verificados aqui.           |
-| **HEAD final (docs OpenSpec + inventário)** | _preencher após push desta R1_             | Commits só de documentação/evidências; **não** redefinem o veredito de CI já obtido no SHA de código/CI. |
+| **HEAD final (docs OpenSpec + inventário)** | `546968415c57e5a4d2cb7fcc2d88ad1ce364f4f3` | Commits só de documentação/evidências; **não** redefinem o veredito de CI já obtido no SHA de código/CI. |
 
 ## Contexto e decisão (#318; épico #315)
 

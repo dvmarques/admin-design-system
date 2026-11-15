@@ -22,6 +22,12 @@ Referência de **código/CI** (não autorreferencial a commits só de documenta�
 - [ ] Inspeção humana das capturas da auditoria focal — **24/24 capturas automatizadas** inspecionadas pelo agente ([artefato #14176183377](https://github.com/dvmarques/admin-design-system/actions/runs/43751285029/artifacts/14176183377), SHA `ca6b042`); aceite visual humano e matriz `docs/visual-audit-inventory.md` permanecem **Pendente** (Daniel).
 - [ ] Zoom real 200% e leitor de tela (humano) — viewport estreita e E2E não substituem; task 9 permanece aberta.
 
+## Validação local R1 (Node 24.22.1, `CI=1 npm run validate`)
+
+- Exit **0** após liberar porta `3000` ocupada por `next-server` residual do snapshot.
+- Vitest **1583/1583** (86 arquivos); Playwright **565** aprovados, **1** ignorado.
+- `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`: **71/71**.
+
 Não confundir viewport efetiva estreita com zoom nativo. Nenhuma aprovação humana é presumida. Archive, merge e fechamento estão proibidos nesta execução.
 
 ## Primeira CI da PR #327 (SHA ce215ee; 15/11/2026)

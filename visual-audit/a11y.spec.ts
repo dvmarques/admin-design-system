@@ -134,7 +134,13 @@ async function assertPanelBounds(panel: Locator, checks: string[]) {
 	checks.push('overlay-panel-within-viewport');
 }
 
-async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, checks: string[]) {
+async function keyboardAction(
+	page: Page,
+	preview: Locator,
+	scenario: Scenario,
+	checks: string[],
+	capture: () => Promise<void>,
+) {
 	switch (scenario.action) {
 		case 'tab-order':
 		case 'reverse-tab': {
@@ -237,6 +243,7 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 				).toBe(true);
 			}
 			checks.push('modal-initial-focus-and-Tab-containment');
+			await capture();
 			await page.keyboard.press('Escape');
 			await expect(dialog).not.toBeVisible();
 			await expect(trigger).toBeFocused();
@@ -262,6 +269,7 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 			await page.keyboard.press('ArrowDown');
 			await expect(first).toBeFocused();
 			checks.push('dropdown-ArrowDown-skips-disabled-items-and-focus-paint-changes');
+			await capture();
 			await page.keyboard.press('Escape');
 			await expect(first).not.toBeVisible();
 			await expect(trigger).toBeFocused();
@@ -274,6 +282,7 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 			await page.keyboard.press('Enter');
 			const action = page.getByRole('button', { name: 'Concluir' });
 			await expect(action).toBeVisible();
+			await capture();
 			await page.keyboard.press('Escape');
 			await expect(action).not.toBeVisible();
 			await expect(trigger).toBeFocused();
@@ -287,6 +296,7 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 			await page.keyboard.press('Enter');
 			const dialog = frame.getByRole('dialog');
 			await expect(dialog).toBeVisible();
+			await capture();
 			await page.keyboard.press('Escape');
 			await expect(dialog).not.toBeVisible();
 			await expect(trigger).toBeFocused();
@@ -434,7 +444,26 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 							measuredPercent: null,
 						};
 					}
-					await keyboardAction(page, preview, scenario, evidence.checks);
+
+					const capture = async () => {
+						const image =
+							'screenshots/a11y/' +
+							scenario.id +
+							'-' +
+							scenario.theme +
+							'-' +
+							scenario.width +
+							'.png';
+						mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
+						await page.evaluate(() => document.fonts.ready);
+						await page.screenshot({
+							path: join(output, image),
+							animations: 'disabled',
+							timeout: 20_000,
+						});
+						evidence.screenshot = image;
+					};
+					await keyboardAction(page, preview, scenario, evidence.checks, capture);
 					await assertDocumentReflow(preview, evidence.checks);
 				}
 				if (evidence.status === 'approved' && !evidence.screenshot) {

@@ -109,3 +109,31 @@ A validação da matriz integra `test:ci`, inclusive em PRs normais, mas os 22 c
 A cobertura contém focos por teclado, estados de validação, aberturas de overlays, dados, sidebar, forced-colors e prefers-reduced-motion em casos selecionados. Emulação de mídia **não é** avaliação perceptual de contraste, e a mudança de viewport/CSS não comprova zoom real do navegador a 200%. Esta verificação permanece pendente de execução manual dedicada (light/dark, desktop/mobile), com capturas e revisão humana antes de alterar seu status. O mesmo vale para diferenças subjetivas de tipografia, densidade, elevação e affordance. Não atualizar snapshots oficiais como parte dessa auditoria.
 
 Revisão de evidências: para cada sinal, registrar export/rota/estado/tema/largura, esperado e observado, severidade, resultado de inspeção humana, link persistente do artefato e PR ou issue de regressão quando cabível. O artefato Actions tem retenção limitada; links efêmeros não substituem evidência preservada quando uma decisão for tomada. A ausência de alertas não permite declarar visual aprovado, e nenhum checkbox geral da #152 deve ser marcado apenas com base na execução automatizada.
+
+
+## Fase 4 — cobertura seletiva de teclado, foco e reflow (#152)
+
+A branch da fase 4 adiciona uma matriz pequena de 15 cenários prioritários em visual-audit/a11y-scenarios.json, executados por visual-audit/a11y.spec.ts. A matriz preexistente (83 exports, 362 estados aplicáveis, 169 N/A) e suas 332 capturas iniciais + 22 cenários seletivos permanecem inalteradas. A suíte nova é **aditiva** e permanece opt-in no mesmo npm run audit:visual e workflow Auditoria visual (workflow_dispatch). Não executa na CI regular nem altera snapshots oficiais.
+
+### Requisitos objetivos
+
+- Botões: Tab e Shift+Tab, posição e indicação de foco visível. A verificação exige mudança em propriedades de pintura do controle ou antecessores, estado :focus-visible, posição visível e hit-test no ponto central; activeElement isolado não conta como foco visual.
+- Abas: ArrowRight e Enter, foco e aria-selected. Menus/dropdown: ArrowDown, mudança de menuitem, Escape e retorno ao acionador.
+- Dialog e drawer: Enter para abrir, foco inicial, ciclos Tab/Shift+Tab contidos no modal, Escape e retorno do foco ao acionador. Popover e AdminShell móvel: abertura por Enter, Escape e retorno do foco.
+- Reflow: documento sem scroll horizontal acima de 2px, painel modal contido no viewport e superfície de tabela disponível. Overflow interno de tabelas e preview é anotado para revisão, pois pode ser rolagem intencional.
+- Preferências: prefers-reduced-motion e forced-colors confirmados no navegador antes do teste; não implicam conformidade de contraste em todos os estados.
+- Light/dark e viewports 320/390/768/1440px aplicados conforme o risco do cenário, sem produto cartesiano desnecessário.
+
+### Zoom nativo a 200%: distinção obrigatória
+
+A suíte tenta usar o acelerador de zoom do navegador Chromium sem CSS zoom, transform, override de viewport ou CDP Emulation.setPageScaleFactor. Registra largura da viewport CSS, devicePixelRatio e visualViewport.scale antes/depois. Somente registra **zoom nativo comprovado** se a viewport CSS for reduzida por fator próximo de 2, DPR aumentar proporcionalmente e a escala visual de pinch permanecer próxima de 1. A captura com sufixo native-200 somente é gerada ANTES da restauração quando a prova for satisfatória. Control+0 e nova medição verificam restauração do estado.
+
+Em Chromium headless, teclas simuladas de zoom podem não afetar o zoom do chrome: nesses casos o manifesto contém pending, sem screenshot falsamente rotulado como 200%, e o requisito permanece aberto na issue #152. **viewport reflow a 320px é um teste separado e não equivale a zoom 200%**. Também não equivalem zoom CSS, transform, dispositivo com DPR=2 ou o comando CDP de escala de página. Um Playwright verde com status pending para o probe NÃO aprova zoom nativo.
+
+### Relatórios e auditoria humana
+
+O teardown atual executa também scripts/visual-audit-a11y-report.mjs e publica a11y-report.json e a11y-report.md, referenciados pelo report.json/report.md existentes. Cada resultado conserva export, rota, estado, tema, largura, preferência, ação, verificações, tipo de zoom, screenshot (quando comprovadamente capturado), status, erro e revisão humana pendente. O verificador confere identidade dos manifestos, presença e assinatura PNG e recusa marcar zoom aprovado só por uma imagem ou metadados de viewport.
+
+Os estados explicitamente representados são: aprovação automática, falha comprovada, pendente de execução/comprovação, não aplicável na matriz original e pendente de revisão visual humana. Não marcar como visualmente aprovado um componente apenas porque um desses testes passou. A execução completa continua exigindo revisão humana das diferenças visuais, contraste e anomalias perceptuais. Não usar os números da auditoria histórica como se fossem desta branch.
+
+Executar com build de produção atualizado e npm run audit:visual; para restringir a fase 4 ao diagnosticar: npx playwright test --config playwright.visual-audit.config.ts visual-audit/a11y.spec.ts. As capturas e manifestos completos só são considerados publicados quando o workflow real tiver sido executado, seus checks passarem e o artefato estiver acessível.

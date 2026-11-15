@@ -116,7 +116,11 @@ export function analyzeAccessibilityEvidence({ scenarios, entries, folder }) {
 			status,
 			zoom: record?.zoom ?? null,
 			checks: Array.isArray(record?.checks) ? record.checks : [],
-			screenshot: status === 'aprovado automaticamente' ? expectedScreenshot : null,
+			screenshot:
+				record?.screenshot === expectedScreenshot &&
+				hasPngSignature(join(folder, expectedScreenshot))
+					? expectedScreenshot
+					: null,
 			error: problem ?? record?.error ?? null,
 			humanReview: 'pendente de revisão visual humana',
 		};

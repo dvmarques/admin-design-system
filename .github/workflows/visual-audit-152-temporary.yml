@@ -1,0 +1,97 @@
+# TEMPORÁRIO: exclusivamente para validar a fase 4 da #152 na branch.
+# Remover integralmente antes de entregar PR Ready final; auditoria definitiva continua manual.
+name: Fase 4 152 - validação temporária
+
+on:
+  pull_request:
+    branches:
+      - develop
+    types:
+      - synchronize
+      - ready_for_review
+
+permissions:
+  contents: read
+
+jobs:
+  format-branch:
+    if: github.event.pull_request.draft == false && github.head_ref == 'feat/152-visual-a11y-zoom-keyboard' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
+          fetch-depth: 0
+          persist-credentials: true
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Formatar apenas arquivos da fase 4
+        run: |
+          npx prettier --write \
+            docs/visual-audit.md \
+            openspec/changes/issue-152-visual-a11y-zoom-keyboard/design.md \
+            openspec/changes/issue-152-visual-a11y-zoom-keyboard/proposal.md \
+            openspec/changes/issue-152-visual-a11y-zoom-keyboard/specs/quality-assurance/spec.md \
+            scripts/visual-audit-a11y-report.mjs \
+            scripts/visual-audit-a11y-report.test.mjs \
+            visual-audit/a11y.spec.ts
+          npm run format
+      - name: Commitar somente formatação na branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -- \
+            docs/visual-audit.md \
+            openspec/changes/issue-152-visual-a11y-zoom-keyboard/design.md \
+            openspec/changes/issue-152-visual-a11y-zoom-keyboard/proposal.md \
+            openspec/changes/issue-152-visual-a11y-zoom-keyboard/specs/quality-assurance/spec.md \
+            scripts/visual-audit-a11y-report.mjs \
+            scripts/visual-audit-a11y-report.test.mjs \
+            visual-audit/a11y.spec.ts
+          if ! git diff --cached --quiet; then
+            git commit -m "style(audit): formatar fase 4 #152"
+            git push origin "HEAD:refs/heads/$GITHUB_HEAD_REF"
+          fi
+
+  audit-browser:
+    needs: format-branch
+    if: github.event.pull_request.draft == false && github.head_ref == 'feat/152-visual-a11y-zoom-keyboard' && github.event.pull_request.head.repo.full_name == github.repository
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
+      options: --ipc=host
+      env:
+        HOME: /root
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.head_ref }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
+      - run: npm run build --workspace @admin-ds/admin-demo
+      - name: Executar auditoria opt-in em Chromium real
+        run: npm run audit:visual
+      - name: Publicar evidências temporárias
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: fase4-152-browser-${{ github.run_id }}
+          path: visual-audit-results/
+          if-no-files-found: warn
+          retention-days: 14

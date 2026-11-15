@@ -229,12 +229,3 @@ A documentação MUST manter uma associação versionada de estados e verificaç
 
 - **WHEN** uma definição de cenário referencia export ausente, estado incompatível ou identificador duplicado
 - **THEN** a validação rejeita a matriz antes de executar a auditoria
-
-### Requirement: Catálogo de composição semântica
-
-O catálogo e o Storybook MUST documentar `AdsPageHeader` e demonstrar os padrões de consulta, formulário e dashboard, relacionando a API pública com exemplos executáveis.
-
-#### Scenario: Novo export e exemplos completos
-
-- **WHEN** a rastreabilidade da API, os snippets e as histórias são verificados
-- **THEN** `AdsPageHeader` possui rota própria, props documentadas, snippet sincronizado e exemplos semanticamente coerentes

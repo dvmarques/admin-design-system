@@ -245,11 +245,17 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 			await page.keyboard.press('ArrowDown');
 			const first = page.getByRole('menuitem', { name: 'Exportar' });
 			await expect(first).toBeFocused();
-			const second = page.getByRole('menuitem', { name: 'Duplicar' });
-			const before = await focusPaint(second);
+			await expect.poll(() => first.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+			const visibleOutline = await first.evaluate((node) => {
+				const css = getComputedStyle(node);
+				return css.outlineStyle !== 'none' && Number.parseFloat(css.outlineWidth) > 0;
+			});
+			expect(visibleOutline, 'menuitem precisa exibir indicador visual de foco').toBe(true);
+			const disabled = page.getByRole('menuitem', { name: 'Indisponível' });
+			await expect(disabled).toHaveAttribute('aria-disabled', 'true');
 			await page.keyboard.press('ArrowDown');
-			await verifyVisibleKeyboardFocus(second, before, checks);
-			checks.push('dropdown-Arrows-move-between-enabled-items');
+			await expect(first).toBeFocused();
+			checks.push('dropdown-ArrowDown-skips-disabled-items-and-visible-outline');
 			await page.keyboard.press('Escape');
 			await expect(first).not.toBeVisible();
 			await expect(trigger).toBeFocused();

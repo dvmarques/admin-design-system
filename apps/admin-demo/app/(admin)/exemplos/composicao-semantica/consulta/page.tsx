@@ -41,7 +41,10 @@ export default function SemanticConsultationPage() {
 						</Link>
 					}
 				/>
-				<section aria-labelledby="consulta-registros" className="ads-layout-stack demo-semantic-section">
+				<section
+					aria-labelledby="consulta-registros"
+					className="ads-layout-stack demo-semantic-section"
+				>
 					<AdsTypography as="h2" id="consulta-registros" variant="heading2">
 						Registros
 					</AdsTypography>

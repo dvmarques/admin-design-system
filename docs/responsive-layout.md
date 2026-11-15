@@ -11,17 +11,19 @@ import '@dvmarques/admin-ds-tokens/styles.css';
 import '@dvmarques/admin-ds-components/styles.css';
 ```
 
-| Classe CSS | Função e padrão | Ajustes opcionais por elemento |
-| --- | --- | --- |
-| `ads-layout-container` | `width:100%`, `max-width:76rem`, centralizado, padding inline `--ads-spacing-4` no mobile e `--ads-spacing-6` a partir de 48rem | `--ads-layout-max-width`, `--ads-layout-gutter` |
-| `ads-layout-stack` | `display:flex`, coluna, gap `--ads-spacing-4` | `--ads-layout-stack-gap` |
-| `ads-layout-grid` | CSS Grid `repeat(auto-fit,minmax(min(100%,16rem),1fr))`; gap `--ads-spacing-4` | `--ads-layout-grid-min-column`, `--ads-layout-grid-gap` |
-| `ads-layout-cluster` | Flex com wrap e gap `--ads-spacing-3`, adequado a grupos de ações | `--ads-layout-cluster-gap` |
+| Classe CSS             | Função e padrão                                                                                                                 | Ajustes opcionais por elemento                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
+| `ads-layout-container` | `width:100%`, `max-width:76rem`, centralizado, padding inline `--ads-spacing-4` no mobile e `--ads-spacing-6` a partir de 48rem | `--ads-layout-max-width`, `--ads-layout-gutter`         |
+| `ads-layout-stack`     | `display:flex`, coluna, gap `--ads-spacing-4`                                                                                   | `--ads-layout-stack-gap`                                |
+| `ads-layout-grid`      | CSS Grid `repeat(auto-fit,minmax(min(100%,16rem),1fr))`; gap `--ads-spacing-4`                                                  | `--ads-layout-grid-min-column`, `--ads-layout-grid-gap` |
+| `ads-layout-cluster`   | Flex com wrap e gap `--ads-spacing-3`, adequado a grupos de ações                                                               | `--ads-layout-cluster-gap`                              |
 
 Use propriedades CSS locais, evitando interfaces React artificiais:
 
 ```css
-.minha-pagina { --ads-layout-max-width: 64rem; }
+.minha-pagina {
+	--ads-layout-max-width: 64rem;
+}
 .meus-indicadores {
 	--ads-layout-grid-min-column: 13rem;
 	--ads-layout-grid-gap: var(--ads-spacing-4);
@@ -33,7 +35,13 @@ Essas propriedades não substituem os tokens públicos e não introduzem uma nov
 ## Exemplo de composição
 
 ```tsx
-import { AdsButton, AdsField, AdsInput, AdsPageHeader, AdsTypography } from '@dvmarques/admin-ds-components';
+import {
+	AdsButton,
+	AdsField,
+	AdsInput,
+	AdsPageHeader,
+	AdsTypography,
+} from '@dvmarques/admin-ds-components';
 
 export function Pagina() {
 	return (
@@ -48,12 +56,18 @@ export function Pagina() {
 					Filtros
 				</AdsTypography>
 				<div className="ads-layout-grid">
-					<AdsField label="Nome"><AdsInput type="search" /></AdsField>
-					<AdsField label="Código"><AdsInput /></AdsField>
+					<AdsField label="Nome">
+						<AdsInput type="search" />
+					</AdsField>
+					<AdsField label="Código">
+						<AdsInput />
+					</AdsField>
 				</div>
 				<div className="ads-layout-cluster">
 					<AdsButton type="button">Pesquisar</AdsButton>
-					<AdsButton type="button" variant="secondary">Limpar</AdsButton>
+					<AdsButton type="button" variant="secondary">
+						Limpar
+					</AdsButton>
 				</div>
 			</section>
 		</div>

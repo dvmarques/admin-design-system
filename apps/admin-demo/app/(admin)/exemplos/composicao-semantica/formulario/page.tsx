@@ -36,7 +36,10 @@ export default function SemanticFormPage() {
 					description="Duas seções semânticas, validação de campos obrigatórios e ações acessíveis; demonstração sem envio de dados."
 				/>
 				<form className="ads-layout-stack demo-semantic-form" noValidate onSubmit={submit}>
-					<section aria-labelledby="form-identificacao" className="ads-layout-stack demo-semantic-section">
+					<section
+						aria-labelledby="form-identificacao"
+						className="ads-layout-stack demo-semantic-section"
+					>
 						<AdsTypography as="h2" id="form-identificacao" variant="heading2">
 							Identificação
 						</AdsTypography>
@@ -76,7 +79,10 @@ export default function SemanticFormPage() {
 							</AdsField>
 						</div>
 					</section>
-					<section aria-labelledby="form-preferencias" className="ads-layout-stack demo-semantic-section">
+					<section
+						aria-labelledby="form-preferencias"
+						className="ads-layout-stack demo-semantic-section"
+					>
 						<AdsTypography as="h2" id="form-preferencias" variant="heading2">
 							Preferências
 						</AdsTypography>

@@ -21,7 +21,10 @@ export default function SemanticDashboardPage() {
 						</Link>
 					}
 				/>
-				<section aria-labelledby="dashboard-indicadores" className="ads-layout-stack demo-semantic-section">
+				<section
+					aria-labelledby="dashboard-indicadores"
+					className="ads-layout-stack demo-semantic-section"
+				>
 					<AdsTypography as="h2" id="dashboard-indicadores" variant="heading2">
 						Indicadores
 					</AdsTypography>
@@ -30,7 +33,10 @@ export default function SemanticDashboardPage() {
 						<AdsMetricCard title="Novos registros" value="72" change="+3%" trend="up" />
 					</div>
 				</section>
-				<section aria-labelledby="dashboard-resumos" className="ads-layout-stack demo-semantic-section">
+				<section
+					aria-labelledby="dashboard-resumos"
+					className="ads-layout-stack demo-semantic-section"
+				>
 					<AdsTypography as="h2" id="dashboard-resumos" variant="heading2">
 						Resumos
 					</AdsTypography>

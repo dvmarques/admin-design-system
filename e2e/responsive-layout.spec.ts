@@ -10,7 +10,9 @@ const routes = [
 
 async function noDocumentOverflow(page: Page) {
 	return page.evaluate(
-		() => Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) <= document.documentElement.clientWidth + 1,
+		() =>
+			Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) <=
+			document.documentElement.clientWidth + 1,
 	);
 }
 
@@ -101,9 +103,9 @@ test('layout #318: propriedades lógicas em RTL e reflow estreito aninhado', asy
 	for (const width of [195, 640]) {
 		await page.setViewportSize({ width, height: 800 });
 		await expect(page.locator('.ads-layout-grid').first()).toHaveCSS('display', 'grid');
-		const hasLocalOverflow = await page.locator('.demo-semantic-nested').evaluate(
-			(node) => node.scrollWidth > node.clientWidth + 1,
-		);
+		const hasLocalOverflow = await page
+			.locator('.demo-semantic-nested')
+			.evaluate((node) => node.scrollWidth > node.clientWidth + 1);
 		expect(hasLocalOverflow).toBe(false);
 	}
 	// Larguras efetivas simulam reflow. Zoom nativo 200% exige validação humana separada.

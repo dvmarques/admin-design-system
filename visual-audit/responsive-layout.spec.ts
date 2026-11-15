@@ -36,7 +36,10 @@ for (const theme of ['light', 'dark'] as const) {
 					fullPage: true,
 					animations: 'disabled',
 				});
-				writeFileSync(join(output, key + '.json'), JSON.stringify({ route, theme, width, ...metrics, errors }, null, 2) + '\n');
+				writeFileSync(
+					join(output, key + '.json'),
+					JSON.stringify({ route, theme, width, ...metrics, errors }, null, 2) + '\n',
+				);
 			});
 		}
 	}

@@ -12,6 +12,8 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
+- Orçamento de JS/CSS publicados de `admin` ajustado de 171.400 para 173.100 bytes após medição de 173.020 bytes na CI #328; limites de gzip e cenário mantidos até medição. (#319)
+
 - Orçamento de JS/CSS publicados de `components` ajustado de 305.200 para 306.800 bytes após medição de 306.728 bytes na CI #328; gzip ajustado de 92.000 para 92.100 bytes após medição de 92.060 bytes; demais cenários pendentes dos checks. (#319)
 
 - `AdsAdminShell.Footer` opcional com slots `start`/`end`, composição responsiva e landmark semântica; `AdsDropdown.Header`/`Divider` e sequência de Tab/Shift+Tab ajustada para menus portados; integração de tema, tokens e portais documentada sem novo provider. (#319, OpenSpec `issue-319-footer-dropdown-theme`)

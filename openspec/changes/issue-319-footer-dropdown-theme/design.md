@@ -50,3 +50,5 @@
 - Manter o shell no topo de `/catalogo-shell/` para não alterar a geometria de navegação coberta pelo E2E; controles adicionais seguem abaixo do shell. O E2E do footer passa a acessar essa rota dedicada.
 - Axe no tema escuro identificou contraste insuficiente (1,55) do link não tematizado no footer. Estilo escopado faz links herdarem a cor do footer, sem impacto global.
 - Medição do gzip de `components`: 92.060 bytes, contra 92.000 anteriores; o novo teto 92.100 tem 40 bytes de folga. Restante permanece sem mudança até nova medição.
+
+- A rodada de CI subsequente mediu o JS/CSS publicado de `admin` em **173.020 bytes**, acima de 171.400. O teto foi corrigido para **173.100 bytes** (+80 bytes de folga) sem alterar gzip ou cenários sem evidência.

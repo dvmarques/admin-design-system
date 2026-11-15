@@ -113,23 +113,23 @@
 	"components": {
 		"AdsButton": {
 			"profile": "button",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsBadge": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAvatar": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsIcon": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsIconSlot": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsPageHeader": {
 			"profile": "pageHeader",
@@ -137,119 +137,119 @@
 		},
 		"AdsTypography": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsSurface": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsLoadingIndicator": {
 			"profile": "static",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "loading"]
 		},
 		"AdsLoadingText": {
 			"profile": "static",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "loading"]
 		},
 		"AdsSkeleton": {
 			"profile": "static",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "loading"]
 		},
 		"AdsSparkline": {
 			"profile": "static",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "empty"]
 		},
 		"AdsCombobox": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsMultiSelect": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAutocomplete": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsInput": {
 			"profile": "field",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsOTPInput": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsPasswordInput": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsMaskedInput": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsFileUpload": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTextarea": {
 			"profile": "field",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsSelect": {
 			"profile": "field",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsCheckbox": {
 			"profile": "choice",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsRadio": {
 			"profile": "choice",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsSwitch": {
 			"profile": "choice",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsField": {
 			"profile": "field",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsFieldLabel": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsFieldDescription": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsFieldMessage": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsInputGroup": {
 			"profile": "field",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsSelectionGroup": {
 			"profile": "choice",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTimePicker": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsDatePicker": {
 			"profile": "complexField",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsBreadcrumb": {
 			"profile": "navigation",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "focus", "active", "overflow"],
 			"notApplicable": {
 				"disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família navigation"
@@ -257,71 +257,71 @@
 		},
 		"AdsNav": {
 			"profile": "navigation",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTabs": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTabsList": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTabsPanel": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTabsTrigger": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAccordion": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAccordionHeader": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAccordionItem": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAccordionPanel": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAccordionTrigger": {
 			"profile": "expandable",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsDropdown": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsPagination": {
 			"profile": "navigation",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsDialog": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsDrawer": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsPopover": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsTooltip": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAlert": {
 			"profile": "feedback",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "error", "success"],
 			"notApplicable": {
 				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
@@ -330,7 +330,7 @@
 		},
 		"AdsToast": {
 			"profile": "feedback",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "open", "closed", "error", "success"],
 			"notApplicable": {
 				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
@@ -339,7 +339,7 @@
 		},
 		"AdsEmptyState": {
 			"profile": "feedback",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "empty", "data"],
 			"notApplicable": {
 				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
@@ -349,7 +349,7 @@
 		},
 		"AdsProgress": {
 			"profile": "feedback",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "loading", "data"],
 			"notApplicable": {
 				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
@@ -359,12 +359,12 @@
 		},
 		"AdsHighlightedCodeSnippet": {
 			"profile": "static",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow", "focus"]
 		},
 		"AdsTable": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -375,7 +375,7 @@
 		},
 		"AdsTableBody": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -386,7 +386,7 @@
 		},
 		"AdsTableCaption": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -397,7 +397,7 @@
 		},
 		"AdsTableCell": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -408,7 +408,7 @@
 		},
 		"AdsTableHead": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -419,7 +419,7 @@
 		},
 		"AdsTableHeader": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -430,7 +430,7 @@
 		},
 		"AdsTableRow": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow", "selected"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -440,7 +440,7 @@
 		},
 		"AdsCard": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -450,7 +450,7 @@
 		},
 		"AdsCardActions": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -460,7 +460,7 @@
 		},
 		"AdsCardContent": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -470,7 +470,7 @@
 		},
 		"AdsCardHeader": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -480,7 +480,7 @@
 		},
 		"AdsList": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "empty", "overflow"],
 			"notApplicable": {
 				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -489,7 +489,7 @@
 		},
 		"AdsListItem": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -499,11 +499,11 @@
 		},
 		"AdsAdminShell": {
 			"profile": "shell",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsDashboardGrid": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "overflow"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -513,11 +513,11 @@
 		},
 		"AdsDashboardPanel": {
 			"profile": "feedback",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsMetricCard": {
 			"profile": "composition",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "data", "loading"],
 			"notApplicable": {
 				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
@@ -527,7 +527,7 @@
 		},
 		"AdsFilterBar": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "focus", "empty", "data"],
 			"notApplicable": {
 				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -538,11 +538,11 @@
 		},
 		"AdsSmartTable": {
 			"profile": "table",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsBulkActionBar": {
 			"profile": "table",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "selected", "unselected"],
 			"notApplicable": {
 				"data": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
@@ -554,36 +554,36 @@
 		},
 		"AdsConfirmDialog": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsListFlow": {
 			"profile": "composition",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsStepForm": {
 			"profile": "composition",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsAccountMenu": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsNotificationCenter": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsOrganizationSwitcher": {
 			"profile": "overlay",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		},
 		"AdsThemeControl": {
 			"profile": "choice",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "focus", "selected", "unselected", "disabled"]
 		},
 		"ThemeToggle": {
 			"profile": "choice",
-			"review": "Pendente",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
 			"states": ["default", "focus", "selected", "unselected"],
 			"notApplicable": {
 				"disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família choice"
@@ -591,7 +591,7 @@
 		},
 		"StyleFixture": {
 			"profile": "static",
-			"review": "Pendente"
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
 		}
 	},
 	"scenarios": [

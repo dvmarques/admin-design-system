@@ -1,3 +1,4 @@
+import { auditRevision } from './visual-audit-revision.mjs';
 import { Buffer } from 'node:buffer';
 import { randomUUID } from 'node:crypto';
 import { readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
@@ -137,7 +138,7 @@ export function buildStateCoverageReport(project = process.cwd()) {
 	const report = {
 		issue: 152,
 		generatedAt: new Date().toISOString(),
-		commit: process.env.GITHUB_SHA ?? null,
+		...auditRevision(root),
 		note: 'Aprovação objetiva não equivale à revisão visual humana, WCAG completa ou zoom nativo 200%.',
 		...coverage,
 	};

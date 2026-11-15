@@ -3,7 +3,7 @@ import { expect, test } from '@playwright/test';
 for (const width of [320, 390, 768, 1440]) {
 	test(`optional footer and scrollable shell at ${width}px`, async ({ page }) => {
 		await page.setViewportSize({ width, height: 900 });
-		await page.goto('/catalogo/admin-shell');
+		await page.goto('/catalogo-shell/');
 		const footer = page.locator('.ads-admin-shell-footer');
 		await expect(footer).toHaveCount(1);
 		await expect(footer).toContainText('Footer opcional');

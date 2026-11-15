@@ -200,6 +200,13 @@
 		font-size: 0.875rem;
 	}
 
+	/* Links inherit accessible foreground contrast from the themed footer surface. */
+	.ads-admin-shell-footer a {
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
 	.ads-admin-shell-footer-start,
 	.ads-admin-shell-footer-end {
 		min-width: 0;

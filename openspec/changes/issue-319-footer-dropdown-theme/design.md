@@ -42,3 +42,11 @@
 - `inspect:packages` no mesmo SHA mediu **306.728 bytes** de JS/CSS publicados de `components`, diante do teto anterior de 305.200 (+1.528 bytes, aproximadamente +0,50%). O teto ajustado é 306.800 bytes com apenas 72 bytes de folga; não alterar o teto gzip ou cenários sem a próxima medição.
 - E2E preexistente de `ThemeControl` espera exatamente `Preferência: system`; preservar seu contrato de texto e exibir o tema efetivo em parágrafo separado, sem mudar testes antigos.
 - `prettier --check` identificou 8 arquivos de fonte/documentação para formatação; corrigir antes de alegar conformidade. Nenhuma alteração de snapshot automática.
+
+## Segunda rodada de CI — correções da revisão
+
+- Vitest identificou drift de snippets. Atualizar `catalog-snippets.json` com os três exemplos gerados por `scripts/catalog-snippets.mjs`.
+- Demo não permite classes utilitárias de Tailwind: usar apenas classes públicas ADS e estilos de tokens inline no exemplo de tema.
+- Manter o shell no topo de `/catalogo-shell/` para não alterar a geometria de navegação coberta pelo E2E; controles adicionais seguem abaixo do shell. O E2E do footer passa a acessar essa rota dedicada.
+- Axe no tema escuro identificou contraste insuficiente (1,55) do link não tematizado no footer. Estilo escopado faz links herdarem a cor do footer, sem impacto global.
+- Medição do gzip de `components`: 92.060 bytes, contra 92.000 anteriores; o novo teto 92.100 tem 40 bytes de folga. Restante permanece sem mudança até nova medição.

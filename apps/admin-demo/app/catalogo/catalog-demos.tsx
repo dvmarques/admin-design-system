@@ -1272,14 +1272,6 @@ export function AdminShellDemo() {
 	const [longContent, setLongContent] = useState(false);
 	return (
 		<div className="ads-layout-stack">
-			<div className="ads-layout-cluster">
-				<AdsButton onClick={() => setShowFooter((visible) => !visible)}>
-					{showFooter ? 'Remover footer' : 'Mostrar footer'}
-				</AdsButton>
-				<AdsButton variant="secondary" onClick={() => setLongContent((long) => !long)}>
-					{longContent ? 'Conteúdo curto' : 'Conteúdo longo'}
-				</AdsButton>
-			</div>
 			<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
 				<AdsAdminShell layout="sidebar-header">
 					<AdsAdminShell.Header>
@@ -1338,6 +1330,14 @@ export function AdminShellDemo() {
 						/>
 					) : null}
 				</AdsAdminShell>
+			</div>
+			<div className="ads-layout-cluster">
+				<AdsButton onClick={() => setShowFooter((visible) => !visible)}>
+					{showFooter ? 'Remover footer' : 'Mostrar footer'}
+				</AdsButton>
+				<AdsButton variant="secondary" onClick={() => setLongContent((long) => !long)}>
+					{longContent ? 'Conteúdo curto' : 'Conteúdo longo'}
+				</AdsButton>
 			</div>
 		</div>
 	);
@@ -1592,7 +1592,13 @@ export function ThemeControlDemo() {
 			<p>Tema efetivo: {effectiveTheme}</p>
 			<div
 				data-theme={effectiveTheme}
-				className="ads-layout-stack rounded-lg border border-border bg-surface p-4"
+				className="ads-layout-stack"
+				style={{
+					backgroundColor: 'var(--ads-color-surface)',
+					border: '1px solid var(--ads-color-border)',
+					borderRadius: 'var(--ads-radius-lg)',
+					padding: '1rem',
+				}}
 			>
 				<p>Escopo de tema aplicado pela aplicação consumidora, sem persistência pelo ADS.</p>
 				<AdsDropdown>
@@ -1609,8 +1615,13 @@ export function ThemeControlDemo() {
 					</AdsDropdown.Content>
 				</AdsDropdown>
 				<div
-					className="rounded-md border border-border p-3 text-text"
-					style={{ backgroundColor: 'var(--ads-color-surface-selected)' }}
+					style={{
+						backgroundColor: 'var(--ads-color-surface-selected)',
+						border: '1px solid var(--ads-color-border)',
+						borderRadius: 'var(--ads-radius-md)',
+						color: 'var(--ads-color-text)',
+						padding: '0.75rem',
+					}}
 				>
 					Superfície com tokens semânticos do tema.
 				</div>

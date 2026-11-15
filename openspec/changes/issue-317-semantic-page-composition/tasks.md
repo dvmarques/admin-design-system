@@ -29,6 +29,18 @@
 | `npm run typecheck` (após build)                                           | exit 0                                                             |
 | `npm run test:quality`                                                     | exit 0 (Vitest 86 files / 1582 tests; `test:ci` 131 pass, 18 skip) |
 | `npx @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` | exit 0 (70/70)                                                     |
-| `npx playwright test e2e/page-composition.spec.ts`                         | exit 0, **11/11** (2 execuções consecutivas)                       |
+| `npx playwright test e2e/page-composition.spec.ts` (R1)                    | exit 0, **11/11** (2 execuções consecutivas)                       |
 
-**CI/Security/Pages — SHA `0cb82ff43aefc6810c658d021f58169710d716be`:** [CI #43728609693](https://github.com/dvmarques/admin-design-system/actions/runs/43728609693) success; [Security #43728609656](https://github.com/dvmarques/admin-design-system/actions/runs/43728609656) success; [Pages #43728609715](https://github.com/dvmarques/admin-design-system/actions/runs/43728609715) success.
+### Gates locais — R2 (agente, 15/11/2026)
+
+| Comando                                                                    | Resultado                                                                |
+| -------------------------------------------------------------------------- | ------------------------------------------------------------------------ |
+| `npm run format`, `lint`, `build`, `typecheck`, `test:quality`             | exit 0 (Vitest `test:ci` 131 pass, 18 skip; quality 70/70)               |
+| `npx @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` | exit 0 (70/70)                                                           |
+| `npx playwright test e2e/page-composition.spec.ts`                         | exit 0, **17/17** (2 execuções; **12** cenários de reflow = 3×2×2 temas) |
+
+**Último SHA com código (E2E reflow claro/escuro):** `89a8bd723ba76e8d32ff6fa6224ea75d258f1009`.
+
+**CI/Security/Pages nesse SHA:** [CI #43731545901](https://github.com/dvmarques/admin-design-system/actions/runs/43731545901) success; [Security #43731545920](https://github.com/dvmarques/admin-design-system/actions/runs/43731545920) success; [Pages #43731545900](https://github.com/dvmarques/admin-design-system/actions/runs/43731545900) success.
+
+Commits subsequentes na branch podem atualizar somente `openspec/.../tasks.md`, corpo sugerido de PR/issue em artifacts ou documentação de processo, sem alterar o código validado acima; os links de CI permanecem válidos para o SHA com código.

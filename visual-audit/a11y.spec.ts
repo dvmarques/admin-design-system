@@ -150,6 +150,57 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 			checks.push('Tab-and-Shift+Tab-logical-order');
 			break;
 		}
+		case 'input-type': {
+			const field = preview.getByRole('textbox', { name: 'Tamanho md' });
+			const before = await focusPaint(field);
+			await field.focus();
+			await page.keyboard.press('Shift+Tab');
+			await page.keyboard.press('Tab');
+			await verifyVisibleKeyboardFocus(field, before, checks);
+			await page.keyboard.type('audit');
+			await expect(field).toHaveValue('audit');
+			checks.push('form-input-typed-via-real-keyboard');
+			break;
+		}
+		case 'select-arrows': {
+			const select = preview.getByRole('combobox', { name: 'Tamanho md' });
+			const before = await focusPaint(select);
+			await select.focus();
+			await page.keyboard.press('Shift+Tab');
+			await page.keyboard.press('Tab');
+			await verifyVisibleKeyboardFocus(select, before, checks);
+			await page.keyboard.press('ArrowDown');
+			await expect(select).toHaveValue('a');
+			checks.push('native-select-changed-via-ArrowDown');
+			break;
+		}
+		case 'checkbox-space': {
+			const checkbox = preview.getByRole('checkbox', { name: 'sm', exact: true });
+			const indicator = checkbox.locator('xpath=following-sibling::span[1]');
+			const before = await focusPaint(indicator);
+			await checkbox.focus();
+			await page.keyboard.press('Shift+Tab');
+			await page.keyboard.press('Tab');
+			await expect(checkbox).toBeFocused();
+			await expect.poll(() => checkbox.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
+			expect(await focusPaint(indicator), 'indicador visível associado ao input sr-only').not.toBe(before);
+			await page.keyboard.press('Space');
+			await expect(checkbox).toBeChecked();
+			checks.push('checkbox-focus-indicator-and-Space-activation');
+			break;
+		}
+		case 'table-select-space': {
+			const checkbox = preview.getByRole('checkbox', { name: 'Selecionar Ana' });
+			await checkbox.focus();
+			await page.keyboard.press('Shift+Tab');
+			await page.keyboard.press('Tab');
+			await expect(checkbox).toBeFocused();
+			await page.keyboard.press('Space');
+			await expect(checkbox).toBeChecked();
+			await expect(preview.getByRole('status', { name: 'Seleção atual' })).toContainText('1');
+			checks.push('smart-table-row-selected-by-Space');
+			break;
+		}
 		case 'tab-arrows': {
 			const first = preview.getByRole('tab', { name: 'Resumo', exact: true });
 			const next = preview.getByRole('tab', { name: 'Histórico', exact: true });

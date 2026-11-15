@@ -182,8 +182,12 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 			await page.keyboard.press('Shift+Tab');
 			await page.keyboard.press('Tab');
 			await expect(checkbox).toBeFocused();
-			await expect.poll(() => checkbox.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
-			expect(await focusPaint(indicator), 'indicador visível associado ao input sr-only').not.toBe(before);
+			await expect
+				.poll(() => checkbox.evaluate((node) => node.matches(':focus-visible')))
+				.toBe(true);
+			expect(await focusPaint(indicator), 'indicador visível associado ao input sr-only').not.toBe(
+				before,
+			);
 			await page.keyboard.press('Space');
 			await expect(checkbox).toBeChecked();
 			checks.push('checkbox-focus-indicator-and-Space-activation');

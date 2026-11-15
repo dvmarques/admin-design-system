@@ -2374,6 +2374,11 @@ export function PageHeaderDemo() {
 				}
 			/>
 			<output aria-label="Resultado das ações">{feedback}</output>
+			<nav aria-label="Exemplos de páginas" style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem' }}>
+				<Link href="/exemplos/composicao-semantica/consulta">Consulta com tabela</Link>
+				<Link href="/exemplos/composicao-semantica/formulario">Formulário validado</Link>
+				<Link href="/exemplos/composicao-semantica/dashboard">Dashboard com cards</Link>
+			</nav>
 		</div>
 	);
 }

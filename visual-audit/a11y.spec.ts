@@ -245,21 +245,23 @@ async function keyboardAction(page: Page, preview: Locator, scenario: Scenario, 
 		}
 		case 'dropdown': {
 			const trigger = preview.getByRole('button', { name: 'Abrir ações' });
-			await trigger.focus();
-			await page.keyboard.press('ArrowDown');
+			// A abertura por clique não move o foco: mede a pintura do item
+			// ainda sem foco, evitando assumir outline específico.
+			await trigger.click();
 			const first = page.getByRole('menuitem', { name: 'Exportar' });
-			await expect(first).toBeFocused();
-			await expect.poll(() => first.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
-			const visibleOutline = await first.evaluate((node) => {
-				const css = getComputedStyle(node);
-				return css.outlineStyle !== 'none' && Number.parseFloat(css.outlineWidth) > 0;
-			});
-			expect(visibleOutline, 'menuitem precisa exibir indicador visual de foco').toBe(true);
+			await expect(first).toBeVisible();
+			const before = await focusPaint(first);
+			await page.keyboard.press('Escape');
+			await expect(first).not.toBeVisible();
+			await trigger.focus();
+			// A operação avaliada usa teclado real, independentemente do probe acima.
+			await page.keyboard.press('ArrowDown');
+			await verifyVisibleKeyboardFocus(first, before, checks);
 			const disabled = page.getByRole('menuitem', { name: 'Indisponível' });
 			await expect(disabled).toHaveAttribute('aria-disabled', 'true');
 			await page.keyboard.press('ArrowDown');
 			await expect(first).toBeFocused();
-			checks.push('dropdown-ArrowDown-skips-disabled-items-and-visible-outline');
+			checks.push('dropdown-ArrowDown-skips-disabled-items-and-focus-paint-changes');
 			await page.keyboard.press('Escape');
 			await expect(first).not.toBeVisible();
 			await expect(trigger).toBeFocused();

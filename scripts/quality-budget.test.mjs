@@ -74,7 +74,15 @@ test('a CI publica cobertura Node e Vitest como artefatos', () => {
 });
 
 const distributionReady = packages.every((name) =>
-	existsSync(new URL(`../packages/${name.split('/').at(-1)}/dist`, import.meta.url)),
+	existsSync(
+		new URL(
+			`../packages/${name
+				.split('/')
+				.at(-1)
+				.replace(/^admin-ds-/, '')}/dist`,
+			import.meta.url,
+		),
+	),
 );
 
 function inspectWith(change) {

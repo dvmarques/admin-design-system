@@ -183,7 +183,6 @@
 		padding: 1rem;
 	}
 
-
 	/* Only mounted on demand; no footer markup or reserved space otherwise. */
 	.ads-admin-shell-footer {
 		box-sizing: border-box;

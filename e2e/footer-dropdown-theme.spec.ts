@@ -18,9 +18,9 @@ for (const width of [320, 390, 768, 1440]) {
 
 for (const theme of ['light', 'dark'] as const) {
 	test(`grouped dropdown keyboard and portal in ${theme}`, async ({ page }) => {
-		await page.context().addCookies([
-			{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' },
-		]);
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 		await page.goto('/catalogo/dropdown');
 		const trigger = page.getByRole('button', { name: 'Abrir ações' });
 		await trigger.focus();
@@ -41,7 +41,9 @@ for (const theme of ['light', 'dark'] as const) {
 	});
 }
 
-test('consumer-controlled light, dark and system preference reaches a portaled menu', async ({ page }) => {
+test('consumer-controlled light, dark and system preference reaches a portaled menu', async ({
+	page,
+}) => {
 	await page.goto('/catalogo/theme-control');
 	const groups = page.getByRole('radiogroup', { name: 'Tema' });
 	const group = groups.first();

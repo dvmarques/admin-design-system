@@ -123,12 +123,19 @@ export const GroupedDropdown: Story = {
 				</div>
 				<AdsDropdown.Divider />
 				<AdsDropdown.Header id="story-export">Exportação</AdsDropdown.Header>
-				<div role="group" aria-labelledby="story-export"><AdsDropdown.Item>Exportar</AdsDropdown.Item></div>
+				<div role="group" aria-labelledby="story-export">
+					<AdsDropdown.Item>Exportar</AdsDropdown.Item>
+				</div>
 			</AdsDropdown.Content>
 		</AdsDropdown>
 	),
 	parameters: {
-		docs: { description: { story: 'Setas/Home/End ignoram Header, Divider e itens desabilitados. Escape retorna ao gatilho; Tab/Shift+Tab fecham e continuam a ordem lógica do gatilho.' } },
+		docs: {
+			description: {
+				story:
+					'Setas/Home/End ignoram Header, Divider e itens desabilitados. Escape retorna ao gatilho; Tab/Shift+Tab fecham e continuam a ordem lógica do gatilho.',
+			},
+		},
 	},
 };
 export const Pagination: Story = {

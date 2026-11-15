@@ -8,19 +8,18 @@ Este guia descreve APIs públicas do ADS; não exige nenhum framework CSS, rotea
 import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 
 export function Page({ children }: { children: React.ReactNode }) {
-  return (
-    <AdsAdminShell layout="sidebar-header">
-      <AdsAdminShell.Header>Admin</AdsAdminShell.Header>
-      <AdsAdminShell.Body>
-        <AdsAdminShell.Sidebar><nav aria-label="Seções">…</nav></AdsAdminShell.Sidebar>
-        <AdsAdminShell.Main>{children}</AdsAdminShell.Main>
-      </AdsAdminShell.Body>
-      <AdsAdminShell.Footer
-        start={<span>Nome do produto</span>}
-        end={<a href="/ajuda">Ajuda</a>}
-      />
-    </AdsAdminShell>
-  );
+	return (
+		<AdsAdminShell layout="sidebar-header">
+			<AdsAdminShell.Header>Admin</AdsAdminShell.Header>
+			<AdsAdminShell.Body>
+				<AdsAdminShell.Sidebar>
+					<nav aria-label="Seções">…</nav>
+				</AdsAdminShell.Sidebar>
+				<AdsAdminShell.Main>{children}</AdsAdminShell.Main>
+			</AdsAdminShell.Body>
+			<AdsAdminShell.Footer start={<span>Nome do produto</span>} end={<a href="/ajuda">Ajuda</a>} />
+		</AdsAdminShell>
+	);
 }
 ```
 
@@ -35,20 +34,20 @@ export function Page({ children }: { children: React.ReactNode }) {
 import { AdsDropdown } from '@dvmarques/admin-ds-components';
 
 <AdsDropdown>
-  <AdsDropdown.Trigger>Ações</AdsDropdown.Trigger>
-  <AdsDropdown.Content aria-label="Ações do registro">
-    <AdsDropdown.Header id="grupo-operacoes">Operações</AdsDropdown.Header>
-    <div role="group" aria-labelledby="grupo-operacoes">
-      <AdsDropdown.Item>Editar</AdsDropdown.Item>
-      <AdsDropdown.Item disabled>Excluir (sem permissão)</AdsDropdown.Item>
-    </div>
-    <AdsDropdown.Divider />
-    <AdsDropdown.Header id="grupo-exportacao">Exportação</AdsDropdown.Header>
-    <div role="group" aria-labelledby="grupo-exportacao">
-      <AdsDropdown.Item>Exportar</AdsDropdown.Item>
-    </div>
-  </AdsDropdown.Content>
-</AdsDropdown>
+	<AdsDropdown.Trigger>Ações</AdsDropdown.Trigger>
+	<AdsDropdown.Content aria-label="Ações do registro">
+		<AdsDropdown.Header id="grupo-operacoes">Operações</AdsDropdown.Header>
+		<div role="group" aria-labelledby="grupo-operacoes">
+			<AdsDropdown.Item>Editar</AdsDropdown.Item>
+			<AdsDropdown.Item disabled>Excluir (sem permissão)</AdsDropdown.Item>
+		</div>
+		<AdsDropdown.Divider />
+		<AdsDropdown.Header id="grupo-exportacao">Exportação</AdsDropdown.Header>
+		<div role="group" aria-labelledby="grupo-exportacao">
+			<AdsDropdown.Item>Exportar</AdsDropdown.Item>
+		</div>
+	</AdsDropdown.Content>
+</AdsDropdown>;
 ```
 
 Header é texto estático e não recebe foco por padrão. Divider é `role=separator` horizontal e também não recebe foco. Use ids únicos para vincular `role=group` via `aria-labelledby` quando houver agrupamento. Não há `AdsDropdown.Group` obrigatório: os elementos nativos preservam a API pequena.
@@ -63,8 +62,12 @@ ArrowDown/ArrowUp/Home/End navegam somente por Items habilitados. Escape fecha e
 
 ```css
 /* Após os estilos distribuídos: alcança página e portais. */
-[data-theme='light'] { --ads-color-primary: #345b9e; }
-[data-theme='dark']  { --ads-color-primary: #a4bbff; }
+[data-theme='light'] {
+	--ads-color-primary: #345b9e;
+}
+[data-theme='dark'] {
+	--ads-color-primary: #a4bbff;
+}
 ```
 
 Overlays existentes replicam o `data-theme` explícito mais próximo da origem e escutam alterações enquanto abertos. Como os portais estão em `document.body`, **variáveis inline definidas somente num ancestral local não são herdadas pelo painel portado**: passe override diretamente ao Content (ex.: `style={{ '--ads-color-surface-raised': '...' } as React.CSSProperties}`) ou use os seletores `[data-theme]` acima. Não duplique o mecanismo de tema, nem copie indiscriminadamente todas as variáveis calculadas para o portal.

@@ -97,9 +97,19 @@ export const ThemePreferenceWithPortal: Story = {
 		}, []);
 		const effective = preference === 'system' ? systemTheme : preference;
 		return (
-			<div data-theme={effective} className="ads-layout-stack rounded-lg border border-border bg-surface p-4">
-				<AdsThemeControl value={preference} onValueChange={setPreference} optionDisplay="icon-text" variant="group" />
-				<p role="status">Preferência: {preference}; tema efetivo: {effective}</p>
+			<div
+				data-theme={effective}
+				className="ads-layout-stack rounded-lg border border-border bg-surface p-4"
+			>
+				<AdsThemeControl
+					value={preference}
+					onValueChange={setPreference}
+					optionDisplay="icon-text"
+					variant="group"
+				/>
+				<p role="status">
+					Preferência: {preference}; tema efetivo: {effective}
+				</p>
 				<AdsDropdown>
 					<AdsDropdown.Trigger>Abrir overlay no tema {effective}</AdsDropdown.Trigger>
 					<AdsDropdown.Content

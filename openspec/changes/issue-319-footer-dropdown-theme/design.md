@@ -9,11 +9,11 @@
 
 ## Footer — decisão
 
-| Alternativa | Benefícios | Limitações | Decisão |
-| --- | --- | --- | --- |
-| `<footer>` puro | API zero | cada aplicação replica geometria do shell, grid, responsividade e CSS | manter como alternativa fora do shell |
-| `AdsFooter` global | possível fora do shell | duplica superfície e regras sem caso demonstrado | não criar |
-| `AdsAdminShell.Footer` | um slot coerente com Header/Main, só ativo quando usado | acoplado ao layout shell, intencional | **criar somente este** |
+| Alternativa            | Benefícios                                              | Limitações                                                            | Decisão                               |
+| ---------------------- | ------------------------------------------------------- | --------------------------------------------------------------------- | ------------------------------------- |
+| `<footer>` puro        | API zero                                                | cada aplicação replica geometria do shell, grid, responsividade e CSS | manter como alternativa fora do shell |
+| `AdsFooter` global     | possível fora do shell                                  | duplica superfície e regras sem caso demonstrado                      | não criar                             |
+| `AdsAdminShell.Footer` | um slot coerente com Header/Main, só ativo quando usado | acoplado ao layout shell, intencional                                 | **criar somente este**                |
 
 - API: `FooterProps extends HTMLAttributes<HTMLElement>` com `start?: ReactNode`, `end?: ReactNode`; `children` permanece como conteúdo livre intermediário. Renderiza `<footer>` no DOM; fragmentos start/end somente quando presentes. Sem placeholder quando Footer não foi montado.
 - O footer é **filho direto de `AdsAdminShell` e irmão de `Body`**, após ele. Isso gera landmark nativa `contentinfo` fora de `main`. Não duplicar `main` ou `footer` em regiões existentes. No desktop padrão, é flex child após body; em `sidebar-header`, ocupa grid col 2 row 3, enquanto a sidebar permanece na col 1. No mobile com footer, shell se torna coluna flex preenchendo viewport; sem footer CSS anterior permanece inalterado. `main` continua rolando no desktop sem footer sobreposto ou clipping.

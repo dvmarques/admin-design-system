@@ -1281,56 +1281,63 @@ export function AdminShellDemo() {
 				</AdsButton>
 			</div>
 			<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
-			<AdsAdminShell layout="sidebar-header">
-				<AdsAdminShell.Header>
-					<AdsAdminShell.NavigationTrigger />
-					<div className="demo-mobile-brand">
-						<DemoBrand compact />
-					</div>
-					<span className="demo-header-tools">Shell de exemplo</span>
-				</AdsAdminShell.Header>
-				<AdsAdminShell.Body>
-					<AdsAdminShell.Sidebar
-						header={
-							<>
-								<DemoBrand />
-								<AdsAdminShell.SidebarToggle />
-							</>
-						}
-						label="Navegação do shell de exemplo"
-						mobileTitle="Menu do exemplo"
-					>
-						<AdsAdminShell.Navigation>
-							<AdsAdminShell.NavigationSection label="Exemplos">
-								<AdsAdminShell.NavigationGroup label="Páginas" icon={<AdsIcon name="info" />} open>
-									<AdsAdminShell.NavigationItem>
-										<a href="#shell-content" aria-current="page">
-											Conteúdo
-										</a>
-									</AdsAdminShell.NavigationItem>
-								</AdsAdminShell.NavigationGroup>
-							</AdsAdminShell.NavigationSection>
-						</AdsAdminShell.Navigation>
-					</AdsAdminShell.Sidebar>
-					<AdsAdminShell.Main>
-						<h1>Shell administrativo</h1>
-						<p id="shell-content">
-							Conteúdo administrativo. Use os controles para recolher ou abrir o menu.
-						</p>
-						{longContent
-							? Array.from({ length: 18 }, (_, index) => (
-									<p key={index}>Linha de exemplo {index + 1}: a região principal mantém sua rolagem independente.</p>
-								))
-							: null}
-					</AdsAdminShell.Main>
-				</AdsAdminShell.Body>
-				{showFooter ? (
-					<AdsAdminShell.Footer
-						start={<span>ADS · Footer opcional</span>}
-						end={<a href="#shell-content">Voltar ao conteúdo</a>}
-					/>
-				) : null}
-			</AdsAdminShell>
+				<AdsAdminShell layout="sidebar-header">
+					<AdsAdminShell.Header>
+						<AdsAdminShell.NavigationTrigger />
+						<div className="demo-mobile-brand">
+							<DemoBrand compact />
+						</div>
+						<span className="demo-header-tools">Shell de exemplo</span>
+					</AdsAdminShell.Header>
+					<AdsAdminShell.Body>
+						<AdsAdminShell.Sidebar
+							header={
+								<>
+									<DemoBrand />
+									<AdsAdminShell.SidebarToggle />
+								</>
+							}
+							label="Navegação do shell de exemplo"
+							mobileTitle="Menu do exemplo"
+						>
+							<AdsAdminShell.Navigation>
+								<AdsAdminShell.NavigationSection label="Exemplos">
+									<AdsAdminShell.NavigationGroup
+										label="Páginas"
+										icon={<AdsIcon name="info" />}
+										open
+									>
+										<AdsAdminShell.NavigationItem>
+											<a href="#shell-content" aria-current="page">
+												Conteúdo
+											</a>
+										</AdsAdminShell.NavigationItem>
+									</AdsAdminShell.NavigationGroup>
+								</AdsAdminShell.NavigationSection>
+							</AdsAdminShell.Navigation>
+						</AdsAdminShell.Sidebar>
+						<AdsAdminShell.Main>
+							<h1>Shell administrativo</h1>
+							<p id="shell-content">
+								Conteúdo administrativo. Use os controles para recolher ou abrir o menu.
+							</p>
+							{longContent
+								? Array.from({ length: 18 }, (_, index) => (
+										<p key={index}>
+											Linha de exemplo {index + 1}: a região principal mantém sua rolagem
+											independente.
+										</p>
+									))
+								: null}
+						</AdsAdminShell.Main>
+					</AdsAdminShell.Body>
+					{showFooter ? (
+						<AdsAdminShell.Footer
+							start={<span>ADS · Footer opcional</span>}
+							end={<a href="#shell-content">Voltar ao conteúdo</a>}
+						/>
+					) : null}
+				</AdsAdminShell>
 			</div>
 		</div>
 	);
@@ -1583,7 +1590,10 @@ export function ThemeControlDemo() {
 			</div>
 			<p role="status">Preferência: {preference}</p>
 			<p>Tema efetivo: {effectiveTheme}</p>
-			<div data-theme={effectiveTheme} className="ads-layout-stack rounded-lg border border-border bg-surface p-4">
+			<div
+				data-theme={effectiveTheme}
+				className="ads-layout-stack rounded-lg border border-border bg-surface p-4"
+			>
 				<p>Escopo de tema aplicado pela aplicação consumidora, sem persistência pelo ADS.</p>
 				<AdsDropdown>
 					<AdsDropdown.Trigger>Overlay no tema {effectiveTheme}</AdsDropdown.Trigger>
@@ -1598,7 +1608,10 @@ export function ThemeControlDemo() {
 						<AdsDropdown.Item>Verificar tema do portal</AdsDropdown.Item>
 					</AdsDropdown.Content>
 				</AdsDropdown>
-				<div className="rounded-md border border-border p-3 text-text" style={{ backgroundColor: 'var(--ads-color-surface-selected)' }}>
+				<div
+					className="rounded-md border border-border p-3 text-text"
+					style={{ backgroundColor: 'var(--ads-color-surface-selected)' }}
+				>
 					Superfície com tokens semânticos do tema.
 				</div>
 			</div>

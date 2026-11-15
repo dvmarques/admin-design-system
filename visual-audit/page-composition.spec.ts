@@ -33,9 +33,9 @@ for (const theme of ['light', 'dark'] as const) {
 				test.setTimeout(90_000);
 				await page.setViewportSize({ width, height: 900 });
 				if (scenario.slug !== 'cabecalho-isolado') {
-					await page.context().addCookies([
-						{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' },
-					]);
+					await page
+						.context()
+						.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 				}
 				const url =
 					scenario.slug === 'cabecalho-isolado'
@@ -48,16 +48,12 @@ for (const theme of ['light', 'dark'] as const) {
 				await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
 				await expect(page.getByRole('main')).toHaveCount(1);
 				await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-				await expect(
-					page.getByRole('heading', { level: 1, name: scenario.heading }),
-				).toBeVisible();
+				await expect(page.getByRole('heading', { level: 1, name: scenario.heading })).toBeVisible();
 				await page.evaluate(() => document.fonts.ready);
 				const metrics = await page.evaluate(() => ({
 					documentOverflowPx:
-						Math.max(
-							document.documentElement.scrollWidth,
-							document.body.scrollWidth,
-						) - document.documentElement.clientWidth,
+						Math.max(document.documentElement.scrollWidth, document.body.scrollWidth) -
+						document.documentElement.clientWidth,
 					h1Visible: !!document.querySelector('h1'),
 					shellPresent: !!document.querySelector('.ads-admin-shell'),
 				}));

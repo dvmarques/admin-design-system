@@ -44,8 +44,10 @@ for (const theme of ['light', 'dark'] as const) {
 							const context = document.createElement('canvas').getContext('2d');
 							if (!context) return false;
 							context.font = getComputedStyle(title).font;
-							const words = (title.textContent ?? '').trim().split(/\\s+/);
-							const longest = Math.max(...words.map((word) => context.measureText(word).width));
+							const words = (title.textContent ?? '').trim().split(/\s+/);
+							const longest = Math.max(
+								...words.map((word) => context.measureText(word).width),
+							);
 							return longest <= title.clientWidth + 1;
 						});
 					expect(longestWordFits, `Palavra do H1 deve caber em ${route.slug} 320px`).toBe(

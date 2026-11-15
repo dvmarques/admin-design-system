@@ -458,7 +458,11 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 							'.png';
 						mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
 						await page.evaluate(() => document.fonts.ready);
-						const options = { path: join(output, image), animations: 'disabled' as const, timeout: 20_000 };
+						const options = {
+							path: join(output, image),
+							animations: 'disabled' as const,
+							timeout: 20_000,
+						};
 						if (target) {
 							await target.screenshot(options);
 						} else {

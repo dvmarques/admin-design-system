@@ -35,6 +35,10 @@ export function Example() {
 
 Componentes de apresentação sem interatividade podem ser usados em Server Components quando seus contratos permitirem; não transporte callbacks por fronteiras Server/Client.
 
+## Padrões CSS de layout
+
+O pacote distribui as classes opt-in `ads-layout-container`, `ads-layout-stack`, `ads-layout-grid` e `ads-layout-cluster` para compor containers, colunas responsivas, empilhamento e ações com HTML nativo. Não é preciso configurar Tailwind; veja o [guia](../../docs/responsive-layout.md).
+
 ## Recursos opcionais
 
 `AdsMaskedInput` **não** pertence ao entrypoint raiz. Apenas se precisar de máscaras:

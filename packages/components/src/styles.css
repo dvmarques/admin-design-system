@@ -747,3 +747,54 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		white-space: normal;
 	}
 }
+
+/* #318: padrões opt-in de composição; nunca alteram semântica nem componentes existentes. */
+@layer components {
+	.ads-layout-container {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: var(--ads-layout-max-width, 76rem);
+		min-width: 0;
+		margin-inline: auto;
+		padding-inline: var(--ads-layout-gutter, var(--ads-spacing-4));
+	}
+
+	.ads-layout-stack {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: var(--ads-layout-stack-gap, var(--ads-spacing-4));
+	}
+
+	.ads-layout-grid {
+		display: grid;
+		min-width: 0;
+		grid-template-columns: repeat(
+			auto-fit,
+			minmax(min(100%, var(--ads-layout-grid-min-column, 16rem)), 1fr)
+		);
+		gap: var(--ads-layout-grid-gap, var(--ads-spacing-4));
+	}
+
+	.ads-layout-grid > * {
+		min-width: 0;
+	}
+
+	.ads-layout-cluster {
+		display: flex;
+		min-width: 0;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--ads-layout-cluster-gap, var(--ads-spacing-3));
+	}
+
+	.ads-layout-cluster > * {
+		min-width: 0;
+	}
+
+	@media (min-width: 48rem) {
+		.ads-layout-container {
+			padding-inline: var(--ads-layout-gutter, var(--ads-spacing-6));
+		}
+	}
+}

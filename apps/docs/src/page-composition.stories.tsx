@@ -28,7 +28,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'AdsPageHeader oferece H1, descrição e ações responsivas. Seções usam HTML nativo com headings H2–H4; AdsCard é opcional e reservado a conteúdos autocontidos. Os exemplos usam apenas APIs públicas.',
+					'AdsPageHeader oferece H1, descrição e ações responsivas. Seções usam HTML nativo e classes CSS opt-in ads-layout-* (container, stack, grid, cluster), sem Tailwind no consumidor. AdsCard é opcional e reservado a conteúdos autocontidos.',
 			},
 		},
 	},
@@ -38,10 +38,6 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const pageStyle = { display: 'grid', gap: '2rem', minWidth: 0 } as const;
-const sectionStyle = { display: 'grid', gap: '1rem', minWidth: 0 } as const;
-const actionStyle = { display: 'flex', flexWrap: 'wrap', gap: '0.75rem' } as const;
-
 function ConsultationExample() {
 	const [query, setQuery] = useState('');
 	const people = ['Ana Silva', 'Bruno Costa', 'Carla Souza'];
@@ -49,7 +45,7 @@ function ConsultationExample() {
 		person.toLowerCase().includes(query.trim().toLowerCase()),
 	);
 	return (
-		<main style={pageStyle}>
+		<main className="ads-layout-stack">
 			<AdsPageHeader
 				title="Consulta administrativa"
 				description="Pesquise registros sem colocar o conteúdo da página dentro de um card."
@@ -59,7 +55,7 @@ function ConsultationExample() {
 					</AdsButton>
 				}
 			/>
-			<section aria-labelledby="storybook-registros" style={sectionStyle}>
+			<section aria-labelledby="storybook-registros" className="ads-layout-stack">
 				<AdsTypography as="h2" id="storybook-registros" variant="heading2">
 					Registros
 				</AdsTypography>
@@ -98,14 +94,14 @@ function FormExample() {
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
 	return (
-		<main style={pageStyle}>
+		<main className="ads-layout-stack">
 			<AdsPageHeader
 				title="Formulário administrativo"
 				description="Seções semânticas, validação e ações sem card obrigatório."
 			/>
 			<form
 				noValidate
-				style={sectionStyle}
+				className="ads-layout-stack"
 				onSubmit={(event) => {
 					event.preventDefault();
 					setMessage(
@@ -115,22 +111,24 @@ function FormExample() {
 					);
 				}}
 			>
-				<section aria-labelledby="storybook-identificacao" style={sectionStyle}>
+				<section aria-labelledby="storybook-identificacao" className="ads-layout-stack">
 					<AdsTypography as="h2" id="storybook-identificacao" variant="heading2">
 						Identificação
 					</AdsTypography>
-					<AdsField label="Nome">
-						<AdsInput value={name} onChange={(event) => setName(event.target.value)} />
-					</AdsField>
-					<AdsField label="E-mail">
-						<AdsInput
-							type="email"
-							value={email}
-							onChange={(event) => setEmail(event.target.value)}
-						/>
-					</AdsField>
+					<div className="ads-layout-grid">
+						<AdsField label="Nome">
+							<AdsInput value={name} onChange={(event) => setName(event.target.value)} />
+						</AdsField>
+						<AdsField label="E-mail">
+							<AdsInput
+								type="email"
+								value={email}
+								onChange={(event) => setEmail(event.target.value)}
+							/>
+						</AdsField>
+					</div>
 				</section>
-				<section aria-labelledby="storybook-revisao" style={sectionStyle}>
+				<section aria-labelledby="storybook-revisao" className="ads-layout-stack">
 					<AdsTypography as="h2" id="storybook-revisao" variant="heading2">
 						Revisão
 					</AdsTypography>
@@ -139,7 +137,7 @@ function FormExample() {
 					</AdsTypography>
 					<AdsTypography variant="muted">Nenhum dado é enviado para um servidor.</AdsTypography>
 				</section>
-				<div style={actionStyle}>
+				<div className="ads-layout-cluster">
 					<AdsButton type="submit">Validar</AdsButton>
 					<AdsButton
 						type="reset"
@@ -161,27 +159,21 @@ function FormExample() {
 
 function DashboardExample() {
 	return (
-		<main style={pageStyle}>
+		<main className="ads-layout-stack">
 			<AdsPageHeader
 				title="Dashboard administrativo"
 				description="Cards apenas para métricas e resumos autocontidos."
 			/>
-			<section aria-labelledby="storybook-indicadores" style={sectionStyle}>
+			<section aria-labelledby="storybook-indicadores" className="ads-layout-stack">
 				<AdsTypography as="h2" id="storybook-indicadores" variant="heading2">
 					Indicadores
 				</AdsTypography>
-				<div
-					style={{
-						display: 'grid',
-						gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 13rem), 1fr))',
-						gap: '1rem',
-					}}
-				>
+				<div className="ads-layout-grid">
 					<AdsMetricCard title="Cadastros ativos" value="1.284" />
 					<AdsMetricCard title="Novos registros" value="72" />
 				</div>
 			</section>
-			<section aria-labelledby="storybook-resumos" style={sectionStyle}>
+			<section aria-labelledby="storybook-resumos" className="ads-layout-stack">
 				<AdsTypography as="h2" id="storybook-resumos" variant="heading2">
 					Resumos
 				</AdsTypography>
@@ -205,7 +197,7 @@ export const ValidatedForm: Story = { render: () => <FormExample /> };
 export const Dashboard: Story = { render: () => <DashboardExample /> };
 export const LongTitleAndActions: Story = {
 	render: () => (
-		<main style={{ ...pageStyle, width: 'min(100%, 20rem)' }}>
+		<main className="ads-layout-stack" style={{ width: 'min(100%, 20rem)' }}>
 			<AdsPageHeader
 				title="TítuloDePáginaAdministrativaLongoSemEspaçosParaTestarQuebra"
 				description="Descrição extensa para verificar a legibilidade e quebra de linhas em uma largura estreita, inclusive zoom elevado."
@@ -225,6 +217,49 @@ export const WithoutOptionalSlots: Story = {
 	render: () => (
 		<main>
 			<AdsPageHeader title="Página sem descrição e sem ações" />
+		</main>
+	),
+};
+
+/** HTML nativo, duas camadas de grids e conteúdo longo sem dependências adicionais. */
+export const NestedResponsiveGrid: Story = {
+	render: () => (
+		<main className="ads-layout-container ads-layout-stack">
+			<AdsPageHeader
+				title="Grade aninhada"
+				description="As colunas usam a largura disponível do contêiner, não a largura da viewport."
+			/>
+			<section aria-labelledby="nested-layout-title" className="ads-layout-stack">
+				<AdsTypography as="h2" id="nested-layout-title" variant="heading2">
+					Áreas de trabalho
+				</AdsTypography>
+				<div className="ads-layout-grid">
+					<div className="ads-layout-stack">
+						<AdsTypography as="h3" variant="heading3">
+							Primeira área
+						</AdsTypography>
+						<div className="ads-layout-grid">
+							<AdsTypography variant="muted">
+								Conteúdo de painel que se ajusta ao espaço disponível.
+							</AdsTypography>
+							<AdsTypography variant="muted" style={{ overflowWrap: 'anywhere' }}>
+								IdentificadorAdministrativoExtensoSemEspacosQuePrecisaQuebrar
+							</AdsTypography>
+						</div>
+					</div>
+					<div className="ads-layout-stack">
+						<AdsTypography as="h3" variant="heading3">
+							Segunda área
+						</AdsTypography>
+						<div className="ads-layout-cluster">
+							<AdsButton type="button">Ação principal</AdsButton>
+							<AdsButton type="button" variant="secondary">
+								Ação secundária
+							</AdsButton>
+						</div>
+					</div>
+				</div>
+			</section>
 		</main>
 	),
 };

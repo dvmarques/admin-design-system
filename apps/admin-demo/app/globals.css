@@ -909,32 +909,37 @@ body {
 	gap: 0.5rem;
 }
 
-/* #317: a semântica da página não depende de cards. */
-.demo-semantic-stack {
-	display: grid;
-	gap: 2rem;
-	min-width: 0;
+/* #318: ajustes da demonstração sobre classes públicas de composição. */
+.demo-semantic-page {
+	--ads-layout-stack-gap: var(--ads-spacing-8);
+	/* demo-page e shell já fornecem gutter: não somar padding do container. */
+	--ads-layout-gutter: 0;
 }
 .demo-semantic-section {
-	display: grid;
-	gap: 1rem;
-	min-width: 0;
+	--ads-layout-stack-gap: var(--ads-spacing-4);
 }
-.demo-semantic-filters,
-.demo-semantic-actions {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 0.75rem;
+.demo-semantic-filters {
 	align-items: end;
 }
-.demo-semantic-filters > * {
-	min-width: 0;
+.demo-semantic-filter-field {
+	flex: 1 1 16rem;
 }
 .demo-semantic-form {
-	display: grid;
-	gap: 1.25rem;
+	--ads-layout-stack-gap: var(--ads-spacing-5);
 	max-width: 40rem;
-	min-width: 0;
+}
+.demo-semantic-form-fields {
+	--ads-layout-grid-min-column: 16rem;
+}
+.demo-semantic-metrics {
+	--ads-layout-grid-min-column: 13rem;
+}
+.demo-semantic-nested {
+	--ads-layout-grid-min-column: 12rem;
+	overflow-wrap: anywhere;
+}
+.demo-semantic-nested > * {
+	--ads-layout-stack-gap: var(--ads-spacing-2);
 }
 .demo-semantic-results {
 	min-width: 0;

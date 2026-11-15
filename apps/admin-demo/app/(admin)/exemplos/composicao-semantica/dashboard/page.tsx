@@ -11,7 +11,7 @@ import {
 export default function SemanticDashboardPage() {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell demo-semantic-stack">
+			<div className="ads-layout-container ads-layout-stack demo-semantic-page">
 				<AdsPageHeader
 					title="Dashboard administrativo"
 					description="A estrutura da página é semântica; cards aparecem somente em indicadores e resumos autocontidos."
@@ -21,16 +21,22 @@ export default function SemanticDashboardPage() {
 						</Link>
 					}
 				/>
-				<section aria-labelledby="dashboard-indicadores" className="demo-semantic-section">
+				<section
+					aria-labelledby="dashboard-indicadores"
+					className="ads-layout-stack demo-semantic-section"
+				>
 					<AdsTypography as="h2" id="dashboard-indicadores" variant="heading2">
 						Indicadores
 					</AdsTypography>
-					<div className="demo-metrics-grid">
+					<div className="ads-layout-grid demo-semantic-metrics">
 						<AdsMetricCard title="Cadastros ativos" value="1.284" change="+8%" trend="up" />
 						<AdsMetricCard title="Novos registros" value="72" change="+3%" trend="up" />
 					</div>
 				</section>
-				<section aria-labelledby="dashboard-resumos" className="demo-semantic-section">
+				<section
+					aria-labelledby="dashboard-resumos"
+					className="ads-layout-stack demo-semantic-section"
+				>
 					<AdsTypography as="h2" id="dashboard-resumos" variant="heading2">
 						Resumos
 					</AdsTypography>
@@ -42,6 +48,24 @@ export default function SemanticDashboardPage() {
 						</AdsCardHeader>
 						<AdsCardContent>
 							<AdsTypography>Os valores são fictícios e não dependem de backend.</AdsTypography>
+							<div className="ads-layout-grid demo-semantic-nested">
+								<div className="ads-layout-stack">
+									<AdsTypography as="h4" variant="heading4">
+										Atendimento
+									</AdsTypography>
+									<AdsTypography variant="muted">
+										Consultas e solicitações são organizadas sem outro card.
+									</AdsTypography>
+								</div>
+								<div className="ads-layout-stack">
+									<AdsTypography as="h4" variant="heading4">
+										Operações
+									</AdsTypography>
+									<AdsTypography variant="muted">
+										Colunas aninhadas acompanham o espaço disponível.
+									</AdsTypography>
+								</div>
+							</div>
 						</AdsCardContent>
 					</AdsCard>
 				</section>

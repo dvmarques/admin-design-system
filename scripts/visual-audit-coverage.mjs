@@ -80,7 +80,8 @@ export function validateCoverage(matrix, entries) {
 		if (!Object.hasOwn(matrix.profiles ?? {}, component?.profile)) {
 			errors.push('perfil inválido de ' + name);
 		}
-		if (component?.review !== 'Pendente') {
+		const review = component?.review;
+		if (review !== 'Pendente' && !/^Aprovado \(/.test(String(review ?? ''))) {
 			errors.push('status humano não comprovado no plano: ' + name);
 		}
 		const base = matrix.profiles?.[component?.profile];

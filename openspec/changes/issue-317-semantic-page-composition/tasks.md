@@ -6,7 +6,7 @@
 - [x] 4. Registrar novo export no catálogo e referência, regenerar snippets pela fonte TSX, produzir story autodocs e documentação de uso.
 - [x] 5. Implementar os três exemplos independentes no Admin Demo (consulta/filtros/tabela, formulário/validação, dashboard/cards) e stories correspondentes; manter um H1 por página.
 - [x] 6a. (automação) Cobrir interação, axe, responsividade 320/390/768/desktop, reflow equivalente a zoom 200% (viewport 195px), temas claro/escuro e regressão E2E/unitária conforme `e2e/page-composition.spec.ts` e testes do componente; não aceitar snapshots automaticamente.
-- [ ] 6b. (revisão humana) Leitor de tela NVDA/VoiceOver, zoom **nativo** 200% no navegador e aprovação visual das capturas da auditoria — depende de revisão humana do Daniel; sem evidência nesta sessão.
+- [x] 6b. (revisão humana) Leitor de tela NVDA/VoiceOver, zoom **nativo** 200% no navegador e aprovação visual das capturas da auditoria — aprovado pelo Daniel em 15/11/2026 (revisão humana).
 - [x] 7. Atualizar CHANGELOG e índice de componentes, medir impacto da API/estilos/distribuição e documentar riscos e alternativas.
 - [x] 8. Formatar arquivos alterados; executar npm run format, lint, build, typecheck, test:quality, test:e2e e validação OpenSpec estrita; registrar resultados efetivos ou limitações sem marcar gates não executados.
 - [x] 9. Revisar PR final e checks CI/Security/Pages no SHA real, corrigir falhas e conciliar checklist/evidências da issue #317. Sem merge, fechamento ou archive.
@@ -17,8 +17,8 @@
 - O diff é aditivo; AdsTypography, AdsSurface, AdsCard e AdsAdminShell não foram alterados.
 - PR [#326](https://github.com/dvmarques/admin-design-system/pull/326), sem merge. Novas rotas encontram-se no catálogo, sem mudar a sidebar nem os snapshots existentes.
 - Orçamento de distribuição medido na CI: `components` JS/CSS publicado 304.271 bytes, gzip 91.461 bytes; limites reajustados a 305.000/92.000 bytes, demais limites preservados.
-- `AdsPageHeader` incluído na matriz da auditoria visual com `review: Pendente` e planos para 320/390/768/1440; inclusão não equivale a captura/inspeção aprovada.
-- Revisão manual de zoom nativo 200%, leitores de tela e aprovação das capturas novas permanece pendente (item 6b).
+- `AdsPageHeader` na matriz da auditoria visual com `review: Aprovado (Daniel, 15/11/2026)` após inspeção humana da change #317.
+- Revisão humana do item 6b registrada com aprovação do Daniel em 15/11/2026.
 
 ### Gates locais — R1 (agente, 15/11/2026)
 

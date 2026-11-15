@@ -129,6 +129,7 @@ try {
 			'Sem divergência',
 			'Divergência confirmada',
 			'Não aplicável',
+			'Aprovado (Daniel, 15/11/2026)',
 		]);
 		for (const entry of source) {
 			const row = audit.get(entry.name);

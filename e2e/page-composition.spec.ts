@@ -91,5 +91,6 @@ test('dashboard usa cards apenas nas métricas e no resumo', async ({ page }) =>
 	await expect(page.getByRole('heading', { level: 2, name: 'Resumos' })).toBeVisible();
 	await expect(page.getByRole('heading', { level: 3, name: 'Leitura operacional' })).toBeVisible();
 	await expect(page.locator('.ads-page-header .ads-card')).toHaveCount(0);
-	await expect(page.locator('.ads-card')).toHaveCount(1);
+	await expect(page.locator('.ads-metric-card')).toHaveCount(2);
+	await expect(page.locator('.ads-card:not(.ads-metric-card)')).toHaveCount(1);
 });

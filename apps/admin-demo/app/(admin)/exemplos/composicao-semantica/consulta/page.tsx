@@ -31,7 +31,7 @@ export default function SemanticConsultationPage() {
 
 	return (
 		<div className="demo-page">
-			<div className="demo-shell demo-semantic-stack">
+			<div className="ads-layout-container ads-layout-stack demo-semantic-page">
 				<AdsPageHeader
 					title="Consulta administrativa"
 					description="Pesquise os registros fictícios, examine os resultados e navegue para o cadastro sem envolver a página em um card."
@@ -41,11 +41,11 @@ export default function SemanticConsultationPage() {
 						</Link>
 					}
 				/>
-				<section aria-labelledby="consulta-registros" className="demo-semantic-section">
+				<section aria-labelledby="consulta-registros" className="ads-layout-stack demo-semantic-section">
 					<AdsTypography as="h2" id="consulta-registros" variant="heading2">
 						Registros
 					</AdsTypography>
-					<div className="demo-semantic-filters">
+					<div className="ads-layout-cluster demo-semantic-filters">
 						<AdsField label="Filtrar clientes">
 							<AdsInput
 								type="search"

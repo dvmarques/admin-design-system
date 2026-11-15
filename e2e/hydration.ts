@@ -3,6 +3,9 @@ import { expect, type Locator } from '@playwright/test';
 /**
  * Waits until React has hydrated the element. Events fired before that, such as `selectOption` or
  * `fill`, can be lost or replayed against stale state, which makes the test flaky on slow runners.
+ *
+ * Implementation detail: checks for React 19 internal props (`__reactProps$*`) on the DOM node. There is
+ * no stable public hydration signal on catalog controls without product changes; see `docs/visual-audit.md`.
  */
 export async function waitForHydration(locator: Locator) {
 	await expect

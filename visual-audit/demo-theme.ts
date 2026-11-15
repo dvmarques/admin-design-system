@@ -1,19 +1,17 @@
 import { expect, type Locator, type Page } from '@playwright/test';
-
-/** Aguarda hidratação do controle antes de simular interação (evita perda de `selectOption`). */
-async function waitForHydration(locator: Locator) {
-	await expect
-		.poll(() =>
-			locator.evaluate((element) =>
-				Object.keys(element).some((key) => key.startsWith('__reactProps$')),
-			),
-		)
-		.toBe(true);
-}
+import { waitForHydration } from '../e2e/hydration';
 
 /**
  * Aplica o tema da demonstração e aguarda `data-theme` na região de preview e em `<html>`,
  * repetindo a seleção se a atualização React/atributos atrasar (corrida com workers paralelos).
+ *
+ * Hidratação: o select do catálogo é um Client Component (`CatalogPreview`) sem expor sinal
+ * público de mount; o helper reutiliza {@link waitForHydration} de `e2e/hydration.ts`, que
+ * detecta propriedades internas do React 19 (`__reactProps$*`). Esse acoplamento é deliberado e
+ * compartilhado com a suíte E2E regular: não há `data-testid` nem evento estável na demo sem
+ * ampliar o escopo da issue #152. Se o React alterar nomes internos, atualizar `e2e/hydration.ts`
+ * restaura auditoria e E2E juntos. A confirmação primária continua sendo `data-theme` em preview e
+ * raiz após `selectOption`.
  */
 export async function applyDemoTheme(page: Page, preview: Locator, theme: 'light' | 'dark') {
 	const themeSelect = page.getByLabel('Tema da demonstração');

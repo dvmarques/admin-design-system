@@ -921,7 +921,7 @@ body {
 .demo-semantic-filters {
 	align-items: end;
 }
-.demo-semantic-filters .ads-field {
+.demo-semantic-filters > * {
 	flex: 1 1 16rem;
 }
 .demo-semantic-form {
@@ -938,7 +938,7 @@ body {
 	--ads-layout-grid-min-column: 12rem;
 	overflow-wrap: anywhere;
 }
-.demo-semantic-nested .ads-layout-stack {
+.demo-semantic-nested > * {
 	--ads-layout-stack-gap: var(--ads-spacing-2);
 }
 .demo-semantic-results {

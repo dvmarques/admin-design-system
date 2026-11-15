@@ -19,6 +19,38 @@
 			"action": "reverse-tab"
 		},
 		{
+			"id": "input-keyboard",
+			"name": "AdsInput",
+			"state": "keyboard",
+			"theme": "light",
+			"width": 390,
+			"action": "input-type"
+		},
+		{
+			"id": "select-keyboard",
+			"name": "AdsSelect",
+			"state": "keyboard",
+			"theme": "dark",
+			"width": 768,
+			"action": "select-arrows"
+		},
+		{
+			"id": "checkbox-space",
+			"name": "AdsCheckbox",
+			"state": "keyboard",
+			"theme": "light",
+			"width": 390,
+			"action": "checkbox-space"
+		},
+		{
+			"id": "table-selection",
+			"name": "AdsSmartTable",
+			"state": "keyboard",
+			"theme": "light",
+			"width": 768,
+			"action": "table-select-space"
+		},
+		{
 			"id": "tabs-arrows",
 			"name": "AdsTabs",
 			"state": "keyboard",

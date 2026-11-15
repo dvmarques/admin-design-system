@@ -10,23 +10,23 @@
 
 Referência de **código/CI** (não autorreferencial a commits só de documentação): `452283bc9d94a0a6ac78c71c69d174a141600b06`.
 
-- [x] `npm run format` — CI [Qualidade rápida #43752585078](https://github.com/dvmarques/admin-design-system/actions/runs/43752585078) no SHA de código/CI; repetido em [CI #43754770088](https://github.com/dvmarques/admin-design-system/actions/runs/43754770088) após o commit de docs `de561ad` (mesmo diff de implementação).
-- [x] `npm run lint` — mesmas execuções.
-- [x] `npm run build` (pacotes, Next.js e Storybook) — mesmas execuções.
-- [x] `npm run typecheck` — mesmas execuções.
+- [x] `npm run format` — CI [Qualidade rápida #43752585078](https://github.com/dvmarques/admin-design-system/actions/runs/43752585078) no SHA de código/CI.
+- [x] `npm run lint` — mesma execução.
+- [x] `npm run build` (pacotes, Next.js e Storybook) — mesma execução.
+- [x] `npm run typecheck` — mesma execução.
 - [x] `npm run test:quality` — Vitest **1.583/1.583** e testes Node **154/154** na CI de código/CI.
 - [x] `npm run test:e2e` — Playwright Chromium **261/261** + **253/253**, Firefox **26/26**, WebKit **25/25**; agregador de navegador **success** no SHA de código/CI.
 - [x] `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` — política de develop **71/71** no SHA de código/CI; revalidação local nesta execução R1.
 - [x] `npm run inspect:packages`: medida antes/depois (develop `8ff38e1` → PR no SHA de código/CI); tetos ajustados somente após falha medida — ver `docs/bundle-measurement.md`.
-- [x] CI, Security e Pages no SHA de código/CI — [CI #43752585078](https://github.com/dvmarques/admin-design-system/actions/runs/43752585078) **success**; [Security #43752584975](https://github.com/dvmarques/admin-design-system/actions/runs/43752584975) **success**; [Pages #43752584972](https://github.com/dvmarques/admin-design-system/actions/runs/43752584972) construção **success** (publicação PR **skipped**). Novo push de documentação disparou [CI #43754770088](https://github.com/dvmarques/admin-design-system/actions/runs/43754770088), [Security](https://github.com/dvmarques/admin-design-system/actions/runs/43754770110) e [Pages #43754770029](https://github.com/dvmarques/admin-design-system/actions/runs/43754770029) no HEAD `de561ad` (somente OpenSpec tasks).
+- [x] CI, Security e Pages — no SHA de código/CI: [CI #43752585078](https://github.com/dvmarques/admin-design-system/actions/runs/43752585078) **success**; [Security #43752584975](https://github.com/dvmarques/admin-design-system/actions/runs/43752584975) **success**; [Pages #43752584972](https://github.com/dvmarques/admin-design-system/actions/runs/43752584972) construção **success** (publicação PR **skipped**). Os commits posteriores ao SHA de código/CI são **somente documentação**; a árvore de implementação permanece equivalente a `452283b`. O HEAD final da branch repete os gates com **success**: [CI #43756195505](https://github.com/dvmarques/admin-design-system/actions/runs/43756195505), [Security #43756195573](https://github.com/dvmarques/admin-design-system/actions/runs/43756195573), [Pages #43756195411](https://github.com/dvmarques/admin-design-system/actions/runs/43756195411) (construção **success**, publicação **skipped**). Identificador do HEAD final na tabela de SHAs da PR #327.
 - [ ] Inspeção humana das capturas da auditoria focal — **24/24 capturas automatizadas** inspecionadas pelo agente ([artefato #14176183377](https://github.com/dvmarques/admin-design-system/actions/runs/43751285029/artifacts/14176183377), SHA `ca6b042`); aceite visual humano e matriz `docs/visual-audit-inventory.md` permanecem **Pendente** (Daniel).
 - [ ] Zoom real 200% e leitor de tela (humano) — viewport estreita e E2E não substituem; task 9 permanece aberta.
 
-## Validação local R1 (Node 24.22.1, `CI=1 npm run validate`)
+## Histórico — validação local R1 (15/11/2026; branch antes dos commits R2; SHA registrado na PR #327)
 
-- Exit **0** após liberar porta `3000` ocupada por `next-server` residual do snapshot.
+- `CI=1 npm run validate` (Node 24.22.1): exit **0** após liberar porta `3000` ocupada por `next-server` residual do snapshot.
 - Vitest **1583/1583** (86 arquivos); Playwright **565** aprovados, **1** ignorado.
-- `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`: **71/71**.
+- OpenSpec strict local: **71/71**.
 
 Não confundir viewport efetiva estreita com zoom nativo. Nenhuma aprovação humana é presumida. Archive, merge e fechamento estão proibidos nesta execução.
 

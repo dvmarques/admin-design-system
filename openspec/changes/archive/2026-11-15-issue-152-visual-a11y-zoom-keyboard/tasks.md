@@ -26,3 +26,7 @@ A CI do SHA 547fbf4 aprovou 565 E2E + 1 skip; Pages e Security também passaram.
 ### Conclusão técnica comprovada da implementação
 
 A correção 53d4783 passou CI/Pages/Security e auditoria oficial; as nove tarefas técnicas possuem evidência e estão concluídas. A auditoria #43766946520 e seu artefato #14182871496 confirmam 14/14 casos nativos em Chromium headed, 113/113 testes e zero sinais/falhas/pendências automáticas. OpenSpec strict passou 72/72. Esta atualização altera apenas documentação e reconcilia as tarefas após a validação efetiva da implementação; seu novo SHA deve receber os próprios checks, registrados na PR #325. A inspeção visual humana integral dos 84 exports e a aprovação humana continuam pendentes na issue-mãe. **Não arquivar, não integrar a PR e não fechar a issue**, conforme instrução explícita do usuário.
+
+## Aprovação humana e autorização posterior — 15/11/2026
+
+O usuário declarou “Aprovado”, autorizou marcar a revisão humana como concluída e solicitou archive e squash da alteração. Essa autorização posterior substitui as restrições anteriores de não arquivar e não integrar a PR; os registros anteriores permanecem como histórico. As nove tarefas técnicas já estavam comprovadas no SHA aed0352. A aprovação humana está em `docs/visual-audit-review-152.md`, vinculada às evidências oficiais #43767891395/#14182903200, e foi refletida no inventário e na matriz de cobertura. Archive e squash são gates operacionais, não novas tarefas. A issue permanece aberta; o SHA com archive deve receber os próprios checks antes da integração.

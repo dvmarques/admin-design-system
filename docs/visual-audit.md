@@ -49,6 +49,30 @@ Para disparar pelo GitHub após o workflow estar presente na branch padrão, abr
 
 O relatório usa apenas demos com dados fictícios. Não adiciona novos baselines nem altera os snapshots oficiais Linux; qualquer diferença encontrada deve ser investigada e tratada separadamente.
 
+### Tema da demonstração (`applyDemoTheme`)
+
+Tanto `visual-audit/audit.spec.ts` (varredura das 332 capturas iniciais) quanto `visual-audit/states.spec.ts` (22 cenários seletivos) delegam a troca de tema ao helper `visual-audit/demo-theme.ts`. O fluxo aguarda hidratação do `AdsSelect`, repete `selectOption` quando necessário e confirma `data-theme` na região `Demonstração interativa` e em `<html>` antes da captura. Rotas com `iframe` (Admin Shell, showcases de organização) continuam aguardando `html[data-theme]` interno e registrando `iframe-theme-mismatch` quando o tema diverge.
+
+### Hidratação em testes (`waitForHydration`)
+
+O helper reutiliza `e2e/hydration.ts`, que detecta propriedades internas do React 19 (`__reactProps$*`). O catálogo não expõe sinal público estável de mount; expandir a demo com `data-testid` ou eventos dedicados ficaria fora do escopo de tooling da #152. A confirmação observável permanece `data-theme` após a seleção. Atualizar `e2e/hydration.ts` beneficia auditoria e E2E juntos se o React mudar esses nomes.
+
+### Execução serial dos cenários de estado
+
+`states.spec.ts` usa `test.describe.configure({ mode: 'serial' })` para evitar corrida na preferência global de tema ao alternar dark/light nos 22 cenários. Trade-off: a primeira falha interrompe os testes seguintes no mesmo bloco; o relatório de cobertura de estados distingue falha de execução de cenário pendente.
+
+### Triagem — três sinais pós-R1 (SHA `0389f711`, baseline local)
+
+Reprodução controlada com `audit.spec.ts` da R1 (`selectOption` direto, 1 worker, Chromium): **332/332 capturas, 3 sinais `browser-console`**, 0 falhas geométricas. Baseline comparado: [Auditoria visual #43646192995](https://github.com/dvmarques/admin-design-system/actions/runs/43646192995) (0 sinais no container CI).
+
+| Export           | Rota                     | Tema  | Viewport | Código            | Esperado      | Observado                                           | Classificação                                                                                                                               |
+| ---------------- | ------------------------ | ----- | -------- | ----------------- | ------------- | --------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------- |
+| `AdsMultiSelect` | `/catalogo/multi-select` | light | 1440px   | `browser-console` | console limpo | aviso React de hidratação (atributos SSR × cliente) | **Variação ambiental / ruído de triagem**: sem falha de captura; métricas geométricas 0; ausente com `applyDemoTheme` na varredura completa |
+| `AdsFileUpload`  | `/catalogo/file-upload`  | light | 390px    | `browser-console` | console limpo | mesmo padrão de hidratação                          | **Variação ambiental / ruído de triagem** (idem)                                                                                            |
+| `AdsCheckbox`    | `/catalogo/checkbox`     | light | 1440px   | `browser-console` | console limpo | mesmo padrão de hidratação                          | **Variação ambiental / ruído de triagem** (idem)                                                                                            |
+
+Nenhum ajuste nos limites de detecção. Com `applyDemoTheme` também em `audit.spec.ts`, a execução **local** `npm run audit:visual` no HEAD desta PR registrou **0 sinais** (evidência em `visual-audit-results/report.json`). Esse resultado **não** provém de job de CI: a auditoria visual é opt-in (`workflow_dispatch` ou máquina de desenvolvimento) e não integra a pipeline de PR. Inspeção humana do diff SSR permanece recomendada se o aviso passar a ser reproduzível na CI.
+
 ## Triagem da execução #43617023449 — acompanhamento #152
 
 - **Organização:** as capturas dark 390/1440px mostraram dois iframes em light; causa identificada na composição: o URL não incluía `theme`, embora a página isolada espere esse parâmetro. A correção faz os dois exemplos acompanhar o tema efetivo, sem mudar o `AdsOrganizationSwitcher` público.
@@ -65,3 +89,23 @@ Execução local (Linux, Chromium) sobre o código da change `issue-152-visual-a
 - `npx playwright test --project=chromium`: 473 aprovados e 9 falhas de snapshot visual em páginas não alteradas por esta change (`/componentes`, `/clientes`, `/clientes/novo`, `/preferencias`, referência, Admin Shell e dados). A diferença ocorre no ambiente local (build do Chromium/renderização) e a CI passou no mesmo SHA; nenhum snapshot foi atualizado. Firefox e WebKit ficam a cargo da CI.
 
 A matriz segue `Pendente` até inspeção mais completa por estado.
+
+## Fase 3 — matriz e estados seletivos (#152)
+
+A fonte versionada de aplicabilidade é `visual-audit/coverage-matrix.json`. Ela contém uma decisão explícita de perfil por export e cenários seletivos; **não** duplica o nome da rota nem as stories do catálogo. Os nomes, grupos e rotas são obtidos de `apps/admin-demo/app/catalogo/catalog-data.ts`; o inventário e as ligações com Storybook existentes continuam válidos. Estados não mapeados não são automaticamente "não aplicáveis". As exceções N/A exigem motivo, e todo componente continua com revisão humana pendente.
+
+Comandos:
+
+```sh
+node scripts/visual-audit-coverage.mjs --check
+node scripts/visual-audit-coverage.mjs --print
+node --test scripts/visual-audit-coverage.test.mjs scripts/visual-audit-coverage-report.test.mjs
+npm run build
+npm run audit:visual
+```
+
+A validação da matriz integra `test:ci`, inclusive em PRs normais, mas os 22 cenários adicionais Playwright são **opt-in**, no workflow de auditoria manual. O conjunto não executa um produto cartesiano de todos os exports, estados, temas e viewports. Após uma execução, a pasta ignorada `visual-audit-results/` passa a conter `coverage-report.md`, `coverage-report.json`, `states/<id>.json` e `screenshots/states/<id>.png`, além dos relatórios e 328 amostras iniciais preexistentes. Resultados de falha ou capturas ausentes não são aprovados. O relatório agregado original recebe apenas o resumo adicional e um link ao relatório detalhado.
+
+A cobertura contém focos por teclado, estados de validação, aberturas de overlays, dados, sidebar, forced-colors e prefers-reduced-motion em casos selecionados. Emulação de mídia **não é** avaliação perceptual de contraste, e a mudança de viewport/CSS não comprova zoom real do navegador a 200%. Esta verificação permanece pendente de execução manual dedicada (light/dark, desktop/mobile), com capturas e revisão humana antes de alterar seu status. O mesmo vale para diferenças subjetivas de tipografia, densidade, elevação e affordance. Não atualizar snapshots oficiais como parte dessa auditoria.
+
+Revisão de evidências: para cada sinal, registrar export/rota/estado/tema/largura, esperado e observado, severidade, resultado de inspeção humana, link persistente do artefato e PR ou issue de regressão quando cabível. O artefato Actions tem retenção limitada; links efêmeros não substituem evidência preservada quando uma decisão for tomada. A ausência de alertas não permite declarar visual aprovado, e nenhum checkbox geral da #152 deve ser marcado apenas com base na execução automatizada.

@@ -1,3 +1,4 @@
+import { buildStateCoverageReport } from './visual-audit-coverage-report.mjs';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 
@@ -224,4 +225,5 @@ export function buildVisualAuditReport({
 
 export default async function summarizeVisualAudit() {
 	buildVisualAuditReport();
+	buildStateCoverageReport();
 }

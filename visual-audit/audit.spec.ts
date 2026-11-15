@@ -2,6 +2,7 @@ import { mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { expect, test } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
+import { applyDemoTheme } from './demo-theme';
 import { measureVisualArea } from './measure-visual-area';
 
 type Theme = 'light' | 'dark';
@@ -61,8 +62,7 @@ for (const theme of ['light', 'dark'] as const) {
 					).toBeVisible({ timeout: 15000 });
 					const preview = page.getByRole('region', { name: 'Demonstração interativa' });
 					await expect(preview).toBeVisible();
-					await page.getByLabel('Tema da demonstração').selectOption(theme);
-					await expect(preview).toHaveAttribute('data-theme', theme);
+					await applyDemoTheme(page, preview, theme);
 
 					// Demos com iframe: aguarda cada documento interno antes de capturar e registra o tema aplicado.
 					const frameCount = await preview.locator('iframe').count();

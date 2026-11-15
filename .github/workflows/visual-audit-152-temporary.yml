@@ -17,47 +17,19 @@ jobs:
   format-branch:
     if: github.event.pull_request.draft == false && github.head_ref == 'feat/152-visual-a11y-zoom-keyboard' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
           ref: ${{ github.head_ref }}
           fetch-depth: 0
-          persist-credentials: true
+          persist-credentials: false
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24
           cache: npm
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts --no-audit --no-fund
-      - name: Formatar apenas arquivos da fase 4
-        run: |
-          npx prettier --write \
-            docs/visual-audit.md \
-            openspec/changes/issue-152-visual-a11y-zoom-keyboard/design.md \
-            openspec/changes/issue-152-visual-a11y-zoom-keyboard/proposal.md \
-            openspec/changes/issue-152-visual-a11y-zoom-keyboard/specs/quality-assurance/spec.md \
-            scripts/visual-audit-a11y-report.mjs \
-            scripts/visual-audit-a11y-report.test.mjs \
-            visual-audit/a11y.spec.ts
-          npm run format
-      - name: Commitar somente formatação na branch
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -- \
-            docs/visual-audit.md \
-            openspec/changes/issue-152-visual-a11y-zoom-keyboard/design.md \
-            openspec/changes/issue-152-visual-a11y-zoom-keyboard/proposal.md \
-            openspec/changes/issue-152-visual-a11y-zoom-keyboard/specs/quality-assurance/spec.md \
-            scripts/visual-audit-a11y-report.mjs \
-            scripts/visual-audit-a11y-report.test.mjs \
-            visual-audit/a11y.spec.ts
-          if ! git diff --cached --quiet; then
-            git commit -m "style(audit): formatar fase 4 #152"
-            git push origin "HEAD:refs/heads/$GITHUB_HEAD_REF"
-          fi
+      - run: npm run format
 
   audit-browser:
     needs: format-branch

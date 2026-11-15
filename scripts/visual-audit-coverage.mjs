@@ -2,6 +2,7 @@
 import { readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isValidCoverageReviewStatus } from './visual-audit-human-review.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const knownStates = new Set([
@@ -80,7 +81,7 @@ export function validateCoverage(matrix, entries) {
 		if (!Object.hasOwn(matrix.profiles ?? {}, component?.profile)) {
 			errors.push('perfil inválido de ' + name);
 		}
-		if (component?.review !== 'Pendente') {
+		if (!isValidCoverageReviewStatus(component?.review)) {
 			errors.push('status humano não comprovado no plano: ' + name);
 		}
 		const base = matrix.profiles?.[component?.profile];

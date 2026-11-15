@@ -12,6 +12,8 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
+- Novo `AdsPageHeader` (H1, descrição e ações responsivas), padrão semântico de seções, três exemplos no Admin Demo/Storybook e teto de JS/CSS publicado do pacote de componentes ajustado para 305.000 bytes (medição 304.271 bytes, gzip 91.461 → limite 92.000 bytes). (#317, OpenSpec `issue-317-semantic-page-composition`)
+
 - Novo `AdsIconSlot` para ícones React/SVG próprios, sem fornecedor obrigatório, e overrides opcionais nos controles de tema, alerta, toast e ações do menu de conta; `AdsIcon` permanece compatível. (#316, OpenSpec `issue-316-agnostic-icon-slots`)
 
 - Novo `AdsTimePicker` com formatos 12h/24h, `HH:mm` canônico, passo de minutos, limites, validação e exemplos no Admin Demo/Storybook. (#144, OpenSpec `add-ads-time-picker-144`)

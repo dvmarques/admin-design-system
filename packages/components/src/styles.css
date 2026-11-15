@@ -727,3 +727,23 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		outline-color: Highlight;
 	}
 }
+
+@layer components {
+	/* Margens tokenizadas sem depender do CSS reset da aplicação. */
+	.ads-page-header__title {
+		margin: 0;
+	}
+	.ads-page-header__description {
+		margin: var(--ads-spacing-2) 0 0;
+	}
+	/* Cabeçalho de página: palavras longas e ações mantêm reflow em zoom elevado. */
+	.ads-page-header__title,
+	.ads-page-header__description,
+	.ads-page-header__actions > * {
+		overflow-wrap: anywhere;
+	}
+	.ads-page-header__actions > * {
+		max-width: 100%;
+		white-space: normal;
+	}
+}

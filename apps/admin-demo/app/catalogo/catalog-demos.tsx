@@ -14,6 +14,7 @@ import {
 	AdsIcon,
 	AdsIconSlot,
 	AdsTypography,
+	AdsPageHeader,
 	AdsSurface,
 	AdsLoadingIndicator,
 	AdsLoadingText,
@@ -2356,7 +2357,29 @@ export function FileUploadDemo() {
 	);
 }
 
+export function PageHeaderDemo() {
+	const [feedback, setFeedback] = useState('Nenhuma ação executada');
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<AdsPageHeader
+				title="Consulta administrativa com um título bastante longo para testar a quebra de linha"
+				description="Cabeçalho sem card; o título H1, a descrição e as ações continuam legíveis em telas estreitas."
+				actions={
+					<>
+						<AdsButton onClick={() => setFeedback('Consulta iniciada')}>Nova consulta</AdsButton>
+						<AdsButton onClick={() => setFeedback('Exportação simulada')} variant="secondary">
+							Exportar
+						</AdsButton>
+					</>
+				}
+			/>
+			<output aria-label="Resultado das ações">{feedback}</output>
+		</div>
+	);
+}
+
 export const catalogDemos = {
+	PageHeader: PageHeaderDemo,
 	Button: ButtonDemo,
 	Badge: BadgeDemo,
 	Avatar: AvatarDemo,

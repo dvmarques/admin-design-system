@@ -23,6 +23,8 @@ export type {
 	AdsTypographyVariant,
 } from './typography.js';
 export { AdsSurface } from './surface.js';
+export { AdsPageHeader } from './page-header.js';
+export type { AdsPageHeaderProps } from './page-header.js';
 export type { AdsSurfaceProps, AdsSurfaceVariant } from './surface.js';
 export { AdsInput } from './input.js';
 export type { AdsInputProps } from './input.js';

@@ -155,6 +155,102 @@
 			"theme": "dark",
 			"width": 1440,
 			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-dialog-dark",
+			"name": "AdsDialog",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-drawer-light",
+			"name": "AdsDrawer",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-drawer-dark",
+			"name": "AdsDrawer",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-dropdown-light",
+			"name": "AdsDropdown",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-dropdown-dark",
+			"name": "AdsDropdown",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-popover-light",
+			"name": "AdsPopover",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-popover-dark",
+			"name": "AdsPopover",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-input-light",
+			"name": "AdsInput",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-input-dark",
+			"name": "AdsInput",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-smarttable-light",
+			"name": "AdsSmartTable",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-adminshell-light",
+			"name": "AdsAdminShell",
+			"state": "zoom-native",
+			"theme": "light",
+			"width": 1440,
+			"action": "zoom-probe"
+		},
+		{
+			"id": "zoom-adminshell-dark",
+			"name": "AdsAdminShell",
+			"state": "zoom-native",
+			"theme": "dark",
+			"width": 1440,
+			"action": "zoom-probe"
 		}
 	]
 }

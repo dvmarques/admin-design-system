@@ -1,6 +1,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { loadCoverage, validateCoverage, formatCoverageTable } from './visual-audit-coverage.mjs';
+import { isApprovedHumanReview } from './visual-audit-human-review.mjs';
 
 const { entries, matrix } = loadCoverage();
 const copy = () => structuredClone(matrix);
@@ -12,6 +13,14 @@ test('matriz sincronizada ao catálogo e documentável sem inventário duplicado
 	assert.deepEqual(validateCoverage(matrix, entries), []);
 	assert.match(formatCoverageTable({ entries, matrix }), /AdsAdminShell/);
 	assert.match(formatCoverageTable({ entries, matrix }), /Revisão humana/);
+});
+test('aprovação humana exige revisor e data válida', () => {
+	assert.equal(isApprovedHumanReview('Aprovado (Daniel, 15/11/2026)'), true);
+	assert.equal(isApprovedHumanReview('Aprovado ('), false);
+	assert.equal(isApprovedHumanReview('Aprovado (Daniel, 31/02/2026)'), false);
+	const altered = copy();
+	altered.components.AdsButton.review = 'Aprovado (Daniel, 31/02/2026)';
+	assert.match(validateCoverage(altered, entries).join(' '), /status humano/);
 });
 test('novo export ou export removido exige decisão explícita', () => {
 	assert.match(

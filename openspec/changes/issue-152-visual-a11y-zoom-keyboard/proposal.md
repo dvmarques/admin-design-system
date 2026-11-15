@@ -21,7 +21,7 @@ A auditoria existente produz 332 capturas iniciais e 22 cenários seletivos; sua
 - Ferramentas e testes internos: visual-audit, scripts de relatório, documentação, workflow manual já existente.
 - Pacotes públicos: nenhum. Demos e Storybook: somente alvos de teste, sem alteração distribuída.
 - Valor para consumidores: documentação de comportamento e evidências rastreáveis sem alterar contrato público.
-- Perfil: Standard; automação interna de auditoria sem alterar comportamento do runtime. Promover a Critical se defeito exigir mudança transversal em acessibilidade pública.
+- Perfil: Critical; acessibilidade transversal, com revisão aprofundada de provas de zoom, isolamento, foco e relatórios. Contratos de runtime permanecem preservados.
 
 ## Riscos e mitigação
 

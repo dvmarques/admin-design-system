@@ -6,12 +6,14 @@ Suíte Playwright opt-in adicional na pasta visual-audit, usando as mesmas rotas
 
 ## Estratégia de zoom
 
-1. Medir baseline (innerWidth, devicePixelRatio, visualViewport.scale, largura física do contexto e caixa testemunha).
-2. Tentar atalho de zoom de navegador via teclado (Control+= repetido no Chromium). O probe somente pode declarar zoom real comprovado se a viewport CSS encolher e o devicePixelRatio aumentar de forma aproximadamente proporcional, com visualViewport.scale próximo de 1, sem alteração artificial de viewport, CSS zoom/transform ou CDP Emulation.setPageScaleFactor.
-3. Falha na prova não equivale a falha visual: registrar status de zoom nativo como pendente de comprovação. Não etiquetar captura 100% como zoom 200%. Registrar observações reais e restaurar o estado via contexto isolado.
-4. Executar _separadamente_ alternativa de reflow em viewport estreita, rotulada como proxy e não como zoom nativo; usar inspeções de overflow e screenshot próprio.
+1. Abrir perfil persistente descartável por cenário no Chromium completo (`channel: chromium`), em headed com Xvfb quando `ADS_NATIVE_ZOOM_HEADED=1`, ou no modo headless completo.
+2. Medir baseline: innerWidth/innerHeight, devicePixelRatio, visualViewport.scale, outerWidth, geometria do preview e overflow horizontal.
+3. Aplicar `chrome.settingsPrivate.setDefaultZoom(2)` em `chrome://settings/appearance`, o mecanismo de configuração nativa do browser. Comprovar fator configurado, viewport CSS pela metade, DPR duplicado, janela física constante e ausência de pinch. Nenhuma API de emulação ou mudança artificial de viewport é utilizada.
+4. Executar interações críticas em dialog/drawer/dropdown/popover/input/SmartTable/AdminShell, light/dark. Medir novamente imediatamente antes de capturar o compositor via `Page.captureScreenshot` sem clip/override. A screenshot padrão do Playwright foi descartada para zoom nativo após recortes deslocados/vazios observados.
+5. Restaurar default zoom para 1 em `finally`, comprovar as métricas de restauração, fechar perfil sempre. A configuração global não é compartilhada com outros testes. Agregador valida as medições e não confia apenas em flags/porcentagem declarada.
+6. Manter reflow 320px como cenário independente. A prova específica de Chromium não certifica zoom nativo em Firefox/WebKit nem julgamento perceptual humano.
 
-CDP Emulation.setPageScaleFactor é pinch/page scale e não atende ao critério de reflow do zoom de browser. A tentativa de atalho em Chromium headless pode ser ignorada; nesse caso a limitação permanece explicitamente aberta. Não adicionar dependência.
+A abordagem anterior com `Control+=` no headless shell é preservada como histórico de probe inconclusivo nos runs existentes. A nova abordagem comprovou 1440→720 CSS px e DPR 1→2, escala visual constante 1 e restauração em Xvfb. Xvfb e browsers são ferramentas do ambiente; não se acrescentam dependências ao projeto.
 
 ## Teclado/foco
 

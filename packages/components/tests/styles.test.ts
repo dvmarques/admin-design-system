@@ -13,3 +13,13 @@ it('distributes the font-sans utility mapped to the public font family token', a
 	const css = await readFile(resolve(import.meta.dirname, '../dist/styles.css'), 'utf8');
 	expect(css).toContain('.font-sans{font-family:var(--ads-typography-font-family)}');
 });
+
+it('publishes opt-in responsive layout classes without JS or Tailwind consumer setup (#318)', async () => {
+	const css = await readFile(resolve(import.meta.dirname, '../dist/styles.css'), 'utf8');
+	for (const name of ['container', 'stack', 'grid', 'cluster']) {
+		expect(css).toContain(`.ads-layout-${name}`);
+	}
+	expect(css).toContain('--ads-layout-grid-min-column');
+	expect(css).toContain('--ads-layout-gutter');
+	expect(css).toContain('--ads-spacing-4');
+});

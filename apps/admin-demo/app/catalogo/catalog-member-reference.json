@@ -233,5 +233,10 @@
 		"description": "Seleção acessível de horário independente de data e fuso horário.",
 		"props": "value, defaultValue, onValueChange, format, minuteStep, min, max, disabled, required, name, labels, size, validationState",
 		"usage": "<AdsTimePicker defaultValue=\"14:30\" format=\"24h\" minuteStep={15} />"
+	},
+	"AdsPageHeader": {
+		"description": "Cabeçalho de página com H1, descrição e ações responsivas.",
+		"props": "title (ReactNode obrigatório), description?, actions?, className e atributos de header",
+		"usage": "<AdsPageHeader title=\"Registros\" description=\"Consulta\" />"
 	}
 }

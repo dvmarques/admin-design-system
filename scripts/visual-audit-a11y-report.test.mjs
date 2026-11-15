@@ -126,3 +126,110 @@ test('falha após captura conserva screenshot como evidência sem aprovar cenár
 	assert.equal(report.summary.automaticPass, 0);
 	assert.equal(report.results[0].screenshot, 'screenshots/a11y/button-tab-light-390.png');
 });
+
+function nativeFixture(folder) {
+	const s = { ...scenario, id: 'zoom-native', action: 'zoom-probe', state: 'zoom-native' };
+	const before = {
+		innerWidth: 1440,
+		innerHeight: 900,
+		outerWidth: 1448,
+		devicePixelRatio: 1,
+		visualScale: 1,
+		geometry: { x: 12, y: 30, width: 1200, height: 400 },
+		documentOverflowPx: 0,
+	};
+	const zoom = {
+		method: 'chromium-settings-native-default-zoom',
+		requestedPercent: 200,
+		configuredFactor: 2,
+		verified: true,
+		measuredPercent: 200,
+		before,
+		after: {
+			...before,
+			innerWidth: 720,
+			innerHeight: 450,
+			devicePixelRatio: 2,
+			geometry: { ...before.geometry, width: 650 },
+		},
+		restored: { ...before },
+	};
+	zoom.captureMetrics = structuredClone(zoom.after);
+	zoom.screenshotEngine = 'cdp-compositor-no-metric-overrides';
+	const record = {
+		screenshot: 'screenshots/a11y/zoom-native-native-200-light-390.png',
+		checks: [
+			'native-zoom-200-layout-viewport-and-DPR-confirmed',
+			'zoom-restored-between-scenarios',
+			'document-horizontal-overflow<=2px',
+		],
+		zoom,
+	};
+	screenshot(folder, 'zoom-native-native-200-light-390.png');
+	return { s, record };
+}
+
+test('zoom nativo exige medições independentes coerentes e restauração verificável', () => {
+	const folder = fixture();
+	const { s, record } = nativeFixture(folder);
+	evidence(folder, s, record);
+	assert.equal(
+		analyzeAccessibilityEvidence({ scenarios: [s], entries, folder }).summary.nativeZoomProven,
+		1,
+	);
+	for (const corrupt of [
+		(z) => {
+			z.after.innerWidth = 1440;
+		}, // DPR sozinho não é zoom.
+		(z) => {
+			z.after.devicePixelRatio = 1;
+		}, // Viewport sozinha não é zoom.
+		(z) => {
+			z.after.visualScale = 2;
+		}, // Pinch não é zoom de layout.
+		(z) => {
+			z.after.outerWidth = 720;
+		}, // Redimensionamento da janela.
+		(z) => {
+			z.restored.devicePixelRatio = 2;
+		},
+		(z) => {
+			delete z.restored;
+		},
+		(z) => {
+			z.measuredPercent = null;
+		},
+		(z) => {
+			delete z.after.geometry;
+		},
+		(z) => {
+			z.captureMetrics.innerWidth = 1440;
+		},
+	]) {
+		const changed = structuredClone(record);
+		corrupt(changed.zoom);
+		evidence(folder, s, changed);
+		const report = analyzeAccessibilityEvidence({ scenarios: [s], entries, folder });
+		assert.equal(report.summary.nativeZoomProven, 0);
+		assert.equal(report.summary.failed, 1);
+	}
+});
+
+test('manifesto aprovado com erro e IDs com travessia de caminho são rejeitados', () => {
+	const folder = fixture();
+	evidence(folder, scenario, { error: 'falha ocultada' });
+	screenshot(folder, 'button-tab-light-390.png');
+	assert.equal(
+		analyzeAccessibilityEvidence({ scenarios: [scenario], entries, folder }).summary.failed,
+		1,
+	);
+	assert.throws(
+		() =>
+			analyzeAccessibilityEvidence({
+				scenarios: [{ ...scenario, id: '../outside' }],
+				entries,
+				folder,
+			}),
+		/inseguro/,
+	);
+});

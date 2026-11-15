@@ -1,6 +1,7 @@
+import { Buffer } from 'node:buffer';
 import { mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { chromium, expect, test, type Locator, type Page } from '@playwright/test';
 import { catalogEntries } from '../apps/admin-demo/app/catalogo/catalog-data';
 import { applyDemoTheme } from './demo-theme';
 import { measureVisualArea } from './measure-visual-area';
@@ -19,6 +20,9 @@ type ZoomMetrics = {
 	devicePixelRatio: number;
 	visualScale: number;
 	outerWidth: number;
+	innerHeight: number;
+	geometry: { x: number; y: number; width: number; height: number };
+	documentOverflowPx: number;
 };
 type Evidence = Scenario & {
 	route: string;
@@ -34,6 +38,12 @@ type Evidence = Scenario & {
 		measuredPercent: number | null;
 		before?: ZoomMetrics;
 		after?: ZoomMetrics;
+		restored?: ZoomMetrics;
+		browserVersion?: string;
+		headed?: boolean;
+		configuredFactor?: number;
+		captureMetrics?: ZoomMetrics;
+		screenshotEngine?: string;
 	} | null;
 };
 
@@ -103,7 +113,7 @@ async function verifyVisibleKeyboardFocus(locator: Locator, before: string, chec
 }
 
 async function assertDocumentReflow(preview: Locator, checks: string[]) {
-	const metrics = await preview.evaluate(measureVisualArea, 'viewport');
+	const metrics = await preview.evaluate(measureVisualArea, 'viewport' as const);
 	expect(metrics.documentOverflowPx, 'rolagem horizontal no documento').toBeLessThanOrEqual(2);
 	checks.push('document-horizontal-overflow<=2px');
 	if (
@@ -242,7 +252,19 @@ async function keyboardAction(
 					'foco saiu do modal com ' + key,
 				).toBe(true);
 			}
-			checks.push('modal-initial-focus-and-Tab-containment');
+			// Exercitar as duas bordas do ciclo: alguns Tabs internos não
+			// detectariam um trap quebrado apenas no primeiro/último controle.
+			const first = dialog.getByRole('button', { name: 'Fechar', exact: true });
+			const last = dialog.getByRole('textbox', { name: 'Observação', exact: true });
+			await last.focus();
+			await page.keyboard.press('Tab');
+			await expect(first).toBeFocused();
+			await page.keyboard.press('Shift+Tab');
+			await expect(last).toBeFocused();
+			checks.push(
+				'modal-initial-focus-and-Tab-containment',
+				'modal-Tab-and-Shift+Tab-wrap-boundaries',
+			);
 			await capture();
 			await page.keyboard.press('Escape');
 			await expect(dialog).not.toBeVisible();
@@ -290,6 +312,9 @@ async function keyboardAction(
 			break;
 		}
 		case 'shell': {
+			await preview
+				.locator('iframe[title="Shell administrativo independente"]')
+				.scrollIntoViewIfNeeded();
 			const frame = preview.frameLocator('iframe[title="Shell administrativo independente"]');
 			const trigger = frame.getByRole('button', { name: 'Abrir navegação' });
 			await trigger.focus();
@@ -325,50 +350,94 @@ async function keyboardAction(
 }
 
 function metrics(page: Page): Promise<ZoomMetrics> {
-	return page.evaluate(() => ({
-		innerWidth: window.innerWidth,
-		devicePixelRatio: window.devicePixelRatio,
-		visualScale: window.visualViewport?.scale ?? 1,
-		outerWidth: window.outerWidth,
-	}));
+	return page.evaluate(() => {
+		const target =
+			document.querySelector('[aria-label="Demonstração interativa"]') ?? document.body;
+		const rect = target.getBoundingClientRect();
+		return {
+			innerWidth: window.innerWidth,
+			innerHeight: window.innerHeight,
+			devicePixelRatio: window.devicePixelRatio,
+			visualScale: window.visualViewport?.scale ?? 1,
+			outerWidth: window.outerWidth,
+			geometry: { x: rect.x, y: rect.y, width: rect.width, height: rect.height },
+			documentOverflowPx: Math.max(0, document.documentElement.scrollWidth - window.innerWidth),
+		};
+	});
 }
 
 function nativeZoomProven(before: ZoomMetrics, after: ZoomMetrics) {
 	const layoutRatio = before.innerWidth / after.innerWidth;
 	const dprRatio = after.devicePixelRatio / before.devicePixelRatio;
 	return (
-		layoutRatio >= 1.85 &&
-		layoutRatio <= 2.15 &&
-		dprRatio >= 1.85 &&
-		dprRatio <= 2.15 &&
-		Math.abs(after.visualScale - 1) <= 0.05
+		Math.abs(layoutRatio - 2) <= 0.02 &&
+		Math.abs(dprRatio - 2) <= 0.02 &&
+		Math.abs(after.visualScale - 1) <= 0.01 &&
+		Math.abs(before.outerWidth - after.outerWidth) <= 2
 	);
 }
 
-async function probeNativeZoom(page: Page, evidence: Evidence) {
-	const before = await metrics(page);
-	let after = before;
-	evidence.zoom = {
-		method: 'chromium-browser-keyboard-accelerator-probe',
-		requestedPercent: 200,
-		verified: false,
-		measuredPercent: null,
-		before,
-		after,
+// API do chrome://settings: muda o zoom de layout do próprio navegador.
+// Um perfil persistente DESCARTÁVEL por cenário evita compartilhar esse estado
+// global com os contextos paralelos. Nenhuma API Emulation/viewport/DPR é usada.
+async function probeNativeZoom(baseURL: string, evidence: Evidence) {
+	const headed = process.env.ADS_NATIVE_ZOOM_HEADED === '1';
+	const context = await chromium.launchPersistentContext('', {
+		headless: !headed,
+		channel: 'chromium',
+		viewport: { width: evidence.width, height: 900 },
+		baseURL,
+	});
+	let settings: Page | undefined;
+	let before: ZoomMetrics | undefined;
+	let page: Page | undefined;
+	const setZoom = async (factor: number) => {
+		if (!settings) throw new Error('Página de configurações indisponível');
+		return settings.evaluate(async (value) => {
+			type SettingsChrome = {
+				settingsPrivate?: {
+					setDefaultZoom: (factor: number, callback: () => void) => void;
+					getDefaultZoom: (callback: (factor: number) => void) => void;
+				};
+				runtime?: { lastError?: { message: string } };
+			};
+			const api = (globalThis as typeof globalThis & { chrome: SettingsChrome }).chrome;
+			if (!api.settingsPrivate) throw new Error('API nativa de zoom indisponível');
+			await new Promise<void>((resolve, reject) =>
+				api.settingsPrivate!.setDefaultZoom(value, () => {
+					if (api.runtime?.lastError) reject(new Error(api.runtime.lastError.message));
+					else resolve();
+				}),
+			);
+			return new Promise<number>((resolve) => api.settingsPrivate!.getDefaultZoom(resolve));
+		}, factor);
 	};
-	// Não usa transform, CSS zoom, alteração da viewport nem CDP pageScaleFactor.
-	// Chromium headless pode ignorar o acelerador: nesse caso o status é pending.
-	for (let index = 0; index < 8; index += 1) {
-		await page.keyboard.press('Control+=');
-		after = await metrics(page);
-		if (nativeZoomProven(before, after)) break;
-	}
-	evidence.zoom.after = after;
-	evidence.zoom.measuredPercent = Math.round((before.innerWidth / after.innerWidth) * 100);
-	if (!nativeZoomProven(before, after)) {
-		evidence.status = 'pending';
-		evidence.checks.push('native-browser-zoom-unverified-not-counted-as-pass');
-	} else {
+	try {
+		page = context.pages()[0] ?? (await context.newPage());
+		await page.goto(evidence.route, { waitUntil: 'domcontentloaded' });
+		const preview = page.getByRole('region', { name: 'Demonstração interativa' });
+		await expect(preview).toBeVisible();
+		await applyDemoTheme(page, preview, evidence.theme);
+		await page.evaluate(() => document.fonts.ready);
+		before = await metrics(page);
+		evidence.zoom = {
+			method: 'chromium-settings-native-default-zoom',
+			requestedPercent: 200,
+			verified: false,
+			measuredPercent: null,
+			before,
+			browserVersion: context.browser()?.version() ?? 'unknown',
+			headed,
+		};
+		settings = await context.newPage();
+		await settings.goto('chrome://settings/appearance');
+		evidence.zoom.configuredFactor = await setZoom(2);
+		await page.bringToFront();
+		await expect.poll(async () => nativeZoomProven(before!, await metrics(page!))).toBe(true);
+		const after = await metrics(page);
+		evidence.zoom.after = after;
+		evidence.zoom.measuredPercent = Math.round((before.innerWidth / after.innerWidth) * 100);
+		expect(evidence.zoom.configuredFactor).toBe(2);
 		evidence.zoom.verified = true;
 		evidence.checks.push('native-zoom-200-layout-viewport-and-DPR-confirmed');
 		const image =
@@ -379,26 +448,80 @@ async function probeNativeZoom(page: Page, evidence: Evidence) {
 			'-' +
 			evidence.width +
 			'.png';
-		mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
-		await page.screenshot({ path: join(output, image), animations: 'disabled', timeout: 20_000 });
-		evidence.screenshot = image;
+		const capture = async () => {
+			mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
+			await page!.evaluate(() => document.fonts.ready);
+			const captureMetrics = await metrics(page!);
+			expect(
+				nativeZoomProven(before!, captureMetrics),
+				'zoom deve permanecer em 200% na captura',
+			).toBe(true);
+			if (evidence.zoom) {
+				evidence.zoom.captureMetrics = captureMetrics;
+				evidence.zoom.screenshotEngine = 'cdp-compositor-no-metric-overrides';
+			}
+			// Captura o compositor sem clip nem overrides de métricas. A API
+			// screenshot do Playwright presume viewport CSS sem zoom e pode
+			// produzir recorte deslocado/vazio em zoom nativo, sobretudo em iframe.
+			const cdp = await context.newCDPSession(page!);
+			try {
+				const { data } = await cdp.send('Page.captureScreenshot', {
+					format: 'png',
+					fromSurface: true,
+					captureBeyondViewport: false,
+				});
+				writeFileSync(join(output, image), Buffer.from(data, 'base64'));
+			} finally {
+				await cdp.detach();
+			}
+			evidence.screenshot = image;
+		};
+		const actions: Record<string, string> = {
+			AdsDialog: 'dialog',
+			AdsDrawer: 'drawer',
+			AdsDropdown: 'dropdown',
+			AdsPopover: 'popover',
+			AdsInput: 'input-type',
+			AdsSmartTable: 'reflow',
+			AdsAdminShell: 'shell',
+		};
+		const action = actions[evidence.name];
+		if (!action) throw new Error('Componente sem ação de zoom: ' + evidence.name);
+		await keyboardAction(page, preview, { ...evidence, action }, evidence.checks, capture);
+		await assertDocumentReflow(preview, evidence.checks);
+		if (!evidence.screenshot) {
+			await preview.scrollIntoViewIfNeeded();
+			await capture();
+		}
+	} finally {
+		// Executa inclusive quando uma asserção/captura falha; fecha o perfil mesmo
+		// se a própria restauração falhar. Nunca mascara erro como aprovação.
+		try {
+			if (settings && before && page) {
+				await setZoom(1);
+				await expect
+					.poll(async () => {
+						const restored = await metrics(page!);
+						return (
+							Math.abs(restored.innerWidth - before!.innerWidth) <= 2 &&
+							Math.abs(restored.devicePixelRatio - before!.devicePixelRatio) <= 0.01 &&
+							Math.abs(restored.visualScale - before!.visualScale) <= 0.01
+						);
+					})
+					.toBe(true);
+				if (evidence.zoom) evidence.zoom.restored = await metrics(page);
+				evidence.checks.push('zoom-restored-between-scenarios');
+			}
+		} finally {
+			await context.close();
+		}
 	}
-	// Cada teste tem contexto isolado; a restauração também é verificada explicitamente.
-	await page.keyboard.press('Control+0');
-	const restored = await metrics(page);
-	if (
-		Math.abs(restored.innerWidth - before.innerWidth) > 2 ||
-		Math.abs(restored.devicePixelRatio - before.devicePixelRatio) > 0.1
-	) {
-		throw new Error('Zoom do navegador não restaurado após cenário');
-	}
-	evidence.checks.push('zoom-restored-between-scenarios');
 }
 
 test.describe('fase 4 — teclado, foco e zoom', () => {
 	test.describe.configure({ mode: 'default' });
 	for (const scenario of scenarios) {
-		test('acessibilidade visual / ' + scenario.id, async ({ page }) => {
+		test('acessibilidade visual / ' + scenario.id, async ({ page, baseURL }) => {
 			test.setTimeout(90_000);
 			const entry = catalogEntries.find((candidate) => candidate.name === scenario.name);
 			if (!entry) throw new Error('Export não encontrado no catálogo: ' + scenario.name);
@@ -436,7 +559,7 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 				const preview = page.getByRole('region', { name: 'Demonstração interativa' });
 				await applyDemoTheme(page, preview, scenario.theme);
 				if (scenario.action === 'zoom-probe') {
-					await probeNativeZoom(page, evidence);
+					await probeNativeZoom(baseURL!, evidence);
 				} else {
 					if (scenario.state === 'reflow') {
 						evidence.zoom = {

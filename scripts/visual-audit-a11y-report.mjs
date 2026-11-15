@@ -1,3 +1,4 @@
+import { auditRevision } from './visual-audit-revision.mjs';
 import { randomUUID } from 'node:crypto';
 import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
 import { basename, dirname, join, resolve } from 'node:path';
@@ -27,10 +28,53 @@ function hasPngSignature(path) {
 	}
 }
 
+export function hasNativeZoomProof(zoom) {
+	if (
+		!zoom ||
+		zoom.method !== 'chromium-settings-native-default-zoom' ||
+		zoom.requestedPercent !== 200 ||
+		zoom.configuredFactor !== 2 ||
+		zoom.verified !== true ||
+		!Number.isFinite(zoom.measuredPercent) ||
+		Math.abs(zoom.measuredPercent - 200) > 2
+	)
+		return false;
+	const { before, after, restored, captureMetrics } = zoom;
+	for (const sample of [before, after, restored, captureMetrics]) {
+		if (
+			!sample ||
+			!['innerWidth', 'innerHeight', 'outerWidth', 'devicePixelRatio', 'visualScale'].every(
+				(key) => Number.isFinite(sample[key]) && sample[key] > 0,
+			) ||
+			!Number.isFinite(sample.documentOverflowPx) ||
+			sample.documentOverflowPx < 0 ||
+			!sample.geometry ||
+			!['x', 'y', 'width', 'height'].every((key) => Number.isFinite(sample.geometry[key]))
+		)
+			return false;
+	}
+	return (
+		zoom.screenshotEngine === 'cdp-compositor-no-metric-overrides' &&
+		Math.abs(before.innerWidth / captureMetrics.innerWidth - 2) <= 0.02 &&
+		Math.abs(captureMetrics.devicePixelRatio / before.devicePixelRatio - 2) <= 0.02 &&
+		Math.abs(captureMetrics.visualScale - 1) <= 0.01 &&
+		Math.abs(before.innerWidth / after.innerWidth - 2) <= 0.02 &&
+		Math.abs(after.devicePixelRatio / before.devicePixelRatio - 2) <= 0.02 &&
+		Math.abs(before.outerWidth - after.outerWidth) <= 2 &&
+		Math.abs(before.visualScale - 1) <= 0.01 &&
+		Math.abs(after.visualScale - 1) <= 0.01 &&
+		Math.abs(restored.innerWidth - before.innerWidth) <= 2 &&
+		Math.abs(restored.devicePixelRatio - before.devicePixelRatio) <= 0.01 &&
+		Math.abs(restored.visualScale - before.visualScale) <= 0.01
+	);
+}
+
 export function analyzeAccessibilityEvidence({ scenarios, entries, folder }) {
 	const routes = new Map(entries.map((entry) => [entry.name, entry.route]));
 	const ids = new Set();
 	const results = scenarios.map((scenario) => {
+		if (typeof scenario.id !== 'string' || !/^[a-z0-9]+(?:-[a-z0-9]+)*$/.test(scenario.id))
+			throw new Error('ID de cenário a11y inseguro');
 		if (ids.has(scenario.id)) throw new Error('ID de cenário a11y duplicado: ' + scenario.id);
 		ids.add(scenario.id);
 		const file = join(folder, 'a11y', scenario.id + '.json');
@@ -80,14 +124,14 @@ export function analyzeAccessibilityEvidence({ scenarios, entries, folder }) {
 				!hasPngSignature(join(folder, expectedScreenshot))
 			)
 				problem = 'PNG ou verificação objetiva ausente';
+			if (record.error != null) problem = 'Aprovação com erro registrado';
 			if (
 				scenario.action === 'zoom-probe' &&
-				(record.zoom?.method !== 'chromium-browser-keyboard-accelerator-probe' ||
-					record.zoom?.verified !== true ||
-					record.zoom?.requestedPercent !== 200 ||
-					Math.abs((record.zoom?.measuredPercent ?? 0) - 200) > 15)
+				(!hasNativeZoomProof(record.zoom) ||
+					!record.checks.includes('zoom-restored-between-scenarios') ||
+					!record.checks.includes('document-horizontal-overflow<=2px'))
 			) {
-				problem = 'Zoom nativo não comprovado';
+				problem = 'Zoom nativo ou restauração não comprovados';
 			}
 		}
 		if (record && record.status === 'pending' && scenario.action !== 'zoom-probe') {
@@ -151,7 +195,7 @@ export function buildAccessibilityCoverageReport(project = process.cwd()) {
 	const analysis = analyzeAccessibilityEvidence({ scenarios: plan.scenarios, entries, folder });
 	const result = {
 		issue: 152,
-		commit: process.env.GITHUB_SHA ?? null,
+		...auditRevision(root),
 		generatedAt: new Date().toISOString(),
 		note: 'Aprovação automática não equivale a WCAG completa ou revisão perceptual; reflow não comprova zoom nativo.',
 		notApplicableStates: entries.reduce((sum, entry) => {
@@ -169,6 +213,17 @@ export function buildAccessibilityCoverageReport(project = process.cwd()) {
 		'# Auditoria visual — fase 4 (teclado, foco, zoom e reflow)',
 		'',
 		'> Zoom nativo é aprovado somente com prova observável de viewport CSS e DPR; reflow não é zoom nativo. O status da revisão visual humana permanece pendente.',
+		'',
+		'Execução: ' +
+			result.generatedAt +
+			' · commit ' +
+			(result.commit ?? 'desconhecido') +
+			' · working tree ' +
+			(result.workingTreeDirty === false
+				? 'limpa'
+				: result.workingTreeDirty === true
+					? 'com alterações locais'
+					: 'desconhecida'),
 		'',
 		'- Planejados: **' + s.planned + '**',
 		'- Aprovados automaticamente: **' + s.automaticPass + '**',
@@ -200,6 +255,35 @@ export function buildAccessibilityCoverageReport(project = process.cwd()) {
 				' | ' +
 				(item.screenshot ? '[PNG](' + item.screenshot + ')' : '—') +
 				' | Pendente |',
+		);
+	}
+	lines.push(
+		'',
+		'## Prova de zoom nativo',
+		'',
+		'| Cenário | Modo | Viewport CSS antes → 200% → restaurada | DPR antes → 200% → restaurado | Escala visual | PNG |',
+		'| --- | --- | --- | --- | --- | --- |',
+	);
+	for (const item of result.results.filter((row) => row.action === 'zoom-probe')) {
+		const z = item.zoom;
+		lines.push(
+			'| ' +
+				escapeCell(item.id) +
+				' | ' +
+				(z?.headed ? 'headed' : 'headless/indisponível') +
+				' | ' +
+				[z?.before?.innerWidth, z?.after?.innerWidth, z?.restored?.innerWidth]
+					.map((n) => n ?? '—')
+					.join(' → ') +
+				' | ' +
+				[z?.before?.devicePixelRatio, z?.after?.devicePixelRatio, z?.restored?.devicePixelRatio]
+					.map((n) => n ?? '—')
+					.join(' → ') +
+				' | ' +
+				(z?.captureMetrics?.visualScale ?? '—') +
+				' | ' +
+				(item.screenshot ? '[PNG](' + item.screenshot + ')' : '—') +
+				' |',
 		);
 	}
 	writeFileSync(join(folder, 'a11y-report.md'), lines.join('\n') + '\n');

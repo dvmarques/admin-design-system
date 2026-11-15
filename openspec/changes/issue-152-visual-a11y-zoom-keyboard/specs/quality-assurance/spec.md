@@ -12,7 +12,7 @@ A auditoria MUST executar verificações seletivas e objetivas de teclado, foco 
 #### Scenario: Overlay modal
 
 - **WHEN** um dialog ou drawer é aberto e fechado por teclado
-- **THEN** a auditoria testa foco inicial, contenção exigida, Escape e retorno do foco ao acionador
+- **THEN** a auditoria testa foco inicial, contenção exigida incluindo ambas as bordas do ciclo Tab/Shift+Tab, Escape e retorno do foco ao acionador
 
 #### Scenario: Navegação selecionada
 
@@ -23,6 +23,11 @@ A auditoria MUST executar verificações seletivas e objetivas de teclado, foco 
 
 - **WHEN** o teste tenta aplicar zoom nativo
 - **THEN** só declara o requisito aprovado após comprovar fator aplicado, redução da viewport CSS e reflow efetivo sem simulação de zoom CSS ou redução artificial da viewport; caso contrário registra pendência de comprovação
+
+#### Scenario: Captura e restauração de zoom
+
+- **WHEN** um cenário usa zoom nativo, inclusive se falhar durante a interação
+- **THEN** a captura é vinculada às métricas efetivas do instante em que foi produzida, a restauração do zoom é verificada e seu estado não contamina outros cenários
 
 #### Scenario: Reflow alternativo
 

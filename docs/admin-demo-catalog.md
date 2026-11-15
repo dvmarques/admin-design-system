@@ -37,6 +37,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsAvatar`                 | Básicos     | `/catalogo/avatar`                   | `avatar.stories.tsx`                                                |
 | `AdsIcon`                   | Básicos     | `/catalogo/icon`                     | `icon.stories.tsx`                                                  |
 | `AdsIconSlot`               | Básicos     | `/catalogo/icon-slot`                | `icon-slot.stories.tsx`                                             |
+| `AdsPageHeader`             | Básicos     | `/catalogo/page-header`               | `page-composition.stories.tsx`                                        |
 | `AdsTypography`             | Básicos     | `/catalogo/typography`               | `admin-shell.stories.tsx`, `typography.stories.tsx`                 |
 | `AdsSurface`                | Básicos     | `/catalogo/surface`                  | `navigation.stories.tsx`, `surface.stories.tsx`                     |
 | `AdsLoadingIndicator`       | Básicos     | `/catalogo/loading-indicator`        | `loading-indicator.stories.tsx`                                     |
@@ -125,3 +126,8 @@ A sidebar agora mostra uma entrada por família de composição: Tabs, Accordion
 A busca continua indexando **cada export visual** e também os nomes de propriedades reais da API composta. Selecionar um subcomponente abre a página canônica e a sua seção identificada por âncora estável. Cada página lista os nomes exatos com papéis, API e exemplos; o código TSX interativo continua derivado do exemplo real.
 
 As rotas anteriores por export não são removidas da geração estática: funcionam como aliases navegáveis, inclusive em GitHub Pages. Novos links devem usar `/catalogo/<familia>#<secao>` para abrir diretamente a parte. A verificação de cobertura permanece por **export**, independentemente da quantidade de links na sidebar; novos componentes continuam exigindo demos e stories correspondentes.
+
+
+## Composição semântica de páginas (#317)
+
+A [orientação de H1–H4, seções e cards opcionais](page-composition.md) inclui três exemplos independentes de consulta com tabela, formulário validado e dashboard. A rota `/catalogo/page-header` demonstra a API pública do `AdsPageHeader`; as rotas `/exemplos/composicao-semantica/consulta`, `/exemplos/composicao-semantica/formulario` e `/exemplos/composicao-semantica/dashboard` mostram páginas completas, e `page-composition.stories.tsx` reúne os padrões no Storybook.

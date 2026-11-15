@@ -46,3 +46,7 @@ Use `<section aria-labelledby="id-do-h2">` junto de `<AdsTypography as="h2" id="
 - [Storybook com os três cenários e casos-limite](../apps/docs/src/page-composition.stories.tsx).
 
 Acessibilidade: confira heading/landmarks via árvore de acessibilidade, foco visível em controles, leitura de erros, temas claro/escuro, viewports 320/390/768/desktop, zoom 200% **real** e SSR/hidratação. Reduzir a largura da viewport não equivale à verificação manual do zoom do navegador. Não aceite snapshots automaticamente para esconder diferenças.
+
+## Layout responsivo reutilizável — #318
+
+Para containers, grids adaptativos, empilhamento e ações, use CSS nativo ou as classes opt-in distribuídas `ads-layout-container`, `ads-layout-grid`, `ads-layout-stack` e `ads-layout-cluster`. Consulte o [guia de layout responsivo](responsive-layout.md) para tokens, RTL, tabela com scroll local, integração com dashboard e alternativas descartadas. A semântica e os cards opcionais descritos acima permanecem inalterados.

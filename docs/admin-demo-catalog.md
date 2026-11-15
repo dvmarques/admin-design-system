@@ -26,6 +26,8 @@ Excluídos: exports `type` (não possuem runtime), `fixtureVariants` (mapa de es
 
 Comandos concisos: `npx vitest run apps/admin-demo/catalog-coverage.test.ts --silent=passed-only`, `npm run test:e2e -- e2e/catalog.spec.ts --workers=4` e `npm run validate`. Diagnóstico: `npm run test:verbose` e `npm run test:e2e:verbose`. O build valida o consumo de CSS compilado pelo Next.js e o Storybook; não há dependência de Tailwind no consumidor.
 
+Os exemplos de [layout responsivo leve](responsive-layout.md) reutilizam as três rotas de composição semântica, sem acrescentar export React, duplicar catálogo ou alterar a navegação global. As classes `ads-layout-*` são CSS público, não membros de API JavaScript.
+
 ## Matriz export → demonstração
 
 Todos os links abaixo abrem exemplos executáveis. As famílias compartilham composições quando a semântica exige contexto (campos, abas, accordion, tabela, card, lista e dashboard). O status final das validações fica na PR e em `validation.md` da change OpenSpec.

@@ -51,7 +51,7 @@ export default function SemanticFormPage() {
 								value={name}
 								onChange={(event) => {
 									setName(event.target.value);
-									setErrors((current) => ({ ...current, name: undefined }));
+									setErrors((current) => ({ ...current, name: '' }));
 									setSubmitted(false);
 								}}
 							/>
@@ -68,7 +68,7 @@ export default function SemanticFormPage() {
 								value={email}
 								onChange={(event) => {
 									setEmail(event.target.value);
-									setErrors((current) => ({ ...current, email: undefined }));
+									setErrors((current) => ({ ...current, email: '' }));
 									setSubmitted(false);
 								}}
 							/>

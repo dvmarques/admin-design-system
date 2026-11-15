@@ -41,6 +41,14 @@ export const catalogEntries = [
 		href: '/catalogo/icon-slot',
 	},
 	{
+		name: 'AdsPageHeader',
+		group: 'Básicos',
+		slug: 'page-header',
+		demo: 'PageHeader',
+		description: 'Cabeçalho de página semântico com H1, descrição e ações responsivas.',
+		href: '/catalogo/page-header',
+	},
+	{
 		name: 'AdsTypography',
 		group: 'Básicos',
 		slug: 'typography',

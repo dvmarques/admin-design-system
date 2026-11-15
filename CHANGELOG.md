@@ -12,6 +12,8 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
+- Orçamento de JS/CSS publicados de `components` ajustado de 305.200 para 306.800 bytes após medição de 306.728 bytes na CI #328; teto de gzip e demais cenários pendentes de evidência dos checks. (#319)
+
 - `AdsAdminShell.Footer` opcional com slots `start`/`end`, composição responsiva e landmark semântica; `AdsDropdown.Header`/`Divider` e sequência de Tab/Shift+Tab ajustada para menus portados; integração de tema, tokens e portais documentada sem novo provider. (#319, OpenSpec `issue-319-footer-dropdown-theme`)
 
 - Quatro classes CSS opt-in de layout responsivo (`ads-layout-container`, `ads-layout-stack`, `ads-layout-grid`, `ads-layout-cluster`) no pacote components, com exemplos de consulta, formulário e dashboard; sem componentes React novos nem exigência de Tailwind no consumidor. (#318, OpenSpec `issue-318-responsive-layout`)

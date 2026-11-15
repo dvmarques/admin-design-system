@@ -35,3 +35,10 @@
 - Alteração de layout restrita a shells com footer; `:has` já empregado no pacote; confirmar mobile, sidebar aberta/recolhida e 320/390/768/1440. Footer imprevisto ou duplicado precisa ser corrigido no consumidor por landmark de nível documento.
 - Tab deve preservar sequência nativa equivalente sem prender foco; testar Shift+Tab, menu sem item elegível, Escape e SSR, portal e viewport reduzida. Caso o helper de foco seja alterado, executar regressões de overlays adjacentes.
 - CSS compilado deve respeitar `@layer components`, exports e imports públicos; testes via Node/React/Playwright e builds, OpenSpec `--all --strict`. Não aprovar zoom nativo 200%, leitor de tela ou estética manual sem evidência humana. Sem snapshot automático.
+
+## Primeira rodada de CI e controle de tamanho (PR #328)
+
+- `Política de develop` executou OpenSpec 1.15.0 com `validate --all --strict --no-interactive`: **success** no SHA `16266a3` (validação posterior à primeira implementação; não presumir validação prévia).
+- `inspect:packages` no mesmo SHA mediu **306.728 bytes** de JS/CSS publicados de `components`, diante do teto anterior de 305.200 (+1.528 bytes, aproximadamente +0,50%). O teto ajustado é 306.800 bytes com apenas 72 bytes de folga; não alterar o teto gzip ou cenários sem a próxima medição.
+- E2E preexistente de `ThemeControl` espera exatamente `Preferência: system`; preservar seu contrato de texto e exibir o tema efetivo em parágrafo separado, sem mudar testes antigos.
+- `prettier --check` identificou 8 arquivos de fonte/documentação para formatação; corrigir antes de alegar conformidade. Nenhuma alteração de snapshot automática.

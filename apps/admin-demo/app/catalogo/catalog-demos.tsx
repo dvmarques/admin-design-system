@@ -1581,7 +1581,8 @@ export function ThemeControlDemo() {
 					variant="group"
 				/>
 			</div>
-			<p role="status">Preferência: {preference} · Tema efetivo: {effectiveTheme}</p>
+			<p role="status">Preferência: {preference}</p>
+			<p>Tema efetivo: {effectiveTheme}</p>
 			<div data-theme={effectiveTheme} className="ads-layout-stack rounded-lg border border-border bg-surface p-4">
 				<p>Escopo de tema aplicado pela aplicação consumidora, sem persistência pelo ADS.</p>
 				<AdsDropdown>

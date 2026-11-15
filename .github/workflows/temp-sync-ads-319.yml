@@ -1,0 +1,62 @@
+# Temporary branch-scoped source formatter/catalog generator for #319; remove after success.
+name: Sincronizar snippets e formatacao ADS 319
+
+on:
+  push:
+    branches:
+      - feat/319-footer-dropdown-themes
+    paths:
+      - .github/workflows/temp-sync-ads-319.yml
+
+permissions:
+  contents: write
+
+jobs:
+  regenerate:
+    if: github.repository == 'dvmarques/admin-design-system'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Regenerate exact catalog demos and check Prettier
+        run: |
+          node scripts/catalog-snippets.mjs
+          npx prettier --write \
+            apps/admin-demo/app/catalogo/catalog-demos.tsx \
+            apps/admin-demo/app/catalogo/catalog-snippets.json \
+            packages/admin/src/styles.css \
+            e2e/footer-dropdown-theme.spec.ts \
+            docs/browser-budget.json \
+            CHANGELOG.md \
+            openspec/changes/issue-319-footer-dropdown-theme/design.md
+          node scripts/catalog-snippets.mjs
+          npm run format
+      - name: Push only generated changes
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git add -- \
+            apps/admin-demo/app/catalogo/catalog-demos.tsx \
+            apps/admin-demo/app/catalogo/catalog-snippets.json \
+            packages/admin/src/styles.css \
+            e2e/footer-dropdown-theme.spec.ts \
+            docs/browser-budget.json \
+            CHANGELOG.md \
+            openspec/changes/issue-319-footer-dropdown-theme/design.md
+          if git diff --cached --quiet; then exit 0; fi
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          remote_sha="$(git ls-remote "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/heads/${GITHUB_REF_NAME}" | cut -f1)"
+          test "${remote_sha}" = "${GITHUB_SHA}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "chore(#319): regenerate catalog snippets and apply Prettier"
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${GITHUB_REF_NAME}"

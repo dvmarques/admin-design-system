@@ -1,0 +1,62 @@
+# Temporary, branch-scoped formatting job for #319. Delete after it commits formatted files.
+name: Formatter ADS 319 temporario
+
+on:
+  push:
+    branches:
+      - feat/319-footer-dropdown-themes
+    paths:
+      - .github/workflows/temp-format-ads-319.yml
+
+permissions:
+  contents: write
+
+jobs:
+  format:
+    if: github.repository == 'dvmarques/admin-design-system'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Format only modified source and docs
+        run: |
+          npx prettier --write \
+            apps/admin-demo/app/catalogo/catalog-demos.tsx \
+            apps/docs/src/admin-shell.stories.tsx \
+            apps/docs/src/navigation.stories.tsx \
+            apps/docs/src/theme-control.stories.tsx \
+            docs/footer-dropdown-theme-integration.md \
+            e2e/footer-dropdown-theme.spec.ts \
+            openspec/changes/issue-319-footer-dropdown-theme/design.md \
+            packages/admin/src/styles.css
+          npm run format
+      - name: Commit narrowly scoped formatter changes
+        env:
+          PUSH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git add -- \
+            apps/admin-demo/app/catalogo/catalog-demos.tsx \
+            apps/docs/src/admin-shell.stories.tsx \
+            apps/docs/src/navigation.stories.tsx \
+            apps/docs/src/theme-control.stories.tsx \
+            docs/footer-dropdown-theme-integration.md \
+            e2e/footer-dropdown-theme.spec.ts \
+            openspec/changes/issue-319-footer-dropdown-theme/design.md \
+            packages/admin/src/styles.css
+          if git diff --cached --quiet; then exit 0; fi
+          test "$(git rev-parse HEAD)" = "${GITHUB_SHA}"
+          remote_sha="$(git ls-remote "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "refs/heads/${GITHUB_REF_NAME}" | cut -f1)"
+          test "${remote_sha}" = "${GITHUB_SHA}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -m "style(#319): format affected files with repository Prettier"
+          git push "https://x-access-token:${PUSH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" "HEAD:refs/heads/${GITHUB_REF_NAME}"

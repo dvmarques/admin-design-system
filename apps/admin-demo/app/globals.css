@@ -908,3 +908,35 @@ body {
 	flex-wrap: wrap;
 	gap: 0.5rem;
 }
+
+/* #317: a semântica da página não depende de cards. */
+.demo-semantic-stack {
+	display: grid;
+	gap: 2rem;
+	min-width: 0;
+}
+.demo-semantic-section {
+	display: grid;
+	gap: 1rem;
+	min-width: 0;
+}
+.demo-semantic-filters,
+.demo-semantic-actions {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.75rem;
+	align-items: end;
+}
+.demo-semantic-filters > * {
+	min-width: 0;
+}
+.demo-semantic-form {
+	display: grid;
+	gap: 1.25rem;
+	max-width: 40rem;
+	min-width: 0;
+}
+.demo-semantic-results {
+	min-width: 0;
+	overflow-x: auto;
+}

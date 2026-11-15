@@ -71,7 +71,7 @@ Reprodução controlada com `audit.spec.ts` da R1 (`selectOption` direto, 1 work
 | `AdsFileUpload`  | `/catalogo/file-upload`  | light | 390px    | `browser-console` | console limpo | mesmo padrão de hidratação                          | **Variação ambiental / ruído de triagem** (idem)                                                                                            |
 | `AdsCheckbox`    | `/catalogo/checkbox`     | light | 1440px   | `browser-console` | console limpo | mesmo padrão de hidratação                          | **Variação ambiental / ruído de triagem** (idem)                                                                                            |
 
-Nenhum ajuste nos limites de detecção. Com `applyDemoTheme` também em `audit.spec.ts`, a execução local no HEAD desta PR registrou **0 sinais** (evidência em `visual-audit-results/report.json`). Inspeção humana do diff SSR permanece recomendada se o aviso passar a ser reproduzível na CI.
+Nenhum ajuste nos limites de detecção. Com `applyDemoTheme` também em `audit.spec.ts`, a execução **local** `npm run audit:visual` no HEAD desta PR registrou **0 sinais** (evidência em `visual-audit-results/report.json`). Esse resultado **não** provém de job de CI: a auditoria visual é opt-in (`workflow_dispatch` ou máquina de desenvolvimento) e não integra a pipeline de PR. Inspeção humana do diff SSR permanece recomendada se o aviso passar a ser reproduzível na CI.
 
 ## Triagem da execução #43617023449 — acompanhamento #152
 

@@ -139,7 +139,7 @@ async function keyboardAction(
 	preview: Locator,
 	scenario: Scenario,
 	checks: string[],
-	capture: () => Promise<void>,
+	capture: (target?: Locator) => Promise<void>,
 ) {
 	switch (scenario.action) {
 		case 'tab-order':
@@ -296,7 +296,9 @@ async function keyboardAction(
 			await page.keyboard.press('Enter');
 			const dialog = frame.getByRole('dialog');
 			await expect(dialog).toBeVisible();
-			await capture();
+			// Capturar o documento do iframe: a página do catálogo pode deixar
+			// o shell abaixo da dobra e ocultar a evidência do menu aberto.
+			await capture(frame.locator('body'));
 			await page.keyboard.press('Escape');
 			await expect(dialog).not.toBeVisible();
 			await expect(trigger).toBeFocused();
@@ -445,7 +447,7 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 						};
 					}
 
-					const capture = async () => {
+					const capture = async (target?: Locator) => {
 						const image =
 							'screenshots/a11y/' +
 							scenario.id +
@@ -456,18 +458,18 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 							'.png';
 						mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
 						await page.evaluate(() => document.fonts.ready);
-						await page.screenshot({
-							path: join(output, image),
-							animations: 'disabled',
-							timeout: 20_000,
-						});
+						const options = { path: join(output, image), animations: 'disabled' as const, timeout: 20_000 };
+						if (target) {
+							await target.screenshot(options);
+						} else {
+							await page.screenshot(options);
+						}
 						evidence.screenshot = image;
 					};
 					await keyboardAction(page, preview, scenario, evidence.checks, capture);
 					await assertDocumentReflow(preview, evidence.checks);
 				}
 				if (evidence.status === 'approved' && !evidence.screenshot) {
-					await page.evaluate(() => document.fonts.ready);
 					const image =
 						'screenshots/a11y/' +
 						scenario.id +
@@ -477,7 +479,8 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 						scenario.width +
 						'.png';
 					mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
-					await page.screenshot({
+					await page.evaluate(() => document.fonts.ready);
+					await preview.screenshot({
 						path: join(output, image),
 						animations: 'disabled',
 						timeout: 20_000,

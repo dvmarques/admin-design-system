@@ -934,6 +934,7 @@ body {
 }
 .demo-semantic-nested {
 	--ads-layout-grid-min-column: 12rem;
+	overflow-wrap: anywhere;
 }
 .demo-semantic-nested .ads-layout-stack {
 	--ads-layout-stack-gap: var(--ads-spacing-2);

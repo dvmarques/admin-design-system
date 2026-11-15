@@ -57,10 +57,8 @@
 
 **SHA com código de feature/E2E (inalterado na R3):** `89a8bd723ba76e8d32ff6fa6224ea75d258f1009`.
 
-**CI/Security/Pages no SHA R3 `5e9670e`:** [CI #43737585537](https://github.com/dvmarques/admin-design-system/actions/runs/43737585537) success; [Security #43737585568](https://github.com/dvmarques/admin-design-system/actions/runs/43737585568) success; [Pages #43737585599](https://github.com/dvmarques/admin-design-system/actions/runs/43737585599) success.
+**CI/Security/Pages no último SHA com código `5e9670e`:** [CI #43737585537](https://github.com/dvmarques/admin-design-system/actions/runs/43737585537) success; [Security #43737585568](https://github.com/dvmarques/admin-design-system/actions/runs/43737585568) success; [Pages #43737585599](https://github.com/dvmarques/admin-design-system/actions/runs/43737585599) success.
 
-**SHA final (HEAD):** `ecd0ef8c721e836075859f8018fd528c25a59998` (evidências R3 em `tasks.md`).
-
-**CI/Security/Pages no HEAD:** [CI #43738834424](https://github.com/dvmarques/admin-design-system/actions/runs/43738834424) success; [Security #43738834438](https://github.com/dvmarques/admin-design-system/actions/runs/43738834438) success; [Pages #43738834412](https://github.com/dvmarques/admin-design-system/actions/runs/43738834412) success.
+**Integração:** o HEAD atual da branch `feat/317-semantic-page-composition` ([PR #326](https://github.com/dvmarques/admin-design-system/pull/326)) é a referência para review e squash; commits posteriores a `5e9670e` nesta branch alteram somente documentação (ex.: `tasks.md`), sem mudar o código validado acima.
 
 Archive/sync OpenSpec permanece **proibido** até merge autorizado (task 9).

@@ -1,8 +1,18 @@
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { randomUUID } from 'node:crypto';
+import { existsSync, mkdirSync, readFileSync, renameSync, rmSync, writeFileSync } from 'node:fs';
+import { basename, dirname, join, resolve } from 'node:path';
 import { loadCoverage } from './visual-audit-coverage.mjs';
 
 const readJson = (path) => JSON.parse(readFileSync(path, 'utf8'));
+const writeTextAtomically = (file, content) => {
+	const temporary = join(dirname(file), '.' + basename(file) + '.' + randomUUID() + '.tmp');
+	try {
+		writeFileSync(temporary, content, { flag: 'wx' });
+		renameSync(temporary, file);
+	} finally {
+		rmSync(temporary, { force: true });
+	}
+};
 const escapeCell = (value) =>
 	String(value ?? '')
 		.replaceAll('|', '\\|')
@@ -210,14 +220,14 @@ export function buildAccessibilityCoverageReport(project = process.cwd()) {
 	if (existsSync(initialPath)) {
 		const previous = readJson(initialPath);
 		previous.accessibilityPhase4 = { ...s, report: 'a11y-report.md', json: 'a11y-report.json' };
-		writeFileSync(initialPath, JSON.stringify(previous, null, 2) + '\n');
+		writeTextAtomically(initialPath, JSON.stringify(previous, null, 2) + '\n');
 	}
 	const markdownPath = join(folder, 'report.md');
 	if (existsSync(markdownPath)) {
 		const previous = readFileSync(markdownPath, 'utf8');
 		const head = '## Fase 4 — teclado, foco e reflow';
 		const index = previous.indexOf(head);
-		writeFileSync(
+		writeTextAtomically(
 			markdownPath,
 			(index === -1 ? previous.trimEnd() : previous.slice(0, index).trimEnd()) + '\n' + summary,
 		);

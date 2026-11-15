@@ -8,6 +8,7 @@ export type {
 export type {
 	AdsAdminShellBodyProps,
 	AdsAdminShellHeaderProps,
+	AdsAdminShellFooterProps,
 	AdsAdminShellMainProps,
 	AdsAdminShellNavigationTriggerProps,
 	AdsAdminShellProps,

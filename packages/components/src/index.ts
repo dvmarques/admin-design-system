@@ -129,6 +129,8 @@ export type {
 export { AdsDropdown } from './dropdown.js';
 export type {
 	AdsDropdownContentProps,
+	AdsDropdownHeaderProps,
+	AdsDropdownDividerProps,
 	AdsDropdownItemProps,
 	AdsDropdownProps,
 	AdsDropdownTriggerProps,

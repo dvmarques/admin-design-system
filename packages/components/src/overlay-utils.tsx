@@ -79,6 +79,15 @@ function getEligibleFocusableElements(container: HTMLElement, reverse = false) {
 	);
 }
 
+/** Advances Tab relative to a portaled menu's logical trigger, not its body-end DOM position. */
+export function focusAdjacentTo(reference: HTMLElement | null, backwards = false) {
+	if (!reference?.isConnected) return;
+	const stops = getEligibleFocusableElements(reference.ownerDocument.body, backwards);
+	const index = stops.indexOf(reference);
+	if (index < 0) return;
+	(stops[index + (backwards ? -1 : 1)] ?? reference).focus({ preventScroll: true });
+}
+
 export function useStableId(prefix: string) {
 	const reactId = useId();
 	return `${prefix}-${reactId.replaceAll(':', '')}`;

@@ -13,6 +13,7 @@ import {
 import { classNames } from './class-names.js';
 import {
 	OverlayPortal,
+	focusAdjacentTo,
 	useAnchoredPosition,
 	useClickOutside,
 	useEscapeKey,
@@ -160,6 +161,13 @@ function AdsDropdownContent({
 				data-placement={position.placement}
 				id={menuId}
 				onKeyDown={(event) => {
+					if (event.key === 'Tab') {
+						// The panel lives at the end of body; keep tab order relative to the trigger.
+						event.preventDefault();
+						setOpen(false);
+						focusAdjacentTo(triggerRef.current, event.shiftKey);
+						return;
+					}
 					const items = Array.from(
 						event.currentTarget.querySelectorAll<HTMLElement>(
 							'[role^="menuitem"]:not([aria-disabled="true"])',
@@ -241,9 +249,30 @@ function AdsDropdownItem({
 	);
 }
 
+/** Non-interactive label; use id with a native role=group/aria-labelledby when needed. */
+export type AdsDropdownHeaderProps = HTMLAttributes<HTMLDivElement>;
+function AdsDropdownHeader({ className, ...props }: AdsDropdownHeaderProps) {
+	return <div {...props} className={classNames('ads-dropdown-header', className)} />;
+}
+
+/** Semantic, non-focusable separator between menu groups. */
+export type AdsDropdownDividerProps = HTMLAttributes<HTMLDivElement>;
+function AdsDropdownDivider({ className, ...props }: AdsDropdownDividerProps) {
+	return (
+		<div
+			{...props}
+			aria-orientation="horizontal"
+			className={classNames('ads-dropdown-divider', className)}
+			role="separator"
+		/>
+	);
+}
+
 export const AdsDropdown = Object.assign(AdsDropdownRoot, {
 	Root: AdsDropdownRoot,
 	Trigger: AdsDropdownTrigger,
 	Content: AdsDropdownContent,
 	Item: AdsDropdownItem,
+	Header: AdsDropdownHeader,
+	Divider: AdsDropdownDivider,
 });

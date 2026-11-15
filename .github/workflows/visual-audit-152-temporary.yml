@@ -46,6 +46,8 @@ jobs:
         with:
           ref: ${{ github.head_ref }}
           persist-credentials: false
+      - name: Confiar somente no checkout da execução isolada
+        run: git config --global --add safe.directory "$GITHUB_WORKSPACE"
       - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
         with:
           node-version: 24

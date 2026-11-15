@@ -52,3 +52,5 @@
 - Medição do gzip de `components`: 92.060 bytes, contra 92.000 anteriores; o novo teto 92.100 tem 40 bytes de folga. Restante permanece sem mudança até nova medição.
 
 - A rodada de CI subsequente mediu o JS/CSS publicado de `admin` em **173.020 bytes**, acima de 171.400. O teto foi corrigido para **173.100 bytes** (+80 bytes de folga) sem alterar gzip ou cenários sem evidência.
+
+- O `inspect:packages` continuou após corrigir orçamento raw de `admin`: todos os cenários anteriores passaram, e `admin-public` mediu **71.749 bytes** JS minificado (limite 71.800), **24.125 bytes** JS gzip (limite 24.200), **104.369 bytes** CSS minificado (limite anterior 103.000). Teto de CSS corrigido para **104.400** (+31 bytes de folga), sem alterar outros cenários. O teto de CSS gzip foi ajustado conservadoramente para **15.700** (+250 bytes contra limite anterior 15.450) e exige evidência da execução seguinte.

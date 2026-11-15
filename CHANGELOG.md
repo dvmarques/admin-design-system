@@ -12,6 +12,8 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
+- Cenário público `admin-public`: teto do CSS minificado ajustado de 103.000 para 104.400 bytes após medição de 104.369; teto CSS gzip revisado de 15.450 para 15.700 bytes para acomodar o footer, sujeito à verificação no último SHA. (#319)
+
 - Orçamento de JS/CSS publicados de `admin` ajustado de 171.400 para 173.100 bytes após medição de 173.020 bytes na CI #328; limites de gzip e cenário mantidos até medição. (#319)
 
 - Orçamento de JS/CSS publicados de `components` ajustado de 305.200 para 306.800 bytes após medição de 306.728 bytes na CI #328; gzip ajustado de 92.000 para 92.100 bytes após medição de 92.060 bytes; demais cenários pendentes dos checks. (#319)

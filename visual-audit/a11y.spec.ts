@@ -92,23 +92,32 @@ async function verifyVisibleKeyboardFocus(locator: Locator, before: string, chec
 		after,
 		'foco visível precisa mudar propriedade de pintura, não apenas activeElement',
 	).not.toBe(before);
-	const geometry = await locator.evaluate((node) => {
-		const r = node.getBoundingClientRect();
-		const middle = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
-		const hit = node.ownerDocument.elementFromPoint(middle.x, middle.y);
-		return {
-			inViewport:
-				r.width > 1 &&
-				r.height > 1 &&
-				r.left >= -2 &&
-				r.right <= window.innerWidth + 2 &&
-				r.top >= -2 &&
-				r.bottom <= window.innerHeight + 2,
-			uncovered: hit != null && (hit === node || node.contains(hit)),
-		};
-	});
-	expect(geometry.inViewport, 'controle focado fora da viewport').toBe(true);
-	expect(geometry.uncovered, 'controle focado obstruído no ponto central').toBe(true);
+	// O foco pode disparar rolagem e reflow assíncronos após zoom/Tab.
+	// Espera a condição real de visibilidade, sem rolar artificialmente o alvo
+	// nem relaxar limites. Uma obstrução persistente continua sendo falha.
+	await expect
+		.poll(
+			() =>
+				locator.evaluate((node) => {
+					const r = node.getBoundingClientRect();
+					const middle = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
+					const hit = node.ownerDocument.elementFromPoint(middle.x, middle.y);
+					return {
+						inViewport:
+							r.width > 1 &&
+							r.height > 1 &&
+							r.left >= -2 &&
+							r.right <= window.innerWidth + 2 &&
+							r.top >= -2 &&
+							r.bottom <= window.innerHeight + 2,
+						uncovered: hit != null && (hit === node || node.contains(hit)),
+						rect: { left: r.left, right: r.right, top: r.top, bottom: r.bottom },
+						viewport: { width: window.innerWidth, height: window.innerHeight },
+					};
+				}),
+			{ message: 'controle focado deve ficar inteiro e descoberto após rolagem/reflow' },
+		)
+		.toMatchObject({ inViewport: true, uncovered: true });
 	checks.push('keyboard-focus-visible-paint-delta', 'focused-control-in-viewport-and-uncovered');
 }
 
@@ -487,8 +496,14 @@ async function probeNativeZoom(baseURL: string, evidence: Evidence) {
 		};
 		const action = actions[evidence.name];
 		if (!action) throw new Error('Componente sem ação de zoom: ' + evidence.name);
-		await keyboardAction(page, preview, { ...evidence, action }, evidence.checks, capture);
-		await assertDocumentReflow(preview, evidence.checks);
+		try {
+			await keyboardAction(page, preview, { ...evidence, action }, evidence.checks, capture);
+			await assertDocumentReflow(preview, evidence.checks);
+		} catch (error) {
+			// Preserva a posição problemática ainda em 200%; status segue failed.
+			if (!evidence.screenshot) await capture().catch(() => undefined);
+			throw error;
+		}
 		if (!evidence.screenshot) {
 			await preview.scrollIntoViewIfNeeded();
 			await capture();

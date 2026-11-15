@@ -14,6 +14,10 @@ async function noDocumentOverflow(page: Page) {
 	);
 }
 
+async function noPageHeaderOverflow(page: Page) {
+	return page.locator('.ads-page-header').evaluate((el) => el.scrollWidth <= el.clientWidth + 0.5);
+}
+
 for (const theme of ['light', 'dark'] as const) {
 	test(`composições semânticas: ${theme}, H1, landmarks, responsividade e axe`, async ({
 		page,
@@ -94,3 +98,54 @@ test('dashboard usa cards apenas nas métricas e no resumo', async ({ page }) =>
 	await expect(page.locator('.ads-metric-card')).toHaveCount(2);
 	await expect(page.locator('.ads-card:not(.ads-metric-card)')).toHaveCount(1);
 });
+
+// Reflow equivalente a zoom 200%: 195px ≈ 390px a 200% (conteúdo em `main`; o chrome do shell pode
+// ultrapassar a janela em 195px) e 640×400 ≈ 1280×800 a 200% (padrão combobox/dashboard-sidebar).
+// Não substitui a verificação manual com o zoom nativo do navegador (ver docs/page-composition.md).
+const zoomReflowSamples = [
+	{
+		slug: 'consulta',
+		heading: 'Consulta administrativa',
+		action: { role: 'link' as const, name: 'Novo cadastro' },
+	},
+	{
+		slug: 'formulario',
+		heading: 'Formulário administrativo',
+		action: { role: 'button' as const, name: 'Validar cadastro' },
+	},
+	{
+		slug: 'dashboard',
+		heading: 'Dashboard administrativo',
+		action: { role: 'link' as const, name: 'Consultar registros' },
+	},
+] as const;
+
+for (const sample of zoomReflowSamples) {
+	for (const viewport of [
+		{ label: 'mobile zoom 200%', width: 195, height: 800, checkDocument: false },
+		{ label: 'desktop zoom 200%', width: 640, height: 400, checkDocument: true },
+	]) {
+		test(`composição ${sample.slug}: ${viewport.label} sem overflow indevido e cabeçalho/ações acessíveis`, async ({
+			page,
+		}) => {
+			await page.setViewportSize({ width: viewport.width, height: viewport.height });
+			await page.goto(`/exemplos/composicao-semantica/${sample.slug}`);
+			expect(await noPageHeaderOverflow(page)).toBe(true);
+			if (viewport.checkDocument) {
+				expect(await noDocumentOverflow(page)).toBe(true);
+			}
+			const header = page.locator('.ads-page-header');
+			await expect(header).toBeVisible();
+			await expect(page.getByRole('heading', { level: 1, name: sample.heading })).toBeVisible();
+			await expect(page.locator('.ads-page-header__description')).toBeVisible();
+			const action = page.getByRole(sample.action.role, { name: sample.action.name });
+			await action.scrollIntoViewIfNeeded();
+			await expect(action).toBeVisible();
+			await action.focus();
+			await expect(action).toBeFocused();
+			if (viewport.checkDocument) {
+				await expectNoAxeViolations(page);
+			}
+		});
+	}
+}

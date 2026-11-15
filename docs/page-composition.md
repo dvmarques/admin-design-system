@@ -6,7 +6,7 @@ O HTML define o significado e a hierarquia; `AdsCard` e `AdsSurface` são escolh
 
 `AdsPageHeader` é exportado pelo pacote `@dvmarques/admin-ds-components` e não depende de `@dvmarques/admin-ds-admin`, roteamento, autenticação, ícones ou backend. Ele aceita `title: ReactNode` (obrigatório), `description?: ReactNode`, `actions?: ReactNode`, `className` e atributos HTML nativos de header.
 
-O componente renderiza `<header>`, `AdsTypography as="h1"`, um parágrafo descritivo opcional e ações em ordem DOM. **Use somente texto e elementos inline** em `title` e `description`; não passe outro heading, parágrafo ou elemento de bloco nessas props. Botões e links pertencem ao slot `actions`. Os slots vazios não acrescentam nós de apresentação. Layout, espaçamento e quebra de texto longo usam o CSS compilado e os tokens existentes.
+O componente renderiza `<header>`, `AdsTypography as="h1"`, um parágrafo descritivo opcional e ações em ordem DOM. As props `title` e `description` são `ReactNode`, mas o markup interno já fixa **H1** e **`<p>`** — portanto envie **somente conteúdo inline** (texto, `span`, `abbr`, ênfase etc.) nessas props. Não passe outro heading, parágrafo, `div` nem qualquer elemento de bloco em `title` ou `description` (evita HTML inválido e leitura confusa em tecnologia assistiva). Botões, links e demais controles interativos ficam no slot `actions`; cada controle deve ter **nome acessível** explícito (`aria-label`, texto visível ou `aria-labelledby` quando o rótulo visível não bastar). Os slots vazios não acrescentam nós de apresentação. Layout, espaçamento e quebra de texto longo usam o CSS compilado e os tokens existentes.
 
 ```tsx
 import { AdsButton, AdsPageHeader, AdsTypography } from '@dvmarques/admin-ds-components';

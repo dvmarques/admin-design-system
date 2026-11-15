@@ -12,9 +12,7 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
-- Atualizado o teto de JS/CSS publicado do pacote de componentes de 303.500 para 305.000 bytes (valor medido de 304.271 bytes após `AdsPageHeader`, CI #43721346614) e o teto gzip de 91.000 para 92.000 bytes (medição de 91.461 bytes); limites de cenários mantidos. (#317)
-
-- Novo `AdsPageHeader` com H1, descrição e ações responsivas, independente do shell e sem card obrigatório; padrão semântico de seções e três exemplos executáveis no Admin Demo/Storybook. (#317, OpenSpec `issue-317-semantic-page-composition`)
+- Novo `AdsPageHeader` (H1, descrição e ações responsivas), padrão semântico de seções, três exemplos no Admin Demo/Storybook e teto de JS/CSS publicado do pacote de componentes ajustado para 305.000 bytes (medição 304.271 bytes, gzip 91.461 → limite 92.000 bytes). (#317, OpenSpec `issue-317-semantic-page-composition`)
 
 - Novo `AdsIconSlot` para ícones React/SVG próprios, sem fornecedor obrigatório, e overrides opcionais nos controles de tema, alerta, toast e ações do menu de conta; `AdsIcon` permanece compatível. (#316, OpenSpec `issue-316-agnostic-icon-slots`)
 

@@ -59,8 +59,8 @@
 
 **CI/Security/Pages no SHA R3 `5e9670e`:** [CI #43737585537](https://github.com/dvmarques/admin-design-system/actions/runs/43737585537) success; [Security #43737585568](https://github.com/dvmarques/admin-design-system/actions/runs/43737585568) success; [Pages #43737585599](https://github.com/dvmarques/admin-design-system/actions/runs/43737585599) success.
 
-**SHA final (HEAD):** `4dfdea33ef520e515dc728b17741b6724392d1cb` (este commit em `tasks.md`).
+**SHA final (HEAD):** `ecd0ef8c721e836075859f8018fd528c25a59998` (evidências R3 em `tasks.md`).
 
-**CI/Security/Pages no HEAD:** [CI #43738235610](https://github.com/dvmarques/admin-design-system/actions/runs/43738235610) success; [Security #43738235633](https://github.com/dvmarques/admin-design-system/actions/runs/43738235633) success; [Pages #43738235620](https://github.com/dvmarques/admin-design-system/actions/runs/43738235620) success.
+**CI/Security/Pages no HEAD:** [CI #43738834424](https://github.com/dvmarques/admin-design-system/actions/runs/43738834424) success; [Security #43738834438](https://github.com/dvmarques/admin-design-system/actions/runs/43738834438) success; [Pages #43738834412](https://github.com/dvmarques/admin-design-system/actions/runs/43738834412) success.
 
 Archive/sync OpenSpec permanece **proibido** até merge autorizado (task 9).

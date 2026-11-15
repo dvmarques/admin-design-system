@@ -42,11 +42,15 @@ describe('AdsPageHeader', () => {
 	});
 
 	it('omits optional slots while preserving native attributes and custom classes', () => {
-		const { container } = render(<AdsPageHeader title="Página" id="my-header" className="custom" />);
+		const { container } = render(
+			<AdsPageHeader title="Página" id="my-header" className="custom" />,
+		);
 		const header = container.querySelector('header');
 		expect(header).toHaveAttribute('id', 'my-header');
 		expect(header).toHaveClass('custom', 'ads-page-header');
-		expect(within(header as HTMLElement).getByRole('heading', { level: 1 })).toHaveTextContent('Página');
+		expect(within(header as HTMLElement).getByRole('heading', { level: 1 })).toHaveTextContent(
+			'Página',
+		);
 		expect(header?.querySelector('.ads-page-header__actions')).toBeNull();
 		expect(header?.querySelector('.ads-page-header__description')).toBeNull();
 	});

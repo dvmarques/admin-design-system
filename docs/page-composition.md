@@ -9,28 +9,24 @@ O HTML define o significado e a hierarquia; `AdsCard` e `AdsSurface` são escolh
 O componente renderiza `<header>`, `AdsTypography as="h1"`, um parágrafo descritivo opcional e ações em ordem DOM. **Use somente texto e elementos inline** em `title` e `description`; não passe outro heading, parágrafo ou elemento de bloco nessas props. Botões e links pertencem ao slot `actions`. Os slots vazios não acrescentam nós de apresentação. Layout, espaçamento e quebra de texto longo usam o CSS compilado e os tokens existentes.
 
 ```tsx
-import {
-  AdsButton,
-  AdsPageHeader,
-  AdsTypography,
-} from '@dvmarques/admin-ds-components';
+import { AdsButton, AdsPageHeader, AdsTypography } from '@dvmarques/admin-ds-components';
 
 export function Registros() {
-  return (
-    <main>
-      <AdsPageHeader
-        title="Registros"
-        description="Consulte os dados do período"
-        actions={<AdsButton type="button">Atualizar</AdsButton>}
-      />
-      <section aria-labelledby="registros-heading">
-        <AdsTypography as="h2" variant="heading2" id="registros-heading">
-          Resultados
-        </AdsTypography>
-        {/* Filtros e tabela podem ficar aqui sem AdsCard. */}
-      </section>
-    </main>
-  );
+	return (
+		<main>
+			<AdsPageHeader
+				title="Registros"
+				description="Consulte os dados do período"
+				actions={<AdsButton type="button">Atualizar</AdsButton>}
+			/>
+			<section aria-labelledby="registros-heading">
+				<AdsTypography as="h2" variant="heading2" id="registros-heading">
+					Resultados
+				</AdsTypography>
+				{/* Filtros e tabela podem ficar aqui sem AdsCard. */}
+			</section>
+		</main>
+	);
 }
 ```
 
@@ -44,9 +40,9 @@ Use `<section aria-labelledby="id-do-h2">` junto de `<AdsTypography as="h2" id="
 
 ## Exemplos
 
-- Consulta: [Demo](../apps/admin-demo/app/(admin)/exemplos/composicao-semantica/consulta/page.tsx), filtros e tabela sem card.
-- Formulário: [Demo](../apps/admin-demo/app/(admin)/exemplos/composicao-semantica/formulario/page.tsx), múltiplas seções, validação e ações.
-- Dashboard: [Demo](../apps/admin-demo/app/(admin)/exemplos/composicao-semantica/dashboard/page.tsx), cards apenas em indicadores e resumos.
+- Consulta: [Demo](<../apps/admin-demo/app/(admin)/exemplos/composicao-semantica/consulta/page.tsx>), filtros e tabela sem card.
+- Formulário: [Demo](<../apps/admin-demo/app/(admin)/exemplos/composicao-semantica/formulario/page.tsx>), múltiplas seções, validação e ações.
+- Dashboard: [Demo](<../apps/admin-demo/app/(admin)/exemplos/composicao-semantica/dashboard/page.tsx>), cards apenas em indicadores e resumos.
 - [Storybook com os três cenários e casos-limite](../apps/docs/src/page-composition.stories.tsx).
 
 Acessibilidade: confira heading/landmarks via árvore de acessibilidade, foco visível em controles, leitura de erros, temas claro/escuro, viewports 320/390/768/desktop, zoom 200% **real** e SSR/hidratação. Reduzir a largura da viewport não equivale à verificação manual do zoom do navegador. Não aceite snapshots automaticamente para esconder diferenças.

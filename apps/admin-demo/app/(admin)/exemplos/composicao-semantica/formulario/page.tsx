@@ -77,16 +77,22 @@ export default function SemanticFormPage() {
 					</section>
 					<div className="demo-semantic-actions">
 						<AdsButton type="submit">Validar cadastro</AdsButton>
-						<AdsButton type="reset" variant="secondary" onClick={() => {
-							setName('');
-							setEmail('');
-							setErrors({});
-							setSubmitted(false);
-						}}>
+						<AdsButton
+							type="reset"
+							variant="secondary"
+							onClick={() => {
+								setName('');
+								setEmail('');
+								setErrors({});
+								setSubmitted(false);
+							}}
+						>
 							Limpar dados
 						</AdsButton>
 					</div>
-					<p role="status">{submitted ? 'Cadastro válido (simulação).' : 'Nenhum cadastro validado.'}</p>
+					<p role="status">
+						{submitted ? 'Cadastro válido (simulação).' : 'Nenhum cadastro validado.'}
+					</p>
 				</form>
 			</div>
 		</div>

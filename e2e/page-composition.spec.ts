@@ -19,9 +19,9 @@ for (const theme of ['light', 'dark'] as const) {
 		page,
 	}) => {
 		test.setTimeout(120000);
-		await page.context().addCookies([
-			{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' },
-		]);
+		await page
+			.context()
+			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 		const hydrationErrors: string[] = [];
 		page.on('console', (message) => {
 			if (message.type() === 'error' && /hydration/i.test(message.text())) {
@@ -34,17 +34,13 @@ for (const theme of ['light', 'dark'] as const) {
 			await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
 			await expect(page.getByRole('main')).toHaveCount(1);
 			await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
-			await expect(
-				page.getByRole('heading', { level: 1, name: sample.heading }),
-			).toBeVisible();
+			await expect(page.getByRole('heading', { level: 1, name: sample.heading })).toBeVisible();
 			await expect(page.getByRole('heading', { level: 2, name: sample.section })).toBeVisible();
 			await expect(page.locator('.ads-page-header')).toHaveCount(1);
 			await expectNoAxeViolations(page);
 			for (const width of [320, 390, 768, 1280]) {
 				await page.setViewportSize({ width, height: 800 });
-				expect(await noDocumentOverflow(page), `${sample.slug} em ${width}px, ${theme}`).toBe(
-					true,
-				);
+				expect(await noDocumentOverflow(page), `${sample.slug} em ${width}px, ${theme}`).toBe(true);
 			}
 		}
 		expect(hydrationErrors).toEqual([]);

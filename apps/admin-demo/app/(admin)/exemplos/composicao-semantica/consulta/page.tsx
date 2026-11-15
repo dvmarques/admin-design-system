@@ -59,7 +59,8 @@ export default function SemanticConsultationPage() {
 						</AdsButton>
 					</div>
 					<p role="status">
-						{results.length} {results.length === 1 ? 'registro encontrado' : 'registros encontrados'}
+						{results.length}{' '}
+						{results.length === 1 ? 'registro encontrado' : 'registros encontrados'}
 					</p>
 					<div className="demo-semantic-results">
 						<AdsTable>
@@ -82,7 +83,9 @@ export default function SemanticConsultationPage() {
 							</AdsTableBody>
 						</AdsTable>
 					</div>
-					{results.length === 0 && <AdsTypography variant="muted">Nenhum registro encontrado.</AdsTypography>}
+					{results.length === 0 && (
+						<AdsTypography variant="muted">Nenhum registro encontrado.</AdsTypography>
+					)}
 				</section>
 			</div>
 		</div>

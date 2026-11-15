@@ -2,7 +2,10 @@ import type { HTMLAttributes, ReactNode } from 'react';
 import { classNames } from './class-names.js';
 import { AdsTypography } from './typography.js';
 
-export interface AdsPageHeaderProps extends Omit<HTMLAttributes<HTMLElement>, 'children' | 'title'> {
+export interface AdsPageHeaderProps extends Omit<
+	HTMLAttributes<HTMLElement>,
+	'children' | 'title'
+> {
 	/** Text or inline content; an H1 is provided automatically. */
 	title: ReactNode;
 	/** Optional text or inline content, rendered as a paragraph. */

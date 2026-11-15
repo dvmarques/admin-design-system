@@ -82,9 +82,9 @@ Para overlays renderizados em portal, sobrescreva tokens usando seletores `[data
 
 1. [Composição semântica de páginas](docs/page-composition.md): hierarquia H1–H4, `AdsPageHeader`, seções e cards opcionais.
 2. [Instalação externa e CSS em App Router](docs/integration.md), incluindo limite Server/Client, tema, fonte, tipos e recursos opcionais.
-2. [Storybook / referência técnica de API](https://dvmarques.github.io/admin-design-system/storybook/) e [catálogo demonstrável da aplicação](docs/admin-demo-catalog.md).
-3. [Limitações e testes](docs/limitations.md), [histórico por componente](docs/component-changelog.md) e [CHANGELOG](CHANGELOG.md).
-4. [Licença MIT](LICENSE.md) e [atribuições de terceiros](docs/licensing.md).
+3. [Storybook / referência técnica de API](https://dvmarques.github.io/admin-design-system/storybook/) e [catálogo demonstrável da aplicação](docs/admin-demo-catalog.md).
+4. [Limitações e testes](docs/limitations.md), [histórico por componente](docs/component-changelog.md) e [CHANGELOG](CHANGELOG.md).
+5. [Licença MIT](LICENSE.md) e [atribuições de terceiros](docs/licensing.md).
 
 ## Desenvolvimento e contribuição
 

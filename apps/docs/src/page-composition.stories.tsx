@@ -53,12 +53,22 @@ function ConsultationExample() {
 			<AdsPageHeader
 				title="Consulta administrativa"
 				description="Pesquise registros sem colocar o conteúdo da página dentro de um card."
-				actions={<AdsButton type="button" onClick={() => setQuery('')}>Nova consulta</AdsButton>}
+				actions={
+					<AdsButton type="button" onClick={() => setQuery('')}>
+						Nova consulta
+					</AdsButton>
+				}
 			/>
 			<section aria-labelledby="storybook-registros" style={sectionStyle}>
-				<AdsTypography as="h2" id="storybook-registros" variant="heading2">Registros</AdsTypography>
+				<AdsTypography as="h2" id="storybook-registros" variant="heading2">
+					Registros
+				</AdsTypography>
 				<AdsField label="Buscar pelo nome">
-					<AdsInput type="search" value={query} onChange={(event) => setQuery(event.target.value)} />
+					<AdsInput
+						type="search"
+						value={query}
+						onChange={(event) => setQuery(event.target.value)}
+					/>
 				</AdsField>
 				<p role="status">{filtered.length} resultados</p>
 				<div style={{ minWidth: 0, overflowX: 'auto' }}>
@@ -71,7 +81,9 @@ function ConsultationExample() {
 						</AdsTableHead>
 						<AdsTableBody>
 							{filtered.map((person) => (
-								<AdsTableRow key={person}><AdsTableCell>{person}</AdsTableCell></AdsTableRow>
+								<AdsTableRow key={person}>
+									<AdsTableCell>{person}</AdsTableCell>
+								</AdsTableRow>
 							))}
 						</AdsTableBody>
 					</AdsTable>
@@ -87,28 +99,59 @@ function FormExample() {
 	const [message, setMessage] = useState('');
 	return (
 		<main style={pageStyle}>
-			<AdsPageHeader title="Formulário administrativo" description="Seções semânticas, validação e ações sem card obrigatório." />
-			<form noValidate style={sectionStyle} onSubmit={(event) => {
-				event.preventDefault();
-				setMessage(name.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim()) ? 'Dados válidos.' : 'Preencha nome e e-mail válido.');
-			}}>
+			<AdsPageHeader
+				title="Formulário administrativo"
+				description="Seções semânticas, validação e ações sem card obrigatório."
+			/>
+			<form
+				noValidate
+				style={sectionStyle}
+				onSubmit={(event) => {
+					event.preventDefault();
+					setMessage(
+						name.trim() && /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())
+							? 'Dados válidos.'
+							: 'Preencha nome e e-mail válido.',
+					);
+				}}
+			>
 				<section aria-labelledby="storybook-identificacao" style={sectionStyle}>
-					<AdsTypography as="h2" id="storybook-identificacao" variant="heading2">Identificação</AdsTypography>
-					<AdsField label="Nome"><AdsInput value={name} onChange={(event) => setName(event.target.value)} /></AdsField>
-					<AdsField label="E-mail"><AdsInput type="email" value={email} onChange={(event) => setEmail(event.target.value)} /></AdsField>
+					<AdsTypography as="h2" id="storybook-identificacao" variant="heading2">
+						Identificação
+					</AdsTypography>
+					<AdsField label="Nome">
+						<AdsInput value={name} onChange={(event) => setName(event.target.value)} />
+					</AdsField>
+					<AdsField label="E-mail">
+						<AdsInput
+							type="email"
+							value={email}
+							onChange={(event) => setEmail(event.target.value)}
+						/>
+					</AdsField>
 				</section>
 				<section aria-labelledby="storybook-revisao" style={sectionStyle}>
-					<AdsTypography as="h2" id="storybook-revisao" variant="heading2">Revisão</AdsTypography>
-					<AdsTypography as="h3" variant="heading4">Conferência de dados</AdsTypography>
+					<AdsTypography as="h2" id="storybook-revisao" variant="heading2">
+						Revisão
+					</AdsTypography>
+					<AdsTypography as="h3" variant="heading4">
+						Conferência de dados
+					</AdsTypography>
 					<AdsTypography variant="muted">Nenhum dado é enviado para um servidor.</AdsTypography>
 				</section>
 				<div style={actionStyle}>
 					<AdsButton type="submit">Validar</AdsButton>
-					<AdsButton type="reset" variant="secondary" onClick={() => {
-						setName('');
-						setEmail('');
-						setMessage('');
-					}}>Limpar</AdsButton>
+					<AdsButton
+						type="reset"
+						variant="secondary"
+						onClick={() => {
+							setName('');
+							setEmail('');
+							setMessage('');
+						}}
+					>
+						Limpar
+					</AdsButton>
 				</div>
 				<p role="status">{message}</p>
 			</form>
@@ -119,19 +162,38 @@ function FormExample() {
 function DashboardExample() {
 	return (
 		<main style={pageStyle}>
-			<AdsPageHeader title="Dashboard administrativo" description="Cards apenas para métricas e resumos autocontidos." />
+			<AdsPageHeader
+				title="Dashboard administrativo"
+				description="Cards apenas para métricas e resumos autocontidos."
+			/>
 			<section aria-labelledby="storybook-indicadores" style={sectionStyle}>
-				<AdsTypography as="h2" id="storybook-indicadores" variant="heading2">Indicadores</AdsTypography>
-				<div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 13rem), 1fr))', gap: '1rem' }}>
+				<AdsTypography as="h2" id="storybook-indicadores" variant="heading2">
+					Indicadores
+				</AdsTypography>
+				<div
+					style={{
+						display: 'grid',
+						gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 13rem), 1fr))',
+						gap: '1rem',
+					}}
+				>
 					<AdsMetricCard title="Cadastros ativos" value="1.284" />
 					<AdsMetricCard title="Novos registros" value="72" />
 				</div>
 			</section>
 			<section aria-labelledby="storybook-resumos" style={sectionStyle}>
-				<AdsTypography as="h2" id="storybook-resumos" variant="heading2">Resumos</AdsTypography>
+				<AdsTypography as="h2" id="storybook-resumos" variant="heading2">
+					Resumos
+				</AdsTypography>
 				<AdsCard>
-					<AdsCardHeader><AdsTypography as="h3" variant="heading3">Leitura operacional</AdsTypography></AdsCardHeader>
-					<AdsCardContent><AdsTypography>Resumo independente em card.</AdsTypography></AdsCardContent>
+					<AdsCardHeader>
+						<AdsTypography as="h3" variant="heading3">
+							Leitura operacional
+						</AdsTypography>
+					</AdsCardHeader>
+					<AdsCardContent>
+						<AdsTypography>Resumo independente em card.</AdsTypography>
+					</AdsCardContent>
 				</AdsCard>
 			</section>
 		</main>
@@ -150,7 +212,9 @@ export const LongTitleAndActions: Story = {
 				actions={
 					<>
 						<AdsButton type="button">Ação principal</AdsButton>
-						<AdsButton type="button" variant="secondary">Ação secundária</AdsButton>
+						<AdsButton type="button" variant="secondary">
+							Ação secundária
+						</AdsButton>
 					</>
 				}
 			/>
@@ -158,5 +222,9 @@ export const LongTitleAndActions: Story = {
 	),
 };
 export const WithoutOptionalSlots: Story = {
-	render: () => <main><AdsPageHeader title="Página sem descrição e sem ações" /></main>,
+	render: () => (
+		<main>
+			<AdsPageHeader title="Página sem descrição e sem ações" />
+		</main>
+	),
 };

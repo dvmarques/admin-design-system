@@ -1,0 +1,20 @@
+## ADDED Requirements
+
+### Requirement: Cabeçalhos e separadores não interativos de dropdown
+
+O AdsDropdown MUST oferecer `Header` e `Divider` composáveis no Content, mantendo a API e os mecanismos existentes de menu, posicionamento e portal. Header e Divider MUST permanecer fora da navegação por itens ativáveis e MUST permitir agrupamento acessível com semântica nativa de grupo e rótulo.
+
+#### Scenario: Menu com agrupamento
+
+- **WHEN** o consumidor coloca Header com id e grupos `role=group` com `aria-labelledby`, intercalando Divider e Item
+- **THEN** leitores de tela encontram os grupos identificados e separadores, enquanto somente Items habilitados recebem foco na navegação por setas, Home e End
+
+#### Scenario: Fechamento e retorno de foco
+
+- **WHEN** o usuário navega por teclado e pressiona Escape, Tab ou Shift+Tab
+- **THEN** Escape fecha e devolve foco ao gatilho, enquanto Tab fecha e prossegue para a parada de foco anterior ou seguinte ao gatilho sem aprisionamento no portal
+
+#### Scenario: Regressão de menu
+
+- **WHEN** o consumidor usa Items normais, desabilitados, menus vazios ou valores radio em telas pequenas ou portais aninhados
+- **THEN** os novos elementos não recebem foco nem ativação e fechamento, layering e posicionamento existentes continuam funcionando

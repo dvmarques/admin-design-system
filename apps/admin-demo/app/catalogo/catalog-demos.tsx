@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import {
 	AdsMaskedInput,
 	type AdsMaskedInputValues,
@@ -1586,7 +1586,14 @@ export function ThemeControlDemo() {
 				<p>Escopo de tema aplicado pela aplicação consumidora, sem persistência pelo ADS.</p>
 				<AdsDropdown>
 					<AdsDropdown.Trigger>Overlay no tema {effectiveTheme}</AdsDropdown.Trigger>
-					<AdsDropdown.Content aria-label="Overlay de tema">
+					<AdsDropdown.Content
+						aria-label="Overlay de tema"
+						style={
+							{
+								'--ads-color-surface-raised': 'var(--ads-color-surface-selected)',
+							} as CSSProperties
+						}
+					>
 						<AdsDropdown.Item>Verificar tema do portal</AdsDropdown.Item>
 					</AdsDropdown.Content>
 				</AdsDropdown>

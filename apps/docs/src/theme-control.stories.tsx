@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
 	AdsDialog,
@@ -102,7 +102,14 @@ export const ThemePreferenceWithPortal: Story = {
 				<p role="status">Preferência: {preference}; tema efetivo: {effective}</p>
 				<AdsDropdown>
 					<AdsDropdown.Trigger>Abrir overlay no tema {effective}</AdsDropdown.Trigger>
-					<AdsDropdown.Content aria-label="Overlay tematizado">
+					<AdsDropdown.Content
+						aria-label="Overlay tematizado"
+						style={
+							{
+								'--ads-color-surface-raised': 'var(--ads-color-surface-selected)',
+							} as CSSProperties
+						}
+					>
 						<AdsDropdown.Header>Tokens do tema</AdsDropdown.Header>
 						<AdsDropdown.Item>Opção</AdsDropdown.Item>
 					</AdsDropdown.Content>

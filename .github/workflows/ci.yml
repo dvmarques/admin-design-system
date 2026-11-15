@@ -23,6 +23,59 @@ concurrency:
   cancel-in-progress: ${{ github.event_name == 'pull_request' }}
 
 jobs:
+  # Temporary, tightly scoped formatter for #317. Removed before final review.
+  format-once-317:
+    if: github.event_name == 'pull_request' && github.event.pull_request.number == 326 && github.event.pull_request.head.repo.full_name == github.repository && github.event.pull_request.head.ref == 'feat/317-semantic-page-composition'
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.event.pull_request.head.ref }}
+          persist-credentials: true
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Format exactly the twelve files flagged by the first quality run
+        run: |
+          npx prettier --write \
+            'apps/admin-demo/app/(admin)/exemplos/composicao-semantica/consulta/page.tsx' \
+            'apps/admin-demo/app/(admin)/exemplos/composicao-semantica/formulario/page.tsx' \
+            'apps/admin-demo/app/demo-navigation.tsx' \
+            'apps/docs/src/page-composition.stories.tsx' \
+            'docs/admin-demo-catalog.md' \
+            'docs/component-changelog.md' \
+            'docs/page-composition.md' \
+            'e2e/page-composition.spec.ts' \
+            'openspec/changes/issue-317-semantic-page-composition/design.md' \
+            'packages/components/src/page-header.tsx' \
+            'packages/components/tests/page-header.test.tsx' \
+            'README.md'
+      - name: Commit formatted files to the issue branch only
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- \
+            'apps/admin-demo/app/(admin)/exemplos/composicao-semantica/consulta/page.tsx' \
+            'apps/admin-demo/app/(admin)/exemplos/composicao-semantica/formulario/page.tsx' \
+            'apps/admin-demo/app/demo-navigation.tsx' \
+            'apps/docs/src/page-composition.stories.tsx' \
+            'docs/admin-demo-catalog.md' \
+            'docs/component-changelog.md' \
+            'docs/page-composition.md' \
+            'e2e/page-composition.spec.ts' \
+            'openspec/changes/issue-317-semantic-page-composition/design.md' \
+            'packages/components/src/page-header.tsx' \
+            'packages/components/tests/page-header.test.tsx' \
+            'README.md'
+          if ! git diff --cached --quiet; then
+            git commit -m 'style: format issue 317 files'
+            git push origin HEAD:feat/317-semantic-page-composition
+          fi
+
   quality:
     name: Qualidade rápida
     if: github.event_name != 'pull_request' || github.event.pull_request.draft == false

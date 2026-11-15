@@ -120,32 +120,38 @@ const zoomReflowSamples = [
 	},
 ] as const;
 
-for (const sample of zoomReflowSamples) {
-	for (const viewport of [
-		{ label: 'mobile zoom 200%', width: 195, height: 800, checkDocument: false },
-		{ label: 'desktop zoom 200%', width: 640, height: 400, checkDocument: true },
-	]) {
-		test(`composição ${sample.slug}: ${viewport.label} sem overflow indevido e cabeçalho/ações acessíveis`, async ({
-			page,
-		}) => {
-			await page.setViewportSize({ width: viewport.width, height: viewport.height });
-			await page.goto(`/exemplos/composicao-semantica/${sample.slug}`);
-			expect(await noPageHeaderOverflow(page)).toBe(true);
-			if (viewport.checkDocument) {
-				expect(await noDocumentOverflow(page)).toBe(true);
-			}
-			const header = page.locator('.ads-page-header');
-			await expect(header).toBeVisible();
-			await expect(page.getByRole('heading', { level: 1, name: sample.heading })).toBeVisible();
-			await expect(page.locator('.ads-page-header__description')).toBeVisible();
-			const action = page.getByRole(sample.action.role, { name: sample.action.name });
-			await action.scrollIntoViewIfNeeded();
-			await expect(action).toBeVisible();
-			await action.focus();
-			await expect(action).toBeFocused();
-			if (viewport.checkDocument) {
-				await expectNoAxeViolations(page);
-			}
-		});
+for (const theme of ['light', 'dark'] as const) {
+	for (const sample of zoomReflowSamples) {
+		for (const viewport of [
+			{ label: 'mobile zoom 200%', width: 195, height: 800, checkDocument: false },
+			{ label: 'desktop zoom 200%', width: 640, height: 400, checkDocument: true },
+		]) {
+			test(`composição ${sample.slug}: ${viewport.label}, tema ${theme}, sem overflow indevido e cabeçalho/ações acessíveis`, async ({
+				page,
+			}) => {
+				await page
+					.context()
+					.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+				await page.setViewportSize({ width: viewport.width, height: viewport.height });
+				await page.goto(`/exemplos/composicao-semantica/${sample.slug}`);
+				await expect(page.locator('html')).toHaveAttribute('data-theme', theme);
+				expect(await noPageHeaderOverflow(page)).toBe(true);
+				if (viewport.checkDocument) {
+					expect(await noDocumentOverflow(page)).toBe(true);
+				}
+				const header = page.locator('.ads-page-header');
+				await expect(header).toBeVisible();
+				await expect(page.getByRole('heading', { level: 1, name: sample.heading })).toBeVisible();
+				await expect(page.locator('.ads-page-header__description')).toBeVisible();
+				const action = page.getByRole(sample.action.role, { name: sample.action.name });
+				await action.scrollIntoViewIfNeeded();
+				await expect(action).toBeVisible();
+				await action.focus();
+				await expect(action).toBeFocused();
+				if (viewport.checkDocument) {
+					await expectNoAxeViolations(page);
+				}
+			});
+		}
 	}
 }

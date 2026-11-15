@@ -75,7 +75,9 @@ test('formulário mantém heading H3 subordinado e valida pelo teclado', async (
 	await expect(page.getByText('Informe o nome.')).toBeVisible();
 	await expect(page.getByText('Informe um e-mail válido.')).toBeVisible();
 	await name.fill('Ana Silva');
+	await expect(page.getByText('Informe o nome.')).toHaveCount(0);
 	await page.getByRole('textbox', { name: 'E-mail' }).fill('ana@exemplo.com');
+	await expect(page.getByText('Informe um e-mail válido.')).toHaveCount(0);
 	await submit.click();
 	await expect(page.getByRole('status')).toHaveText('Cadastro válido (simulação).');
 	await page.getByRole('button', { name: 'Limpar dados' }).click();

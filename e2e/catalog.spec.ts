@@ -311,3 +311,19 @@ test('sidebar distingue seções e expande categoria por teclado no desktop reco
 	await page.keyboard.press('Space');
 	await expect(nav.getByRole('link', { name: 'Button', exact: true })).toBeHidden();
 });
+
+
+test('PageHeader mantém um H1 por documento, tema e ações acessíveis na prévia', async ({ page }) => {
+	await page.goto('/catalogo/page-header');
+	await expect(page.getByRole('heading', { level: 1, name: 'AdsPageHeader' })).toBeVisible();
+	await expect(page.getByRole('heading', { level: 1 })).toHaveCount(1);
+	const frame = page.frameLocator('iframe[title="Cabeçalho semântico em documento independente"]');
+	await expect(frame.getByRole('main')).toHaveCount(1);
+	await expect(frame.getByRole('heading', { level: 1, name: /Consulta administrativa/ })).toBeVisible();
+	const create = frame.getByRole('button', { name: 'Nova consulta' });
+	await waitForHydration(create);
+	await create.click();
+	await expect(frame.getByLabel('Resultado das ações')).toHaveText('Consulta iniciada');
+	await page.getByLabel('Tema da demonstração').selectOption('dark');
+	await expect(frame.locator('html')).toHaveAttribute('data-theme', 'dark');
+});

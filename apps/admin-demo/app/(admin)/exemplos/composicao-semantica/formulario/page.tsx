@@ -49,7 +49,11 @@ export default function SemanticFormPage() {
 								name="nome"
 								required
 								value={name}
-								onChange={(event) => setName(event.target.value)}
+								onChange={(event) => {
+									setName(event.target.value);
+									setErrors((current) => ({ ...current, name: undefined }));
+									setSubmitted(false);
+								}}
 							/>
 						</AdsField>
 						<AdsField
@@ -62,7 +66,11 @@ export default function SemanticFormPage() {
 								type="email"
 								required
 								value={email}
-								onChange={(event) => setEmail(event.target.value)}
+								onChange={(event) => {
+									setEmail(event.target.value);
+									setErrors((current) => ({ ...current, email: undefined }));
+									setSubmitted(false);
+								}}
 							/>
 						</AdsField>
 					</section>

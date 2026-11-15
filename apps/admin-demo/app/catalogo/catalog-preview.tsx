@@ -52,6 +52,12 @@ export function CatalogPreview({
 						src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/catalogo-shell/?theme=${theme}`}
 						style={{ width: '100%', height: '32rem', border: 0 }}
 					/>
+				) : demo === 'PageHeader' ? (
+					<iframe
+						title="Cabeçalho semântico em documento independente"
+						src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/catalogo-page-header/?theme=${theme}`}
+						style={{ width: '100%', height: '36rem', border: 0 }}
+					/>
 				) : (
 					<Demo />
 				)}

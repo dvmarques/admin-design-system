@@ -23,21 +23,6 @@ const applications: NavigationItem[] = [
 		icon: { initials: 'Cd' },
 		label: 'Código destacado',
 	},
-	{
-		href: '/exemplos/composicao-semantica/consulta',
-		icon: { initials: 'Pc' },
-		label: 'Página: consulta',
-	},
-	{
-		href: '/exemplos/composicao-semantica/formulario',
-		icon: { initials: 'Pf' },
-		label: 'Página: formulário',
-	},
-	{
-		href: '/exemplos/composicao-semantica/dashboard',
-		icon: { initials: 'Pd' },
-		label: 'Página: dashboard',
-	},
 	{ href: '/clientes', icon: { initials: 'Cl' }, label: 'Clientes' },
 	{ href: '/clientes/novo', icon: 'plus', label: 'Novo cliente' },
 	{ href: '/preferencias', icon: { initials: 'Pr' }, label: 'Preferências' },

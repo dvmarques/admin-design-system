@@ -989,9 +989,17 @@ export function DropdownDemo() {
 		<>
 			<AdsDropdown>
 				<AdsDropdown.Trigger>Abrir ações</AdsDropdown.Trigger>
-				<AdsDropdown.Content>
-					<AdsDropdown.Item onSelect={() => setMessage('Exportado')}>Exportar</AdsDropdown.Item>
-					<AdsDropdown.Item disabled>Indisponível</AdsDropdown.Item>
+				<AdsDropdown.Content aria-label="Ações agrupadas">
+					<AdsDropdown.Header id="demo-actions-group">Operações</AdsDropdown.Header>
+					<div role="group" aria-labelledby="demo-actions-group">
+						<AdsDropdown.Item onSelect={() => setMessage('Editado')}>Editar</AdsDropdown.Item>
+						<AdsDropdown.Item disabled>Indisponível</AdsDropdown.Item>
+					</div>
+					<AdsDropdown.Divider />
+					<AdsDropdown.Header id="demo-export-group">Exportação</AdsDropdown.Header>
+					<div role="group" aria-labelledby="demo-export-group">
+						<AdsDropdown.Item onSelect={() => setMessage('Exportado')}>Exportar</AdsDropdown.Item>
+					</div>
 				</AdsDropdown.Content>
 			</AdsDropdown>
 			<p role="status">{message}</p>
@@ -1260,8 +1268,19 @@ export function ListDemo() {
 }
 
 export function AdminShellDemo() {
+	const [showFooter, setShowFooter] = useState(true);
+	const [longContent, setLongContent] = useState(false);
 	return (
-		<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
+		<div className="ads-layout-stack">
+			<div className="ads-layout-cluster">
+				<AdsButton onClick={() => setShowFooter((visible) => !visible)}>
+					{showFooter ? 'Remover footer' : 'Mostrar footer'}
+				</AdsButton>
+				<AdsButton variant="secondary" onClick={() => setLongContent((long) => !long)}>
+					{longContent ? 'Conteúdo curto' : 'Conteúdo longo'}
+				</AdsButton>
+			</div>
+			<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
 			<AdsAdminShell layout="sidebar-header">
 				<AdsAdminShell.Header>
 					<AdsAdminShell.NavigationTrigger />
@@ -1298,9 +1317,21 @@ export function AdminShellDemo() {
 						<p id="shell-content">
 							Conteúdo administrativo. Use os controles para recolher ou abrir o menu.
 						</p>
+						{longContent
+							? Array.from({ length: 18 }, (_, index) => (
+									<p key={index}>Linha de exemplo {index + 1}: a região principal mantém sua rolagem independente.</p>
+								))
+							: null}
 					</AdsAdminShell.Main>
 				</AdsAdminShell.Body>
+				{showFooter ? (
+					<AdsAdminShell.Footer
+						start={<span>ADS · Footer opcional</span>}
+						end={<a href="#shell-content">Voltar ao conteúdo</a>}
+					/>
+				) : null}
 			</AdsAdminShell>
+			</div>
 		</div>
 	);
 }
@@ -1521,6 +1552,15 @@ export function StepFormDemo() {
 
 export function ThemeControlDemo() {
 	const [preference, setPreference] = useState<AdsThemePreference>('system');
+	const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
+	useEffect(() => {
+		const query = window.matchMedia('(prefers-color-scheme: dark)');
+		const sync = () => setSystemTheme(query.matches ? 'dark' : 'light');
+		sync();
+		query.addEventListener('change', sync);
+		return () => query.removeEventListener('change', sync);
+	}, []);
+	const effectiveTheme = preference === 'system' ? systemTheme : preference;
 	return (
 		<div style={{ display: 'grid', gap: '1rem' }}>
 			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
@@ -1541,7 +1581,19 @@ export function ThemeControlDemo() {
 					variant="group"
 				/>
 			</div>
-			<p role="status">Preferência: {preference}</p>
+			<p role="status">Preferência: {preference} · Tema efetivo: {effectiveTheme}</p>
+			<div data-theme={effectiveTheme} className="ads-layout-stack rounded-lg border border-border bg-surface p-4">
+				<p>Escopo de tema aplicado pela aplicação consumidora, sem persistência pelo ADS.</p>
+				<AdsDropdown>
+					<AdsDropdown.Trigger>Overlay no tema {effectiveTheme}</AdsDropdown.Trigger>
+					<AdsDropdown.Content aria-label="Overlay de tema">
+						<AdsDropdown.Item>Verificar tema do portal</AdsDropdown.Item>
+					</AdsDropdown.Content>
+				</AdsDropdown>
+				<div className="rounded-md border border-border p-3 text-text" style={{ backgroundColor: 'var(--ads-color-surface-selected)' }}>
+					Superfície com tokens semânticos do tema.
+				</div>
+			</div>
 		</div>
 	);
 }

@@ -507,3 +507,33 @@ export const SidebarColorsDark: Story = {
 	name: 'Tokens isolados de sidebar e header — escuro',
 	render: () => <ScopedShellColorExample theme="dark" />,
 };
+
+/** Footer lives outside the scrolling main; consumers can switch it on or off. */
+export const OptionalFooter: Story = {
+	name: 'Footer opcional e conteúdo longo',
+	render: () => {
+		const [showFooter, setShowFooter] = useState(true);
+		const [longContent, setLongContent] = useState(false);
+		return (
+			<div className="ads-layout-stack">
+				<div className="ads-layout-cluster">
+					<AdsButton onClick={() => setShowFooter((v) => !v)}>{showFooter ? 'Sem footer' : 'Com footer'}</AdsButton>
+					<AdsButton variant="secondary" onClick={() => setLongContent((v) => !v)}>{longContent ? 'Conteúdo curto' : 'Conteúdo extenso'}</AdsButton>
+				</div>
+				<AdsAdminShell layout="sidebar-header">
+					<AdsAdminShell.Header>Admin</AdsAdminShell.Header>
+					<AdsAdminShell.Body>
+						<AdsAdminShell.Sidebar><a href="#footer-story-main">Navegação</a></AdsAdminShell.Sidebar>
+						<AdsAdminShell.Main id="footer-story-main">
+							<h1>Composição com footer</h1>
+							{longContent
+								? Array.from({ length: 20 }, (_, i) => <p key={i}>Parágrafo {i + 1} na região rolável.</p>)
+								: <p>Conteúdo curto mantém o footer ao final do shell.</p>}
+						</AdsAdminShell.Main>
+					</AdsAdminShell.Body>
+					{showFooter ? <AdsAdminShell.Footer start="Exemplo genérico · 2026" end={<a href="#footer-story-main">Informações de uso</a>} /> : null}
+				</AdsAdminShell>
+			</div>
+		);
+	},
+};

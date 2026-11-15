@@ -110,6 +110,27 @@ export const Dropdown: Story = {
 		</AdsDropdown>
 	),
 };
+/** Headers are static; native groups provide screen-reader labels. */
+export const GroupedDropdown: Story = {
+	render: () => (
+		<AdsDropdown>
+			<AdsDropdown.Trigger>Ações agrupadas</AdsDropdown.Trigger>
+			<AdsDropdown.Content aria-label="Operações">
+				<AdsDropdown.Header id="story-actions">Ações</AdsDropdown.Header>
+				<div role="group" aria-labelledby="story-actions">
+					<AdsDropdown.Item>Editar</AdsDropdown.Item>
+					<AdsDropdown.Item disabled>Indisponível</AdsDropdown.Item>
+				</div>
+				<AdsDropdown.Divider />
+				<AdsDropdown.Header id="story-export">Exportação</AdsDropdown.Header>
+				<div role="group" aria-labelledby="story-export"><AdsDropdown.Item>Exportar</AdsDropdown.Item></div>
+			</AdsDropdown.Content>
+		</AdsDropdown>
+	),
+	parameters: {
+		docs: { description: { story: 'Setas/Home/End ignoram Header, Divider e itens desabilitados. Escape retorna ao gatilho; Tab/Shift+Tab fecham e continuam a ordem lógica do gatilho.' } },
+	},
+};
 export const Pagination: Story = {
 	render: () => {
 		const [page, setPage] = useState(5);

@@ -36,11 +36,6 @@ jobs:
     if: github.event.pull_request.draft == false && github.head_ref == 'feat/152-visual-a11y-zoom-keyboard' && github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 45
-    container:
-      image: mcr.microsoft.com/playwright:v1.64.1-noble@sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea
-      options: --ipc=host
-      env:
-        HOME: /root
     steps:
       - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
@@ -54,6 +49,8 @@ jobs:
           cache: npm
       - run: npm install --global npm@11.19.1
       - run: npm ci --ignore-scripts --no-audit --no-fund
+      - name: Instalar browsers reais de teste no runner descartável
+        run: npx playwright install --with-deps chromium firefox webkit
       - name: Verificar formatação
         run: npm run format
       - name: Lint

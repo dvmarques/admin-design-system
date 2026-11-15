@@ -82,7 +82,7 @@ async function verifyVisibleKeyboardFocus(locator: Locator, before: string, chec
 	checks.push('keyboard-focus-visible-paint-delta', 'focused-control-in-viewport-and-uncovered');
 }
 
-async function assertDocumentReflow(page: Page, preview: Locator, checks: string[]) {
+async function assertDocumentReflow(preview: Locator, checks: string[]) {
 	const metrics = await preview.evaluate(measureVisualArea, 'viewport');
 	expect(metrics.documentOverflowPx, 'rolagem horizontal no documento').toBeLessThanOrEqual(2);
 	checks.push('document-horizontal-overflow<=2px');
@@ -326,7 +326,7 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 						};
 					}
 					await keyboardAction(page, preview, scenario, evidence.checks);
-					await assertDocumentReflow(page, preview, evidence.checks);
+					await assertDocumentReflow(preview, evidence.checks);
 				}
 				if (evidence.status === 'approved' && !evidence.screenshot) {
 					await page.evaluate(() => document.fonts.ready);

@@ -34,6 +34,24 @@ for (const theme of ['light', 'dark'] as const) {
 				await expect(page.locator('.demo-semantic-page')).toHaveCSS('display', 'flex');
 				await expect(page.locator('.ads-layout-container')).toHaveCSS('width', /px/);
 				expect(await noDocumentOverflow(page), `${route.slug} ${theme} ${width}px`).toBe(true);
+				// Garante que a palavra mais longa do H1 caiba inteira em 320px:
+				// a auditoria visual #318 detectou última letra órfã por gutter duplicado.
+				if (width === 320) {
+					const longestWordFits = await page
+						.getByRole('heading', { level: 1, name: route.heading })
+						.evaluate(async (title) => {
+							await document.fonts.ready;
+							const context = document.createElement('canvas').getContext('2d');
+							if (!context) return false;
+							context.font = getComputedStyle(title).font;
+							const words = (title.textContent ?? '').trim().split(/\\s+/);
+							const longest = Math.max(...words.map((word) => context.measureText(word).width));
+							return longest <= title.clientWidth + 1;
+						});
+					expect(longestWordFits, `Palavra do H1 deve caber em ${route.slug} 320px`).toBe(
+						true,
+					);
+				}
 				if (route.slug === 'formulario' || route.slug === 'dashboard') {
 					await expect(page.locator('.ads-layout-grid').first()).toHaveCSS('display', 'grid');
 				}

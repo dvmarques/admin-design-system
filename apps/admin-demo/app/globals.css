@@ -912,6 +912,8 @@ body {
 /* #318: ajustes da demonstração sobre classes públicas de composição. */
 .demo-semantic-page {
 	--ads-layout-stack-gap: var(--ads-spacing-8);
+	/* demo-page e shell já fornecem gutter: não somar padding do container. */
+	--ads-layout-gutter: 0;
 }
 .demo-semantic-section {
 	--ads-layout-stack-gap: var(--ads-spacing-4);

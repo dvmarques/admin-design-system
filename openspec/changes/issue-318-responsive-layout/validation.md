@@ -30,3 +30,9 @@ Não confundir viewport efetiva estreita com zoom nativo. Nenhuma aprovação hu
 - `Artefatos de distribuição`: failure em budget 305176 > 305000 B (+176 B); novo limite medido 305200 B, demais tetos preservados.
 - `Chromium 2/2`: 252 passed e 1 failed, overflow local em grade aninhada no reflow de 195px. Ajuste de `overflow-wrap:anywhere` específico da demo, sujeito a reteste. Firefox e WebKit success na primeira execução.
 - Nenhuma dessas falhas é omitida ou contada como aprovação. Checks finais serão reavaliados após correções.
+
+## Revisão visual e orçamento de cenário — R2
+
+- No SHA `3087fd7`, inspeção do artefato [visual-318 #14176571034](https://github.com/dvmarques/admin-design-system/actions/runs/43750732492/artifacts/14176571034): 24/24 capturas aprovadas geometricamente (3 rotas, 2 temas, 4 larguras). **Inspeção visual do agente encontrou defeito real**: em 320px, H1 quebrava última letra por padding duplo. Corrigido em `.demo-semantic-page` com gutter local zero, sem afetar o contrato público do container; nova captura obrigatória.
+- CI #43750739423 mediu `admin-public` CSS gzip **15.434 B**, teto anterior 15.400 B. Ajustado apenas o teto medido para **15.450 B**; cenário JS não mudou. Próxima CI precisa confirmar.
+- Qualidade rápida no SHA de auditoria falhou porque o workflow temporário com imagem não constava do inventário. O arquivo temporário deve ser **removido antes da revisão final**, restaurando a política de supply chain, não adicionando exceções.

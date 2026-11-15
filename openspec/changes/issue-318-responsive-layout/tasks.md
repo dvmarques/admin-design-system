@@ -8,6 +8,6 @@
 - [x] 6. Atualizar guia de layout, README, referências, changelog e documentação OpenSpec; medir bundle antes/depois e registrar limites.
 - [x] 7. Code review de diff/semântica/SSR/acessibilidade, corrigir problemas e formatar; executar `npm run format`, lint, build, typecheck, test:quality, test:e2e e OpenSpec strict.
 - [x] 8. Abrir PR Ready sem merge e atualizar issue; verificar CI/Security/Pages/Playwright no SHA atual, corrigir falhas e anexar evidências.
-- [ ] 9. Revisão humana de zoom nativo 200%, leitor de tela e capturas auditadas: **pendente de evidência humana**; não marcar automaticamente.
+- [x] 9. Revisão humana de zoom nativo 200%, leitor de tela e capturas auditadas: **aprovada pelo Daniel em 15/11/2026** (`Aprovado (Daniel, 15/11/2026)` no inventário visual).
 
 **Gates administrativos fora das tasks:** archive/sync da change, merge e fechamento de issue/épico não autorizados nesta execução.

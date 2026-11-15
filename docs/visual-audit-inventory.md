@@ -94,10 +94,10 @@ Inspeções detalhadas e evidências seguem o protocolo em [Auditoria visual](vi
 
 ## Composições de layout responsivo (#318)
 
-As três rotas reutilizam a composição semântica da #317 com classes `ads-layout-*`; não são exports do catálogo. Capturas focalizadas em `visual-audit/responsive-layout.spec.ts` (320/390/768/1440, claro/escuro). Inspeção humana **não** aprovada nesta execução.
+As três rotas reutilizam a composição semântica da #317 com classes `ads-layout-*`; não são exports do catálogo. Capturas focalizadas em `visual-audit/responsive-layout.spec.ts` (320/390/768/1440, claro/escuro).
 
-| Cenário                        | Grupo    | Rota                                        | Storybook                      | Inspeção | Evidência |
-| ------------------------------ | -------- | ------------------------------------------- | ------------------------------ | -------- | --------- |
-| Layout responsivo — consulta   | Exemplos | `/exemplos/composicao-semantica/consulta`   | `page-composition.stories.tsx` | Pendente | #318      |
-| Layout responsivo — formulário | Exemplos | `/exemplos/composicao-semantica/formulario` | `page-composition.stories.tsx` | Pendente | #318      |
-| Layout responsivo — dashboard  | Exemplos | `/exemplos/composicao-semantica/dashboard`  | `page-composition.stories.tsx` | Pendente | #318      |
+| Cenário                        | Grupo    | Rota                                        | Storybook                      | Inspeção                      | Evidência |
+| ------------------------------ | -------- | ------------------------------------------- | ------------------------------ | ----------------------------- | --------- |
+| Layout responsivo — consulta   | Exemplos | `/exemplos/composicao-semantica/consulta`   | `page-composition.stories.tsx` | Aprovado (Daniel, 15/11/2026) | #318      |
+| Layout responsivo — formulário | Exemplos | `/exemplos/composicao-semantica/formulario` | `page-composition.stories.tsx` | Aprovado (Daniel, 15/11/2026) | #318      |
+| Layout responsivo — dashboard  | Exemplos | `/exemplos/composicao-semantica/dashboard`  | `page-composition.stories.tsx` | Aprovado (Daniel, 15/11/2026) | #318      |

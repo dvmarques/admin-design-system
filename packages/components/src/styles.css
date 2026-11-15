@@ -727,3 +727,16 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		outline-color: Highlight;
 	}
 }
+
+@layer components {
+	/* Cabeçalho de página: palavras longas e ações mantêm reflow em zoom elevado. */
+	.ads-page-header__title,
+	.ads-page-header__description,
+	.ads-page-header__actions > * {
+		overflow-wrap: anywhere;
+	}
+	.ads-page-header__actions > * {
+		max-width: 100%;
+		white-space: normal;
+	}
+}

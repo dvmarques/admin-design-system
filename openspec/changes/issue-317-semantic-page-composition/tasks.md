@@ -43,4 +43,20 @@
 
 **CI/Security/Pages nesse SHA:** [CI #43731545901](https://github.com/dvmarques/admin-design-system/actions/runs/43731545901) success; [Security #43731545920](https://github.com/dvmarques/admin-design-system/actions/runs/43731545920) success; [Pages #43731545900](https://github.com/dvmarques/admin-design-system/actions/runs/43731545900) success.
 
-Commits subsequentes na branch podem atualizar somente `openspec/.../tasks.md`, corpo sugerido de PR/issue em artifacts ou documentação de processo, sem alterar o código validado acima; os links de CI permanecem válidos para o SHA com código.
+### Gates locais — R3 (agente, 15/11/2026, review Daniel)
+
+| Ação / comando                                                        | Resultado                                                                                  |
+| --------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ |
+| Revert `39dc790` (`git revert`, sem force push)                       | change `issue-317-semantic-page-composition` reativada; sync em `openspec/specs/` desfeito |
+| `openspec validate --all --strict --no-interactive` + `openspec list` | exit 0 (70/70); change **ativa** (não arquivada — archive **pós-merge**)                   |
+| Validador compartilhado `scripts/visual-audit-human-review.mjs`       | formato `Aprovado (revisor, DD/MM/AAAA)` com data válida; testes em `test:ci`              |
+| `npm run format`, `lint`, `build`, `typecheck`, `test:quality`        | exit 0                                                                                     |
+| `npx playwright test e2e/page-composition.spec.ts`                    | exit 0, **17/17**                                                                          |
+
+**Último SHA com código (R3 — validadores + revert OpenSpec):** `5e9670e94698c5cb590336c6659db2e6ca1da408`.
+
+**SHA com código de feature/E2E (inalterado na R3):** `89a8bd723ba76e8d32ff6fa6224ea75d258f1009`.
+
+**CI/Security/Pages no SHA R3 `5e9670e`:** [CI #43737585537](https://github.com/dvmarques/admin-design-system/actions/runs/43737585537) success; [Security #43737585568](https://github.com/dvmarques/admin-design-system/actions/runs/43737585568) success; [Pages #43737585599](https://github.com/dvmarques/admin-design-system/actions/runs/43737585599) success.
+
+Commits somente em `tasks.md`/artifacts na sequência não alteram o código validado em `5e9670e`; archive/sync OpenSpec permanece **proibido** até merge autorizado (task 9).

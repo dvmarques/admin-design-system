@@ -99,6 +99,15 @@
 			},
 			"viewports": [390, 768, 1440],
 			"checks": ["geometry", "human-visual"]
+		},
+		"pageHeader": {
+			"states": ["default", "focus", "overflow"],
+			"notApplicable": {
+				"loading": "O cabeçalho não gerencia operações assíncronas",
+				"open": "O cabeçalho não abre overlay por conta própria"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
 		}
 	},
 	"components": {
@@ -120,6 +129,10 @@
 		},
 		"AdsIconSlot": {
 			"profile": "static",
+			"review": "Pendente"
+		},
+		"AdsPageHeader": {
+			"profile": "pageHeader",
 			"review": "Pendente"
 		},
 		"AdsTypography": {

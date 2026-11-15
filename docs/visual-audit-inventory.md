@@ -12,6 +12,7 @@ Inspeções detalhadas e evidências seguem o protocolo em [Auditoria visual](vi
 | `AdsAvatar`                 | Básicos     | `/catalogo/avatar`                   | `avatar.stories.tsx`                                                | Pendente | —         |
 | `AdsIcon`                   | Básicos     | `/catalogo/icon`                     | `icon.stories.tsx`                                                  | Pendente | —         |
 | `AdsIconSlot`               | Básicos     | `/catalogo/icon-slot`                | `icon-slot.stories.tsx`                                             | Pendente | —         |
+| `AdsPageHeader`             | Básicos     | `/catalogo/page-header`              | `page-composition.stories.tsx`                                        | Pendente | —         |
 | `AdsTypography`             | Básicos     | `/catalogo/typography`               | `admin-shell.stories.tsx`, `typography.stories.tsx`                 | Pendente | —         |
 | `AdsSurface`                | Básicos     | `/catalogo/surface`                  | `navigation.stories.tsx`, `surface.stories.tsx`                     | Pendente | —         |
 | `AdsLoadingIndicator`       | Básicos     | `/catalogo/loading-indicator`        | `loading-indicator.stories.tsx`                                     | Pendente | —         |

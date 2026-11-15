@@ -2,6 +2,7 @@
 import { existsSync, readFileSync } from 'node:fs';
 import { dirname, join, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isValidInspectionStatus } from './visual-audit-human-review.mjs';
 
 const root = resolve(dirname(fileURLToPath(import.meta.url)), '..');
 const tick = String.fromCharCode(96);
@@ -123,19 +124,11 @@ try {
 			rows(read('docs/visual-audit-inventory.md'), '## Matriz de inspeção'),
 			'auditoria',
 		);
-		const valid = new Set([
-			'Pendente',
-			'Em análise',
-			'Sem divergência',
-			'Divergência confirmada',
-			'Não aplicável',
-			'Aprovado (Daniel, 15/11/2026)',
-		]);
 		for (const entry of source) {
 			const row = audit.get(entry.name);
 			if (row.stories !== refs.get(entry.name).stories)
 				fail('stories desatualizadas: ' + entry.name);
-			if (!valid.has(row.status)) fail('status desconhecido: ' + entry.name);
+			if (!isValidInspectionStatus(row.status)) fail('status desconhecido: ' + entry.name);
 			if (row.status !== 'Pendente' && (!row.evidence || row.evidence === '—')) {
 				fail('evidência ausente: ' + entry.name);
 			}

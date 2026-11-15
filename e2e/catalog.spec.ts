@@ -327,6 +327,8 @@ test('PageHeader mantém um H1 por documento, tema e ações acessíveis na pré
 	await waitForHydration(create);
 	await create.click();
 	await expect(frame.getByLabel('Resultado das ações')).toHaveText('Consulta iniciada');
+	await expect(frame.getByRole('navigation', { name: 'Exemplos de páginas' })).toHaveCount(0);
+	await expect(page.getByRole('navigation', { name: 'Exemplos de páginas' })).toBeVisible();
 	await page.getByLabel('Tema da demonstração').selectOption('dark');
 	await expect(frame.locator('html')).toHaveAttribute('data-theme', 'dark');
 });

@@ -35,7 +35,7 @@ export function AdsPageHeader({
 					{title}
 				</AdsTypography>
 				{description != null && (
-					<AdsTypography as="p" className="ads-page-header__description mt-2" variant="muted">
+					<AdsTypography as="p" className="ads-page-header__description" variant="muted">
 						{description}
 					</AdsTypography>
 				)}

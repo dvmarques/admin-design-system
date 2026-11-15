@@ -37,6 +37,8 @@ for (const theme of ['light', 'dark'] as const) {
 			await expect(page.getByRole('heading', { level: 1, name: sample.heading })).toBeVisible();
 			await expect(page.getByRole('heading', { level: 2, name: sample.section })).toBeVisible();
 			await expect(page.locator('.ads-page-header')).toHaveCount(1);
+			await expect(page.locator('.ads-page-header__title')).toHaveCSS('margin-top', '0px');
+			await expect(page.locator('.ads-page-header__description')).toHaveCSS('margin-bottom', '0px');
 			await expectNoAxeViolations(page);
 			for (const width of [320, 390, 768, 1280]) {
 				await page.setViewportSize({ width, height: 800 });

@@ -263,6 +263,10 @@ async function probeNativeZoom(page: Page, evidence: Evidence) {
 	} else {
 		evidence.zoom.verified = true;
 		evidence.checks.push('native-zoom-200-layout-viewport-and-DPR-confirmed');
+		const image = 'screenshots/a11y/' + evidence.id + '-native-200-' + evidence.theme + '-' + evidence.width + '.png';
+		mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
+		await page.screenshot({ path: join(output, image), animations: 'disabled', timeout: 20_000 });
+		evidence.screenshot = image;
 	}
 	// Cada teste tem contexto isolado; a restauração também é verificada explicitamente.
 	await page.keyboard.press('Control+0');
@@ -324,7 +328,7 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 					await keyboardAction(page, preview, scenario, evidence.checks);
 					await assertDocumentReflow(page, preview, evidence.checks);
 				}
-				if (evidence.status === 'approved') {
+				if (evidence.status === 'approved' && !evidence.screenshot) {
 					await page.evaluate(() => document.fonts.ready);
 					const image = 'screenshots/a11y/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
 					mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });

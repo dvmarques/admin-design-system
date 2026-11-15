@@ -112,7 +112,7 @@ Revisão de evidências: para cada sinal, registrar export/rota/estado/tema/larg
 
 ## Fase 4 — cobertura seletiva de teclado, foco e reflow (#152)
 
-A branch da fase 4 adiciona uma matriz pequena de 15 cenários prioritários em visual-audit/a11y-scenarios.json, executados por visual-audit/a11y.spec.ts. A matriz preexistente (83 exports, 362 estados aplicáveis, 169 N/A) e suas 332 capturas iniciais + 22 cenários seletivos permanecem inalteradas. A suíte nova é **aditiva** e permanece opt-in no mesmo npm run audit:visual e workflow Auditoria visual (workflow_dispatch). Não executa na CI regular nem altera snapshots oficiais.
+A branch da fase 4 adiciona uma matriz pequena de 19 cenários prioritários em visual-audit/a11y-scenarios.json, executados por visual-audit/a11y.spec.ts. A matriz preexistente (83 exports, 362 estados aplicáveis, 169 N/A) e suas 332 capturas iniciais + 22 cenários seletivos permanecem inalteradas. A suíte nova é **aditiva** e permanece opt-in no mesmo npm run audit:visual e workflow Auditoria visual (workflow_dispatch). Não executa na CI regular nem altera snapshots oficiais.
 
 ### Requisitos objetivos
 
@@ -128,6 +128,10 @@ A branch da fase 4 adiciona uma matriz pequena de 15 cenários prioritários em 
 A suíte tenta usar o acelerador de zoom do navegador Chromium sem CSS zoom, transform, override de viewport ou CDP Emulation.setPageScaleFactor. Registra largura da viewport CSS, devicePixelRatio e visualViewport.scale antes/depois. Somente registra **zoom nativo comprovado** se a viewport CSS for reduzida por fator próximo de 2, DPR aumentar proporcionalmente e a escala visual de pinch permanecer próxima de 1. A captura com sufixo native-200 somente é gerada ANTES da restauração quando a prova for satisfatória. Control+0 e nova medição verificam restauração do estado.
 
 Em Chromium headless, teclas simuladas de zoom podem não afetar o zoom do chrome: nesses casos o manifesto contém pending, sem screenshot falsamente rotulado como 200%, e o requisito permanece aberto na issue #152. **viewport reflow a 320px é um teste separado e não equivale a zoom 200%**. Também não equivalem zoom CSS, transform, dispositivo com DPR=2 ou o comando CDP de escala de página. Um Playwright verde com status pending para o probe NÃO aprova zoom nativo.
+
+### Capturas com o overlay aberto
+
+Os cenários de dialog, drawer, dropdown, popover e navegação móvel capturam a tela **enquanto a camada está aberta e com foco**, antes de testar Escape e a devolução do foco ao acionador. A aprovação objetiva só acontece após validar o fechamento e o foco de retorno. Quando houver falha depois da captura, o PNG disponível permanece associado à falha, sem transformá-la em aprovação.
 
 ### Relatórios e auditoria humana
 

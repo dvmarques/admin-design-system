@@ -49,7 +49,7 @@ export default function SemanticConsultationPage() {
 						Registros
 					</AdsTypography>
 					<div className="ads-layout-cluster demo-semantic-filters">
-						<AdsField label="Filtrar clientes">
+						<AdsField className="demo-semantic-filter-field" label="Filtrar clientes">
 							<AdsInput
 								type="search"
 								placeholder="Nome"

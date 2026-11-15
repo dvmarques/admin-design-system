@@ -25,6 +25,15 @@ Após executar um build limpo, registre os valores impressos pelo script, revise
 
 Os números de referência deste guia registram calibrações anteriores dos orçamentos, **não** uma leitura atual do repositório. Antes de comparar resultados, registre SHA do commit, data, versão do Node e npm, SO/terminações de linha, comandos, estado limpo de `dist/` e versão do toolchain. Registros antigos em Node 22 (quando presentes no histórico) **não** podem ser tratados como medição sob o Node 24 vigente; sem esses metadados a comparação é apenas indicativa. Não foi realizada nova medição nesta revisão documental. A fonte normativa de limites é o trio [bundle-baseline.json](bundle-baseline.json), [browser-budget.json](browser-budget.json) e [scenario-budget.json](scenario-budget.json); alterações desses arquivos precisam de justificativa e validação próprias.
 
-## Issue #318 — medição da primeira execução da PR #327 (15/11/2026)
+## Issue #318 — comparação reproduzida de bundle (15/11/2026)
 
-No SHA `ce215ee11c4f149d65d54bd3781f00766f9db32a`, o job [Artefatos de distribuição da CI #43749992546](https://github.com/dvmarques/admin-design-system/actions/runs/43749992546/job/132921610075) em Linux/Node 24.22.2/npm 11.19.1 registrou **703.396 B** de `dist` completo (limite 762.897) e **305.176 B** de JS/CSS publicados para `@dvmarques/admin-ds-components`. O limite anterior de 305.000 B falhou por 176 B. Para acomodar as quatro classes CSS aditivas, o limite de **JS/CSS publicados** passa a **305.200 B** (folga de 24 B sobre o medido). As medições de gzip e dos cenários ainda não foram emitidas porque o script interrompeu na primeira violação; registrar essas métricas após nova execução, sem aumentar os demais tetos por suposição. Como referência histórica, a entrega #317 registrara 304.271 B (diferença indicativa +905 B, não substitui comparação reexecutada no mesmo ambiente). Nenhum novo JavaScript exportado ou dependência runtime foi introduzido nesta change. O changelog e PR devem registrar este teto; não confundir teto com tamanho real.
+Fontes: [CI da develop, SHA 8ff38e1](https://github.com/dvmarques/admin-design-system/actions/runs/43744007350/job/132903194588) e [CI da PR #327, SHA 3087fd7](https://github.com/dvmarques/admin-design-system/actions/runs/43750739423/job/132923973759). Ambos executaram `npm run inspect:packages` após builds em Linux, Node 24.22.2 e npm 11.19.1.
+
+- `components`, `dist` completo: **702.581 → 703.396 B** (**+815 B**).
+- `components`, JS/CSS publicados: **304.361 → 305.176 B** (**+815 B**, cerca de **+0,27%**).
+- `components`, gzip por arquivo: **91.473 → 91.657 B** (**+184 B**, cerca de **+0,20%**).
+- `components-public`, CSS minificado: **61.468 → 62.279 B** (+811 B); CSS gzip: **10.071 → 10.255 B** (+184 B).
+- `admin-public`, CSS minificado: **102.064 → 102.875 B** (+811 B); CSS gzip: **15.272 → 15.434 B** (+162 B).
+- JavaScript dos cenários permanece idêntico: `components-public` 33.417 B, `admin-public` 71.439 B, sem novos exports JS ou dependências.
+
+**Limites ajustados somente após falhas mensuradas:** JS/CSS publicados de `components`: **305.000 → 305.200 B** (real 305.176 B); `admin-public` CSS gzip: **15.400 → 15.450 B** (real 15.434 B). Todos os demais limites preservados, inclusive o gzip do pacote e CSS dos outros cenários. O limite não é uma medição. A referência histórica da #317 de 304.271 B não equivale à base `develop` reconstruída (304.361 B); o comparativo acima usa o mesmo runner/toolchain.

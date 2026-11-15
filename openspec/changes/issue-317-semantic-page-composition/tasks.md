@@ -9,7 +9,7 @@
 - [ ] 6b. (revisão humana) Leitor de tela NVDA/VoiceOver, zoom **nativo** 200% no navegador e aprovação visual das capturas da auditoria — depende de revisão humana do Daniel; sem evidência nesta sessão.
 - [x] 7. Atualizar CHANGELOG e índice de componentes, medir impacto da API/estilos/distribuição e documentar riscos e alternativas.
 - [x] 8. Formatar arquivos alterados; executar npm run format, lint, build, typecheck, test:quality, test:e2e e validação OpenSpec estrita; registrar resultados efetivos ou limitações sem marcar gates não executados.
-- [ ] 9. Revisar PR final e checks CI/Security/Pages no SHA real, corrigir falhas e conciliar checklist/evidências da issue #317. Sem merge, fechamento ou archive.
+- [x] 9. Revisar PR final e checks CI/Security/Pages no SHA real, corrigir falhas e conciliar checklist/evidências da issue #317. Sem merge, fechamento ou archive.
 
 ## Evidências verificadas (15/11/2026)
 
@@ -31,4 +31,4 @@
 | `npx @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive` | exit 0 (70/70)                                                     |
 | `npx playwright test e2e/page-composition.spec.ts`                         | exit 0, **11/11** (2 execuções consecutivas)                       |
 
-CI/Security/Pages do SHA final desta rodada: registrar na conclusão do item 9 após o push.
+**CI/Security/Pages — SHA `0cb82ff43aefc6810c658d021f58169710d716be`:** [CI #43728609693](https://github.com/dvmarques/admin-design-system/actions/runs/43728609693) success; [Security #43728609656](https://github.com/dvmarques/admin-design-system/actions/runs/43728609656) success; [Pages #43728609715](https://github.com/dvmarques/admin-design-system/actions/runs/43728609715) success.

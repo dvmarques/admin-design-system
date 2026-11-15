@@ -48,14 +48,26 @@ const scenarios = (
 async function focusPaint(locator: Locator) {
 	return locator.evaluate((node) => {
 		const snapshots: string[] = [];
-		for (let target: Element | null = node, depth = 0; target && depth < 3; target = target.parentElement, depth++) {
+		for (
+			let target: Element | null = node, depth = 0;
+			target && depth < 3;
+			target = target.parentElement, depth++
+		) {
 			for (const pseudo of [null, '::before', '::after']) {
 				const css = getComputedStyle(target, pseudo);
-				snapshots.push([
-					css.outlineStyle, css.outlineWidth, css.outlineColor, css.outlineOffset,
-					css.boxShadow, css.borderTopColor, css.borderTopWidth,
-					css.backgroundColor, css.textDecorationLine,
-				].join('|'));
+				snapshots.push(
+					[
+						css.outlineStyle,
+						css.outlineWidth,
+						css.outlineColor,
+						css.outlineOffset,
+						css.boxShadow,
+						css.borderTopColor,
+						css.borderTopWidth,
+						css.backgroundColor,
+						css.textDecorationLine,
+					].join('|'),
+				);
 			}
 		}
 		return snapshots.join(';');
@@ -66,14 +78,22 @@ async function verifyVisibleKeyboardFocus(locator: Locator, before: string, chec
 	await expect(locator).toBeFocused();
 	await expect.poll(() => locator.evaluate((node) => node.matches(':focus-visible'))).toBe(true);
 	const after = await focusPaint(locator);
-	expect(after, 'foco visível precisa mudar propriedade de pintura, não apenas activeElement').not.toBe(before);
+	expect(
+		after,
+		'foco visível precisa mudar propriedade de pintura, não apenas activeElement',
+	).not.toBe(before);
 	const geometry = await locator.evaluate((node) => {
 		const r = node.getBoundingClientRect();
 		const middle = { x: r.left + r.width / 2, y: r.top + r.height / 2 };
 		const hit = node.ownerDocument.elementFromPoint(middle.x, middle.y);
 		return {
-			inViewport: r.width > 1 && r.height > 1 && r.left >= -2 &&
-				r.right <= window.innerWidth + 2 && r.top >= -2 && r.bottom <= window.innerHeight + 2,
+			inViewport:
+				r.width > 1 &&
+				r.height > 1 &&
+				r.left >= -2 &&
+				r.right <= window.innerWidth + 2 &&
+				r.top >= -2 &&
+				r.bottom <= window.innerHeight + 2,
 			uncovered: hit != null && (hit === node || node.contains(hit)),
 		};
 	});
@@ -86,7 +106,11 @@ async function assertDocumentReflow(preview: Locator, checks: string[]) {
 	const metrics = await preview.evaluate(measureVisualArea, 'viewport');
 	expect(metrics.documentOverflowPx, 'rolagem horizontal no documento').toBeLessThanOrEqual(2);
 	checks.push('document-horizontal-overflow<=2px');
-	if (metrics.previewOverflowPx > 2 || metrics.controlsOutOfBounds > 0 || metrics.controlsWithOverflow > 0) {
+	if (
+		metrics.previewOverflowPx > 2 ||
+		metrics.controlsOutOfBounds > 0 ||
+		metrics.controlsWithOverflow > 0
+	) {
 		checks.push('preview-geometry-requires-human-review');
 	}
 }
@@ -94,7 +118,14 @@ async function assertDocumentReflow(preview: Locator, checks: string[]) {
 async function assertPanelBounds(panel: Locator, checks: string[]) {
 	const rect = await panel.evaluate((node) => {
 		const r = node.getBoundingClientRect();
-		return { left: r.left, right: r.right, top: r.top, bottom: r.bottom, width: window.innerWidth, height: window.innerHeight };
+		return {
+			left: r.left,
+			right: r.right,
+			top: r.top,
+			bottom: r.bottom,
+			width: window.innerWidth,
+			height: window.innerHeight,
+		};
 	});
 	expect(rect.left).toBeGreaterThanOrEqual(-2);
 	expect(rect.right).toBeLessThanOrEqual(rect.width + 2);
@@ -231,8 +262,10 @@ function nativeZoomProven(before: ZoomMetrics, after: ZoomMetrics) {
 	const layoutRatio = before.innerWidth / after.innerWidth;
 	const dprRatio = after.devicePixelRatio / before.devicePixelRatio;
 	return (
-		layoutRatio >= 1.85 && layoutRatio <= 2.15 &&
-		dprRatio >= 1.85 && dprRatio <= 2.15 &&
+		layoutRatio >= 1.85 &&
+		layoutRatio <= 2.15 &&
+		dprRatio >= 1.85 &&
+		dprRatio <= 2.15 &&
 		Math.abs(after.visualScale - 1) <= 0.05
 	);
 }
@@ -263,7 +296,14 @@ async function probeNativeZoom(page: Page, evidence: Evidence) {
 	} else {
 		evidence.zoom.verified = true;
 		evidence.checks.push('native-zoom-200-layout-viewport-and-DPR-confirmed');
-		const image = 'screenshots/a11y/' + evidence.id + '-native-200-' + evidence.theme + '-' + evidence.width + '.png';
+		const image =
+			'screenshots/a11y/' +
+			evidence.id +
+			'-native-200-' +
+			evidence.theme +
+			'-' +
+			evidence.width +
+			'.png';
 		mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
 		await page.screenshot({ path: join(output, image), animations: 'disabled', timeout: 20_000 });
 		evidence.screenshot = image;
@@ -301,17 +341,23 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 				await page.setViewportSize({ width: scenario.width, height: 900 });
 				if (scenario.media === 'reduced-motion') {
 					await page.emulateMedia({ reducedMotion: 'reduce' });
-					expect(await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches)).toBe(true);
+					expect(
+						await page.evaluate(() => matchMedia('(prefers-reduced-motion: reduce)').matches),
+					).toBe(true);
 					evidence.checks.push('prefers-reduced-motion-confirmed');
 				}
 				if (scenario.media === 'forced-colors') {
 					await page.emulateMedia({ forcedColors: 'active' });
-					expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(true);
+					expect(await page.evaluate(() => matchMedia('(forced-colors: active)').matches)).toBe(
+						true,
+					);
 					evidence.checks.push('forced-colors-confirmed');
 				}
 				const response = await page.goto(entry.href, { waitUntil: 'domcontentloaded' });
 				if (!response?.ok()) throw new Error('HTTP ' + String(response?.status()));
-				await expect(page.getByRole('heading', { name: entry.name, exact: true, level: 1 })).toBeVisible();
+				await expect(
+					page.getByRole('heading', { name: entry.name, exact: true, level: 1 }),
+				).toBeVisible();
 				const preview = page.getByRole('region', { name: 'Demonstração interativa' });
 				await applyDemoTheme(page, preview, scenario.theme);
 				if (scenario.action === 'zoom-probe') {
@@ -330,9 +376,20 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 				}
 				if (evidence.status === 'approved' && !evidence.screenshot) {
 					await page.evaluate(() => document.fonts.ready);
-					const image = 'screenshots/a11y/' + scenario.id + '-' + scenario.theme + '-' + scenario.width + '.png';
+					const image =
+						'screenshots/a11y/' +
+						scenario.id +
+						'-' +
+						scenario.theme +
+						'-' +
+						scenario.width +
+						'.png';
 					mkdirSync(join(output, 'screenshots/a11y'), { recursive: true });
-					await page.screenshot({ path: join(output, image), animations: 'disabled', timeout: 20_000 });
+					await page.screenshot({
+						path: join(output, image),
+						animations: 'disabled',
+						timeout: 20_000,
+					});
 					evidence.screenshot = image;
 				}
 			} catch (error) {
@@ -340,7 +397,10 @@ test.describe('fase 4 — teclado, foco e zoom', () => {
 				evidence.error = error instanceof Error ? error.message : String(error);
 			} finally {
 				mkdirSync(join(output, 'a11y'), { recursive: true });
-				writeFileSync(join(output, 'a11y', scenario.id + '.json'), JSON.stringify(evidence, null, 2) + '\n');
+				writeFileSync(
+					join(output, 'a11y', scenario.id + '.json'),
+					JSON.stringify(evidence, null, 2) + '\n',
+				);
 			}
 			expect(evidence.error, 'falha objetiva de ' + scenario.id).toBeNull();
 		});

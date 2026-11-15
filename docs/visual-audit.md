@@ -110,7 +110,6 @@ A cobertura contém focos por teclado, estados de validação, aberturas de over
 
 Revisão de evidências: para cada sinal, registrar export/rota/estado/tema/largura, esperado e observado, severidade, resultado de inspeção humana, link persistente do artefato e PR ou issue de regressão quando cabível. O artefato Actions tem retenção limitada; links efêmeros não substituem evidência preservada quando uma decisão for tomada. A ausência de alertas não permite declarar visual aprovado, e nenhum checkbox geral da #152 deve ser marcado apenas com base na execução automatizada.
 
-
 ## Fase 4 — cobertura seletiva de teclado, foco e reflow (#152)
 
 A branch da fase 4 adiciona uma matriz pequena de 15 cenários prioritários em visual-audit/a11y-scenarios.json, executados por visual-audit/a11y.spec.ts. A matriz preexistente (83 exports, 362 estados aplicáveis, 169 N/A) e suas 332 capturas iniciais + 22 cenários seletivos permanecem inalteradas. A suíte nova é **aditiva** e permanece opt-in no mesmo npm run audit:visual e workflow Auditoria visual (workflow_dispatch). Não executa na CI regular nem altera snapshots oficiais.

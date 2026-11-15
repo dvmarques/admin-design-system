@@ -18,20 +18,34 @@ function fixture() {
 	return folder;
 }
 const scenario = {
-	id: 'button-tab', name: 'AdsButton', state: 'keyboard', theme: 'light',
-	width: 390, action: 'tab-order',
+	id: 'button-tab',
+	name: 'AdsButton',
+	state: 'keyboard',
+	theme: 'light',
+	width: 390,
+	action: 'tab-order',
 };
 function evidence(folder, s, override = {}) {
-	writeFileSync(join(folder, 'a11y', s.id + '.json'), JSON.stringify({
-		...s, route: '/catalogo/button', status: 'approved', humanReview: 'pending',
-		screenshot: 'screenshots/a11y/' + s.id + '-' + s.theme + '-' + s.width + '.png',
-		checks: ['focus-visible-paint-change'], error: null, zoom: null, ...override,
-	}));
+	writeFileSync(
+		join(folder, 'a11y', s.id + '.json'),
+		JSON.stringify({
+			...s,
+			route: '/catalogo/button',
+			status: 'approved',
+			humanReview: 'pending',
+			screenshot: 'screenshots/a11y/' + s.id + '-' + s.theme + '-' + s.width + '.png',
+			checks: ['focus-visible-paint-change'],
+			error: null,
+			zoom: null,
+			...override,
+		}),
+	);
 }
 function screenshot(folder, name) {
-	writeFileSync(join(folder, 'screenshots/a11y', name), Buffer.concat([
-		Buffer.from('89504e470d0a1a0a', 'hex'), Buffer.alloc(40),
-	]));
+	writeFileSync(
+		join(folder, 'screenshots/a11y', name),
+		Buffer.concat([Buffer.from('89504e470d0a1a0a', 'hex'), Buffer.alloc(40)]),
+	);
 }
 test('cenário não executado permanece pendente sem screenshot implícita', () => {
 	const folder = fixture();
@@ -54,9 +68,15 @@ test('status pending aceito somente para probe nativo sem comprovação', () => 
 	const folder = fixture();
 	const native = { ...scenario, id: 'zoom-native', action: 'zoom-probe', state: 'zoom-native' };
 	evidence(folder, native, {
-		status: 'pending', screenshot: null, checks: ['browser-accelerator-unverified'],
-		zoom: { method: 'chromium-browser-keyboard-accelerator-probe', requestedPercent: 200,
-			verified: false, measuredPercent: 100 },
+		status: 'pending',
+		screenshot: null,
+		checks: ['browser-accelerator-unverified'],
+		zoom: {
+			method: 'chromium-browser-keyboard-accelerator-probe',
+			requestedPercent: 200,
+			verified: false,
+			measuredPercent: 100,
+		},
 	});
 	let report = analyzeAccessibilityEvidence({ scenarios: [native], entries, folder });
 	assert.equal(report.summary.pending, 1);
@@ -70,8 +90,12 @@ test('zoom nativo não pode aprovar apenas por screenshot ou fator declarado', (
 	const native = { ...scenario, id: 'zoom-native', action: 'zoom-probe', state: 'zoom-native' };
 	evidence(folder, native, {
 		screenshot: 'screenshots/a11y/zoom-native-native-200-light-390.png',
-		zoom: { method: 'viewport-reflow-alternative-not-native-zoom',
-			requestedPercent: 200, verified: true, measuredPercent: 200 },
+		zoom: {
+			method: 'viewport-reflow-alternative-not-native-zoom',
+			requestedPercent: 200,
+			verified: true,
+			measuredPercent: 200,
+		},
 	});
 	screenshot(folder, 'zoom-native-native-200-light-390.png');
 	const report = analyzeAccessibilityEvidence({ scenarios: [native], entries, folder });
@@ -83,7 +107,8 @@ test('manifestos incoerentes e identificadores repetidos nunca aprovam', () => {
 	evidence(folder, scenario, { route: '/outro' });
 	screenshot(folder, 'button-tab-light-390.png');
 	assert.equal(
-		analyzeAccessibilityEvidence({ scenarios: [scenario], entries, folder }).summary.failed, 1,
+		analyzeAccessibilityEvidence({ scenarios: [scenario], entries, folder }).summary.failed,
+		1,
 	);
 	assert.throws(
 		() => analyzeAccessibilityEvidence({ scenarios: [scenario, scenario], entries, folder }),

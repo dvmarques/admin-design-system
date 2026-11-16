@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import {
 	PACKAGE_ORDER,
+	REGISTRY_CONFIRMATION,
 	makePlan,
 	publishPlan,
 	registryVersion,
@@ -113,6 +114,127 @@ function fakeRegistry(plan, initiallyPublished = []) {
 	};
 	return { registry, calls, getVersion, publishTarball, sleep: async () => {} };
 }
+
+test('confirma publicação propagada depois de mais de 30 segundos sem republicar', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const tokens = packageName('tokens');
+		let clock = 0;
+		let tokenReads = 0;
+		const getVersion = async (name, version) => {
+			if (name === tokens && fake.registry.has(tokens)) {
+				tokenReads += 1;
+				if (tokenReads <= 6) return null;
+			}
+			return fake.getVersion(name, version);
+		};
+		await publishPlan(plan, {
+			...fake,
+			getVersion,
+			now: () => clock,
+			sleep: async (ms) => {
+				clock += ms;
+			},
+		});
+		assert.equal(tokenReads, 7);
+		assert.ok(clock > 30_000, 'a versão somente deve aparecer depois da janela antiga');
+		assert.ok(clock < REGISTRY_CONFIRMATION.maxDurationMs);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('janela esgotada falha com contexto e impede o próximo publish', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const writes = [];
+		const timeouts = [];
+		let clock = 0;
+		const getVersion = async (_name, _version, timeoutMs) => {
+			if (timeoutMs !== undefined) timeouts.push(timeoutMs);
+			return null;
+		};
+		await assert.rejects(
+			publishPlan(plan, {
+				getVersion,
+				publishTarball: async (item) => {
+					writes.push(item.name);
+				},
+				now: () => clock,
+				sleep: async (ms) => {
+					clock += ms;
+				},
+			}),
+			(error) =>
+				/Publicação não confirmada/.test(error.message) &&
+				error.message.includes(packageName('tokens') + '@' + plan.version) &&
+				error.message.includes('mesmo artifact ID'),
+		);
+		assert.deepEqual(writes, [packageName('tokens')]);
+		assert.equal(clock, REGISTRY_CONFIRMATION.maxDurationMs);
+		assert.ok(timeouts.length <= REGISTRY_CONFIRMATION.maxAttempts);
+		assert.ok(timeouts.every((timeout) => timeout > 0 && timeout <= 30_000));
+		assert.ok(timeouts.at(-1) < 30_000, 'última chamada respeita o saldo da janela');
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('limite de leituras prevalece mesmo quando relógio não avança', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		let reads = 0;
+		let publishes = 0;
+		await assert.rejects(
+			publishPlan(plan, {
+				getVersion: async () => {
+					reads += 1;
+					return null;
+				},
+				publishTarball: async () => {
+					publishes += 1;
+				},
+				sleep: async () => {},
+				now: () => 0,
+			}),
+			/Publicação não confirmada/,
+		);
+		assert.equal(reads, plan.packages.length + REGISTRY_CONFIRMATION.maxAttempts);
+		assert.equal(publishes, 1);
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('integridade divergente após publish falha antes de continuar', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		await assert.rejects(
+			publishPlan(plan, {
+				...fake,
+				publishTarball: async (item) => {
+					fake.calls.push(item.name);
+					fake.registry.set(item.name, {
+						name: item.name,
+						version: item.version,
+						dist: { integrity: 'sha512-conteudo-inesperado' },
+					});
+				},
+			}),
+			/Integridade divergente/,
+		);
+		assert.deepEqual(fake.calls, [packageName('tokens')]);
+	} finally {
+		await fx.dispose();
+	}
+});
 
 test('plano contém quatro pacotes públicos, mesma versão, SHA e tarballs reais', async () => {
 	const fx = await fixture();

@@ -263,3 +263,31 @@ export const NestedResponsiveGrid: Story = {
 		</main>
 	),
 };
+
+/** Índice de integração sem copiar as rotas nem depender de Next.js no Storybook. */
+export const IntegratedAdmin: Story = {
+	render: () => (
+		<main className="ads-layout-container ads-layout-stack">
+			<AdsPageHeader
+				title="Integração administrativa"
+				description="Execute o percurso completo de consulta, formulário, shell e indicadores no Admin Demo, com APIs públicas e dados fictícios."
+			/>
+			<section aria-labelledby="integration-story-examples" className="ads-layout-stack">
+				<AdsTypography id="integration-story-examples" as="h2" variant="heading2">
+					Matriz de exemplos
+				</AdsTypography>
+				<ul className="ads-layout-stack">
+					<li>Consulta: filtros, paginação, ações, vazio, carregamento e erro.</li>
+					<li>Formulário: validação, feedback e campo desabilitado.</li>
+					<li>Shell: sidebar, footer opcional, dropdown agrupado e temas.</li>
+					<li>Dashboard: cards somente para indicadores e resumos.</li>
+				</ul>
+				<p>
+					<a href="https://dvmarques.github.io/admin-design-system/exemplos/integracao/">
+						Abrir cenários integrados no Admin Demo
+					</a>
+				</p>
+			</section>
+		</main>
+	),
+};

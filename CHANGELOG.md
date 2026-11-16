@@ -10,7 +10,13 @@ para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.3] - Em andamento
 
+#### Changed
+
+- Consulta demonstrativa preserva o foco após tentar novamente e anuncia ações de linha sem interromper leitores de tela. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
+
 #### Added
+
+- Matriz navegável de composições de consulta, formulário, shell e indicadores no Admin Demo e Storybook; estados de consulta, paginação, ação de linha e campo desabilitado, sem mudar APIs de pacotes. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
 
 - Cenário público `admin-public`: teto do CSS minificado ajustado de 103.000 para 104.400 bytes após medição de 104.369; teto CSS gzip revisado de 15.450 para 15.700 bytes para acomodar o footer, sujeito à verificação no último SHA. (#319)
 

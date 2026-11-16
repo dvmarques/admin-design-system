@@ -4,6 +4,15 @@ O índice `/catalogo` oferece busca por nome, categoria e descrição. Cada expo
 
 A sidebar oferece grupos expansíveis por teclado, indicação de página ativa e fechamento automático após navegação móvel. As rotas `/`, `/clientes`, `/clientes/novo`, `/preferencias`, `/componentes`, `/componentes/datas`, `/componentes/overlays`, `/componentes/paginacao`, `/componentes/tabela-avancada`, `/data-display` e `/catalogo/lacunas` continuam disponíveis.
 
+## Integração das composições — #320
+
+O índice `/exemplos/integracao` reúne consulta, formulário, dashboard e shell sem
+duplicar o layout. A consulta cobre paginação, ações por linha, vazio, erro e
+carregamento; o formulário inclui campo desabilitado.
+
+O Storybook inclui a story **Patterns / Page composition / Integrated admin**.
+Consulte a [matriz dos cenários](integrated-admin-compositions.md).
+
 ## Convenção para novas demonstrações
 
 A sidebar distingue títulos de seção fixos (Componentes, Composições administrativas e Exemplos de aplicação), categorias expansíveis com ícones ou iniciais distintos e links internos recuados. Visão geral e Catálogo são links diretos. Os nomes do menu omitem `Ads`, preservado nas páginas e snippets. A composição pública é fornecida por `AdsAdminShell.Navigation`, `NavigationSection`, `NavigationGroup` e `NavigationItem`; a aplicação controla rotas e expansão. No desktop recolhido, ativar uma categoria expande a sidebar e abre o grupo. O drawer móvel mantém os rótulos completos.

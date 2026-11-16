@@ -78,6 +78,9 @@ export default function SemanticFormPage() {
 								/>
 							</AdsField>
 						</div>
+						<AdsField label="Código (desabilitado)">
+							<AdsInput value="DEMO-001" disabled />
+						</AdsField>
 					</section>
 					<section
 						aria-labelledby="form-preferencias"

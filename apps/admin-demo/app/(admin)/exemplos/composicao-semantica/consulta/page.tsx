@@ -110,11 +110,7 @@ export default function SemanticConsultationPage() {
 						</AdsButton>
 					</div>
 					<div className="ads-layout-cluster" role="group" aria-label="Estados de demonstração">
-						<AdsButton
-							type="button"
-							variant="secondary"
-							onClick={() => setView('carregando')}
-						>
+						<AdsButton type="button" variant="secondary" onClick={() => setView('carregando')}>
 							Simular carregamento
 						</AdsButton>
 						<AdsButton type="button" variant="secondary" onClick={() => setView('erro')}>
@@ -193,9 +189,7 @@ export default function SemanticConsultationPage() {
 									aria-label="Paginação da consulta"
 								/>
 							)}
-							{lastAction && (
-								<p role="alert">Detalhes fictícios de {lastAction} selecionados.</p>
-							)}
+							{lastAction && <p role="alert">Detalhes fictícios de {lastAction} selecionados.</p>}
 						</>
 					)}
 				</section>

@@ -72,7 +72,7 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await pagination.getByRole('button', { name: 'Página 2', exact: true }).click();
 	await expect(pagination.locator('[aria-current="page"]')).toHaveText('2');
 	await expect(page.getByRole('cell', { name: 'Carla Souza' })).toBeVisible();
-	const detail = page.getByRole('button', { name: 'Detalhes de Carla Souza' });
+	const detail = page.getByRole('button', { name: 'Detalhes do registro 103' });
 	await detail.focus();
 	await page.keyboard.press('Enter');
 	await expect(detail).toBeFocused();

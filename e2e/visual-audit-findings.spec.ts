@@ -128,7 +128,6 @@ for (const width of [390, 1440]) {
 	test(`superfícies informativas não sugerem clique ao passar o mouse em ${width}px`, async ({
 		page,
 	}) => {
-		test.setTimeout(90_000);
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto('/componentes');
 
@@ -140,7 +139,10 @@ for (const width of [390, 1440]) {
 			for (let index = 0; index < count; index++) {
 				const panel = panels.nth(index);
 				await expect(panel).toBeVisible();
-				await panel.scrollIntoViewIfNeeded();
+				await panel.evaluate((node) => node.scrollIntoView({ block: 'center' }));
+				const bounds = await panel.boundingBox();
+				expect(bounds, `Sem bounding box para ${selector}[${index}]`).not.toBeNull();
+				if (!bounds) throw new Error(`Sem bounding box para ${selector}[${index}]`);
 
 				const appearance = () =>
 					panel.evaluate((node) => {
@@ -148,7 +150,8 @@ for (const width of [390, 1440]) {
 						return { transform: style.transform, shadow: style.boxShadow };
 					});
 				const beforeHover = await appearance();
-				await panel.hover({ position: { x: 8, y: 8 } });
+				await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
+				expect(await panel.evaluate((node) => node.matches(':hover'))).toBe(true);
 				// Wait for the browser to paint the hovered state without a fixed sleep.
 				await page.evaluate(
 					() =>

@@ -1,5 +1,10 @@
 # Catálogo da aplicação admin demo (issue #151)
 
+## Integração das composições — #320
+
+O índice `/exemplos/integracao` reúne consulta, formulário, dashboard e shell sem duplicar o layout nem as composições públicas. A consulta traz estados locais de carregamento/erro/vazio, paginação e ação por linha; o formulário demonstra campos desabilitados. Storybook: **Patterns / Page composition / Integrated admin**. Consulte a [matriz de cenários, consumo público e evidências](integrated-admin-compositions.md).
+
+
 O índice `/catalogo` oferece busca por nome, categoria e descrição. Cada export público de UI tem uma rota `/catalogo/<slug>` gerada estaticamente, inclusive no GitHub Pages. Subcomponentes exibem a composição completa para que possam ser usados com o contexto e a semântica corretos. Slugs desconhecidos retornam 404.
 
 A sidebar oferece grupos expansíveis por teclado, indicação de página ativa e fechamento automático após navegação móvel. As rotas `/`, `/clientes`, `/clientes/novo`, `/preferencias`, `/componentes`, `/componentes/datas`, `/componentes/overlays`, `/componentes/paginacao`, `/componentes/tabela-avancada`, `/data-display` e `/catalogo/lacunas` continuam disponíveis.

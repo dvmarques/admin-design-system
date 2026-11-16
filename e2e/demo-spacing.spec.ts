@@ -15,6 +15,7 @@ for (const theme of ['light', 'dark'] as const) {
 			await expect(list.locator('li')).toHaveCount(4);
 			await expect(list).toHaveCSS('list-style-type', 'none');
 			await expect(list).toHaveCSS('padding-left', '0px');
+			await expect(list).toHaveCSS('margin-bottom', '16px');
 			await expect(list).toHaveCSS('column-gap', '16px');
 			const links = nav.getByRole('link');
 			const destinations = [

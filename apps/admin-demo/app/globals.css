@@ -532,7 +532,7 @@ body {
 }
 .demo-catalog-shortcuts {
 	--ads-layout-cluster-gap: var(--ads-spacing-4);
-	margin: 0;
+	margin: 0 0 var(--ads-spacing-4);
 	padding: 0;
 	list-style: none;
 }

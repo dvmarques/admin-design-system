@@ -8,53 +8,31 @@ por versão e pelas changes correspondentes do OpenSpec. Consulte a
 [política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286)
 para distinguir mudanças públicas de manutenção interna.
 
-### [0.1.3] - Em andamento
+### [0.1.4] - Em andamento
 
-#### Changed
-
-- Consulta demonstrativa preserva o foco após tentar novamente e anuncia ações de linha sem interromper leitores de tela. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
+### [0.1.3] - 16-nov-2026
 
 #### Added
 
-- Matriz navegável de composições de consulta, formulário, shell e indicadores no Admin Demo e Storybook; estados de consulta, paginação, ação de linha e campo desabilitado, sem mudar APIs de pacotes. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
-
-- Cenário público `admin-public`: teto do CSS minificado ajustado de 103.000 para 104.400 bytes após medição de 104.369; teto CSS gzip revisado de 15.450 para 15.700 bytes para acomodar o footer, sujeito à verificação no último SHA. (#319)
-
-- Orçamento de JS/CSS publicados de `admin` ajustado de 171.400 para 173.100 bytes após medição de 173.020 bytes na CI #328; limites de gzip e cenário mantidos até medição. (#319)
-
-- Orçamento de JS/CSS publicados de `components` ajustado de 305.200 para 306.800 bytes após medição de 306.728 bytes na CI #328; gzip ajustado de 92.000 para 92.100 bytes após medição de 92.060 bytes; demais cenários pendentes dos checks. (#319)
-
-- `AdsAdminShell.Footer` opcional com slots `start`/`end`, composição responsiva e landmark semântica; `AdsDropdown.Header`/`Divider` e sequência de Tab/Shift+Tab ajustada para menus portados; integração de tema, tokens e portais documentada sem novo provider. (#319, OpenSpec `issue-319-footer-dropdown-theme`)
-
-- Quatro classes CSS opt-in de layout responsivo (`ads-layout-container`, `ads-layout-stack`, `ads-layout-grid`, `ads-layout-cluster`) no pacote components, com exemplos de consulta, formulário e dashboard; sem componentes React novos nem exigência de Tailwind no consumidor. (#318, OpenSpec `issue-318-responsive-layout`)
-
-- Novo `AdsPageHeader` (H1, descrição e ações responsivas), padrão semântico de seções, três exemplos no Admin Demo/Storybook e teto de JS/CSS publicado do pacote de componentes ajustado para 305.200 bytes (medição 304.361 bytes na base `develop` usada na #318, gzip 91.461 → limite 92.000 bytes). (#317, OpenSpec `issue-317-semantic-page-composition`)
-
-- Novo `AdsIconSlot` para ícones React/SVG próprios, sem fornecedor obrigatório, e overrides opcionais nos controles de tema, alerta, toast e ações do menu de conta; `AdsIcon` permanece compatível. (#316, OpenSpec `issue-316-agnostic-icon-slots`)
-
-- Novo `AdsTimePicker` com formatos 12h/24h, `HH:mm` canônico, passo de minutos, limites, validação e exemplos no Admin Demo/Storybook. (#144, OpenSpec `add-ads-time-picker-144`)
-
-- Novo `AdsMultiSelect` com busca, chips removíveis, seleção múltipla controlada/não controlada, limites e serialização de formulário; Admin Demo e Storybook navegáveis. (#143, OpenSpec `add-ads-multi-select-143`)
-- Novo `AdsOTPInput` para códigos numéricos com comprimento configurável, navegação nativa, colagem e autofill, estados controlados e integração a `AdsField`; exemplos no Admin Demo e Storybook. (#146, OpenSpec `add-ads-otp-input-146`)
-- Tokens públicos opcionais de cor da sidebar e do header do Admin Shell (`--ads-sidebar-*`, `--ads-header-*`) com fallback dinâmico para os tokens globais; sem override, as cores renderizadas não mudam. (#306, OpenSpec `issue-306-component-color-overrides`)
+- Novo `AdsTimePicker` (12h/24h, `HH:mm` canônico, passo, limites e validação), com exemplos no Admin Demo e Storybook. Orçamentos de JS/CSS de `components` revistos. (#144, OpenSpec `add-ads-time-picker-144`)
+- Novo `AdsMultiSelect` com busca, chips removíveis, seleção controlada/não controlada, limites e serialização de formulário. Orçamento de JS/CSS de `components` revisto. (#143, OpenSpec `add-ads-multi-select-143`)
+- Novo `AdsOTPInput` para códigos numéricos (comprimento configurável, colagem, autofill, estados controlados e integração a `AdsField`), com exemplos no Demo e Storybook. (#146, OpenSpec `add-ads-otp-input-146`)
+- Tokens públicos opcionais de cor da sidebar e do header do Admin Shell (`--ads-sidebar-*`, `--ads-header-*`) com fallback para os tokens globais; sem override, as cores não mudam. (#306, OpenSpec `issue-306-component-color-overrides`)
+- Novo `AdsIconSlot` para ícones React/SVG próprios, sem fornecedor obrigatório, com overrides opcionais em tema, alerta, toast e conta; `AdsIcon` segue compatível. (#316, OpenSpec `issue-316-agnostic-icon-slots`)
+- Novo `AdsPageHeader` (H1, descrição e ações responsivas), padrão semântico de seções e três exemplos no Demo e Storybook. Teto de JS/CSS de `components` ajustado. (#317, OpenSpec `issue-317-semantic-page-composition`)
+- Classes CSS opt-in de layout responsivo (`ads-layout-container`, `-stack`, `-grid`, `-cluster`) em `components`, sem componentes React novos nem exigir Tailwind no consumidor. (#318, OpenSpec `issue-318-responsive-layout`)
+- `AdsAdminShell.Footer` opcional (slots `start`/`end`), `AdsDropdown.Header`/`Divider`, Tab/Shift+Tab preservado em menus portados e integração de tema documentada. Orçamentos de `admin` e `components` revistos. (#319, OpenSpec `issue-319-footer-dropdown-theme`)
+- Matriz de composições de consulta, formulário, shell e indicadores no Demo e Storybook; foco preservado ao tentar novamente e ações de linha anunciadas sem interromper leitores de tela. Sem mudar APIs. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
 
 #### Changed
 
-- Dropdown portado preserva a saída nativa por Tab/Shift+Tab nos limites do documento e respeita eventos de teclado cancelados pelo consumidor ou descendentes. (#319)
-- Orçamentos de `components` revistos para 308.000 B raw e 92.400 B gzip após medição de 307.865/92.279 B com as correções de limites de foco e eventos cancelados; cenários públicos e demais pacotes mantêm os limites existentes. (#319)
-
-- Dropdown aberto com foco no gatilho também fecha em Tab/Shift+Tab, preservando a ordem nativa de foco após abertura por clique ou sem itens habilitados. (#319)
-- A tabela da consulta administrativa do Demo oferece região nomeada e focável para rolagem horizontal por teclado em telas estreitas. (#319)
-- Orçamento raw de JS/CSS publicado de `components` ajustado de 306.800 para 306.900 bytes após medição de 306.805 com a correção de Tab; gzip e cenários mantêm os tetos existentes. (#319)
-
-- Admin Demo e Storybook publicados recebem CSP parcial compatível com HTML estático (`object-src 'none'`, `base-uri 'self'`, `form-action 'self'`) e meta de referrer; limitações do GitHub Pages e controles que exigem headers reais são documentados, sem declarar mitigação de script ou clickjacking. (#269, OpenSpec `issue-269-pages-security-hardening`)
-- Fluxo de publicação npm ajustado para executar Trusted Publisher/OIDC no merge exato aprovado em `master`, preservando o artifact preparado em `develop`, a integridade, o back-merge e as permissões mínimas. (#298, OpenSpec `issue-298-master-release-provenance`)
-- Orçamentos técnicos do `AdsTimePicker` (#144): JS/CSS publicado de `@dvmarques/admin-ds-components` 295.000→302.000 B (medido 299.472 B), gzip de navegador 89.000→91.000 B (89.847 B), `components-public` gzip 11.880→12.000 B (11.881 B), módulo `time-picker.js` ~6.935 B minificado; cenário `admin-public` 71.440→71.800 B e gzip 24.050→24.200 B após medição 71.439/24.050 B (folga mínima anterior); baseline de distribuição completa de components 628.048→693.543 B após I-1 (medido 691.541 B no Windows e 693.543 B na CI Linux/LF, com declarações e source maps do rascunho parcial controlado).
-- Orçamento técnico de JS/CSS publicado de `@dvmarques/admin-ds-components` revisto de 285.000 para 295.000 bytes após medição explícita de 292.236 bytes com o novo `AdsMultiSelect`; limite gzip revisto de 86.000 para 89.000 bytes após medição de 87.601 bytes; demais cenários sujeitos à validação. (#143)
+- Publicação npm via Trusted Publisher/OIDC passa a ocorrer em `master`, no merge exato aprovado; artifact preparado em `develop`, integridade, back-merge e permissões mínimas preservados. **Procedimento de release alterado.** (#298, OpenSpec `issue-298-master-release-provenance`)
+- Admin Demo e Storybook publicados recebem CSP parcial compatível com HTML estático e meta de referrer; limitações do GitHub Pages documentadas, sem declarar mitigação de script ou clickjacking. (#269, OpenSpec `issue-269-pages-security-hardening`)
 - Verificador de distribuição do peer opcional aceita as saídas JSON do npm pack 11 e 12, mantendo o contrato de tarball. (#299)
-- Checks de PR otimizados: Chromium em dois shards com check obrigatório agregado, suítes de qualidade sem repetição para coletar cobertura, Pages seletivo para documentação e cancelamento apenas de execuções obsoletas de PR. Os resumos de CI exibem dispensas de escopo sem alegar testes executados; `--prefer-offline` foi removido após não mostrar ganho. Sem redução de cobertura nem de gates de segurança. (#294)
-- Teste de transferência de baselines converte URLs em caminhos de arquivo compatíveis com Windows e Unix. (#294)
-- Inventário rastreável da auditoria visual (82 exports) e auditor opt-in (`npm run audit:visual`, workflow manual) que gera capturas Chromium em 390/1440 px, claro/escuro, e relatório de triagem. Ferramenta interna do repositório: sem mudança de API, CSS, tokens ou comportamento dos pacotes publicados. (#152, #313, OpenSpec `issue-152-visual-audit-inventory`)
+- Checks de PR otimizados: Chromium em dois shards com check agregado, qualidade sem repetição, Pages seletivo e cancelamento só de execuções obsoletas; transferência de baselines compatível com Windows e Unix. Sem reduzir cobertura nem gates de segurança. (#294)
+- Inventário rastreável da auditoria visual (82 exports) e auditor opt-in (`npm run audit:visual`). Ferramenta interna do repositório, sem mudança nos pacotes publicados. (#152, #313, OpenSpec `issue-152-visual-audit-inventory`)
+
+<!-- release-changelog-approved sha256:1ca77c9b56160aa38dc90252cc3fd9e7b008fcf5d25472b8bcd417e3f1e1b3a5 -->
 
 ### [0.1.2] - 02-nov-2026
 

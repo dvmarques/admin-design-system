@@ -146,7 +146,7 @@ for (const width of [390, 1440]) {
 					panel.evaluate((node) => {
 						const style = getComputedStyle(node);
 						return { transform: style.transform, shadow: style.boxShadow };
-						});
+					});
 				const beforeHover = await appearance();
 				await panel.hover({ position: { x: 8, y: 8 } });
 				// Wait for the browser to paint the hovered state without a fixed sleep.

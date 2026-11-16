@@ -143,8 +143,13 @@ for (const width of [390, 1440]) {
 				});
 			const beforeHover = await appearance();
 			await panel.hover({ position: { x: 8, y: 8 } });
-			// Observe the settled hover state, not only the first animation frame.
-			await page.waitForTimeout(350);
+			// Wait for the browser to paint the hovered state without a fixed sleep.
+			await page.evaluate(
+				() =>
+					new Promise<void>((resolve) =>
+						requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+					),
+			);
 			expect(await appearance()).toEqual(beforeHover);
 		}
 	});

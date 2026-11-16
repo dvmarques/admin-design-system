@@ -54,6 +54,8 @@ Header é texto estático e não recebe foco por padrão. Divider é `role=separ
 
 ArrowDown/ArrowUp/Home/End navegam somente por Items habilitados. Escape fecha e devolve o foco ao gatilho. Tab/Shift+Tab fecham e avançam logicamente do gatilho, inclusive quando o Content está portado para `document.body`; atalhos de navegador sem próximo foco elegível continuam sujeitos à plataforma. As camadas de menu, posição/flip, click-outside e tratamento de modais continuam usando a infraestrutura comum.
 
+Nos limites do documento, Tab não é cancelado e o fechamento aguarda a ação nativa do navegador; não há retorno forçado e permanente ao gatilho. O `onKeyDown` de Content e os handlers de descendentes podem chamar `preventDefault()` para preservar estado e foco, sem executar a navegação interna do dropdown.
+
 ## Tema e tokens sem sistema paralelo
 
 - **Tema efetivo**: `data-theme="light"` ou `"dark"` no ancestral; sem atributo, os tokens seguem `prefers-color-scheme`. `AdsThemeControl` emite a **preferência** `light | dark | system`, e `ThemeToggle` permanece binário. O consumidor resolve `system` usando `matchMedia`, aplica `data-theme` e decide se quer gravar cookie/localStorage — nada é persistido pelo pacote.

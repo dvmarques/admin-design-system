@@ -1,5 +1,13 @@
 # Design técnico e revisão crítica — #319
 
+## Ajustes da revisão da PR — limites de Tab e eventos cancelados
+
+- O helper informa se encontrou um destino interno. Havendo destino, o evento é cancelado e o foco segue para essa parada. Nos limites, o foco parte do gatilho lógico e Tab não é cancelado: o navegador pode sair do documento. O fechamento nesse caso ocorre no próximo frame para não remover o alvo original durante a ação nativa; gatilho e Content compartilham o agendamento no Root, cancelado ao desmontar ou mudar explicitamente o estado.
+- Sem movimentar o portal, criar elementos focáveis, sentinelas ou APIs novas. A fixture de navegador embute o dropdown real em um iframe com controles externos antes/depois, tornando observável a saída do documento sem depender do chrome do navegador headless. A referência usa um clone nativo do gatilho, com a mesma sequência de teclado ou clique; verifica também uma segunda tabulação quando necessário. Cobertura Chromium, Firefox e WebKit.
+- Content executa o handler público de teclado e respeita `defaultPrevented`, inclusive quando cancelado por descendentes; nenhum fechamento ou movimento interno nesses casos.
+- Cobertura de teclado real compara o resultado com Tab nativo no mesmo navegador, com o dropdown como primeiro, último e único controle, nos dois sentidos, aberto por teclado e clique. Testes unitários cobrem limites e cancelamento pelo Content/descendentes.
+- Medição final da correção: `components` publicado 307.865 B raw / 92.279 B gzip (antes 306.805 / 92.067). Tetos ajustados somente nesse pacote para 308.000 / 92.400 B; cenários públicos e demais limites preservados.
+
 ## Sincronização e revisão de 16/11/2026
 
 - Incorporado `origin/develop` em `83e68698b26e032291c3b04da7c42bb987bf3f44` via merge, sem conflitos. Preservados #325 (auditoria), #329 (reconciliação), #330 (hover do Demo) e #331 (Playwright 1.65.1, workflows e lockfile). As mudanças de dependências são exclusivamente as já integradas na base.

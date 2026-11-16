@@ -1,5 +1,5 @@
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { describe, expect, it } from 'vitest';
+import { describe, expect, it, vi } from 'vitest';
 import { AdsDropdown } from '../src/dropdown';
 
 function Groups({ defaultOpen = false }: { defaultOpen?: boolean }) {
@@ -25,6 +25,98 @@ function Groups({ defaultOpen = false }: { defaultOpen?: boolean }) {
 }
 
 describe('semantic dropdown grouping', () => {
+	it('does not apply a pending Tab close to a newly reopened menu', async () => {
+		render(
+			<AdsDropdown>
+				<AdsDropdown.Trigger>Único controle</AdsDropdown.Trigger>
+				<AdsDropdown.Content>
+					<AdsDropdown.Item>Ação</AdsDropdown.Item>
+				</AdsDropdown.Content>
+			</AdsDropdown>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Único controle' });
+		trigger.focus();
+		fireEvent.keyDown(trigger, { key: 'Enter' });
+		await waitFor(() => expect(screen.getByRole('menuitem')).toHaveFocus());
+		fireEvent.keyDown(screen.getByRole('menuitem'), { key: 'Tab' });
+		fireEvent.keyDown(trigger, { key: 'Escape' });
+		expect(screen.queryByRole('menu')).toBeNull();
+		fireEvent.keyDown(trigger, { key: 'Enter' });
+		await new Promise((resolve) => window.requestAnimationFrame(resolve));
+		expect(screen.getByRole('menu')).toBeVisible();
+	});
+
+	it('cancels a pending boundary close when the dropdown unmounts', async () => {
+		const change = vi.fn();
+		const { unmount } = render(
+			<AdsDropdown onOpenChange={change}>
+				<AdsDropdown.Trigger>Único controle</AdsDropdown.Trigger>
+				<AdsDropdown.Content>
+					<AdsDropdown.Item>Ação</AdsDropdown.Item>
+				</AdsDropdown.Content>
+			</AdsDropdown>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Único controle' });
+		trigger.focus();
+		fireEvent.keyDown(trigger, { key: 'Enter' });
+		const item = await screen.findByRole('menuitem');
+		await waitFor(() => expect(item).toHaveFocus());
+		change.mockClear();
+		fireEvent.keyDown(item, { key: 'Tab' });
+		unmount();
+		await new Promise((resolve) => window.requestAnimationFrame(resolve));
+		expect(change).not.toHaveBeenCalled();
+	});
+
+	it.each([false, true])('leaves boundary Tab to the browser (shift=%s)', async (shiftKey) => {
+		render(
+			<AdsDropdown>
+				<AdsDropdown.Trigger>Único controle</AdsDropdown.Trigger>
+				<AdsDropdown.Content>
+					<AdsDropdown.Item>Ação</AdsDropdown.Item>
+				</AdsDropdown.Content>
+			</AdsDropdown>,
+		);
+		const trigger = screen.getByRole('button', { name: 'Único controle' });
+		trigger.focus();
+		fireEvent.keyDown(trigger, { key: 'Enter' });
+		const item = await screen.findByRole('menuitem');
+		await waitFor(() => expect(item).toHaveFocus());
+		expect(fireEvent.keyDown(item, { key: 'Tab', shiftKey })).toBe(true);
+		expect(trigger).toHaveFocus(); // jsdom does not run the default Tab action; browser tests do.
+		await waitFor(() => expect(screen.queryByRole('menu')).toBeNull());
+	});
+
+	it.each(['content', 'descendant'] as const)(
+		'respects keyboard cancellation by %s',
+		async (source) => {
+			const cancel = (event: React.KeyboardEvent) => event.preventDefault();
+			render(
+				<AdsDropdown>
+					<AdsDropdown.Trigger>Opções canceladas</AdsDropdown.Trigger>
+					<AdsDropdown.Content onKeyDown={source === 'content' ? cancel : undefined}>
+						<div onKeyDown={source === 'descendant' ? cancel : undefined}>
+							<AdsDropdown.Item>Primeira</AdsDropdown.Item>
+							<AdsDropdown.Item>Segunda</AdsDropdown.Item>
+						</div>
+					</AdsDropdown.Content>
+				</AdsDropdown>,
+			);
+			const trigger = screen.getByRole('button', { name: 'Opções canceladas' });
+			trigger.focus();
+			fireEvent.keyDown(trigger, { key: 'Enter' });
+			const item = await screen.findByRole('menuitem', { name: 'Primeira' });
+			await waitFor(() => expect(item).toHaveFocus());
+			for (const key of ['Tab', 'ArrowDown', 'End']) {
+				for (const shiftKey of [false, true]) {
+					expect(fireEvent.keyDown(item, { key, shiftKey })).toBe(false);
+					expect(screen.getByRole('menu')).toBeVisible();
+					expect(item).toHaveFocus();
+				}
+			}
+		},
+	);
+
 	it.each([false, true])('closes on Tab at the trigger (shift=%s)', async (shiftKey) => {
 		render(<Groups />);
 		const trigger = screen.getByRole('button', { name: 'Opções' });
@@ -32,9 +124,9 @@ describe('semantic dropdown grouping', () => {
 		fireEvent.click(trigger);
 		await screen.findByRole('menu');
 		expect(trigger).toHaveFocus();
-		// The browser must retain its default navigation from the trigger.
-		expect(fireEvent.keyDown(trigger, { key: 'Tab', shiftKey })).toBe(true);
+		expect(fireEvent.keyDown(trigger, { key: 'Tab', shiftKey })).toBe(false);
 		expect(screen.queryByRole('menu')).toBeNull();
+		expect(screen.getByRole('button', { name: shiftKey ? 'Anterior' : 'Próximo' })).toHaveFocus();
 	});
 
 	it('renders static headers and a semantic separator outside the keyboard item sequence', async () => {

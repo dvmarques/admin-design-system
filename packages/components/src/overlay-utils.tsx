@@ -85,7 +85,9 @@ export function focusAdjacentTo(reference: HTMLElement | null, backwards = false
 	const stops = getEligibleFocusableElements(reference.ownerDocument.body, backwards);
 	const index = stops.indexOf(reference);
 	if (index < 0) return;
-	(stops[index + (backwards ? -1 : 1)] ?? reference).focus({ preventScroll: true });
+	const next = stops[index + (backwards ? -1 : 1)];
+	(next ?? reference).focus({ preventScroll: true });
+	return !!next;
 }
 
 export function useStableId(prefix: string) {

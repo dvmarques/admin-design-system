@@ -34,6 +34,9 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Changed
 
+- Dropdown portado preserva a saída nativa por Tab/Shift+Tab nos limites do documento e respeita eventos de teclado cancelados pelo consumidor ou descendentes. (#319)
+- Orçamentos de `components` revistos para 308.000 B raw e 92.400 B gzip após medição de 307.865/92.279 B com as correções de limites de foco e eventos cancelados; cenários públicos e demais pacotes mantêm os limites existentes. (#319)
+
 - Dropdown aberto com foco no gatilho também fecha em Tab/Shift+Tab, preservando a ordem nativa de foco após abertura por clique ou sem itens habilitados. (#319)
 - A tabela da consulta administrativa do Demo oferece região nomeada e focável para rolagem horizontal por teclado em telas estreitas. (#319)
 - Orçamento raw de JS/CSS publicado de `components` ajustado de 306.800 para 306.900 bytes após medição de 306.805 com a correção de Tab; gzip e cenários mantêm os tetos existentes. (#319)

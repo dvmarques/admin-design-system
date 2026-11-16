@@ -21,5 +21,15 @@ O AdsDropdown MUST oferecer `Header` e `Divider` composáveis no Content, manten
 
 #### Scenario: Regressão de menu
 
+- **WHEN** Tab ou Shift+Tab chega ao limite da sequência do documento com o menu portado aberto
+- **THEN** o menu fecha e permite a tabulação nativa a partir do gatilho, inclusive a saída do documento quando não existe outra parada nesse sentido
+
+#### Scenario: Evento de teclado cancelado pelo consumidor
+
+- **WHEN** um descendente ou o handler público do Content cancela o evento de teclado
+- **THEN** o dropdown preserva o estado e o foco, sem executar sua navegação ou fechamento internos
+
+#### Scenario: Regressão de itens
+
 - **WHEN** o consumidor usa Items normais, desabilitados, menus vazios ou valores radio em telas pequenas ou portais aninhados
 - **THEN** os novos elementos não recebem foco nem ativação e fechamento, layering e posicionamento existentes continuam funcionando

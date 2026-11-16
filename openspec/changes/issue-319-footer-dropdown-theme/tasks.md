@@ -14,6 +14,15 @@
 
 **Não autorizar nesta change:** archive, merge, fechamento de issue ou épico.
 
+## Ajustes solicitados na revisão da PR #328
+
+- [x] 11. Preservar Tab/Shift+Tab nativo nos limites do documento, validando primeiro/último/único controle em menu portado nos dois sentidos por teclado real.
+- [x] 12. Respeitar eventos cancelados por Content/descendentes, com testes de preservação de estado e foco, e executar os gates aplicáveis da correção.
+
+- Evidência local da revisão: 26 testes unitários focados e 46 E2E focados aprovados (Chromium, Firefox e WebKit), com primeiro/último/único controle, clique/teclado, Tab/Shift+Tab, eventos cancelados, desmontagem e reabertura antes do fechamento pendente.
+- Formato, lint, tipos, build, distribuição, qualidade (88 arquivos Vitest / 1.601 testes) e OpenSpec strict (72 itens) aprovados. Suíte E2E completa executada: 591 aprovados, 1 skip previsto e 10 falhas; nove são diferenças locais conhecidas de screenshots, e uma era a expectativa de fixture no WebKit corrigida e revalidada na rodada focalizada de 46 aprovados. Nenhum snapshot atualizado. Confirmar a matriz completa no novo SHA publicado; links dos checks registrados na PR #328.
+- Mantidas as pendências humanas de zoom nativo 200%, NVDA/VoiceOver e aprovação visual. Sem merge, archive ou fechamento administrativo.
+
 ## Revalidação após sincronização com develop — 16/11/2026
 
 - As 11 tarefas acima registram a entrega histórica; a revisão atual incorpora `develop` em `83e68698b26e032291c3b04da7c42bb987bf3f44`, via merge sem conflitos.

@@ -22,4 +22,4 @@ O diff esperado é somente em consumidores, testes e documentação: nenhum orç
 
 ## Evidência e revisão
 
-Matriz: 320/390/768/1440px × light/dark, navegação por teclado, foco, axe WCAG, overflow, menu/sidebar e footer opcional; reflow de zoom simulado não substitui zoom real 200%, NVDA/VoiceOver e inspeção visual humana. Snapshots somente após diff visual revisado. A PR permanece sem merge e a change sem archive.
+Matriz: 320/390/768/1440px × light/dark, navegação por teclado, foco, axe WCAG, overflow, menu/sidebar e footer opcional; reflow de zoom simulado não substitui zoom real 200% nem NVDA/VoiceOver; a inspeção automatizada de capturas tem cobertura documentada e não representa aprovação humana. Snapshots somente após diff visual revisado. A PR permanece sem merge e a change sem archive.

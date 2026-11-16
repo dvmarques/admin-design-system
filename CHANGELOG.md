@@ -10,6 +10,10 @@ para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.3] - Em andamento
 
+#### Changed
+
+- Documentados o comparativo reproduzível de bundles e os limites da revisão automatizada das composições integradas; removido o gate de revisão manual por decisão de escopo. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
+
 #### Added
 
 - Matriz navegável de composições de consulta, formulário, shell e indicadores no Admin Demo e Storybook; estados de consulta, paginação, ação de linha e campo desabilitado, sem mudar APIs de pacotes. (#320, OpenSpec `issue-320-integrated-admin-compositions`)

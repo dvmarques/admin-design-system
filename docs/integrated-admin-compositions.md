@@ -28,7 +28,7 @@ A Demo importa os componentes apenas de `@dvmarques/admin-ds-components` e `@dvm
 
 Com Node 24/npm 11.19.1, executar `npm run validate`, `npm run inspect:packages`, `npm run verify:optional-peer` e `npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`. A suíte `e2e/integrated-admin-compositions.spec.ts` inclui 320/390/768/1440px e light/dark com axe WCAG, H1/landmark, ausência de overflow, erros de hidratação, teclado, filtro, paginação, erro/carregamento e campo desabilitado. As suites existentes verificam shell, portais, tema, footer, teclado e reflow equivalente.
 
-Zoom **nativo** 200%, NVDA/VoiceOver e aprovação visual das capturas **exigem inspeção humana**. Emulação por viewport ou CSS zoom não é equivalente. Não atualize snapshots automaticamente.
+Zoom **nativo** 200% e NVDA/VoiceOver não foram testados. Emulação por viewport ou CSS zoom não é equivalente. Por decisão do solicitante, revisão manual não é gate desta entrega; essa decisão não implica aprovação dos cenários não verificados. Não atualize snapshots automaticamente.
 
 ## Orçamentos e comparação
 
@@ -61,57 +61,31 @@ Pages; os workflows de [Security](https://github.com/dvmarques/admin-design-syst
 e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/43875243625)
 concluíram com sucesso. O deploy real é pulado em PRs, por política.
 
-### Limite do comparativo de bundles do consumidor — revisão da PR #335
+### Comparativo reproduzível — base e HEAD da PR
 
-Os números acima medem **artefatos publicados dos pacotes**, não o JavaScript
-efetivamente carregado por cada rota Next.js nem os chunks do Storybook.
-Embora a #320 não modifique `packages/`, manifests ou lockfile, isso **não**
-prova que os bundles das aplicações tenham tamanho idêntico: as composições
-podem alterar os chunks do consumidor.
+Em 16/11/2026, Windows x64, Node 24.21.0, npm 11.19.1 e lockfile SHA-256 `7484c326a677075b021e6111aa8a866ba179ee2044e7165a98c4c70307558715`: base `157bb339bb31b483c6acbbfaaa4370d5d6653893` e HEAD funcional/documental `903696a6f55c3061a892105dcd83d1c5da97dfa0`. Ambos usaram worktrees separados, `npm ci --ignore-scripts` e `npm run build`, sem variáveis de Pages, com `next start` em produção. Nenhum budget foi alterado.
 
-**Justificativa técnica para não apresentar um delta:** os relatórios preservados
-da CI não trazem uma medição paritária, por rota e por chunk, tanto da base
-`develop` (`157bb339bb31b483c6acbbfaaa4370d5d6653893`) quanto da
-branch da PR, usando exatamente a mesma toolchain e dependências.
-Comparar totais de pacote de commits históricos com o build atual do Demo
-ou do Storybook produziria um delta sem significado. Por isso, o
-**antes/depois Next.js e Storybook permanece não medido**; os budgets
-distribuíveis aprovados **não devem ser relatados como substitutos**.
+Para reproduzir, instale a mesma versão de Node/npm e execute `npm ci --ignore-scripts` e `npm run build` em cada checkout; instale o Chromium do Playwright com `npx playwright install chromium`. Sirva cada checkout com `npm run start --workspace @admin-ds/admin-demo` em portas distintas. A partir da branch desta change, execute `node scripts/measure-integrated-bundles.mjs <worktree> <http://localhost:porta>` para cada servidor. O script registra requisições JS/CSS durante navegação e interações disponíveis nas duas versões, deduplica caminhos, soma gzip nível 9 por arquivo e relaciona os assets por rota. Os relatórios completos estão em [base](bundle-measurements/issue-320/base.json) e [HEAD](bundle-measurements/issue-320/head.json).
 
-Para obter uma comparação válida, fazer builds limpos e isolados da base
-e do HEAD com Node 24, npm 11.19.1 e `npm ci`, registrar SHAs e ambiente,
-extrair tamanhos brutos e gzip dos mesmos assets/rotas Next.js e chunks
-Storybook, distinguindo chunks compartilhados para não contá-los duas
-vezes. Comparar apenas saídas equivalentes e anexar os relatórios à PR.
+| Rota / conjunto                | Base JS bruto / gzip (B) | HEAD JS bruto / gzip (B) |                Delta bruto / gzip |
+| ------------------------------ | -----------------------: | -----------------------: | --------------------------------: |
+| Catálogo                       |        593.835 / 178.504 |        594.441 / 178.643 |     +606 (+0,10%) / +139 (+0,08%) |
+| Consulta                       |        595.923 / 178.897 |        603.948 / 181.810 | +8.025 (+1,35%) / +2.913 (+1,63%) |
+| Formulário                     |        596.937 / 179.031 |        597.040 / 179.069 |      +103 (+0,02%) / +38 (+0,02%) |
+| Dashboard                      |        587.195 / 176.120 |        587.195 / 176.120 |                             0 / 0 |
+| União sem dupla contagem       |        612.305 / 184.192 |        621.039 / 187.282 | +8.734 (+1,43%) / +3.090 (+1,68%) |
+| Storybook: todos os JS gerados |   10.275.788 / 2.576.448 |   10.278.452 / 2.577.255 | +2.664 (+0,026%) / +807 (+0,031%) |
 
-**Aceite:** a justificativa acima documenta a limitação da evidência,
-mas não constitui medição nem aprovação automática de exceção. O responsável
-deve solicitar o comparativo reproduzível ou aprovar expressamente a
-exceção antes de considerar esse requisito encerrado. Não elevar budgets.
+Cada rota carregou os mesmos dois CSS: 121.462 B brutos / 19.279 B gzip na base e no HEAD; a união os conta uma vez. O Storybook gerou dois CSS, 107.154 / 16.692 B em ambos. A rota nova `/exemplos/integracao` não existe na base; no HEAD carregou 587.195 / 176.120 B de JS e 121.462 / 19.279 B de CSS, arquivos já contados na união. Os totais de Storybook são todos os arquivos gerados, não bytes de uma sessão individual.
 
-### Checks da revisão técnica (HEAD funcional da PR #335)
-
-Em **16/11/2026**, após as correções semânticas e de estado de consulta, os
-três workflows do SHA de **código**
-[`a6069fea04d6217bfa931f10bb8e855dda745bed`](https://github.com/dvmarques/admin-design-system/commit/a6069fea04d6217bfa931f10bb8e855dda745bed)
-terminaram com `success`:
-
-- [CI #43898557490](https://github.com/dvmarques/admin-design-system/actions/runs/43898557490):
-  qualidade rápida (formato, lint, builds, tipos e cobertura), distribuição
-  (incluindo `inspect:packages`), Chromium 1/2 e 2/2, Firefox, WebKit e
-  agregador E2E aprovados.
-- [Security #43898557286](https://github.com/dvmarques/admin-design-system/actions/runs/43898557286):
-  Gitleaks, npm audit e CodeQL aprovados.
-- [Pages #43898557258](https://github.com/dvmarques/admin-design-system/actions/runs/43898557258):
-  build aprovado; **publicação pulada** por ser evento de PR.
-
-Esses checks comprovam o SHA de código indicado, não certificam futuros
-commits de documentação. Os budgets de pacotes continuam válidos, mas o
-comparativo paritário de chunks/rotas Next.js e Storybook **não foi realizado**.
-A justificativa registrada acima **não foi aprovada como exceção humana**.
-A revisão de capturas, zoom nativo 200% e leitores de tela também permanece
-pendente. A CI verde não equivale a aceite final nem autoriza merge/archive.
+A investigação identificou que os +8.025 B da consulta correspondem à substituição de seu chunk específico de 8.728 B por outro de 16.753 B. O diff acrescenta estados, ações e paginação usando imports públicos; não adiciona dependências nem altera pacotes. Não foi identificado import massivo novo pelo diff. Os dois arquivos CSS de Storybook têm hashes distintos e o CSS carregado pelo Next não mudou; isso não prova ausência de regras CSS semanticamente duplicadas. Nenhum erro de página ou console de hidratação foi observado nos percursos medidos. A medição cobre as interações explicitadas no script, não todas as combinações possíveis, e os limites existentes de distribuição continuam em `bundle-baseline.json`, `browser-budget.json` e `scenario-budget.json`.
 
 ## Dependências e limites
 
 Épico #315: #316/PR #321, #317/PR #326, #318/PR #327 e #319/PR #328 integrados em `develop` antes desta branch. Sem archive, merge ou fechamento administrativo nesta etapa.
+
+## Acessibilidade e limites da execução
+
+A suíte integrada Chromium passou (5 testes), com axe na largura inicial de 1440 px e overflow testado em 320/390/768/1440 px para ambos os temas, além de teclado, semântica e hidratação. Foram capturadas 32 combinações de quatro páginas, dois temas e quatro larguras; folhas de contato foram inspecionadas pela IA e duas capturas também em tamanho original. A tabela de consulta usa rolagem horizontal em telas estreitas. Não foi realizada comparação completa com baselines nem testes reais de zoom nativo e leitor de tela. A remoção da antiga task 12 foi autorizada pelo solicitante e não constitui aprovação dos itens não testados.
+
+A suíte E2E completa local terminou com 597 aprovados, 1 ignorado e 9 falhas por baselines `*-chromium-win32.png` inexistentes. Os 18 arquivos criados automaticamente pelo Playwright foram removidos sem atualizar baselines. A CI Linux usa as baselines oficiais.

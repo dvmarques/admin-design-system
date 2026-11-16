@@ -1,0 +1,136 @@
+{
+	"node": "v24.21.0",
+	"origin": "http://localhost:3102",
+	"byRoute": {
+		"/catalogo": {
+			"js": {
+				"files": 10,
+				"raw": 593835,
+				"gzip": 178504
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				"/_next/static/chunks/0om590q-tq0l9.js",
+				"/_next/static/chunks/1-uf94uxvovbm.js",
+				"/_next/static/chunks/19oo2x0jj-xjk.js",
+				"/_next/static/chunks/1_tt0uj4i1iev.js",
+				"/_next/static/chunks/1cbl236v59rkz.js",
+				"/_next/static/chunks/229k-tfm0svxj.js",
+				"/_next/static/chunks/262tpklk41u37.js",
+				"/_next/static/chunks/2j5vg8jeruf4x.css",
+				"/_next/static/chunks/34d35wto3ad07.css",
+				"/_next/static/chunks/3o_akfi1c71u7.js",
+				"/_next/static/chunks/3srfjz42u14tx.js",
+				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+			]
+		},
+		"/exemplos/composicao-semantica/consulta": {
+			"js": {
+				"files": 10,
+				"raw": 595923,
+				"gzip": 178897
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				"/_next/static/chunks/0om590q-tq0l9.js",
+				"/_next/static/chunks/1-uf94uxvovbm.js",
+				"/_next/static/chunks/19oo2x0jj-xjk.js",
+				"/_next/static/chunks/1_tt0uj4i1iev.js",
+				"/_next/static/chunks/1cbl236v59rkz.js",
+				"/_next/static/chunks/229k-tfm0svxj.js",
+				"/_next/static/chunks/2j5vg8jeruf4x.css",
+				"/_next/static/chunks/2s2tm0h8qgyf5.js",
+				"/_next/static/chunks/34d35wto3ad07.css",
+				"/_next/static/chunks/3o_akfi1c71u7.js",
+				"/_next/static/chunks/3srfjz42u14tx.js",
+				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+			]
+		},
+		"/exemplos/composicao-semantica/formulario": {
+			"js": {
+				"files": 10,
+				"raw": 596937,
+				"gzip": 179031
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				"/_next/static/chunks/0om590q-tq0l9.js",
+				"/_next/static/chunks/1-uf94uxvovbm.js",
+				"/_next/static/chunks/19oo2x0jj-xjk.js",
+				"/_next/static/chunks/1_tt0uj4i1iev.js",
+				"/_next/static/chunks/1cbl236v59rkz.js",
+				"/_next/static/chunks/229k-tfm0svxj.js",
+				"/_next/static/chunks/2j5vg8jeruf4x.css",
+				"/_next/static/chunks/2syfoohvtnn3h.js",
+				"/_next/static/chunks/34d35wto3ad07.css",
+				"/_next/static/chunks/3o_akfi1c71u7.js",
+				"/_next/static/chunks/3srfjz42u14tx.js",
+				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+			]
+		},
+		"/exemplos/composicao-semantica/dashboard": {
+			"js": {
+				"files": 9,
+				"raw": 587195,
+				"gzip": 176120
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				"/_next/static/chunks/0om590q-tq0l9.js",
+				"/_next/static/chunks/1-uf94uxvovbm.js",
+				"/_next/static/chunks/19oo2x0jj-xjk.js",
+				"/_next/static/chunks/1_tt0uj4i1iev.js",
+				"/_next/static/chunks/1cbl236v59rkz.js",
+				"/_next/static/chunks/229k-tfm0svxj.js",
+				"/_next/static/chunks/2j5vg8jeruf4x.css",
+				"/_next/static/chunks/34d35wto3ad07.css",
+				"/_next/static/chunks/3o_akfi1c71u7.js",
+				"/_next/static/chunks/3srfjz42u14tx.js",
+				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+			]
+		},
+		"/exemplos/integracao": null
+	},
+	"union": {
+		"js": {
+			"files": 12,
+			"raw": 612305,
+			"gzip": 184192
+		},
+		"css": {
+			"files": 2,
+			"raw": 121462,
+			"gzip": 19279
+		}
+	},
+	"storybook": {
+		"js": {
+			"files": 202,
+			"raw": 10275788,
+			"gzip": 2576448
+		},
+		"css": {
+			"files": 2,
+			"raw": 107154,
+			"gzip": 16692
+		},
+		"duplicateCss": []
+	},
+	"errors": []
+}

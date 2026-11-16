@@ -146,7 +146,11 @@ for (const width of [390, 1440]) {
 							matchedRules[index]++;
 							let targetsSurface = false;
 							for (const selector of rule.selectorText.split(',')) {
-								const subject = selector.trim().split(/[\s>+~]+/).at(-1) ?? '';
+								const subject =
+									selector
+										.trim()
+										.split(/[\s>+~]+/)
+										.at(-1) ?? '';
 								if (targetClass.test(subject) && subject.includes(':hover')) {
 									targetsSurface = true;
 								}

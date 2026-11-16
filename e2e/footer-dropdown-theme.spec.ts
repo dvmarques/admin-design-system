@@ -103,9 +103,7 @@ for (const width of [320, 390, 768, 1440]) {
 }
 
 for (const theme of ['light', 'dark'] as const) {
-	test(`grouped action menu in the real Demo inherits the ${theme} theme`, async ({
-		page,
-	}) => {
+	test(`grouped action menu in the real Demo inherits the ${theme} theme`, async ({ page }) => {
 		await page
 			.context()
 			.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);

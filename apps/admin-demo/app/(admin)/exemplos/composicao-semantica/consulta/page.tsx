@@ -109,7 +109,7 @@ export default function SemanticConsultationPage() {
 							Limpar filtro
 						</AdsButton>
 					</div>
-					<div className="ads-layout-cluster" aria-label="Estados de demonstração">
+					<div className="ads-layout-cluster" role="group" aria-label="Estados de demonstração">
 						<AdsButton
 							type="button"
 							variant="secondary"

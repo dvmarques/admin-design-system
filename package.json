@@ -14,7 +14,7 @@
 	],
 	"scripts": {
 		"prepare": "husky",
-		"format": "prettier --check . || (prettier --write e2e/visual-audit-findings.spec.ts && git diff -- e2e/visual-audit-findings.spec.ts && exit 1)",
+		"format": "prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",

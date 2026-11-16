@@ -125,7 +125,7 @@ test('ThemeToggle: a demo renderiza o tema inicial antes de qualquer clique', as
 });
 
 for (const width of [390, 1440]) {
-	test(`superfícies informativas não têm elevação por hover em ${width}px`, async ({ page }) => {
+	test(`painéis sem elevação no hover em ${width}px`, async ({ page }) => {
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto('/componentes');
 
@@ -160,11 +160,10 @@ for (const width of [390, 1440]) {
 								return classPattern[name].test(target) && target.includes(':hover');
 							});
 							if (!targetsSurfaceOnHover) continue;
-							const effects = ['transform', 'box-shadow', 'translate'].filter((property) =>
-								rule.style.getPropertyValue(property) !== '',
-							);
-							if (effects.length > 0) {
-								hoverElevation[name].push(`${rule.selectorText}: ${effects.join(', ')}`);
+							for (const property of ['transform', 'box-shadow', 'translate']) {
+								if (rule.style.getPropertyValue(property)) {
+									hoverElevation[name].push(`${rule.selectorText}: ${property}`);
+								}
 							}
 						}
 					}

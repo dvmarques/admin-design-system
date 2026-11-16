@@ -54,3 +54,10 @@
 - A rodada de CI subsequente mediu o JS/CSS publicado de `admin` em **173.020 bytes**, acima de 171.400. O teto foi corrigido para **173.100 bytes** (+80 bytes de folga) sem alterar gzip ou cenários sem evidência.
 
 - O `inspect:packages` continuou após corrigir orçamento raw de `admin`: todos os cenários anteriores passaram, e `admin-public` mediu **71.749 bytes** JS minificado (limite 71.800), **24.125 bytes** JS gzip (limite 24.200), **104.369 bytes** CSS minificado (limite anterior 103.000). Teto de CSS corrigido para **104.400** (+31 bytes de folga), sem alterar outros cenários. O teto de CSS gzip foi ajustado conservadoramente para **15.700** (+250 bytes contra limite anterior 15.450) e exige evidência da execução seguinte.
+
+## Integração real no Admin Demo — revisão adicional
+
+- O layout administrativo compartilhado em `apps/admin-demo/app/(admin)/layout.tsx` já utiliza `AdsAdminShell` com header, sidebar e controles de tema/conta. Não criar outro shell ou outra página administrativa.
+- `DemoFooter` atua como consumidor opt-in do slot: apresenta o footer apenas na rota existente `/exemplos/composicao-semantica/consulta`. O componente ocupa o lugar exigido pelo contrato (irmão de Body); nas demais rotas não renderiza footer nem reserva espaço. A decisão evita mudanças desnecessárias nos baselines visuais de outras páginas.
+- No conteúdo desta rota, preservar o link atual "Novo cadastro" e acrescentar um dropdown de navegação com `Header`, `Divider`, grupos semânticos e ações reais do Demo via Next Router.
+- Os E2E de integração devem comprovar ausência do footer na visão geral, presença no fluxo de consulta, um único shell/main/sidebar, sem overflow nas quatro larguras, navegação por teclado, mudança de rota e herança de tema do portal. Não atualizar snapshots sem revisão visual.

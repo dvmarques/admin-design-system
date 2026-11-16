@@ -20,6 +20,7 @@ antes de qualquer regeneração de snapshots Linux; não aumentar tolerâncias.
 
 Os registros abaixo retratam a implementação histórica da issue #268 em
 31/10/2026 e preservam seus dados de origem; não indicam os pins atuais.
+
 ## Inventário em 31/10/2026
 
 | Workflow                      | Eventos / código executado                                                | Actions externas e contêiner                                                                                       | Permissões e riscos                                                                                                   |

@@ -10,6 +10,10 @@ para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.4] - Em andamento
 
+#### Fixed
+
+- A publicação dos quatro pacotes npm tolera propagação do registry por até 150 segundos por pacote, sem avançar antes de verificar integridade; falhas continuam recuperáveis por reexecução idempotente. (#338, OpenSpec `issue-338-npm-registry-propagation`)
+
 ### [0.1.3] - 16-nov-2026
 
 #### Added

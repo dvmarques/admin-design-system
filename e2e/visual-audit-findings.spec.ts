@@ -124,7 +124,6 @@ test('ThemeToggle: a demo renderiza o tema inicial antes de qualquer clique', as
 	await expect(area.locator('[data-theme="light"]').first()).toBeVisible();
 });
 
-
 for (const width of [390, 1440]) {
 	test(`superfícies informativas não sugerem clique ao passar o mouse em ${width}px`, async ({
 		page,

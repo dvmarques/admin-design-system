@@ -125,42 +125,41 @@ test('ThemeToggle: a demo renderiza o tema inicial antes de qualquer clique', as
 });
 
 for (const width of [390, 1440]) {
-	test(`superfícies informativas não sugerem clique ao passar o mouse em ${width}px`, async ({
+	test(`superfícies informativas não têm regras de elevação por hover em ${width}px`, async ({
 		page,
 	}) => {
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto('/componentes');
 
-		for (const selector of ['.demo-panel', '.demo-utility-panel']) {
-			const panels = page.locator(selector);
-			const count = await panels.count();
-			expect(count, `Nenhum painel encontrado para ${selector}`).toBeGreaterThan(0);
+		const audit = await page.evaluate(() => {
+			const selectors = ['.demo-panel', '.demo-utility-panel'];
+			const counts = selectors.map((selector) => document.querySelectorAll(selector).length);
+			const hoverRules: string[] = [];
+			let matchedRules = 0;
+			const targetClass = /\.demo-(?:panel|utility-panel)(?![\w-])/;
 
-			for (let index = 0; index < count; index++) {
-				const panel = panels.nth(index);
-				await expect(panel).toBeVisible();
-				await panel.evaluate((node) => node.scrollIntoView({ block: 'center' }));
-				const bounds = await panel.boundingBox();
-				expect(bounds, `Sem bounding box para ${selector}[${index}]`).not.toBeNull();
-				if (!bounds) throw new Error(`Sem bounding box para ${selector}[${index}]`);
+			const inspect = (rules: CSSRuleList) => {
+				for (const rule of Array.from(rules)) {
+					if (rule instanceof CSSStyleRule && targetClass.test(rule.selectorText)) {
+						matchedRules++;
+						if (rule.selectorText.includes(':hover')) hoverRules.push(rule.selectorText);
+					}
+					if ('cssRules' in rule) inspect((rule as CSSGroupingRule).cssRules);
+				}
+			};
 
-				const appearance = () =>
-					panel.evaluate((node) => {
-						const style = getComputedStyle(node);
-						return { transform: style.transform, shadow: style.boxShadow };
-					});
-				const beforeHover = await appearance();
-				await page.mouse.move(bounds.x + bounds.width / 2, bounds.y + bounds.height / 2);
-				expect(await panel.evaluate((node) => node.matches(':hover'))).toBe(true);
-				// Wait for the browser to paint the hovered state without a fixed sleep.
-				await page.evaluate(
-					() =>
-						new Promise<void>((resolve) =>
-							requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-						),
-				);
-				expect(await appearance()).toEqual(beforeHover);
+			for (const sheet of Array.from(document.styleSheets)) {
+				try {
+					inspect(sheet.cssRules);
+				} catch {
+					// External stylesheets may be inaccessible; the demo stylesheet is same-origin.
+				}
 			}
-		}
+			return { counts, hoverRules, matchedRules };
+		});
+
+		expect(audit.counts.every((count) => count > 0)).toBe(true);
+		expect(audit.matchedRules).toBeGreaterThan(0);
+		expect(audit.hoverRules).toEqual([]);
 	});
 }

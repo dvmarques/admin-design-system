@@ -170,7 +170,7 @@ export async function verifyPlan(plan, version, releaseSha, directory) {
 
 export async function publishPlan(
 	plan,
-	{ getVersion, publishTarball, sleep = delay, now = () => performance.now() },
+	{ getVersion, publishTarball, sleep = delay, now = () => globalThis.performance.now() },
 ) {
 	// Examinar o estado INTEIRO antes da primeira publicação, evitando falha tardia previsível.
 	const existing = new Map();
@@ -229,16 +229,11 @@ export async function publishPlan(
 			await sleep(Math.min(backoffMs, timeLeftMs));
 		}
 		if (!confirmed) {
+			const limitSeconds = REGISTRY_CONFIRMATION.maxDurationMs / 1000;
 			throw new Error(
-				'Publicação não confirmada no registry: ' +
-					item.name +
-					'@' +
-					item.version +
-					' (' +
-					reads +
-					' leituras; janela de até ' +
-					REGISTRY_CONFIRMATION.maxDurationMs / 1000 +
-					' s). Confira nome, versão e integridade no npm e reexecute com o mesmo artifact ID.',
+				`Publicação não confirmada no registry: ${item.name}@${item.version} ` +
+					`(${reads} leituras; janela de até ${limitSeconds} s). ` +
+					'Confira nome, versão e integridade no npm e reexecute com o mesmo artifact ID.',
 			);
 		}
 	}
@@ -255,7 +250,9 @@ export async function publishPlan(
 export async function registryVersion(name, version, timeoutMs = 30_000) {
 	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
 	const response = await globalThis.fetch(url, {
-		signal: globalThis.AbortSignal.timeout(Math.max(1, Math.min(30_000, Math.ceil(timeoutMs)))),
+		signal: globalThis.AbortSignal.timeout(
+			Math.max(1, Math.min(30_000, Math.ceil(timeoutMs))),
+		),
 		headers: { accept: 'application/json' },
 		cache: 'no-store',
 	});

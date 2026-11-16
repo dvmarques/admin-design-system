@@ -58,7 +58,9 @@ test('índice integra shell, links, navegação por teclado e footer opt-in', as
 	await page.keyboard.press('Enter');
 	await expect(page).toHaveURL(/composicao-semantica\/consulta/);
 	await expect(page.getByRole('contentinfo')).toHaveCount(1);
-	await expect(page.getByRole('heading', { level: 1, name: 'Consulta administrativa' })).toBeVisible();
+	await expect(
+		page.getByRole('heading', { level: 1, name: 'Consulta administrativa' }),
+	).toBeVisible();
 });
 
 test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry', async ({ page }) => {

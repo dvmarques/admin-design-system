@@ -7,6 +7,7 @@
 - [x] 5. Implementar Dropdown.Header/Divider, retorno em Tab/Shift+Tab e testes de teclado, leitores de tela e portal.
 - [x] 6. Validar contratos de tema/tokens e overlays, corrigir integração comprovada, documentar SSR/CSP/ordem de CSS e criar demonstração pública dos três modos e tokens.
 - [x] 7. Publicar Admin Demo/Storybook funcionais para os três temas, footer presente/ausente e agrupamentos de menu; acrescentar E2E em 320/390/768/1440 e regressão visual.
+- [x] 7a. Integrar Footer opcional e Dropdown agrupado ao conteúdo da rota de consulta do Admin Demo existente, sem duplicar shell, e acrescentar E2E para navegação real e exportação do GitHub Pages com basePath/trailingSlash.
 - [ ] 8. Revisar todo o diff, atualizar changelog/docs, medir dependências/bundle, executar format, lint, typecheck, build, testes quality, E2E e OpenSpec strict, sem atualizar snapshots sem inspeção.
 - [ ] 9. Publicar PR em develop e atualizar issue; acompanhar CI, Security, Pages e corrigir falhas de logs no SHA atual.
 - [x] 10. Registrar como pendentes zoom nativo 200%, leitores de tela e validação visual humana até avaliação humana real.

@@ -12,3 +12,14 @@
 **Evidência dos gates concluídos:** CI [#43875243920](https://github.com/dvmarques/admin-design-system/actions/runs/43875243920), Security [#43875243630](https://github.com/dvmarques/admin-design-system/actions/runs/43875243630) e Pages [#43875243625](https://github.com/dvmarques/admin-design-system/actions/runs/43875243625), todos verdes no SHA `0e4e57e`. Medições em `docs/integrated-admin-compositions.md`. Revisão humana de zoom nativo 200%, leitor de tela e capturas continua pendente.
 
 **Fora das tasks:** merge, archive/sync e fechamento administrativo exigem autorização posterior.
+
+## Retorno da revisão da PR #335 — 16/11/2026
+
+- [x] 9. Alinhar o rótulo do código desabilitado com a propriedade `disabled` e atualizar a asserção E2E.
+- [x] 10. Limpar a ação de linha ao mudar para carregando, erro, dados ou tentar novamente; cobrir todas as transições em E2E.
+- [x] 11. Registrar a justificativa para ausência de comparativo paritário Next.js/Storybook, sem atribuir diferenças históricas à #320 nem mudar budgets.
+- [ ] 12. Registrar resultados de revisão humana de capturas, zoom nativo 200% e NVDA/VoiceOver, ou obter aprovação explícita de exceção.
+- [ ] 13. Reconferir o novo HEAD em CI, Security e Pages; adicionar evidências na PR e obter aceite do comparativo de rotas ou de sua exceção.
+
+A aprovação anterior da CI se refere ao SHA `0e4e57e`, e não comprova
+estas correções. Merge, archive/sync e fechamento continuam bloqueados.

@@ -61,6 +61,34 @@ Pages; os workflows de [Security](https://github.com/dvmarques/admin-design-syst
 e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/43875243625)
 concluíram com sucesso. O deploy real é pulado em PRs, por política.
 
+### Limite do comparativo de bundles do consumidor — revisão da PR #335
+
+Os números acima medem **artefatos publicados dos pacotes**, não o JavaScript
+efetivamente carregado por cada rota Next.js nem os chunks do Storybook.
+Embora a #320 não modifique `packages/`, manifests ou lockfile, isso **não**
+prova que os bundles das aplicações tenham tamanho idêntico: as composições
+podem alterar os chunks do consumidor.
+
+**Justificativa técnica para não apresentar um delta:** os relatórios preservados
+da CI não trazem uma medição paritária, por rota e por chunk, tanto da base
+`develop` (`157bb339bb31b483c6acbbfaaa4370d5d6653893`) quanto da
+branch da PR, usando exatamente a mesma toolchain e dependências.
+Comparar totais de pacote de commits históricos com o build atual do Demo
+ou do Storybook produziria um delta sem significado. Por isso, o
+**antes/depois Next.js e Storybook permanece não medido**; os budgets
+distribuíveis aprovados **não devem ser relatados como substitutos**.
+
+Para obter uma comparação válida, fazer builds limpos e isolados da base
+e do HEAD com Node 24, npm 11.19.1 e `npm ci`, registrar SHAs e ambiente,
+extrair tamanhos brutos e gzip dos mesmos assets/rotas Next.js e chunks
+Storybook, distinguindo chunks compartilhados para não contá-los duas
+vezes. Comparar apenas saídas equivalentes e anexar os relatórios à PR.
+
+**Aceite:** a justificativa acima documenta a limitação da evidência,
+mas não constitui medição nem aprovação automática de exceção. O responsável
+deve solicitar o comparativo reproduzível ou aprovar expressamente a
+exceção antes de considerar esse requisito encerrado. Não elevar budgets.
+
 ## Dependências e limites
 
 Épico #315: #316/PR #321, #317/PR #326, #318/PR #327 e #319/PR #328 integrados em `develop` antes desta branch. Sem archive, merge ou fechamento administrativo nesta etapa.

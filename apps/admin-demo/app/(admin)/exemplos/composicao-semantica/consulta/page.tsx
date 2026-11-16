@@ -31,6 +31,10 @@ export default function SemanticConsultationPage() {
 	const [page, setPage] = useState(1);
 	const [view, setView] = useState<'dados' | 'carregando' | 'erro'>('dados');
 	const [lastAction, setLastAction] = useState<string | null>(null);
+	function changeView(nextView: typeof view) {
+		setView(nextView);
+		setLastAction(null);
+	}
 	const router = useRouter();
 	const results = customers.filter((row) =>
 		row.name.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')),
@@ -110,13 +114,13 @@ export default function SemanticConsultationPage() {
 						</AdsButton>
 					</div>
 					<div className="ads-layout-cluster" role="group" aria-label="Estados de demonstração">
-						<AdsButton type="button" variant="secondary" onClick={() => setView('carregando')}>
+						<AdsButton type="button" variant="secondary" onClick={() => changeView('carregando')}>
 							Simular carregamento
 						</AdsButton>
-						<AdsButton type="button" variant="secondary" onClick={() => setView('erro')}>
+						<AdsButton type="button" variant="secondary" onClick={() => changeView('erro')}>
 							Simular erro
 						</AdsButton>
-						<AdsButton type="button" variant="secondary" onClick={() => setView('dados')}>
+						<AdsButton type="button" variant="secondary" onClick={() => changeView('dados')}>
 							Mostrar dados
 						</AdsButton>
 					</div>
@@ -126,7 +130,7 @@ export default function SemanticConsultationPage() {
 						<div role="alert" className="ads-layout-stack">
 							<p>Não foi possível carregar os registros fictícios.</p>
 							<div>
-								<AdsButton type="button" onClick={() => setView('dados')}>
+								<AdsButton type="button" onClick={() => changeView('dados')}>
 									Tentar novamente
 								</AdsButton>
 							</div>

@@ -207,7 +207,6 @@ A conferência do encerramento encontrou 16 testes de orçamento pulados indevid
 
 A comparação pareada da varredura inicial de 328 screenshots com o artefato pós-merge de 336 capturas, a investigação dos sete estados de teclado/zoom com diferenças de enquadramento e a classificação dos findings estão documentadas em [Reconciliação de evidências visuais #152](visual-audit-reconciliation-152.md). A revisão de pranchas não representa inspeção perceptual individual integral; a issue permanece aberta e exige autorização antes de merge ou fechamento.
 
-
 ## Triagem da affordance dos painéis informativos — #152
 
 A hipótese original sobre `.demo-panel` e `.demo-utility-panel` foi confirmada

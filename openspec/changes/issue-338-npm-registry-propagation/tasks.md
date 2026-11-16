@@ -7,11 +7,11 @@
 
 ## 2. Implementação
 
-- [ ] 2.1 Implementar confirmação temporalmente limitada com backoff, timeout HTTP pelo saldo e diagnóstico explícito.
-- [ ] 2.2 Limitar o job npm sem alterar OIDC, provenance, permissões ou concorrência.
-- [ ] 2.3 Testar propagação após >30 s, esgotamento da janela, integridade divergente e idempotência sem sleeps reais.
-- [ ] 2.4 Atualizar procedimento de release e spec, avaliando inclusão no changelog pela política editorial.
-- [ ] 2.5 Revisar código, testes, diffs, compatibilidade e riscos.
+- [x] 2.1 Implementar confirmação temporalmente limitada com backoff, timeout HTTP pelo saldo e diagnóstico explícito.
+- [x] 2.2 Limitar o job npm sem alterar OIDC, provenance, permissões ou concorrência.
+- [x] 2.3 Testar propagação após >30 s, esgotamento da janela, integridade divergente e idempotência sem sleeps reais.
+- [x] 2.4 Atualizar procedimento de release e spec, avaliando inclusão no changelog pela política editorial.
+- [x] 2.5 Revisar código, testes, diffs, compatibilidade e riscos.
 
 ## 3. Verificação
 

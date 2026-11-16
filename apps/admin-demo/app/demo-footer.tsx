@@ -7,8 +7,8 @@ import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
 /** O consumidor escolhe em quais páginas utiliza a região opt-in do shell. */
 export function DemoFooter() {
 	const pathname = usePathname();
-	const isConsultation = pathname?.replace(/\/$/, '').endsWith('/exemplos/composicao-semantica/consulta');
-	if (!isConsultation) return null;
+	const currentPath = pathname?.replace(/\/$/, '');
+	if (!currentPath?.endsWith('/exemplos/composicao-semantica/consulta')) return null;
 
 	return (
 		<AdsAdminShell.Footer

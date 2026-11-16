@@ -77,6 +77,9 @@ export default function SemanticFormPage() {
 									}}
 								/>
 							</AdsField>
+							<AdsField label="Código (somente leitura)">
+								<AdsInput value="DEMO-001" disabled />
+							</AdsField>
 						</div>
 					</section>
 					<section

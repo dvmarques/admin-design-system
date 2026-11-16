@@ -9,19 +9,19 @@
 	},
 	"components-public": {
 		"entry": "scripts/scenarios/components.mjs",
-		"bytes": 33420,
-		"gzipBytes": 11880,
+		"bytes": 33600,
+		"gzipBytes": 12000,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 58000,
-		"cssGzipBytes": 9650
+		"cssBytes": 63000,
+		"cssGzipBytes": 10400
 	},
 	"masked-input-public": {
 		"entry": "scripts/scenarios/masked-input.mjs",
 		"bytes": 74100,
 		"gzipBytes": 20900,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 58000,
-		"cssGzipBytes": 9650
+		"cssBytes": 63000,
+		"cssGzipBytes": 10400
 	},
 	"highlighted-code-public": {
 		"entry": "scripts/scenarios/highlighted-code.mjs",
@@ -33,14 +33,14 @@
 	},
 	"admin-public": {
 		"entry": "scripts/scenarios/admin.mjs",
-		"bytes": 71440,
-		"gzipBytes": 24050,
+		"bytes": 71800,
+		"gzipBytes": 24200,
 		"cssFiles": [
 			"packages/tokens/dist/tokens.css",
 			"packages/components/dist/styles.css",
 			"packages/admin/dist/styles.css"
 		],
-		"cssBytes": 97800,
-		"cssGzipBytes": 14800
+		"cssBytes": 104400,
+		"cssGzipBytes": 15700
 	}
 }

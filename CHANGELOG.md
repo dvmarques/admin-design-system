@@ -4,9 +4,35 @@ Aqui são registradas as principais inclusões, correções e evoluções do Adm
 Design System.
 
 O formato segue as convenções do Keep a Changelog. As mudanças são organizadas
-por versão e pelas changes correspondentes do OpenSpec.
+por versão e pelas changes correspondentes do OpenSpec. Consulte a
+[política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286)
+para distinguir mudanças públicas de manutenção interna.
 
-### [0.1.3] - Em andamento
+### [0.1.4] - Em andamento
+
+### [0.1.3] - 16-nov-2026
+
+#### Added
+
+- Novo `AdsTimePicker` (12h/24h, `HH:mm` canônico, passo, limites e validação), com exemplos no Admin Demo e Storybook. Orçamentos de JS/CSS de `components` revistos. (#144, OpenSpec `add-ads-time-picker-144`)
+- Novo `AdsMultiSelect` com busca, chips removíveis, seleção controlada/não controlada, limites e serialização de formulário. Orçamento de JS/CSS de `components` revisto. (#143, OpenSpec `add-ads-multi-select-143`)
+- Novo `AdsOTPInput` para códigos numéricos (comprimento configurável, colagem, autofill, estados controlados e integração a `AdsField`), com exemplos no Demo e Storybook. (#146, OpenSpec `add-ads-otp-input-146`)
+- Tokens públicos opcionais de cor da sidebar e do header do Admin Shell (`--ads-sidebar-*`, `--ads-header-*`) com fallback para os tokens globais; sem override, as cores não mudam. (#306, OpenSpec `issue-306-component-color-overrides`)
+- Novo `AdsIconSlot` para ícones React/SVG próprios, sem fornecedor obrigatório, com overrides opcionais em tema, alerta, toast e conta; `AdsIcon` segue compatível. (#316, OpenSpec `issue-316-agnostic-icon-slots`)
+- Novo `AdsPageHeader` (H1, descrição e ações responsivas), padrão semântico de seções e três exemplos no Demo e Storybook. Teto de JS/CSS de `components` ajustado. (#317, OpenSpec `issue-317-semantic-page-composition`)
+- Classes CSS opt-in de layout responsivo (`ads-layout-container`, `-stack`, `-grid`, `-cluster`) em `components`, sem componentes React novos nem exigir Tailwind no consumidor. (#318, OpenSpec `issue-318-responsive-layout`)
+- `AdsAdminShell.Footer` opcional (slots `start`/`end`), `AdsDropdown.Header`/`Divider`, Tab/Shift+Tab preservado em menus portados e integração de tema documentada. Orçamentos de `admin` e `components` revistos. (#319, OpenSpec `issue-319-footer-dropdown-theme`)
+- Matriz de composições de consulta, formulário, shell e indicadores no Demo e Storybook; foco preservado ao tentar novamente e ações de linha anunciadas sem interromper leitores de tela. Sem mudar APIs. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
+
+#### Changed
+
+- Publicação npm via Trusted Publisher/OIDC passa a ocorrer em `master`, no merge exato aprovado; artifact preparado em `develop`, integridade, back-merge e permissões mínimas preservados. **Procedimento de release alterado.** (#298, OpenSpec `issue-298-master-release-provenance`)
+- Admin Demo e Storybook publicados recebem CSP parcial compatível com HTML estático e meta de referrer; limitações do GitHub Pages documentadas, sem declarar mitigação de script ou clickjacking. (#269, OpenSpec `issue-269-pages-security-hardening`)
+- Verificador de distribuição do peer opcional aceita as saídas JSON do npm pack 11 e 12, mantendo o contrato de tarball. (#299)
+- Checks de PR otimizados: Chromium em dois shards com check agregado, qualidade sem repetição, Pages seletivo e cancelamento só de execuções obsoletas; transferência de baselines compatível com Windows e Unix. Sem reduzir cobertura nem gates de segurança. (#294)
+- Inventário rastreável da auditoria visual (82 exports) e auditor opt-in (`npm run audit:visual`). Ferramenta interna do repositório, sem mudança nos pacotes publicados. (#152, #313, OpenSpec `issue-152-visual-audit-inventory`)
+
+<!-- release-changelog-approved sha256:1ca77c9b56160aa38dc90252cc3fd9e7b008fcf5d25472b8bcd417e3f1e1b3a5 -->
 
 ### [0.1.2] - 02-nov-2026
 

@@ -179,6 +179,22 @@ export async function verifyReleaseManifests(plan, directory, sha) {
 	}
 }
 
+export function assertTrustedPrepareAncestry(
+	producerSha,
+	refName = process.env.GITHUB_REF_NAME,
+	trustedDevelopSha = process.env.TRUSTED_DEVELOP_SHA,
+) {
+	const target = refName === 'master' ? trustedDevelopSha : 'HEAD';
+	if (refName === 'master') {
+		assert.match(
+			target ?? '',
+			/^[a-f0-9]{40}$/,
+			'SHA confiável de develop obrigatório na publicação em master.',
+		);
+	}
+	execFileSync('git', ['merge-base', '--is-ancestor', producerSha, target]);
+}
+
 export async function fetchArtifact(id, version, sha, destination) {
 	assert.ok(
 		integer(id) && /^[1-9][0-9]*$/.test(String(id)),
@@ -205,8 +221,8 @@ export async function fetchArtifact(id, version, sha, destination) {
 		api('').then((r) => r.json()),
 	]);
 	const producer = validateOrigin({ artifact, run, workflow, repository, version, sha });
-	// develop is the immutable dispatch SHA checked out with full history, not a user ref.
-	execFileSync('git', ['merge-base', '--is-ancestor', run.head_sha, 'HEAD']);
+	// O commit da preparação pertence a develop, não necessariamente a master.
+	assertTrustedPrepareAncestry(run.head_sha);
 	const redirect = await api(`/actions/artifacts/${id}/zip`, { redirect: 'manual' });
 	const location = redirect.headers.get('location');
 	assert.ok(location?.startsWith('https://'), 'URL de download inválida.');
@@ -236,7 +252,17 @@ async function main() {
 	const [operation, version, sha, argument] = process.argv.slice(2);
 	if (operation === 'fetch') {
 		assert.equal(process.env.GITHUB_REPOSITORY, REPOSITORY);
-		assert.equal(process.env.GITHUB_REF_NAME, 'develop');
+		assert.ok(
+			['develop', 'master'].includes(process.env.GITHUB_REF_NAME),
+			'Fetch permitido somente em develop ou master.',
+		);
+		if (process.env.GITHUB_REF_NAME === 'master') {
+			assert.match(
+				process.env.TRUSTED_DEVELOP_SHA ?? '',
+				/^[a-f0-9]{40}$/,
+				'SHA confiável de develop obrigatório na publicação em master.',
+			);
+		}
 		return fetchArtifact(argument, version, sha, resolve('npm-release-artifacts'));
 	}
 	assert.equal(process.env.GITHUB_REPOSITORY, REPOSITORY);

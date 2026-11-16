@@ -156,6 +156,71 @@ Os valores aceitos são `light` e `dark`. Sem o atributo, os tokens usam a
 preferência `prefers-color-scheme` do sistema. A aplicação é responsável por
 persistir a preferência e aplicá-la antes da hidratação quando necessário.
 
+### Cores específicas da sidebar e do header
+
+O Admin Shell permite sobrescrever cores da sidebar e do header principal sem
+alterar os tokens globais. Todos os tokens abaixo são opcionais e usam fallback
+dinâmico. Nenhum valor padrão adicional é definido.
+
+```text
+--ads-sidebar-background         -> --ads-color-surface-raised
+--ads-sidebar-text               -> --ads-color-text
+--ads-sidebar-text-muted         -> --ads-color-text-muted
+--ads-sidebar-hover-background   -> --ads-color-surface-hover
+--ads-sidebar-active-background  -> --ads-color-surface-selected
+--ads-sidebar-active-text        -> --ads-color-on-surface-selected
+--ads-sidebar-active-indicator   -> --ads-color-primary
+--ads-sidebar-border             -> --ads-color-border
+--ads-sidebar-header-background  -> --ads-sidebar-background
+                                    ou --ads-color-surface-raised
+--ads-header-background          -> --ads-color-surface
+--ads-header-text                -> --ads-color-text
+--ads-header-border              -> --ads-color-border
+```
+
+O token `--ads-sidebar-active-background` já existia e continua compatível.
+Personalize a aplicação carregando seu CSS depois dos pacotes:
+
+```css
+[data-theme='light'] {
+	--ads-sidebar-background: #eaf2ff;
+	--ads-sidebar-active-background: #cfe0ff;
+}
+
+[data-theme='dark'] {
+	--ads-header-background: #192c46;
+	--ads-header-text: #f8fafc;
+}
+```
+
+As cores dos exemplos não alteram os defaults da biblioteca. Sem override, a
+sidebar e o header continuam seguindo os tokens globais atuais. A sidebar
+desktop e o Drawer móvel aceitam o fundo específico; o contêiner da navegação
+dentro do Drawer permanece transparente e o cabeçalho móvel é transparente
+por padrão, exceto quando `--ads-sidebar-header-background` é definido.
+
+Use `[data-theme='light']` e `[data-theme='dark']` no CSS global para incluir
+o Drawer portado. Uma variável definida somente em um contêiner local não
+alcança necessariamente um portal. Os tokens específicos alteram os elementos
+do shell; componentes compostos dentro dele podem ter tokens próprios.
+Ao personalizar, valide contraste, hover, seleção e foco nos dois temas.
+
+Detalhes do contrato:
+
+- Esses doze nomes são os únicos tokens públicos de cor do shell. Outras
+  variáveis `--ads-sidebar-*` (`-header-min-height`, `-toggle-size`,
+  `-selection-size`, `-compact-content-width`, `-scrollbar-size`) são internas
+  de layout e não devem ser sobrescritas.
+- `--ads-header-text` define a cor herdada pelo header principal; filhos com cor
+  própria (por exemplo, botões e ícones de componentes) não são afetados.
+- `--ads-sidebar-text` e `--ads-sidebar-text-muted` valem para a sidebar
+  expandida, recolhida, o cabeçalho da sidebar e o Drawer móvel. O anel de foco
+  continua `--ads-color-focus-ring` e não possui token específico.
+- Sob `prefers-contrast: more`, os tokens globais ganham valores de maior
+  contraste. Um override específico definido pela aplicação prevalece sobre
+  eles; a aplicação responde pelo contraste das cores escolhidas.
+- Em `forced-colors: active`, as cores do sistema substituem os tokens.
+
 ### Controle de preferência: Claro, Escuro e Sistema
 
 `AdsThemeControl` oferece as três preferências (`light`, `dark` e `system`). Ele
@@ -2091,3 +2156,34 @@ export function ImportarArquivo() {
 ```
 
 Para um fluxo modal, componha `AdsDialog` e `AdsButton` na aplicação. Consulte a rota de demonstração `/componentes/arquivos` para um envio simulado sem backend. Drag-and-drop não integra o MVP: o botão nativo acessível é o caminho de seleção obrigatório. O componente deve ser usado em uma fronteira Client Component no App Router; não requer Next.js dentro da biblioteca.
+
+## AdsMultiSelect — seleção múltipla (#143)
+
+Importe `AdsMultiSelect` de `@dvmarques/admin-ds-components` e use `AdsField` para rótulo, ajuda e mensagem de erro. As opções têm `value` (valor enviado ao formulário), `label` e, opcionalmente, `description`/`disabled`. Não repita `value` entre opções.
+
+```tsx
+'use client';
+import { AdsField, AdsMultiSelect } from '@dvmarques/admin-ds-components';
+
+export function Categorias() {
+	return (
+		<AdsField label="Categorias" description="Escolha até duas categorias.">
+			<AdsMultiSelect
+				name="categorias"
+				required
+				maxSelections={2}
+				options={[
+					{ value: 'a', label: 'A' },
+					{ value: 'b', label: 'B' },
+				]}
+			/>
+		</AdsField>
+	);
+}
+```
+
+Use `defaultValue={['a']}` para estado não controlado ou `value`/`onValueChange` para estado controlado. `name` gera um input hidden por valor: `FormData.getAll('categorias')` recebe a lista de values, nunca o texto pesquisado; `disabled` omite os valores. A validação `required` pertence ao input focável, não aos hidden. Teclado: setas percorrem opções disponíveis, Enter alterna, Escape fecha, Backspace com busca vazia remove a última seleção, Tab segue fluxo nativo. `readOnly` bloqueia mudanças, `maxSelections` impede apenas novas escolhas e `clearable` controla a limpeza. A lista é local e não faz requisições de rede.
+
+## Composição opcional de footer, menus agrupados e temas (#319)
+
+Consulte [o guia de footer, agrupamentos de menu e temas](footer-dropdown-theme-integration.md) para os exemplos completos com `AdsAdminShell.Footer`, `AdsDropdown.Header`/`Divider`, Tab/Shift+Tab em menus portados, tokens, SSR/hidratação e responsabilidades do consumidor. Essas APIs são aditivas e não alteram os valores padrão dos temas.

@@ -8,6 +8,7 @@ import { join } from 'node:path';
 import test from 'node:test';
 import {
 	artifactName,
+	assertTrustedPrepareAncestry,
 	extractArchive,
 	fetchArtifact,
 	PREPARE_WORKFLOW,
@@ -19,6 +20,8 @@ import {
 import { PACKAGE_ORDER } from './npm-publication.mjs';
 
 const sha = execFileSync('git', ['rev-parse', 'HEAD'], { encoding: 'utf8' }).trim();
+// No teste de fetch, simular o histórico confiável quando a CI roda em master.
+if (process.env.GITHUB_REF_NAME === 'master') process.env.TRUSTED_DEVELOP_SHA = sha;
 const version = JSON.parse(
 	execFileSync('git', ['show', `${sha}:package.json`], { encoding: 'utf8' }),
 ).version;
@@ -121,6 +124,14 @@ test('origem exige run manual bem-sucedido do workflow em develop do mesmo repo'
 		mutate(changed);
 		assert.throws(() => validateOrigin(changed));
 	}
+});
+
+test('identidade do produtor em master exige SHA confiável de develop', () => {
+	assert.doesNotThrow(() => assertTrustedPrepareAncestry(sha, 'master', sha));
+	assert.throws(() => assertTrustedPrepareAncestry(sha, 'master', ''), /SHA confiável/);
+	assert.throws(() => assertTrustedPrepareAncestry(sha, 'master', 'abc'), /SHA confiável/);
+	assert.throws(() => assertTrustedPrepareAncestry('f'.repeat(40), 'master', sha));
+	assert.doesNotThrow(() => assertTrustedPrepareAncestry(sha, 'develop'));
 });
 
 test('artifact expirado, sem data ou de outro merge é recusado', () => {

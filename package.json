@@ -1,6 +1,6 @@
 {
 	"name": "admin-design-system",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"private": true,
 	"license": "MIT",
 	"packageManager": "npm@11.19.1",
@@ -31,7 +31,7 @@
 		"validate:impact:lint": "node scripts/validate-impact.mjs lint",
 		"validate:impact:types": "node scripts/validate-impact.mjs typecheck",
 		"validate:impact:test": "node scripts/validate-impact.mjs test",
-		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs ./scripts/ci-impact.test.mjs ./scripts/ci-scope.test.mjs ./scripts/validate-impact.test.mjs ./scripts/ci-metrics.test.mjs ./scripts/ci-workflow.test.mjs ./scripts/visual-baseline-transfer.test.mjs ./scripts/security-audit.test.mjs ./scripts/codeql-gate.test.mjs ./scripts/quality-budget.test.mjs ./scripts/masked-input-distribution.test.mjs ./scripts/eslint-config.test.mjs ./scripts/codex-hooks.test.mjs",
+		"test:ci": "node --test ./scripts/ci-changed-paths.test.mjs ./scripts/ci-impact.test.mjs ./scripts/ci-scope.test.mjs ./scripts/validate-impact.test.mjs ./scripts/ci-metrics.test.mjs ./scripts/ci-workflow.test.mjs ./scripts/visual-baseline-transfer.test.mjs ./scripts/security-audit.test.mjs ./scripts/codeql-gate.test.mjs ./scripts/quality-budget.test.mjs ./scripts/masked-input-distribution.test.mjs ./scripts/npm-pack-output.test.mjs ./scripts/eslint-config.test.mjs ./scripts/codex-hooks.test.mjs ./scripts/visual-audit-human-review.test.mjs ./scripts/visual-audit-inventory.test.mjs ./scripts/visual-audit-report.test.mjs ./scripts/visual-audit-coverage.test.mjs ./scripts/visual-audit-coverage-report.test.mjs ./scripts/visual-audit-a11y-report.test.mjs",
 		"test:quality": "npm run generate --workspace @dvmarques/admin-ds-tokens && npm run test:quiet && npm run test:release && npm run test:ci && npm run check:agent-skills && npm run check:generated --workspace @dvmarques/admin-ds-tokens",
 		"sync:agent-skills": "node ./scripts/sync-agent-skills.mjs",
 		"check:agent-skills": "node ./scripts/sync-agent-skills.mjs --check",
@@ -47,7 +47,8 @@
 		"release:validate": "node ./scripts/validate-release.mjs",
 		"release:notes": "node ./scripts/extract-release-notes.mjs",
 		"validate": "npm run format && npm run lint && npm run build && npm run test:output --workspace @admin-ds/docs && npm run verify:optional-peer && npm run typecheck && npm run test:quality && npm run test:e2e",
-		"verify:distribution": "node ./scripts/verify-public-tarballs.mjs"
+		"verify:distribution": "node ./scripts/verify-public-tarballs.mjs",
+		"audit:visual": "playwright test --config playwright.visual-audit.config.ts --reporter=list"
 	},
 	"lint-staged": {
 		"*.{js,mjs,cjs,ts,tsx}": [
@@ -58,16 +59,16 @@
 	},
 	"devDependencies": {
 		"@eslint/js": "^10.0.1",
-		"@playwright/test": "1.64.1",
-		"@storybook/addon-docs": "10.6.5",
-		"@storybook/react-vite": "10.6.5",
-		"@tailwindcss/cli": "^4.3.3",
+		"@playwright/test": "1.65.1",
+		"@storybook/addon-docs": "10.6.6",
+		"@storybook/react-vite": "10.6.6",
+		"@tailwindcss/cli": "^4.3.4",
 		"@testing-library/jest-dom": "^7.0.1",
 		"@testing-library/react": "^16.3.3",
 		"@types/node": "^24.19.2",
 		"@types/react": "^19.3.0",
 		"@types/react-dom": "^19.3.0",
-		"@vitest/coverage-v8": "5.0.5",
+		"@vitest/coverage-v8": "5.1.0",
 		"axe-core": "4.14.0",
 		"esbuild": "0.28.2",
 		"eslint": "^10.13.0",
@@ -77,11 +78,11 @@
 		"next": "^16.4.3",
 		"prettier": "^3.9.10",
 		"react-docgen-typescript": "^2.4.0",
-		"storybook": "10.6.5",
+		"storybook": "10.6.6",
 		"tailwindcss": "^4.3.3",
 		"typescript": "~6.0.3",
 		"typescript-eslint": "^8.72.1",
-		"vitest": "5.0.5"
+		"vitest": "5.1.0"
 	},
 	"dependencies": {
 		"react": "^19.3.1",

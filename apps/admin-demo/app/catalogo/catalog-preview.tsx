@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { AdsHighlightedCodeSnippet } from '@dvmarques/admin-ds-highlighted-code';
 import '@dvmarques/admin-ds-highlighted-code/styles.css';
 import { AdsField, AdsSelect } from '@dvmarques/admin-ds-components';
@@ -52,10 +53,25 @@ export function CatalogPreview({
 						src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/catalogo-shell/?theme=${theme}`}
 						style={{ width: '100%', height: '32rem', border: 0 }}
 					/>
+				) : demo === 'PageHeader' ? (
+					<div className="demo-page-header-preview-viewport">
+						<iframe
+							className="demo-page-header-preview-frame"
+							title="Cabeçalho semântico em documento independente"
+							src={`${process.env.NEXT_PUBLIC_BASE_PATH ?? ''}/catalogo-page-header/?theme=${theme}`}
+						/>
+					</div>
 				) : (
 					<Demo />
 				)}
 			</section>
+			{demo === 'PageHeader' ? (
+				<nav aria-label="Exemplos de páginas" className="demo-page-header-example-links">
+					<Link href="/exemplos/composicao-semantica/consulta">Consulta com tabela</Link>
+					<Link href="/exemplos/composicao-semantica/formulario">Formulário validado</Link>
+					<Link href="/exemplos/composicao-semantica/dashboard">Dashboard com cards</Link>
+				</nav>
+			) : null}
 			<p>
 				Interaja com os controles e navegue por Tab e pelas setas quando aplicável. O tema é
 				aplicado também aos painéis em portal. A largura limita o conteúdo do exemplo; overlays usam

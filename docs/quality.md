@@ -59,11 +59,18 @@ responsividade, hidratação do Next.js e fluxos completos entre componentes de
 servidor e cliente.
 
 [playwright.config.ts](../playwright.config.ts) define o endereço padrão da
-aplicação e localiza os testes no diretório `e2e/`. Na CI, os três jobs E2E
-usam a imagem oficial `mcr.microsoft.com/playwright:v1.62.0-noble`, que já
-contém os navegadores e bibliotecas do sistema. O Playwright npm continua sendo instalado pelo lockfile
+aplicação e localiza os testes no diretório `e2e/`. Na CI, a matriz E2E
+usa a imagem oficial `mcr.microsoft.com/playwright:v1.65.1-noble` fixada por
+digest OCI, que já contém os navegadores e bibliotecas do sistema. O Playwright npm continua sendo instalado pelo lockfile
 com `npm ci --ignore-scripts`; não se executa `playwright install-deps` nem
 cache de `~/.cache/ms-playwright` nos jobs migrados.
+
+A imagem atual é o **índice OCI** publicado em 13/11/2026 no
+[Microsoft Artifact Registry](https://mcr.microsoft.com/en-us/product/playwright/tags):
+`mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579`.
+O índice abrange as arquiteturas suportadas; não confundir seu digest com o
+manifesto de arquitetura. O `@playwright/test` e as transitivas
+`playwright`/`playwright-core` são fixados em 1.65.1 no lockfile.
 
 Por padrão o E2E serve o build de produção do admin demo (`next start`), então
 execute `npm run build` antes de rodar os testes. Para usar o servidor de
@@ -122,9 +129,10 @@ pelo menu principal. Firefox e WebKit também executam `dropdown-focus.spec.ts` 
 `theme-control.spec.ts` (esta última sobre `/catalogo/theme-control`). Não há
 snapshots nesses navegadores.
 
-Na CI, cada navegador é um job paralelo e independente da matrix:
-"Fluxos no navegador" (Chromium), "Fluxos no navegador (Firefox)" e "Fluxos no
-navegador (WebKit)". O WebKit do Playwright no Linux detecta quebras de motor,
+Na CI, a matriz executa dois shards Chromium (1/2 e 2/2) e mantém os checks
+"Fluxos no navegador (Firefox)" e "Fluxos no navegador (WebKit)". O required
+check "Fluxos no navegador" agrega o resultado de toda a matriz: uma falha em
+qualquer shard ou navegador bloqueia a PR. O WebKit do Playwright no Linux detecta quebras de motor,
 mas não garante paridade com o Safari. Para rodar um navegador isolado:
 `npx playwright test --project=firefox`.
 
@@ -285,4 +293,10 @@ O job **Qualidade rápida** publica dois artefatos por 14 dias:
 - `cobertura-node-ci`: dados brutos V8 (`NODE_V8_COVERAGE`) de `npm run test:ci`; não é uma porcentagem consolidada.
 - `cobertura-vitest`: relatório de `npm run test:coverage` (resumo, `coverage-summary.json` e `lcov`) dos testes React/Vitest sobre `packages/*/src`.
 
-Não há limite mínimo de cobertura nem serviço externo; os relatórios servem como evidência para inspeção.
+Na CI, o Vitest com cobertura usa timeout de 30 segundos por teste; o comando local
+`test:unit:quiet` mantém o timeout padrão do Vitest.
+
+O pipeline executa as suítes de CI e Vitest uma vez com as coberturas, em vez
+de repetir os testes apenas para coletar dados; o comando local `test:quality`
+permanece inalterado. Não há limite mínimo de cobertura nem serviço externo;
+os relatórios servem como evidência para inspeção.

@@ -61,6 +61,45 @@ test('build publica uma referência navegável para todo export da matriz #151',
 	}
 });
 
+test('manager e iframe publicados incluem somente CSP meta suportada e política de referrer', () => {
+	const expectedCsp = "object-src 'none'; base-uri 'self'; form-action 'self'";
+	for (const file of ['index.html', 'iframe.html']) {
+		const html = readFileSync(new URL('../storybook-static/' + file, import.meta.url), 'utf8');
+		const cspTag = html.match(/<meta\b[^>]*http-equiv="Content-Security-Policy"[^>]*>/i)?.[0];
+		assert.ok(cspTag, file + ': meta CSP ausente');
+		assert.equal(
+			cspTag.match(/content="([^"]*)"/)?.[1],
+			expectedCsp,
+			file + ': CSP parcial divergente',
+		);
+		assert.doesNotMatch(
+			cspTag,
+			/frame-ancestors|unsafe-inline|unsafe-eval|script-src/,
+			file + ': não declarar controles não implementados',
+		);
+		assert.ok(
+			html.includes('name="referrer" content="strict-origin-when-cross-origin"'),
+			file + ': referrer ausente',
+		);
+		const cspIndex = html.indexOf(cspTag);
+		// O Storybook injeta scripts próprios antes do head customizado do iframe; o meta só vale para o
+		// que vem depois. No manager exigimos que preceda todo script; em ambos, que nenhum elemento
+		// coberto pelas diretivas (base com href, object, embed, form) apareça antes dele.
+		if (file === 'index.html') {
+			const firstScript = html.search(/<script\b/i);
+			assert.ok(
+				firstScript === -1 || cspIndex < firstScript,
+				file + ': meta CSP deve preceder o primeiro script',
+			);
+		}
+		assert.doesNotMatch(
+			html.slice(0, cspIndex),
+			/<(base\b[^>]*\bhref=|object\b|embed\b|form\b)/i,
+			file + ': elemento coberto pela CSP aparece antes do meta',
+		);
+	}
+});
+
 test('Autodocs original e novas páginas não possuem IDs duplicados', () => {
 	const published = entries();
 	assert.equal(new Set(published.map((item) => item.id)).size, published.length);

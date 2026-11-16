@@ -4,6 +4,15 @@ O índice `/catalogo` oferece busca por nome, categoria e descrição. Cada expo
 
 A sidebar oferece grupos expansíveis por teclado, indicação de página ativa e fechamento automático após navegação móvel. As rotas `/`, `/clientes`, `/clientes/novo`, `/preferencias`, `/componentes`, `/componentes/datas`, `/componentes/overlays`, `/componentes/paginacao`, `/componentes/tabela-avancada`, `/data-display` e `/catalogo/lacunas` continuam disponíveis.
 
+## Integração das composições — #320
+
+O índice `/exemplos/integracao` reúne consulta, formulário, dashboard e shell sem
+duplicar o layout. A consulta cobre paginação, ações por linha, vazio, erro e
+carregamento; o formulário inclui campo desabilitado.
+
+O Storybook inclui a story **Patterns / Page composition / Integrated admin**.
+Consulte a [matriz dos cenários](integrated-admin-compositions.md).
+
 ## Convenção para novas demonstrações
 
 A sidebar distingue títulos de seção fixos (Componentes, Composições administrativas e Exemplos de aplicação), categorias expansíveis com ícones ou iniciais distintos e links internos recuados. Visão geral e Catálogo são links diretos. Os nomes do menu omitem `Ads`, preservado nas páginas e snippets. A composição pública é fornecida por `AdsAdminShell.Navigation`, `NavigationSection`, `NavigationGroup` e `NavigationItem`; a aplicação controla rotas e expansão. No desktop recolhido, ativar uma categoria expande a sidebar e abre o grupo. O drawer móvel mantém os rótulos completos.
@@ -16,6 +25,10 @@ A sidebar distingue títulos de seção fixos (Componentes, Composições admini
 
 O layout de página mostra nome, descrição, exemplos, orientações de composição, seletor de tema e largura, código e cópia com feedback/fallback. O tema sincroniza o documento e os portais; o seletor de largura limita o conteúdo à largura disponível (320px, 768px ou disponível). Overlays seguem a viewport real, por isso os testes também alteram a viewport do navegador. Exemplos não fazem chamadas remotas nem persistem dados de negócio.
 
+## Integração das composições na aplicação real — #319
+
+A rota existente `/exemplos/composicao-semantica/consulta` reutiliza o `AdsAdminShell` compartilhado, com header, sidebar, conta e controle de tema **sem duplicação**. Seu conteúdo demonstra `AdsDropdown.Header`/`Divider` em um menu de ações com grupos acessíveis e navegação funcional. O consumidor opta por renderizar `AdsAdminShell.Footer` nesse fluxo, como irmão de `Body` no shell; o footer segue ausente nas demais rotas. Esse exemplo complementa, sem substituir, o showcase isolado `/catalogo-shell/`. Verificações E2E cobrem larguras 320/390/768/1440, presença/ausência do footer, semântica do menu, teclado e os dois temas.
+
 ## Verificação e exclusões
 
 A mesma matriz de exports abaixo alimenta a geração de uma **referência de API técnica no Storybook**, rastreável por export público. O gerador confronta a matriz com os índices runtime dos pacotes e reutiliza as stories; mantenha esta lista atualizada na mesma entrega de novos componentes. Procedimento e limites de inferência: [`docs/storybook-api-reference.md`](storybook-api-reference.md). A validação da #193 confronta páginas efetivamente geradas, não somente as tags `autodocs`.
@@ -25,6 +38,8 @@ O teste `apps/admin-demo/catalog-coverage.test.ts` compara os exports runtime do
 Excluídos: exports `type` (não possuem runtime), `fixtureVariants` (mapa de estilos), `getAdsPaginationItems` (função de cálculo), `getAdsSmartTableCsv` (auxiliar CSV sem UI) e `useAdsAdminShell` (hook sem representação visual própria, exercitado pelos controles do shell). `AdsThemeControl`, `ThemeToggle` e `StyleFixture` têm exemplos próprios. `AdsAccountMenu`, `AdsNotificationCenter` e `AdsOrganizationSwitcher` (#185) têm showcases próprios na categoria "Conta e contexto": foto, iniciais e falha de imagem; leitura, filtros e estados de carregamento, vazio e erro; troca de organização com busca, estados e sidebar recolhida (painel baseado no `AdsCombobox` popover, #239); e a sidebar com e sem o seletor (`/catalogo-organizacao/?variante=com|sem`, carregada em `iframe` pelo showcase). No cabeçalho e na sidebar do demo os três componentes usam dados fictícios e ações com feedback local (Sair não encerra sessão real). A lista de exclusões é explícita: um novo export runtime não pode ser ignorado silenciosamente.
 
 Comandos concisos: `npx vitest run apps/admin-demo/catalog-coverage.test.ts --silent=passed-only`, `npm run test:e2e -- e2e/catalog.spec.ts --workers=4` e `npm run validate`. Diagnóstico: `npm run test:verbose` e `npm run test:e2e:verbose`. O build valida o consumo de CSS compilado pelo Next.js e o Storybook; não há dependência de Tailwind no consumidor.
+
+Os exemplos de [layout responsivo leve](responsive-layout.md) reutilizam as três rotas de composição semântica, sem acrescentar export React, duplicar catálogo ou alterar a navegação global. As classes `ads-layout-*` são CSS público, não membros de API JavaScript.
 
 ## Matriz export → demonstração
 
@@ -36,6 +51,8 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsBadge`                  | Básicos     | `/catalogo/badge`                    | `admin-flows.stories.tsx`, `admin-shell.stories.tsx`                |
 | `AdsAvatar`                 | Básicos     | `/catalogo/avatar`                   | `avatar.stories.tsx`                                                |
 | `AdsIcon`                   | Básicos     | `/catalogo/icon`                     | `icon.stories.tsx`                                                  |
+| `AdsIconSlot`               | Básicos     | `/catalogo/icon-slot`                | `icon-slot.stories.tsx`                                             |
+| `AdsPageHeader`             | Básicos     | `/catalogo/page-header`              | `page-composition.stories.tsx`                                      |
 | `AdsTypography`             | Básicos     | `/catalogo/typography`               | `admin-shell.stories.tsx`, `typography.stories.tsx`                 |
 | `AdsSurface`                | Básicos     | `/catalogo/surface`                  | `navigation.stories.tsx`, `surface.stories.tsx`                     |
 | `AdsLoadingIndicator`       | Básicos     | `/catalogo/loading-indicator`        | `loading-indicator.stories.tsx`                                     |
@@ -43,12 +60,14 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsSkeleton`               | Básicos     | `/catalogo/skeleton`                 | `data-display.stories.tsx`                                          |
 | `AdsSparkline`              | Básicos     | `/catalogo/sparkline`                | `dashboard.stories.tsx`, `sparkline.stories.tsx`                    |
 | `AdsInput`                  | Formulários | `/catalogo/input`                    | `admin-flows.stories.tsx`, `form.stories.tsx`                       |
+| `AdsOTPInput`               | Formulários | `/catalogo/otp-input`                | `otp-input.stories.tsx`                                             |
 | `AdsPasswordInput`          | Formulários | `/catalogo/password-input`           | `form.stories.tsx`                                                  |
 | `AdsMaskedInput`            | Formulários | `/catalogo/masked-input`             | `masked-input.stories.tsx` (subpath opcional)                       |
 | `AdsFileUpload`             | Formulários | `/catalogo/file-upload`              | `file-upload.stories.tsx`                                           |
 | `AdsTextarea`               | Formulários | `/catalogo/textarea`                 | `form.stories.tsx`                                                  |
 | `AdsSelect`                 | Formulários | `/catalogo/select`                   | `admin-flows.stories.tsx`, `form.stories.tsx`, `select.stories.tsx` |
 | `AdsCombobox`               | Formulários | `/catalogo/combobox`                 | `combobox.stories.tsx`                                              |
+| `AdsMultiSelect`            | Formulários | `/catalogo/multi-select`             | `multi-select.stories.tsx`                                          |
 | `AdsAutocomplete`           | Formulários | `/catalogo/autocomplete`             | `autocomplete.stories.tsx`                                          |
 | `AdsCheckbox`               | Formulários | `/catalogo/checkbox`                 | `form.stories.tsx`                                                  |
 | `AdsRadio`                  | Formulários | `/catalogo/radio`                    | `form.stories.tsx`                                                  |
@@ -59,6 +78,7 @@ Todos os links abaixo abrem exemplos executáveis. As famílias compartilham com
 | `AdsFieldMessage`           | Formulários | `/catalogo/field-message`            | `catalog-composition.stories.tsx`                                   |
 | `AdsInputGroup`             | Formulários | `/catalogo/input-group`              | `form.stories.tsx`, `catalog-composition.stories.tsx`               |
 | `AdsSelectionGroup`         | Formulários | `/catalogo/selection-group`          | `form.stories.tsx`                                                  |
+| `AdsTimePicker`             | Formulários | `/catalogo/time-picker`              | `time-picker.stories.tsx`                                           |
 | `AdsDatePicker`             | Formulários | `/catalogo/date-picker`              | `date-picker.stories.tsx`                                           |
 | `AdsBreadcrumb`             | Navegação   | `/catalogo/breadcrumb`               | `navigation.stories.tsx`                                            |
 | `AdsNav`                    | Navegação   | `/catalogo/nav`                      | `navigation.stories.tsx`                                            |
@@ -121,3 +141,7 @@ A sidebar agora mostra uma entrada por família de composição: Tabs, Accordion
 A busca continua indexando **cada export visual** e também os nomes de propriedades reais da API composta. Selecionar um subcomponente abre a página canônica e a sua seção identificada por âncora estável. Cada página lista os nomes exatos com papéis, API e exemplos; o código TSX interativo continua derivado do exemplo real.
 
 As rotas anteriores por export não são removidas da geração estática: funcionam como aliases navegáveis, inclusive em GitHub Pages. Novos links devem usar `/catalogo/<familia>#<secao>` para abrir diretamente a parte. A verificação de cobertura permanece por **export**, independentemente da quantidade de links na sidebar; novos componentes continuam exigindo demos e stories correspondentes.
+
+## Composição semântica de páginas (#317)
+
+A [orientação de H1–H4, seções e cards opcionais](page-composition.md) inclui três exemplos independentes de consulta com tabela, formulário validado e dashboard. A rota `/catalogo/page-header` demonstra a API pública do `AdsPageHeader`; as rotas `/exemplos/composicao-semantica/consulta`, `/exemplos/composicao-semantica/formulario` e `/exemplos/composicao-semantica/dashboard` mostram páginas completas, e `page-composition.stories.tsx` reúne os padrões no Storybook.

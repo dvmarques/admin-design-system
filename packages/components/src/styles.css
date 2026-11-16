@@ -575,3 +575,243 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		outline-offset: -2px;
 	}
 }
+
+/* AdsMultiSelect: CSS publicado e independente da configuração Tailwind do consumidor. */
+@layer components {
+	.ads-multi-select__control {
+		box-sizing: border-box;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--ads-spacing-1, 0.25rem);
+		min-height: var(--ads-dimension-field-md);
+		padding: 0.25rem 0.5rem;
+		border: 1px solid var(--ads-color-border-control);
+		border-radius: var(--ads-radius-md);
+		background: var(--ads-color-form-background);
+		color: var(--ads-color-text);
+	}
+	.ads-multi-select__control[data-size='sm'] {
+		min-height: var(--ads-dimension-field-sm);
+	}
+	.ads-multi-select__control[data-size='lg'] {
+		min-height: var(--ads-dimension-field-lg);
+	}
+	.ads-multi-select__control:focus-within {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+	.ads-multi-select__control--error {
+		border-color: var(--ads-color-form-invalid);
+	}
+	.ads-multi-select__control--disabled {
+		background: var(--ads-color-form-background-disabled);
+		/* Keep chip text at full opacity for 4.5:1 contrast in both themes. */
+		cursor: not-allowed;
+	}
+	.ads-multi-select__input {
+		box-sizing: border-box;
+		min-width: 7ch;
+		flex: 1 1 8rem;
+		width: 1%;
+		max-width: 100%;
+		padding: 0.25rem;
+		border: 0;
+		outline: none;
+		font: inherit;
+		font-size: var(--ads-typography-font-size-sm);
+		color: inherit;
+		background: transparent;
+	}
+	.ads-multi-select__input::placeholder {
+		color: var(--ads-color-text-muted);
+	}
+	.ads-multi-select__chip {
+		box-sizing: border-box;
+		display: inline-flex;
+		align-items: center;
+		gap: 0.25rem;
+		max-width: 100%;
+		padding: 0.1rem 0.35rem;
+		border-radius: var(--ads-radius-md);
+		background: var(--ads-color-surface-selected);
+		color: var(--ads-color-on-surface-selected);
+		font-size: var(--ads-typography-font-size-sm);
+	}
+	.ads-multi-select__chip-label {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+	.ads-multi-select__remove,
+	.ads-multi-select__clear {
+		flex: none;
+		border: 0;
+		border-radius: var(--ads-radius-sm);
+		padding: 0.1rem 0.3rem;
+		font: inherit;
+		background: transparent;
+		color: inherit;
+		cursor: pointer;
+	}
+	.ads-multi-select__clear {
+		font-size: var(--ads-typography-font-size-xs);
+		text-decoration: underline;
+	}
+	.ads-multi-select__remove:focus-visible,
+	.ads-multi-select__clear:focus-visible {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: 2px;
+	}
+	.ads-multi-select__popup {
+		position: absolute;
+		z-index: var(--ads-layer-overlay, 100);
+		inset-inline: 0;
+		top: calc(100% + 0.25rem);
+		box-sizing: border-box;
+		min-width: min(100%, 15rem);
+		max-height: min(18rem, 50vh);
+		overflow-y: auto;
+		border: 1px solid var(--ads-color-border);
+		border-radius: var(--ads-radius-md);
+		background: var(--ads-color-surface-raised);
+		box-shadow: 0 6px 18px rgb(0 0 0 / 12%);
+		color: var(--ads-color-text);
+	}
+	.ads-multi-select__list {
+		list-style: none;
+		margin: 0;
+		padding: 0.25rem;
+	}
+	.ads-multi-select__option {
+		display: flex;
+		align-items: start;
+		gap: 0.5rem;
+		padding: 0.5rem;
+		border-radius: var(--ads-radius-sm);
+		cursor: pointer;
+		font-size: var(--ads-typography-font-size-sm);
+	}
+	.ads-multi-select__option[aria-selected='true'] {
+		background: var(--ads-color-surface-selected);
+		color: var(--ads-color-on-surface-selected);
+	}
+	.ads-multi-select__option[data-active='true'] {
+		outline: 2px solid var(--ads-color-focus-ring);
+		outline-offset: -2px;
+	}
+	.ads-multi-select__option[aria-disabled='true'] {
+		cursor: not-allowed;
+		opacity: 0.55;
+	}
+	.ads-multi-select__check {
+		min-width: 1.25rem;
+	}
+	.ads-multi-select__description {
+		display: block;
+		color: var(--ads-color-text-muted);
+	}
+	.ads-multi-select__message {
+		margin: 0;
+		padding: 0.75rem;
+		font-size: var(--ads-typography-font-size-sm);
+	}
+}
+@media (forced-colors: active) {
+	.ads-multi-select__chip,
+	.ads-multi-select__option[aria-selected='true'] {
+		border: 1px solid Highlight;
+		forced-color-adjust: auto;
+	}
+	.ads-multi-select__option[data-active='true'] {
+		outline-color: Highlight;
+	}
+}
+
+@layer components {
+	/* Margens tokenizadas sem depender do CSS reset da aplicação. */
+	.ads-page-header__title {
+		margin: 0;
+	}
+	.ads-page-header__description {
+		margin: var(--ads-spacing-2) 0 0;
+	}
+	/* Cabeçalho de página: palavras longas e ações mantêm reflow em zoom elevado. */
+	.ads-page-header__title,
+	.ads-page-header__description,
+	.ads-page-header__actions > * {
+		overflow-wrap: anywhere;
+	}
+	.ads-page-header__actions > * {
+		max-width: 100%;
+		white-space: normal;
+	}
+}
+
+/* #318: padrões opt-in de composição; nunca alteram semântica nem componentes existentes. */
+@layer components {
+	.ads-layout-container {
+		box-sizing: border-box;
+		width: 100%;
+		max-width: var(--ads-layout-max-width, 76rem);
+		min-width: 0;
+		margin-inline: auto;
+		padding-inline: var(--ads-layout-gutter, var(--ads-spacing-4));
+	}
+
+	.ads-layout-stack {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: var(--ads-layout-stack-gap, var(--ads-spacing-4));
+	}
+
+	.ads-layout-grid {
+		display: grid;
+		min-width: 0;
+		grid-template-columns: repeat(
+			auto-fit,
+			minmax(min(100%, var(--ads-layout-grid-min-column, 16rem)), 1fr)
+		);
+		gap: var(--ads-layout-grid-gap, var(--ads-spacing-4));
+	}
+
+	.ads-layout-grid > * {
+		min-width: 0;
+	}
+
+	.ads-layout-cluster {
+		display: flex;
+		min-width: 0;
+		flex-wrap: wrap;
+		align-items: center;
+		gap: var(--ads-layout-cluster-gap, var(--ads-spacing-3));
+	}
+
+	.ads-layout-cluster > * {
+		min-width: 0;
+	}
+
+	@media (min-width: 48rem) {
+		.ads-layout-container {
+			padding-inline: var(--ads-layout-gutter, var(--ads-spacing-6));
+		}
+	}
+}
+
+/* Additive dropdown labels and separators; no extra focusable menu entries. */
+@layer components {
+	.ads-dropdown-header {
+		padding: var(--ads-spacing-2) var(--ads-spacing-3);
+		color: var(--ads-color-text-muted);
+		font-size: 0.75rem;
+		font-weight: 600;
+		overflow-wrap: anywhere;
+	}
+	.ads-dropdown-divider {
+		height: 0;
+		margin: var(--ads-spacing-1) var(--ads-spacing-2);
+		border: 0;
+		border-block-start: 1px solid var(--ads-color-border);
+	}
+}

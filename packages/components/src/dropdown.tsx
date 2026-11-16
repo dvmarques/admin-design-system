@@ -5,6 +5,7 @@ import {
 	createElement,
 	useContext,
 	useCallback,
+	useEffect,
 	useRef,
 	useState,
 	type ButtonHTMLAttributes,
@@ -13,6 +14,7 @@ import {
 import { classNames } from './class-names.js';
 import {
 	OverlayPortal,
+	focusAdjacentTo,
 	useAnchoredPosition,
 	useClickOutside,
 	useEscapeKey,
@@ -23,6 +25,7 @@ import { AdsButton, type AdsButtonSize, type AdsButtonVariant } from './button.j
 interface DropdownContextValue {
 	open: boolean;
 	setOpen: (open: boolean) => void;
+	closeAfterTab: () => void;
 	triggerRef: React.MutableRefObject<HTMLElement | null>;
 	menuId: string;
 	initialFocusRef: React.MutableRefObject<boolean>;
@@ -48,16 +51,25 @@ function AdsDropdownRoot({
 	...props
 }: AdsDropdownProps) {
 	const [uncontrolledOpen, setUncontrolledOpen] = useState(defaultOpen);
+	const closeFrame = useRef<number | undefined>(undefined);
 	const open = controlledOpen ?? uncontrolledOpen;
 	const setOpen = (next: boolean) => {
+		window.cancelAnimationFrame(closeFrame.current ?? 0);
 		if (controlledOpen === undefined) setUncontrolledOpen(next);
 		onOpenChange?.(next);
 	};
 	const triggerRef = useRef<HTMLElement | null>(null);
+	useEffect(() => () => window.cancelAnimationFrame(closeFrame.current ?? 0), []);
+	const closeAfterTab = () => {
+		window.cancelAnimationFrame(closeFrame.current ?? 0);
+		closeFrame.current = window.requestAnimationFrame(() => setOpen(false));
+	};
 	const menuId = useStableId('ads-dropdown-menu');
 	const initialFocusRef = useRef(false);
 	return (
-		<DropdownContext.Provider value={{ open, setOpen, triggerRef, menuId, initialFocusRef }}>
+		<DropdownContext.Provider
+			value={{ open, setOpen, closeAfterTab, triggerRef, menuId, initialFocusRef }}
+		>
 			<div {...props} className={classNames('ads-dropdown relative inline-flex', className)}>
 				{children}
 			</div>
@@ -78,7 +90,7 @@ function AdsDropdownTrigger({
 	variant = 'secondary',
 	...props
 }: AdsDropdownTriggerProps) {
-	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
+	const { open, setOpen, closeAfterTab, triggerRef, menuId, initialFocusRef } = useDropdown();
 	return (
 		<AdsButton
 			{...props}
@@ -96,6 +108,13 @@ function AdsDropdownTrigger({
 			onKeyDown={(event) => {
 				onKeyDown?.(event);
 				if (event.defaultPrevented) return;
+				if (event.key === 'Tab' && open) {
+					if (focusAdjacentTo(triggerRef.current, event.shiftKey)) {
+						event.preventDefault();
+						setOpen(false);
+					} else closeAfterTab();
+					return;
+				}
 				if ((event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') && !open) {
 					event.preventDefault();
 					initialFocusRef.current = true;
@@ -120,10 +139,11 @@ export interface AdsDropdownContentProps extends HTMLAttributes<HTMLDivElement> 
 function AdsDropdownContent({
 	children,
 	className,
+	onKeyDown,
 	placement = 'bottom',
 	...props
 }: AdsDropdownContentProps) {
-	const { open, setOpen, triggerRef, menuId, initialFocusRef } = useDropdown();
+	const { open, setOpen, closeAfterTab, triggerRef, menuId, initialFocusRef } = useDropdown();
 	const contentRef = useRef<HTMLDivElement>(null);
 	const position = useAnchoredPosition(open, triggerRef, contentRef, placement, 'start');
 	const setContentRef = useCallback(
@@ -160,6 +180,19 @@ function AdsDropdownContent({
 				data-placement={position.placement}
 				id={menuId}
 				onKeyDown={(event) => {
+					onKeyDown?.(event);
+					if (event.defaultPrevented) return;
+					if (event.key === 'Tab') {
+						// The panel lives at the end of body; keep tab order relative to the trigger.
+						if (focusAdjacentTo(triggerRef.current, event.shiftKey)) {
+							event.preventDefault();
+							setOpen(false);
+						} else {
+							// Native Tab must run from the trigger before its original key target unmounts.
+							closeAfterTab();
+						}
+						return;
+					}
 					const items = Array.from(
 						event.currentTarget.querySelectorAll<HTMLElement>(
 							'[role^="menuitem"]:not([aria-disabled="true"])',
@@ -241,9 +274,30 @@ function AdsDropdownItem({
 	);
 }
 
+/** Non-interactive label; use id with a native role=group/aria-labelledby when needed. */
+export type AdsDropdownHeaderProps = HTMLAttributes<HTMLDivElement>;
+function AdsDropdownHeader({ className, ...props }: AdsDropdownHeaderProps) {
+	return <div {...props} className={classNames('ads-dropdown-header', className)} />;
+}
+
+/** Semantic, non-focusable separator between menu groups. */
+export type AdsDropdownDividerProps = HTMLAttributes<HTMLDivElement>;
+function AdsDropdownDivider({ className, ...props }: AdsDropdownDividerProps) {
+	return (
+		<div
+			{...props}
+			aria-orientation="horizontal"
+			className={classNames('ads-dropdown-divider', className)}
+			role="separator"
+		/>
+	);
+}
+
 export const AdsDropdown = Object.assign(AdsDropdownRoot, {
 	Root: AdsDropdownRoot,
 	Trigger: AdsDropdownTrigger,
 	Content: AdsDropdownContent,
 	Item: AdsDropdownItem,
+	Header: AdsDropdownHeader,
+	Divider: AdsDropdownDivider,
 });

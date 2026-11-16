@@ -461,3 +461,94 @@ export const SidebarBrandingCollapsed: Story = {
 	name: 'Marca na sidebar recolhida',
 	render: () => <SidebarBrandShell organization collapsed />,
 };
+
+/**
+ * Identidade alternativa do consumidor, não um novo padrão do design system.
+ * As variáveis aqui afetam apenas o shell e deixam superfícies e campos globais intactos.
+ */
+function ScopedShellColorExample({ theme }: { theme: 'light' | 'dark' }) {
+	const light = theme === 'light';
+	return (
+		<div
+			data-theme={theme}
+			style={
+				{
+					'--ads-sidebar-background': light ? '#eaf2ff' : '#223344',
+					'--ads-sidebar-header-background': light ? '#dbeafe' : '#2b4058',
+					'--ads-sidebar-text': light ? '#0f172a' : '#f8fafc',
+					'--ads-sidebar-text-muted': light ? '#334155' : '#e2e8f0',
+					'--ads-sidebar-hover-background': light ? '#dbeafe' : '#354b65',
+					'--ads-sidebar-active-background': light ? '#bfdbfe' : '#435b79',
+					'--ads-sidebar-active-text': light ? '#0f172a' : '#f8fafc',
+					'--ads-header-background': light ? '#f8fafc' : '#192c46',
+					'--ads-header-text': light ? '#0f172a' : '#f8fafc',
+				} as CSSProperties
+			}
+		>
+			<SidebarBrandShell />
+		</div>
+	);
+}
+
+export const SidebarColorsLight: Story = {
+	name: 'Tokens isolados de sidebar e header — claro',
+	render: () => <ScopedShellColorExample theme="light" />,
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Exemplo opcional, não representa o default. Tokens específicos usam fallback automático para a cor global quando ausentes; confira docs/integration.md para a lista completa.',
+			},
+		},
+	},
+};
+
+export const SidebarColorsDark: Story = {
+	name: 'Tokens isolados de sidebar e header — escuro',
+	render: () => <ScopedShellColorExample theme="dark" />,
+};
+
+/** Footer lives outside the scrolling main; consumers can switch it on or off. */
+export const OptionalFooter: Story = {
+	name: 'Footer opcional e conteúdo longo',
+	render: () => {
+		const [showFooter, setShowFooter] = useState(true);
+		const [longContent, setLongContent] = useState(false);
+		return (
+			<div className="ads-layout-stack">
+				<div className="ads-layout-cluster">
+					<AdsButton onClick={() => setShowFooter((v) => !v)}>
+						{showFooter ? 'Sem footer' : 'Com footer'}
+					</AdsButton>
+					<AdsButton variant="secondary" onClick={() => setLongContent((v) => !v)}>
+						{longContent ? 'Conteúdo curto' : 'Conteúdo extenso'}
+					</AdsButton>
+				</div>
+				<AdsAdminShell layout="sidebar-header">
+					<AdsAdminShell.Header>Admin</AdsAdminShell.Header>
+					<AdsAdminShell.Body>
+						<AdsAdminShell.Sidebar>
+							<a href="#footer-story-main">Navegação</a>
+						</AdsAdminShell.Sidebar>
+						<AdsAdminShell.Main id="footer-story-main">
+							<h1>Composição com footer</h1>
+							{longContent ? (
+								Array.from({ length: 20 }, (_, i) => (
+									<p key={i}>Parágrafo {i + 1} na região rolável.</p>
+								))
+							) : (
+								<p>Conteúdo curto mantém o footer ao final do shell.</p>
+							)}
+						</AdsAdminShell.Main>
+					</AdsAdminShell.Body>
+					{showFooter ? (
+						<AdsAdminShell.Footer
+							start="Exemplo genérico · 2026"
+							end={<a href="#footer-story-main">Informações de uso</a>}
+						/>
+					) : null}
+				</AdsAdminShell>
+			</div>
+		);
+	},
+};

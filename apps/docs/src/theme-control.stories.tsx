@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
 import {
 	AdsDialog,
 	AdsThemeControl,
+	AdsDropdown,
 	type AdsThemePreference,
 } from '@dvmarques/admin-ds-components';
 
@@ -78,6 +79,53 @@ export const InsideDialog: Story = {
 			<AdsDialog onOpenChange={setOpen} open={open} title="Preferências">
 				<AdsThemeControl />
 			</AdsDialog>
+		);
+	},
+};
+
+/** Controlled preference and local scope (the portal receives the effective data-theme). */
+export const ThemePreferenceWithPortal: Story = {
+	render: () => {
+		const [preference, setPreference] = useState<AdsThemePreference>('system');
+		const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
+		useEffect(() => {
+			const query = window.matchMedia('(prefers-color-scheme: dark)');
+			const sync = () => setSystemTheme(query.matches ? 'dark' : 'light');
+			sync();
+			query.addEventListener('change', sync);
+			return () => query.removeEventListener('change', sync);
+		}, []);
+		const effective = preference === 'system' ? systemTheme : preference;
+		return (
+			<div
+				data-theme={effective}
+				className="ads-layout-stack rounded-lg border border-border bg-surface p-4"
+			>
+				<AdsThemeControl
+					value={preference}
+					onValueChange={setPreference}
+					optionDisplay="icon-text"
+					variant="group"
+				/>
+				<p role="status">
+					Preferência: {preference}; tema efetivo: {effective}
+				</p>
+				<AdsDropdown>
+					<AdsDropdown.Trigger>Abrir overlay no tema {effective}</AdsDropdown.Trigger>
+					<AdsDropdown.Content
+						aria-label="Overlay tematizado"
+						style={
+							{
+								'--ads-color-surface-raised': 'var(--ads-color-surface-selected)',
+							} as CSSProperties
+						}
+					>
+						<AdsDropdown.Header>Tokens do tema</AdsDropdown.Header>
+						<AdsDropdown.Item>Opção</AdsDropdown.Item>
+					</AdsDropdown.Content>
+				</AdsDropdown>
+				<p>Para customizar tokens em portais, use seletores [data-theme] após o CSS distribuído.</p>
+			</div>
 		);
 	},
 };

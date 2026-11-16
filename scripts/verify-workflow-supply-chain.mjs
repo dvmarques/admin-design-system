@@ -6,8 +6,8 @@ const read = (path) => readFileSync(new URL(path, root), 'utf8');
 const names = readdirSync(new URL('.github/workflows/', root)).filter(
 	(name) => name.endsWith('.yml') || name.endsWith('.yaml'),
 );
-const playwrightVersion = '1.64.1';
-const playwrightDigest = 'sha256:47b510dd9230bf0b9bfc9b20102241e577ea7a99334ab4c3ca19f19770e9b8ea';
+const playwrightVersion = '1.65.1';
+const playwrightDigest = 'sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579';
 const playwrightImage =
 	'mcr.microsoft.com/playwright:v' + playwrightVersion + '-noble@' + playwrightDigest;
 
@@ -28,7 +28,7 @@ export function verifyWorkflowSupplyChain() {
 	}
 	assert.equal(lock.packages['']?.devDependencies['@playwright/test'], playwrightVersion);
 
-	const expectedImages = ['ci.yml', 'pages.yml', 'update-visual-baselines.yml'];
+	const expectedImages = ['ci.yml', 'pages.yml', 'update-visual-baselines.yml', 'visual-audit.yml'];
 	for (const file of names) {
 		const workflow = read('.github/workflows/' + file);
 		assert.doesNotMatch(workflow, /pull_request_target/, file + ' usa evento privilegiado');
@@ -73,6 +73,8 @@ export function verifyWorkflowSupplyChain() {
 		}
 	}
 	const ci = read('.github/workflows/ci.yml');
+	assert.equal(ci.match(/^\s*EXPECTED=([\d.]+)$/m)?.[1], playwrightVersion);
+	assert.equal(ci.match(/^\s*const expected = '([\d.]+)';$/m)?.[1], playwrightVersion);
 	const pages = read('.github/workflows/pages.yml');
 	const security = read('.github/workflows/security.yml');
 	const release = read('.github/workflows/release.yml');

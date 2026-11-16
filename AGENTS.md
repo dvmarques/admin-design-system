@@ -58,7 +58,20 @@ Para orquestrar uma issue até a revisão da PR, invoque a skill própria `adapt
 3. Para mudanças relevantes de comportamento, API, tokens, estilos ou arquitetura,
    crie ou atualize uma change em `openspec/changes/<change-id>` antes da implementação.
 4. Preserve mudanças locais não relacionadas.
-5. Para toda mudança relevante ao produto, fluxo de desenvolvimento ou documentação, registre uma entrada em `CHANGELOG.md`, na única seção `### [X.Y.Z] - Em andamento` da branch `develop`; se ela não existir, crie-a conforme `docs/release-process.md`; se houver mais de uma, resolva a inconsistência antes de registrar. Em branches `release/*` ou hotfix, siga o processo específico sem alterar versões fechadas, sob `Added`, `Changed` ou `Fixed` conforme o caso. Identifique a change OpenSpec ou issue e descreva objetivamente o efeito. Não omita o registro por otimização de contexto; se não houver mudança registrável, justifique explicitamente na PR.
+5. Para mudanças com impacto em quem consome os pacotes (APIs, componentes,
+   comportamento visível, compatibilidade, distribuição, segurança, deprecações,
+   remoções e migrações), registre uma nota pública no `CHANGELOG.md`, na única
+   seção `### [X.Y.Z] - Em andamento`, conforme a
+   [política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286).
+   Identifique a issue ou change OpenSpec e descreva o efeito para o consumidor,
+   não a sequência de tarefas. Mudanças exclusivamente internas de CI, tooling,
+   refatoração e documentação/processo, sem efeito para consumidores, não precisam
+   gerar nota pública: preserve a rastreabilidade em issues, PRs, commits e
+   OpenSpec e justifique a ausência no corpo da PR. A exclusão de notas internas
+   não autoriza ocultar breaking changes, migrações ou impactos de segurança.
+   Se a seção em andamento estiver ausente ou duplicada, resolva conforme
+   `docs/release-process.md`. Em branches `release/*` ou hotfix, siga o processo
+   específico sem reescrever versões fechadas ou aprovações anteriores.
 6. Use uma branch de trabalho e submeta alterações por Pull Request conforme as
    políticas do repositório.
 

@@ -17,7 +17,9 @@ test('required check names are unchanged', () => {
 		'name: Qualidade rápida',
 		'name: Artefatos de distribuição',
 		'name: ${{ matrix.check }}',
-		'check: Fluxos no navegador\n',
+		'name: Fluxos no navegador\n',
+		'check: Fluxos no navegador (Chromium 1/2)',
+		'check: Fluxos no navegador (Chromium 2/2)',
 		'check: Fluxos no navegador (Firefox)',
 		'check: Fluxos no navegador (WebKit)',
 		'name: Política de develop',
@@ -34,8 +36,54 @@ test('quality, develop policy and release validation never depend on the scope d
 	assert.match(section('quality'), /ci-scope\.mjs --summary/);
 	assert.match(
 		section('quality'),
-		/npm run format[\s\S]*npm run lint[\s\S]*npm run typecheck[\s\S]*npm run test:quality/,
+		/npm run format[\s\S]*npm run lint[\s\S]*npm run typecheck[\s\S]*npm run test:node:quiet[\s\S]*npm run test:release[\s\S]*npm run test:ci[\s\S]*npm run test:coverage/,
 	);
+});
+
+test('required E2E check aggregates all Chromium shards and browsers', () => {
+	const e2e = section('e2e');
+	const gate = section('chromium-gate');
+	assert.match(e2e, /shard: '1\/2'/);
+	assert.match(e2e, /shard: '2\/2'/);
+	assert.match(e2e, /--shard=\{0\}/);
+	assert.match(e2e, /matrix\.shard == '1\/2'/);
+	assert.match(e2e, /check: Fluxos no navegador \(Firefox\)/);
+	assert.match(e2e, /check: Fluxos no navegador \(WebKit\)/);
+	assert.match(gate, /name: Fluxos no navegador\n/);
+	assert.match(gate, /needs: e2e/);
+	assert.match(gate, /if: always\(\)/);
+	assert.match(gate, /MATRIX_RESULT: \$\{\{ needs\.e2e\.result \}\}/);
+	assert.match(
+		gate,
+		/shell: bash[\s\S]*run: \|[\s\S]*\[\[ "\$MATRIX_RESULT" != "success" \]\][\s\S]*exit 1/,
+	);
+	assert.doesNotMatch(gate, /uses: actions\/checkout/);
+	assert.match(
+		e2e,
+		/if: github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false/,
+	);
+	assert.match(
+		gate,
+		/if: always\(\) && \(github\.event_name != 'pull_request' \|\| github\.event\.pull_request\.draft == false\)/,
+	);
+});
+
+test('quality executes each suite once while publishing both coverage artifacts', () => {
+	const quality = section('quality');
+	const lines = [
+		'npm run test:node:quiet',
+		'npm run test:release',
+		'npm run test:ci',
+		'npm run test:coverage',
+		'npm run check:agent-skills',
+		'npm run check:generated',
+	];
+	for (const cmd of lines) assert.equal(quality.split(cmd).length - 1, 1, cmd);
+	assert.doesNotMatch(quality, /- run: npm run test:quality\n/);
+	assert.match(quality, /NODE_V8_COVERAGE: coverage\/node-ci/);
+	for (const name of ['cobertura-vitest', 'cobertura-node-ci'])
+		assert.match(quality, new RegExp('name: ' + name));
+	assert.match(JSON.parse(read('package.json')).scripts['test:quality'], /test:quiet/);
 });
 
 test('scope outputs fail open: only `!= false` conditions reduce work', () => {
@@ -50,10 +98,19 @@ test('jobs that read the scope fetch full history and use the shared script', ()
 	for (const job of ['build', 'e2e']) {
 		const text = section(job);
 		assert.match(text, /fetch-depth: 0/, job);
-		assert.match(text, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs/, job);
+		assert.match(text, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs(?: --summary)?/, job);
 	}
 	assert.doesNotMatch(ci, /ci-changed-paths\.mjs/);
 	assert.match(section('quality'), /fetch-depth: 0/);
+});
+
+test('scope decisions are visible in E2E and Pages summaries, with full validation on uncertainty', () => {
+	const e2e = section('e2e');
+	const pages = read('.github/workflows/pages.yml');
+	assert.match(e2e, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs --summary/);
+	assert.match(pages, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs --summary/);
+	assert.match(read('scripts/ci-scope.mjs'), /mode: 'full'/);
+	assert.match(read('scripts/ci-scope.mjs'), /GITHUB_STEP_SUMMARY/);
 });
 
 test('every E2E step after the scope step honors both the docs and the E2E decision', () => {
@@ -143,6 +200,22 @@ test('Pages verifies pull requests in Linux and publishes only develop outside p
 	);
 	assert.match(pages, /runs-on: ubuntu-latest/);
 	assert.match(pages, /run: npm run test:e2e:pages/);
+	assert.match(pages, /fetch-depth: 0/);
+	assert.match(pages, /id: scope\n\s+run: node \.\/scripts\/ci-scope\.mjs/);
+	assert.match(pages, /cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/);
+	for (const script of [
+		'npm ci --ignore-scripts',
+		'npm run build:pages',
+		'npm run test:e2e:pages',
+	]) {
+		const position = pages.indexOf('run: ' + script);
+		assert.notEqual(position, -1, script);
+		assert.match(
+			pages.slice(position, position + 210),
+			/if: steps\.scope\.outputs\.docs_only != 'true'/,
+		);
+	}
+
 	const gate = "if: github.ref == 'refs/heads/develop' && github.event_name != 'pull_request'";
 	for (const action of ['configure-pages', 'upload-pages-artifact']) {
 		const step = pages.split('\n      - ').find((step) => step.includes(`actions/${action}@`));
@@ -152,6 +225,22 @@ test('Pages verifies pull requests in Linux and publishes only develop outside p
 	assert.ok(deploy.includes(gate));
 	assert.match(deploy, /needs: build/);
 	assert.match(pages, /group: pages-.*github.event.pull_request.number/);
+});
+
+test('cancellation is limited to superseded pull request runs across CI, Pages, and Security', () => {
+	for (const path of [
+		'.github/workflows/ci.yml',
+		'.github/workflows/pages.yml',
+		'.github/workflows/security.yml',
+	]) {
+		const workflow = read(path);
+		assert.match(
+			workflow,
+			/cancel-in-progress: \$\{\{ github\.event_name == 'pull_request' \}\}/,
+			path,
+		);
+		assert.doesNotMatch(workflow, /cancel-in-progress: true/, path);
+	}
 });
 
 test('workflows usam SHAs, digest Playwright e mínimo privilégio', async () => {

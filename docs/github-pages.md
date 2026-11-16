@@ -55,6 +55,14 @@ No Windows, o export do Next.js pode gerar caminhos de prefetch como diretórios
 Depois de `build:pages`, rode `npm run build` antes de `npm run test:e2e`: o E2E principal usa o
 build normal do demo, não o estático.
 
+## Segurança dos documentos HTML
+
+As três entradas HTML (demo Next, manager e iframe Storybook) recebem uma CSP parcial
+via `meta` e uma política de referrer. Isso **não** configura headers HTTP no GitHub
+Pages nem ativa restrições de scripts ou proteção contra embedding por outros sites.
+O inventário, os riscos e as alternativas de hospedagem estão em
+[Políticas de segurança do Pages](security/pages-web-policies.md) (issue #269).
+
 ## Limitações
 
 - Não há preview por Pull Request (o GitHub Pages não oferece).

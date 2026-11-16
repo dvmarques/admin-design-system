@@ -1,0 +1,777 @@
+{
+	"version": 1,
+	"note": "Aplicabilidades derivadas de perfis com exceções explícitas por export; não testado não equivale a aprovado. Revisar states no código quando a demo mudar; toda aprovação visual humana permanece pendente.",
+	"profiles": {
+		"static": {
+			"states": ["default"],
+			"notApplicable": {
+				"focus": "Sem controle focável próprio nesta demonstração",
+				"open": "Não abre camada interativa própria"
+			},
+			"viewports": [390, 1440],
+			"checks": ["geometry", "human-visual"]
+		},
+		"button": {
+			"states": ["default", "hover", "focus", "active", "disabled", "loading"],
+			"notApplicable": {
+				"open": "Ação não é overlay",
+				"selected": "Não representa seleção persistente"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"field": {
+			"states": ["default", "focus", "disabled", "error", "success", "overflow"],
+			"notApplicable": {
+				"open": "Controle não apresenta overlay próprio nesta demonstração"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"choice": {
+			"states": ["default", "focus", "selected", "unselected", "disabled"],
+			"notApplicable": {
+				"loading": "Controles de seleção não gerenciam carregamento nesta demo"
+			},
+			"viewports": [390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"complexField": {
+			"states": ["default", "focus", "disabled", "open", "empty", "error", "loading"],
+			"notApplicable": {
+				"active": "Não há estado pressionado persistente"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"overlay": {
+			"states": ["default", "open", "closed", "focus", "overflow"],
+			"notApplicable": {
+				"loading": "A camada não tem estado de carregamento genérico"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"expandable": {
+			"states": ["default", "open", "closed", "focus", "selected", "disabled"],
+			"notApplicable": {
+				"loading": "Não representa operação assíncrona"
+			},
+			"viewports": [390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"navigation": {
+			"states": ["default", "focus", "active", "disabled", "overflow"],
+			"notApplicable": {
+				"error": "Navegação não valida entrada"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"table": {
+			"states": ["default", "data", "empty", "loading", "error", "overflow", "selected"],
+			"notApplicable": {
+				"open": "Tabela não é overlay em si"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"shell": {
+			"states": ["default", "expanded", "collapsed", "mobile", "focus", "overflow"],
+			"notApplicable": {
+				"error": "Shell não valida formulários"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		},
+		"feedback": {
+			"states": ["default", "loading", "error", "success", "empty"],
+			"notApplicable": {
+				"selected": "Não representa opção selecionável"
+			},
+			"viewports": [390, 768, 1440],
+			"checks": ["geometry", "human-visual"]
+		},
+		"composition": {
+			"states": ["default", "data", "empty", "loading", "error", "overflow"],
+			"notApplicable": {
+				"selected": "Composição não representa seleção única"
+			},
+			"viewports": [390, 768, 1440],
+			"checks": ["geometry", "human-visual"]
+		},
+		"pageHeader": {
+			"states": ["default", "focus", "overflow"],
+			"notApplicable": {
+				"loading": "O cabeçalho não gerencia operações assíncronas",
+				"open": "O cabeçalho não abre overlay por conta própria"
+			},
+			"viewports": [320, 390, 768, 1440],
+			"checks": ["aria", "geometry", "human-visual"]
+		}
+	},
+	"components": {
+		"AdsButton": {
+			"profile": "button",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsBadge": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAvatar": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsIcon": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsIconSlot": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsPageHeader": {
+			"profile": "pageHeader",
+			"review": "Aprovado (Daniel, 15/11/2026)"
+		},
+		"AdsTypography": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsSurface": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsLoadingIndicator": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "loading"]
+		},
+		"AdsLoadingText": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "loading"]
+		},
+		"AdsSkeleton": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "loading"]
+		},
+		"AdsSparkline": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "empty"]
+		},
+		"AdsCombobox": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsMultiSelect": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAutocomplete": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsInput": {
+			"profile": "field",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsOTPInput": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsPasswordInput": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsMaskedInput": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsFileUpload": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTextarea": {
+			"profile": "field",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsSelect": {
+			"profile": "field",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsCheckbox": {
+			"profile": "choice",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsRadio": {
+			"profile": "choice",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsSwitch": {
+			"profile": "choice",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsField": {
+			"profile": "field",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsFieldLabel": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsFieldDescription": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsFieldMessage": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsInputGroup": {
+			"profile": "field",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsSelectionGroup": {
+			"profile": "choice",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTimePicker": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsDatePicker": {
+			"profile": "complexField",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsBreadcrumb": {
+			"profile": "navigation",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "focus", "active", "overflow"],
+			"notApplicable": {
+				"disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família navigation"
+			}
+		},
+		"AdsNav": {
+			"profile": "navigation",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTabs": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTabsList": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTabsPanel": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTabsTrigger": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAccordion": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAccordionHeader": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAccordionItem": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAccordionPanel": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAccordionTrigger": {
+			"profile": "expandable",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsDropdown": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsPagination": {
+			"profile": "navigation",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsDialog": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsDrawer": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsPopover": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsTooltip": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAlert": {
+			"profile": "feedback",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "error", "success"],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsToast": {
+			"profile": "feedback",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "open", "closed", "error", "success"],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsEmptyState": {
+			"profile": "feedback",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "empty", "data"],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"success": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsProgress": {
+			"profile": "feedback",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "loading", "data"],
+			"notApplicable": {
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"success": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família feedback"
+			}
+		},
+		"AdsHighlightedCodeSnippet": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow", "focus"]
+		},
+		"AdsTable": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableBody": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableCaption": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableCell": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableHead": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableHeader": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsTableRow": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow", "selected"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsCard": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsCardActions": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsCardContent": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsCardHeader": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsList": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "empty", "overflow"],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsListItem": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsAdminShell": {
+			"profile": "shell",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsDashboardGrid": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "overflow"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsDashboardPanel": {
+			"profile": "feedback",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsMetricCard": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "data", "loading"],
+			"notApplicable": {
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition",
+				"overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família composition"
+			}
+		},
+		"AdsFilterBar": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "focus", "empty", "data"],
+			"notApplicable": {
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"selected": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsSmartTable": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsBulkActionBar": {
+			"profile": "table",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "selected", "unselected"],
+			"notApplicable": {
+				"data": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"empty": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"loading": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"error": "Estado não exposto pelo próprio export nesta composição; não inferir da família table",
+				"overflow": "Estado não exposto pelo próprio export nesta composição; não inferir da família table"
+			}
+		},
+		"AdsConfirmDialog": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsListFlow": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsStepForm": {
+			"profile": "composition",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsAccountMenu": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsNotificationCenter": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsOrganizationSwitcher": {
+			"profile": "overlay",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		},
+		"AdsThemeControl": {
+			"profile": "choice",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "focus", "selected", "unselected", "disabled"]
+		},
+		"ThemeToggle": {
+			"profile": "choice",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)",
+			"states": ["default", "focus", "selected", "unselected"],
+			"notApplicable": {
+				"disabled": "Estado não exposto pelo próprio export nesta composição; não inferir da família choice"
+			}
+		},
+		"StyleFixture": {
+			"profile": "static",
+			"review": "Aprovado (Usuário desta conversa, 15/11/2026)"
+		}
+	},
+	"scenarios": [
+		{
+			"id": "button-hover",
+			"name": "AdsButton",
+			"state": "hover",
+			"action": "button-hover",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "button-keyboard-focus",
+			"name": "AdsButton",
+			"state": "focus",
+			"action": "button-keyboard-focus",
+			"theme": "dark",
+			"width": 320
+		},
+		{
+			"id": "button-disabled",
+			"name": "AdsButton",
+			"state": "disabled",
+			"action": "button-disabled",
+			"theme": "light",
+			"width": 1440
+		},
+		{
+			"id": "button-loading",
+			"name": "AdsButton",
+			"state": "loading",
+			"action": "button-loading",
+			"theme": "dark",
+			"width": 390
+		},
+		{
+			"id": "input-error",
+			"name": "AdsInput",
+			"state": "error",
+			"action": "input-error",
+			"theme": "light",
+			"width": 320
+		},
+		{
+			"id": "input-success",
+			"name": "AdsInput",
+			"state": "success",
+			"action": "input-success",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "checkbox-selected",
+			"name": "AdsCheckbox",
+			"state": "selected",
+			"action": "checkbox-selected",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "tabs-selected",
+			"name": "AdsTabs",
+			"state": "selected",
+			"action": "tabs-selected",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "accordion-open",
+			"name": "AdsAccordion",
+			"state": "open",
+			"action": "accordion-open",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "dropdown-open",
+			"name": "AdsDropdown",
+			"state": "open",
+			"action": "dropdown-open",
+			"theme": "dark",
+			"width": 320
+		},
+		{
+			"id": "dialog-open",
+			"name": "AdsDialog",
+			"state": "open",
+			"action": "dialog-open",
+			"theme": "light",
+			"width": 390
+		},
+		{
+			"id": "drawer-open",
+			"name": "AdsDrawer",
+			"state": "open",
+			"action": "drawer-open",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "popover-open",
+			"name": "AdsPopover",
+			"state": "open",
+			"action": "popover-open",
+			"theme": "light",
+			"width": 320
+		},
+		{
+			"id": "tooltip-open",
+			"name": "AdsTooltip",
+			"state": "open",
+			"action": "tooltip-open",
+			"theme": "dark",
+			"width": 1440
+		},
+		{
+			"id": "table-data",
+			"name": "AdsTable",
+			"state": "data",
+			"action": "table-compact",
+			"theme": "light",
+			"width": 768
+		},
+		{
+			"id": "table-empty",
+			"name": "AdsSmartTable",
+			"state": "empty",
+			"action": "smart-table-empty",
+			"theme": "dark",
+			"width": 390
+		},
+		{
+			"id": "table-error",
+			"name": "AdsSmartTable",
+			"state": "error",
+			"action": "smart-table-error",
+			"theme": "light",
+			"width": 1440
+		},
+		{
+			"id": "table-loading",
+			"name": "AdsSmartTable",
+			"state": "loading",
+			"action": "smart-table-loading",
+			"theme": "dark",
+			"width": 768
+		},
+		{
+			"id": "shell-collapsed",
+			"name": "AdsAdminShell",
+			"state": "collapsed",
+			"action": "shell-collapsed",
+			"theme": "light",
+			"width": 1440
+		},
+		{
+			"id": "shell-mobile",
+			"name": "AdsAdminShell",
+			"state": "mobile",
+			"action": "shell-mobile",
+			"theme": "dark",
+			"width": 320
+		},
+		{
+			"id": "button-high-contrast",
+			"name": "AdsButton",
+			"state": "focus",
+			"action": "button-focus",
+			"theme": "light",
+			"width": 768,
+			"media": "forced-colors"
+		},
+		{
+			"id": "button-reduced-motion",
+			"name": "AdsButton",
+			"state": "hover",
+			"action": "button-hover",
+			"theme": "dark",
+			"width": 390,
+			"media": "reduced-motion"
+		}
+	]
+}

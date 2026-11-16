@@ -5,7 +5,9 @@ export type { AdsBadgeProps, AdsBadgeSize, AdsBadgeVariant } from './badge.js';
 export { AdsAvatar } from './avatar.js';
 export type { AdsAvatarProps, AdsAvatarSize, AdsAvatarTone } from './avatar.js';
 export { AdsIcon } from './icon.js';
+export { AdsIconSlot } from './icons/index.js';
 export type { AdsIconName, AdsIconProps, AdsIconSize } from './icon.js';
+export type { AdsIconSlotProps } from './icons/index.js';
 export { AdsLoadingIndicator } from './loading-indicator.js';
 export type { AdsLoadingIndicatorProps, AdsLoadingIndicatorSize } from './loading-indicator.js';
 export { AdsLoadingText } from './loading-text.js';
@@ -21,9 +23,13 @@ export type {
 	AdsTypographyVariant,
 } from './typography.js';
 export { AdsSurface } from './surface.js';
+export { AdsPageHeader } from './page-header.js';
+export type { AdsPageHeaderProps } from './page-header.js';
 export type { AdsSurfaceProps, AdsSurfaceVariant } from './surface.js';
 export { AdsInput } from './input.js';
 export type { AdsInputProps } from './input.js';
+export { AdsOTPInput } from './otp-input.js';
+export type { AdsOTPInputProps } from './otp-input.js';
 export { AdsPasswordInput } from './password-input.js';
 export type {
 	AdsPasswordInputProps,
@@ -43,6 +49,8 @@ export type {
 	AdsComboboxQueryReason,
 	AdsComboboxTriggerContext,
 } from './combobox.js';
+export { AdsMultiSelect } from './multi-select.js';
+export type { AdsMultiSelectProps, AdsMultiSelectOption } from './multi-select.js';
 export { AdsAutocomplete } from './autocomplete.js';
 export type { AdsAutocompleteProps } from './autocomplete.js';
 export type { AdsSelectProps, AdsSelectValue } from './select.js';
@@ -121,6 +129,8 @@ export type {
 export { AdsDropdown } from './dropdown.js';
 export type {
 	AdsDropdownContentProps,
+	AdsDropdownHeaderProps,
+	AdsDropdownDividerProps,
 	AdsDropdownItemProps,
 	AdsDropdownProps,
 	AdsDropdownTriggerProps,
@@ -171,6 +181,8 @@ export type {
 export { AdsEmptyState, AdsProgress } from './data-feedback.js';
 export type { AdsEmptyStateProps, AdsProgressProps } from './data-feedback.js';
 export { AdsDatePicker } from './date-picker.js';
+export { AdsTimePicker } from './time-picker.js';
+export type { AdsTimePickerProps, AdsTimePickerLabels } from './time-picker.js';
 export type {
 	AdsDatePickerLabels,
 	AdsDatePickerProps,

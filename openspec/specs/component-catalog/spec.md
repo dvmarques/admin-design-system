@@ -38,6 +38,20 @@ Cada demonstração SHALL fornecer descrição, exemplos funcionais e variaçõe
 - **WHEN** a pessoa abre uma página de demonstração no catálogo
 - **THEN** o snippet TSX gerado automaticamente é exibido com highlighting assíncrono e permanece copiável integralmente
 
+### Requirement: Exemplos isolados e ações de demonstração
+
+Demonstrações isoladas em iframe MUST refletir o tema efetivo selecionado no catálogo, e grupos de ações de demonstração MUST manter espaçamento perceptível em viewport estreita.
+
+#### Scenario: Tema dos exemplos isolados em iframe
+
+- **WHEN** a pessoa escolhe claro/escuro ou alterna o tema efetivo do catálogo
+- **THEN** os dois exemplos com/sem seletor de organização no iframe refletem o tema selecionado, inclusive em viewport móvel e desktop, sem exigir recarregar manualmente a página
+
+#### Scenario: Ações do exemplo de upload em tela estreita
+
+- **WHEN** o exemplo de `AdsFileUpload` é exibido em viewport estreita
+- **THEN** o botão de limpar dados e o link de importação simulada conservam separação visual, podem quebrar linha e continuam acessíveis por teclado
+
 ### Requirement: Navegação responsiva
 
 A navegação SHALL agrupar categorias, indicar página ativa, funcionar em dispositivos móveis e permitir inspecionar os temas claro e escuro sem overflow horizontal.
@@ -187,3 +201,40 @@ O catálogo MUST preservar acesso a slugs antigos dos exports públicos em gera�
 
 - **WHEN** um export visual deixa de ter mapeamento para família, seção ou exemplo executável
 - **THEN** o teste automatizado de cobertura falha em vez de aceitar uma página familiar genérica
+
+### Requirement: Catálogo documenta AdsMultiSelect com interações reais
+
+O catálogo MUST incluir uma rota navegável para `AdsMultiSelect` no Admin Demo e uma story funcional com estados e variantes, usando apenas exports públicos.
+
+#### Scenario: Demonstração navegável de multisseleção
+
+- **WHEN** a pessoa abre o catálogo do Admin Demo ou a story do componente
+- **THEN** consegue adicionar e remover tags, usar busca e teclado, observar estados e limites e verificar valores controlados
+
+### Requirement: Matriz de estados sincronizada ao catálogo
+
+A documentação MUST manter uma associação versionada de estados e verificações por export público visual presente no catálogo, sem duplicar a definição canônica de nome, grupo, rota ou Storybook.
+
+#### Scenario: Export adicionado ou removido
+
+- **WHEN** o conjunto de exports do catálogo difere das entradas configuradas na matriz
+- **THEN** a validação automatizada falha e informa os nomes adicionados ou ausentes
+
+#### Scenario: Estado é não aplicável
+
+- **WHEN** um componente registra estado não aplicável
+- **THEN** a matriz apresenta justificativa específica e não registra tal estado como cenário executado
+
+#### Scenario: Cenário inadequado ou duplicado
+
+- **WHEN** uma definição de cenário referencia export ausente, estado incompatível ou identificador duplicado
+- **THEN** a validação rejeita a matriz antes de executar a auditoria
+
+### Requirement: Catálogo de composição semântica
+
+O catálogo e o Storybook MUST documentar `AdsPageHeader` e demonstrar os padrões de consulta, formulário e dashboard, relacionando a API pública com exemplos executáveis.
+
+#### Scenario: Novo export e exemplos completos
+
+- **WHEN** a rastreabilidade da API, os snippets e as histórias são verificados
+- **THEN** `AdsPageHeader` possui rota própria, props documentadas, snippet sincronizado e exemplos semanticamente coerentes

@@ -228,5 +228,30 @@
 		"description": "Alias público do componente raiz AdsDropdown; gerencia a abertura do menu.",
 		"props": "open, defaultOpen, onOpenChange, children",
 		"usage": "<AdsDropdown.Root>…</AdsDropdown.Root>"
+	},
+	"AdsTimePicker": {
+		"description": "Seleção acessível de horário independente de data e fuso horário.",
+		"props": "value, defaultValue, onValueChange, format, minuteStep, min, max, disabled, required, name, labels, size, validationState",
+		"usage": "<AdsTimePicker defaultValue=\"14:30\" format=\"24h\" minuteStep={15} />"
+	},
+	"AdsPageHeader": {
+		"description": "Cabeçalho de página com H1, descrição e ações responsivas.",
+		"props": "title (ReactNode obrigatório), description?, actions?, className e atributos de header",
+		"usage": "<AdsPageHeader title=\"Registros\" description=\"Consulta\" />"
+	},
+	"AdsDropdown.Header": {
+		"description": "Cabeçalho textual estático de menu, nunca focável.",
+		"props": "id, children, className, atributos div",
+		"usage": "<AdsDropdown.Header id=\"grupo\">Ações</AdsDropdown.Header>"
+	},
+	"AdsDropdown.Divider": {
+		"description": "Separador semântico horizontal de grupos no menu.",
+		"props": "className, atributos div",
+		"usage": "<AdsDropdown.Divider />"
+	},
+	"AdsAdminShell.Footer": {
+		"description": "Footer opcional fora de Main, com slots responsivos.",
+		"props": "start, end, children, className, atributos footer",
+		"usage": "<AdsAdminShell.Footer start=\"Produto\" end=\"Ajuda\" />"
 	}
 }

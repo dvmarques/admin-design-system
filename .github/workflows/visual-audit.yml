@@ -1,0 +1,47 @@
+name: Auditoria visual
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  audit:
+    name: Capturar catálogo e gerar relatório
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    container:
+      image: mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579
+      options: --ipc=host
+      env:
+        HOME: /root
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-node@249970729cb0ef3589644e2896645e5dc5ba9c38 # v6
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm install --global npm@11.19.1
+      - run: npm ci --ignore-scripts --no-audit --no-fund
+      - run: npm run build --workspace @dvmarques/admin-ds-tokens
+      - run: npm run build --workspace @dvmarques/admin-ds-components
+      - run: npm run build --workspace @dvmarques/admin-ds-highlighted-code
+      - run: npm run build --workspace @dvmarques/admin-ds-admin
+      - run: npm run build --workspace @admin-ds/admin-demo
+      - name: Auditar catálogo
+        # O zoom usa configurações nativas do Chromium completo em display real.
+        # Xvfb já faz parte da imagem oficial Playwright; a auditoria segue opt-in.
+        run: xvfb-run -a -s '-screen 0 1600x1200x24' npm run audit:visual
+        env:
+          ADS_NATIVE_ZOOM_HEADED: '1'
+      - name: Publicar capturas e relatórios
+        if: always()
+        uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: auditoria-visual-${{ github.run_id }}
+          path: visual-audit-results/
+          if-no-files-found: warn
+          retention-days: 14

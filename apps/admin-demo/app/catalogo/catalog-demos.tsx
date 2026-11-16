@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState, type CSSProperties } from 'react';
 import {
 	AdsMaskedInput,
 	type AdsMaskedInputValues,
@@ -12,18 +12,22 @@ import {
 	AdsBadge,
 	AdsAvatar,
 	AdsIcon,
+	AdsIconSlot,
 	AdsTypography,
+	AdsPageHeader,
 	AdsSurface,
 	AdsLoadingIndicator,
 	AdsLoadingText,
 	AdsSkeleton,
 	AdsSparkline,
 	AdsInput,
+	AdsOTPInput,
 	AdsFileUpload,
 	AdsPasswordInput,
 	AdsTextarea,
 	AdsSelect,
 	AdsCombobox,
+	AdsMultiSelect,
 	AdsAutocomplete,
 	AdsCheckbox,
 	AdsRadio,
@@ -35,6 +39,7 @@ import {
 	AdsInputGroup,
 	AdsSelectionGroup,
 	AdsDatePicker,
+	AdsTimePicker,
 	AdsBreadcrumb,
 	AdsNav,
 	AdsTabs,
@@ -155,6 +160,23 @@ export function IconDemo() {
 			))}
 			<AdsIcon name="search" />
 			<span>Busca (ícone decorativo)</span>
+			<AdsIconSlot
+				icon={
+					<svg
+						aria-hidden="true"
+						fill="none"
+						height="20"
+						stroke="currentColor"
+						viewBox="0 0 24 24"
+						width="20"
+					>
+						<rect height="16" rx="2" width="16" x="4" y="4" />
+						<path d="M4 10h16" />
+					</svg>
+				}
+				label="Pacote local"
+			/>
+			<span>SVG local no slot genérico</span>
 		</>
 	);
 }
@@ -266,6 +288,57 @@ export function InputDemo() {
 				<AdsInput placeholder="Digite aqui" />
 			</AdsField>
 		</>
+	);
+}
+
+export function OTPInputDemo() {
+	const [code, setCode] = useState('');
+	const [pin, setPin] = useState('');
+	const [complete, setComplete] = useState(false);
+	return (
+		<div style={{ display: 'grid', gap: 'var(--ads-spacing-4)', maxWidth: 384 }}>
+			<AdsField
+				description="Código fictício: cole ou digite seis dígitos."
+				label="Código de 6 dígitos"
+			>
+				<AdsOTPInput
+					name="codigo"
+					onChange={(next) => {
+						setCode(next);
+						setComplete(false);
+					}}
+					onComplete={() => setComplete(true)}
+					required
+					value={code}
+				/>
+			</AdsField>
+			<p aria-live="polite">
+				{code.length}/6 dígitos. {complete ? 'Código completo.' : 'Aguardando preenchimento.'}
+			</p>
+			<AdsField description="Experimente os botões de valor controlado." label="PIN de 4 dígitos">
+				<AdsOTPInput length={4} onChange={setPin} value={pin} />
+			</AdsField>
+			<div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--ads-spacing-2)' }}>
+				<AdsButton onClick={() => setPin('0012')} type="button" variant="secondary">
+					Preencher PIN 0012
+				</AdsButton>
+				<AdsButton onClick={() => setPin('')} type="button" variant="secondary">
+					Limpar PIN
+				</AdsButton>
+			</div>
+			<AdsField error="Código incorreto" label="Código inválido" validationState="error">
+				<AdsOTPInput defaultValue="12" length={4} />
+			</AdsField>
+			<AdsField label="Código desabilitado">
+				<AdsOTPInput defaultValue="123456" disabled />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsOTPInput defaultValue="001234" readOnly />
+			</AdsField>
+			<AdsField label="Confirmado" validationState="success">
+				<AdsOTPInput defaultValue="123456" />
+			</AdsField>
+		</div>
 	);
 }
 
@@ -590,6 +663,74 @@ export function SelectDemo() {
 	);
 }
 
+export function MultiSelectDemo() {
+	const choices = [
+		{ value: 'design', label: 'Design de produto' },
+		{ value: 'frontend', label: 'Desenvolvimento frontend' },
+		{ value: 'backend', label: 'Desenvolvimento backend' },
+		{ value: 'qualidade', label: 'Qualidade e testes' },
+		{ value: 'operacoes', label: 'Operações', disabled: true },
+	];
+	const [selected, setSelected] = useState<string[]>(['design']);
+	const [submitted, setSubmitted] = useState('');
+	return (
+		<div style={{ display: 'grid', gap: 'var(--ads-spacing-4)', maxWidth: 600 }}>
+			<AdsField
+				description="Busque opções, use setas e Enter, remova chips ou limpe tudo. Limite de 3."
+				label="Áreas (controlado)"
+			>
+				<AdsMultiSelect
+					maxSelections={3}
+					onValueChange={setSelected}
+					options={choices}
+					value={selected}
+				/>
+			</AdsField>
+			<p aria-label="Valores selecionados">{selected.join(', ') || 'Nenhum'}</p>
+			<AdsButton onClick={() => setSelected(['frontend'])} type="button" variant="secondary">
+				Definir Frontend externamente
+			</AdsButton>
+			<form
+				aria-label="Formulário de áreas"
+				onSubmit={(event) => {
+					event.preventDefault();
+					setSubmitted(JSON.stringify(new FormData(event.currentTarget).getAll('areas')));
+				}}
+				style={{ display: 'grid', gap: 'var(--ads-spacing-2)' }}
+			>
+				<AdsField
+					description="O formulário envia apenas values, repetindo name para cada escolha."
+					label="Áreas obrigatórias"
+				>
+					<AdsMultiSelect name="areas" options={choices} required />
+				</AdsField>
+				<div style={{ display: 'flex', flexWrap: 'wrap', gap: 'var(--ads-spacing-2)' }}>
+					<AdsButton type="submit">Enviar valores</AdsButton>
+					<AdsButton type="reset" variant="secondary">
+						Reiniciar formulário
+					</AdsButton>
+				</div>
+				<output aria-label="Dados enviados">{submitted}</output>
+			</form>
+			<AdsField label="Sem resultados">
+				<AdsMultiSelect emptyText="Nenhuma equipe disponível" options={[]} />
+			</AdsField>
+			<AdsField label="Carregamento">
+				<AdsMultiSelect loading options={choices} />
+			</AdsField>
+			<AdsField error="Falha simulada" label="Erro" validationState="error">
+				<AdsMultiSelect error="Não foi possível carregar opções." options={choices} />
+			</AdsField>
+			<AdsField label="Desabilitado">
+				<AdsMultiSelect defaultValue={['design']} disabled options={choices} />
+			</AdsField>
+			<AdsField label="Somente leitura">
+				<AdsMultiSelect defaultValue={['design']} options={choices} readOnly />
+			</AdsField>
+		</div>
+	);
+}
+
 export function CheckboxDemo() {
 	return (
 		<AdsSelectionGroup legend="Preferências">
@@ -717,6 +858,36 @@ export function SelectionGroupDemo() {
 	);
 }
 
+export function TimePickerDemo() {
+	const [time, setTime] = useState<string | null>('15:30');
+	const [format, setFormat] = useState<'12h' | '24h'>('24h');
+	return (
+		<div className="demo-time-picker-group">
+			<AdsField label="Horário controlado" description={'Valor: ' + (time ?? 'vazio')}>
+				<AdsTimePicker value={time} onValueChange={setTime} format={format} />
+			</AdsField>
+			<AdsButton onClick={() => setFormat(format === '24h' ? '12h' : '24h')}>
+				Alternar 12h/24h
+			</AdsButton>
+			<AdsField label="Horário limitado">
+				<AdsTimePicker defaultValue="09:15" min="09:00" max="17:00" minuteStep={15} />
+			</AdsField>
+			<AdsField label="Horário obrigatório" error="Selecione um horário." validationState="error">
+				<AdsTimePicker required />
+			</AdsField>
+			<AdsField label="Horário desabilitado">
+				<AdsTimePicker defaultValue="10:00" disabled />
+			</AdsField>
+			<AdsField label="Data independente">
+				<AdsDatePicker defaultValue="2026-11-05" />
+			</AdsField>
+			<AdsField label="Hora independente">
+				<AdsTimePicker defaultValue="10:45" />
+			</AdsField>
+		</div>
+	);
+}
+
 export function DatePickerDemo() {
 	return (
 		<>
@@ -818,9 +989,17 @@ export function DropdownDemo() {
 		<>
 			<AdsDropdown>
 				<AdsDropdown.Trigger>Abrir ações</AdsDropdown.Trigger>
-				<AdsDropdown.Content>
-					<AdsDropdown.Item onSelect={() => setMessage('Exportado')}>Exportar</AdsDropdown.Item>
-					<AdsDropdown.Item disabled>Indisponível</AdsDropdown.Item>
+				<AdsDropdown.Content aria-label="Ações agrupadas">
+					<AdsDropdown.Header id="demo-actions-group">Operações</AdsDropdown.Header>
+					<div role="group" aria-labelledby="demo-actions-group">
+						<AdsDropdown.Item onSelect={() => setMessage('Editado')}>Editar</AdsDropdown.Item>
+						<AdsDropdown.Item disabled>Indisponível</AdsDropdown.Item>
+					</div>
+					<AdsDropdown.Divider />
+					<AdsDropdown.Header id="demo-export-group">Exportação</AdsDropdown.Header>
+					<div role="group" aria-labelledby="demo-export-group">
+						<AdsDropdown.Item onSelect={() => setMessage('Exportado')}>Exportar</AdsDropdown.Item>
+					</div>
 				</AdsDropdown.Content>
 			</AdsDropdown>
 			<p role="status">{message}</p>
@@ -1089,47 +1268,77 @@ export function ListDemo() {
 }
 
 export function AdminShellDemo() {
+	const [showFooter, setShowFooter] = useState(true);
+	const [longContent, setLongContent] = useState(false);
 	return (
-		<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
-			<AdsAdminShell layout="sidebar-header">
-				<AdsAdminShell.Header>
-					<AdsAdminShell.NavigationTrigger />
-					<div className="demo-mobile-brand">
-						<DemoBrand compact />
-					</div>
-					<span className="demo-header-tools">Shell de exemplo</span>
-				</AdsAdminShell.Header>
-				<AdsAdminShell.Body>
-					<AdsAdminShell.Sidebar
-						header={
-							<>
-								<DemoBrand />
-								<AdsAdminShell.SidebarToggle />
-							</>
-						}
-						label="Navegação do shell de exemplo"
-						mobileTitle="Menu do exemplo"
-					>
-						<AdsAdminShell.Navigation>
-							<AdsAdminShell.NavigationSection label="Exemplos">
-								<AdsAdminShell.NavigationGroup label="Páginas" icon={<AdsIcon name="info" />} open>
-									<AdsAdminShell.NavigationItem>
-										<a href="#shell-content" aria-current="page">
-											Conteúdo
-										</a>
-									</AdsAdminShell.NavigationItem>
-								</AdsAdminShell.NavigationGroup>
-							</AdsAdminShell.NavigationSection>
-						</AdsAdminShell.Navigation>
-					</AdsAdminShell.Sidebar>
-					<AdsAdminShell.Main>
-						<h1>Shell administrativo</h1>
-						<p id="shell-content">
-							Conteúdo administrativo. Use os controles para recolher ou abrir o menu.
-						</p>
-					</AdsAdminShell.Main>
-				</AdsAdminShell.Body>
-			</AdsAdminShell>
+		<div className="ads-layout-stack">
+			<div style={{ height: '26rem', width: '100%', overflow: 'auto' }}>
+				<AdsAdminShell layout="sidebar-header">
+					<AdsAdminShell.Header>
+						<AdsAdminShell.NavigationTrigger />
+						<div className="demo-mobile-brand">
+							<DemoBrand compact />
+						</div>
+						<span className="demo-header-tools">Shell de exemplo</span>
+					</AdsAdminShell.Header>
+					<AdsAdminShell.Body>
+						<AdsAdminShell.Sidebar
+							header={
+								<>
+									<DemoBrand />
+									<AdsAdminShell.SidebarToggle />
+								</>
+							}
+							label="Navegação do shell de exemplo"
+							mobileTitle="Menu do exemplo"
+						>
+							<AdsAdminShell.Navigation>
+								<AdsAdminShell.NavigationSection label="Exemplos">
+									<AdsAdminShell.NavigationGroup
+										label="Páginas"
+										icon={<AdsIcon name="info" />}
+										open
+									>
+										<AdsAdminShell.NavigationItem>
+											<a href="#shell-content" aria-current="page">
+												Conteúdo
+											</a>
+										</AdsAdminShell.NavigationItem>
+									</AdsAdminShell.NavigationGroup>
+								</AdsAdminShell.NavigationSection>
+							</AdsAdminShell.Navigation>
+						</AdsAdminShell.Sidebar>
+						<AdsAdminShell.Main>
+							<h1>Shell administrativo</h1>
+							<p id="shell-content">
+								Conteúdo administrativo. Use os controles para recolher ou abrir o menu.
+							</p>
+							{longContent
+								? Array.from({ length: 18 }, (_, index) => (
+										<p key={index}>
+											Linha de exemplo {index + 1}: a região principal mantém sua rolagem
+											independente.
+										</p>
+									))
+								: null}
+						</AdsAdminShell.Main>
+					</AdsAdminShell.Body>
+					{showFooter ? (
+						<AdsAdminShell.Footer
+							start={<span>ADS · Footer opcional</span>}
+							end={<a href="#shell-content">Voltar ao conteúdo</a>}
+						/>
+					) : null}
+				</AdsAdminShell>
+			</div>
+			<div className="ads-layout-cluster">
+				<AdsButton onClick={() => setShowFooter((visible) => !visible)}>
+					{showFooter ? 'Remover footer' : 'Mostrar footer'}
+				</AdsButton>
+				<AdsButton variant="secondary" onClick={() => setLongContent((long) => !long)}>
+					{longContent ? 'Conteúdo curto' : 'Conteúdo longo'}
+				</AdsButton>
+			</div>
 		</div>
 	);
 }
@@ -1350,6 +1559,15 @@ export function StepFormDemo() {
 
 export function ThemeControlDemo() {
 	const [preference, setPreference] = useState<AdsThemePreference>('system');
+	const [systemTheme, setSystemTheme] = useState<'light' | 'dark'>('light');
+	useEffect(() => {
+		const query = window.matchMedia('(prefers-color-scheme: dark)');
+		const sync = () => setSystemTheme(query.matches ? 'dark' : 'light');
+		sync();
+		query.addEventListener('change', sync);
+		return () => query.removeEventListener('change', sync);
+	}, []);
+	const effectiveTheme = preference === 'system' ? systemTheme : preference;
 	return (
 		<div style={{ display: 'grid', gap: '1rem' }}>
 			<div style={{ display: 'flex', flexWrap: 'wrap', gap: '1rem', alignItems: 'center' }}>
@@ -1371,6 +1589,43 @@ export function ThemeControlDemo() {
 				/>
 			</div>
 			<p role="status">Preferência: {preference}</p>
+			<p>Tema efetivo: {effectiveTheme}</p>
+			<div
+				data-theme={effectiveTheme}
+				className="ads-layout-stack"
+				style={{
+					backgroundColor: 'var(--ads-color-surface)',
+					border: '1px solid var(--ads-color-border)',
+					borderRadius: 'var(--ads-radius-lg)',
+					padding: '1rem',
+				}}
+			>
+				<p>Escopo de tema aplicado pela aplicação consumidora, sem persistência pelo ADS.</p>
+				<AdsDropdown>
+					<AdsDropdown.Trigger>Overlay no tema {effectiveTheme}</AdsDropdown.Trigger>
+					<AdsDropdown.Content
+						aria-label="Overlay de tema"
+						style={
+							{
+								'--ads-color-surface-raised': 'var(--ads-color-surface-selected)',
+							} as CSSProperties
+						}
+					>
+						<AdsDropdown.Item>Verificar tema do portal</AdsDropdown.Item>
+					</AdsDropdown.Content>
+				</AdsDropdown>
+				<div
+					style={{
+						backgroundColor: 'var(--ads-color-surface-selected)',
+						border: '1px solid var(--ads-color-border)',
+						borderRadius: 'var(--ads-radius-md)',
+						color: 'var(--ads-color-text)',
+						padding: '0.75rem',
+					}}
+				>
+					Superfície com tokens semânticos do tema.
+				</div>
+			</div>
 		</div>
 	);
 }
@@ -1580,6 +1835,16 @@ export function NotificationCenterDemo() {
 }
 
 export function OrganizationSwitcherDemo() {
+	// Acompanha o tema efetivo da página (`data-theme`), inclusive quando a preferência é Sistema.
+	const [theme, setTheme] = useState<'light' | 'dark' | null>(null);
+	useEffect(() => {
+		const root = document.documentElement;
+		const read = () => setTheme(root.dataset.theme === 'dark' ? 'dark' : 'light');
+		read();
+		const observer = new MutationObserver(read);
+		observer.observe(root, { attributes: true, attributeFilter: ['data-theme'] });
+		return () => observer.disconnect();
+	}, []);
 	const brokenImage = 'data:image/png;base64,AAAA';
 	const [value, setValue] = useState('acme');
 	const [count, setCount] = useState<'zero' | 'one' | 'many'>('many');
@@ -1661,16 +1926,21 @@ export function OrganizationSwitcherDemo() {
 			</div>
 			<p role="status">{log}</p>
 			<div style={{ display: 'grid', gap: '1rem' }}>
-				<iframe
-					title="Shell com seletor de organização"
-					src={`${basePath}/catalogo-organizacao/?variante=com`}
-					style={{ width: '100%', height: '20rem', border: 0 }}
-				/>
-				<iframe
-					title="Shell sem seletor de organização"
-					src={`${basePath}/catalogo-organizacao/?variante=sem`}
-					style={{ width: '100%', height: '20rem', border: 0 }}
-				/>
+				{/* Os iframes só montam após ler o tema efetivo: evita carregar em claro e recarregar em escuro. */}
+				{theme && (
+					<>
+						<iframe
+							title="Shell com seletor de organização"
+							src={`${basePath}/catalogo-organizacao/?variante=com&theme=${theme}`}
+							style={{ width: '100%', height: '20rem', border: 0 }}
+						/>
+						<iframe
+							title="Shell sem seletor de organização"
+							src={`${basePath}/catalogo-organizacao/?variante=sem&theme=${theme}`}
+							style={{ width: '100%', height: '20rem', border: 0 }}
+						/>
+					</>
+				)}
 			</div>
 		</div>
 	);
@@ -2146,7 +2416,7 @@ export function HighlightedCodeSnippetDemo() {
 export function FileUploadDemo() {
 	const [files, setFiles] = useState<File[]>([]);
 	return (
-		<div>
+		<div style={{ display: 'grid', gap: '1rem' }}>
 			<AdsFileUpload
 				accept=".csv,.json"
 				files={files}
@@ -2154,15 +2424,46 @@ export function FileUploadDemo() {
 				maxSizeBytes={2_000_000}
 				onFilesChange={setFiles}
 			/>
-			<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
-				Limpar dados
-			</AdsButton>
-			<Link href="/componentes/arquivos">Testar importação simulada</Link>
+			<div
+				style={{
+					display: 'flex',
+					flexWrap: 'wrap',
+					alignItems: 'center',
+					gap: 'var(--ads-spacing-3)',
+				}}
+			>
+				<AdsButton disabled={files.length === 0} onClick={() => setFiles([])}>
+					Limpar dados
+				</AdsButton>
+				<Link href="/componentes/arquivos">Testar importação simulada</Link>
+			</div>
+		</div>
+	);
+}
+
+export function PageHeaderDemo() {
+	const [feedback, setFeedback] = useState('Nenhuma ação executada');
+	return (
+		<div style={{ display: 'grid', gap: '1rem' }}>
+			<AdsPageHeader
+				title="Consulta administrativa com um título bastante longo para testar a quebra de linha"
+				description="Cabeçalho sem card; o título H1, a descrição e as ações continuam legíveis em telas estreitas."
+				actions={
+					<>
+						<AdsButton onClick={() => setFeedback('Consulta iniciada')}>Nova consulta</AdsButton>
+						<AdsButton onClick={() => setFeedback('Exportação simulada')} variant="secondary">
+							Exportar
+						</AdsButton>
+					</>
+				}
+			/>
+			<output aria-label="Resultado das ações">{feedback}</output>
 		</div>
 	);
 }
 
 export const catalogDemos = {
+	PageHeader: PageHeaderDemo,
 	Button: ButtonDemo,
 	Badge: BadgeDemo,
 	Avatar: AvatarDemo,
@@ -2174,12 +2475,14 @@ export const catalogDemos = {
 	Skeleton: SkeletonDemo,
 	Sparkline: SparklineDemo,
 	Input: InputDemo,
+	OTPInput: OTPInputDemo,
 	PasswordInput: PasswordInputDemo,
 	MaskedInput: MaskedInputDemo,
 	FileUpload: FileUploadDemo,
 	Textarea: TextareaDemo,
 	Select: SelectDemo,
 	Combobox: ComboboxDemo,
+	MultiSelect: MultiSelectDemo,
 	Autocomplete: AutocompleteDemo,
 	Checkbox: CheckboxDemo,
 	Radio: RadioDemo,
@@ -2188,6 +2491,7 @@ export const catalogDemos = {
 	InputGroup: InputGroupDemo,
 	SelectionGroup: SelectionGroupDemo,
 	DatePicker: DatePickerDemo,
+	TimePicker: TimePickerDemo,
 	Breadcrumb: BreadcrumbDemo,
 	Nav: NavDemo,
 	Tabs: TabsDemo,

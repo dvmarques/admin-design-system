@@ -1,4 +1,4 @@
-import type { HTMLAttributes } from 'react';
+import type { HTMLAttributes, ReactNode } from 'react';
 import {
 	AdsAdminShellNavigationTrigger,
 	AdsAdminShellSidebar,
@@ -74,6 +74,30 @@ function AdsAdminShellMain({ className, ...props }: AdsAdminShellMainProps) {
 	return <main tabIndex={0} {...props} className={classNames('ads-admin-shell-main', className)} />;
 }
 
+/** Optional document footer placed after Body, outside the scrolling Main landmark. */
+export interface AdsAdminShellFooterProps extends HTMLAttributes<HTMLElement> {
+	/** Content aligned to the inline start. */
+	start?: ReactNode;
+	/** Content aligned to the inline end. */
+	end?: ReactNode;
+}
+
+function AdsAdminShellFooter({
+	className,
+	start,
+	end,
+	children,
+	...props
+}: AdsAdminShellFooterProps) {
+	return (
+		<footer {...props} className={classNames('ads-admin-shell-footer', className)}>
+			{start != null ? <div className="ads-admin-shell-footer-start">{start}</div> : null}
+			{children}
+			{end != null ? <div className="ads-admin-shell-footer-end">{end}</div> : null}
+		</footer>
+	);
+}
+
 export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
 	Root: AdsAdminShellRoot,
 	Header: AdsAdminShellHeader,
@@ -82,6 +106,7 @@ export const AdsAdminShell = Object.assign(AdsAdminShellRoot, {
 	Body: AdsAdminShellBody,
 	Sidebar: AdsAdminShellSidebar,
 	Main: AdsAdminShellMain,
+	Footer: AdsAdminShellFooter,
 	Navigation: AdsAdminShellNavigation,
 	NavigationSection: AdsAdminShellNavigationSection,
 	NavigationGroup: AdsAdminShellNavigationGroup,

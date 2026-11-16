@@ -1,0 +1,392 @@
+{
+	"node": "v24.21.0",
+	"origin": "http://localhost:3101",
+	"byRoute": {
+		"/catalogo": {
+			"js": {
+				"files": 10,
+				"raw": 594441,
+				"gzip": 178643
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3_fyt0fkgpy9g.js",
+					"raw": 7246,
+					"gzip": 2523
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
+			]
+		},
+		"/exemplos/composicao-semantica/consulta": {
+			"js": {
+				"files": 10,
+				"raw": 603999,
+				"gzip": 181846
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/1r35__aa9hxay.js",
+					"raw": 16804,
+					"gzip": 5726
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
+			]
+		},
+		"/exemplos/composicao-semantica/formulario": {
+			"js": {
+				"files": 10,
+				"raw": 597040,
+				"gzip": 179069
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2em7xf8-1b-ku.js",
+					"raw": 9845,
+					"gzip": 2949
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
+			]
+		},
+		"/exemplos/composicao-semantica/dashboard": {
+			"js": {
+				"files": 9,
+				"raw": 587195,
+				"gzip": 176120
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
+			]
+		},
+		"/exemplos/integracao": {
+			"js": {
+				"files": 9,
+				"raw": 587195,
+				"gzip": 176120
+			},
+			"css": {
+				"files": 2,
+				"raw": 121462,
+				"gzip": 19279
+			},
+			"assets": [
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
+			]
+		}
+	},
+	"union": {
+		"js": {
+			"files": 12,
+			"raw": 621090,
+			"gzip": 187318
+		},
+		"css": {
+			"files": 2,
+			"raw": 121462,
+			"gzip": 19279
+		}
+	},
+	"storybook": {
+		"js": {
+			"files": 202,
+			"raw": 10278452,
+			"gzip": 2577255
+		},
+		"css": {
+			"files": 2,
+			"raw": 107154,
+			"gzip": 16692
+		},
+		"duplicateCss": []
+	},
+	"errors": []
+}

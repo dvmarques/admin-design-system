@@ -188,3 +188,61 @@ Na composição sidebar-header, os ícones de links e grupos de navegação MUST
 
 - **WHEN** uma aplicação Next.js importa o CSS compilado, personaliza a largura compacta e depois abre o menu em viewport móvel
 - **THEN** o eixo desktop acompanha a largura configurada e o menu móvel mantém rótulos e composição completa
+
+### Requirement: Cores independentes do Admin Shell por CSS com fallback dinâmico
+
+O Admin Shell MUST permitir sobrescrever cores da sidebar e do header por variáveis CSS públicas específicas, sem mudar tokens globais, props, DOM ou necessidade de recompilação. A ausência de cada override MUST resolver para a mesma variável semântica global utilizada antes da mudança, inclusive nos dois temas e em alto contraste. A variável `--ads-sidebar-active-background` existente MUST continuar funcionando com seu fallback anterior.
+
+#### Scenario: Nenhum override
+
+- **WHEN** uma aplicação importa o CSS do Admin DS sem sobrescritas específicas
+- **THEN** sidebar, cabeçalho, navegação, foco, hover, ativo e cores dos textos são cromaticamente idênticos à versão anterior, em light, dark, system, expansão, recolhimento e mobile
+
+#### Scenario: Alteração global continua sendo herdada
+
+- **WHEN** o consumidor altera `--ads-color-surface-raised` e não fornece `--ads-sidebar-background`
+- **THEN** a sidebar acompanha o novo valor, sem necessitar recompilar o pacote
+
+#### Scenario: Override específico preserva o restante
+
+- **WHEN** o consumidor fornece `--ads-sidebar-background` e `--ads-sidebar-active-background` apenas no tema claro
+- **THEN** somente as superfícies correspondentes da sidebar clara mudam, sem mudar header principal, conteúdo, cards, campos, overlays ou o tema escuro
+
+#### Scenario: Header principal customizado independentemente
+
+- **WHEN** o consumidor define `--ads-header-background`, `--ads-header-border` ou `--ads-header-text`
+- **THEN** apenas os papéis correspondentes do header principal são afetados
+
+#### Scenario: Navegação e cabeçalho da sidebar
+
+- **WHEN** o consumidor configura papéis específicos para hover, texto, texto atenuado, seleção, marcador, borda e fundo do cabeçalho
+- **THEN** esses estilos usam o override nos estados e variantes relevantes, preservando focos, legibilidade do padrão e contratos ARIA
+
+#### Scenario: Compatibilidade e documentação
+
+- **WHEN** um consumidor usa `--ads-sidebar-active-background` existente ou segue a documentação de tokens públicos
+- **THEN** ambos continuam válidos, e os novos nomes, fallback e responsabilidades de contraste estão documentados
+
+### Requirement: Footer semântico e totalmente opcional no shell
+
+O ADS MUST oferecer um único slot público e opt-in `AdsAdminShell.Footer`, com conteúdo inicial e final independentes, conteúdo livre e atributos nativos de footer, sem impor footer nas aplicações consumidoras. O slot MUST preservar a região principal, sua rolagem e a navegação lateral nos layouts `standard` e `sidebar-header`, sem reservar espaço quando ausente.
+
+#### Scenario: Shell sem footer
+
+- **WHEN** o consumidor monta Header, Body, Sidebar e Main sem o slot Footer
+- **THEN** não existe elemento footer nem espaço reservado, e a geometria anterior permanece inalterada
+
+#### Scenario: Footer com conteúdo inicial e final
+
+- **WHEN** o consumidor monta Footer depois de Body com `start`, `end` e conteúdo opcional
+- **THEN** o HTML contém footer semântico com conteúdo legível em ordem de DOM e os slots refluem quando a largura é estreita
+
+#### Scenario: Navegação lateral e rolagem
+
+- **WHEN** o layout usa sidebar normal, recolhida, móvel ou `sidebar-header`, com conteúdo curto ou extenso
+- **THEN** footer não sobrepõe Main nem Sidebar e permanece alcançável depois da região principal, com rolagem correta e sem overflow horizontal acidental
+
+#### Scenario: Tokens e acessibilidade
+
+- **WHEN** o consumidor muda temas claro/escuro ou customiza os tokens do footer
+- **THEN** fundo, texto e borda seguem tokens CSS públicos sem criar novo landmark main nem introduzir controle focável vazio

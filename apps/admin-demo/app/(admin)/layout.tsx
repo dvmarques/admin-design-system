@@ -3,6 +3,7 @@ import type { ReactNode } from 'react';
 import { DemoBrand } from '../demo-brand';
 import { readServerPreference } from '../../lib/server-theme';
 import { DemoNavigation } from '../demo-navigation';
+import { DemoFooter } from '../demo-footer';
 import { DemoAccountMenu, DemoNotifications, DemoOrganizationSwitcher } from '../header-controls';
 import { RouteChangeHandler } from '../route-change-handler';
 import { ThemeControl } from '../theme-control';
@@ -40,6 +41,7 @@ export default async function AdminLayout({ children }: Readonly<{ children: Rea
 				</AdsAdminShell.Sidebar>
 				<AdsAdminShell.Main>{children}</AdsAdminShell.Main>
 			</AdsAdminShell.Body>
+			<DemoFooter />
 		</AdsAdminShell>
 	);
 }

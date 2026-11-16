@@ -33,6 +33,22 @@ export const catalogEntries = [
 		href: '/catalogo/icon',
 	},
 	{
+		name: 'AdsIconSlot',
+		group: 'Básicos',
+		slug: 'icon-slot',
+		demo: 'Icon',
+		description: 'Composição de ícones React ou SVG locais com acessibilidade.',
+		href: '/catalogo/icon-slot',
+	},
+	{
+		name: 'AdsPageHeader',
+		group: 'Básicos',
+		slug: 'page-header',
+		demo: 'PageHeader',
+		description: 'Cabeçalho de página semântico com H1, descrição e ações responsivas.',
+		href: '/catalogo/page-header',
+	},
+	{
 		name: 'AdsTypography',
 		group: 'Básicos',
 		slug: 'typography',
@@ -91,6 +107,14 @@ export const catalogEntries = [
 		href: '/catalogo/combobox',
 	},
 	{
+		name: 'AdsMultiSelect',
+		group: 'Formulários',
+		slug: 'multi-select',
+		demo: 'MultiSelect',
+		description: 'Múltiplas escolhas com busca, chips removíveis, limites e formulário acessível.',
+		href: '/catalogo/multi-select',
+	},
+	{
 		name: 'AdsAutocomplete',
 		group: 'Formulários',
 		slug: 'autocomplete',
@@ -106,6 +130,14 @@ export const catalogEntries = [
 		demo: 'Input',
 		description: 'Controle nativo editável com tamanhos e estados de validação.',
 		href: '/catalogo/input',
+	},
+	{
+		name: 'AdsOTPInput',
+		group: 'Formulários',
+		slug: 'otp-input',
+		demo: 'OTPInput',
+		description: 'Código numérico segmentado com colagem, autofill, teclado e valores controlados.',
+		href: '/catalogo/otp-input',
 	},
 	{
 		name: 'AdsPasswordInput',
@@ -219,6 +251,14 @@ export const catalogEntries = [
 		demo: 'SelectionGroup',
 		description: 'Agrupamento semântico de opções relacionadas.',
 		href: '/catalogo/selection-group',
+	},
+	{
+		name: 'AdsTimePicker',
+		group: 'Formulários',
+		slug: 'time-picker',
+		demo: 'TimePicker',
+		description: 'Seleção de horas/minutos 12h/24h com passo, limites e formulário.',
+		href: '/catalogo/time-picker',
 	},
 	{
 		name: 'AdsDatePicker',

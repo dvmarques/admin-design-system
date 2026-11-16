@@ -300,3 +300,176 @@ O monorepo MUST manter compilador TypeScript, ambiente DOM, runner de testes e f
 
 - **WHEN** a matriz E2E e o site estático são validados em Chromium, Firefox e WebKit
 - **THEN** foco, acessibilidade, temas, nomes acessíveis e snapshots existentes são preservados sem mudanças visuais não autorizadas
+
+### Requirement: Check composto de E2E com cobertura preservada
+
+A CI MUST validar a suíte Chromium integralmente e os projetos Firefox/WebKit previstos. Se a suíte Chromium for repartida em shards, um check obrigatório agregado MUST concluir `success` somente quando todos os shards necessários tiverem aprovado; qualquer falha ou cancelamento inesperado MUST impedir aprovação do agregado.
+
+#### Scenario: Um shard Chromium falha
+
+- **WHEN** qualquer shard Chromium falha ou é cancelado na PR Ready
+- **THEN** o check obrigatório `Fluxos no navegador` não fica verde
+
+#### Scenario: Suíte Chromium é dividida
+
+- **WHEN** a CI executa os shards em paralelo
+- **THEN** o conjunto executado cobre cada teste original e snapshot aplicável, sem pular testes, e os checks Firefox/WebKit continuam presentes
+
+#### Scenario: PR sem impacto E2E comprovado
+
+- **WHEN** o escopo conservador identifica uma PR de documentação sem impacto e as etapas pesadas são dispensadas
+- **THEN** os status obrigatórios permanecem resolvidos e registram a dispensa, sem marcar execução de testes inexistentes como cobertura efetiva
+
+### Requirement: Qualidade CI sem duplicar testes
+
+O workflow MUST executar todas as suítes de testes obrigatórias e publicar os artefatos de cobertura Node e Vitest. MUST NOT repetir a mesma suíte apenas para gerar cobertura se puder coletar cobertura na execução já obrigatória.
+
+#### Scenario: Validação de qualidade em PR Ready
+
+- **WHEN** a CI valida uma PR Ready
+- **THEN** testes Node de workspace, release, CI e Vitest executam com as verificações existentes, suas coberturas são publicadas, e o comando local `test:quality` mantém seu contrato
+
+### Requirement: Otimização com evidências e fallback seguro
+
+As reduções de etapas MUST preservar os gates de segurança, releases, publicação Pages e required checks. Uma classificação incerta MUST executar a validação completa.
+
+#### Scenario: Mudança global ou classificação não confiável
+
+- **WHEN** arquivos do workflow, configuração, lockfile ou mudanças indeterminadas são detectados
+- **THEN** a CI executa verificações completas em vez de dispensar trabalho
+
+#### Scenario: Otimização candidata é avaliada
+
+- **WHEN** uma mudança de paralelismo, cache ou instalação é considerada pronta
+- **THEN** os resultados antes/depois distinguem duração da PR, minutos de runner e falhas, com links e limitações das amostras
+
+#### Scenario: Release ou push em branch protegida
+
+- **WHEN** ocorre uma PR para `master`, ou push em `develop`/`master`
+- **THEN** a validação exigida pela política correspondente continua completa e não é cancelada por eventos de PR de outro grupo
+
+### Requirement: Inventário rastreável de inspeção visual
+
+O projeto MUST manter uma matriz de inspeção por export visual, ligada ao catálogo e às stories, diferenciando cobertura cadastrada de inspeção comprovada e preservando as evidências existentes.
+
+#### Scenario: Export ou referência de Storybook é modificado
+
+- **WHEN** o inventário é verificado após alteração nas fontes
+- **THEN** a verificação falha se nomes, grupos, rotas ou stories divergirem, sem marcar automaticamente a inspeção como concluída
+
+#### Scenario: Inspeção recebe status não pendente
+
+- **WHEN** uma pessoa indica análise, ausência de divergência, defeito ou não aplicabilidade
+- **THEN** a verificação exige evidência/justificativa e não sobrescreve outros registros
+
+#### Scenario: Novo modelo é solicitado
+
+- **WHEN** o comando de impressão do inventário é executado
+- **THEN** ele produz uma matriz pendente sem modificar arquivos existentes
+
+### Requirement: Triagem visual automatizada com evidências
+
+O projeto MUST oferecer execução opcional de auditoria no navegador para os exports documentados, nos temas claro/escuro e larguras mobile/desktop, produzindo capturas e um relatório que diferencie sinais automatizados de problemas confirmados e declare amostras faltantes. A heurística de truncamento MUST distinguir conteúdo realmente recortado de overflow CSS visível não recortado, sem desativar a medição independente de bordas e viewport.
+
+#### Scenario: Catálogo é auditado em navegador real
+
+- **WHEN** a suíte visual é executada contra um build atual do Admin Demo
+- **THEN** captura evidências por export/tema/viewport e registra métricas de overflow, posicionamento e erros do navegador, sem alterar snapshots de regressão
+
+#### Scenario: Amostra falha ou deixa de ser executada
+
+- **WHEN** uma rota falha, uma captura não é produzida ou uma combinação está ausente
+- **THEN** o relatório indica explicitamente falha ou ausência, sem tratar a amostra como aprovada
+
+#### Scenario: Sinal geométrico é detectado
+
+- **WHEN** uma medição indica possível divergência
+- **THEN** o relatório sinaliza a necessidade de revisão humana, sem classificar automaticamente um defeito como confirmado
+
+#### Scenario: Auditoria opcional é solicitada
+
+- **WHEN** o comando dedicado ou o workflow manual é invocado
+- **THEN** são gerados relatórios e PNGs separados do ciclo E2E normal, sem atualização de baselines oficiais
+
+#### Scenario: Controle com overflow CSS visível, mas sem conteúdo recortado
+
+- **WHEN** a área interna de um botão icon-only ultrapassa seu `clientWidth` com `overflow-x: visible`
+- **THEN** a heurística de truncamento não sinaliza esse controle como recortado, mantendo ativas as checagens independentes de borda/viewport
+
+#### Scenario: Conteúdo efetivamente recortado
+
+- **WHEN** texto excede `clientWidth` com `overflow-x: hidden` ou `clip`
+- **THEN** a heurística de truncamento mantém o sinal de necessidade de revisão humana
+
+### Requirement: Cobertura visual por estado com evidências verificáveis
+
+A auditoria MUST planejar cenários por aplicabilidade, associar amostras ao export, estado, tema e viewport e distinguir execuções aprovadas por verificações objetivas de inspeções visuais humanas.
+
+#### Scenario: Cenário aplicável ainda não executado
+
+- **WHEN** a matriz declara um estado aplicável sem manifesto de execução
+- **THEN** o relatório o apresenta como pendente e não como aprovado ou não aplicável
+
+#### Scenario: Execução e revisão têm significados distintos
+
+- **WHEN** uma captura é produzida e verificações de foco ou de estado passam sem sinais
+- **THEN** o relatório registra execução objetiva aprovada e revisão visual humana ainda pendente
+
+#### Scenario: Falha ou evidência perdida
+
+- **WHEN** a ação falha, screenshot não é encontrado ou um manifesto está ilegível
+- **THEN** o relatório registra falha ou ausência, sem sucesso presumido
+
+#### Scenario: Auditoria manual opt-in
+
+- **WHEN** o workflow de auditoria visual é disparado manualmente
+- **THEN** os cenários seletivos são executados fora da CI regular, gerando evidências sem atualizar snapshots oficiais
+
+#### Scenario: Acessibilidade e responsividade selecionadas por risco
+
+- **WHEN** controles interativos, overlays e superfícies de dados são auditados
+- **THEN** a suíte testa estados pertinentes, foco/teclado, temas, viewports e emulação de mídia conforme a matriz, sem inferir aprovação de WCAG ou zoom nativo não executado
+
+### Requirement: Auditoria seletiva e rastreável de acessibilidade visual
+
+A auditoria MUST executar verificações seletivas e objetivas de teclado, foco visual, responsividade e preferências do navegador no catálogo sem inferir revisão perceptual humana.
+
+#### Scenario: Foco por teclado com indicação visual
+
+- **WHEN** um controle é alcançado usando Tab ou Shift+Tab
+- **THEN** a evidência confirma :focus-visible, mudança visual observável no controle ou ancestral e posição acessível na viewport, além de registrar a captura
+
+#### Scenario: Overlay modal
+
+- **WHEN** um dialog ou drawer é aberto e fechado por teclado
+- **THEN** a auditoria testa foco inicial, contenção exigida incluindo ambas as bordas do ciclo Tab/Shift+Tab, Escape e retorno do foco ao acionador
+
+#### Scenario: Navegação selecionada
+
+- **WHEN** um componente disponibiliza navegação de menu, lista, tabela ou abas por teclado
+- **THEN** o cenário selecionado usa as teclas suportadas e verifica resultado sem presumir suporte universal
+
+#### Scenario: Zoom de navegador de 200 por cento
+
+- **WHEN** o teste tenta aplicar zoom nativo
+- **THEN** só declara o requisito aprovado após comprovar fator aplicado, redução da viewport CSS e reflow efetivo sem simulação de zoom CSS ou redução artificial da viewport; caso contrário registra pendência de comprovação
+
+#### Scenario: Captura e restauração de zoom
+
+- **WHEN** um cenário usa zoom nativo, inclusive se falhar durante a interação
+- **THEN** a captura é vinculada às métricas efetivas do instante em que foi produzida, a restauração do zoom é verificada e seu estado não contamina outros cenários
+
+#### Scenario: Reflow alternativo
+
+- **WHEN** o navegador não permite comprovar zoom nativo
+- **THEN** a auditoria executa testes de reflow nomeados como alternativa, sem contabilizá-los como zoom nativo aprovado
+
+#### Scenario: Relatório com status separado
+
+- **WHEN** o workflow manual termina com aprovações, falhas, pendências e capturas
+- **THEN** o relatório integra cenários e métodos de zoom, preserva estados N/A e revisão visual humana pendente, e não altera snapshots oficiais
+
+#### Scenario: Preferências de acessibilidade
+
+- **WHEN** um cenário requer redução de movimento ou cores forçadas
+- **THEN** a preferência ativada é confirmada no browser antes da asserção e da captura em tema identificado

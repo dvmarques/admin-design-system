@@ -7,6 +7,7 @@ import { open, readFile, readdir, writeFile } from 'node:fs/promises';
 import { join, resolve } from 'node:path';
 import { setTimeout as delay } from 'node:timers/promises';
 import { fileURLToPath } from 'node:url';
+import { assertPublicationRef } from './release-publication-ref.mjs';
 
 export const PACKAGE_ORDER = ['tokens', 'components', 'highlighted-code', 'admin'];
 const ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -248,14 +249,14 @@ function npmPublish(tarball) {
 	});
 }
 
-function requireTrustedPublisher() {
+export function requireTrustedPublisher(releaseSha) {
 	assert.equal(process.env.GITHUB_ACTIONS, 'true', 'Publicação requer GitHub Actions.');
 	assert.equal(process.env.GITHUB_REPOSITORY, 'dvmarques/admin-design-system');
-	assert.equal(process.env.GITHUB_REF_NAME, 'develop', 'Disparo deve ser feito em develop.');
-	assert.ok(
-		process.env.GITHUB_WORKFLOW_REF?.includes(
-			'dvmarques/admin-design-system/.github/workflows/release.yml@refs/heads/develop',
-		),
+	assert.equal(process.env.GITHUB_REF_NAME, 'master', 'Disparo deve ser feito em master.');
+	assertPublicationRef(process.env.GITHUB_REF, process.env.GITHUB_SHA, releaseSha);
+	assert.equal(
+		process.env.GITHUB_WORKFLOW_REF,
+		'dvmarques/admin-design-system/.github/workflows/release.yml@refs/heads/master',
 		'Workflow OIDC inesperado.',
 	);
 	assert.ok(
@@ -279,7 +280,7 @@ async function main() {
 		console.log('Plano validado para ' + version + ' no commit ' + sha + '; sem publicar.');
 		return;
 	}
-	requireTrustedPublisher();
+	requireTrustedPublisher(sha);
 	const plan = JSON.parse(await readFile(join(directory, 'publication-plan.json'), 'utf8'));
 	await verifyPlan(plan, version, sha, directory);
 	await publishPlan(plan, {

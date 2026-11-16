@@ -23,6 +23,22 @@ export default function CatalogPage() {
 		<div className="demo-page demo-shell demo-catalog-page">
 			<h1>Catálogo de componentes</h1>
 			<p>Exemplos executáveis, variações e código dos componentes públicos do design system.</p>
+			<nav aria-label="Exemplos administrativos integrados">
+				<ul className="ads-layout-cluster">
+					<li>
+						<Link href="/exemplos/integracao">Visão integrada</Link>
+					</li>
+					<li>
+						<Link href="/exemplos/composicao-semantica/consulta">Consulta</Link>
+					</li>
+					<li>
+						<Link href="/exemplos/composicao-semantica/formulario">Formulário</Link>
+					</li>
+					<li>
+						<Link href="/exemplos/composicao-semantica/dashboard">Indicadores</Link>
+					</li>
+				</ul>
+			</nav>
 			<AdsField label="Buscar componente">
 				<AdsInput
 					type="search"

@@ -11,6 +11,73 @@ Este documento descreve o fluxo operacional de release do Admin Design System. A
 - A versão do produto é coordenada entre raiz, `packages/*`, `apps/*`, dependências internas e lockfile.
 - O projeto fixa npm `11.19.1` em `packageManager`; use essa versão na preparação.
 
+## Política editorial do changelog (issue #286)
+
+O `CHANGELOG.md` é o registro público por versão e a fonte integral das GitHub Release Notes. Seu público é **quem instala, atualiza ou integra os pacotes**. A revisão editorial é humana e precede a aprovação por SHA-256. Esta política vale **prospectivamente** para a seção `Em andamento`: não reescreva versões fechadas, marcas de aprovação nem GitHub Releases publicadas.
+
+### Critérios de inclusão
+
+Inclua uma nota quando a mudança afetar o consumo, a segurança ou a migração dos pacotes:
+
+- **Added:** componente, exportação, API ou capacidade pública nova; indique como utilizá-la quando não for óbvio.
+- **Changed:** alteração visível de comportamento, aparência, integração, dependência ou requisito de plataforma; sinalize compatibilidade e eventual ação necessária.
+- **Deprecated:** API ou comportamento ainda disponível, mas desaconselhado, com substituto e prazo quando conhecido.
+- **Removed:** remoção efetiva de API/recurso; descreva substituto ou migração e destaque incompatibilidades.
+- **Fixed:** correção relevante de defeito observável, acessibilidade, integração, regressão ou estabilidade para consumidores.
+- **Security:** correção ou mitigação de risco relevante para consumidores, sem expor instruções de exploração ou detalhes sigilosos.
+
+CI, cobertura de testes, refactors sem mudança de contrato, ajustes internos de tooling, budgets, documentação de processo e manutenção de infraestrutura **não entram automaticamente** nas notas públicas. Registre-os em issue, PR, commits e OpenSpec. Inclua-os somente se tiverem consequência concreta para instalação, segurança, compatibilidade, distribuição ou operação dos pacotes; descreva essa consequência, não a tarefa interna. Não omita alterações incompatíveis, deprecações ou migrações obrigatórias por serem internas na origem.
+
+Esta regra também orienta a exigência de registro em `AGENTS.md`: uma mudança exclusivamente interna sem consequência para consumidores pode ficar fora do changelog, desde que a PR justifique a ausência e mantenha a rastreabilidade. Não é necessário criar nota pública sobre a própria manutenção da política editorial.
+
+### Consolidação e redação
+
+1. Revise todas as issues, PRs e changes desde a versão anterior. Agrupe itens correlatos **pelo efeito no consumidor**, não pelo número de commits; mantenha as referências às issues e a OpenSpec quando aplicável.
+2. Use `#### Added`, `#### Changed`, `#### Deprecated`, `#### Removed`, `#### Fixed` e `#### Security` **somente quando houver entradas**, nessa ordem. Não crie seções vazias. Cada entrada começa com o resultado ou a ação para o consumidor e tem **até 300 caracteres**.
+3. Separe efeitos materialmente diferentes de uma mesma issue (especialmente breaking/security) em frases claras, mas considere que a validação atual sinaliza múltiplas entradas com a mesma issue principal. Consolidar numa entrada não pode ocultar a incompatibilidade; se não couber com segurança no limite, revise o desenho editorial antes de aprovar, **sem contornar** o validador.
+4. Declare explicitamente **BREAKING**, migração exigida e versão/plataforma mínima quando aplicável. Nunca use uma nota genérica como “melhorias e correções diversas”.
+5. Confira a prévia com `npm run release:changelog -- X.Y.Z` e faça a revisão/aprovação na branch `release/X.Y.Z`, conforme [Preparar uma release](#preparar-uma-release). O comando encontra duplicidades por issue e limites de comprimento; **não** decide se uma alteração tem impacto público, nem consolida automaticamente.
+
+**Exemplos ilustrativos** (não representam alterações publicadas):
+
+```text
+#### Added
+- Novo `AdsDatePicker` para seleção por teclado e mouse, com mensagens de erro acessíveis. (#123)
+
+#### Changed
+- BREAKING: `AdsDialog` passa a exigir `title`; migre os usos existentes para informar o título acessível. (#124)
+
+#### Deprecated
+- `oldSize` foi desaconselhado; use `size`. A remoção será anunciada em outra versão. (#125)
+
+#### Removed
+- Removido o export `LegacyButton`; substitua por `AdsButton` antes de atualizar. (#126)
+
+#### Fixed
+- Corrigida a perda de foco ao fechar `AdsPopover` com Escape. (#127)
+
+#### Security
+- Corrigida exposição acidental de dados de entrada em mensagem de erro público. (#128)
+```
+
+**Exemplo de exclusão:** “Refatoração do pipeline, atualização de action e reorganização dos testes (#129)” fica documentada na PR/issue e **não** no changelog se não modificar o pacote entregue. Se a alteração impactar a instalação, a nota pública descreve a compatibilidade ou a correção de publicação observada.
+
+### Formato, crescimento e compatibilidade com os comandos
+
+**Decisão atual: manter o formato existente.** O cabeçalho `### [X.Y.Z] - Em andamento` é o único bloco editável e `### [X.Y.Z] - dd-mmm-aaaa` identifica versões fechadas. A data é gerada em `America/Sao_Paulo`. Não substituir automaticamente pelo `## [Unreleased]` ou por datas ISO `YYYY-MM-DD`: `parseChangelog`, `release:prepare`, `release:validate` e verificações de back-merge dependem desse contrato; formatos mistos exigiriam migração e testes de regressão, em conflito com a preservação do histórico. O formato atual é uma adaptação documentada do Keep a Changelog.
+
+**Links de comparação:** podem facilitar a navegação depois que ambas as tags existirem, mas links gerados para um alvo ainda não publicado podem apontar para tags inexistentes. Nesta issue não serão introduzidos nem exigidos; se adotados futuramente, definir política para bootstrap/tags, testar extração e não editar blocos fechados. **Arquivamento** em múltiplos arquivos não é necessário enquanto a leitura e a extração de qualquer versão forem confiáveis; avaliar somente com ganho medido, estratégia de índice e migração testada.
+
+- **`CHANGELOG.md`:** uma seção em andamento, versões fechadas intocadas e ordem SemVer decrescente.
+- **`release:changelog`:** prévia sem escrita, limite de 300 caracteres, duplicidade por issue e aprovação humana por hash do texto exato.
+- **`release:prepare`:** exige aprovação válida, fecha a versão com data local oficial e abre novo placeholder patch.
+- **`release:validate`:** confere versão coordenada, bloco fechado e integridade da aprovação.
+- **`release:notes`:** extrai somente o bloco fechado correspondente, omitindo apenas o comentário HTML de aprovação.
+- **GitHub Releases:** o corpo equivale às notas extraídas, normalizando apenas CRLF/LF e newline final.
+- **Back-merge:** preserva o bloco fechado da release e mantém novas entradas de `develop` na seção em andamento.
+
+Nenhum script, regex, versão fechada ou aprovação existente muda por esta política. Se uma evolução futura alterar parser, extração, aprovação, comparação de notas ou o formato, será obrigatória uma change específica com testes de múltiplas versões (incluindo histórico longo), preservação integral dos blocos fechados e hashes, extração/equivalência das notas e back-merge.
+
 ## CI de Pull Requests draft
 
 Enquanto um Pull Request estiver em **Draft**, os jobs automáticos de PR ficam skipped: quality, build, E2E, `release-check` e `develop-policy`.
@@ -132,9 +199,9 @@ O comportamento foi verificado em 2026-10-16 com a exclusão automática de head
 
 ## Publicação de quatro pacotes npm e GitHub Release (#195)
 
-**Somente após autorização humana da release** e integração de `release/X.Y.Z -> master` por merge commit, seguida do back-merge `release/X.Y.Z -> develop` aprovado e validado, execute primeiro **Actions > Preparar artefatos npm**, em `develop`, com a versão estável `X.Y.Z`. Essa preparação não publica. Depois de revisar o resultado e autorizar a publicação separadamente, execute **Actions > Publicar release**, também em `develop`, informando a versão e o **artifact ID** aprovado (não o run ID). Não dispara em push ou PR. A fila `release-publication` serializa execuções, sem cancelar uma publicação parcialmente concluída.
+**Somente após autorização humana da release** e integração de `release/X.Y.Z -> master` por merge commit, seguida do back-merge `release/X.Y.Z -> develop` aprovado e validado, execute primeiro **Actions > Preparar artefatos npm**, em `develop`, com a versão estável `X.Y.Z`. Essa preparação não publica. Depois de revisar o resultado e autorizar a publicação separadamente, execute **Actions > Publicar release** em `master`, informando a versão e o **artifact ID** aprovado (não o run ID). O `workflow_dispatch` usa o HEAD de `master`: ele precisa ser exatamente o merge commit aprovado de `release/X.Y.Z -> master`. Se `master` tiver avançado depois desse merge, o despacho será recusado; não execute em `develop` ou em outra ref para contornar o gate. Não dispara em push ou PR. A fila `release-publication` serializa execuções, sem cancelar uma publicação parcialmente concluída.
 
-O identificador da publicação é **sempre a versão coordenada do commit de merge da release em master**, não o HEAD mais recente de master, nem a evolução posterior de develop. Exemplo: `release/0.1.1` aprovada publica exclusivamente `@dvmarques/admin-ds-*@0.1.1`, tag `v0.1.1` e GitHub Release `v0.1.1`. Essa versão é ilustrativa; a primeira ainda será escolhida pelo mantenedor.
+A identidade da publicação (inclusive provenance OIDC do npm) é **o commit exato do merge da release em master**, não um HEAD posterior de master nem a evolução posterior de develop. Programe a publicação enquanto o merge aprovado for o HEAD de `master` e após concluir o back-merge em `develop`. Se `master` avançar antes do disparo, o workflow falha em `resolve-validate`, antes de qualquer escrita no npm, tag ou GitHub Release; não há como contornar pela UI. Não use outra ref, não edite o gate e não reaponte o merge SHA: o merge aprovado deixou de ser o HEAD e não pode mais receber a provenance esperada. Evite novos merges em `master` entre o merge da release e a publicação. Se já houve avanço, interrompa e deixe o mantenedor decidir, em PR própria e revisada, entre ajustar o procedimento ou seguir com um novo ciclo de release. Exemplo: `release/0.1.1` aprovada publica exclusivamente `@dvmarques/admin-ds-*@0.1.1`, tag `v0.1.1` e GitHub Release `v0.1.1`. Essa versão é ilustrativa; a primeira ainda será escolhida pelo mantenedor.
 
 ### Preparar uma vez, publicar os mesmos bytes
 
@@ -146,8 +213,8 @@ O identificador da publicação é **sempre a versão coordenada do commit de me
 
 `release.yml` **não constrói ou empacota bibliotecas**. Recebe `version` e `artifact_id` obrigatórios:
 
-1. `resolve-validate` revalida o estado da release; `fetch-npm` consulta o artifact por ID na API do próprio repositório.
-2. `release-artifact.mjs` exige o workflow ID/path `release-prepare.yml`, evento `workflow_dispatch`, branch `develop`, repository/head-repository IDs locais, tentativa original concluída com sucesso e workflow SHA ancestral do checkout confiável. Recusa PRs, forks, outras branches/workflows e metadados incompletos. A evidência usa a tentativa original, não a situação mutável de um re-run posterior.
+1. `resolve-validate` revalida o estado da release e exige `GITHUB_REF=refs/heads/master` e `GITHUB_SHA` exatamente igual ao merge SHA aprovado; registra o `develop_sha` confiável após validar o back-merge. `fetch-npm` consulta o artifact por ID na API do próprio repositório.
+2. `release-artifact.mjs` exige o workflow ID/path `release-prepare.yml`, evento `workflow_dispatch`, branch produtora `develop`, repository/head-repository IDs locais, tentativa original concluída com sucesso e workflow SHA ancestral do `develop_sha` confiável capturado pelo job read-only (ou do checkout de `develop` no uso local). Recusa PRs, forks, outras branches/workflows e metadados incompletos. A evidência usa a tentativa original, não a situação mutável de um re-run posterior.
 3. O download verifica **fatalmente** SHA-256 do ZIP contra o digest da API; não depende do aviso não bloqueante da action de download. Extração só aceita os cinco arquivos regulares esperados, sem caminhos, links, duplicatas ou extras e com limites de tamanho. Verifica origem do plano, merge SHA, versão, nomes, hashes e manifests/dependências contra `git show` do merge aprovado. Nunca executa scripts do artifact.
 4. `publish-npm` repete o download/verificação do **mesmo ID**, em job separado com `id-token: write`, sem `contents: write` e sem credenciais npm permanentes. O plano e a integridade de todas as versões existentes são conferidos antes da primeira escrita. Publica somente ausentes, na ordem **tokens → components → highlighted-code → admin**. Existente idêntico é no-op; divergente bloqueia tudo.
 5. `verify-registry` instala por nome/versão, verifica assinaturas e executa smoke externo. `publish-github`, isolado com `contents: write` e sem OIDC, revalida estado e só então cria/recupera tag anotada e GitHub Release no merge exato, preservando todas as regras existentes.
@@ -166,7 +233,7 @@ O comando consulta/valida o artifact e grava `npm-release-artifacts/` somente ap
 
 Depois do bootstrap, executar **Publicar release** com o mesmo ID somente após autorizar seus efeitos (inclusive tag/GitHub Release). Se todos já estiverem presentes com os mesmos hashes, a etapa npm será no-op. Isso **não valida OIDC real**. Não criar Trusted Publishers com antecedência para uma execução que só fará no-op; planejar o primeiro publish OIDC da próxima versão efetivamente publicável dentro da janela npm de dois dias.
 
-A provenance npm usa o contexto OIDC do workflow disparado em `develop`; esse workflow SHA e o merge SHA do código empacotado são identidades diferentes, ambas registradas no plano. Não afirmar que provenance comprova automaticamente o build no merge aprovado. Bootstrap manual não recebe automaticamente provenance OIDC; conferir atestação efetiva por pacote e manter esse critério pendente até haver evidência.
+A provenance npm da próxima publicação efetiva usará o contexto OIDC de `release.yml` disparado no commit de merge de `master`. O SHA da execução publicadora, o SHA produtor em `develop` e o merge SHA do código empacotado são identidades distintas, ligadas por histórico, plano e hashes. A provenance atesta a execução publicadora em `master`; não afirmar que comprova automaticamente o build no merge aprovado. Conferir nas quatro páginas do npm o repositório, o workflow e o merge SHA, integridades publicadas, `npm audit signatures` e smoke externo. A provenance existente da 0.1.2 é imutável e não deve ser alterada. Bootstrap manual não recebe automaticamente provenance OIDC; conferir atestação efetiva por pacote e manter esse critério pendente até haver evidência.
 
 ### Expiração e interrupção segura
 

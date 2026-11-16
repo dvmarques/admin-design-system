@@ -89,6 +89,29 @@ mas não constitui medição nem aprovação automática de exceção. O respons
 deve solicitar o comparativo reproduzível ou aprovar expressamente a
 exceção antes de considerar esse requisito encerrado. Não elevar budgets.
 
+### Checks da revisão técnica (HEAD funcional da PR #335)
+
+Em **16/11/2026**, após as correções semânticas e de estado de consulta, os
+três workflows do SHA de **código**
+[`a6069fea04d6217bfa931f10bb8e855dda745bed`](https://github.com/dvmarques/admin-design-system/commit/a6069fea04d6217bfa931f10bb8e855dda745bed)
+terminaram com `success`:
+
+- [CI #43898557490](https://github.com/dvmarques/admin-design-system/actions/runs/43898557490):
+  qualidade rápida (formato, lint, builds, tipos e cobertura), distribuição
+  (incluindo `inspect:packages`), Chromium 1/2 e 2/2, Firefox, WebKit e
+  agregador E2E aprovados.
+- [Security #43898557286](https://github.com/dvmarques/admin-design-system/actions/runs/43898557286):
+  Gitleaks, npm audit e CodeQL aprovados.
+- [Pages #43898557258](https://github.com/dvmarques/admin-design-system/actions/runs/43898557258):
+  build aprovado; **publicação pulada** por ser evento de PR.
+
+Esses checks comprovam o SHA de código indicado, não certificam futuros
+commits de documentação. Os budgets de pacotes continuam válidos, mas o
+comparativo paritário de chunks/rotas Next.js e Storybook **não foi realizado**.
+A justificativa registrada acima **não foi aprovada como exceção humana**.
+A revisão de capturas, zoom nativo 200% e leitores de tela também permanece
+pendente. A CI verde não equivale a aceite final nem autoriza merge/archive.
+
 ## Dependências e limites
 
 Épico #315: #316/PR #321, #317/PR #326, #318/PR #327 e #319/PR #328 integrados em `develop` antes desta branch. Sem archive, merge ou fechamento administrativo nesta etapa.

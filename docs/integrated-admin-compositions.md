@@ -38,6 +38,31 @@ Os três arquivos de orçamento permanecem intactos: [distribuição](bundle-bas
 
 Registre no PR SHA, data, versões de Node/npm e métricas de `inspect:packages` da CI **antes de afirmar comparação comprovada**. Se houver regressão, investigue import massivo, CSS duplicado e SSR/hidratação sem elevar o budget para silenciar a falha.
 
+### Medição efetiva da integração
+
+Na [CI #43875243920](https://github.com/dvmarques/admin-design-system/actions/runs/43875243920),
+em **16/11/2026**, no commit `0e4e57ed21f955ccfad6f0790307d410d1628c51`
+(Node 24 e npm 11.19.1), `inspect:packages` passou com os limites existentes:
+
+- Components: JS/CSS publicados **307.865 B / teto 308.000 B**;
+  gzip **92.279 B / teto 92.400 B**.
+- Admin: JS/CSS publicados **173.020 B / teto 173.100 B**;
+  gzip **46.886 B / teto 47.100 B**.
+- Cenário minificado `components-public`: **33.417 B / teto 33.600 B**.
+- Cenário CSS minificado `admin-public`: **104.369 B / teto 104.400 B**.
+
+**Interpretação:** orçamento preservado sem alterações em `packages/`. A diferença
+entre esses valores e qualquer medição anterior não deve ser atribuída à #320
+sem uma base comparável (mesmos scripts, toolchain e conteúdo dos pacotes).
+
+A mesma revisão no commit verificou `format`, lint, build, types, coberturas,
+Chromium (2 shards), Firefox, WebKit, CodeQL, Gitleaks, npm audit e build de
+Pages; os workflows de [Security](https://github.com/dvmarques/admin-design-system/actions/runs/43875243630)
+e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/43875243625)
+concluíram com sucesso. O deploy real é pulado em PRs, por política.
+
+
+
 ## Dependências e limites
 
 Épico #315: #316/PR #321, #317/PR #326, #318/PR #327 e #319/PR #328 integrados em `develop` antes desta branch. Sem archive, merge ou fechamento administrativo nesta etapa.

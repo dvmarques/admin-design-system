@@ -218,11 +218,14 @@ sugeria uma affordance de acionamento inexistente.
 A correção remove apenas esse tratamento de hover e suas transições decorativas
 nas superfícies da demo; preserva as variantes `AdsSurface`, bordas, raios,
 paddings, espaçamento dos controles, temas, `focus-visible` dos controles
-interativos e estilos distribuídos da biblioteca. O teste
-`e2e/visual-audit-findings.spec.ts` verifica a presença de ambas as classes na
-página e a ausência de regras CSS com `:hover` destinadas a elas nos estilos
-carregados, nas larguras 390px e 1440px. O teste não simula o ponteiro nem
-substitui uma inspeção visual individual. Nenhum snapshot é regravado.
+interativos e estilos distribuídos da biblioteca. A transição de `transform` e `box-shadow` em `.demo-form-surface` é
+preservada, pois essa superfície não faz parte da correção de affordance.
+O teste `e2e/visual-audit-findings.spec.ts` verifica separadamente a presença
+de ambas as classes e das respectivas regras CSS, e detecta declarações de
+`transform`, `box-shadow` ou `translate` em regras de `:hover` que têm a própria
+superfície como alvo, sem rejeitar estilos legítimos de hover dos controles
+internos. Executa nas larguras 390px e 1440px, não simula o ponteiro nem
+substitui inspeção visual individual. Nenhum snapshot é regravado.
 
 Classificação: **inconsistência de affordance confirmada, P3 (baixa severidade,
 restrita à demo)**. Não havia evidência de falha funcional nem indicação de

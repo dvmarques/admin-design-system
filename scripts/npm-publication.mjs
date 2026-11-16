@@ -14,6 +14,12 @@ const ROOT = fileURLToPath(new URL('..', import.meta.url));
 const REGISTRY = 'https://registry.npmjs.org';
 const NAME = (part) => '@dvmarques/admin-ds-' + part;
 const INTERNAL_PACKAGE_NAMES = new Set(PACKAGE_ORDER.map(NAME));
+export const REGISTRY_CONFIRMATION = Object.freeze({
+	maxAttempts: 20,
+	maxDurationMs: 150_000,
+	initialDelayMs: 2_500,
+	maxDelayMs: 15_000,
+});
 
 function verifyVersion(version) {
 	if (!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version)) {
@@ -162,7 +168,10 @@ export async function verifyPlan(plan, version, releaseSha, directory) {
 	return plan;
 }
 
-export async function publishPlan(plan, { getVersion, publishTarball, sleep = delay }) {
+export async function publishPlan(
+	plan,
+	{ getVersion, publishTarball, sleep = delay, now = () => performance.now() },
+) {
 	// Examinar o estado INTEIRO antes da primeira publicação, evitando falha tardia previsível.
 	const existing = new Map();
 	for (const item of plan.packages) {
@@ -189,19 +198,49 @@ export async function publishPlan(plan, { getVersion, publishTarball, sleep = de
 			);
 		}
 		await publishTarball(item);
+		const startedAt = now();
 		let confirmed = false;
-		for (let attempt = 0; attempt < 12; attempt += 1) {
-			const remote = await getVersion(item.name, item.version);
+		let reads = 0;
+		while (reads < REGISTRY_CONFIRMATION.maxAttempts) {
+			const remainingMs = REGISTRY_CONFIRMATION.maxDurationMs - (now() - startedAt);
+			if (remainingMs <= 0) break;
+
+			reads += 1;
+			const remote = await getVersion(
+				item.name,
+				item.version,
+				Math.min(30_000, Math.max(1, Math.ceil(remainingMs))),
+			);
 			if (remote) {
-				assert.equal(remote.name, item.name);
-				assert.equal(remote.version, item.version);
+				assert.equal(remote.name, item.name, 'Registry devolveu nome diferente.');
+				assert.equal(remote.version, item.version, 'Registry devolveu versão diferente.');
 				verifyIntegrity(remote.dist?.integrity, item.integrity, item.name);
 				confirmed = true;
 				break;
 			}
-			await sleep(2500);
+			if (reads === REGISTRY_CONFIRMATION.maxAttempts) break;
+
+			const timeLeftMs = REGISTRY_CONFIRMATION.maxDurationMs - (now() - startedAt);
+			if (timeLeftMs <= 0) break;
+			const backoffMs = Math.min(
+				REGISTRY_CONFIRMATION.maxDelayMs,
+				Math.round(REGISTRY_CONFIRMATION.initialDelayMs * 1.5 ** (reads - 1)),
+			);
+			await sleep(Math.min(backoffMs, timeLeftMs));
 		}
-		if (!confirmed) throw new Error('Publicação não confirmada no registry: ' + item.name);
+		if (!confirmed) {
+			throw new Error(
+				'Publicação não confirmada no registry: ' +
+					item.name +
+					'@' +
+					item.version +
+					' (' +
+					reads +
+					' leituras; janela de até ' +
+					REGISTRY_CONFIRMATION.maxDurationMs / 1000 +
+					' s). Confira nome, versão e integridade no npm e reexecute com o mesmo artifact ID.',
+			);
+		}
 	}
 	for (const item of plan.packages) {
 		const remote = await getVersion(item.name, item.version);
@@ -213,10 +252,10 @@ export async function publishPlan(plan, { getVersion, publishTarball, sleep = de
 	console.log('Quatro pacotes npm confirmados com SHA-512 idêntico aos tarballs validados.');
 }
 
-export async function registryVersion(name, version) {
+export async function registryVersion(name, version, timeoutMs = 30_000) {
 	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
 	const response = await globalThis.fetch(url, {
-		signal: globalThis.AbortSignal.timeout(30_000),
+		signal: globalThis.AbortSignal.timeout(Math.max(1, Math.min(30_000, Math.ceil(timeoutMs)))),
 		headers: { accept: 'application/json' },
 		cache: 'no-store',
 	});

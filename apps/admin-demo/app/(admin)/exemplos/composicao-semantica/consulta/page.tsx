@@ -1,9 +1,11 @@
 'use client';
 
 import Link from 'next/link';
+import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import {
 	AdsButton,
+	AdsDropdown,
 	AdsField,
 	AdsInput,
 	AdsPageHeader,
@@ -25,6 +27,7 @@ const customers = [
 
 export default function SemanticConsultationPage() {
 	const [query, setQuery] = useState('');
+	const router = useRouter();
 	const results = customers.filter((row) =>
 		row.name.toLocaleLowerCase('pt-BR').includes(query.toLocaleLowerCase('pt-BR')),
 	);
@@ -36,9 +39,36 @@ export default function SemanticConsultationPage() {
 					title="Consulta administrativa"
 					description="Pesquise os registros fictícios, examine os resultados e navegue para o cadastro sem envolver a página em um card."
 					actions={
-						<Link className="demo-action-link" href="/exemplos/composicao-semantica/formulario">
-							Novo cadastro
-						</Link>
+						<div className="ads-layout-cluster">
+							<Link className="demo-action-link" href="/exemplos/composicao-semantica/formulario">
+								Novo cadastro
+							</Link>
+							<AdsDropdown.Root>
+								<AdsDropdown.Trigger>Mais ações</AdsDropdown.Trigger>
+								<AdsDropdown.Content aria-label="Ações da consulta">
+									<div role="group" aria-labelledby="consulta-menu-cadastros">
+										<AdsDropdown.Header id="consulta-menu-cadastros">
+											Cadastros
+										</AdsDropdown.Header>
+										<AdsDropdown.Item onSelect={() => router.push('/clientes')}>
+											Ver clientes
+										</AdsDropdown.Item>
+										<AdsDropdown.Item onSelect={() => router.push('/clientes/novo')}>
+											Cadastrar cliente
+										</AdsDropdown.Item>
+									</div>
+									<AdsDropdown.Divider />
+									<div role="group" aria-labelledby="consulta-menu-configuracoes">
+										<AdsDropdown.Header id="consulta-menu-configuracoes">
+											Configurações
+										</AdsDropdown.Header>
+										<AdsDropdown.Item onSelect={() => router.push('/preferencias')}>
+											Preferências
+										</AdsDropdown.Item>
+									</div>
+								</AdsDropdown.Content>
+							</AdsDropdown.Root>
+						</div>
 					}
 				/>
 				<section

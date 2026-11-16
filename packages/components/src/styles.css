@@ -798,3 +798,20 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		}
 	}
 }
+
+/* Additive dropdown labels and separators; no extra focusable menu entries. */
+@layer components {
+	.ads-dropdown-header {
+		padding: var(--ads-spacing-2) var(--ads-spacing-3);
+		color: var(--ads-color-text-muted);
+		font-size: 0.75rem;
+		font-weight: 600;
+		overflow-wrap: anywhere;
+	}
+	.ads-dropdown-divider {
+		height: 0;
+		margin: var(--ads-spacing-1) var(--ads-spacing-2);
+		border: 0;
+		border-block-start: 1px solid var(--ads-color-border);
+	}
+}

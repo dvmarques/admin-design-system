@@ -16,6 +16,10 @@ A sidebar distingue títulos de seção fixos (Componentes, Composições admini
 
 O layout de página mostra nome, descrição, exemplos, orientações de composição, seletor de tema e largura, código e cópia com feedback/fallback. O tema sincroniza o documento e os portais; o seletor de largura limita o conteúdo à largura disponível (320px, 768px ou disponível). Overlays seguem a viewport real, por isso os testes também alteram a viewport do navegador. Exemplos não fazem chamadas remotas nem persistem dados de negócio.
 
+## Integração das composições na aplicação real — #319
+
+A rota existente `/exemplos/composicao-semantica/consulta` reutiliza o `AdsAdminShell` compartilhado, com header, sidebar, conta e controle de tema **sem duplicação**. Seu conteúdo demonstra `AdsDropdown.Header`/`Divider` em um menu de ações com grupos acessíveis e navegação funcional. O consumidor opta por renderizar `AdsAdminShell.Footer` nesse fluxo, como irmão de `Body` no shell; o footer segue ausente nas demais rotas. Esse exemplo complementa, sem substituir, o showcase isolado `/catalogo-shell/`. Verificações E2E cobrem larguras 320/390/768/1440, presença/ausência do footer, semântica do menu, teclado e os dois temas.
+
 ## Verificação e exclusões
 
 A mesma matriz de exports abaixo alimenta a geração de uma **referência de API técnica no Storybook**, rastreável por export público. O gerador confronta a matriz com os índices runtime dos pacotes e reutiliza as stories; mantenha esta lista atualizada na mesma entrega de novos componentes. Procedimento e limites de inferência: [`docs/storybook-api-reference.md`](storybook-api-reference.md). A validação da #193 confronta páginas efetivamente geradas, não somente as tags `autodocs`.

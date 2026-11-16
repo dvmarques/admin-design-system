@@ -40,7 +40,7 @@
 			"packages/components/dist/styles.css",
 			"packages/admin/dist/styles.css"
 		],
-		"cssBytes": 103000,
-		"cssGzipBytes": 15450
+		"cssBytes": 104400,
+		"cssGzipBytes": 15700
 	}
 }

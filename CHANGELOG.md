@@ -12,6 +12,14 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
+- Cenário público `admin-public`: teto do CSS minificado ajustado de 103.000 para 104.400 bytes após medição de 104.369; teto CSS gzip revisado de 15.450 para 15.700 bytes para acomodar o footer, sujeito à verificação no último SHA. (#319)
+
+- Orçamento de JS/CSS publicados de `admin` ajustado de 171.400 para 173.100 bytes após medição de 173.020 bytes na CI #328; limites de gzip e cenário mantidos até medição. (#319)
+
+- Orçamento de JS/CSS publicados de `components` ajustado de 305.200 para 306.800 bytes após medição de 306.728 bytes na CI #328; gzip ajustado de 92.000 para 92.100 bytes após medição de 92.060 bytes; demais cenários pendentes dos checks. (#319)
+
+- `AdsAdminShell.Footer` opcional com slots `start`/`end`, composição responsiva e landmark semântica; `AdsDropdown.Header`/`Divider` e sequência de Tab/Shift+Tab ajustada para menus portados; integração de tema, tokens e portais documentada sem novo provider. (#319, OpenSpec `issue-319-footer-dropdown-theme`)
+
 - Quatro classes CSS opt-in de layout responsivo (`ads-layout-container`, `ads-layout-stack`, `ads-layout-grid`, `ads-layout-cluster`) no pacote components, com exemplos de consulta, formulário e dashboard; sem componentes React novos nem exigência de Tailwind no consumidor. (#318, OpenSpec `issue-318-responsive-layout`)
 
 - Novo `AdsPageHeader` (H1, descrição e ações responsivas), padrão semântico de seções, três exemplos no Admin Demo/Storybook e teto de JS/CSS publicado do pacote de componentes ajustado para 305.200 bytes (medição 304.361 bytes na base `develop` usada na #318, gzip 91.461 → limite 92.000 bytes). (#317, OpenSpec `issue-317-semantic-page-composition`)
@@ -25,6 +33,13 @@ para distinguir mudanças públicas de manutenção interna.
 - Tokens públicos opcionais de cor da sidebar e do header do Admin Shell (`--ads-sidebar-*`, `--ads-header-*`) com fallback dinâmico para os tokens globais; sem override, as cores renderizadas não mudam. (#306, OpenSpec `issue-306-component-color-overrides`)
 
 #### Changed
+
+- Dropdown portado preserva a saída nativa por Tab/Shift+Tab nos limites do documento e respeita eventos de teclado cancelados pelo consumidor ou descendentes. (#319)
+- Orçamentos de `components` revistos para 308.000 B raw e 92.400 B gzip após medição de 307.865/92.279 B com as correções de limites de foco e eventos cancelados; cenários públicos e demais pacotes mantêm os limites existentes. (#319)
+
+- Dropdown aberto com foco no gatilho também fecha em Tab/Shift+Tab, preservando a ordem nativa de foco após abertura por clique ou sem itens habilitados. (#319)
+- A tabela da consulta administrativa do Demo oferece região nomeada e focável para rolagem horizontal por teclado em telas estreitas. (#319)
+- Orçamento raw de JS/CSS publicado de `components` ajustado de 306.800 para 306.900 bytes após medição de 306.805 com a correção de Tab; gzip e cenários mantêm os tetos existentes. (#319)
 
 - Admin Demo e Storybook publicados recebem CSP parcial compatível com HTML estático (`object-src 'none'`, `base-uri 'self'`, `form-action 'self'`) e meta de referrer; limitações do GitHub Pages e controles que exigem headers reais são documentados, sem declarar mitigação de script ou clickjacking. (#269, OpenSpec `issue-269-pages-security-hardening`)
 - Fluxo de publicação npm ajustado para executar Trusted Publisher/OIDC no merge exato aprovado em `master`, preservando o artifact preparado em `develop`, a integridade, o back-merge e as permissões mínimas. (#298, OpenSpec `issue-298-master-release-provenance`)

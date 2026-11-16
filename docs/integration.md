@@ -2183,3 +2183,7 @@ export function Categorias() {
 ```
 
 Use `defaultValue={['a']}` para estado não controlado ou `value`/`onValueChange` para estado controlado. `name` gera um input hidden por valor: `FormData.getAll('categorias')` recebe a lista de values, nunca o texto pesquisado; `disabled` omite os valores. A validação `required` pertence ao input focável, não aos hidden. Teclado: setas percorrem opções disponíveis, Enter alterna, Escape fecha, Backspace com busca vazia remove a última seleção, Tab segue fluxo nativo. `readOnly` bloqueia mudanças, `maxSelections` impede apenas novas escolhas e `clearable` controla a limpeza. A lista é local e não faz requisições de rede.
+
+## Composição opcional de footer, menus agrupados e temas (#319)
+
+Consulte [o guia de footer, agrupamentos de menu e temas](footer-dropdown-theme-integration.md) para os exemplos completos com `AdsAdminShell.Footer`, `AdsDropdown.Header`/`Divider`, Tab/Shift+Tab em menus portados, tokens, SSR/hidratação e responsabilidades do consumidor. Essas APIs são aditivas e não alteram os valores padrão dos temas.

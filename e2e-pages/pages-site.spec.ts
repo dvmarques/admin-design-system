@@ -221,3 +221,23 @@ test('site estático mantém o Shiki com CSP parcial, sem erros de navegador', a
 	).toBeVisible();
 	expect(errors).toEqual([]);
 });
+
+test('demo publicado: footer opt-in e ações agrupadas funcionam sob o basePath', async ({
+	page,
+}) => {
+	const errors = collectBrowserErrors(page);
+	await page.goto(`${base}/exemplos/composicao-semantica/consulta/`);
+	const footer = page.getByRole('contentinfo');
+	await expect(footer).toHaveCount(1);
+	await expect(footer).toContainText('Consulta administrativa');
+
+	const trigger = page.getByRole('button', { name: 'Mais ações' });
+	await waitForHydration(trigger);
+	await trigger.click();
+	await expect(page.getByRole('group', { name: 'Cadastros' })).toBeVisible();
+	await expect(page.getByRole('separator')).toBeVisible();
+	await page.getByRole('menuitem', { name: 'Ver clientes' }).click();
+	await expect(page).toHaveURL(`${base}/clientes/`);
+	await expect(page.getByRole('contentinfo')).toHaveCount(0);
+	expect(errors).toEqual([]);
+});

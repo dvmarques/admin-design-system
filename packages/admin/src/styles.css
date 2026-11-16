@@ -183,6 +183,50 @@
 		padding: 1rem;
 	}
 
+	/* Only mounted on demand; no footer markup or reserved space otherwise. */
+	.ads-admin-shell-footer {
+		box-sizing: border-box;
+		display: flex;
+		flex-wrap: wrap;
+		align-items: center;
+		justify-content: space-between;
+		gap: var(--ads-spacing-3);
+		min-width: 0;
+		padding: var(--ads-spacing-3) var(--ads-spacing-4);
+		padding-block-end: max(var(--ads-spacing-3), env(safe-area-inset-bottom));
+		border-block-start: 1px solid var(--ads-footer-border, var(--ads-color-border));
+		background: var(--ads-footer-background, var(--ads-color-surface));
+		color: var(--ads-footer-text, var(--ads-color-text-muted));
+		font-size: 0.875rem;
+	}
+
+	/* Links inherit accessible foreground contrast from the themed footer surface. */
+	.ads-admin-shell-footer a {
+		color: inherit;
+		text-decoration: underline;
+		text-underline-offset: 0.15em;
+	}
+
+	.ads-admin-shell-footer-start,
+	.ads-admin-shell-footer-end {
+		min-width: 0;
+		max-width: 100%;
+		overflow-wrap: anywhere;
+	}
+
+	@media (max-width: 47.99rem) {
+		.ads-admin-shell:has(> .ads-admin-shell-footer) {
+			display: flex;
+			flex-direction: column;
+			min-height: 100dvh;
+		}
+
+		.ads-admin-shell:has(> .ads-admin-shell-footer) > .ads-admin-shell-body {
+			min-height: 0;
+			flex: 1 1 auto;
+		}
+	}
+
 	.ads-admin-shell-main:focus-visible {
 		outline: 2px solid var(--ads-color-focus-ring);
 		outline-offset: -2px;
@@ -507,6 +551,11 @@
 			overscroll-behavior: contain;
 			padding: 1.5rem;
 			padding-bottom: max(1.5rem, env(safe-area-inset-bottom));
+		}
+
+		.ads-admin-shell-footer {
+			flex: 0 0 auto;
+			padding-inline: var(--ads-spacing-6);
 		}
 
 		.ads-admin-shell-sidebar-toggle {
@@ -1835,6 +1884,13 @@
 			display: grid;
 			grid-template-columns: auto minmax(0, 1fr);
 			grid-template-rows: auto minmax(0, 1fr);
+		}
+		.ads-admin-shell--sidebar-header:has(> .ads-admin-shell-footer) {
+			grid-template-rows: auto minmax(0, 1fr) auto;
+		}
+		.ads-admin-shell--sidebar-header > .ads-admin-shell-footer {
+			grid-column: 2;
+			grid-row: 3;
 		}
 		.ads-admin-shell--sidebar-header > .ads-admin-shell-header {
 			grid-column: 2;

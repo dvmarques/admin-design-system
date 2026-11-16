@@ -8,7 +8,9 @@ por versão e pelas changes correspondentes do OpenSpec. Consulte a
 [política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286)
 para distinguir mudanças públicas de manutenção interna.
 
-### [0.1.3] - Em andamento
+### [0.1.4] - Em andamento
+
+### [0.1.3] - 16-nov-2026
 
 #### Added
 

@@ -89,19 +89,23 @@ export default function SemanticConsultationPage() {
 								placeholder="Nome"
 								value={query}
 								onChange={(event) => {
-								setQuery(event.target.value);
+									setQuery(event.target.value);
+									setPage(1);
+									setView('dados');
+									setLastAction(null);
+								}}
+							/>
+						</AdsField>
+						<AdsButton
+							type="button"
+							variant="secondary"
+							onClick={() => {
+								setQuery('');
 								setPage(1);
 								setView('dados');
 								setLastAction(null);
 							}}
-							/>
-						</AdsField>
-						<AdsButton type="button" variant="secondary" onClick={() => {
-							setQuery('');
-							setPage(1);
-							setView('dados');
-							setLastAction(null);
-						}}>
+						>
 							Limpar filtro
 						</AdsButton>
 					</div>

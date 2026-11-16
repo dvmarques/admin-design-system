@@ -37,7 +37,10 @@ export default function IntegratedAdminPage() {
 					<ul className="ads-layout-stack">
 						{scenarios.map((scenario) => (
 							<li key={scenario.id}>
-								<section aria-labelledby={`cenario-${scenario.id}`} className="ads-layout-stack">
+								<section
+									aria-labelledby={`cenario-${scenario.id}`}
+									className="ads-layout-stack"
+								>
 									<AdsTypography as="h2" id={`cenario-${scenario.id}`} variant="heading2">
 										{scenario.title}
 									</AdsTypography>

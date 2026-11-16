@@ -30,6 +30,8 @@ para distinguir mudanças públicas de manutenção interna.
 - Checks de PR otimizados: Chromium em dois shards com check agregado, qualidade sem repetição, Pages seletivo e cancelamento só de execuções obsoletas; transferência de baselines compatível com Windows e Unix. Sem reduzir cobertura nem gates de segurança. (#294)
 - Inventário rastreável da auditoria visual (82 exports) e auditor opt-in (`npm run audit:visual`). Ferramenta interna do repositório, sem mudança nos pacotes publicados. (#152, #313, OpenSpec `issue-152-visual-audit-inventory`)
 
+<!-- release-changelog-approved sha256:1ca77c9b56160aa38dc90252cc3fd9e7b008fcf5d25472b8bcd417e3f1e1b3a5 -->
+
 ### [0.1.2] - 02-nov-2026
 
 #### Added

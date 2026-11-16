@@ -24,7 +24,7 @@ export default function CatalogPage() {
 			<h1>Catálogo de componentes</h1>
 			<p>Exemplos executáveis, variações e código dos componentes públicos do design system.</p>
 			<nav aria-label="Exemplos administrativos integrados">
-				<ul className="ads-layout-cluster">
+				<ul className="ads-layout-cluster demo-catalog-shortcuts">
 					<li>
 						<Link href="/exemplos/integracao">Visão integrada</Link>
 					</li>

@@ -10,6 +10,11 @@ para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.4] - Em andamento
 
+#### Fixed
+
+- Alinhados o ritmo das páginas administrativas do Demo e os atalhos do Catálogo à Visão geral. (#339, OpenSpec `issue-339-demo-spacing`)
+- Corrigido o contraste do exemplo de tema aninhado no Catálogo quando o tema externo é escuro. (#339, OpenSpec `issue-339-demo-spacing`)
+
 ### [0.1.3] - 16-nov-2026
 
 #### Added

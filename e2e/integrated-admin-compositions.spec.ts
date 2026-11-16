@@ -76,7 +76,8 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await detail.focus();
 	await page.keyboard.press('Enter');
 	await expect(detail).toBeFocused();
-	await expect(page.getByRole('alert')).toContainText('Carla Souza');
+	const detailAlert = page.getByRole('alert').filter({ hasText: 'Carla Souza' });
+	await expect(detailAlert).toBeVisible();
 	await filter.fill('nome inexistente');
 	await expect(page.getByText('Nenhum registro encontrado.')).toBeVisible();
 	await expect(pagination).toHaveCount(0);
@@ -84,7 +85,8 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await expect(page.getByRole('status')).toHaveText('Carregando registros de demonstração.');
 	await expect(page.getByRole('table', { name: 'Resultados da consulta' })).toHaveCount(0);
 	await page.getByRole('button', { name: 'Simular erro' }).click();
-	await expect(page.getByRole('alert')).toContainText('Não foi possível carregar');
+	const errorAlert = page.getByRole('alert').filter({ hasText: 'Não foi possível carregar' });
+	await expect(errorAlert).toBeVisible();
 	await page.getByRole('button', { name: 'Tentar novamente' }).click();
 	await expect(page.getByText('Nenhum registro encontrado.')).toBeVisible();
 	await page.getByRole('button', { name: 'Limpar filtro' }).click();

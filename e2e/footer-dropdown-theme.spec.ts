@@ -72,7 +72,11 @@ for (const width of [320, 390, 768, 1440]) {
 		await page.goto('/exemplos/composicao-semantica/consulta');
 		await expect(page.locator('.ads-admin-shell')).toHaveCount(1);
 		await expect(page.getByRole('main')).toHaveCount(1);
-		await expect(page.getByRole('navigation', { name: 'Navegação do demo' })).toHaveCount(1);
+		if (width < 768) {
+			await expect(page.getByRole('button', { name: 'Abrir navegação' })).toBeVisible();
+		} else {
+			await expect(page.getByRole('navigation', { name: 'Navegação do demo' })).toHaveCount(1);
+		}
 		const footer = page.getByRole('contentinfo');
 		await expect(footer).toHaveCount(1);
 		await expect(footer).toContainText('Consulta administrativa');

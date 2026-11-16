@@ -138,7 +138,7 @@ test('confirma publicação propagada depois de mais de 30 segundos sem republic
 				clock += ms;
 			},
 		});
-		assert.equal(tokenReads, 7);
+		assert.equal(tokenReads, 8, '7 consultas de confirmação e 1 verificação final');
 		assert.ok(clock > 30_000, 'a versão somente deve aparecer depois da janela antiga');
 		assert.ok(clock < REGISTRY_CONFIRMATION.maxDurationMs);
 		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));

@@ -219,8 +219,10 @@ A correção remove apenas esse tratamento de hover e suas transições decorati
 nas superfícies da demo; preserva as variantes `AdsSurface`, bordas, raios,
 paddings, espaçamento dos controles, temas, `focus-visible` dos controles
 interativos e estilos distribuídos da biblioteca. O teste
-`e2e/visual-audit-findings.spec.ts` verifica que transformação e sombra não
-mudam com hover nas larguras 390px e 1440px. Nenhum snapshot é regravado.
+`e2e/visual-audit-findings.spec.ts` verifica a presença de ambas as classes na
+página e a ausência de regras CSS com `:hover` destinadas a elas nos estilos
+carregados, nas larguras 390px e 1440px. O teste não simula o ponteiro nem
+substitui uma inspeção visual individual. Nenhum snapshot é regravado.
 
 Classificação: **inconsistência de affordance confirmada, P3 (baixa severidade,
 restrita à demo)**. Não havia evidência de falha funcional nem indicação de

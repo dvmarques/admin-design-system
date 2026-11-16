@@ -78,6 +78,13 @@ for (const width of [320, 390, 768, 1440]) {
 			await expect(page.getByRole('navigation', { name: 'Navegação do demo' })).toHaveCount(1);
 		}
 		const footer = page.getByRole('contentinfo');
+		const results = page.getByRole('region', { name: 'Resultados da consulta' });
+		await results.focus();
+		await expect(results).toBeFocused();
+		if (width === 320) {
+			await page.keyboard.press('ArrowRight');
+			await expect.poll(() => results.evaluate((element) => element.scrollLeft)).toBeGreaterThan(0);
+		}
 		await expect(footer).toHaveCount(1);
 		await expect(footer).toContainText('Consulta administrativa');
 		await expect(footer.getByRole('link', { name: 'Preferências do Demo' })).toHaveAttribute(
@@ -98,6 +105,17 @@ for (const width of [320, 390, 768, 1440]) {
 		await expect(page.getByRole('menuitem', { name: 'Ver clientes' })).toBeFocused();
 		await page.keyboard.press('Escape');
 		await expect(trigger).toBeFocused();
+
+		// Pointer opening leaves focus on the trigger; Tab still closes the menu.
+		await trigger.click();
+		await expect(page.getByRole('menu')).toBeVisible();
+		await page.keyboard.press('Tab');
+		await expect(page.getByRole('menu')).toBeHidden();
+		await expect(page.getByRole('searchbox', { name: 'Filtrar clientes' })).toBeFocused();
+		await trigger.click();
+		await page.keyboard.press('Shift+Tab');
+		await expect(page.getByRole('menu')).toBeHidden();
+		await expect(page.getByRole('link', { name: 'Novo cadastro' })).toBeFocused();
 
 		await trigger.click();
 		await page.getByRole('menuitem', { name: 'Ver clientes' }).click();

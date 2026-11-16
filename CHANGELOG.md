@@ -34,6 +34,10 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Changed
 
+- Dropdown aberto com foco no gatilho também fecha em Tab/Shift+Tab, preservando a ordem nativa de foco após abertura por clique ou sem itens habilitados. (#319)
+- A tabela da consulta administrativa do Demo oferece região nomeada e focável para rolagem horizontal por teclado em telas estreitas. (#319)
+- Orçamento raw de JS/CSS publicado de `components` ajustado de 306.800 para 306.900 bytes após medição de 306.805 com a correção de Tab; gzip e cenários mantêm os tetos existentes. (#319)
+
 - Admin Demo e Storybook publicados recebem CSP parcial compatível com HTML estático (`object-src 'none'`, `base-uri 'self'`, `form-action 'self'`) e meta de referrer; limitações do GitHub Pages e controles que exigem headers reais são documentados, sem declarar mitigação de script ou clickjacking. (#269, OpenSpec `issue-269-pages-security-hardening`)
 - Fluxo de publicação npm ajustado para executar Trusted Publisher/OIDC no merge exato aprovado em `master`, preservando o artifact preparado em `develop`, a integridade, o back-merge e as permissões mínimas. (#298, OpenSpec `issue-298-master-release-provenance`)
 - Orçamentos técnicos do `AdsTimePicker` (#144): JS/CSS publicado de `@dvmarques/admin-ds-components` 295.000→302.000 B (medido 299.472 B), gzip de navegador 89.000→91.000 B (89.847 B), `components-public` gzip 11.880→12.000 B (11.881 B), módulo `time-picker.js` ~6.935 B minificado; cenário `admin-public` 71.440→71.800 B e gzip 24.050→24.200 B após medição 71.439/24.050 B (folga mínima anterior); baseline de distribuição completa de components 628.048→693.543 B após I-1 (medido 691.541 B no Windows e 693.543 B na CI Linux/LF, com declarações e source maps do rascunho parcial controlado).

@@ -14,6 +14,16 @@
 
 **Não autorizar nesta change:** archive, merge, fechamento de issue ou épico.
 
+## Revalidação após sincronização com develop — 16/11/2026
+
+- As 11 tarefas acima registram a entrega histórica; a revisão atual incorpora `develop` em `83e68698b26e032291c3b04da7c42bb987bf3f44`, via merge sem conflitos.
+- Corrigidos Tab/Shift+Tab com foco no gatilho e acesso por teclado à tabela da consulta a 320 px; testes de regressão adicionados sem novos mecanismos ou dependências.
+- Validações locais: format, lint, build, typecheck, quality (88 arquivos Vitest / 1.595 testes), inspeção de pacotes, peer opcional, saída Storybook e OpenSpec strict (72 itens) aprovados. Build repetido após a correção do Demo; E2E focalizado: 13 aprovados. WebKit revalidado com bibliotecas isoladas: 25 aprovados e 1 skip previsto pela suíte.
+- Suíte E2E completa local: 546 aprovados, 9 diferenças de screenshots e 26 falhas iniciais de carregamento WebKit. Estas últimas foram resolvidas no ambiente e revalidadas acima; snapshots permanecem intactos. Diferenças locais de rasterização de texto exigem confirmação no ambiente oficial de CI, sem aceitação automática.
+- Matriz complementar no Demo real: capturas de 320/390/768/1440 px, claro/escuro, menu, foco e sidebar móvel/recolhida; axe WCAG sem violações nas oito combinações após a correção da tabela, sem erro de página ou overflow em escala normal. CSS zoom 200% sem overflow em 768/1440; em 320/390 produz overflow (largura efetiva abaixo de 320 px), registrado como limite da simulação. Zoom nativo, leitor de tela real e aprovação visual humana não realizados.
+- Resultados de Pages e checks do SHA publicado nesta revisão serão registrados na PR #328, sem substituir as evidências históricas abaixo. A execução histórica não comprova o SHA atual.
+- `npm run build:pages` e `npm run test:e2e:pages`: aprovados localmente, 34 testes incluindo footer/dropdown sob `basePath` e `trailingSlash`.
+
 ## Evidências da PR #328
 
 - OpenSpec strict e suíte de qualidade rápida (format, lint, typecheck, build e 88 arquivos Vitest) passaram no SHA `e5addaf`; WebKit, Firefox e os dois shards Chromium passaram no mesmo código da entrega; Security e Pages também passaram.

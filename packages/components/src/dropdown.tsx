@@ -97,6 +97,7 @@ function AdsDropdownTrigger({
 			onKeyDown={(event) => {
 				onKeyDown?.(event);
 				if (event.defaultPrevented) return;
+				if (event.key === 'Tab' && open) setOpen(false);
 				if ((event.key === 'ArrowDown' || event.key === 'Enter' || event.key === ' ') && !open) {
 					event.preventDefault();
 					initialFocusRef.current = true;

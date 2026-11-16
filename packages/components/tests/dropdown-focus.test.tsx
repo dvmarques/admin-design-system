@@ -140,6 +140,10 @@ describe('dropdown keyboard focus', () => {
 			fireEvent.keyDown(trigger, { key: 'ArrowDown' });
 			await screen.findByRole('menu');
 			expect(trigger).toHaveFocus();
+			fireEvent.keyDown(trigger, { key: 'Tab' });
+			expect(screen.queryByRole('menu')).not.toBeInTheDocument();
+			fireEvent.keyDown(trigger, { key: 'ArrowDown' });
+			await screen.findByRole('menu');
 			fireEvent.keyDown(trigger, { key: 'Escape' });
 			expect(screen.queryByRole('menu')).not.toBeInTheDocument();
 		},

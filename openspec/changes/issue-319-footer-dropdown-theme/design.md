@@ -1,5 +1,13 @@
 # Design técnico e revisão crítica — #319
 
+## Sincronização e revisão de 16/11/2026
+
+- Incorporado `origin/develop` em `83e68698b26e032291c3b04da7c42bb987bf3f44` via merge, sem conflitos. Preservados #325 (auditoria), #329 (reconciliação), #330 (hover do Demo) e #331 (Playwright 1.65.1, workflows e lockfile). As mudanças de dependências são exclusivamente as já integradas na base.
+- A revisão identificou que Tab/Shift+Tab só fechavam o menu quando o foco estava no Content portado. Após abertura por clique ou em menu sem itens habilitados, o foco fica no Trigger: fechar também nesse caminho, preservando o comportamento nativo de Tab e callbacks que previnem o evento. Cobrir os dois sentidos em testes de componente e navegador.
+- Mantidos o shell compartilhado, footer condicional, mecanismos de tema/portal e APIs públicas. Sem alteração intencional de aparência ou atualização de snapshots.
+- A correção acrescenta 77 bytes de JS/CSS publicado em `components` (306.728 → 306.805), excedendo o teto anterior de 306.800 em 5 bytes. Teto raw ajustado para 306.900 (+100 bytes); gzip e cenários permanecem sujeitos aos limites existentes, sem aumento preventivo.
+- Inspeção axe do Demo real em 320 px identificou `scrollable-region-focusable` na tabela da consulta. Consumir a API pública existente `AdsTable.containerProps` com `role=region`, nome e `tabIndex=0` permite rolagem por teclado sem alterar o componente ou o layout. Teste E2E confirma foco nas quatro larguras e rolagem com ArrowRight a 320 px.
+
 ## Inventário verificado em develop (553461b)
 
 - `AdsAdminShell`: `Header`, `Body`, `Sidebar`, `Main`; main com rolagem própria no desktop; modo `sidebar-header` é grid com `Body {display:contents}` e sidebar na coluna 1. Nenhum footer existe.

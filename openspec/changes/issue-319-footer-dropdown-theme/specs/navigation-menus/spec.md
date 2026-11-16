@@ -14,6 +14,11 @@ O AdsDropdown MUST oferecer `Header` e `Divider` composáveis no Content, manten
 - **WHEN** o usuário navega por teclado e pressiona Escape, Tab ou Shift+Tab
 - **THEN** Escape fecha e devolve foco ao gatilho, enquanto Tab fecha e prossegue para a parada de foco anterior ou seguinte ao gatilho sem aprisionamento no portal
 
+#### Scenario: Tab com foco no gatilho
+
+- **WHEN** o menu está aberto e o foco permanece no gatilho após clique ou por não existir item habilitado
+- **THEN** Tab e Shift+Tab fecham o menu e preservam a navegação nativa a partir do gatilho
+
 #### Scenario: Regressão de menu
 
 - **WHEN** o consumidor usa Items normais, desabilitados, menus vazios ou valores radio em telas pequenas ou portais aninhados

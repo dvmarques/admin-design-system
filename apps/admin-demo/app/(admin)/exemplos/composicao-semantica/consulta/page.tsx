@@ -94,7 +94,13 @@ export default function SemanticConsultationPage() {
 						{results.length === 1 ? 'registro encontrado' : 'registros encontrados'}
 					</p>
 					<div className="demo-semantic-results">
-						<AdsTable>
+						<AdsTable
+							containerProps={{
+								role: 'region',
+								'aria-label': 'Resultados da consulta',
+								tabIndex: 0,
+							}}
+						>
 							<AdsTableCaption>Resultados da consulta</AdsTableCaption>
 							<AdsTableHead>
 								<AdsTableRow interactive={false}>

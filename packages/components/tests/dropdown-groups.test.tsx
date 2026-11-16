@@ -25,6 +25,18 @@ function Groups({ defaultOpen = false }: { defaultOpen?: boolean }) {
 }
 
 describe('semantic dropdown grouping', () => {
+	it.each([false, true])('closes on Tab at the trigger (shift=%s)', async (shiftKey) => {
+		render(<Groups />);
+		const trigger = screen.getByRole('button', { name: 'Opções' });
+		trigger.focus();
+		fireEvent.click(trigger);
+		await screen.findByRole('menu');
+		expect(trigger).toHaveFocus();
+		// The browser must retain its default navigation from the trigger.
+		expect(fireEvent.keyDown(trigger, { key: 'Tab', shiftKey })).toBe(true);
+		expect(screen.queryByRole('menu')).toBeNull();
+	});
+
 	it('renders static headers and a semantic separator outside the keyboard item sequence', async () => {
 		render(<Groups />);
 		const trigger = screen.getByRole('button', { name: 'Opções' });

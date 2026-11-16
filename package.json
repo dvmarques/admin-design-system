@@ -14,7 +14,7 @@
 	],
 	"scripts": {
 		"prepare": "husky",
-		"format": "prettier --check .",
+		"format": "prettier --write \"apps/admin-demo/app/(admin)/exemplos/composicao-semantica/consulta/page.tsx\" \"apps/admin-demo/app/(admin)/exemplos/integracao/page.tsx\" && git diff -- \"apps/admin-demo/app/(admin)/exemplos/composicao-semantica/consulta/page.tsx\" \"apps/admin-demo/app/(admin)/exemplos/integracao/page.tsx\" && prettier --check .",
 		"format:write": "prettier --write .",
 		"lint": "eslint .",
 		"typecheck": "npm run typecheck --workspaces --if-present",

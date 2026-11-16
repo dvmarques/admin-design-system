@@ -132,7 +132,11 @@ for (const width of [390, 1440]) {
 		await page.goto('/componentes');
 
 		for (const selector of ['.demo-panel', '.demo-utility-panel']) {
-			const panel = page.locator(selector).first();
+			const panels = page.locator(selector);
+			const count = await panels.count();
+			expect(count, `Nenhum painel encontrado para ${selector}`).toBeGreaterThan(0);
+			for (let index = 0; index < count; index++) {
+			const panel = panels.nth(index);
 			await expect(panel).toBeVisible();
 			await panel.scrollIntoViewIfNeeded();
 
@@ -151,6 +155,7 @@ for (const width of [390, 1440]) {
 					),
 			);
 			expect(await appearance()).toEqual(beforeHover);
+			}
 		}
 	});
 }

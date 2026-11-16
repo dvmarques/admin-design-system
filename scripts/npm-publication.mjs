@@ -250,9 +250,7 @@ export async function publishPlan(
 export async function registryVersion(name, version, timeoutMs = 30_000) {
 	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
 	const response = await globalThis.fetch(url, {
-		signal: globalThis.AbortSignal.timeout(
-			Math.max(1, Math.min(30_000, Math.ceil(timeoutMs))),
-		),
+		signal: globalThis.AbortSignal.timeout(Math.max(1, Math.min(30_000, Math.ceil(timeoutMs)))),
 		headers: { accept: 'application/json' },
 		cache: 'no-store',
 	});

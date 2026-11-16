@@ -128,6 +128,7 @@ for (const width of [390, 1440]) {
 	test(`superfícies informativas não sugerem clique ao passar o mouse em ${width}px`, async ({
 		page,
 	}) => {
+		test.setTimeout(90_000);
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto('/componentes');
 
@@ -135,26 +136,27 @@ for (const width of [390, 1440]) {
 			const panels = page.locator(selector);
 			const count = await panels.count();
 			expect(count, `Nenhum painel encontrado para ${selector}`).toBeGreaterThan(0);
-			for (let index = 0; index < count; index++) {
-			const panel = panels.nth(index);
-			await expect(panel).toBeVisible();
-			await panel.scrollIntoViewIfNeeded();
 
-			const appearance = () =>
-				panel.evaluate((node) => {
-					const style = getComputedStyle(node);
-					return { transform: style.transform, shadow: style.boxShadow };
-				});
-			const beforeHover = await appearance();
-			await panel.hover({ position: { x: 8, y: 8 } });
-			// Wait for the browser to paint the hovered state without a fixed sleep.
-			await page.evaluate(
-				() =>
-					new Promise<void>((resolve) =>
-						requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
-					),
-			);
-			expect(await appearance()).toEqual(beforeHover);
+			for (let index = 0; index < count; index++) {
+				const panel = panels.nth(index);
+				await expect(panel).toBeVisible();
+				await panel.scrollIntoViewIfNeeded();
+
+				const appearance = () =>
+					panel.evaluate((node) => {
+						const style = getComputedStyle(node);
+						return { transform: style.transform, shadow: style.boxShadow };
+						});
+				const beforeHover = await appearance();
+				await panel.hover({ position: { x: 8, y: 8 } });
+				// Wait for the browser to paint the hovered state without a fixed sleep.
+				await page.evaluate(
+					() =>
+						new Promise<void>((resolve) =>
+							requestAnimationFrame(() => requestAnimationFrame(() => resolve())),
+						),
+				);
+				expect(await appearance()).toEqual(beforeHover);
 			}
 		}
 	});

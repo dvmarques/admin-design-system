@@ -12,7 +12,7 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Changed
 
-- Documentados o comparativo reproduzível de bundles e os limites da revisão automatizada das composições integradas; removido o gate de revisão manual por decisão de escopo. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
+- Consulta demonstrativa preserva o foco após tentar novamente e anuncia ações de linha sem interromper leitores de tela. (#320, OpenSpec `issue-320-integrated-admin-compositions`)
 
 #### Added
 

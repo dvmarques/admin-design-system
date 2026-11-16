@@ -83,6 +83,10 @@ for (const route of routes) {
 			await page.waitForTimeout(100);
 		}
 	}
+	for (const name of ['Página 2', 'Detalhes do registro 103']) {
+		const control = page.getByRole('button', { name, exact: true });
+		if (await control.isVisible()) await control.click();
+	}
 	const input = page.getByRole('searchbox', { name: 'Filtrar clientes' });
 	if (await input.count()) {
 		await input.fill('Ana');
@@ -96,7 +100,14 @@ for (const route of routes) {
 	byRoute[route] = {
 		js: await stats(paths.filter((p) => p.endsWith('.js'))),
 		css: await stats(paths.filter((p) => p.endsWith('.css'))),
-		assets: [...assets].sort(),
+		assets: await Promise.all(
+			[...assets].sort().map(async (url) => {
+				const data = await readFile(
+					join(root, 'apps/admin-demo/.next', url.slice('/_next/'.length)),
+				);
+				return { path: url, raw: data.length, gzip: gzipSync(data, { level: 9 }).length };
+			}),
+		),
 	};
 	await context.close();
 }

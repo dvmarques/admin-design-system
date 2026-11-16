@@ -67,7 +67,9 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await page.goto(`${base}/consulta`);
 	const filter = page.getByRole('searchbox', { name: 'Filtrar clientes' });
 	await waitForHydration(filter);
-	await expect(page.getByRole('status')).toHaveText('3 registros encontrados');
+	await expect(page.getByRole('status').filter({ hasText: 'registros encontrados' })).toHaveText(
+		'3 registros encontrados',
+	);
 	const pagination = page.getByRole('navigation', { name: 'Paginação da consulta' });
 	await pagination.getByRole('button', { name: 'Página 2', exact: true }).click();
 	await expect(pagination.locator('[aria-current="page"]')).toHaveText('2');
@@ -76,7 +78,7 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await detail.focus();
 	await page.keyboard.press('Enter');
 	await expect(detail).toBeFocused();
-	const detailAlert = page.getByRole('alert').filter({ hasText: 'Carla Souza' });
+	const detailAlert = page.getByRole('status').filter({ hasText: 'Carla Souza' });
 	await expect(detailAlert).toBeVisible();
 	await page.getByRole('button', { name: 'Mostrar dados' }).click();
 	await expect(detailAlert).toHaveCount(0);
@@ -90,7 +92,9 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await expect(detailAlert).toBeVisible();
 	await page.getByRole('button', { name: 'Simular erro' }).click();
 	await expect(detailAlert).toHaveCount(0);
-	await page.getByRole('button', { name: 'Tentar novamente' }).click();
+	await page.getByRole('button', { name: 'Tentar novamente' }).focus();
+	await page.keyboard.press('Enter');
+	await expect(page.getByRole('button', { name: 'Mostrar dados' })).toBeFocused();
 	await expect(detailAlert).toHaveCount(0);
 	await filter.fill('nome inexistente');
 	await expect(page.getByText('Nenhum registro encontrado.')).toBeVisible();
@@ -104,7 +108,9 @@ test('consulta: paginação, filtro, ações, vazio, carregamento, erro e retry'
 	await page.getByRole('button', { name: 'Tentar novamente' }).click();
 	await expect(page.getByText('Nenhum registro encontrado.')).toBeVisible();
 	await page.getByRole('button', { name: 'Limpar filtro' }).click();
-	await expect(page.getByRole('status')).toHaveText('3 registros encontrados');
+	await expect(page.getByRole('status').filter({ hasText: 'registros encontrados' })).toHaveText(
+		'3 registros encontrados',
+	);
 	await expect(pagination.locator('[aria-current="page"]')).toHaveText('1');
 });
 

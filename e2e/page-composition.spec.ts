@@ -60,13 +60,17 @@ test('consulta filtra e limpa tabela sem card de página', async ({ page }) => {
 	const filter = page.getByRole('searchbox', { name: 'Filtrar clientes' });
 	await waitForHydration(filter);
 	await filter.fill('Ana');
-	await expect(page.getByRole('status')).toHaveText('1 registro encontrado');
+	await expect(page.getByRole('status').filter({ hasText: '1 registro encontrado' })).toHaveText(
+		'1 registro encontrado',
+	);
 	await expect(page.getByRole('cell', { name: 'Ana Silva' })).toBeVisible();
 	await expect(page.getByRole('cell', { name: 'Bruno Costa' })).toHaveCount(0);
 	await page.getByRole('button', { name: 'Limpar filtro' }).focus();
 	await expect(page.getByRole('button', { name: 'Limpar filtro' })).toBeFocused();
 	await page.keyboard.press('Enter');
-	await expect(page.getByRole('status')).toHaveText('3 registros encontrados');
+	await expect(page.getByRole('status').filter({ hasText: '3 registros encontrados' })).toHaveText(
+		'3 registros encontrados',
+	);
 });
 
 test('formulário mantém heading H3 subordinado e valida pelo teclado', async ({ page }) => {

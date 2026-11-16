@@ -58,7 +58,8 @@ export default function IntegratedAdminPage() {
 					</AdsTypography>
 					<p>
 						Esta página já usa o shell administrativo compartilhado com sidebar normal, recolhida e
-						mobile, menu da conta e troca de tema. A consulta demonstra o footer opcional.
+						mobile, menu da conta e troca de tema. O footer é fornecido pelo layout compartilhado da
+						Demo.
 					</p>
 					<div>
 						<Link className="demo-action-link" href="/catalogo-shell">

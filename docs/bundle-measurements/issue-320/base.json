@@ -14,18 +14,66 @@
 				"gzip": 19279
 			},
 			"assets": [
-				"/_next/static/chunks/0om590q-tq0l9.js",
-				"/_next/static/chunks/1-uf94uxvovbm.js",
-				"/_next/static/chunks/19oo2x0jj-xjk.js",
-				"/_next/static/chunks/1_tt0uj4i1iev.js",
-				"/_next/static/chunks/1cbl236v59rkz.js",
-				"/_next/static/chunks/229k-tfm0svxj.js",
-				"/_next/static/chunks/262tpklk41u37.js",
-				"/_next/static/chunks/2j5vg8jeruf4x.css",
-				"/_next/static/chunks/34d35wto3ad07.css",
-				"/_next/static/chunks/3o_akfi1c71u7.js",
-				"/_next/static/chunks/3srfjz42u14tx.js",
-				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/262tpklk41u37.js",
+					"raw": 6640,
+					"gzip": 2384
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
 			]
 		},
 		"/exemplos/composicao-semantica/consulta": {
@@ -40,18 +88,66 @@
 				"gzip": 19279
 			},
 			"assets": [
-				"/_next/static/chunks/0om590q-tq0l9.js",
-				"/_next/static/chunks/1-uf94uxvovbm.js",
-				"/_next/static/chunks/19oo2x0jj-xjk.js",
-				"/_next/static/chunks/1_tt0uj4i1iev.js",
-				"/_next/static/chunks/1cbl236v59rkz.js",
-				"/_next/static/chunks/229k-tfm0svxj.js",
-				"/_next/static/chunks/2j5vg8jeruf4x.css",
-				"/_next/static/chunks/2s2tm0h8qgyf5.js",
-				"/_next/static/chunks/34d35wto3ad07.css",
-				"/_next/static/chunks/3o_akfi1c71u7.js",
-				"/_next/static/chunks/3srfjz42u14tx.js",
-				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/2s2tm0h8qgyf5.js",
+					"raw": 8728,
+					"gzip": 2777
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
 			]
 		},
 		"/exemplos/composicao-semantica/formulario": {
@@ -66,18 +162,66 @@
 				"gzip": 19279
 			},
 			"assets": [
-				"/_next/static/chunks/0om590q-tq0l9.js",
-				"/_next/static/chunks/1-uf94uxvovbm.js",
-				"/_next/static/chunks/19oo2x0jj-xjk.js",
-				"/_next/static/chunks/1_tt0uj4i1iev.js",
-				"/_next/static/chunks/1cbl236v59rkz.js",
-				"/_next/static/chunks/229k-tfm0svxj.js",
-				"/_next/static/chunks/2j5vg8jeruf4x.css",
-				"/_next/static/chunks/2syfoohvtnn3h.js",
-				"/_next/static/chunks/34d35wto3ad07.css",
-				"/_next/static/chunks/3o_akfi1c71u7.js",
-				"/_next/static/chunks/3srfjz42u14tx.js",
-				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/2syfoohvtnn3h.js",
+					"raw": 9742,
+					"gzip": 2911
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
 			]
 		},
 		"/exemplos/composicao-semantica/dashboard": {
@@ -92,17 +236,61 @@
 				"gzip": 19279
 			},
 			"assets": [
-				"/_next/static/chunks/0om590q-tq0l9.js",
-				"/_next/static/chunks/1-uf94uxvovbm.js",
-				"/_next/static/chunks/19oo2x0jj-xjk.js",
-				"/_next/static/chunks/1_tt0uj4i1iev.js",
-				"/_next/static/chunks/1cbl236v59rkz.js",
-				"/_next/static/chunks/229k-tfm0svxj.js",
-				"/_next/static/chunks/2j5vg8jeruf4x.css",
-				"/_next/static/chunks/34d35wto3ad07.css",
-				"/_next/static/chunks/3o_akfi1c71u7.js",
-				"/_next/static/chunks/3srfjz42u14tx.js",
-				"/_next/static/chunks/turbopack-2c3mg3r-05n1w.js"
+				{
+					"path": "/_next/static/chunks/0om590q-tq0l9.js",
+					"raw": 13492,
+					"gzip": 3735
+				},
+				{
+					"path": "/_next/static/chunks/1-uf94uxvovbm.js",
+					"raw": 44528,
+					"gzip": 14639
+				},
+				{
+					"path": "/_next/static/chunks/19oo2x0jj-xjk.js",
+					"raw": 41119,
+					"gzip": 12003
+				},
+				{
+					"path": "/_next/static/chunks/1_tt0uj4i1iev.js",
+					"raw": 14925,
+					"gzip": 3955
+				},
+				{
+					"path": "/_next/static/chunks/1cbl236v59rkz.js",
+					"raw": 229597,
+					"gzip": 71735
+				},
+				{
+					"path": "/_next/static/chunks/229k-tfm0svxj.js",
+					"raw": 43093,
+					"gzip": 13417
+				},
+				{
+					"path": "/_next/static/chunks/2j5vg8jeruf4x.css",
+					"raw": 17073,
+					"gzip": 3507
+				},
+				{
+					"path": "/_next/static/chunks/34d35wto3ad07.css",
+					"raw": 104389,
+					"gzip": 15772
+				},
+				{
+					"path": "/_next/static/chunks/3o_akfi1c71u7.js",
+					"raw": 159205,
+					"gzip": 44127
+				},
+				{
+					"path": "/_next/static/chunks/3srfjz42u14tx.js",
+					"raw": 29981,
+					"gzip": 8119
+				},
+				{
+					"path": "/_next/static/chunks/turbopack-2c3mg3r-05n1w.js",
+					"raw": 11255,
+					"gzip": 4390
+				}
 			]
 		},
 		"/exemplos/integracao": null

@@ -2,7 +2,7 @@
 
 ## Decisões
 
-1. **Reuso:** manter a consulta, formulário e dashboard em suas rotas atuais, enriquecendo estados que faltam. A nova rota índice `/exemplos/integracao` apenas apresenta matriz e links, sem reimplementar as mesmas páginas ou criar um segundo shell. O `(admin)/layout.tsx` continua fornecendo uma única região `main`, cabeçalho, sidebar, menus, controle de tema e footer opt-in.
+1. **Reuso:** manter a consulta, formulário e dashboard em suas rotas atuais, enriquecendo estados que faltam. A nova rota índice `/exemplos/integracao` apenas apresenta matriz e links, sem reimplementar as mesmas páginas ou criar um segundo shell. O `(admin)/layout.tsx` continua fornecendo uma única região `main`, cabeçalho, sidebar, menus, controle de tema e footer compartilhado, configurado de forma opt-in pelo consumidor do shell.
 2. **Client/Server:** índice e dashboard sem estado são Server Components; consulta e formulário são Client Components apenas onde há estado/ações. Dados são fictícios e definidos localmente; sem fetch, storage ou router privado nos pacotes.
 3. **Acessibilidade:** manter H1 único do `AdsPageHeader`, H2 nas seções, foco programático apenas quando necessário, regiões rotuladas de tabela, estados anunciados por `role=status`/`role=alert` e controles com nomes próprios. Não usar anúncio de status duplicado.
 4. **CSS:** composição por classes públicas `ads-layout-*`, estilos da Demo existentes e tokens `--ads-*`. Não adicionar CSS dos pacotes, nem exigir Tailwind no consumidor. O CSS compilado permanece carregado pelo layout raiz na ordem tokens → components → admin.

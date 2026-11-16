@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import {
 	AdsButton,
 	AdsDropdown,
@@ -31,6 +31,7 @@ export default function SemanticConsultationPage() {
 	const [page, setPage] = useState(1);
 	const [view, setView] = useState<'dados' | 'carregando' | 'erro'>('dados');
 	const [lastAction, setLastAction] = useState<string | null>(null);
+	const showDataRef = useRef<HTMLButtonElement>(null);
 	function changeView(nextView: typeof view) {
 		setView(nextView);
 		setLastAction(null);
@@ -120,27 +121,39 @@ export default function SemanticConsultationPage() {
 						<AdsButton type="button" variant="secondary" onClick={() => changeView('erro')}>
 							Simular erro
 						</AdsButton>
-						<AdsButton type="button" variant="secondary" onClick={() => changeView('dados')}>
+						<AdsButton
+							ref={showDataRef}
+							type="button"
+							variant="secondary"
+							onClick={() => changeView('dados')}
+						>
 							Mostrar dados
 						</AdsButton>
 					</div>
-					{view === 'carregando' ? (
-						<p role="status">Carregando registros de demonstração.</p>
-					) : view === 'erro' ? (
+					<p role="status">
+						{view === 'carregando'
+							? 'Carregando registros de demonstração.'
+							: view === 'dados'
+								? `${results.length} ${results.length === 1 ? 'registro encontrado' : 'registros encontrados'}`
+								: null}
+					</p>
+					{view === 'carregando' ? null : view === 'erro' ? (
 						<div role="alert" className="ads-layout-stack">
 							<p>Não foi possível carregar os registros fictícios.</p>
 							<div>
-								<AdsButton type="button" onClick={() => changeView('dados')}>
+								<AdsButton
+									type="button"
+									onClick={() => {
+										changeView('dados');
+										showDataRef.current?.focus();
+									}}
+								>
 									Tentar novamente
 								</AdsButton>
 							</div>
 						</div>
 					) : (
 						<>
-							<p role="status">
-								{results.length}{' '}
-								{results.length === 1 ? 'registro encontrado' : 'registros encontrados'}
-							</p>
 							<div className="demo-semantic-results">
 								<AdsTable
 									containerProps={{
@@ -193,7 +206,9 @@ export default function SemanticConsultationPage() {
 									aria-label="Paginação da consulta"
 								/>
 							)}
-							{lastAction && <p role="alert">Detalhes fictícios de {lastAction} selecionados.</p>}
+							<p role="status">
+								{lastAction ? `Detalhes fictícios de ${lastAction} selecionados.` : null}
+							</p>
 						</>
 					)}
 				</section>

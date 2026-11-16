@@ -2,13 +2,13 @@
 
 ## Percurso na Demo e no Storybook
 
-O índice `/exemplos/integracao` é um Server Component com links para os três exemplos existentes e as variantes do shell. O `(admin)/layout.tsx` fornece um único `main`, cabeçalho, sidebar, conta, menu e controle de tema; o footer permanece opt-in na consulta. Não há um segundo shell.
+O índice `/exemplos/integracao` é um Server Component com links para os três exemplos existentes e as variantes do shell. O `(admin)/layout.tsx` fornece um único `main`, cabeçalho, sidebar, conta, menu e controle de tema; o layout da Demo inclui o footer compartilhado; o componente de footer é opt-in para o consumidor do shell. Não há um segundo shell.
 
 | Cenário    | Rota                                                   | Composição e estados                                                                                                          |
 | ---------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
 | Consulta   | `/exemplos/composicao-semantica/consulta`              | `AdsPageHeader`, H2, `AdsField` + `AdsInput`, `AdsTable`, `AdsPagination`, ações de linha, filtro, vazio, carregamento e erro |
 | Formulário | `/exemplos/composicao-semantica/formulario`            | H1/H2/H3, `AdsField` e `AdsButton`, validação, feedback, campo desabilitado                                                   |
-| Shell      | Índice e rotas acima; `/catalogo-shell` para variantes | `AdsAdminShell`, sidebar normal/recolhida/mobile, menu, tema, footer opcional                                                 |
+| Shell      | Índice e rotas acima; `/catalogo-shell` para variantes | `AdsAdminShell`, sidebar normal/recolhida/mobile, menu, tema e footer do layout compartilhado                                 |
 | Resumos    | `/exemplos/composicao-semantica/dashboard`             | `AdsMetricCard` e `AdsCard` apenas em indicadores e conteúdo autocontido, não como contêiner de página                        |
 
 O Storybook inclui **Patterns / Page composition / Integrated admin** e os exemplos separados **Consultation**, **Validated form** e **Dashboard**. O catálogo da aplicação aponta para a matriz integrada.
@@ -36,9 +36,9 @@ Os três arquivos de orçamento permanecem intactos: [distribuição](bundle-bas
 
 **Medições anteriores, apenas históricas:** a [PR #328](https://github.com/dvmarques/admin-design-system/pull/328) registrou components 306.805 B (gzip 92.067 B) e admin 173.020 B (gzip 46.886 B) de JS/CSS publicados. Não são medições da #320. O diff desta change não altera `packages/`; não há aumento de bundle de pacote intencional. Bytes de rotas Next/Storybook podem mudar e não são inferidos desses números.
 
-Registre no PR SHA, data, versões de Node/npm e métricas de `inspect:packages` da CI **antes de afirmar comparação comprovada**. Se houver regressão, investigue import massivo, CSS duplicado e SSR/hidratação sem elevar o budget para silenciar a falha.
+O comparativo vigente está abaixo, com SHAs, ambiente e limites; as métricas históricas de distribuição não são substitutas desse comparativo.
 
-### Medição efetiva da integração
+### Medição histórica da distribuição
 
 Na [CI #43875243920](https://github.com/dvmarques/admin-design-system/actions/runs/43875243920),
 em **16/11/2026**, no commit `0e4e57ed21f955ccfad6f0790307d410d1628c51`
@@ -63,22 +63,22 @@ concluíram com sucesso. O deploy real é pulado em PRs, por política.
 
 ### Comparativo reproduzível — base e HEAD da PR
 
-Em 16/11/2026, Windows x64, Node 24.21.0, npm 11.19.1 e lockfile SHA-256 `7484c326a677075b021e6111aa8a866ba179ee2044e7165a98c4c70307558715`: base `157bb339bb31b483c6acbbfaaa4370d5d6653893` e HEAD funcional/documental `903696a6f55c3061a892105dcd83d1c5da97dfa0`. Ambos usaram worktrees separados, `npm ci --ignore-scripts` e `npm run build`, sem variáveis de Pages, com `next start` em produção. Nenhum budget foi alterado.
+Em 16/11/2026, Windows x64, Node 24.21.0, npm 11.19.1 e lockfile SHA-256 `7484c326a677075b021e6111aa8a866ba179ee2044e7165a98c4c70307558715`: base `157bb339bb31b483c6acbbfaaa4370d5d6653893` e árvore de trabalho sobre `4d78a1c74321ea608e73197eaefa1bc493e1a6d5`, incluindo as correções de foco e regiões de status da revisão posterior. Ambos usaram worktrees separados, `npm ci --ignore-scripts` e `npm run build`, sem variáveis de Pages, com `next start` em produção. Nenhum budget foi alterado.
 
-Para reproduzir, instale a mesma versão de Node/npm e execute `npm ci --ignore-scripts` e `npm run build` em cada checkout; instale o Chromium do Playwright com `npx playwright install chromium`. Sirva cada checkout com `npm run start --workspace @admin-ds/admin-demo` em portas distintas. A partir da branch desta change, execute `node scripts/measure-integrated-bundles.mjs <worktree> <http://localhost:porta>` para cada servidor. O script registra requisições JS/CSS durante navegação e interações disponíveis nas duas versões, deduplica caminhos, soma gzip nível 9 por arquivo e relaciona os assets por rota. Os relatórios completos estão em [base](bundle-measurements/issue-320/base.json) e [HEAD](bundle-measurements/issue-320/head.json).
+Para reproduzir, instale a mesma versão de Node/npm e execute `npm ci --ignore-scripts` e `npm run build` em cada checkout; instale o Chromium do Playwright com `npx playwright install chromium`. Sirva cada checkout com `npm run start --workspace @admin-ds/admin-demo` em portas distintas. A partir da branch desta change, execute `node scripts/measure-integrated-bundles.mjs <worktree> <http://localhost:porta>` para cada servidor. O script registra requisições JS/CSS durante navegação e interações disponíveis nas duas versões, deduplica caminhos, soma gzip nível 9 por arquivo e relaciona os assets por rota com tamanho bruto e gzip de cada arquivo. Os relatórios completos estão em [base](bundle-measurements/issue-320/base.json) e [HEAD](bundle-measurements/issue-320/head.json).
 
 | Rota / conjunto                | Base JS bruto / gzip (B) | HEAD JS bruto / gzip (B) |                Delta bruto / gzip |
 | ------------------------------ | -----------------------: | -----------------------: | --------------------------------: |
 | Catálogo                       |        593.835 / 178.504 |        594.441 / 178.643 |     +606 (+0,10%) / +139 (+0,08%) |
-| Consulta                       |        595.923 / 178.897 |        603.948 / 181.810 | +8.025 (+1,35%) / +2.913 (+1,63%) |
+| Consulta                       |        595.923 / 178.897 |        603.999 / 181.846 | +8.076 (+1,36%) / +2.949 (+1,65%) |
 | Formulário                     |        596.937 / 179.031 |        597.040 / 179.069 |      +103 (+0,02%) / +38 (+0,02%) |
 | Dashboard                      |        587.195 / 176.120 |        587.195 / 176.120 |                             0 / 0 |
-| União sem dupla contagem       |        612.305 / 184.192 |        621.039 / 187.282 | +8.734 (+1,43%) / +3.090 (+1,68%) |
+| União sem dupla contagem       |        612.305 / 184.192 |        621.090 / 187.318 | +8.785 (+1,43%) / +3.126 (+1,70%) |
 | Storybook: todos os JS gerados |   10.275.788 / 2.576.448 |   10.278.452 / 2.577.255 | +2.664 (+0,026%) / +807 (+0,031%) |
 
 Cada rota carregou os mesmos dois CSS: 121.462 B brutos / 19.279 B gzip na base e no HEAD; a união os conta uma vez. O Storybook gerou dois CSS, 107.154 / 16.692 B em ambos. A rota nova `/exemplos/integracao` não existe na base; no HEAD carregou 587.195 / 176.120 B de JS e 121.462 / 19.279 B de CSS, arquivos já contados na união. Os totais de Storybook são todos os arquivos gerados, não bytes de uma sessão individual.
 
-A investigação identificou que os +8.025 B da consulta correspondem à substituição de seu chunk específico de 8.728 B por outro de 16.753 B. O diff acrescenta estados, ações e paginação usando imports públicos; não adiciona dependências nem altera pacotes. Não foi identificado import massivo novo pelo diff. Os dois arquivos CSS de Storybook têm hashes distintos e o CSS carregado pelo Next não mudou; isso não prova ausência de regras CSS semanticamente duplicadas. Nenhum erro de página ou console de hidratação foi observado nos percursos medidos. A medição cobre as interações explicitadas no script, não todas as combinações possíveis, e os limites existentes de distribuição continuam em `bundle-baseline.json`, `browser-budget.json` e `scenario-budget.json`.
+A investigação identificou que os +8.076 B da consulta correspondem à substituição de seu chunk específico de 8.728 B por outro de 16.804 B. O diff acrescenta estados, ações e paginação usando imports públicos; não adiciona dependências nem altera pacotes. Não foi identificado import massivo novo pelo diff. Os dois arquivos CSS de Storybook têm hashes distintos e o CSS carregado pelo Next não mudou; isso não prova ausência de regras CSS semanticamente duplicadas. Nenhum erro de página ou console de hidratação foi observado nos percursos medidos. A medição cobre as interações explicitadas no script, não todas as combinações possíveis, e os limites existentes de distribuição continuam em `bundle-baseline.json`, `browser-budget.json` e `scenario-budget.json`.
 
 ## Dependências e limites
 

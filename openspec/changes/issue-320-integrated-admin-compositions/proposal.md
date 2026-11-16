@@ -9,7 +9,7 @@ O épico #315 concluiu as capacidades públicas de ícones (#316), cabeçalhos s
 - Criar um índice de validação integrada no Admin Demo, reutilizando as páginas de consulta, formulário e dashboard existentes e o único AdsAdminShell do layout compartilhado.
 - Completar a consulta com paginação, ações por linha e estados controláveis de carregamento e erro, preservando busca, vazio e ação de filtro já existentes.
 - Completar o formulário com campo desabilitado e feedback de sucesso/erro, sem transporte nem armazenamento de dados.
-- Expor rotas de validação no menu da Demo e referências cruzadas no Storybook e na documentação, distinguindo padrões, primitivos e estados.
+- Expor rotas de validação no catálogo da Demo e referências cruzadas no Storybook e na documentação, distinguindo padrões, primitivos e estados.
 - Executar testes de integração Playwright, axe, teclado, foco, temas, reflow e hidratação, além das verificações de distribuição/bundle existentes. Registrar métricas reais do SHA final e riscos não cobertos.
 
 ## Perfil e impacto

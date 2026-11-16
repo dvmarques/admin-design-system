@@ -1,6 +1,7 @@
 /** Every admin route of the demo, with the label of its item in the main navigation. */
 export const routes = [
 	{ path: '/', label: 'Visão geral' },
+	{ path: '/exemplos/integracao', label: 'Integração ADS' },
 	{ path: '/clientes', label: 'Clientes' },
 	{ path: '/clientes/novo', label: 'Novo cliente' },
 	{ path: '/preferencias', label: 'Preferências' },

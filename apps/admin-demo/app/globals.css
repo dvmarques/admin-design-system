@@ -264,6 +264,9 @@ body {
 }
 .demo-form-surface {
 	padding: clamp(1.25rem, 3vw, 2rem);
+	transition:
+		transform var(--ads-motion-normal) var(--ads-motion-easing),
+		box-shadow var(--ads-motion-normal) var(--ads-motion-easing);
 }
 .demo-form {
 	display: grid;

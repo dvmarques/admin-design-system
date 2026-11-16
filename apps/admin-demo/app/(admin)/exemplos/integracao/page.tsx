@@ -37,10 +37,7 @@ export default function IntegratedAdminPage() {
 					<ul className="ads-layout-stack">
 						{scenarios.map((scenario) => (
 							<li key={scenario.id}>
-								<section
-									aria-labelledby={`cenario-${scenario.id}`}
-									className="ads-layout-stack"
-								>
+								<section aria-labelledby={`cenario-${scenario.id}`} className="ads-layout-stack">
 									<AdsTypography as="h2" id={`cenario-${scenario.id}`} variant="heading2">
 										{scenario.title}
 									</AdsTypography>
@@ -60,9 +57,8 @@ export default function IntegratedAdminPage() {
 						Shell, navegação e tema
 					</AdsTypography>
 					<p>
-						Esta página já usa o shell administrativo compartilhado com sidebar normal,
-						recolhida e mobile, menu da conta e troca de tema. A consulta demonstra o
-						footer opcional.
+						Esta página já usa o shell administrativo compartilhado com sidebar normal, recolhida e
+						mobile, menu da conta e troca de tema. A consulta demonstra o footer opcional.
 					</p>
 					<div>
 						<Link className="demo-action-link" href="/catalogo-shell">

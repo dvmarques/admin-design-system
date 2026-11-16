@@ -47,9 +47,7 @@ export default function SemanticConsultationPage() {
 								<AdsDropdown.Trigger>Mais ações</AdsDropdown.Trigger>
 								<AdsDropdown.Content aria-label="Ações da consulta">
 									<div role="group" aria-labelledby="consulta-menu-cadastros">
-										<AdsDropdown.Header id="consulta-menu-cadastros">
-											Cadastros
-										</AdsDropdown.Header>
+										<AdsDropdown.Header id="consulta-menu-cadastros">Cadastros</AdsDropdown.Header>
 										<AdsDropdown.Item onSelect={() => router.push('/clientes')}>
 											Ver clientes
 										</AdsDropdown.Item>

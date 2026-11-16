@@ -123,3 +123,64 @@ test('ThemeToggle: a demo renderiza o tema inicial antes de qualquer clique', as
 	await expect(area).toContainText('Tema do exemplo: light');
 	await expect(area.locator('[data-theme="light"]').first()).toBeVisible();
 });
+
+for (const width of [390, 1440]) {
+	test(`superfícies informativas não têm regras de elevação por hover em ${width}px`, async ({
+		page,
+	}) => {
+		await page.setViewportSize({ width, height: 900 });
+		await page.goto('/componentes');
+
+		const audit = await page.evaluate(() => {
+			const selectors = ['.demo-panel', '.demo-utility-panel'];
+			const counts = selectors.map((selector) => document.querySelectorAll(selector).length);
+			const hoverRules: string[][] = [[], []];
+			const matchedRules = [0, 0];
+			const targetClasses = [/\.demo-panel(?![\w-])/, /\.demo-utility-panel(?![\w-])/];
+
+			const inspect = (rules: CSSRuleList) => {
+				for (const rule of Array.from(rules)) {
+					if (rule instanceof CSSStyleRule) {
+						for (const [index, targetClass] of targetClasses.entries()) {
+							if (!targetClass.test(rule.selectorText)) continue;
+							matchedRules[index]++;
+							let targetsSurface = false;
+							for (const selector of rule.selectorText.split(',')) {
+								const subject =
+									selector
+										.trim()
+										.split(/[\s>+~]+/)
+										.at(-1) ?? '';
+								if (targetClass.test(subject) && subject.includes(':hover')) {
+									targetsSurface = true;
+								}
+							}
+							if (!targetsSurface) continue;
+							for (const property of ['transform', 'box-shadow', 'translate']) {
+								if (rule.style.getPropertyValue(property)) {
+									hoverRules[index].push(`${rule.selectorText}: ${property}`);
+								}
+							}
+						}
+					}
+					if ('cssRules' in rule) inspect((rule as CSSGroupingRule).cssRules);
+				}
+			};
+
+			for (const sheet of Array.from(document.styleSheets)) {
+				try {
+					inspect(sheet.cssRules);
+				} catch {
+					// External stylesheets may be inaccessible; the demo stylesheet is same-origin.
+				}
+			}
+			return { counts, hoverRules, matchedRules };
+		});
+
+		for (const index of [0, 1]) {
+			expect(audit.counts[index]).toBeGreaterThan(0);
+			expect(audit.matchedRules[index]).toBeGreaterThan(0);
+			expect(audit.hoverRules[index]).toEqual([]);
+		}
+	});
+}

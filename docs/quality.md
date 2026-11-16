@@ -60,10 +60,17 @@ servidor e cliente.
 
 [playwright.config.ts](../playwright.config.ts) define o endereço padrão da
 aplicação e localiza os testes no diretório `e2e/`. Na CI, a matriz E2E
-usa a imagem oficial `mcr.microsoft.com/playwright:v1.64.1-noble` fixada por
+usa a imagem oficial `mcr.microsoft.com/playwright:v1.65.1-noble` fixada por
 digest OCI, que já contém os navegadores e bibliotecas do sistema. O Playwright npm continua sendo instalado pelo lockfile
 com `npm ci --ignore-scripts`; não se executa `playwright install-deps` nem
 cache de `~/.cache/ms-playwright` nos jobs migrados.
+
+A imagem atual é o **índice OCI** publicado em 13/11/2026 no
+[Microsoft Artifact Registry](https://mcr.microsoft.com/en-us/product/playwright/tags):
+`mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579`.
+O índice abrange as arquiteturas suportadas; não confundir seu digest com o
+manifesto de arquitetura. O `@playwright/test` e as transitivas
+`playwright`/`playwright-core` são fixados em 1.65.1 no lockfile.
 
 Por padrão o E2E serve o build de produção do admin demo (`next start`), então
 execute `npm run build` antes de rodar os testes. Para usar o servidor de

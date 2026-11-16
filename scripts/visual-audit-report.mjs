@@ -1,3 +1,5 @@
+import { auditRevision } from './visual-audit-revision.mjs';
+import { buildAccessibilityCoverageReport } from './visual-audit-a11y-report.mjs';
 import { buildStateCoverageReport } from './visual-audit-coverage-report.mjs';
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -113,7 +115,7 @@ export function buildVisualAuditReport({
 	const report = {
 		issue: 152,
 		generatedAt: new Date().toISOString(),
-		commit: process.env.GITHUB_SHA ?? null,
+		...auditRevision(root),
 		scope: 'Estado inicial visível; Chromium; temas claro/escuro; viewports 390/1440px',
 		note: 'Sinais automáticos são suspeitas, não bugs confirmados; sem sinais não prova consistência visual.',
 		summary,
@@ -226,4 +228,7 @@ export function buildVisualAuditReport({
 export default async function summarizeVisualAudit() {
 	buildVisualAuditReport();
 	buildStateCoverageReport();
+	const accessibility = buildAccessibilityCoverageReport();
+	if (accessibility.summary.failed > 0)
+		throw new Error('Falhas na integridade das evidências a11y');
 }

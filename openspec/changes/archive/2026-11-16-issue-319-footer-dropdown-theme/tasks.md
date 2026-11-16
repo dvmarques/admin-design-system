@@ -12,7 +12,7 @@
 - [x] 9. Publicar PR em develop e atualizar issue; acompanhar CI, Security, Pages e corrigir falhas de logs no SHA atual.
 - [x] 10. Registrar como pendentes zoom nativo 200%, leitores de tela e validação visual humana até avaliação humana real.
 
-**Não autorizar nesta change:** archive, merge, fechamento de issue ou épico.
+**Restrição histórica da implementação:** archive, merge e fechamento administrativo não estavam autorizados nessa etapa. Em 16/11/2026, após aprovação, o usuário autorizou explicitamente sync/archive e squash da PR #328, confirmação do fechamento da issue #319 e atualização dos checkboxes correspondentes. Isso não atesta a execução das validações humanas ainda pendentes e não autoriza encerrar o épico #315 enquanto a #320 estiver aberta.
 
 ## Ajustes solicitados na revisão da PR #328
 

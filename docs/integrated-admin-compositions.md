@@ -4,12 +4,12 @@
 
 O índice `/exemplos/integracao` é um Server Component com links para os três exemplos existentes e as variantes do shell. O `(admin)/layout.tsx` fornece um único `main`, cabeçalho, sidebar, conta, menu e controle de tema; o footer permanece opt-in na consulta. Não há um segundo shell.
 
-| Cenário | Rota | Composição e estados |
-| --- | --- | --- |
-| Consulta | `/exemplos/composicao-semantica/consulta` | `AdsPageHeader`, H2, `AdsField` + `AdsInput`, `AdsTable`, `AdsPagination`, ações de linha, filtro, vazio, carregamento e erro |
-| Formulário | `/exemplos/composicao-semantica/formulario` | H1/H2/H3, `AdsField` e `AdsButton`, validação, feedback, campo desabilitado |
-| Shell | Índice e rotas acima; `/catalogo-shell` para variantes | `AdsAdminShell`, sidebar normal/recolhida/mobile, menu, tema, footer opcional |
-| Resumos | `/exemplos/composicao-semantica/dashboard` | `AdsMetricCard` e `AdsCard` apenas em indicadores e conteúdo autocontido, não como contêiner de página |
+| Cenário    | Rota                                                   | Composição e estados                                                                                                          |
+| ---------- | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------- |
+| Consulta   | `/exemplos/composicao-semantica/consulta`              | `AdsPageHeader`, H2, `AdsField` + `AdsInput`, `AdsTable`, `AdsPagination`, ações de linha, filtro, vazio, carregamento e erro |
+| Formulário | `/exemplos/composicao-semantica/formulario`            | H1/H2/H3, `AdsField` e `AdsButton`, validação, feedback, campo desabilitado                                                   |
+| Shell      | Índice e rotas acima; `/catalogo-shell` para variantes | `AdsAdminShell`, sidebar normal/recolhida/mobile, menu, tema, footer opcional                                                 |
+| Resumos    | `/exemplos/composicao-semantica/dashboard`             | `AdsMetricCard` e `AdsCard` apenas em indicadores e conteúdo autocontido, não como contêiner de página                        |
 
 O Storybook inclui **Patterns / Page composition / Integrated admin** e os exemplos separados **Consultation**, **Validated form** e **Dashboard**. O catálogo da aplicação aponta para a matriz integrada.
 

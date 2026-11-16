@@ -171,7 +171,7 @@ export default function SemanticConsultationPage() {
 														size="sm"
 														onClick={() => setLastAction(row.name)}
 													>
-														Detalhes de {row.name}
+														Detalhes do registro {row.id}
 													</AdsButton>
 												</AdsTableCell>
 											</AdsTableRow>

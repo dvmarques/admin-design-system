@@ -202,3 +202,8 @@ Os trechos anteriores que descrevem revisão humana ou autorização pendentes s
 ### Verificação dos gates no encerramento
 
 A conferência do encerramento encontrou 16 testes de orçamento pulados indevidamente: o precheck usava o nome publicado `admin-ds-*` como diretório, embora os workspaces sejam `packages/tokens`, `components`, `highlighted-code` e `admin`. O precheck foi corrigido para remover esse prefixo e permitir a execução dos testes existentes após o build. Não se alteraram limites, asserções, snapshots ou componentes. Os skips de plataforma (Windows e checkout com outro UID) continuam condicionados aos ambientes a que se aplicam. O SHA com esta correção deve aprovar os gates antes do squash.
+
+
+## Reconciliação histórica da #152 — 15/11/2026
+
+A comparação pareada da varredura inicial de 328 screenshots com o artefato pós-merge de 336 capturas, a investigação dos sete estados de teclado/zoom com diferenças de enquadramento e a classificação dos findings estão documentadas em [Reconciliação de evidências visuais #152](visual-audit-reconciliation-152.md). A revisão de pranchas não representa inspeção perceptual individual integral; a issue permanece aberta e exige autorização antes de merge ou fechamento.

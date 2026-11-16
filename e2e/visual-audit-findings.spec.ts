@@ -125,44 +125,36 @@ test('ThemeToggle: a demo renderiza o tema inicial antes de qualquer clique', as
 });
 
 for (const width of [390, 1440]) {
-	test(`painéis sem elevação no hover em ${width}px`, async ({ page }) => {
+	test(`superfícies informativas não têm regras de elevação por hover em ${width}px`, async ({
+		page,
+	}) => {
 		await page.setViewportSize({ width, height: 900 });
 		await page.goto('/componentes');
 
 		const audit = await page.evaluate(() => {
-			const classes = ['demo-panel', 'demo-utility-panel'] as const;
-			const counts = {
-				'demo-panel': document.querySelectorAll('.demo-panel').length,
-				'demo-utility-panel': document.querySelectorAll('.demo-utility-panel').length,
-			};
-			const matchedRules: Record<(typeof classes)[number], number> = {
-				'demo-panel': 0,
-				'demo-utility-panel': 0,
-			};
-			const hoverElevation: Record<(typeof classes)[number], string[]> = {
-				'demo-panel': [],
-				'demo-utility-panel': [],
-			};
-			const classPattern = {
-				'demo-panel': /\.demo-panel(?![\w-])/,
-				'demo-utility-panel': /\.demo-utility-panel(?![\w-])/,
-			};
+			const selectors = ['.demo-panel', '.demo-utility-panel'];
+			const counts = selectors.map((selector) => document.querySelectorAll(selector).length);
+			const hoverRules: string[][] = [[], []];
+			const matchedRules = [0, 0];
+			const targetClasses = [/\.demo-panel(?![\w-])/, /\.demo-utility-panel(?![\w-])/];
 
 			const inspect = (rules: CSSRuleList) => {
 				for (const rule of Array.from(rules)) {
 					if (rule instanceof CSSStyleRule) {
-						const selectors = rule.selectorText.split(',');
-						for (const name of classes) {
-							if (!classPattern[name].test(rule.selectorText)) continue;
-							matchedRules[name]++;
-							const targetsSurfaceOnHover = selectors.some((selector) => {
-								const target = selector.trim().split(/[\s>+~]+/).at(-1) ?? '';
-								return classPattern[name].test(target) && target.includes(':hover');
-							});
-							if (!targetsSurfaceOnHover) continue;
+						for (const [index, targetClass] of targetClasses.entries()) {
+							if (!targetClass.test(rule.selectorText)) continue;
+							matchedRules[index]++;
+							let targetsSurface = false;
+							for (const selector of rule.selectorText.split(',')) {
+								const subject = selector.trim().split(/[\s>+~]+/).at(-1) ?? '';
+								if (targetClass.test(subject) && subject.includes(':hover')) {
+									targetsSurface = true;
+								}
+							}
+							if (!targetsSurface) continue;
 							for (const property of ['transform', 'box-shadow', 'translate']) {
 								if (rule.style.getPropertyValue(property)) {
-									hoverElevation[name].push(`${rule.selectorText}: ${property}`);
+									hoverRules[index].push(`${rule.selectorText}: ${property}`);
 								}
 							}
 						}
@@ -175,16 +167,16 @@ for (const width of [390, 1440]) {
 				try {
 					inspect(sheet.cssRules);
 				} catch {
-					// Folhas externas podem ser inacessíveis; CSS da demo é servido na mesma origem.
+					// External stylesheets may be inaccessible; the demo stylesheet is same-origin.
 				}
 			}
-			return { counts, matchedRules, hoverElevation };
+			return { counts, hoverRules, matchedRules };
 		});
 
-		for (const name of ['demo-panel', 'demo-utility-panel'] as const) {
-			expect(audit.counts[name], `Elementos .${name} ausentes`).toBeGreaterThan(0);
-			expect(audit.matchedRules[name], `Regras CSS de .${name} ausentes`).toBeGreaterThan(0);
-			expect(audit.hoverElevation[name], `Elevação de hover em .${name}`).toEqual([]);
+		for (const index of [0, 1]) {
+			expect(audit.counts[index]).toBeGreaterThan(0);
+			expect(audit.matchedRules[index]).toBeGreaterThan(0);
+			expect(audit.hoverRules[index]).toEqual([]);
 		}
 	});
 }

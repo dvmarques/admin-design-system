@@ -1,0 +1,18 @@
+'use client';
+
+import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import { AdsAdminShell } from '@dvmarques/admin-ds-admin';
+
+/** O consumidor escolhe em quais páginas utiliza a região opt-in do shell. */
+export function DemoFooter() {
+	const pathname = usePathname();
+	if (pathname !== '/exemplos/composicao-semantica/consulta') return null;
+
+	return (
+		<AdsAdminShell.Footer
+			start={<span>Admin Design System · Consulta administrativa</span>}
+			end={<Link href="/preferencias">Preferências do Demo</Link>}
+		/>
+	);
+}

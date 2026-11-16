@@ -6,11 +6,11 @@
 
 ## 2. Atualização coordenada
 
-- [ ] 2.1 Fixar versões e hashes íntegros em `package.json` e `package-lock.json`.
-- [ ] 2.2 Atualizar digest e tag nos quatro workflows, incluindo `visual-audit.yml`.
-- [ ] 2.3 Alinhar checks de versão e supply chain, preservando o fail-fast.
-- [ ] 2.4 Documentar versão, proveniência do digest e procedimento seguro de snapshots.
-- [ ] 2.5 Avaliar CHANGELOG e registrar motivo para não adicionar nota de consumidor.
+- [x] 2.1 Fixar versões e hashes íntegros em `package.json` e `package-lock.json`.
+- [x] 2.2 Atualizar digest e tag nos quatro workflows, incluindo `visual-audit.yml`.
+- [x] 2.3 Alinhar checks de versão e supply chain, preservando o fail-fast.
+- [x] 2.4 Documentar versão, proveniência do digest e procedimento seguro de snapshots.
+- [x] 2.5 Avaliar CHANGELOG e registrar motivo para não adicionar nota de consumidor.
 
 ## 3. Testes, revisão e entrega
 

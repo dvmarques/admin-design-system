@@ -2,6 +2,24 @@
 
 Referência: [issue #268](https://github.com/dvmarques/admin-design-system/issues/268). Change: `openspec/changes/archive/2026-10-31-issue-268-github-actions-hardening` (arquivada; spec em `openspec/specs/ci-supply-chain`).
 
+## Estado atual — atualização coordenada #312 (15/11/2026)
+
+O Playwright está fixado em **1.65.1** no `package.json` e no
+`package-lock.json` (`@playwright/test`, `playwright` e `playwright-core`).
+Quatro workflows usam a imagem Noble oficial com o mesmo índice OCI:
+`ci.yml`, `pages.yml`, `update-visual-baselines.yml` e `visual-audit.yml`:
+
+`mcr.microsoft.com/playwright:v1.65.1-noble@sha256:1507cbfc550a63a6b7396791ca4f00df17beb56342d2447b3f106c306f525579`
+
+Proveniência: [Microsoft Artifact Registry](https://mcr.microsoft.com/en-us/product/playwright/tags),
+tag `v1.65.1-noble`, tipo **OCI Image Index**, publicada em 13/11/2026.
+O SHA acima é o índice multi-arquitetura, e não um digest de imagem/manifesto
+específico de arquitetura. A verificação de supply chain alinha as quatro imagens,
+checks de versão e lockfile. Diferenças visuais de browser devem ser revisadas
+antes de qualquer regeneração de snapshots Linux; não aumentar tolerâncias.
+
+Os registros abaixo retratam a implementação histórica da issue #268 em
+31/10/2026 e preservam seus dados de origem; não indicam os pins atuais.
 ## Inventário em 31/10/2026
 
 | Workflow                      | Eventos / código executado                                                | Actions externas e contêiner                                                                                       | Permissões e riscos                                                                                                   |

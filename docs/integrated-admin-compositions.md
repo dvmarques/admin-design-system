@@ -61,8 +61,6 @@ Pages; os workflows de [Security](https://github.com/dvmarques/admin-design-syst
 e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/43875243625)
 concluíram com sucesso. O deploy real é pulado em PRs, por política.
 
-
-
 ## Dependências e limites
 
 Épico #315: #316/PR #321, #317/PR #326, #318/PR #327 e #319/PR #328 integrados em `develop` antes desta branch. Sem archive, merge ou fechamento administrativo nesta etapa.

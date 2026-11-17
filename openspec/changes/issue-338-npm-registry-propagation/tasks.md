@@ -21,3 +21,12 @@
 - [x] 3.4 Confirmar OpenSpec strict (`npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`) no job de política de develop, além de [CI](https://github.com/dvmarques/admin-design-system/actions/runs/43982732237), [Security](https://github.com/dvmarques/admin-design-system/actions/runs/43982732201) e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/43982732180) verdes no SHA `6bc3d72e90e08a3f6d7426d57070b7166e0961f1`.
 - [ ] 3.5 Executar `npm run validate` integral no ambiente local; não executado por indisponibilidade de clone via DNS. As etapas equivalentes passaram na CI, mas não comprovam a execução do comando local.
 - [ ] 3.6 Obter revisão independente do diff de supply chain; ainda não há review registrado.
+
+## 4. Revisão da PR #341 — resiliência de leituras (P2)
+
+- [ ] 4.1 Reutilizar o polling na confirmação inicial e na verificação final read-only, com limites de 60 s/12 leituras na fase final.
+- [ ] 4.2 Tratar timeouts, falhas transitórias de rede, HTTP 429/5xx sem retry de erros permanentes ou divergência de integridade.
+- [ ] 4.3 Cobrir testes determinísticos de 200→404→200, falhas transitórias recuperadas, erros fatais, exaustão, limites e idempotência.
+- [ ] 4.4 Atualizar OpenSpec, documentação, revisar diff e manter invariantes de OIDC, provenance e fila.
+- [ ] 4.5 Confirmar testes de release, format, lint, build, typecheck, quality, E2E e OpenSpec estrito no HEAD final pela CI; não equiparar comandos agregados locais a etapas separadas.
+- [ ] 4.6 Confirmar Security Gate e Pages no novo HEAD, revisar findings e atualizar PR sem merge/archive/publicação.

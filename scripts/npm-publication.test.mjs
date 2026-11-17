@@ -422,7 +422,7 @@ test('registryVersion diferencia HTTP 429/5xx de erros HTTP permanentes', async 
 	}
 });
 
-test('registryVersion sinaliza falha temporária de transporte sem ocultar erro permanente', async () => {
+test('registryVersion diferencia falha de rede de erro permanente', async () => {
 	const originalFetch = globalThis.fetch;
 	try {
 		globalThis.fetch = async () => {
@@ -441,6 +441,65 @@ test('registryVersion sinaliza falha temporária de transporte sem ocultar erro 
 		);
 	} finally {
 		globalThis.fetch = originalFetch;
+	}
+});
+
+test('falhas transitórias até o deadline informam o último motivo e não avançam', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		let clock = 0;
+		const getVersion = async (name, version) => {
+			if (fake.registry.has(name)) {
+				const error = new Error('HTTP 503 temporário');
+				error.retryableRegistry = true;
+				throw error;
+			}
+			return fake.getVersion(name, version);
+		};
+		await assert.rejects(
+			publishPlan(plan, {
+				...fake,
+				getVersion,
+				now: () => clock,
+				sleep: async (ms) => {
+					clock += ms;
+				},
+			}),
+			(error) =>
+				/Publicação não confirmada/.test(error.message) &&
+				error.message.includes(packageName('tokens') + '@' + plan.version) &&
+				error.message.includes('motivo: HTTP 503 temporário'),
+		);
+		assert.equal(clock, REGISTRY_CONFIRMATION.maxDurationMs);
+		assert.deepEqual(fake.calls, [packageName('tokens')]);
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('erro HTTP permanente interrompe polling na primeira leitura', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		let reads = 0;
+		const getVersion = async (name, version) => {
+			if (fake.registry.has(name)) {
+				reads += 1;
+				throw new Error('Falha ao consultar registry npm: HTTP 403');
+			}
+			return fake.getVersion(name, version);
+		};
+		await assert.rejects(
+			publishPlan(plan, { ...fake, getVersion }),
+			/HTTP 403/,
+		);
+		assert.equal(reads, 1);
+		assert.deepEqual(fake.calls, [packageName('tokens')]);
+	} finally {
+		await fx.dispose();
 	}
 });
 

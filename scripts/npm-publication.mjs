@@ -68,7 +68,12 @@ async function confirmRegistryVersion(item, { getVersion, sleep, now, phase, lim
 			}
 			lastReason = 'versão não visível (HTTP 404)';
 		} catch (error) {
-			if (!isTransientRegistryError(error)) throw error;
+			if (!isTransientRegistryError(error)) {
+				throw new Error(
+					`${phase} falhou para ${item.name}@${item.version} após ${reads} leitura(s): ${error.message}`,
+					{ cause: error },
+				);
+			}
 			lastReason = error.message || error.name || 'erro transitório de rede';
 		}
 		if (reads === limits.maxAttempts) break;

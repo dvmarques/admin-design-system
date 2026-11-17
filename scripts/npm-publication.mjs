@@ -20,6 +20,74 @@ export const REGISTRY_CONFIRMATION = Object.freeze({
 	initialDelayMs: 2_500,
 	maxDelayMs: 15_000,
 });
+export const FINAL_REGISTRY_CONFIRMATION = Object.freeze({
+	...REGISTRY_CONFIRMATION,
+	maxAttempts: 12,
+	maxDurationMs: 60_000,
+});
+const TRANSIENT_NETWORK_CODES = new Set([
+	'ECONNRESET',
+	'ETIMEDOUT',
+	'EAI_AGAIN',
+	'ENOTFOUND',
+	'ECONNREFUSED',
+	'EHOSTUNREACH',
+	'ENETUNREACH',
+	'UND_ERR_CONNECT_TIMEOUT',
+]);
+
+function isTransientRegistryError(error) {
+	return (
+		error?.retryableRegistry === true ||
+		error?.name === 'TimeoutError' ||
+		TRANSIENT_NETWORK_CODES.has(error?.code) ||
+		TRANSIENT_NETWORK_CODES.has(error?.cause?.code)
+	);
+}
+
+async function confirmRegistryVersion(item, { getVersion, sleep, now, phase, limits }) {
+	const startedAt = now();
+	let reads = 0;
+	let lastReason = 'versão não visível (HTTP 404)';
+	while (reads < limits.maxAttempts) {
+		const remainingMs = limits.maxDurationMs - (now() - startedAt);
+		if (remainingMs <= 0) break;
+
+		reads += 1;
+		try {
+			const remote = await getVersion(
+				item.name,
+				item.version,
+				Math.min(30_000, Math.max(1, Math.ceil(remainingMs))),
+			);
+			if (remote) {
+				assert.equal(remote.name, item.name, 'Registry devolveu nome diferente.');
+				assert.equal(remote.version, item.version, 'Registry devolveu versão diferente.');
+				verifyIntegrity(remote.dist?.integrity, item.integrity, item.name);
+				return remote;
+			}
+			lastReason = 'versão não visível (HTTP 404)';
+		} catch (error) {
+			if (!isTransientRegistryError(error)) throw error;
+			lastReason = error.message || error.name || 'erro transitório de rede';
+		}
+		if (reads === limits.maxAttempts) break;
+
+		const timeLeftMs = limits.maxDurationMs - (now() - startedAt);
+		if (timeLeftMs <= 0) break;
+		const backoffMs = Math.min(
+			limits.maxDelayMs,
+			Math.round(limits.initialDelayMs * 1.5 ** (reads - 1)),
+		);
+		await sleep(Math.min(backoffMs, timeLeftMs));
+	}
+	const limitSeconds = limits.maxDurationMs / 1000;
+	throw new Error(
+		`${phase} não confirmada no registry: ${item.name}@${item.version} ` +
+			`(${reads} leituras; janela de até ${limitSeconds} s; motivo: ${lastReason}). ` +
+			'Confira nome, versão e integridade no npm e reexecute com o mesmo artifact ID.',
+	);
+}
 
 function verifyVersion(version) {
 	if (!/^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$/.test(version)) {
@@ -175,87 +243,49 @@ export async function publishPlan(
 	// Examinar o estado INTEIRO antes da primeira publicação, evitando falha tardia previsível.
 	const existing = new Map();
 	for (const item of plan.packages) {
-		const remote = await getVersion(item.name, item.version);
-		if (remote) {
-			assert.equal(remote.name, item.name, 'Registry devolveu nome diferente.');
-			assert.equal(remote.version, item.version, 'Registry devolveu versão diferente.');
-			verifyIntegrity(remote.dist?.integrity, item.integrity, item.name);
-		}
-		existing.set(item.name, Boolean(remote));
-	}
-	for (const item of plan.packages) {
-		if (existing.get(item.name)) {
-			console.log('Já publicado com integridade correta: ' + item.name);
-			continue;
-		}
-		if (item.name === NAME('admin')) {
-			const dependency = await getVersion(NAME('components'), item.version);
-			if (!dependency) throw new Error('Dependência components ausente no registry.');
-			verifyIntegrity(
-				dependency.dist?.integrity,
-				plan.packages.find((part) => part.name === NAME('components')).integrity,
-				NAME('components'),
-			);
-		}
-		await publishTarball(item);
-		const startedAt = now();
-		let confirmed = false;
-		let reads = 0;
-		while (reads < REGISTRY_CONFIRMATION.maxAttempts) {
-			const remainingMs = REGISTRY_CONFIRMATION.maxDurationMs - (now() - startedAt);
-			if (remainingMs <= 0) break;
-
-			reads += 1;
-			const remote = await getVersion(
-				item.name,
-				item.version,
-				Math.min(30_000, Math.max(1, Math.ceil(remainingMs))),
-			);
-			if (remote) {
-				assert.equal(remote.name, item.name, 'Registry devolveu nome diferente.');
-				assert.equal(remote.version, item.version, 'Registry devolveu versão diferente.');
-				verifyIntegrity(remote.dist?.integrity, item.integrity, item.name);
-				confirmed = true;
-				break;
-			}
-			if (reads === REGISTRY_CONFIRMATION.maxAttempts) break;
-
-			const timeLeftMs = REGISTRY_CONFIRMATION.maxDurationMs - (now() - startedAt);
-			if (timeLeftMs <= 0) break;
-			const backoffMs = Math.min(
-				REGISTRY_CONFIRMATION.maxDelayMs,
-				Math.round(REGISTRY_CONFIRMATION.initialDelayMs * 1.5 ** (reads - 1)),
-			);
-			await sleep(Math.min(backoffMs, timeLeftMs));
-		}
-		if (!confirmed) {
-			const limitSeconds = REGISTRY_CONFIRMATION.maxDurationMs / 1000;
-			throw new Error(
-				`Publicação não confirmada no registry: ${item.name}@${item.version} ` +
-					`(${reads} leituras; janela de até ${limitSeconds} s). ` +
-					'Confira nome, versão e integridade no npm e reexecute com o mesmo artifact ID.',
-			);
-		}
-	}
-	for (const item of plan.packages) {
-		const remote = await getVersion(item.name, item.version);
-		if (!remote) throw new Error('Pacote ausente na verificação final: ' + item.name);
-		assert.equal(remote.name, item.name);
-		assert.equal(remote.version, item.version);
-		verifyIntegrity(remote.dist?.integrity, item.integrity, item.name);
+		await confirmRegistryVersion(item, {
+			getVersion,
+			sleep,
+			now,
+			phase: 'Verificação final',
+			limits: FINAL_REGISTRY_CONFIRMATION,
+		});
 	}
 	console.log('Quatro pacotes npm confirmados com SHA-512 idêntico aos tarballs validados.');
 }
 
 export async function registryVersion(name, version, timeoutMs = 30_000) {
 	const url = REGISTRY + '/' + encodeURIComponent(name) + '/' + encodeURIComponent(version);
-	const response = await globalThis.fetch(url, {
-		signal: globalThis.AbortSignal.timeout(Math.max(1, Math.min(30_000, Math.ceil(timeoutMs)))),
-		headers: { accept: 'application/json' },
-		cache: 'no-store',
-	});
+	let response;
+	try {
+		response = await globalThis.fetch(url, {
+			signal: globalThis.AbortSignal.timeout(Math.max(1, Math.min(30_000, Math.ceil(timeoutMs)))),
+			headers: { accept: 'application/json' },
+			cache: 'no-store',
+		});
+	} catch (error) {
+		if (
+			error?.name !== 'TimeoutError' &&
+			!(error instanceof TypeError) &&
+			!TRANSIENT_NETWORK_CODES.has(error?.code) &&
+			!TRANSIENT_NETWORK_CODES.has(error?.cause?.code)
+		) {
+			throw error;
+		}
+		const transient = new Error('Falha temporária de rede no registry npm: ' + error.message, {
+			cause: error,
+		});
+		transient.retryableRegistry = true;
+		throw transient;
+	}
 	if (response.status === 404) return null;
-	if (!response.ok) throw new Error('Falha ao consultar registry npm: HTTP ' + response.status);
+	if (!response.ok) {
+		const message = 'Falha ao consultar registry npm: HTTP ' + response.status;
+		const error = new Error(message);
+		error.retryableRegistry =
+			response.status === 429 || (response.status >= 500 && response.status <= 599);
+		throw error;
+	}
 	return response.json();
 }
 

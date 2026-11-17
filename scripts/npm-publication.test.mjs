@@ -492,10 +492,7 @@ test('erro HTTP permanente interrompe polling na primeira leitura', async () => 
 			}
 			return fake.getVersion(name, version);
 		};
-		await assert.rejects(
-			publishPlan(plan, { ...fake, getVersion }),
-			/HTTP 403/,
-		);
+		await assert.rejects(publishPlan(plan, { ...fake, getVersion }), /HTTP 403/);
 		assert.equal(reads, 1);
 		assert.deepEqual(fake.calls, [packageName('tokens')]);
 	} finally {

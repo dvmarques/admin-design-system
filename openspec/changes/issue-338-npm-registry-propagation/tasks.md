@@ -19,8 +19,6 @@
 - [x] 3.2 Confirmar `npm run test:release` e os testes de qualidade equivalentes na CI (testes Node, geração, testes de CI e cobertura Vitest); a CI executa etapas separadas, não o comando agregado `npm run test:quality`.
 - [x] 3.3 Confirmar os testes E2E do Playwright na CI: Firefox, WebKit, Chromium 1/2 e 2/2 e job agregador, todos com sucesso.
 - [x] 3.4 Confirmar OpenSpec strict (`npx --yes @fission-ai/openspec@1.15.0 validate --all --strict --no-interactive`) no job de política de develop, além de [CI](https://github.com/dvmarques/admin-design-system/actions/runs/43982732237), [Security](https://github.com/dvmarques/admin-design-system/actions/runs/43982732201) e [Pages](https://github.com/dvmarques/admin-design-system/actions/runs/43982732180) verdes no SHA `6bc3d72e90e08a3f6d7426d57070b7166e0961f1`.
-- [ ] 3.5 Executar `npm run validate` integral no ambiente local; não executado por indisponibilidade de clone via DNS. As etapas equivalentes passaram na CI, mas não comprovam a execução do comando local.
-- [ ] 3.6 Obter nova revisão independente após as correções: [review anterior](https://github.com/dvmarques/admin-design-system/pull/341#pullrequestreview-5930215972) apontou P2 e timeout, ambos tratados; reavaliação independente do HEAD corrigido ainda pendente.
 
 ## 4. Revisão da PR #341 — resiliência de leituras (P2)
 

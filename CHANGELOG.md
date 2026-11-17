@@ -12,7 +12,7 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Fixed
 
-- A publicação dos quatro pacotes npm tolera propagação do registry por até 150 segundos por pacote, sem avançar antes de verificar integridade; falhas continuam recuperáveis por reexecução idempotente. (#338, OpenSpec `issue-338-npm-registry-propagation`)
+- Publicação npm: confirmação por até 150 s após o publish, reconciliação final por até 60 s e releituras limitadas para 404, timeout e falhas HTTP transitórias; nome, versão e SHA-512 seguem obrigatórios, com recuperação idempotente. (#338, OpenSpec `issue-338-npm-registry-propagation`)
 - Alinhados o ritmo das páginas administrativas do Demo e os atalhos do Catálogo à Visão geral. (#339, OpenSpec `issue-339-demo-spacing`)
 - Corrigido o contraste do exemplo de tema aninhado no Catálogo quando o tema externo é escuro. (#339, OpenSpec `issue-339-demo-spacing`)
 

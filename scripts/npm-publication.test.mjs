@@ -404,14 +404,14 @@ test('registryVersion diferencia HTTP 429/5xx de erros HTTP permanentes', async 
 	const originalFetch = globalThis.fetch;
 	try {
 		for (const status of [429, 500, 502, 503, 504]) {
-			globalThis.fetch = async () => new Response(null, { status });
+			globalThis.fetch = async () => new globalThis.Response(null, { status });
 			await assert.rejects(
 				registryVersion(packageName('tokens'), '0.2.0'),
 				(error) => error.retryableRegistry === true && error.message.includes(String(status)),
 			);
 		}
 		for (const status of [400, 401, 403, 422]) {
-			globalThis.fetch = async () => new Response(null, { status });
+			globalThis.fetch = async () => new globalThis.Response(null, { status });
 			await assert.rejects(
 				registryVersion(packageName('tokens'), '0.2.0'),
 				(error) => error.retryableRegistry !== true && error.message.includes(String(status)),

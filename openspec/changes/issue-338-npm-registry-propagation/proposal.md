@@ -12,6 +12,8 @@ Na publicação OIDC da 0.1.3, o pacote tokens ficou invisível no registry por 
 - Validar nome, versão e dist.integrity antes de avançar; esgotamento e divergência devem falhar com diagnóstico claro.
 - Limitar o job npm a 30 minutos sem alterar a fila release-publication, Trusted Publisher/OIDC, provenance, integridades ou permissões.
 - Adicionar testes determinísticos de propagação >30 s, timeout, divergência e reexecução, além de documentação e spec.
+- Reutilizar um verificador de polling na confirmação pós-publicação e na reconciliação final (até 60 segundos e 12 consultas por pacote), incluindo o cenário `200 → 404 → 200`.
+- Repetir somente falhas transitórias de leitura durante essas duas etapas (`TimeoutError`, erros de transporte temporários, HTTP 429/5xx); preservar falha imediata em HTTP 4xx não transitório, JSON inválido ou divergência de identidade/integridade.
 
 ## Capabilities
 

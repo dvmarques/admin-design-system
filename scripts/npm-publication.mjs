@@ -243,6 +243,38 @@ export async function publishPlan(
 	// Examinar o estado INTEIRO antes da primeira publicação, evitando falha tardia previsível.
 	const existing = new Map();
 	for (const item of plan.packages) {
+		const remote = await getVersion(item.name, item.version);
+		if (remote) {
+			assert.equal(remote.name, item.name, 'Registry devolveu nome diferente.');
+			assert.equal(remote.version, item.version, 'Registry devolveu versão diferente.');
+			verifyIntegrity(remote.dist?.integrity, item.integrity, item.name);
+		}
+		existing.set(item.name, Boolean(remote));
+	}
+	for (const item of plan.packages) {
+		if (existing.get(item.name)) {
+			console.log('Já publicado com integridade correta: ' + item.name);
+			continue;
+		}
+		if (item.name === NAME('admin')) {
+			const dependency = await getVersion(NAME('components'), item.version);
+			if (!dependency) throw new Error('Dependência components ausente no registry.');
+			verifyIntegrity(
+				dependency.dist?.integrity,
+				plan.packages.find((part) => part.name === NAME('components')).integrity,
+				NAME('components'),
+			);
+		}
+		await publishTarball(item);
+		await confirmRegistryVersion(item, {
+			getVersion,
+			sleep,
+			now,
+			phase: 'Publicação',
+			limits: REGISTRY_CONFIRMATION,
+		});
+	}
+	for (const item of plan.packages) {
 		await confirmRegistryVersion(item, {
 			getVersion,
 			sleep,

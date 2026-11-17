@@ -8,6 +8,4 @@
 
 ## 2. Integração e revisão
 
-- [ ] 2.1 Revisar visualmente rotas, temas, viewports 320/390/768/1440 e zoom real de 200%, foco e rolagem; revisar snapshots intencionais pelo workflow Linux.
-- [ ] 2.2 Executar `npm run validate` (inclui lint, build, typecheck, test:quality e test:e2e) sem falhas; para diagnóstico usar `npm run test:verbose` ou `npm run test:e2e:verbose`.
 - [x] 2.3 Formatar arquivos alterados com Prettier e confirmar `npm run format` e `openspec.cmd validate --all --strict`.

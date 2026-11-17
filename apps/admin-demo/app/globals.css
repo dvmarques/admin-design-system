@@ -19,6 +19,9 @@ body {
 	min-height: 100dvh;
 	padding: var(--ads-spacing-4);
 }
+.demo-page > h1 {
+	overflow-wrap: anywhere;
+}
 .demo-shell {
 	width: min(100%, 76rem);
 	margin: 0 auto;

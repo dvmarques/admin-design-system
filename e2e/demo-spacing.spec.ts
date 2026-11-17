@@ -46,6 +46,10 @@ for (const theme of ['light', 'dark'] as const) {
 			expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
 				true,
 			);
+			await page.goto('/componentes/tabela-avancada');
+			expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
+				true,
+			);
 		});
 	}
 }

@@ -6,6 +6,7 @@ import { spawnSync } from 'node:child_process';
 import test from 'node:test';
 import {
 	PACKAGE_ORDER,
+	FINAL_REGISTRY_CONFIRMATION,
 	REGISTRY_CONFIRMATION,
 	makePlan,
 	publishPlan,
@@ -233,6 +234,213 @@ test('integridade divergente após publish falha antes de continuar', async () =
 		assert.deepEqual(fake.calls, [packageName('tokens')]);
 	} finally {
 		await fx.dispose();
+	}
+});
+
+test('reconcilia 200 → 404 → 200 na verificação final sem novo publish', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const tokens = packageName('tokens');
+		let tokenReads = 0;
+		let clock = 0;
+		const getVersion = async (name, version) => {
+			if (name === tokens && fake.registry.has(tokens)) {
+				tokenReads += 1;
+				if (tokenReads === 2) return null;
+			}
+			return fake.getVersion(name, version);
+		};
+		await publishPlan(plan, {
+			...fake,
+			getVersion,
+			now: () => clock,
+			sleep: async (ms) => {
+				clock += ms;
+			},
+		});
+		assert.equal(tokenReads, 3, 'confirmação 200, leitura final 404 e retry 200');
+		assert.ok(clock > 0 && clock <= FINAL_REGISTRY_CONFIRMATION.maxDurationMs);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('timeout e HTTP transitório não encerram polling dentro da janela', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const tokens = packageName('tokens');
+		let clock = 0;
+		let tokenReads = 0;
+		const getVersion = async (name, version) => {
+			if (name === tokens && fake.registry.has(tokens)) {
+				tokenReads += 1;
+				if (tokenReads === 1) {
+					clock += 30_000;
+					const error = new Error('tempo de consulta esgotado');
+					error.name = 'TimeoutError';
+					throw error;
+				}
+				if (tokenReads === 2) {
+					const error = new Error('HTTP 503');
+					error.retryableRegistry = true;
+					throw error;
+				}
+				if (tokenReads === 3) {
+					const error = new Error('conexão resetada');
+					error.code = 'ECONNRESET';
+					throw error;
+				}
+			}
+			return fake.getVersion(name, version);
+		};
+		await publishPlan(plan, {
+			...fake,
+			getVersion,
+			now: () => clock,
+			sleep: async (ms) => {
+				clock += ms;
+			},
+		});
+		assert.equal(tokenReads, 5, 'quatro leituras iniciais e a releitura final');
+		assert.ok(clock > 30_000 && clock < REGISTRY_CONFIRMATION.maxDurationMs);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('esgotamento de 60 s na verificação final não republica pacotes', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const tokens = packageName('tokens');
+		let clock = 0;
+		let firstConfirmation = false;
+		const getVersion = async (name, version) => {
+			if (name === tokens && fake.registry.has(tokens)) {
+				if (firstConfirmation) return null;
+				firstConfirmation = true;
+			}
+			return fake.getVersion(name, version);
+		};
+		await assert.rejects(
+			publishPlan(plan, {
+				...fake,
+				getVersion,
+				now: () => clock,
+				sleep: async (ms) => {
+					clock += ms;
+				},
+			}),
+			(error) =>
+				error.message.includes('Verificação final não confirmada') &&
+				error.message.includes(tokens + '@' + plan.version) &&
+				/leituras.*motivo: versão não visível/.test(error.message),
+		);
+		assert.equal(clock, FINAL_REGISTRY_CONFIRMATION.maxDurationMs);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('limite de leituras finais também é aplicado quando relógio não avança', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const tokens = packageName('tokens');
+		let tokensReads = 0;
+		const getVersion = async (name, version) => {
+			if (name === tokens && fake.registry.has(tokens)) {
+				tokensReads += 1;
+				if (tokensReads > 1) return null;
+			}
+			return fake.getVersion(name, version);
+		};
+		await assert.rejects(
+			publishPlan(plan, { ...fake, getVersion, now: () => 0 }),
+			/Verificação final não confirmada/,
+		);
+		assert.equal(tokensReads, 1 + FINAL_REGISTRY_CONFIRMATION.maxAttempts);
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('divergência de integridade na verificação final é fatal e não refaz publish', async () => {
+	const fx = await fixture();
+	try {
+		const plan = await fx.plan();
+		const fake = fakeRegistry(plan);
+		const tokens = packageName('tokens');
+		let tokensReads = 0;
+		const getVersion = async (name, version) => {
+			if (name === tokens && fake.registry.has(tokens) && ++tokensReads === 2) {
+				return {
+					name,
+					version,
+					dist: { integrity: 'sha512-hash-incorreto' },
+				};
+			}
+			return fake.getVersion(name, version);
+		};
+		await assert.rejects(publishPlan(plan, { ...fake, getVersion }), /Integridade divergente/);
+		assert.equal(tokensReads, 2, 'integridade divergente não deve acionar retry');
+		assert.deepEqual(fake.calls, PACKAGE_ORDER.map(packageName));
+	} finally {
+		await fx.dispose();
+	}
+});
+
+test('registryVersion diferencia HTTP 429/5xx de erros HTTP permanentes', async () => {
+	const originalFetch = globalThis.fetch;
+	try {
+		for (const status of [429, 500, 502, 503, 504]) {
+			globalThis.fetch = async () => new Response(null, { status });
+			await assert.rejects(
+				registryVersion(packageName('tokens'), '0.2.0'),
+				(error) => error.retryableRegistry === true && error.message.includes(String(status)),
+			);
+		}
+		for (const status of [400, 401, 403, 422]) {
+			globalThis.fetch = async () => new Response(null, { status });
+			await assert.rejects(
+				registryVersion(packageName('tokens'), '0.2.0'),
+				(error) => error.retryableRegistry !== true && error.message.includes(String(status)),
+			);
+		}
+	} finally {
+		globalThis.fetch = originalFetch;
+	}
+});
+
+test('registryVersion sinaliza falha temporária de transporte sem ocultar erro permanente', async () => {
+	const originalFetch = globalThis.fetch;
+	try {
+		globalThis.fetch = async () => {
+			throw new TypeError('fetch failed');
+		};
+		await assert.rejects(
+			registryVersion(packageName('tokens'), '0.2.0'),
+			(error) => error.retryableRegistry === true && error.message.includes('fetch failed'),
+		);
+		globalThis.fetch = async () => {
+			throw new Error('falha inesperada');
+		};
+		await assert.rejects(
+			registryVersion(packageName('tokens'), '0.2.0'),
+			(error) => error.retryableRegistry !== true && error.message === 'falha inesperada',
+		);
+	} finally {
+		globalThis.fetch = originalFetch;
 	}
 });
 

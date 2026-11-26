@@ -142,9 +142,7 @@ export const TableStripedWrap: Story = {
 					{['Mariana Costa', 'Rafael Lima', 'Helena Prado'].map((name) => (
 						<AdsTableRow key={name}>
 							<AdsTableCell>{name}</AdsTableCell>
-							<AdsTableCell>
-								ReferênciaSemEspaçosMuitoLongaParaDemonstrarAQuebra
-							</AdsTableCell>
+							<AdsTableCell>ReferênciaSemEspaçosMuitoLongaParaDemonstrarAQuebra</AdsTableCell>
 						</AdsTableRow>
 					))}
 				</AdsTableBody>

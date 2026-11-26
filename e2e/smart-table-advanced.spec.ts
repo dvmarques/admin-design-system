@@ -97,7 +97,7 @@ test('hidrata sem erros e sem rolagem horizontal da página', async ({ page }) =
 });
 
 for (const theme of ['light', 'dark']) {
-	test(`listras preservam o hover e permitem quebra no tema ${theme}`, async ({ page, context }) => {
+	test(`listras, hover e quebra no tema ${theme}`, async ({ page, context }) => {
 		await context.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
 		await page.goto(path);
 		await waitForHydration(page.getByLabel('Virtualizar linhas'));

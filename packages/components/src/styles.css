@@ -733,10 +733,10 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 	.ads-page-header__title {
 		margin: 0;
 	}
-	/* Linha própria acima do H1; o gap do cabeçalho é compensado para manter 8px até o título. */
+	/* Linha própria acima do H1; os 8px até o título vêm do row-gap do cabeçalho, não de margem. */
 	.ads-page-header__eyebrow {
 		flex: 0 0 100%;
-		margin: 0 0 calc(var(--ads-spacing-2) - var(--ads-spacing-4));
+		margin: 0;
 		color: var(--ads-color-text-muted);
 		font-size: 0.6875rem;
 		font-weight: var(--ads-typography-font-weight-semibold);

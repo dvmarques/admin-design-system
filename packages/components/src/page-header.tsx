@@ -29,7 +29,7 @@ export function AdsPageHeader({
 		<header
 			{...props}
 			className={classNames(
-				'ads-page-header flex min-w-0 flex-wrap items-start justify-between gap-4',
+				'ads-page-header flex min-w-0 flex-wrap items-start justify-between gap-x-4 gap-y-2',
 				className,
 			)}
 		>

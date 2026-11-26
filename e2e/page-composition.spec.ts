@@ -171,6 +171,23 @@ test('AdsPageHeader: eyebrow acima do H1 no Demo e ações alinhadas à primeira
 	const titleBox = await header.getByRole('heading', { level: 1 }).boundingBox();
 	expect(eyebrowBox && titleBox && eyebrowBox.y < titleBox.y).toBe(true);
 
+	for (const path of ['/clientes', '/']) {
+		await page.goto(path);
+		const gaps = await page.locator('header.ads-page-header').evaluate((el) => {
+			const eyebrow = el.querySelector('.ads-page-header__eyebrow')?.getBoundingClientRect();
+			const h1 = el.querySelector('h1')?.getBoundingClientRect();
+			const description = el
+				.querySelector('.ads-page-header__description')
+				?.getBoundingClientRect();
+			return {
+				eyebrowToTitle: (h1?.top ?? 0) - (eyebrow?.bottom ?? 0),
+				titleToDescription: (description?.top ?? 0) - (h1?.bottom ?? 0),
+			};
+		});
+		expect(gaps.eyebrowToTitle).toBeCloseTo(8, 0);
+		expect(gaps.titleToDescription).toBeCloseTo(8, 0);
+	}
+
 	await page.goto('/exemplos/composicao-semantica/consulta');
 	const title = await page.getByRole('heading', { level: 1 }).boundingBox();
 	const action = await page.locator('.ads-page-header__actions > *').first().boundingBox();

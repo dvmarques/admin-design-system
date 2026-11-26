@@ -13,7 +13,7 @@
 ## Decisions
 
 - Prop `eyebrow` no próprio `AdsPageHeader`, renderizada somente quando `!= null` (sem nó extra, como `description`/`actions`). Classe `ads-page-header__eyebrow`, com tokens existentes (`--ads-color-text-muted`, `--ads-spacing-2`, peso semibold).
-- Eyebrow como linha própria do cabeçalho flex (`flex: 0 0 100%`) acima da intro, com margem negativa que compensa o `gap` para manter 8px até o H1; assim o H1 continua sendo a primeira linha da intro.
+- Eyebrow como linha própria do cabeçalho flex (`flex: 0 0 100%`) acima da intro, e o `row-gap` do cabeçalho (8px) dá o espaço até o H1, sem margens negativas que resets globais do consumidor desfariam (em larguras estreitas, as ações quebradas ficam a 8px do texto); assim o H1 continua sendo a primeira linha da intro.
 - Alinhamento: `align-items: first baseline` não serve com a intro contendo o eyebrow; as ações recebem `min-height` igual à altura da primeira linha do H1 (`font-size-4xl × line-height-tight`, tokens) e seguem centralizadas nela, mantendo `flex-wrap` para quebrar abaixo em larguras estreitas.
 - O alinhamento é feito no pacote com valores derivados dos tokens tipográficos, sem número mágico no consumidor.
 

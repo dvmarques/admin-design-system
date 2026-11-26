@@ -24,9 +24,9 @@
 		"react-dom": ">=18.2.0"
 	},
 	"dependencies": {
-		"@shikijs/langs": "4.5.0",
-		"@shikijs/themes": "4.5.0",
-		"shiki": "4.5.0"
+		"@shikijs/langs": "4.6.0",
+		"@shikijs/themes": "4.6.0",
+		"shiki": "4.6.0"
 	},
 	"scripts": {
 		"build:css": "node ./scripts/build-css.mjs",

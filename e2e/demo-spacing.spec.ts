@@ -57,6 +57,53 @@ for (const theme of ['light', 'dark'] as const) {
 	}
 }
 
+for (const route of ['/', '/clientes']) {
+	test(`variáveis públicas de ritmo vertical ajustam a página em ${route}`, async ({ page }) => {
+		await page.goto(route);
+		const shell = page.locator('.demo-shell.ads-layout-page').first();
+		const header = shell.locator('> header.ads-page-header');
+		const next = shell.locator('> *').nth(1);
+		const gapBetween = async () => {
+			const h = (await header.boundingBox())!;
+			const n = (await next.boundingBox())!;
+			return n.y - (h.y + h.height);
+		};
+		expect(await gapBetween()).toBeCloseTo(24, 0);
+		await shell.evaluate((el) => el.style.setProperty('--ads-layout-page-gap', '40px'));
+		expect(await gapBetween()).toBeCloseTo(40, 0);
+
+		const eyebrow = header.locator('.ads-page-header__eyebrow');
+		const title = header.getByRole('heading', { level: 1 });
+		const description = header.locator('.ads-page-header__description');
+		const distances = async () => {
+			const e = (await eyebrow.boundingBox())!;
+			const t = (await title.boundingBox())!;
+			const d = (await description.boundingBox())!;
+			return [t.y - (e.y + e.height), d.y - (t.y + t.height)];
+		};
+		const [eyebrowGap, descriptionGap] = await distances();
+		expect(eyebrowGap).toBeCloseTo(8, 0);
+		expect(descriptionGap).toBeCloseTo(8, 0);
+		await header.evaluate((el) =>
+			(el as HTMLElement).style.setProperty('--ads-page-header-gap', '12px'),
+		);
+		const [eyebrowCustom, descriptionCustom] = await distances();
+		expect(eyebrowCustom).toBeCloseTo(12, 0);
+		expect(descriptionCustom).toBeCloseTo(12, 0);
+
+		// ads-layout-stack mantém o padrão de 16px, independente do ritmo de página.
+		const stackGap = await page.evaluate(() => {
+			const probe = document.createElement('div');
+			probe.className = 'ads-layout-stack';
+			document.body.append(probe);
+			const value = getComputedStyle(probe).rowGap;
+			probe.remove();
+			return value;
+		});
+		expect(stackGap).toBe('16px');
+	});
+}
+
 test('atalhos do catálogo abrem os exemplos por teclado', async ({ page }) => {
 	const destinations = [
 		['Visão integrada', '/exemplos/integracao'],

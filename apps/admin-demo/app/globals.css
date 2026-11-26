@@ -624,8 +624,6 @@ body {
 	padding: var(--ads-spacing-4);
 }
 .demo-overview > .demo-shell {
-	display: grid;
-	gap: var(--ads-spacing-6);
 	container: demo-overview / inline-size;
 }
 .demo-overview .demo-section {

@@ -55,7 +55,7 @@ continua valendo para os títulos; mudar `fontFamilyHeading` não exige alterar 
 monoespaçada em estilos próprios, por exemplo com `font-family:
 var(--ads-typography-font-family-mono)`.
 
-**A biblioteca não distribui arquivos de fonte.** Para que a Inter renderize igual
+**A biblioteca não distribui arquivos de fonte** (decisão da #343: evita dependência de runtime e mantém a licença da Inter sob responsabilidade da aplicação; para outra fonte, sobrescreva `--ads-typography-font-family`). Para que a Inter renderize igual
 em Windows, Mac, Linux e Android, a aplicação deve carregá-la. Sem isso, cai no
 primeiro item disponível da pilha (por exemplo Segoe UI no Windows ou a fonte do
 sistema no Mac), sem quebrar o layout. Em Next.js, `next/font` baixa e

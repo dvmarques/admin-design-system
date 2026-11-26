@@ -159,3 +159,29 @@ for (const theme of ['light', 'dark'] as const) {
 		}
 	}
 }
+
+test('AdsPageHeader: eyebrow acima do H1 no Demo e ações alinhadas à primeira linha do título', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto('/clientes');
+	const header = page.locator('header.ads-page-header');
+	await expect(header.locator('p.ads-page-header__eyebrow')).toHaveText('Cadastro');
+	const eyebrowBox = await header.locator('.ads-page-header__eyebrow').boundingBox();
+	const titleBox = await header.getByRole('heading', { level: 1 }).boundingBox();
+	expect(eyebrowBox && titleBox && eyebrowBox.y < titleBox.y).toBe(true);
+
+	await page.goto('/exemplos/composicao-semantica/consulta');
+	const title = await page.getByRole('heading', { level: 1 }).boundingBox();
+	const action = await page.locator('.ads-page-header__actions > *').first().boundingBox();
+	expect(title && action).toBeTruthy();
+	if (title && action) {
+		expect(Math.abs(action.y + action.height / 2 - (title.y + title.height / 2))).toBeLessThan(1.5);
+	}
+
+	await page.setViewportSize({ width: 320, height: 800 });
+	const intro = await page.locator('.ads-page-header__intro').boundingBox();
+	const actions = await page.locator('.ads-page-header__actions').boundingBox();
+	expect(intro && actions && actions.y >= intro.y + intro.height - 0.5).toBe(true);
+	expect(await noDocumentOverflow(page)).toBe(true);
+});

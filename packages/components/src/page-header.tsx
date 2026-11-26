@@ -6,6 +6,8 @@ export interface AdsPageHeaderProps extends Omit<
 	HTMLAttributes<HTMLElement>,
 	'children' | 'title'
 > {
+	/** Optional short text or inline content, rendered as a paragraph above the H1. */
+	eyebrow?: ReactNode;
 	/** Text or inline content; an H1 is provided automatically. */
 	title: ReactNode;
 	/** Optional text or inline content, rendered as a paragraph. */
@@ -16,6 +18,7 @@ export interface AdsPageHeaderProps extends Omit<
 
 /** Semantic, responsive header independent from routing, shell and cards. */
 export function AdsPageHeader({
+	eyebrow,
 	title,
 	description,
 	actions,
@@ -30,6 +33,7 @@ export function AdsPageHeader({
 				className,
 			)}
 		>
+			{eyebrow != null && <p className="ads-page-header__eyebrow">{eyebrow}</p>}
 			<div className="ads-page-header__intro min-w-0 flex-[1_1_18rem]">
 				<AdsTypography as="h1" className="ads-page-header__title" variant="heading1">
 					{title}

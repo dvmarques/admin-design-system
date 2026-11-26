@@ -28,7 +28,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'AdsPageHeader oferece H1, descrição e ações responsivas. Seções usam HTML nativo e classes CSS opt-in ads-layout-* (container, stack, grid, cluster), sem Tailwind no consumidor. AdsCard é opcional e reservado a conteúdos autocontidos.',
+					'AdsPageHeader oferece eyebrow opcional, H1, descrição e ações responsivas. Seções usam HTML nativo e classes CSS opt-in ads-layout-* (container, stack, grid, cluster), sem Tailwind no consumidor. AdsCard é opcional e reservado a conteúdos autocontidos.',
 			},
 		},
 	},
@@ -47,6 +47,7 @@ function ConsultationExample() {
 	return (
 		<main className="ads-layout-stack">
 			<AdsPageHeader
+				eyebrow="Consultas"
 				title="Consulta administrativa"
 				description="Pesquise registros sem colocar o conteúdo da página dentro de um card."
 				actions={

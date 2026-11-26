@@ -637,7 +637,7 @@ body {
 	padding: 0;
 	border: 0;
 }
-.demo-overview :is(h1, h2, p):not(.ads-page-header *) {
+.demo-overview > .demo-shell > :not(header) :is(h1, h2, p) {
 	margin-block: 0;
 }
 .demo-overview .demo-metrics-grid {

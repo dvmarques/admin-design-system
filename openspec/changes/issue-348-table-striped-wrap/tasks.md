@@ -1,8 +1,8 @@
 ## 1. Implementação
 
 - [x] 1.1 Publicar token de listra nos dois temas e verificar contraste e geração.
-- [ ] 1.2 Implementar opções em AdsTable com CSS em camada, preservando padrão e hover.
-- [ ] 1.3 Integrar AdsSmartTable, incluindo seleção, virtualização e larguras controladas.
+- [x] 1.2 Implementar opções em AdsTable com CSS em camada, preservando padrão e hover.
+- [x] 1.3 Integrar AdsSmartTable, incluindo seleção, virtualização e larguras controladas.
 
 ## 2. Testes e documentação
 
@@ -20,3 +20,5 @@
 
 - SHA `a78e73f`: [CI](https://github.com/dvmarques/admin-design-system/actions/runs/45897648077) confirmou format, lint, build, typecheck, testes Node (incluindo contraste), geração e check de tokens, e OpenSpec estrito. A inspeção de pacote falhou por orçamento de JS/CSS; ajuste pontual documentado no design. Validação completa e testes de navegador permanecem pendentes de confirmação no HEAD.
 - Clone local e CLI OpenSpec local bloqueados por DNS; os comandos efetivamente executados na CI são a evidência disponível.
+
+- Implementação de ambas as tabelas concluída e revisada estaticamente; testes em navegador permanecem em 2.3 e validação integral em 3.2. A [CI de diagnóstico](https://github.com/dvmarques/admin-design-system/actions/runs/45898273973) confirmou medições de distribuição; os limites afetados foram calibrados sem remover verificações.

@@ -22,14 +22,12 @@ A CI de `7bf2005` mediu 92.602 B de gzip publicado (teto 92.500 B); o teto passa
 
 A [medição completa de `3f8bbae`](https://github.com/dvmarques/admin-design-system/actions/runs/45898273973/job/140177550795) confirmou os demais excessos. Ajustes restritos aos tetos afetados:
 
-| Métrica | Medido (B) | Teto anterior (B) | Novo teto (B) |
-| --- | ---: | ---: | ---: |
-| Admin publicado | 173171 | 173100 | 173300 |
-| Components e masked-input CSS | 63712 | 63300 | 63800 |
-| Components e masked-input CSS gzip | 10572 | 10500 | 10600 |
-| Admin cenário JS | 71989 | 71800 | 72100 |
-| Admin cenário JS gzip | 24205 | 24200 | 24300 |
-| Admin cenário CSS | 105499 | 105100 | 105600 |
-| Admin cenário CSS gzip | 15869 | 15800 | 15900 |
+- Admin publicado: 173.171 B medidos, teto de 173.100 para 173.300 B.
+- Components e masked-input CSS: 63.712 B medidos, teto de 63.300 para 63.800 B.
+- Components e masked-input CSS gzip: 10.572 B medidos, teto de 10.500 para 10.600 B.
+- Admin cenário JS: 71.989 B medidos, teto de 71.800 para 72.100 B.
+- Admin cenário JS gzip: 24.205 B medidos, teto de 24.200 para 24.300 B.
+- Admin cenário CSS: 105.499 B medidos, teto de 105.100 para 105.600 B.
+- Admin cenário CSS gzip: 15.869 B medidos, teto de 15.800 para 15.900 B.
 
 A medição temporariamente agrupou falhas sem desativar o gate; o script original foi restaurado. Os cenários JS de components e masked-input não cresceram; os outros tetos permanecem inalterados.

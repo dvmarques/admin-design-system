@@ -45,7 +45,7 @@ export default function SemanticConsultationPage() {
 
 	return (
 		<div className="demo-page">
-			<div className="ads-layout-container ads-layout-stack demo-semantic-page">
+			<div className="ads-layout-container ads-layout-page demo-semantic-page">
 				<AdsPageHeader
 					title="Consulta administrativa"
 					description="Pesquise os registros fictícios, examine os resultados e navegue para o cadastro sem envolver a página em um card."

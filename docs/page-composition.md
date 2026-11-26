@@ -13,7 +13,7 @@ import { AdsButton, AdsPageHeader, AdsTypography } from '@dvmarques/admin-ds-com
 
 export function Registros() {
 	return (
-		<main>
+		<main className="ads-layout-page">
 			<AdsPageHeader
 				title="Registros"
 				description="Consulte os dados do período"
@@ -30,7 +30,30 @@ export function Registros() {
 }
 ```
 
-O código acima mostra a estrutura; o consumidor implementa a ação do botão. Caso utilize `AdsAdminShell.Main`, **não** envolva novamente em `<main>`: o shell já fornece o landmark e `tabIndex` para sua região rolável. Insira `AdsPageHeader` e `<section>` diretamente como descendentes do shell. O `header` dentro de `main` não precisa receber `role="banner"`; o shell já tem o cabeçalho global.
+O código acima mostra a estrutura; o consumidor implementa a ação do botão. Caso utilize `AdsAdminShell.Main`, **não** envolva novamente em `<main>`: o shell já fornece o landmark e `tabIndex` para sua região rolável. Insira `AdsPageHeader` e `<section>` dentro de um `div` com `ads-layout-page` (ver [ritmo vertical](#ritmo-vertical-de-página--344)), descendente do shell, preservando um único landmark `main`. O `header` dentro de `main` não precisa receber `role="banner"`; o shell já tem o cabeçalho global.
+
+## Ritmo vertical de página — #344
+
+O ritmo padrão vem do pacote, sem CSS adicional no consumidor:
+
+| Onde                                               | Valor                    | Como                                                                                 |
+| -------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
+| Dentro do `AdsPageHeader` (eyebrow, H1, descrição) | 8px (`--ads-spacing-2`)  | Automático no próprio componente; ajustável com `--ads-page-header-gap`.             |
+| Entre cabeçalho e seções                           | 24px (`--ads-spacing-6`) | Classe opt-in `ads-layout-page` no contêiner; ajustável com `--ads-layout-page-gap`. |
+| Dentro de cada seção                               | 16px (`--ads-spacing-4`) | `ads-layout-stack` (padrão já existente).                                            |
+
+```tsx
+<main className="ads-layout-page">
+	<AdsPageHeader title="Registros" description="Consulte os dados do período" />
+	<section aria-labelledby="registros-heading" className="ads-layout-stack">
+		{/* ... */}
+	</section>
+</main>
+```
+
+Dentro do shell, o mesmo padrão usa `<div className="ads-layout-page">` no lugar de `<main>`.
+
+`ads-layout-page` combina com `ads-layout-container`. Dentro de `AdsAdminShell.Main`, aplique-a a um `div` envolvente (o shell já fornece o `main`). O Admin Demo usa exatamente esta classe, sem espaçamento próprio entre cabeçalho e seções.
 
 ## Seções e aparência
 
@@ -49,4 +72,4 @@ Acessibilidade: confira heading/landmarks via árvore de acessibilidade, foco vi
 
 ## Layout responsivo reutilizável — #318
 
-Para containers, grids adaptativos, empilhamento e ações, use CSS nativo ou as classes opt-in distribuídas `ads-layout-container`, `ads-layout-grid`, `ads-layout-stack` e `ads-layout-cluster`. Consulte o [guia de layout responsivo](responsive-layout.md) para tokens, RTL, tabela com scroll local, integração com dashboard e alternativas descartadas. A semântica e os cards opcionais descritos acima permanecem inalterados.
+Para containers, grids adaptativos, empilhamento e ações, use CSS nativo ou as classes opt-in distribuídas `ads-layout-container`, `ads-layout-page`, `ads-layout-grid`, `ads-layout-stack` e `ads-layout-cluster`. Consulte o [guia de layout responsivo](responsive-layout.md) para tokens, RTL, tabela com scroll local, integração com dashboard e alternativas descartadas. A semântica e os cards opcionais descritos acima permanecem inalterados.

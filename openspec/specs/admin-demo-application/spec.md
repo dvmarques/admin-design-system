@@ -615,3 +615,12 @@ Os cabeçalhos de página administrativos do Demo MUST usar `AdsPageHeader` com 
 
 - **WHEN** a pessoa abre Visão geral, Clientes, Novo cliente, Data display ou Preferências
 - **THEN** o eyebrow aparece acima do H1 com o estilo do pacote e o ritmo vertical da página é preservado
+
+### Requirement: Demo usa o ritmo vertical do pacote
+
+As páginas administrativas do Demo MUST obter o espaçamento entre cabeçalho e seções da classe `ads-layout-page`, sem CSS próprio equivalente.
+
+#### Scenario: Pessoa abre Clientes
+
+- **WHEN** a pessoa abre uma página administrativa
+- **THEN** o intervalo entre cabeçalho e primeira seção é 24px, vindo de `ads-layout-page`

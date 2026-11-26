@@ -26,11 +26,6 @@ body {
 	width: min(100%, 76rem);
 	margin: 0 auto;
 }
-.demo-page > .demo-shell {
-	display: grid;
-	grid-template-columns: minmax(0, 1fr);
-	gap: var(--ads-spacing-6);
-}
 .demo-page > .demo-shell > * {
 	min-width: 0;
 }
@@ -629,8 +624,6 @@ body {
 	padding: var(--ads-spacing-4);
 }
 .demo-overview > .demo-shell {
-	display: grid;
-	gap: var(--ads-spacing-6);
 	container: demo-overview / inline-size;
 }
 .demo-overview .demo-section {
@@ -925,7 +918,6 @@ body {
 
 /* #318: ajustes da demonstração sobre classes públicas de composição. */
 .demo-semantic-page {
-	--ads-layout-stack-gap: var(--ads-spacing-6);
 	/* demo-page e shell já fornecem gutter: não somar padding do container. */
 	--ads-layout-gutter: 0;
 }

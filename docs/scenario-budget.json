@@ -12,7 +12,7 @@
 		"bytes": 33600,
 		"gzipBytes": 12000,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 63200,
+		"cssBytes": 63300,
 		"cssGzipBytes": 10500
 	},
 	"masked-input-public": {
@@ -20,7 +20,7 @@
 		"bytes": 74100,
 		"gzipBytes": 20900,
 		"cssFiles": ["packages/tokens/dist/tokens.css", "packages/components/dist/styles.css"],
-		"cssBytes": 63200,
+		"cssBytes": 63300,
 		"cssGzipBytes": 10500
 	},
 	"highlighted-code-public": {
@@ -40,7 +40,7 @@
 			"packages/components/dist/styles.css",
 			"packages/admin/dist/styles.css"
 		],
-		"cssBytes": 104900,
+		"cssBytes": 105100,
 		"cssGzipBytes": 15800
 	}
 }

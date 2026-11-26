@@ -10,6 +10,7 @@ import {
 	AdsEmptyState,
 	AdsList,
 	AdsListItem,
+	AdsPageHeader,
 	AdsPagination,
 	AdsProgress,
 	AdsSparkline,
@@ -26,15 +27,11 @@ export default function DataDisplayPage() {
 	return (
 		<div className="demo-page">
 			<div className="demo-shell">
-				<header className="demo-section">
-					<p className="demo-kicker">Data display</p>
-					<AdsTypography as="h1" variant="heading1">
-						Apresentação de dados administrativos
-					</AdsTypography>
-					<AdsTypography variant="muted">
-						Exemplo consumindo somente APIs públicas de @dvmarques/admin-ds-components.
-					</AdsTypography>
-				</header>
+				<AdsPageHeader
+					eyebrow="Data display"
+					title="Apresentação de dados administrativos"
+					description="Exemplo consumindo somente APIs públicas de @dvmarques/admin-ds-components."
+				/>
 
 				<section aria-labelledby="data-table" className="demo-section">
 					<AdsTypography as="h2" id="data-table" variant="heading2">

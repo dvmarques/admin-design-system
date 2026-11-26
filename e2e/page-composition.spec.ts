@@ -159,3 +159,92 @@ for (const theme of ['light', 'dark'] as const) {
 		}
 	}
 }
+
+test('AdsPageHeader: eyebrow acima do H1 no Demo e ações alinhadas à primeira linha do título', async ({
+	page,
+}) => {
+	await page.setViewportSize({ width: 1280, height: 800 });
+	await page.goto('/clientes');
+	const header = page.locator('header.ads-page-header');
+	await expect(header.locator('p.ads-page-header__eyebrow')).toHaveText('Cadastro');
+	const eyebrowBox = await header.locator('.ads-page-header__eyebrow').boundingBox();
+	const titleBox = await header.getByRole('heading', { level: 1 }).boundingBox();
+	expect(eyebrowBox && titleBox && eyebrowBox.y < titleBox.y).toBe(true);
+
+	for (const path of ['/clientes', '/']) {
+		await page.goto(path);
+		const gaps = await page.locator('header.ads-page-header').evaluate((el) => {
+			const eyebrow = el.querySelector('.ads-page-header__eyebrow')?.getBoundingClientRect();
+			const h1 = el.querySelector('h1')?.getBoundingClientRect();
+			const description = el
+				.querySelector('.ads-page-header__description')
+				?.getBoundingClientRect();
+			return {
+				eyebrowToTitle: (h1?.top ?? 0) - (eyebrow?.bottom ?? 0),
+				titleToDescription: (description?.top ?? 0) - (h1?.bottom ?? 0),
+			};
+		});
+		expect(gaps.eyebrowToTitle).toBeCloseTo(8, 0);
+		expect(gaps.titleToDescription).toBeCloseTo(8, 0);
+	}
+
+	await page.goto('/exemplos/composicao-semantica/consulta');
+	await page.setViewportSize({ width: 320, height: 800 });
+	const intro = await page.locator('.ads-page-header__intro').boundingBox();
+	const actions = await page.locator('.ads-page-header__actions').boundingBox();
+	expect(intro && actions && actions.y >= intro.y + intro.height - 0.5).toBe(true);
+	expect(await noDocumentOverflow(page)).toBe(true);
+});
+
+const alignmentPages = [
+	'/exemplos/composicao-semantica/consulta',
+	'/exemplos/composicao-semantica/dashboard',
+] as const;
+
+for (const path of alignmentPages) {
+	for (const withEyebrow of [false, true]) {
+		for (const longTitle of [false, true]) {
+			test(`AdsPageHeader: ações alinhadas à primeira linha (${path.split('/').pop()}, ${
+				withEyebrow ? 'com' : 'sem'
+			} eyebrow, título de ${longTitle ? 'várias linhas' : 'uma linha'})`, async ({ page }) => {
+				await page.setViewportSize({ width: 1280, height: 800 });
+				await page.goto(path);
+				await page.locator('header.ads-page-header').evaluate(
+					(header, options) => {
+						if (options.withEyebrow) {
+							const eyebrow = document.createElement('p');
+							eyebrow.className = 'ads-page-header__eyebrow';
+							eyebrow.textContent = 'Eyebrow';
+							header.prepend(eyebrow);
+						}
+						if (options.longTitle) {
+							const h1 = header.querySelector('h1');
+							if (h1)
+								h1.textContent = 'Título administrativo bastante longo para quebrar linha '.repeat(
+									5,
+								);
+						}
+					},
+					{ withEyebrow, longTitle },
+				);
+				const measured = await page.evaluate(() => {
+					const h1 = document.querySelector('header.ads-page-header h1') as HTMLElement;
+					const button = document.querySelector('.ads-page-header__actions > *') as HTMLElement;
+					const title = h1.getBoundingClientRect();
+					const box = button.getBoundingClientRect();
+					const lineHeight = Number.parseFloat(getComputedStyle(h1).lineHeight);
+					return {
+						lines: Math.round(title.height / lineHeight),
+						sideBySide: box.left >= title.right - 0.5 && box.top < title.bottom,
+						firstLineCenter: title.top + lineHeight / 2,
+						buttonCenter: box.top + box.height / 2,
+					};
+				});
+				if (longTitle) expect(measured.lines).toBeGreaterThan(1);
+				else expect(measured.lines).toBe(1);
+				expect(measured.sideBySide).toBe(true);
+				expect(Math.abs(measured.buttonCenter - measured.firstLineCenter)).toBeLessThan(1.5);
+			});
+		}
+	}
+}

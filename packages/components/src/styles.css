@@ -733,6 +733,22 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 	.ads-page-header__title {
 		margin: 0;
 	}
+	/* Linha própria acima do H1; os 8px até o título vêm do row-gap do cabeçalho, não de margem. */
+	.ads-page-header__eyebrow {
+		flex: 0 0 100%;
+		margin: 0;
+		color: var(--ads-color-text-muted);
+		font-size: 0.6875rem;
+		font-weight: var(--ads-typography-font-weight-semibold);
+		letter-spacing: 0.08em;
+		line-height: 1.25;
+		text-transform: uppercase;
+		overflow-wrap: anywhere;
+	}
+	/* Ações centradas na primeira linha do H1 (tamanho × entrelinha dos tokens), sem valor no consumidor. */
+	.ads-page-header__actions {
+		min-height: calc(var(--ads-typography-font-size-4xl) * var(--ads-typography-line-height-tight));
+	}
 	.ads-page-header__description {
 		margin: var(--ads-spacing-2) 0 0;
 	}

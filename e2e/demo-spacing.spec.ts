@@ -37,7 +37,7 @@ for (const theme of ['light', 'dark'] as const) {
 			expect(overview).not.toBeNull();
 			expect(customers).not.toBeNull();
 			expect(customers!.x).toBeCloseTo(overview!.x, 0);
-			const header = page.locator('header.demo-section');
+			const header = page.locator('header.ads-page-header');
 			const section = page.getByRole('region', { name: 'Lista de clientes' });
 			const headerBox = await header.boundingBox();
 			const sectionBox = await section.boundingBox();

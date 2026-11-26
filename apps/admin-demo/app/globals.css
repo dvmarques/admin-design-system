@@ -637,14 +637,8 @@ body {
 	padding: 0;
 	border: 0;
 }
-.demo-overview h1,
-.demo-overview h2,
-.demo-overview p {
+.demo-overview > .demo-shell > :not(header) :is(h1, h2, p) {
 	margin-block: 0;
-}
-.demo-overview header.demo-section {
-	display: grid;
-	gap: var(--ads-spacing-2);
 }
 .demo-overview .demo-metrics-grid {
 	grid-template-columns: minmax(0, 1fr);

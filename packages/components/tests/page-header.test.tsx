@@ -55,6 +55,21 @@ describe('AdsPageHeader', () => {
 		expect(header?.querySelector('.ads-page-header__description')).toBeNull();
 	});
 
+	it('renders the eyebrow as a paragraph above the H1 and adds no node without it', () => {
+		const { container, rerender } = render(<AdsPageHeader eyebrow="Cadastro" title="Clientes" />);
+		const header = container.querySelector('header') as HTMLElement;
+		const eyebrow = within(header).getByText('Cadastro');
+		expect(eyebrow.tagName).toBe('P');
+		expect(eyebrow).toHaveClass('ads-page-header__eyebrow');
+		expect(
+			eyebrow.compareDocumentPosition(within(header).getByRole('heading', { level: 1 })) &
+				Node.DOCUMENT_POSITION_FOLLOWING,
+		).toBeTruthy();
+		rerender(<AdsPageHeader title="Clientes" />);
+		expect(container.querySelector('.ads-page-header__eyebrow')).toBeNull();
+		expect(container.querySelector('header')?.children).toHaveLength(1);
+	});
+
 	it.each(['light', 'dark'] as const)('supports %s theme and long headings', (theme) => {
 		const long = 'RelatorioSemEspacos'.repeat(12);
 		const { container } = renderWithTheme(

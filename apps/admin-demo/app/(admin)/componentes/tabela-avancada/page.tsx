@@ -24,7 +24,7 @@ const statuses = ['Ativo', 'Inativo', 'Pendente'];
 const people: Person[] = Array.from({ length: 10000 }, (_, i) => ({
 	id: String(i + 1),
 	name: `Pessoa ${i + 1}`,
-	email: `pessoa${i + 1}@exemplo.com`,
+	email: i === 49 ? `${'referencia'.repeat(20)}@exemplo.com` : `pessoa${i + 1}@exemplo.com`,
 	role: roles[i % roles.length]!,
 	status: statuses[i % statuses.length]!,
 }));

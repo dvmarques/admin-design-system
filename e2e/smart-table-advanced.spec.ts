@@ -104,8 +104,12 @@ for (const theme of ['light', 'dark']) {
 		await page.getByLabel('Virtualizar linhas').uncheck();
 		await page.getByLabel('Redimensionar colunas').uncheck();
 		await page.getByLabel('Linhas listradas').check();
-		await page.getByLabel('Quebrar texto').check();
 		const table = page.getByRole('table', { name: 'Pessoas' });
+		const region = page.getByRole('region', { name: 'Pessoas' });
+		const overflow = () => region.evaluate((node) => node.scrollWidth - node.clientWidth);
+		await expect.poll(overflow).toBeGreaterThan(0);
+		await page.getByLabel('Quebrar texto').check();
+		await expect.poll(overflow).toBeLessThanOrEqual(1);
 		const first = table.locator('tbody tr').nth(0);
 		const second = table.locator('tbody tr').nth(1);
 		const background = (row: typeof first) =>
@@ -114,11 +118,18 @@ for (const theme of ['light', 'dark']) {
 		await expect(table).toHaveAttribute('data-wrap', '');
 		await expect(table).toHaveCSS('min-width', '0px');
 		await page.getByLabel('Quebrar texto').hover();
+		await expect(second).toHaveCSS(
+			'background-color',
+			theme === 'light' ? 'rgb(232, 238, 245)' : 'rgb(41, 53, 72)',
+		);
 		const stripe = await background(second);
 		expect(stripe).not.toBe(await background(first));
 		expect(stripe).not.toBe(await background(table.locator('thead')));
 		await second.hover();
-		await expect.poll(() => background(second)).not.toBe(stripe);
+		await expect(second).toHaveCSS(
+			'background-color',
+			theme === 'light' ? 'rgb(248, 250, 252)' : 'rgb(61, 75, 96)',
+		);
 		await expect(second.getByRole('cell').nth(2)).toHaveCSS('overflow-wrap', 'anywhere');
 		await expect(second.getByRole('cell').nth(2)).toHaveCSS('white-space', 'normal');
 		await expectNoAxeViolations(page);

@@ -6,8 +6,8 @@
 
 ## 2. Testes e documentação
 
-- [ ] 2.1 Cobrir props, compatibilidade, estilos e estados em testes.
-- [ ] 2.2 Documentar opções e limitações; adicionar stories de ambas as tabelas e changelog.
+- [x] 2.1 Cobrir props, compatibilidade, estilos e estados em testes.
+- [x] 2.2 Documentar opções e limitações; adicionar stories de ambas as tabelas e changelog.
 - [ ] 2.3 Validar consumo Next.js, responsividade, temas e acessibilidade em navegador.
 
 ## 3. Validação

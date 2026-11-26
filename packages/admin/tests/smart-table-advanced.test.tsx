@@ -400,3 +400,21 @@ describe('AdsListFlow with advanced options', () => {
 		expect(onExport.mock.calls[0]![0].selectedRows.map((row) => row.id)).toEqual(['i2']);
 	});
 });
+
+it('keeps stripe parity across virtual windows and skips spacers', () => {
+	const { container } = render(<Table striped virtualization={virtualization} />);
+	const verifyParity = () => {
+		for (const row of dataRows()) {
+			const index = Number(row.getAttribute('aria-rowindex')) - 2;
+			expect(row).toHaveAttribute('data-stripe', index % 2 === 1 ? 'even' : 'odd');
+		}
+		for (const spacer of container.querySelectorAll('.ads-smart-table-spacer')) {
+			expect(spacer).not.toHaveAttribute('data-stripe');
+		}
+	};
+	verifyParity();
+	fireEvent.scroll(screen.getByRole('region', { name: 'Itens' }), {
+		target: { scrollTop: 20040 },
+	});
+	verifyParity();
+});

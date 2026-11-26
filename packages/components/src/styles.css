@@ -858,9 +858,10 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 
 @layer components {
 	/* Keep specificity below row hover, selection and consumer utility overrides. */
-	:where(.ads-table[data-striped]) > :where(tbody) > :where(tr:nth-child(even):not([aria-rowindex], [aria-hidden='true'], [data-selected])),
-	:where(.ads-table[data-striped]) > :where(tbody) > :where(tr[data-stripe]:not([data-selected])) {
-		background-color: var(--ads-color-table-stripe);
+	:where(.ads-table[data-striped] > tbody > tr:not([aria-hidden='true'], [data-selected])) {
+		&:where([data-stripe='even'], :nth-child(even):not([data-stripe])) {
+			background-color: var(--ads-color-table-stripe);
+		}
 	}
 
 	:where(.ads-table[data-wrap]) {

@@ -446,7 +446,7 @@ export function AdsSmartTable<Row>({
 			<AdsTableRow
 				aria-rowindex={virtual ? index + 2 : undefined}
 				data-row-id={virtual ? id : undefined}
-				data-stripe={striped && virtual && index % 2 === 1 ? '' : undefined}
+				data-stripe={striped && virtual ? (index % 2 === 1 ? 'even' : 'odd') : undefined}
 				data-selected={isSelected ? '' : undefined}
 				key={id}
 				style={virtual ? { ...virtualRowStyle, height: virtual.rowHeight } : undefined}
@@ -555,8 +555,8 @@ export function AdsSmartTable<Row>({
 			) : null}
 			<AdsTable
 				{...(density && { density })}
-				striped={striped}
-				wrap={wrap}
+				{...(striped && { striped })}
+				{...(wrap && { wrap })}
 				aria-busy={loading ? true : undefined}
 				aria-rowcount={showsRows && virtual ? pageRows.length + 1 : undefined}
 				containerClassName="ads-smart-table-scroll"

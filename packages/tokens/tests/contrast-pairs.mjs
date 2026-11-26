@@ -14,7 +14,13 @@ const surfaces = [
 	'surfaceHover',
 	'tableStripe',
 ];
-const controlBackgrounds = ['surface', 'formBackground', 'surfaceMuted', 'surfaceHover', 'tableStripe'];
+const controlBackgrounds = [
+	'surface',
+	'formBackground',
+	'surfaceMuted',
+	'surfaceHover',
+	'tableStripe',
+];
 
 const chartSurfaces = ['surface', 'surfaceRaised'];
 

@@ -1,1 +1,0 @@
-{"version":"0.0.1","configurations":[{"name":"admin-demo","runtimeExecutable":"npm","runtimeArgs":["run","dev","--workspace","@admin-ds/admin-demo"],"port":3000}]}

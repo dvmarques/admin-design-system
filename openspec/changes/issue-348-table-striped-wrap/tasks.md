@@ -8,7 +8,7 @@
 
 - [x] 2.1 Cobrir props, compatibilidade, estilos e estados em testes.
 - [x] 2.2 Documentar opções e limitações; adicionar stories de ambas as tabelas e changelog.
-- [ ] 2.3 Validar consumo Next.js, responsividade, temas e acessibilidade em navegador.
+- [x] 2.3 Validar consumo Next.js, responsividade, temas e acessibilidade em navegador.
 
 ## 3. Validação
 
@@ -22,3 +22,6 @@
 - Clone local e CLI OpenSpec local bloqueados por DNS; os comandos efetivamente executados na CI são a evidência disponível.
 
 - Implementação de ambas as tabelas concluída e revisada estaticamente; testes em navegador permanecem em 2.3 e validação integral em 3.2. A [CI de diagnóstico](https://github.com/dvmarques/admin-design-system/actions/runs/45898273973) confirmou medições de distribuição; os limites afetados foram calibrados sem remover verificações.
+
+- [CI anterior](https://github.com/dvmarques/admin-design-system/actions/runs/45898482866): qualidade, distribuição (incluindo consumo Next.js), Firefox e WebKit aprovados; Chromium falhou apenas no snapshot de `/componentes`, cujo contador de tokens passou de 104 para 105.
+- [Workflow oficial Linux](https://github.com/dvmarques/admin-design-system/actions/runs/45909585588) aprovado: 563 testes Chromium na geração e 563 na revalidação sem atualização. Commit `82dcc80` altera exclusivamente os snapshots claro e escuro de `/componentes`; comparação visual antes/depois revisada, com alteração esperada do contador e sem outras diferenças visíveis. A CI integral do novo HEAD permanece pendente; execuções acionadas pelo bot registraram `action_required`.

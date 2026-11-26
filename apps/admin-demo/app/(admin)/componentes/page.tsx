@@ -34,7 +34,7 @@ import { EvaluationShowcase } from '../../evaluation-showcase';
 export default function ComponentsPage() {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<header className="demo-hero">
 					<div className="demo-hero__intro">
 						<p className="demo-kicker">Admin Design System</p>

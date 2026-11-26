@@ -22,7 +22,7 @@ interface OverviewContentProps {
 export function OverviewContent({ indicators, progress, activity }: OverviewContentProps) {
 	return (
 		<div className="demo-page demo-overview">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<AdsPageHeader
 					eyebrow="Admin Design System"
 					title="Visão geral"

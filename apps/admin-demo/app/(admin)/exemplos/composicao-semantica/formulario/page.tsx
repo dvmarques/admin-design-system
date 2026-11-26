@@ -30,7 +30,7 @@ export default function SemanticFormPage() {
 
 	return (
 		<div className="demo-page">
-			<div className="ads-layout-container ads-layout-stack demo-semantic-page">
+			<div className="ads-layout-container ads-layout-page demo-semantic-page">
 				<AdsPageHeader
 					title="Formulário administrativo"
 					description="Duas seções semânticas, validação de campos obrigatórios e ações acessíveis; demonstração sem envio de dados."

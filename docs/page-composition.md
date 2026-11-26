@@ -32,6 +32,27 @@ export function Registros() {
 
 O código acima mostra a estrutura; o consumidor implementa a ação do botão. Caso utilize `AdsAdminShell.Main`, **não** envolva novamente em `<main>`: o shell já fornece o landmark e `tabIndex` para sua região rolável. Insira `AdsPageHeader` e `<section>` diretamente como descendentes do shell. O `header` dentro de `main` não precisa receber `role="banner"`; o shell já tem o cabeçalho global.
 
+## Ritmo vertical de página — #344
+
+O ritmo padrão vem do pacote, sem CSS adicional no consumidor:
+
+| Onde                                               | Valor                    | Como                                                                                 |
+| -------------------------------------------------- | ------------------------ | ------------------------------------------------------------------------------------ |
+| Dentro do `AdsPageHeader` (eyebrow, H1, descrição) | 8px (`--ads-spacing-2`)  | Automático no próprio componente; ajustável com `--ads-page-header-gap`.             |
+| Entre cabeçalho e seções                           | 24px (`--ads-spacing-6`) | Classe opt-in `ads-layout-page` no contêiner; ajustável com `--ads-layout-page-gap`. |
+| Dentro de cada seção                               | 16px (`--ads-spacing-4`) | `ads-layout-stack` (padrão já existente).                                            |
+
+```tsx
+<main className="ads-layout-page">
+	<AdsPageHeader title="Registros" description="Consulte os dados do período" />
+	<section aria-labelledby="registros-heading" className="ads-layout-stack">
+		{/* ... */}
+	</section>
+</main>
+```
+
+`ads-layout-page` combina com `ads-layout-container`. Dentro de `AdsAdminShell.Main`, aplique-a a um `div` envolvente (o shell já fornece o `main`). O Admin Demo usa exatamente esta classe, sem espaçamento próprio entre cabeçalho e seções.
+
 ## Seções e aparência
 
 Use `<section aria-labelledby="id-do-h2">` junto de `<AdsTypography as="h2" id="id-do-h2" variant="heading2">` para nomear a região. A mesma estratégia vale para H3 e H4 de subseções. `AdsTypography` separa **semântica** de **aparência**, por exemplo `as="h2" variant="heading3"` mantém a hierarquia H2 com visual menor. Prefira nomes visíveis; `aria-label` é alternativa quando a seção não tem título.

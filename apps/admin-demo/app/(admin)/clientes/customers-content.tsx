@@ -17,7 +17,7 @@ interface CustomersContentProps {
 export function CustomersContent({ total, ...listing }: CustomersContentProps) {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<AdsPageHeader
 					eyebrow="Cadastro"
 					title="Clientes"

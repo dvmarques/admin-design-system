@@ -1,6 +1,6 @@
 # Layout responsivo leve — #318
 
-O ADS mantém HTML nativo como estrutura. Quatro classes CSS **opt-in** reduzem repetição em filtros, formulários, dashboards simples e ações. Não foram criados `AdsContainer`, `AdsGrid`, `AdsGridItem`, `AdsStack` nem dependências de runtime. As classes estão no CSS compilado de `@dvmarques/admin-ds-components`, sem exigir Tailwind no projeto consumidor.
+O ADS mantém HTML nativo como estrutura. Cinco classes CSS **opt-in** reduzem repetição em filtros, formulários, dashboards simples e ações. Não foram criados `AdsContainer`, `AdsGrid`, `AdsGridItem`, `AdsStack` nem dependências de runtime. As classes estão no CSS compilado de `@dvmarques/admin-ds-components`, sem exigir Tailwind no projeto consumidor.
 
 ## Importação
 
@@ -11,12 +11,13 @@ import '@dvmarques/admin-ds-tokens/styles.css';
 import '@dvmarques/admin-ds-components/styles.css';
 ```
 
-| Classe CSS             | Função e padrão                                                                                                                 | Ajustes opcionais por elemento                          |
-| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------- |
-| `ads-layout-container` | `width:100%`, `max-width:76rem`, centralizado, padding inline `--ads-spacing-4` no mobile e `--ads-spacing-6` a partir de 48rem | `--ads-layout-max-width`, `--ads-layout-gutter`         |
-| `ads-layout-stack`     | `display:flex`, coluna, gap `--ads-spacing-4`                                                                                   | `--ads-layout-stack-gap`                                |
-| `ads-layout-grid`      | CSS Grid `repeat(auto-fit,minmax(min(100%,16rem),1fr))`; gap `--ads-spacing-4`                                                  | `--ads-layout-grid-min-column`, `--ads-layout-grid-gap` |
-| `ads-layout-cluster`   | Flex com wrap e gap `--ads-spacing-3`, adequado a grupos de ações                                                               | `--ads-layout-cluster-gap`                              |
+| Classe CSS             | Função e padrão                                                                                                                                              | Ajustes opcionais por elemento                          |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| `ads-layout-container` | `width:100%`, `max-width:76rem`, centralizado, padding inline `--ads-spacing-4` no mobile e `--ads-spacing-6` a partir de 48rem                              | `--ads-layout-max-width`, `--ads-layout-gutter`         |
+| `ads-layout-stack`     | `display:flex`, coluna, gap `--ads-spacing-4`                                                                                                                | `--ads-layout-stack-gap`                                |
+| `ads-layout-page`      | `display:flex`, coluna, gap `--ads-spacing-6` (24px) entre `AdsPageHeader` e seções; ver [ritmo vertical](page-composition.md#ritmo-vertical-de-página--344) | `--ads-layout-page-gap`                                 |
+| `ads-layout-grid`      | CSS Grid `repeat(auto-fit,minmax(min(100%,16rem),1fr))`; gap `--ads-spacing-4`                                                                               | `--ads-layout-grid-min-column`, `--ads-layout-grid-gap` |
+| `ads-layout-cluster`   | Flex com wrap e gap `--ads-spacing-3`, adequado a grupos de ações                                                                                            | `--ads-layout-cluster-gap`                              |
 
 Use propriedades CSS locais, evitando interfaces React artificiais:
 

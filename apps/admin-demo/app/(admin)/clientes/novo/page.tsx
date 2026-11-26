@@ -4,7 +4,7 @@ import { NewCustomerForm } from './new-customer-form';
 export default function NewCustomerPage() {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<AdsPageHeader
 					eyebrow="Cadastro"
 					title="Novo cliente"

@@ -45,7 +45,7 @@ function ConsultationExample() {
 		person.toLowerCase().includes(query.trim().toLowerCase()),
 	);
 	return (
-		<main className="ads-layout-stack">
+		<main className="ads-layout-page">
 			<AdsPageHeader
 				eyebrow="Consultas"
 				title="Consulta administrativa"
@@ -95,7 +95,7 @@ function FormExample() {
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
 	return (
-		<main className="ads-layout-stack">
+		<main className="ads-layout-page">
 			<AdsPageHeader
 				title="Formulário administrativo"
 				description="Seções semânticas, validação e ações sem card obrigatório."
@@ -160,7 +160,7 @@ function FormExample() {
 
 function DashboardExample() {
 	return (
-		<main className="ads-layout-stack">
+		<main className="ads-layout-page">
 			<AdsPageHeader
 				title="Dashboard administrativo"
 				description="Cards apenas para métricas e resumos autocontidos."

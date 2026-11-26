@@ -16,6 +16,7 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Changed
 
+- Ritmo vertical de página padronizado no pacote: nova classe opt-in `ads-layout-page` (24px entre `AdsPageHeader` e seções, ajustável por `--ads-layout-page-gap`) e espaçamento interno do cabeçalho de 8px (`--ads-page-header-gap`), documentados em `page-composition.md`. O Admin Demo passa a usar a classe em vez de CSS próprio; o consumidor não precisa mais sobrescrever `--ads-layout-stack-gap`. (#344, OpenSpec `issue-344-page-vertical-rhythm`)
 - As ações do `AdsPageHeader` ficam alinhadas à primeira linha do título, sem contêiner nem valores mágicos no consumidor; em telas estreitas continuam quebrando abaixo do texto. Tetos de JS/CSS de `components` e dos cenários de CSS de `components`, `masked-input` e `admin` ajustados. (#343, OpenSpec `issue-343-page-header-eyebrow`)
 - Documentado que a fonte Inter é carregada pela aplicação consumidora (os pacotes não a distribuem) e como sobrescrever `--ads-typography-font-family`. (#343, OpenSpec `issue-343-page-header-eyebrow`)
 - `highlighted-code` atualiza o Shiki para 4.6.0. Em testes com jsdom, o destaque real deixa de carregar e o código aparece sem cores; adicione um polyfill de `Blob.prototype.stream` ao setup. Navegador e SSR não mudam. (#333)

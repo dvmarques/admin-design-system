@@ -26,7 +26,7 @@ import {
 export default function DataDisplayPage() {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<AdsPageHeader
 					eyebrow="Data display"
 					title="Apresentação de dados administrativos"

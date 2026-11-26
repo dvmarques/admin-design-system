@@ -42,6 +42,9 @@ for (const theme of ['light', 'dark'] as const) {
 			const headerBox = await header.boundingBox();
 			const sectionBox = await section.boundingBox();
 			expect(sectionBox!.y - (headerBox!.y + headerBox!.height)).toBeCloseTo(24, 0);
+			await expect(page.locator('.demo-shell').first()).toHaveClass(/ads-layout-page/);
+			await expect(page.locator('.demo-shell').first()).toHaveCSS('row-gap', '24px');
+			await expect(header).toHaveCSS('row-gap', '8px');
 			await expect(section).toHaveCSS('border-top-width', '0px');
 			expect(await page.evaluate(() => document.documentElement.scrollWidth <= innerWidth)).toBe(
 				true,

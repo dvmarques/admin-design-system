@@ -4,7 +4,7 @@ import { TimePickerExamples } from './time-picker-examples';
 export default function DatesPage() {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<AdsTypography as="h1" variant="heading1">
 					Seleção de datas e horários
 				</AdsTypography>

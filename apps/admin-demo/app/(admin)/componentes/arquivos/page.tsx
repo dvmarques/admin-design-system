@@ -37,7 +37,7 @@ export default function FileImportPage() {
 
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
+			<div className="demo-shell ads-layout-page">
 				<AdsTypography as="h1" variant="heading1">
 					Importação de arquivos
 				</AdsTypography>

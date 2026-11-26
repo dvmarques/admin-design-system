@@ -12,4 +12,4 @@
 
 ## 3. Validação
 
-- [ ] 3.1 Registrar no changelog; formatar e executar format, lint, build, typecheck, quality, E2E e `openspec.cmd validate --all --strict`.
+- [x] 3.1 Registrar no changelog; formatar e executar format, lint, build, typecheck, quality, E2E e `openspec.cmd validate --all --strict`.

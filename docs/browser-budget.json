@@ -4,8 +4,8 @@
 		"gzipBytes": 3600
 	},
 	"@dvmarques/admin-ds-components": {
-		"bytes": 308000,
-		"gzipBytes": 92400
+		"bytes": 308600,
+		"gzipBytes": 92500
 	},
 	"@dvmarques/admin-ds-highlighted-code": {
 		"bytes": 17500,

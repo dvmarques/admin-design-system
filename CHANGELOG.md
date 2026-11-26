@@ -16,7 +16,7 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Changed
 
-- As ações do `AdsPageHeader` ficam alinhadas à primeira linha do título, sem contêiner nem valores mágicos no consumidor; em telas estreitas continuam quebrando abaixo do texto. (#343, OpenSpec `issue-343-page-header-eyebrow`)
+- As ações do `AdsPageHeader` ficam alinhadas à primeira linha do título, sem contêiner nem valores mágicos no consumidor; em telas estreitas continuam quebrando abaixo do texto. Tetos de JS/CSS de `components` e dos cenários de CSS de `components`, `masked-input` e `admin` ajustados. (#343, OpenSpec `issue-343-page-header-eyebrow`)
 - Documentado que a fonte Inter é carregada pela aplicação consumidora (os pacotes não a distribuem) e como sobrescrever `--ads-typography-font-family`. (#343, OpenSpec `issue-343-page-header-eyebrow`)
 
 #### Fixed

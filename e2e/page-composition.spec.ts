@@ -189,16 +189,62 @@ test('AdsPageHeader: eyebrow acima do H1 no Demo e ações alinhadas à primeira
 	}
 
 	await page.goto('/exemplos/composicao-semantica/consulta');
-	const title = await page.getByRole('heading', { level: 1 }).boundingBox();
-	const action = await page.locator('.ads-page-header__actions > *').first().boundingBox();
-	expect(title && action).toBeTruthy();
-	if (title && action) {
-		expect(Math.abs(action.y + action.height / 2 - (title.y + title.height / 2))).toBeLessThan(1.5);
-	}
-
 	await page.setViewportSize({ width: 320, height: 800 });
 	const intro = await page.locator('.ads-page-header__intro').boundingBox();
 	const actions = await page.locator('.ads-page-header__actions').boundingBox();
 	expect(intro && actions && actions.y >= intro.y + intro.height - 0.5).toBe(true);
 	expect(await noDocumentOverflow(page)).toBe(true);
 });
+
+const alignmentPages = [
+	'/exemplos/composicao-semantica/consulta',
+	'/exemplos/composicao-semantica/dashboard',
+] as const;
+
+for (const path of alignmentPages) {
+	for (const withEyebrow of [false, true]) {
+		for (const longTitle of [false, true]) {
+			test(`AdsPageHeader: ações alinhadas à primeira linha (${path.split('/').pop()}, ${
+				withEyebrow ? 'com' : 'sem'
+			} eyebrow, título de ${longTitle ? 'várias linhas' : 'uma linha'})`, async ({ page }) => {
+				await page.setViewportSize({ width: 1280, height: 800 });
+				await page.goto(path);
+				await page.locator('header.ads-page-header').evaluate(
+					(header, options) => {
+						if (options.withEyebrow) {
+							const eyebrow = document.createElement('p');
+							eyebrow.className = 'ads-page-header__eyebrow';
+							eyebrow.textContent = 'Eyebrow';
+							header.prepend(eyebrow);
+						}
+						if (options.longTitle) {
+							const h1 = header.querySelector('h1');
+							if (h1)
+								h1.textContent = 'Título administrativo bastante longo para quebrar linha '.repeat(
+									5,
+								);
+						}
+					},
+					{ withEyebrow, longTitle },
+				);
+				const measured = await page.evaluate(() => {
+					const h1 = document.querySelector('header.ads-page-header h1') as HTMLElement;
+					const button = document.querySelector('.ads-page-header__actions > *') as HTMLElement;
+					const title = h1.getBoundingClientRect();
+					const box = button.getBoundingClientRect();
+					const lineHeight = Number.parseFloat(getComputedStyle(h1).lineHeight);
+					return {
+						lines: Math.round(title.height / lineHeight),
+						sideBySide: box.left >= title.right - 0.5 && box.top < title.bottom,
+						firstLineCenter: title.top + lineHeight / 2,
+						buttonCenter: box.top + box.height / 2,
+					};
+				});
+				if (longTitle) expect(measured.lines).toBeGreaterThan(1);
+				else expect(measured.lines).toBe(1);
+				expect(measured.sideBySide).toBe(true);
+				expect(Math.abs(measured.buttonCenter - measured.firstLineCenter)).toBeLessThan(1.5);
+			});
+		}
+	}
+}

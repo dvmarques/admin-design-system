@@ -65,17 +65,39 @@ execução:
 ```tsx
 // app/layout.tsx
 import { Inter } from 'next/font/google';
+import '@dvmarques/admin-ds-tokens/styles.css';
+import '@dvmarques/admin-ds-components/styles.css';
+import './fonts.css'; // depois dos CSS do ADS
 
-const inter = Inter({ subsets: ['latin'], display: 'swap' });
+const inter = Inter({ subsets: ['latin'], display: 'swap', variable: '--font-inter' });
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
 	return (
-		<html lang="pt-BR" className={inter.className}>
+		<html lang="pt-BR" className={inter.variable}>
 			<body>{children}</body>
 		</html>
 	);
 }
 ```
+
+`next/font` gera uma família com nome próprio (não `Inter`), então aplicar apenas
+`inter.className` não alcança os tokens: `AdsTypography` e o corpo leem
+`--ads-typography-font-family` (e `--ads-typography-font-family-heading`, que a
+acompanha) e continuariam na fonte de fallback. Ligue a variável gerada aos
+tokens, nos mesmos seletores em que os tokens a declaram e depois dos CSS do ADS,
+para que a sobrescrita prevaleça nos temas claro, escuro e sem `data-theme`:
+
+```css
+/* app/fonts.css */
+:root,
+[data-theme='light'],
+[data-theme='dark'],
+:root:not([data-theme]) {
+	--ads-typography-font-family: var(--font-inter), system-ui, sans-serif;
+}
+```
+
+Confirme no navegador que a fonte computada do `h1` e do `body` é a Inter.
 
 A demonstração (`apps/admin-demo`) e o Storybook (`apps/docs`) carregam a Inter com `@fontsource/inter` (pesos 400, 500, 600 e 700, subconjunto latino, woff2 hospedado no próprio build); a biblioteca em si não depende dele. Como a pilha começa por `Inter`, `next/font` com `variable` e um
 `@font-face` próprio também funcionam: defina uma família chamada `Inter`. A

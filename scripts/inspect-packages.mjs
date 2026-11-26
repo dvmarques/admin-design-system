@@ -3,7 +3,7 @@ import { readdir, readFile, stat } from 'node:fs/promises';
 import { fileURLToPath } from 'node:url';
 import { resolve, extname } from 'node:path';
 import { build } from 'esbuild';
-import { checkBudget as assertBudget } from './quality-budget.mjs';
+import { checkBudget } from './quality-budget.mjs';
 import { gzipSync } from 'node:zlib';
 
 const root = fileURLToPath(new URL('..', import.meta.url));
@@ -22,15 +22,6 @@ const readBudget = async (name) =>
 const baseline = await readBudget('bundle-baseline.json');
 const browserBudget = await readBudget('browser-budget.json');
 const scenarioBudget = await readBudget('scenario-budget.json');
-
-const budgetFailures = [];
-function checkBudget(packageName, metric, actual, limit) {
-	try {
-		assertBudget(packageName, metric, actual, limit);
-	} catch (error) {
-		budgetFailures.push(error instanceof Error ? error.message : String(error));
-	}
-}
 
 async function filesIn(directory) {
 	const entries = await readdir(directory, { withFileTypes: true });
@@ -147,5 +138,3 @@ for (const [name, scenario] of Object.entries(scenarioBudget)) {
 	checkBudget(name, 'cenário CSS minificado', cssBytes, scenario.cssBytes);
 	checkBudget(name, 'cenário CSS gzip', cssGzipBytes, scenario.cssGzipBytes);
 }
-
-if (budgetFailures.length) throw new Error(budgetFailures.join('\n'));

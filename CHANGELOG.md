@@ -12,6 +12,7 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
+- `AdsTable` e `AdsSmartTable` aceitam as props opcionais `striped` (listras tematizáveis com `--ads-color-table-stripe`) e `wrap` (quebra de texto longo); sem as props, preservam a apresentação anterior. (#348, OpenSpec `issue-348-table-striped-wrap`)
 - `AdsPageHeader` aceita a prop opcional `eyebrow` (texto pequeno em caixa-alta acima do H1); sem ela, o markup não muda. O Admin Demo usa a prop em vez de estilos locais. (#343, OpenSpec `issue-343-page-header-eyebrow`)
 
 #### Changed

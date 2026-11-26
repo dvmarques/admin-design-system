@@ -14,6 +14,10 @@ export interface AdsTableProps extends TableHTMLAttributes<HTMLTableElement> {
 	 * ancestral ou a confortável (padrão).
 	 */
 	density?: AdsTableDensity;
+	/** Alterna a cor de fundo das linhas do corpo. */
+	striped?: boolean;
+	/** Permite quebrar texto longo nas células e reduzir a largura intrínseca. */
+	wrap?: boolean;
 	containerClassName?: string;
 	/** HTML attributes for the scroll container, for example to make it a labelled, focusable region. */
 	containerProps?: Omit<
@@ -27,6 +31,8 @@ export function AdsTable({
 	containerClassName,
 	containerProps,
 	density,
+	striped,
+	wrap,
 	...props
 }: AdsTableProps) {
 	return (
@@ -37,8 +43,12 @@ export function AdsTable({
 			<table
 				{...props}
 				data-density={density}
+				data-striped={striped ? '' : undefined}
+				data-wrap={wrap ? '' : undefined}
 				className={classNames(
-					'ads-table w-full min-w-max border-collapse text-left text-sm text-text',
+					wrap
+						? 'ads-table w-full border-collapse text-left text-sm text-text'
+						: 'ads-table w-full min-w-max border-collapse text-left text-sm text-text',
 					className,
 				)}
 			/>

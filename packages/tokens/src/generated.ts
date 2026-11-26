@@ -57,6 +57,7 @@ export const tokenValues = {
   "color.surfaceRaised": "#ffffff",
   "color.surfaceMuted": "#f1f5f9",
   "color.surfaceHover": "#f8fafc",
+  "color.tableStripe": "#e8eef5",
   "color.surfaceSelected": "#93c5fd",
   "color.onSurfaceSelected": "#0f172a",
   "color.text": "#0f172a",

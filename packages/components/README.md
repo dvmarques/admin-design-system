@@ -62,3 +62,7 @@ Os tokens e a fonte ficam sob controle da aplicação. `AdsThemeControl` disponi
 **Referências:** [integração](https://github.com/dvmarques/admin-design-system/blob/develop/docs/integration.md) · [API Storybook](https://dvmarques.github.io/admin-design-system/storybook/) · [limitações](https://github.com/dvmarques/admin-design-system/blob/develop/docs/limitations.md) · [histórico](https://github.com/dvmarques/admin-design-system/blob/develop/docs/component-changelog.md) · [release](https://github.com/dvmarques/admin-design-system/blob/develop/docs/release-process.md) · [MIT](https://github.com/dvmarques/admin-design-system/blob/develop/LICENSE.md) e [avisos de terceiros](https://github.com/dvmarques/admin-design-system/blob/develop/docs/licensing.md).
 
 Licença do projeto: MIT, copyright Daniel Marques.
+
+### Apresentação de tabelas
+
+Use `<AdsTable striped wrap>` para habilitar listras alternadas e quebra de texto. Cada opção é independente e desativada por padrão. A cor da listra pode ser personalizada com `--ads-color-table-stripe`; a tabela preserva o hover e a semântica nativa. Sem wrap, a largura mínima intrínseca continua a permitir rolagem horizontal; conteúdo de largura explícita ainda pode exigir rolagem.

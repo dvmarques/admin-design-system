@@ -164,6 +164,10 @@ export interface AdsSmartTableProps<Row> extends Omit<
 	onHiddenColumnsChange?: (ids: string[]) => void;
 	/** Densidade das células. Sem a prop, vale a herdada de um ancestral ou a confortável. */
 	density?: AdsTableDensity;
+	/** Alterna a cor de fundo das linhas de dados. */
+	striped?: boolean;
+	/** Permite quebra de texto; larguras controladas e virtualização preservam o recorte. */
+	wrap?: boolean;
 	loading?: boolean;
 	loadingRows?: number;
 	error?: ReactNode;
@@ -271,6 +275,8 @@ export function AdsSmartTable<Row>({
 	selectionMode = 'multiple',
 	sort = null,
 	virtualization,
+	striped,
+	wrap,
 	columnWidths = emptyWidths,
 	onColumnWidthsChange,
 	onExport,
@@ -440,6 +446,7 @@ export function AdsSmartTable<Row>({
 			<AdsTableRow
 				aria-rowindex={virtual ? index + 2 : undefined}
 				data-row-id={virtual ? id : undefined}
+				data-stripe={striped && virtual && index % 2 === 1 ? '' : undefined}
 				data-selected={isSelected ? '' : undefined}
 				key={id}
 				style={virtual ? { ...virtualRowStyle, height: virtual.rowHeight } : undefined}
@@ -548,6 +555,8 @@ export function AdsSmartTable<Row>({
 			) : null}
 			<AdsTable
 				{...(density && { density })}
+				striped={striped}
+				wrap={wrap}
 				aria-busy={loading ? true : undefined}
 				aria-rowcount={showsRows && virtual ? pageRows.length + 1 : undefined}
 				containerClassName="ads-smart-table-scroll"

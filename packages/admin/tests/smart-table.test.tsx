@@ -528,3 +528,17 @@ describe('pagination footer options', () => {
 		expect(screen.queryByText(/Exibindo/)).toBeNull();
 	});
 });
+
+it('forwards the presentation options to the native table, not the root', () => {
+	const { container, rerender } = render(<Harness striped wrap />);
+	const table = screen.getByRole('table', { name: 'Usuários' });
+	expect(table).toHaveAttribute('data-striped');
+	expect(table).toHaveAttribute('data-wrap');
+	expect(table).not.toHaveClass('min-w-max');
+	expect(container.firstElementChild).not.toHaveAttribute('striped');
+	expect(container.firstElementChild).not.toHaveAttribute('wrap');
+	rerender(<Harness />);
+	expect(table).not.toHaveAttribute('data-striped');
+	expect(table).not.toHaveAttribute('data-wrap');
+	expect(table).toHaveClass('min-w-max');
+});

@@ -54,3 +54,7 @@ Não executa operações de negócio, não busca nem persiste dados, não faz lo
 **Referências:** [integração](https://github.com/dvmarques/admin-design-system/blob/develop/docs/integration.md) · [API Storybook](https://dvmarques.github.io/admin-design-system/storybook/) · [Demo](https://dvmarques.github.io/admin-design-system/) · [limitações](https://github.com/dvmarques/admin-design-system/blob/develop/docs/limitations.md) · [histórico](https://github.com/dvmarques/admin-design-system/blob/develop/docs/component-changelog.md) · [release](https://github.com/dvmarques/admin-design-system/blob/develop/docs/release-process.md) · [licença MIT](https://github.com/dvmarques/admin-design-system/blob/develop/LICENSE.md).
 
 Copyright Daniel Marques. As atribuições de terceiros aplicáveis permanecem preservadas.
+
+### Apresentação de tabelas
+
+`AdsSmartTable` aceita `striped` para alternar o fundo das linhas e `wrap` para permitir quebra de texto, inclusive palavras longas. As opções são independentes e desativadas por padrão. Personalize a listra com `--ads-color-table-stripe`. A seleção e o hover continuam identificáveis. Colunas de largura controlada e linhas virtualizadas mantêm o recorte e a altura fixa; controles e conteúdo de largura explícita ainda podem exigir rolagem.

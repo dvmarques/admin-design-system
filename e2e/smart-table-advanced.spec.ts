@@ -95,3 +95,32 @@ test('hidrata sem erros e sem rolagem horizontal da página', async ({ page }) =
 	).toBeLessThanOrEqual(0);
 	expect(errors).toEqual([]);
 });
+
+for (const theme of ['light', 'dark']) {
+	test(`listras preservam o hover e permitem quebra no tema ${theme}`, async ({ page, context }) => {
+		await context.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+		await page.goto(path);
+		await waitForHydration(page.getByLabel('Virtualizar linhas'));
+		await page.getByLabel('Virtualizar linhas').uncheck();
+		await page.getByLabel('Redimensionar colunas').uncheck();
+		await page.getByLabel('Linhas listradas').check();
+		await page.getByLabel('Quebrar texto').check();
+		const table = page.getByRole('table', { name: 'Pessoas' });
+		const first = table.locator('tbody tr').nth(0);
+		const second = table.locator('tbody tr').nth(1);
+		const background = (row: typeof first) =>
+			row.evaluate((element) => getComputedStyle(element).backgroundColor);
+		await expect(table).toHaveAttribute('data-striped', '');
+		await expect(table).toHaveAttribute('data-wrap', '');
+		await expect(table).toHaveCSS('min-width', '0px');
+		await page.getByLabel('Quebrar texto').hover();
+		const stripe = await background(second);
+		expect(stripe).not.toBe(await background(first));
+		expect(stripe).not.toBe(await background(table.locator('thead')));
+		await second.hover();
+		await expect.poll(() => background(second)).not.toBe(stripe);
+		await expect(second.getByRole('cell').nth(2)).toHaveCSS('overflow-wrap', 'anywhere');
+		await expect(second.getByRole('cell').nth(2)).toHaveCSS('white-space', 'normal');
+		await expectNoAxeViolations(page);
+	});
+}

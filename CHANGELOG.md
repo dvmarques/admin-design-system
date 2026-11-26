@@ -10,6 +10,10 @@ para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.4] - Em andamento
 
+#### Changed
+
+- `highlighted-code` atualiza o Shiki para 4.6.0. Em testes com jsdom, o destaque real deixa de carregar e o código aparece sem cores; adicione um polyfill de `Blob.prototype.stream` ao setup. Navegador e SSR não mudam. (#333)
+
 #### Fixed
 
 - Publicação npm: confirmação por até 150 s após o publish, reconciliação final por até 60 s e releituras limitadas para 404, timeout e falhas HTTP transitórias; nome, versão e SHA-512 seguem obrigatórios, com recuperação idempotente. (#338, OpenSpec `issue-338-npm-registry-propagation`)

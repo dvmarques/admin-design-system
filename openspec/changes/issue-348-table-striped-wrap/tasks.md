@@ -13,7 +13,7 @@
 ## 3. Validação
 
 - [x] 3.1 Formatar arquivos e executar `npm run format`.
-- [ ] 3.2 Executar `npm run validate` (incluindo lint, build, tipos, quality e E2E) e confirmar `npm run test:e2e` sem falhas; usar modo verbose para diagnóstico. Atualizar snapshots apenas se intencionais e revisados pelo workflow Linux.
+- [x] 3.2 Validar as etapas de `npm run validate` e `npm run test:e2e` sem falhas (execução equivalente na CI); usar modo verbose para diagnóstico quando necessário. Atualizar snapshots apenas se intencionais e revisados pelo workflow Linux.
 - [x] 3.3 Executar `openspec.cmd validate --all --strict` (Linux: CLI 1.15.0) e revisar diff e riscos.
 
 ## Evidências
@@ -25,3 +25,5 @@
 
 - [CI anterior](https://github.com/dvmarques/admin-design-system/actions/runs/45898482866): qualidade, distribuição (incluindo consumo Next.js), Firefox e WebKit aprovados; Chromium falhou apenas no snapshot de `/componentes`, cujo contador de tokens passou de 104 para 105.
 - [Workflow oficial Linux](https://github.com/dvmarques/admin-design-system/actions/runs/45909585588) aprovado: 563 testes Chromium na geração e 563 na revalidação sem atualização. Commit `82dcc80` altera exclusivamente os snapshots claro e escuro de `/componentes`; comparação visual antes/depois revisada, com alteração esperada do contador e sem outras diferenças visíveis. A CI integral do novo HEAD permanece pendente; execuções acionadas pelo bot registraram `action_required`.
+
+- [CI integral](https://github.com/dvmarques/admin-design-system/actions/runs/45911715336) aprovada no SHA `222dab2`: format, lint, builds dos seis workspaces, output de docs, peer opcional, typecheck, testes de qualidade e geração de tokens, matriz E2E completa (Chromium 1/2 e 2/2, Firefox, WebKit e gate agregado), distribuição e OpenSpec estrito. Security Gate e GitHub Pages também aprovados. A task 3.2 está cumprida pelas etapas equivalentes executadas na CI; não se afirma execução local dos comandos agregadores.

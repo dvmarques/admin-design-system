@@ -362,3 +362,55 @@ it('does not retain a focus-repair request after an unchanged observer notificat
 	rerender(<AdsPagination page={50} pageCount={50} />);
 	expect(document.body).toHaveFocus();
 });
+
+describe('pagination density', () => {
+	it('keeps comfortable by default and supports switching density without losing the current page', () => {
+		const navigate = vi.fn();
+		const { rerender } = render(<AdsPagination page={2} pageCount={5} onPageChange={navigate} />);
+		const nav = screen.getByRole('navigation');
+		const current = screen.getByRole('button', { name: 'Página 2' });
+		expect(nav).not.toHaveClass('ads-pagination-compact');
+		expect(current).toHaveClass('min-h-10', 'min-w-10');
+		current.focus();
+		rerender(<AdsPagination density="compact" page={2} pageCount={5} onPageChange={navigate} />);
+		expect(nav).toHaveClass('ads-pagination-compact');
+		expect(current).not.toHaveClass('min-h-10');
+		expect(current).not.toHaveClass('min-w-10');
+		expect(current).toHaveClass('text-sm', 'ads-pagination-number');
+		expect(current).toHaveAttribute('aria-current', 'page');
+		expect(current).toHaveFocus();
+		fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
+		expect(navigate).toHaveBeenCalledWith(3);
+		rerender(
+			<AdsPagination density="comfortable" page={2} pageCount={5} onPageChange={navigate} />,
+		);
+		expect(nav).not.toHaveClass('ads-pagination-compact');
+		expect(current).toHaveClass('min-h-10', 'min-w-10');
+	});
+
+	it('passes compact classes to links and preserves disabled and loading states', () => {
+		const activate = vi.fn();
+		render(
+			<AdsPagination
+				density="compact"
+				page={1}
+				pageCount={5}
+				navigationMode="arrows"
+				loading
+				renderPageLink={(page, props) => (
+					<a href={`?page=${page}`} {...props} onClick={activate} />
+				)}
+			/>,
+		);
+		const current = screen.getByRole('link', { name: 'Página 1' });
+		const next = screen.getByRole('link', { name: 'Próxima página' });
+		expect(current).toHaveClass('ads-pagination-item', 'ads-pagination-number', 'text-sm');
+		expect(next).toHaveClass('ads-pagination-item', 'text-sm');
+		expect(next).not.toHaveClass('min-h-10');
+		expect(current).toHaveAttribute('aria-current', 'page');
+		expect(next).toHaveAttribute('aria-disabled', 'true');
+		expect(screen.getByRole('button', { name: 'Página anterior' })).toBeDisabled();
+		fireEvent.click(next);
+		expect(activate).not.toHaveBeenCalled();
+	});
+});

@@ -10,6 +10,7 @@ export default function PaginationPage() {
 	const [count, setCount] = useState(50);
 	const [width, setWidth] = useState(800);
 	const [arrows, setArrows] = useState(false);
+	const [compact, setCompact] = useState(false);
 	const [links, setLinks] = useState(false);
 	const [loading, setLoading] = useState(false);
 	const [firstLast, setFirstLast] = useState(false);
@@ -55,6 +56,10 @@ export default function PaginationPage() {
 					/>
 				</label>
 				<label>
+					<input type="checkbox" checked={compact} onChange={(e) => setCompact(e.target.checked)} />{' '}
+					Paginação compacta
+				</label>
+				<label>
 					<input type="checkbox" checked={arrows} onChange={(e) => setArrows(e.target.checked)} />{' '}
 					Navegar por setas
 				</label>
@@ -78,6 +83,7 @@ export default function PaginationPage() {
 			<section aria-label="Exemplo isolado" style={{ width, maxWidth: '100%', minWidth: 0 }}>
 				<h2>Paginação isolada</h2>
 				<AdsPagination
+					density={compact ? 'compact' : 'comfortable'}
 					page={page}
 					pageCount={count}
 					onPageChange={setPage}

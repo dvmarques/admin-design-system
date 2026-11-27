@@ -10,6 +10,10 @@ para distinguir mudanças públicas de manutenção interna.
 
 ### [0.1.5] - Em andamento
 
+#### Added
+
+- `AdsPagination` aceita `density="compact"` para acompanhar tabelas densas sem CSS adicional, mantendo `comfortable` como padrão e preservando a tipografia e a navegação por links. (#352, OpenSpec `issue-352-pagination-density`)
+
 ### [0.1.4] - 26-nov-2026
 
 #### Added

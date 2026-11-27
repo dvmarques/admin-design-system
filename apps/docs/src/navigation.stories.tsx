@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react-vite';
+import { AdsSmartTable } from '@dvmarques/admin-ds-admin';
 import {
 	AdsAccordion,
 	AdsBreadcrumb,
@@ -142,6 +143,50 @@ export const Pagination: Story = {
 	render: () => {
 		const [page, setPage] = useState(5);
 		return <AdsPagination page={page} pageCount={20} onPageChange={setPage} />;
+	},
+};
+
+export const PaginationDensity: Story = {
+	parameters: {
+		docs: {
+			description: {
+				story:
+					'Use density="compact" para paginação externa em tabelas densas. Comfortable é o padrão. Compact mantém text-sm e alvos de pelo menos 24 × 24 CSS px com os tokens padrão; prefira comfortable em interfaces predominantemente de toque.',
+			},
+		},
+	},
+	render: () => {
+		const [page, setPage] = useState(2);
+		const rows = Array.from({ length: 3 }, (_, index) => ({
+			id: String((page - 1) * 3 + index + 1),
+		}));
+		return (
+			<div
+				className="grid gap-4"
+				style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(min(100%, 20rem), 1fr))' }}
+			>
+				{(['comfortable', 'compact'] as const).map((density) => (
+					<section key={density} style={{ minWidth: 0 }}>
+						<h3>{density}</h3>
+						<AdsSmartTable
+							caption={`Registros — ${density}`}
+							density="compact"
+							columns={[{ id: 'id', label: 'Registro', cell: (row) => row.id }]}
+							rows={rows}
+							getRowId={(row) => row.id}
+						/>
+						<AdsPagination
+							aria-label={`Paginação ${density}`}
+							density={density}
+							page={page}
+							pageCount={5}
+							onPageChange={setPage}
+							navigationMode="arrows"
+						/>
+					</section>
+				))}
+			</div>
+		);
 	},
 };
 

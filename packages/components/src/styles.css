@@ -272,6 +272,27 @@
 	min-width: 2.5rem;
 	box-sizing: border-box;
 }
+/* Compact preserves the button typography and focus clearance in the scroll viewport. */
+.ads-pagination.ads-pagination-compact {
+	gap: 0.25rem;
+}
+.ads-pagination-compact .ads-pagination-list {
+	gap: 0.125rem;
+}
+.ads-pagination.ads-pagination-compact .ads-pagination-item {
+	min-height: max(24px, var(--ads-dimension-control-sm));
+	min-width: max(24px, 1.625rem);
+	padding-inline: 0.28rem;
+	translate: none;
+}
+.ads-pagination.ads-pagination-compact .ads-pagination-number,
+.ads-pagination-compact .ads-pagination-ellipsis {
+	width: max(24px, 1.5rem, calc(var(--ads-pagination-digits, 2) * 1ch + 0.65rem));
+	min-width: max(24px, 1.5rem);
+}
+.ads-pagination.ads-pagination-compact .ads-pagination-number {
+	padding-inline: 0.22rem;
+}
 .ads-pagination-ellipsis {
 	font-size: 0.875rem;
 	font-weight: 500;

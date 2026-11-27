@@ -11,7 +11,7 @@ import {
 export default function SemanticDashboardPage() {
 	return (
 		<div className="demo-page">
-			<div className="ads-layout-container ads-layout-stack demo-semantic-page">
+			<div className="ads-layout-container ads-layout-page demo-semantic-page">
 				<AdsPageHeader
 					title="Dashboard administrativo"
 					description="A estrutura da página é semântica; cards aparecem somente em indicadores e resumos autocontidos."

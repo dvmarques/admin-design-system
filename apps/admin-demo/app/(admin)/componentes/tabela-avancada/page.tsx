@@ -24,7 +24,7 @@ const statuses = ['Ativo', 'Inativo', 'Pendente'];
 const people: Person[] = Array.from({ length: 10000 }, (_, i) => ({
 	id: String(i + 1),
 	name: `Pessoa ${i + 1}`,
-	email: `pessoa${i + 1}@exemplo.com`,
+	email: i === 49 ? `${'referencia'.repeat(20)}@exemplo.com` : `pessoa${i + 1}@exemplo.com`,
 	role: roles[i % roles.length]!,
 	status: statuses[i % statuses.length]!,
 }));
@@ -46,6 +46,8 @@ const columns: AdsSmartTableColumn<Person>[] = [
 
 export default function AdvancedTablePage() {
 	const [virtualized, setVirtualized] = useState(true);
+	const [striped, setStriped] = useState(false);
+	const [wrap, setWrap] = useState(false);
 	const [resizable, setResizable] = useState(true);
 	const [exportable, setExportable] = useState(true);
 	const [sort, setSort] = useState<AdsSmartTableSort | null>(null);
@@ -99,6 +101,22 @@ export default function AdvancedTablePage() {
 					/>{' '}
 					Exportar
 				</label>
+				<label>
+					<input
+						checked={striped}
+						onChange={(event) => setStriped(event.target.checked)}
+						type="checkbox"
+					/>{' '}
+					Linhas listradas
+				</label>
+				<label>
+					<input
+						checked={wrap}
+						onChange={(event) => setWrap(event.target.checked)}
+						type="checkbox"
+					/>{' '}
+					Quebrar texto
+				</label>
 			</div>
 			<AdsSmartTable<Person>
 				caption="Pessoas"
@@ -117,6 +135,8 @@ export default function AdvancedTablePage() {
 				rows={virtualized ? rows : rows.slice(0, 50)}
 				selectedIds={selected}
 				sort={sort}
+				striped={striped}
+				wrap={wrap}
 				{...(virtualized && { virtualization: { rowHeight: 44, height: 360 } })}
 			/>
 			<p>

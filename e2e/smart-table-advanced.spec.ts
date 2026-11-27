@@ -95,3 +95,43 @@ test('hidrata sem erros e sem rolagem horizontal da página', async ({ page }) =
 	).toBeLessThanOrEqual(0);
 	expect(errors).toEqual([]);
 });
+
+for (const theme of ['light', 'dark']) {
+	test(`listras, hover e quebra no tema ${theme}`, async ({ page, context }) => {
+		await context.addCookies([{ name: 'ads-theme', value: theme, url: 'http://127.0.0.1:3000' }]);
+		await page.goto(path);
+		await waitForHydration(page.getByLabel('Virtualizar linhas'));
+		await page.getByLabel('Virtualizar linhas').uncheck();
+		await page.getByLabel('Redimensionar colunas').uncheck();
+		await page.getByLabel('Linhas listradas').check();
+		const table = page.getByRole('table', { name: 'Pessoas' });
+		const region = page.getByRole('region', { name: 'Pessoas' });
+		const overflow = () => region.evaluate((node) => node.scrollWidth - node.clientWidth);
+		await expect.poll(overflow).toBeGreaterThan(0);
+		await page.getByLabel('Quebrar texto').check();
+		await expect.poll(overflow).toBeLessThanOrEqual(1);
+		const first = table.locator('tbody tr').nth(0);
+		const second = table.locator('tbody tr').nth(1);
+		const background = (row: typeof first) =>
+			row.evaluate((element) => getComputedStyle(element).backgroundColor);
+		await expect(table).toHaveAttribute('data-striped', '');
+		await expect(table).toHaveAttribute('data-wrap', '');
+		await expect(table).not.toHaveClass(/min-w-max/);
+		await page.getByLabel('Quebrar texto').hover();
+		await expect(second).toHaveCSS(
+			'background-color',
+			theme === 'light' ? 'rgb(232, 238, 245)' : 'rgb(41, 53, 72)',
+		);
+		const stripe = await background(second);
+		expect(stripe).not.toBe(await background(first));
+		expect(stripe).not.toBe(await background(table.locator('thead')));
+		await second.hover();
+		await expect(second).toHaveCSS(
+			'background-color',
+			theme === 'light' ? 'rgb(248, 250, 252)' : 'rgb(61, 75, 96)',
+		);
+		await expect(second.getByRole('cell').nth(2)).toHaveCSS('overflow-wrap', 'anywhere');
+		await expect(second.getByRole('cell').nth(2)).toHaveCSS('white-space', 'normal');
+		await expectNoAxeViolations(page);
+	});
+}

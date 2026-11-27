@@ -729,12 +729,32 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 }
 
 @layer components {
+	/* #344: ritmo interno do cabeçalho (eyebrow, título, descrição) em 8px; ajustável por --ads-page-header-gap. */
+	.ads-page-header {
+		row-gap: var(--ads-page-header-gap, var(--ads-spacing-2));
+	}
 	/* Margens tokenizadas sem depender do CSS reset da aplicação. */
 	.ads-page-header__title {
 		margin: 0;
 	}
+	/* Linha própria acima do H1; os 8px até o título vêm do row-gap do cabeçalho, não de margem. */
+	.ads-page-header__eyebrow {
+		flex: 0 0 100%;
+		margin: 0;
+		color: var(--ads-color-text-muted);
+		font-size: 0.6875rem;
+		font-weight: var(--ads-typography-font-weight-semibold);
+		letter-spacing: 0.08em;
+		line-height: 1.25;
+		text-transform: uppercase;
+		overflow-wrap: anywhere;
+	}
+	/* Ações centradas na primeira linha do H1 (tamanho × entrelinha dos tokens), sem valor no consumidor. */
+	.ads-page-header__actions {
+		min-height: calc(var(--ads-typography-font-size-4xl) * var(--ads-typography-line-height-tight));
+	}
 	.ads-page-header__description {
-		margin: var(--ads-spacing-2) 0 0;
+		margin: var(--ads-page-header-gap, var(--ads-spacing-2)) 0 0;
 	}
 	/* Cabeçalho de página: palavras longas e ações mantêm reflow em zoom elevado. */
 	.ads-page-header__title,
@@ -764,6 +784,18 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		min-width: 0;
 		flex-direction: column;
 		gap: var(--ads-layout-stack-gap, var(--ads-spacing-4));
+	}
+
+	/* #344: ritmo vertical de página, entre AdsPageHeader e seções (24px). */
+	.ads-layout-page {
+		display: flex;
+		min-width: 0;
+		flex-direction: column;
+		gap: var(--ads-layout-page-gap, var(--ads-spacing-6));
+	}
+
+	.ads-layout-page > * {
+		min-width: 0;
 	}
 
 	.ads-layout-grid {
@@ -813,5 +845,19 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 		margin: var(--ads-spacing-1) var(--ads-spacing-2);
 		border: 0;
 		border-block-start: 1px solid var(--ads-color-border);
+	}
+}
+
+@layer components {
+	/* Keep specificity below row hover, selection and consumer utility overrides. */
+	:where(.ads-table[data-striped] > tbody > tr:not([aria-hidden='true'], [data-selected])) {
+		&:where([data-stripe='even'], :nth-child(even):not([data-stripe])) {
+			background-color: var(--ads-color-table-stripe);
+		}
+	}
+
+	:where(.ads-table[data-wrap]) > :where(thead, tbody, tfoot) > :where(tr) > :where(th, td) {
+		white-space: normal;
+		overflow-wrap: anywhere;
 	}
 }

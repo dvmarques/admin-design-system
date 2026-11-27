@@ -6,8 +6,21 @@
  */
 export const minimumRatio = { text: 4.5, ui: 3 };
 
-const surfaces = ['canvas', 'surface', 'surfaceRaised', 'surfaceMuted', 'surfaceHover'];
-const controlBackgrounds = ['surface', 'formBackground', 'surfaceMuted', 'surfaceHover'];
+const surfaces = [
+	'canvas',
+	'surface',
+	'surfaceRaised',
+	'surfaceMuted',
+	'surfaceHover',
+	'tableStripe',
+];
+const controlBackgrounds = [
+	'surface',
+	'formBackground',
+	'surfaceMuted',
+	'surfaceHover',
+	'tableStripe',
+];
 
 const chartSurfaces = ['surface', 'surfaceRaised'];
 

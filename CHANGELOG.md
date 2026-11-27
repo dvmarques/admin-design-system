@@ -8,7 +8,21 @@ por versão e pelas changes correspondentes do OpenSpec. Consulte a
 [política editorial](docs/release-process.md#política-editorial-do-changelog-issue-286)
 para distinguir mudanças públicas de manutenção interna.
 
-### [0.1.4] - Em andamento
+### [0.1.5] - Em andamento
+
+### [0.1.4] - 26-nov-2026
+
+#### Added
+
+- `AdsTable` e `AdsSmartTable` aceitam `striped` (listras tematizáveis por `--ads-color-table-stripe`) e `wrap` (quebra de texto); sem essas props, a apresentação anterior é preservada. (#348, OpenSpec `issue-348-table-striped-wrap`)
+- `AdsPageHeader` aceita `eyebrow` opcional e alinha ações à primeira linha do título; em telas estreitas, elas continuam abaixo do texto. A aplicação carrega a fonte Inter e pode configurar `--ads-typography-font-family`. (#343, OpenSpec `issue-343-page-header-eyebrow`)
+
+#### Changed
+
+- A classe opt-in `ads-layout-page` define 24px entre cabeçalho e seções, ajustáveis por `--ads-layout-page-gap`; o espaçamento interno do `AdsPageHeader` é 8px, ajustável por `--ads-page-header-gap`. (#344, OpenSpec `issue-344-page-vertical-rhythm`)
+- `highlighted-code` atualiza o Shiki para 4.6.0. Em testes com jsdom, o destaque real deixa de carregar e o código aparece sem cores; adicione um polyfill de `Blob.prototype.stream` ao setup. Navegador e SSR não mudam. (#333)
+
+<!-- release-changelog-approved sha256:fbae8268c257648c83c02d72b6abaed33c71b6c0c0904cb0e78eab208fc50613 -->
 
 ### [0.1.3] - 16-nov-2026
 

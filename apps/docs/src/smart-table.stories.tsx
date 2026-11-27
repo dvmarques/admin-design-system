@@ -296,3 +296,21 @@ export const ExportHook: Story = {
 		);
 	},
 };
+
+/** Listras e quebra podem ser habilitadas independentemente. */
+export const StripedWrap: Story = {
+	args,
+	render: () => (
+		<div style={{ maxWidth: 420 }}>
+			<Demo
+				striped
+				wrap
+				columns={columns}
+				rows={data.map((user) => ({
+					...user,
+					email: 'referenciaMuitoLongaSemEspacosParaQuebrar@exemplo.com',
+				}))}
+			/>
+		</div>
+	),
+};

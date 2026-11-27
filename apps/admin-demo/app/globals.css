@@ -17,11 +17,28 @@ body {
 
 .demo-page {
 	min-height: 100dvh;
-	padding: clamp(1.25rem, 4vw, 4rem);
+	padding: var(--ads-spacing-4);
+}
+.demo-page > h1 {
+	overflow-wrap: anywhere;
 }
 .demo-shell {
 	width: min(100%, 76rem);
 	margin: 0 auto;
+}
+.demo-page > .demo-shell > * {
+	min-width: 0;
+}
+.demo-page > .demo-shell > .demo-section {
+	padding: 0;
+	border: 0;
+}
+.demo-page > .demo-shell > header.demo-section {
+	display: grid;
+	gap: var(--ads-spacing-2);
+}
+.demo-page > .demo-shell > header.demo-section > :is(h1, p) {
+	margin-block: 0;
 }
 
 .demo-hero {
@@ -29,7 +46,7 @@ body {
 	align-items: flex-start;
 	justify-content: space-between;
 	gap: 2rem;
-	padding: clamp(2rem, 5vw, 4.5rem) 0 clamp(2.75rem, 6vw, 5.5rem);
+	padding: 0;
 }
 .demo-hero__intro {
 	max-width: 48rem;
@@ -418,9 +435,6 @@ body {
 	.demo-page {
 		padding: 1rem;
 	}
-	.demo-hero {
-		padding-top: 1.5rem;
-	}
 	.demo-form {
 		grid-template-columns: 1fr;
 	}
@@ -514,6 +528,12 @@ body {
 	min-width: 0;
 	overflow-wrap: anywhere;
 }
+.demo-catalog-shortcuts {
+	--ads-layout-cluster-gap: var(--ads-spacing-4);
+	margin: 0 0 var(--ads-spacing-4);
+	padding: 0;
+	list-style: none;
+}
 .demo-catalog-member {
 	margin-block: 1.25rem;
 	padding-block: 0.75rem;
@@ -604,22 +624,14 @@ body {
 	padding: var(--ads-spacing-4);
 }
 .demo-overview > .demo-shell {
-	display: grid;
-	gap: var(--ads-spacing-6);
 	container: demo-overview / inline-size;
 }
 .demo-overview .demo-section {
 	padding: 0;
 	border: 0;
 }
-.demo-overview h1,
-.demo-overview h2,
-.demo-overview p {
+.demo-overview > .demo-shell > :not(header) :is(h1, h2, p) {
 	margin-block: 0;
-}
-.demo-overview header.demo-section {
-	display: grid;
-	gap: var(--ads-spacing-2);
 }
 .demo-overview .demo-metrics-grid {
 	grid-template-columns: minmax(0, 1fr);
@@ -906,7 +918,6 @@ body {
 
 /* #318: ajustes da demonstração sobre classes públicas de composição. */
 .demo-semantic-page {
-	--ads-layout-stack-gap: var(--ads-spacing-8);
 	/* demo-page e shell já fornecem gutter: não somar padding do container. */
 	--ads-layout-gutter: 0;
 }

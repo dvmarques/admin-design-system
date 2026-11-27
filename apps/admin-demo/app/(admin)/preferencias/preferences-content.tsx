@@ -1,6 +1,11 @@
 'use client';
 
-import { AdsSwitch, AdsThemeControl, AdsTypography } from '@dvmarques/admin-ds-components';
+import {
+	AdsSwitch,
+	AdsThemeControl,
+	AdsPageHeader,
+	AdsTypography,
+} from '@dvmarques/admin-ds-components';
 import { useAdsAdminShell } from '@dvmarques/admin-ds-admin';
 import { applyThemePreference, type ThemePreference } from '../../../lib/theme';
 import { useThemePreference } from '../../use-theme';
@@ -16,16 +21,12 @@ export function PreferencesContent({ initialPreference }: { initialPreference: T
 
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
-				<header className="demo-section">
-					<p className="demo-kicker">Conta</p>
-					<AdsTypography as="h1" variant="heading1">
-						Preferências
-					</AdsTypography>
-					<AdsTypography variant="muted">
-						Aparência e layout do admin. As escolhas valem apenas neste navegador.
-					</AdsTypography>
-				</header>
+			<div className="demo-shell ads-layout-page">
+				<AdsPageHeader
+					eyebrow="Conta"
+					title="Preferências"
+					description="Aparência e layout do admin. As escolhas valem apenas neste navegador."
+				/>
 
 				<section aria-labelledby="preferences-appearance" className="demo-section">
 					<AdsTypography as="h2" id="preferences-appearance" variant="heading2">

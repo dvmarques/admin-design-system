@@ -28,7 +28,7 @@ const scenarios = [
 export default function IntegratedAdminPage() {
 	return (
 		<div className="demo-page">
-			<div className="ads-layout-container ads-layout-stack demo-semantic-page">
+			<div className="ads-layout-container ads-layout-page demo-semantic-page">
 				<AdsPageHeader
 					title="Integração administrativa ADS"
 					description="Cenários integrados com dados fictícios, APIs públicas e CSS compilado. O cabeçalho, a sidebar e o controle de tema pertencem ao shell compartilhado da aplicação."

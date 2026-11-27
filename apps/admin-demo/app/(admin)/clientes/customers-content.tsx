@@ -1,4 +1,4 @@
-import { AdsTypography } from '@dvmarques/admin-ds-components';
+import { AdsPageHeader, AdsTypography } from '@dvmarques/admin-ds-components';
 import type { Customer } from '../../../lib/data/customers';
 import type { CustomersQuery, CustomersState } from '../../../lib/customers-query';
 import { CustomersListing } from './customers-listing';
@@ -17,17 +17,12 @@ interface CustomersContentProps {
 export function CustomersContent({ total, ...listing }: CustomersContentProps) {
 	return (
 		<div className="demo-page">
-			<div className="demo-shell">
-				<header className="demo-section">
-					<p className="demo-kicker">Cadastro</p>
-					<AdsTypography as="h1" variant="heading1">
-						Clientes
-					</AdsTypography>
-					<AdsTypography variant="muted">
-						Filtros, ordenação e página guardados na URL, com os estados de dados, carregamento,
-						vazio e erro.
-					</AdsTypography>
-				</header>
+			<div className="demo-shell ads-layout-page">
+				<AdsPageHeader
+					eyebrow="Cadastro"
+					title="Clientes"
+					description="Filtros, ordenação e página guardados na URL, com os estados de dados, carregamento, vazio e erro."
+				/>
 
 				<section aria-label="Lista de clientes" className="demo-section">
 					<AdsTypography variant="muted">

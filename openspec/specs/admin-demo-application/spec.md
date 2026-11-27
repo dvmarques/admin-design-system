@@ -587,3 +587,40 @@ As rotas demonstrativas de autenticação MUST ocupar a viewport sem rolagem da 
 
 - **WHEN** a viewport muda de largura ou altura
 - **THEN** a composição acompanha a nova área disponível sem altura excedente imposta pela decoração
+
+### Requirement: Densidade consistente no Demo administrativo
+
+As páginas administrativas do Demo MUST usar a Visão geral como referência de alinhamento, padding e ritmo entre cabeçalho e seções, preservando espaçamentos internos e funcionalidades próprias.
+
+#### Scenario: Pessoa compara páginas
+
+- **WHEN** a pessoa abre Visão geral, Clientes, Novo cliente, Preferências e exemplos administrativos na mesma viewport
+- **THEN** o conteúdo mantém alinhamento e ritmo vertical coerentes, sem grandes vazios ou divisórias decorativas desnecessárias
+
+#### Scenario: Viewport e tema variam
+
+- **WHEN** a pessoa usa as páginas nos temas claro e escuro em celular, tablet ou desktop
+- **THEN** controles e conteúdo permanecem legíveis, navegáveis e sem overflow horizontal da página
+
+#### Scenario: Estados da listagem
+
+- **WHEN** a listagem apresenta dados, carregamento, vazio ou erro
+- **THEN** seus controles e mensagens continuam funcionais e acessíveis
+
+### Requirement: Cabeçalhos de página do Demo usam o eyebrow do pacote
+
+Os cabeçalhos de página administrativos do Demo MUST usar `AdsPageHeader` com a prop `eyebrow` em vez de estilos locais de kicker.
+
+#### Scenario: Pessoa abre uma página administrativa
+
+- **WHEN** a pessoa abre Visão geral, Clientes, Novo cliente, Data display ou Preferências
+- **THEN** o eyebrow aparece acima do H1 com o estilo do pacote e o ritmo vertical da página é preservado
+
+### Requirement: Demo usa o ritmo vertical do pacote
+
+As páginas administrativas do Demo MUST obter o espaçamento entre cabeçalho e seções da classe `ads-layout-page`, sem CSS próprio equivalente.
+
+#### Scenario: Pessoa abre Clientes
+
+- **WHEN** a pessoa abre uma página administrativa
+- **THEN** o intervalo entre cabeçalho e primeira seção é 24px, vindo de `ads-layout-page`

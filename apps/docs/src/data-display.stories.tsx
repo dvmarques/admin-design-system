@@ -126,3 +126,27 @@ export const Feedback: Story = {
 		</div>
 	),
 };
+
+/** As opções são independentes e podem ser combinadas em um contêiner estreito. */
+export const TableStripedWrap: Story = {
+	render: () => (
+		<div style={{ maxWidth: 360 }}>
+			<AdsTable aria-label="Clientes com descrições longas" striped wrap>
+				<AdsTableHead>
+					<AdsTableRow interactive={false}>
+						<AdsTableHeader>Cliente</AdsTableHeader>
+						<AdsTableHeader>Referência</AdsTableHeader>
+					</AdsTableRow>
+				</AdsTableHead>
+				<AdsTableBody>
+					{['Mariana Costa', 'Rafael Lima', 'Helena Prado'].map((name) => (
+						<AdsTableRow key={name}>
+							<AdsTableCell>{name}</AdsTableCell>
+							<AdsTableCell>ReferênciaSemEspaçosMuitoLongaParaDemonstrarAQuebra</AdsTableCell>
+						</AdsTableRow>
+					))}
+				</AdsTableBody>
+			</AdsTable>
+		</div>
+	),
+};

@@ -1,5 +1,11 @@
 import { AdsDashboardGrid, AdsDashboardPanel, AdsMetricCard } from '@dvmarques/admin-ds-admin';
-import { AdsList, AdsListItem, AdsProgress, AdsTypography } from '@dvmarques/admin-ds-components';
+import {
+	AdsList,
+	AdsListItem,
+	AdsProgress,
+	AdsPageHeader,
+	AdsTypography,
+} from '@dvmarques/admin-ds-components';
 import type {
 	OverviewActivity,
 	OverviewIndicator,
@@ -16,16 +22,12 @@ interface OverviewContentProps {
 export function OverviewContent({ indicators, progress, activity }: OverviewContentProps) {
 	return (
 		<div className="demo-page demo-overview">
-			<div className="demo-shell">
-				<header className="demo-section">
-					<p className="demo-kicker">Admin Design System</p>
-					<AdsTypography as="h1" variant="heading1">
-						Visão geral
-					</AdsTypography>
-					<AdsTypography variant="muted">
-						Indicadores, progresso e atividade recente da operação.
-					</AdsTypography>
-				</header>
+			<div className="demo-shell ads-layout-page">
+				<AdsPageHeader
+					eyebrow="Admin Design System"
+					title="Visão geral"
+					description="Indicadores, progresso e atividade recente da operação."
+				/>
 
 				<section aria-labelledby="overview-indicators" className="demo-section">
 					<AdsTypography as="h2" id="overview-indicators" variant="heading2">

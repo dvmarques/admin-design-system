@@ -28,7 +28,7 @@ const meta = {
 		docs: {
 			description: {
 				component:
-					'AdsPageHeader oferece H1, descrição e ações responsivas. Seções usam HTML nativo e classes CSS opt-in ads-layout-* (container, stack, grid, cluster), sem Tailwind no consumidor. AdsCard é opcional e reservado a conteúdos autocontidos.',
+					'AdsPageHeader oferece eyebrow opcional, H1, descrição e ações responsivas. Seções usam HTML nativo e classes CSS opt-in ads-layout-* (container, stack, grid, cluster), sem Tailwind no consumidor. AdsCard é opcional e reservado a conteúdos autocontidos.',
 			},
 		},
 	},
@@ -45,8 +45,9 @@ function ConsultationExample() {
 		person.toLowerCase().includes(query.trim().toLowerCase()),
 	);
 	return (
-		<main className="ads-layout-stack">
+		<main className="ads-layout-page">
 			<AdsPageHeader
+				eyebrow="Consultas"
 				title="Consulta administrativa"
 				description="Pesquise registros sem colocar o conteúdo da página dentro de um card."
 				actions={
@@ -94,7 +95,7 @@ function FormExample() {
 	const [email, setEmail] = useState('');
 	const [message, setMessage] = useState('');
 	return (
-		<main className="ads-layout-stack">
+		<main className="ads-layout-page">
 			<AdsPageHeader
 				title="Formulário administrativo"
 				description="Seções semânticas, validação e ações sem card obrigatório."
@@ -159,7 +160,7 @@ function FormExample() {
 
 function DashboardExample() {
 	return (
-		<main className="ads-layout-stack">
+		<main className="ads-layout-page">
 			<AdsPageHeader
 				title="Dashboard administrativo"
 				description="Cards apenas para métricas e resumos autocontidos."

@@ -1595,6 +1595,7 @@ export function ThemeControlDemo() {
 				className="ads-layout-stack"
 				style={{
 					backgroundColor: 'var(--ads-color-surface)',
+					color: 'var(--ads-color-text)',
 					border: '1px solid var(--ads-color-border)',
 					borderRadius: 'var(--ads-radius-lg)',
 					padding: '1rem',

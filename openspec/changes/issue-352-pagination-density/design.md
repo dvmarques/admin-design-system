@@ -14,3 +14,7 @@ A paginação atual combina AdsButton sm com mínimos de 40px, inclusive no CSS 
 ## Riscos
 
 Alterações de métricas afetam a capacidade responsiva e o foco. Testar troca de densidade, links, múltiplos dígitos, temas e CSS real. O salto direto mantém seu campo existente.
+
+## Orçamento de distribuição
+
+A primeira CI mediu 310122 bytes de JS/CSS publicados de components, contra limite de 309300 bytes. A prop e o CSS opt-in adicionam comportamento público; ajustar apenas esse limite para 310500 bytes (+1200, cerca de 0,39%), mantendo os demais limites até evidência de necessidade. O gate continua ativo.

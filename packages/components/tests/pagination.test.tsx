@@ -364,7 +364,7 @@ it('does not retain a focus-repair request after an unchanged observer notificat
 });
 
 describe('pagination density', () => {
-	it('keeps comfortable by default and supports switching density without losing the current page', () => {
+	it('switches density while preserving default styles and the current page', () => {
 		const navigate = vi.fn();
 		const { rerender } = render(<AdsPagination page={2} pageCount={5} onPageChange={navigate} />);
 		const nav = screen.getByRole('navigation');
@@ -381,9 +381,7 @@ describe('pagination density', () => {
 		expect(current).toHaveFocus();
 		fireEvent.click(screen.getByRole('button', { name: 'Próxima página' }));
 		expect(navigate).toHaveBeenCalledWith(3);
-		rerender(
-			<AdsPagination density="comfortable" page={2} pageCount={5} onPageChange={navigate} />,
-		);
+		rerender(<AdsPagination density="comfortable" page={2} pageCount={5} />);
 		expect(nav).not.toHaveClass('ads-pagination-compact');
 		expect(current).toHaveClass('min-h-10', 'min-w-10');
 	});

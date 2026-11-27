@@ -2187,3 +2187,14 @@ Use `defaultValue={['a']}` para estado não controlado ou `value`/`onValueChange
 ## Composição opcional de footer, menus agrupados e temas (#319)
 
 Consulte [o guia de footer, agrupamentos de menu e temas](footer-dropdown-theme-integration.md) para os exemplos completos com `AdsAdminShell.Footer`, `AdsDropdown.Header`/`Divider`, Tab/Shift+Tab em menus portados, tokens, SSR/hidratação e responsabilidades do consumidor. Essas APIs são aditivas e não alteram os valores padrão dos temas.
+
+## Densidade da paginação
+
+Use `density="compact"` em `AdsPagination` quando uma tabela administrativa
+compacta precisar de paginação externa menor. O padrão `comfortable` mantém
+os alvos originais de 40px. Compact mantém a fonte `text-sm`, usa a altura do
+controle pequeno (32px com os tokens padrão) e alvos de pelo menos 24 × 24 CSS px
+(WCAG 2.2 AA, 2.5.8). Prefira `comfortable` para interfaces de toque. Links
+fornecidos por `renderPageLink` devem aplicar as props recebidas, inclusive
+`className`, para manter as dimensões, os nomes acessíveis e o foco. Não é
+necessário CSS adicional no consumidor.

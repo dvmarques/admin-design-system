@@ -32,6 +32,8 @@ export interface AdsPaginationProps extends Omit<HTMLAttributes<HTMLElement>, 'o
 	/** Renders the consumer's link (for example `next/link`) for an enabled page, previous or next target. */
 	renderPageLink?: (page: number, props: AdsPaginationLinkProps) => ReactNode;
 	siblingCount?: number;
+	/** Densidade visual; comfortable preserva os alvos originais de 40px. */
+	density?: 'comfortable' | 'compact';
 	/** Texto (padrão) ou setas para os controles de navegação. */
 	navigationMode?: 'text' | 'arrows';
 	previousContent?: ReactNode;
@@ -133,6 +135,7 @@ export function AdsPagination({
 	renderPage,
 	renderPageLink,
 	siblingCount = 1,
+	density = 'comfortable',
 	navigationMode = 'text',
 	previousContent,
 	nextContent,
@@ -162,6 +165,7 @@ export function AdsPagination({
 	const correctionRef = useRef<string | null>(null);
 	const [layout, setLayout] = useState<{ slots: number; overflow: boolean } | null>(null);
 	const measuredLayout = useRef<typeof layout>(null);
+	const measuredDensity = useRef(density);
 	const [jumpValue, setJumpValue] = useState(String(safePage));
 	const [jumpError, setJumpError] = useState(false);
 
@@ -211,7 +215,10 @@ export function AdsPagination({
 		observer?.observe(viewport);
 		observer?.observe(list);
 		view.addEventListener('resize', schedule);
-		measure();
+		const densityChanged = measuredDensity.current !== density;
+		measuredDensity.current = density;
+		if (densityChanged) schedule();
+		else measure();
 		return () => {
 			observer?.disconnect();
 			view.removeEventListener('resize', schedule);
@@ -220,6 +227,7 @@ export function AdsPagination({
 	}, [
 		safePage,
 		count,
+		density,
 		navigationMode,
 		previousContent,
 		nextContent,
@@ -291,7 +299,9 @@ export function AdsPagination({
 	) => {
 		const current = numeric && target === safePage;
 		const itemClass = classNames(
-			'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums',
+			density === 'compact'
+				? 'ads-pagination-item tabular-nums'
+				: 'ads-pagination-item min-h-10 min-w-10 px-2 tabular-nums',
 			numeric ? 'ads-pagination-number' : undefined,
 			current ? 'border-transparent' : undefined,
 		);
@@ -361,6 +371,7 @@ export function AdsPagination({
 			}}
 			className={classNames(
 				'ads-pagination flex max-w-full min-w-0 flex-wrap items-center gap-2',
+				density === 'compact' && 'ads-pagination-compact',
 				className,
 			)}
 		>

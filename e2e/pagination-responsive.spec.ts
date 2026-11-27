@@ -52,6 +52,45 @@ for (const theme of ['light', 'dark']) {
 			await resize(page, '800');
 			await expect.poll(() => nav.locator('[data-page]').count()).toBe(initial);
 		});
+		test('compact mantém alvos acessíveis e recalcula a capacidade para botões e links', async ({
+			page,
+		}) => {
+			const nav = page.getByRole('navigation', { name: 'Paginação de exemplo' });
+			await page.getByLabel('Navegar por setas').check();
+			await resize(page, '280');
+			await fits(nav);
+			const count = await nav.locator('[data-page]').count();
+			const button = nav.getByRole('button', { name: 'Página 25', exact: true });
+			const fontSize = await button.evaluate((node) => getComputedStyle(node).fontSize);
+			await page.getByLabel('Paginação compacta').check();
+			await expect.poll(() => nav.locator('[data-page]').count()).toBeGreaterThan(count);
+			await fits(nav);
+			await button.focus();
+			await expect(button).toBeFocused();
+			await page.getByLabel('Usar links').check();
+			const link = nav.getByRole('link', { name: 'Página 25', exact: true });
+			for (const target of [link, nav.getByRole('link', { name: 'Próxima página' })]) {
+				const size = await target.evaluate((node) => {
+					const rect = node.getBoundingClientRect();
+					return {
+						width: rect.width,
+						height: rect.height,
+						font: getComputedStyle(node).fontSize,
+					};
+				});
+				expect(size.width).toBeGreaterThanOrEqual(24);
+				expect(size.height).toBeGreaterThanOrEqual(24);
+				expect(size.height).toBeLessThan(40);
+				expect(size.font).toBe(fontSize);
+			}
+			await link.focus();
+			await expect(link).toBeFocused();
+			await nav.getByRole('link', { name: 'Próxima página' }).click();
+			await current(nav, 26);
+			await page.getByLabel('Paginação compacta').uncheck();
+			await expect.poll(() => nav.locator('[data-page]').count()).toBeLessThanOrEqual(count);
+			await fits(nav);
+		});
 		test('navega com teclado, salto por Enter/clique, valida e mantém foco', async ({ page }) => {
 			const nav = page.getByRole('navigation', { name: 'Paginação de exemplo' });
 			const field = nav.getByRole('spinbutton');

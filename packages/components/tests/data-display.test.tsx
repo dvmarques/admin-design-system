@@ -280,3 +280,20 @@ describe('AdsEmptyState', () => {
 		expect((await axe.run(container)).violations).toEqual([]);
 	});
 });
+
+it('opts into striped and wrapping independently without forwarding boolean DOM props', () => {
+	const { rerender } = render(<AdsTable striped />);
+	const table = screen.getByRole('table');
+	expect(table).toHaveAttribute('data-striped');
+	expect(table).toHaveClass('min-w-max');
+	expect(table).not.toHaveAttribute('striped');
+	rerender(<AdsTable wrap />);
+	expect(table).toHaveAttribute('data-wrap');
+	expect(table).not.toHaveAttribute('wrap');
+	expect(table).not.toHaveAttribute('data-striped');
+	expect(table).not.toHaveClass('min-w-max');
+	rerender(<AdsTable striped={false} wrap={false} />);
+	expect(table).not.toHaveAttribute('data-wrap');
+	expect(table).not.toHaveAttribute('data-striped');
+	expect(table).toHaveClass('min-w-max');
+});

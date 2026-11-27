@@ -134,3 +134,10 @@ test('emits the chart colors as --ads-color-chart1 to --ads-color-chart8 in both
 		for (const block of [light, dark])
 			assert.match(block, new RegExp(`--ads-color-chart${index}: #[\\da-f]{6};`, 'i'));
 });
+
+test('emits distinct stripe colors in both themes', () => {
+	const { css, module } = createArtifacts(tokenSource);
+	assert.match(css, /--ads-color-table-stripe: #e8eef5;/);
+	assert.match(css, /--ads-color-table-stripe: #293548;/);
+	assert.match(module, /"color.tableStripe": "#e8eef5"/);
+});

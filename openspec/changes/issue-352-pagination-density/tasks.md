@@ -12,7 +12,7 @@
 ## 3. Validação
 
 - [x] 3.1 Formatar e executar `npm run format`.
-- [ ] 3.2 Executar `npm run validate` e `npm run test:e2e` sem falhas; usar modo verbose para diagnóstico. Atualizar snapshots apenas se intencionais e revisados pelo workflow Linux.
+- [x] 3.2 Executar `npm run validate` e `npm run test:e2e` sem falhas; usar modo verbose para diagnóstico. Atualizar snapshots apenas se intencionais e revisados pelo workflow Linux.
 - [x] 3.3 Executar `openspec.cmd validate --all --strict` (Linux: CLI 1.15.0) e revisar diff e riscos.
 
 ## Evidências
@@ -21,4 +21,6 @@
 
 - [CI 46010344478](https://github.com/dvmarques/admin-design-system/actions/runs/46010344478), SHA `b1c576a`: matriz E2E completa (Chromium 1/2 e 2/2, Firefox, WebKit) e política develop/OpenSpec estrito aprovadas. Security Gate e Pages também aprovados. Formatação e distribuição ainda falharam; corrigidas no próximo commit, aguardando confirmação.
 
-- [CI 46011315678](https://github.com/dvmarques/admin-design-system/actions/runs/46011315678), SHA `45805c2`: format, lint, typecheck, builds das bibliotecas e OpenSpec estrito aprovados. A cobertura Node e a inspeção de pacotes identificaram limite CSS de cenário; ajuste restrito aos cenários que consomem o CSS de components. Validação integral ainda pendente.
+- [CI 46011315678](https://github.com/dvmarques/admin-design-system/actions/runs/46011315678), SHA `45805c2`: format, lint, typecheck, builds das bibliotecas e OpenSpec estrito aprovados. A cobertura Node e a inspeção de pacotes identificaram limite CSS de cenário; ajuste restrito aos cenários que consomem o CSS de components. Validação integral confirmada na execução final abaixo.
+
+- [CI 46011733698](https://github.com/dvmarques/admin-design-system/actions/runs/46011733698), SHA `148004a`: todos os jobs aplicáveis aprovados, incluindo format, lint, builds, typecheck, cobertura Node e Vitest, inspeção de pacotes e cenários, consumo Next.js, OpenSpec estrito e matriz E2E completa (Chromium 1/2 e 2/2, Firefox e WebKit). Security Gate e Pages também aprovados. Validação de release não aplicável. A task 3.2 está concluída pelas etapas equivalentes da CI; não se afirma execução local dos comandos agregadores.

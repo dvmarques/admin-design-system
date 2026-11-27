@@ -388,6 +388,9 @@ describe('pagination density', () => {
 
 	it('passes compact classes to links and preserves disabled and loading states', () => {
 		const activate = vi.fn();
+		const renderLink = (page: number, props: AdsPaginationLinkProps) => (
+			<a href={`?page=${page}`} {...props} onClick={activate} />
+		);
 		render(
 			<AdsPagination
 				density="compact"
@@ -395,9 +398,7 @@ describe('pagination density', () => {
 				pageCount={5}
 				navigationMode="arrows"
 				loading
-				renderPageLink={(page, props) => (
-					<a href={`?page=${page}`} {...props} onClick={activate} />
-				)}
+				renderPageLink={renderLink}
 			/>,
 		);
 		const current = screen.getByRole('link', { name: 'Página 1' });

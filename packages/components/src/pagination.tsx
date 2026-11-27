@@ -217,7 +217,8 @@ export function AdsPagination({
 		view.addEventListener('resize', schedule);
 		const densityChanged = measuredDensity.current !== density;
 		measuredDensity.current = density;
-		measure(densityChanged);
+		if (densityChanged) schedule();
+		else measure();
 		return () => {
 			observer?.disconnect();
 			view.removeEventListener('resize', schedule);

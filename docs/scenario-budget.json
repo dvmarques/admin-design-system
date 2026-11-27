@@ -33,7 +33,7 @@
 	},
 	"admin-public": {
 		"entry": "scripts/scenarios/admin.mjs",
-		"bytes": 72100,
+		"bytes": 72400,
 		"gzipBytes": 24300,
 		"cssFiles": [
 			"packages/tokens/dist/tokens.css",

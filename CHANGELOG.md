@@ -12,21 +12,15 @@ para distinguir mudanças públicas de manutenção interna.
 
 #### Added
 
-- `AdsTable` e `AdsSmartTable` aceitam as props opcionais `striped` (listras tematizáveis com `--ads-color-table-stripe`) e `wrap` (quebra de texto longo); sem as props, preservam a apresentação anterior. (#348, OpenSpec `issue-348-table-striped-wrap`)
-- `AdsPageHeader` aceita a prop opcional `eyebrow` (texto pequeno em caixa-alta acima do H1); sem ela, o markup não muda. O Admin Demo usa a prop em vez de estilos locais. (#343, OpenSpec `issue-343-page-header-eyebrow`)
+- `AdsTable` e `AdsSmartTable` aceitam `striped` (listras tematizáveis por `--ads-color-table-stripe`) e `wrap` (quebra de texto); sem essas props, a apresentação anterior é preservada. (#348, OpenSpec `issue-348-table-striped-wrap`)
+- `AdsPageHeader` aceita `eyebrow` opcional e alinha ações à primeira linha do título; em telas estreitas, elas continuam abaixo do texto. A aplicação carrega a fonte Inter e pode configurar `--ads-typography-font-family`. (#343, OpenSpec `issue-343-page-header-eyebrow`)
 
 #### Changed
 
-- Ritmo vertical de página padronizado no pacote: nova classe opt-in `ads-layout-page` (24px entre `AdsPageHeader` e seções, ajustável por `--ads-layout-page-gap`) e espaçamento interno do cabeçalho de 8px (`--ads-page-header-gap`), documentados em `page-composition.md`. O Admin Demo passa a usar a classe em vez de CSS próprio; o consumidor não precisa mais sobrescrever `--ads-layout-stack-gap`. (#344, OpenSpec `issue-344-page-vertical-rhythm`)
-- As ações do `AdsPageHeader` ficam alinhadas à primeira linha do título, sem contêiner nem valores mágicos no consumidor; em telas estreitas continuam quebrando abaixo do texto. Tetos de JS/CSS de `components` e dos cenários de CSS de `components`, `masked-input` e `admin` ajustados. (#343, OpenSpec `issue-343-page-header-eyebrow`)
-- Documentado que a fonte Inter é carregada pela aplicação consumidora (os pacotes não a distribuem) e como sobrescrever `--ads-typography-font-family`. (#343, OpenSpec `issue-343-page-header-eyebrow`)
+- A classe opt-in `ads-layout-page` define 24px entre cabeçalho e seções, ajustáveis por `--ads-layout-page-gap`; o espaçamento interno do `AdsPageHeader` é 8px, ajustável por `--ads-page-header-gap`. (#344, OpenSpec `issue-344-page-vertical-rhythm`)
 - `highlighted-code` atualiza o Shiki para 4.6.0. Em testes com jsdom, o destaque real deixa de carregar e o código aparece sem cores; adicione um polyfill de `Blob.prototype.stream` ao setup. Navegador e SSR não mudam. (#333)
 
-#### Fixed
-
-- Publicação npm: confirmação por até 150 s após o publish, reconciliação final por até 60 s e releituras limitadas para 404, timeout e falhas HTTP transitórias; nome, versão e SHA-512 seguem obrigatórios, com recuperação idempotente. (#338, OpenSpec `issue-338-npm-registry-propagation`)
-- Alinhados o ritmo das páginas administrativas do Demo e os atalhos do Catálogo à Visão geral. (#339, OpenSpec `issue-339-demo-spacing`)
-- Corrigido o contraste do exemplo de tema aninhado no Catálogo quando o tema externo é escuro. (#339, OpenSpec `issue-339-demo-spacing`)
+<!-- release-changelog-approved sha256:fbae8268c257648c83c02d72b6abaed33c71b6c0c0904cb0e78eab208fc50613 -->
 
 ### [0.1.3] - 16-nov-2026
 

@@ -20,3 +20,5 @@ Alterações de métricas afetam a capacidade responsiva e o foco. Testar troca 
 A primeira CI mediu 310122 bytes de JS/CSS publicados de components, contra limite de 309300 bytes. A prop e o CSS opt-in adicionam comportamento público; ajustar apenas esse limite para 310500 bytes (+1200, cerca de 0,39%), mantendo os demais limites até evidência de necessidade. O gate continua ativo.
 
 A segunda CI mediu 92798 bytes gzip por arquivo contra 92700; o limite gzip de components passa a 93000 bytes (+300, cerca de 0,32%), sem alterar limites de outros pacotes.
+
+A CI 46011315678 confirmou os orçamentos de distribuição por pacote, mas mediu 64235 bytes no CSS minificado de components-public (limite 63800). Como components-public, masked-input-public e admin-public compartilham o mesmo CSS de components, ajustar seus limites CSS em 700 bytes minificados e 200 bytes gzip, com margem pequena para o mesmo incremento. Os limites JS dos cenários e os cenários sem CSS de components permanecem intactos; as medidas finais dependem da nova CI.

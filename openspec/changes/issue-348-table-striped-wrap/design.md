@@ -14,20 +14,19 @@ A tabela usa largura mínima intrínseca e hover optativo. A tabela inteligente 
 
 Verificar temas, contraste, precedência e scroll. Props ausentes preservam o comportamento; remover as props é a reversão no consumidor. Não alterar snapshots não relacionados.
 
+## Cor da listra
+
+`tableStripe` usa hex literais (`#e8eef5` no claro, `#293548` no escuro), pois nenhum passo da escala `reference` serve: `slate100` iguala o cabeçalho (`surfaceMuted`), `slate200` iguala a borda das linhas, e no escuro `slate700` iguala `surfaceRaised` e fica a poucos pontos do hover (`slate650`). Adicionar passos à escala alteraria o contador de tokens exibido em `/componentes` e os baselines visuais; fica como evolução futura.
+
+No tema claro, o hover (`slate50`) é mais claro que a listra: a linha listrada clareia ao passar o mouse. No escuro, o hover é mais claro e o efeito é o esperado. O contraste do texto sobre a listra é validado em `contrast-pairs.mjs`.
+
 ## Orçamento de distribuição
 
-A CI Linux do SHA `a78e73f` (26/11/2026, Node 24.22.3, npm 11.19.1) mediu 309.193 B de JS/CSS publicados de components, ante o teto de 308.800 B, e 711.388 B no dist completo (abaixo do teto de 762.897 B). O custo aditivo das opções e dos seletores CSS motivou ajuste de 500 B no teto de JS/CSS, para 309.300 B (107 B de margem sobre a medição). Nenhuma dependência ou gate foi removido. Gzip e demais orçamentos permanecem inicialmente inalterados; novas medições devem confirmar o resultado. Evidência: [CI / distribuição](https://github.com/dvmarques/admin-design-system/actions/runs/45897648077/job/140175495187).
+Os tetos de `docs/browser-budget.json` e `docs/scenario-budget.json` foram elevados apenas onde a CI Linux (Node 24.22.3, npm 11.19.1) mediu excesso, com margem de cerca de 100 B, sem remover gates:
 
-A CI de `7bf2005` mediu 92.602 B de gzip publicado (teto 92.500 B); o teto passa a 92.700 B (98 B de margem). [Medição Linux](https://github.com/dvmarques/admin-design-system/actions/runs/45898012327/job/140176668543).
+- Components (JS/CSS publicados): 309.193 B medidos, teto de 308.800 para 309.300 B; gzip 92.602 B, teto de 92.500 para 92.700 B.
+- Admin publicado: 173.171 B, teto de 173.100 para 173.300 B.
+- Components e masked-input, CSS: 63.712 B (gzip 10.572 B), tetos para 63.800 B (10.600 B).
+- Admin, cenário JS: 71.989 B (gzip 24.205 B), tetos para 72.100 B (24.300 B); cenário CSS: 105.499 B (gzip 15.869 B), tetos para 105.600 B (15.900 B).
 
-A [medição completa de `3f8bbae`](https://github.com/dvmarques/admin-design-system/actions/runs/45898273973/job/140177550795) confirmou os demais excessos. Ajustes restritos aos tetos afetados:
-
-- Admin publicado: 173.171 B medidos, teto de 173.100 para 173.300 B.
-- Components e masked-input CSS: 63.712 B medidos, teto de 63.300 para 63.800 B.
-- Components e masked-input CSS gzip: 10.572 B medidos, teto de 10.500 para 10.600 B.
-- Admin cenário JS: 71.989 B medidos, teto de 71.800 para 72.100 B.
-- Admin cenário JS gzip: 24.205 B medidos, teto de 24.200 para 24.300 B.
-- Admin cenário CSS: 105.499 B medidos, teto de 105.100 para 105.600 B.
-- Admin cenário CSS gzip: 15.869 B medidos, teto de 15.800 para 15.900 B.
-
-A medição temporariamente agrupou falhas sem desativar o gate; o script original foi restaurado. Os cenários JS de components e masked-input não cresceram; os outros tetos permanecem inalterados.
+Medições: [components](https://github.com/dvmarques/admin-design-system/actions/runs/45897648077/job/140175495187) e [completa](https://github.com/dvmarques/admin-design-system/actions/runs/45898273973/job/140177550795). Após a remoção de regras CSS redundantes, a medição real tende a ficar abaixo dos tetos; recalibrar se a margem ficar excessiva.

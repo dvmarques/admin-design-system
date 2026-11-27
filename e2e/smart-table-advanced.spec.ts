@@ -116,7 +116,7 @@ for (const theme of ['light', 'dark']) {
 			row.evaluate((element) => getComputedStyle(element).backgroundColor);
 		await expect(table).toHaveAttribute('data-striped', '');
 		await expect(table).toHaveAttribute('data-wrap', '');
-		await expect(table).toHaveCSS('min-width', '0px');
+		await expect(table).not.toHaveClass(/min-w-max/);
 		await page.getByLabel('Quebrar texto').hover();
 		await expect(second).toHaveCSS(
 			'background-color',

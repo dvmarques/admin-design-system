@@ -2,8 +2,6 @@
 @import 'tailwindcss/utilities.css';
 
 @source './**/*.{ts,tsx}';
-/* Keep the table's legacy utility overridable by consumer CSS layers. */
-@source not inline('min-w-max');
 
 @theme inline {
 	/* Transições sem `duration-*` herdam o token, que vira 0ms com movimento reduzido. */
@@ -850,22 +848,12 @@ select.ads-select:not([multiple]):not([size]):dir(rtl) {
 	}
 }
 
-@layer utilities {
-	.min-w-max {
-		min-width: max-content;
-	}
-}
-
 @layer components {
 	/* Keep specificity below row hover, selection and consumer utility overrides. */
 	:where(.ads-table[data-striped] > tbody > tr:not([aria-hidden='true'], [data-selected])) {
 		&:where([data-stripe='even'], :nth-child(even):not([data-stripe])) {
 			background-color: var(--ads-color-table-stripe);
 		}
-	}
-
-	:where(.ads-table[data-wrap]) {
-		min-width: 0;
 	}
 
 	:where(.ads-table[data-wrap]) > :where(thead, tbody, tfoot) > :where(tr) > :where(th, td) {
